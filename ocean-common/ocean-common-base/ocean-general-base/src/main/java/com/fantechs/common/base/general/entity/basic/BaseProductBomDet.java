@@ -130,6 +130,14 @@ public class BaseProductBomDet extends ValidGroup implements Serializable {
     @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
     private Byte status;
 
+    /**
+     * 是否有下一级（0、否 1、是）
+     */
+    @ApiModelProperty(name="ifHaveLowerLevel",value = "是否有下一级（0、否 1、是）")
+    @Column(name = "if_have_lower_level")
+    private Byte ifHaveLowerLevel;
+
+
     private String remark;
 
     /**

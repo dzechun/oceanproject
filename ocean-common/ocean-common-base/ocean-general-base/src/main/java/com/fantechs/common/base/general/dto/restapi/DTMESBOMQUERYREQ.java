@@ -39,14 +39,12 @@ public class DTMESBOMQUERYREQ {
     /**
      * 对象管理记录描述
      */
-    @ApiModelProperty(name="OITXT" ,value="对象管理记录描述")
     @XmlElement(name = "OITXT")
     protected String oitxt;
 
     /**
      * 父项物料号
      */
-    @ApiModelProperty(name="MATNR" ,value="父项物料号")
     @XmlElement(name = "MATNR")
     protected String matnr;
 
