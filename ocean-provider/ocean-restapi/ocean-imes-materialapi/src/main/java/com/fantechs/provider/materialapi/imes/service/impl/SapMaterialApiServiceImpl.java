@@ -67,6 +67,7 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
         searchBaseMaterial.setMaterialCode(material.getMATNR());
         ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
         BaseMaterial baseMaterial = new BaseMaterial();
+        baseMaterial.setOrganizationId((long)1000);
         if(StringUtils.isEmpty(list.getData())){
             baseMaterial.setMaterialName(material.getMAKTX());
             baseMaterial.setMaterialDesc(material.getMAKTX());
