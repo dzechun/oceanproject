@@ -28,9 +28,12 @@ public interface MesSfcBarcodeOperationService {
      * 包箱作业-修改包箱规格数量
      * @param productCartonId
      * @param cartonDescNum
+     * @param packType
+     * @param print
+     * @param printName
      * @return
      */
-    int updateCartonDescNum(Long productCartonId, BigDecimal cartonDescNum, String packType);
+    int updateCartonDescNum(Long productCartonId, BigDecimal cartonDescNum, String packType, Boolean print, String printName);
 
     /**
      * 包箱作业-检查是否有未关闭包箱

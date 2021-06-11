@@ -53,10 +53,11 @@ public class MesSfcPalletWorkController {
     @ApiOperation("未满栈板提交")
     public ResponseEntity submitNoFullPallet(
             @ApiParam(value = "栈板表ID列表", required = true) @RequestBody List<Long> palletIdList,
-            @ApiParam(value = "打印条码（0-否 1-是）", required = true) @RequestParam byte printBarcode) throws Exception {
+            @ApiParam(value = "打印条码（0-否 1-是）", required = true) @RequestParam byte printBarcode,
+            @ApiParam(value = "打印名称", required = true) @RequestParam String printName) throws Exception {
 
 
-        int i = mesSfcPalletWorkService.submitNoFullPallet(palletIdList, printBarcode);
+        int i = mesSfcPalletWorkService.submitNoFullPallet(palletIdList, printBarcode, printName);
         return ControllerUtil.returnCRUD(i);
     }
 
@@ -72,10 +73,12 @@ public class MesSfcPalletWorkController {
     @ApiOperation("修改栈板包装规格数量")
     public ResponseEntity updateNowPackageSpecQty(
             @ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId,
-            @ApiParam(value = "包装规格数量", required = true) @RequestParam Double nowPackageSpecQty) throws Exception {
+            @ApiParam(value = "包装规格数量", required = true) @RequestParam Double nowPackageSpecQty,
+            @ApiParam(value = "是否打印", required = true) @RequestParam Boolean print,
+            @ApiParam(value = "打印名称", required = true) @RequestParam String printName) throws Exception {
 
 
-        int i = mesSfcPalletWorkService.updateNowPackageSpecQty(productPalletId, nowPackageSpecQty);
+        int i = mesSfcPalletWorkService.updateNowPackageSpecQty(productPalletId, nowPackageSpecQty, print, printName);
         return ControllerUtil.returnCRUD(i);
     }
 

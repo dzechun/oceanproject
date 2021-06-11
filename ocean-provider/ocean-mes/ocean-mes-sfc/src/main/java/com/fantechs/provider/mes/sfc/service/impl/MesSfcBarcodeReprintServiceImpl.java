@@ -57,7 +57,7 @@ public class MesSfcBarcodeReprintServiceImpl implements MesSfcBarcodeReprintServ
     }
 
     @Override
-    public int reprintBarcode(String barCode, byte barocdeType) throws Exception {
+    public int reprintBarcode(String barCode, byte barocdeType, String printName) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -93,6 +93,7 @@ public class MesSfcBarcodeReprintServiceImpl implements MesSfcBarcodeReprintServ
                 .barcode(barCode)
                 .labelTypeCode("09")
                 .workOrderId(workOrderId)
+                .printName(printName != null ? printName : "测试")
                 .build());
 
         // 生成补打记录
