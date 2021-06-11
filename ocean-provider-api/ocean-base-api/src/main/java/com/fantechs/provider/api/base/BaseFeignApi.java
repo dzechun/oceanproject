@@ -309,7 +309,7 @@ public interface BaseFeignApi {
     ResponseEntity<BasePackageSpecification> BasePackageSpecificationDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("获取包装规格信息列表")
-    @PostMapping("/basePackageSpecification/findList")
+    @PostMapping("/basePackageSpecification/findByMaterialProcess")
     ResponseEntity<List<BasePackageSpecificationDto>> findBasePackageSpecificationList(@ApiParam(value = "查询对象") @RequestBody SearchBasePackageSpecification searchBasePackageSpecification);
 
     @ApiOperation("获取工位详情")

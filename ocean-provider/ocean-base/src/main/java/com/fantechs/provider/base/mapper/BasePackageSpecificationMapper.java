@@ -13,4 +13,5 @@ import java.util.Map;
 public interface BasePackageSpecificationMapper extends MyMapper<BasePackageSpecification> {
 
     List<BasePackageSpecificationDto> findList(Map<String, Object> map);
+    List<BasePackageSpecificationDto> findByMaterialProcess(Map<String, Object> map);
 }
