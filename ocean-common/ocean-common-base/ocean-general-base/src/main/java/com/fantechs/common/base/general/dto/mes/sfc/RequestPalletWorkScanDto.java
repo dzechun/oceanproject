@@ -31,4 +31,7 @@ public class RequestPalletWorkScanDto {
 
     @ApiModelProperty(name = "maxPalletNum", value = "最大栈板操作数量")
     private int maxPalletNum;
+
+    @ApiModelProperty(name = "printName", value = "打印机名称")
+    private String printName;
 }

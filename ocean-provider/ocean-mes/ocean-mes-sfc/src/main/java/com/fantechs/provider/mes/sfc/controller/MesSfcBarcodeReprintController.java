@@ -37,8 +37,9 @@ public class MesSfcBarcodeReprintController {
     @ApiOperation("补打条码")
     @PostMapping("/reprintBarcode")
     public ResponseEntity reprintBarcode(@ApiParam(value = "号码", required = true) @RequestParam @NotNull(message = "keyword不能为空") String barCode,
-                                         @ApiParam(value = "号码类型，1:包箱，2:栈板", required = true) @RequestParam @NotNull(message = "barocdeType不能为空") byte barocdeType) throws Exception{
-        return ControllerUtil.returnCRUD(mesSfcBarcodeReprintService.reprintBarcode(barCode, barocdeType));
+                                         @ApiParam(value = "号码类型，1:包箱，2:栈板", required = true) @RequestParam @NotNull(message = "barocdeType不能为空") byte barocdeType,
+                                         @ApiParam(value = "打印名称", required = true) @RequestParam String printName) throws Exception{
+        return ControllerUtil.returnCRUD(mesSfcBarcodeReprintService.reprintBarcode(barCode, barocdeType, printName));
     }
 
 }

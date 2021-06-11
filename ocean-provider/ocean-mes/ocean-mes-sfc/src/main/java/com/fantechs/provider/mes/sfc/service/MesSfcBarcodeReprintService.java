@@ -18,5 +18,5 @@ public interface MesSfcBarcodeReprintService {
      * @param barocdeType 1:包箱，2:栈板
      * @return
      */
-    int reprintBarcode(String barCode, byte barocdeType) throws Exception;
+    int reprintBarcode(String barCode, byte barocdeType, String printName) throws Exception;
 }

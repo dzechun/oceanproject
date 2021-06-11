@@ -31,4 +31,6 @@ public class PdaCartonWorkDto implements Serializable {
     private Boolean print;
     @ApiModelProperty(name = "packType", value = "包箱类型(1：工单包箱，2：料号包箱)", required = true)
     private String packType;
+    @ApiModelProperty(name = "printName", value = "打印机名称")
+    private String printName;
 }

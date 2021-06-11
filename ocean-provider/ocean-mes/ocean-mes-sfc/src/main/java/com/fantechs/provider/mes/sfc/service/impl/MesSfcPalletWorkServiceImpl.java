@@ -301,6 +301,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 printCarCodeDto.setWorkOrderId(workOrderId);
                 printCarCodeDto.setLabelTypeCode("10");
                 printCarCodeDto.setBarcode(palletCode);
+                printCarCodeDto.setPrintName(requestPalletWorkScanDto.getPrintName() != null ? requestPalletWorkScanDto.getPrintName() : "测试");
                 BarcodeUtils.printBarCode(printCarCodeDto);
             }
             //完工入库
@@ -408,7 +409,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int submitNoFullPallet(List<Long> palletIdList, byte printBarcode) throws Exception {
+    public int submitNoFullPallet(List<Long> palletIdList, byte printBarcode, String printName) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -430,6 +431,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     printCarCodeDto.setWorkOrderId(item.getWorkOrderId());
                     printCarCodeDto.setLabelTypeCode("10");
                     printCarCodeDto.setBarcode(item.getPalletCode());
+                    printCarCodeDto.setPrintName(printName != null ? printName : "测试");
                     BarcodeUtils.printBarCode(printCarCodeDto);
                 }
 
@@ -500,7 +502,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     }
 
     @Override
-    public int updateNowPackageSpecQty(Long productPalletId, Double nowPackageSpecQty) throws Exception {
+    public int updateNowPackageSpecQty(Long productPalletId, Double nowPackageSpecQty, Boolean print, String printName) throws Exception {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -566,8 +568,17 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         }
         mesSfcProductPallet.setModifiedTime(new Date());
         mesSfcProductPallet.setModifiedUserId(user.getUserId());
-        mesSfcProductPalletService.update(mesSfcProductPallet);
-        return 1;
+        int update = mesSfcProductPalletService.update(mesSfcProductPallet);
+        if (print && update > 0) {
+            // 关箱后才能打印条码
+            BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
+                    .barcode(mesSfcProductPallet.getPalletCode())
+                    .labelTypeCode("09")
+                    .workOrderId(mesSfcProductPallet.getWorkOrderId())
+                    .printName(printName != null ? printName : "测试")
+                    .build());
+        }
+        return update;
     }
 
     @Override

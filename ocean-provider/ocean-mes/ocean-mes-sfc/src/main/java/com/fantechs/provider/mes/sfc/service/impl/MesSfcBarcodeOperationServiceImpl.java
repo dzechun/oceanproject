@@ -378,6 +378,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .barcode(sfcProductCarton.getCartonCode())
                         .labelTypeCode("09")
                         .workOrderId(mesPmWorkOrder.getWorkOrderId())
+                        .printName(dto.getPrintName() != null ? dto.getPrintName() : "测试")
                         .build());
             }
         }
@@ -398,7 +399,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     }
 
     @Override
-    public int updateCartonDescNum(Long productCartonId, BigDecimal cartonDescNum, String packType) {
+    public int updateCartonDescNum(Long productCartonId, BigDecimal cartonDescNum, String packType, Boolean print, String printName) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -425,7 +426,17 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             mesSfcProductCarton.setCloseCartonTime(new Date());
             mesSfcProductCarton.setModifiedUserId(user.getUserId());
             mesSfcProductCarton.setModifiedTime(new Date());
-            return mesSfcProductCartonService.update(mesSfcProductCarton);
+            int update = mesSfcProductCartonService.update(mesSfcProductCarton);
+            if (print && update > 0) {
+                // 关箱后才能打印条码
+                BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
+                        .barcode(mesSfcProductCarton.getCartonCode())
+                        .labelTypeCode("09")
+                        .workOrderId(mesSfcProductCarton.getWorkOrderId())
+                        .printName(printName != null ? printName : "测试")
+                        .build());
+            }
+            return update;
         } else {
             mesSfcProductCarton.setNowPackageSpecQty(cartonDescNum);
             return mesSfcProductCartonService.update(mesSfcProductCarton);
@@ -504,6 +515,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .barcode(productCartonDto.getCartonCode())
                     .labelTypeCode("09")
                     .workOrderId(productCartonDto.getWorkOrderId())
+                    .printName(dto.getPrintName() != null ? dto.getPrintName() : "测试")
                     .build());
         }
         return update;
