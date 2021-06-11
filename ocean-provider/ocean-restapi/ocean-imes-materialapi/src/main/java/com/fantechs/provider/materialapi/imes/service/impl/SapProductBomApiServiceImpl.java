@@ -114,8 +114,6 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
     public BaseProductBom saveBaseProductBom(String materialCode,String productBomVersion){
         SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
         searchBaseProductBom.setMaterialId(getMaterialId(materialCode));
-        System.out.println("---productBomVersion---"+productBomVersion);
-        System.out.println("---materialCode---"+materialCode);
         searchBaseProductBom.setProductBomVersion(productBomVersion);
         ResponseEntity<List<BaseProductBomDto>> productBomList = baseFeignApi.findProductBomList(searchBaseProductBom);
         BaseProductBom productBom = new BaseProductBom();
