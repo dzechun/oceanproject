@@ -56,7 +56,7 @@ public class BaseProducttionKeyIssuesServiceImpl extends BaseService<BaseProduct
         //判断是否重复
         Example example = new Example(BaseProducttionKeyIssues.class);
         Example.Criteria criteria = example.createCriteria();
-        List<BaseProducttionKeyIssues> baseProducttionKeyIssuesList = null;
+        List<BaseProducttionKeyIssues> baseProducttionKeyIssuesList;
         if(StringUtils.isNotEmpty(baseProducttionKeyIssues.getMaterialId())) {
             criteria.andEqualTo("materialId", baseProducttionKeyIssues.getMaterialId());
             baseProducttionKeyIssuesList = baseProducttionKeyIssuesMapper.selectByExample(example);
@@ -115,7 +115,7 @@ public class BaseProducttionKeyIssuesServiceImpl extends BaseService<BaseProduct
         //判断是否重复
         Example example = new Example(BaseProducttionKeyIssues.class);
         Example.Criteria criteria = example.createCriteria();
-        List<BaseProducttionKeyIssues> baseProducttionKeyIssuesList = null;
+        List<BaseProducttionKeyIssues> baseProducttionKeyIssuesList;
         if(StringUtils.isNotEmpty(baseProducttionKeyIssues.getMaterialId())) {
             criteria.andEqualTo("materialId", baseProducttionKeyIssues.getMaterialId())
                     .andNotEqualTo("producttionKeyIssuesId",baseProducttionKeyIssues.getProducttionKeyIssuesId());
@@ -143,16 +143,34 @@ public class BaseProducttionKeyIssuesServiceImpl extends BaseService<BaseProduct
         BeanUtils.copyProperties(baseProducttionKeyIssues,baseHtProducttionKeyIssues);
         baseHtProducttionKeyIssuesMapper.insertSelective(baseHtProducttionKeyIssues);
 
+        //原来有的明细只更新
+        ArrayList<Long> idList = new ArrayList<>();
+        List<BaseProducttionKeyIssuesDet> baseProducttionKeyIssuesDetList = baseProducttionKeyIssues.getBaseProducttionKeyIssuesDetList();
+        if(StringUtils.isNotEmpty(baseProducttionKeyIssuesDetList)) {
+            for (BaseProducttionKeyIssuesDet baseProducttionKeyIssuesDet : baseProducttionKeyIssuesDetList) {
+                if (StringUtils.isNotEmpty(baseProducttionKeyIssuesDet.getProducttionKeyIssuesDetId())) {
+                    baseProducttionKeyIssuesDetMapper.updateByPrimaryKeySelective(baseProducttionKeyIssuesDet);
+                    idList.add(baseProducttionKeyIssuesDet.getProducttionKeyIssuesDetId());
+                }
+            }
+        }
+
         //删除原明细
         Example example1 = new Example(BaseProducttionKeyIssuesDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("producttionKeyIssuesId",baseProducttionKeyIssues.getProducttionKeyIssuesId());
+        if(idList.size()>0){
+            criteria1.andNotIn("producttionKeyIssuesDetId",idList);
+        }
         baseProducttionKeyIssuesDetMapper.deleteByExample(example1);
 
         //新增明细
-        List<BaseProducttionKeyIssuesDet> baseProducttionKeyIssuesDetList = baseProducttionKeyIssues.getBaseProducttionKeyIssuesDetList();
+
         if (StringUtils.isNotEmpty(baseProducttionKeyIssuesDetList)){
             for (BaseProducttionKeyIssuesDet baseProducttionKeyIssuesDet : baseProducttionKeyIssuesDetList) {
+                if(idList.contains(baseProducttionKeyIssuesDet.getProducttionKeyIssuesDetId())){
+                    continue;
+                }
                 baseProducttionKeyIssuesDet.setProducttionKeyIssuesId(baseProducttionKeyIssues.getProducttionKeyIssuesId());
                 baseProducttionKeyIssuesDet.setCreateTime(new Date());
                 baseProducttionKeyIssuesDet.setCreateUserId(user.getUserId());
