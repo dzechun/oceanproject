@@ -345,7 +345,24 @@ public interface BaseFeignApi {
     @PostMapping("/baseSignature/findList")
     ResponseEntity<List<BaseSignature>> findSignatureList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSignature searchBaseSignature);
 
-    @ApiOperation("接口新增火修改供应商信息")
+    @ApiOperation("接口新增或修改供应商（客户）信息")
     @PostMapping("/baseSupplier/addOrUpdate")
     ResponseEntity addOrUpdate(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody @Validated BaseSupplier baseSupplier);
+
+    @ApiOperation("接口新增或修改产品bom信息")
+    @PostMapping("/baseProductBom/addOrUpdate")
+    ResponseEntity<BaseProductBom> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProductBom baseProductBom);
+
+    @ApiOperation("接口新增或修改产品bom详情表信息")
+    @PostMapping("/baseProductBomDet/addOrUpdate")
+    ResponseEntity<BaseProductBomDet> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProductBomDet bseProductBomDet);
+
+    @ApiOperation("查询产品bom详情表信息")
+    @PostMapping("/baseProductBomDet/findList")
+    ResponseEntity<List<BaseProductBomDet>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseProductBomDet searchBaseProductBomDet);
+
+    @ApiOperation("批量删除bom详情表信息")
+    @PostMapping("/baseProductBomDet/batchApiDelete")
+    ResponseEntity batchApiDelete(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated List<BaseProductBomDet> bseProductBomDets);
+
 }

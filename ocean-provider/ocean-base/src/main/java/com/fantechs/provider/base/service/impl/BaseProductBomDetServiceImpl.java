@@ -2,6 +2,7 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.entity.basic.BaseProductBom;
 import com.fantechs.common.base.general.entity.basic.BaseProductBomDet;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductBomDet;
@@ -48,27 +49,27 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
 
 
         BaseProductBom baseProductBom = baseProductBomMapper.selectByPrimaryKey(baseProductBomDet.getProductBomId());
-        if (baseProductBom.getMaterialId().equals(baseProductBomDet.getPartMaterialId())) {
+        if (baseProductBom.getMaterialId().equals(baseProductBomDet.getMaterialId())) {
             throw new BizErrorException("零件料号不能选择产品料号");
         }
 
         Example example = new Example(BaseProductBomDet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("productBomId", baseProductBomDet.getProductBomId());
-        criteria.andEqualTo("partMaterialId", baseProductBomDet.getPartMaterialId());
+        criteria.andEqualTo("materialId", baseProductBomDet.getMaterialId());
         List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseProductBomDets)) {
             throw new BizErrorException("零件料号已存在");
         }
 
-        if (baseProductBom.getMaterialId().equals(baseProductBomDet.getSubMaterialId()) || baseProductBomDet.getPartMaterialId().equals(baseProductBomDet.getSubMaterialId())) {
+        if (baseProductBom.getMaterialId().equals(baseProductBomDet.getSubMaterialId()) || baseProductBomDet.getMaterialId().equals(baseProductBomDet.getSubMaterialId())) {
             throw new BizErrorException("代用料号不能选择产品料号或零件料号");
         }
         baseProductBomDet.setCreateUserId(currentUser.getUserId());
         baseProductBomDet.setCreateTime(new Date());
         baseProductBomDet.setModifiedUserId(currentUser.getUserId());
         baseProductBomDet.setModifiedTime(new Date());
-        baseProductBomDet.setOrganizationId(currentUser.getOrganizationId());
+        baseProductBomDet.setOrgId(currentUser.getOrganizationId());
         baseProductBomDetMapper.insertUseGeneratedKeys(baseProductBomDet);
 
         //新增产品BOM详细历史信息
@@ -87,27 +88,27 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
         }
 
         BaseProductBom baseProductBom = baseProductBomMapper.selectByPrimaryKey(baseProductBomDet.getProductBomId());
-        if (baseProductBom.getMaterialId().equals(baseProductBomDet.getPartMaterialId())) {
+        if (baseProductBom.getMaterialId().equals(baseProductBomDet.getMaterialId())) {
             throw new BizErrorException("零件料号不能选择产品料号");
         }
 
         Example example = new Example(BaseProductBomDet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("productBomId", baseProductBomDet.getProductBomId());
-        criteria.andEqualTo("partMaterialId", baseProductBomDet.getPartMaterialId());
+        criteria.andEqualTo("materialId", baseProductBomDet.getMaterialId());
         BaseProductBomDet productBomDet = baseProductBomDetMapper.selectOneByExample(example);
 
         if (StringUtils.isNotEmpty(productBomDet) && !productBomDet.getProductBomDetId().equals(productBomDet.getProductBomDetId())) {
             throw new BizErrorException("零件料号已存在");
         }
 
-        if (baseProductBom.getMaterialId().equals(baseProductBomDet.getSubMaterialId()) || baseProductBomDet.getPartMaterialId().equals(baseProductBomDet.getSubMaterialId())) {
+        if (baseProductBom.getMaterialId().equals(baseProductBomDet.getSubMaterialId()) || baseProductBomDet.getMaterialId().equals(baseProductBomDet.getSubMaterialId())) {
             throw new BizErrorException("代用料号不能选择产品料号或零件料号");
         }
 
         baseProductBomDet.setModifiedUserId(currentUser.getUserId());
         baseProductBomDet.setModifiedTime(new Date());
-        baseProductBomDet.setOrganizationId(currentUser.getOrganizationId());
+        baseProductBomDet.setOrgId(currentUser.getOrganizationId());
         int i = baseProductBomDetMapper.updateByPrimaryKeySelective(baseProductBomDet);
 
         //新增产品BOM详细历史信息
@@ -151,8 +152,55 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
     }
 
     @Override
-    public List<BaseProductBomDet> findNextLevelProductBomDet(Long productBomDetId) {
-        List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.findNextLevelProductBomDet(productBomDetId);
+    public List<BaseProductBomDet> findNextLevelProductBomDet(Long productBomId) {
+        if(StringUtils.isEmpty(productBomId))  throw new BizErrorException("产品bomId 不能为空");
+        List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.findNextLevelProductBomDet(productBomId);
         return baseProductBomDets;
+    }
+
+
+    @Override
+    public BaseProductBomDet addOrUpdate(BaseProductBomDet baseProductBomDet) {
+
+        Example example = new Example(BaseProductBomDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("productBomId", baseProductBomDet.getProductBomId());
+        criteria.andEqualTo("materialId", baseProductBomDet.getMaterialId());
+        List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(baseProductBomDets)) {
+            throw new BizErrorException("零件料号已存在");
+        }
+        //添加组织，后续根据实际情况添加
+        baseProductBomDet.setOrgId((long)1000);
+        baseProductBomDet.setCreateTime(new Date());
+        baseProductBomDet.setModifiedTime(new Date());
+        System.out.println("----baseProductBomDet---"+baseProductBomDet);
+        int i = baseProductBomDetMapper.insertSelective(baseProductBomDet);
+        //新增产品BOM详细历史信息
+        /*BaseHtProductBomDet baseHtProductBomDet = new BaseHtProductBomDet();
+        BeanUtils.copyProperties(baseProductBomDet, baseHtProductBomDet);
+        int i = baseHtProductBomDetMapper.insertSelective(baseHtProductBomDet);
+        return i;*/
+
+        return baseProductBomDet;
+    }
+
+    @Override
+    public int batchApiDelete(Long productBomId) {
+        String ids = null;
+        List<BaseProductBomDet> baseProductBomDets = this.findNextLevelProductBomDet(productBomId);
+
+        for(BaseProductBomDet  baseProductBomDet : baseProductBomDets){
+            if (StringUtils.isEmpty(baseProductBomDet)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            if(ids == null){
+                ids =  baseProductBomDet.getProductBomDetId().toString();
+            }else{
+                ids = ids +","+ baseProductBomDet.getProductBomDetId();
+            }
+        }
+        System.out.println("-----ids----"+ids);
+        return baseProductBomDetMapper.deleteByIds(ids);
     }
 }

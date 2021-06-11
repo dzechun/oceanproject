@@ -105,7 +105,20 @@ public class BaseProductBomDetController {
     @PostMapping("/findNextLevelProductBomDet")
     public ResponseEntity<List<BaseProductBomDet>> findNextLevelProductBomDet(@ApiParam(value = "查询对象") @RequestBody SearchBaseProductBomDet searchBaseProductBomDet) {
         Page<Object> page = PageHelper.startPage(searchBaseProductBomDet.getStartPage(), searchBaseProductBomDet.getPageSize());
-        List<BaseProductBomDet> list = baseProductBomDetService.findNextLevelProductBomDet(searchBaseProductBomDet.getProductBomDetId());
+        List<BaseProductBomDet> list = baseProductBomDetService.findNextLevelProductBomDet(searchBaseProductBomDet.getProductBomId());
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
+    }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity<BaseProductBomDet> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProductBomDet bseProductBomDet) {
+        BaseProductBomDet bseProductBomDets = baseProductBomDetService.addOrUpdate(bseProductBomDet);
+        return ControllerUtil.returnDataSuccess(bseProductBomDets, StringUtils.isEmpty(bseProductBomDets) ? 0 : 1);
+    }
+
+    @ApiOperation("接口批量删除")
+    @PostMapping("/batchApiDelete")
+    public ResponseEntity batchApiDelete(@ApiParam(value = "抽样过程id",required = true) @RequestParam @NotNull(message="productBomId不能为空") Long productBomId) {
+        return ControllerUtil.returnCRUD(baseProductBomDetService.batchApiDelete(productBomId));
     }
 }

@@ -59,6 +59,9 @@
             <if test="userCode != null and userCode != ''">
                 AND su.user_code LIKE CONCAT('%', #{userCode}, '%')
             </if>
+            <if test="warehouseId != null">
+                AND bwh.warehouse_id = #{warehouseId}
+            </if>
             <if test="workerCode != null and workerCode != ''">
                 AND bw.worker_code LIKE CONCAT('%', #{workerCode}, '%')
             </if>

@@ -91,9 +91,11 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         if(StringUtils.isNotEmpty(baseInspectionStandardDets)){
             for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets) {
                 if(baseInspectionStandardDet.getInspectionTag()==(byte)2) {
-                    if (baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor()) == -1
-                            || baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor()) == 0) {
-                        throw new BizErrorException("规格上限必须大于规格下限");
+                    if(StringUtils.isNotEmpty(baseInspectionStandardDet.getSpecificationUpperLimit(),baseInspectionStandardDet.getSpecificationFloor())) {
+                        if (baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor()) == -1
+                                || baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor()) == 0) {
+                            throw new BizErrorException("规格上限必须大于规格下限");
+                        }
                     }
                 }
                 baseInspectionStandardDet.setInspectionStandardId(baseInspectionStandard.getInspectionStandardId());

@@ -1,84 +1,50 @@
 server:
   max-http-header-size: 10000000
   undertow:
-     max-http-post-size: 0
-     buffer-size: 1024
-     direct-buffers: true
+    max-http-post-size: 0
+    buffer-size: 1024
+    direct-buffers: true
   tomcat:
     basedir: /tmp/tomcat
 spring:
-  main:
-    allow-bean-definition-overriding: true
-  shardingsphere:
-    # 展示修改以后的sql语句
-    props:
-      sql-show: true
-    datasource:
-      names: master0,master0slave0
-      master0:
-        url: jdbc:mysql://192.168.204.164:3306/ocean_v2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
-        type: com.alibaba.druid.pool.DruidDataSource
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        username: root
-        password: 123456
-        initialSize: 5
-        minIdle: 5
-        maxActive: 20
-        maxWait: 60000
-        timeBetweenEvictionRunsMillis: 60000
-        minEvictableIdleTimeMillis: 300000
-        validationQuery: SELECT 1 FROM DUAL
-        testWhileIdle: true
-        testOnBorrow: false
-        testOnReturn: false
-        poolPreparedStatements: true
-        #配置监控统计拦截的filters，stat:监控统计，去掉后监控界面sql无法统计，'wall'用于防火墙，防止SQL注入，log4j：日志记录
-        filters: stat,wall,log4j
-        maxPoolPreparedStatementPerConnectionSize: 20
-        useGlobalDataSourceStat: true
-        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-      master0slave0:
-        url: jdbc:mysql://192.168.204.152:3306/ocean_v2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
-        type: com.alibaba.druid.pool.DruidDataSource
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        username: root
-        password: 123456
-        initialSize: 5
-        minIdle: 5
-        maxActive: 20
-        maxWait: 60000
-        timeBetweenEvictionRunsMillis: 60000
-        minEvictableIdleTimeMillis: 300000
-        validationQuery: SELECT 1 FROM DUAL
-        testWhileIdle: true
-        testOnBorrow: false
-        testOnReturn: false
-        poolPreparedStatements: true
-        #配置监控统计拦截的filters，stat:监控统计，去掉后监控界面sql无法统计，'wall'用于防火墙，防止SQL注入，log4j：日志记录
-        filters: stat,wall,log4j
-        maxPoolPreparedStatementPerConnectionSize: 20
-        useGlobalDataSourceStat: true
-        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-    sharding:
-      # 读写分离配置
-      master-slave-rules:
-        ms0:
-          master-data-source-name: master0
-          slave-data-source-names: master0slave0
-      binding-tables: sys_user
-      tables:
-        sys_user: #逻辑表名,在一个库里分表:ds0.t_user_0,ds0.t_user_1
-          key-generator:
-            column: user_id
-            type: SNOWFLAKE
-            workerId: 123
-          actual-data-nodes: ms0.sys_user$->{0..1}
-          table-strategy: #表分片策略
-            inline: #行表达式分片策略
-              sharding-column: user_id #分片的字段
-              algorithm-expression: sys_user$->{user_id % 2} #分片的算法
-      #defaultDataSourceName: master0
-    enabled: true
+  datasource:
+    url: jdbc:mysql://192.168.204.164:3306/ocean_v2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
+    #url: jdbc:mysql://10.182.163.246:3306/newenergy_mes?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 初始连接数
+    initialSize: 5
+    # 最小连接池数量
+    minIdle: 10
+    # 最大连接池数量
+    maxActive: 30
+    # 配置获取连接等待超时的时间
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 300000
+    # 配置一个连接在池中最大生存的时间，单位是毫秒
+    maxEvictableIdleTimeMillis: 900000
+    # 配置检测连接是否有效
+    validationQuery: SELECT 1 FROM DUAL
+    #申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+    testWhileIdle: true
+    #配置从连接池获取连接时，是否检查连接有效性，true每次都检查；false不检查。做了这个配置会降低性能。
+    testOnBorrow: false
+    #配置向连接池归还连接时，是否检查连接有效性，true每次都检查；false不检查。做了这个配置会降低性能。
+    testOnReturn: false
+    #打开PsCache，并且指定每个连接上PSCache的大小
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    #   配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    filters: stat,wall,log4j
+    #合并多个DruidDatasource的监控数据
+    useGlobalDataSourceStat: true
+    #通过connectProperties属性来打开mergesql功能罗慢sQL记录
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500;
   redis:
     host: 192.168.204.151
     port: 6379
@@ -122,8 +88,8 @@ feign:
   hystrix:
     enabled: false
   httpclient:
-        enabled: true
-        connection-timeout: 60000
+    enabled: true
+    connection-timeout: 60000
   compression:
     request:
       enabled: true

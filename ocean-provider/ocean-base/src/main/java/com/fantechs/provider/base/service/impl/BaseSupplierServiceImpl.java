@@ -275,6 +275,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("supplierCode",baseSupplier.getSupplierCode()); // 前面的字段等于后面的参数
         List<BaseSupplier> baseSuppliers = this.selectByExample(example);
+        baseSupplier.setOrganizationId((long)1000);
         if (StringUtils.isEmpty(baseSuppliers)){
             baseSupplier.setCreateTime(new Date());
             baseSupplier.setCreateUserId((long)1);

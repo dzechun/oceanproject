@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.service;
 
+import com.fantechs.common.base.general.entity.basic.BaseProductBom;
 import com.fantechs.common.base.general.entity.basic.BaseProductBomDet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBomDet;
 import com.fantechs.common.base.support.IService;
@@ -15,5 +16,9 @@ public interface BaseProductBomDetService extends IService<BaseProductBomDet> {
 
     List<BaseProductBomDet> findList(SearchBaseProductBomDet searchBaseProductBomDet);
 
-    List<BaseProductBomDet> findNextLevelProductBomDet(Long productBomDetId);
+    List<BaseProductBomDet> findNextLevelProductBomDet(Long productBomId);
+
+    BaseProductBomDet addOrUpdate (BaseProductBomDet baseProductBomDet);
+
+    int batchApiDelete(Long productBomId);
 }

@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.entity.basic.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -52,4 +53,9 @@ public class SearchBaseProductBom extends BaseQuery implements Serializable {
     @ApiModelProperty(name="isBomDet" ,value="是否查询产品BOM")
     private Byte isBomDet;
 
+    /**
+     * BOM版本号
+     */
+    @ApiModelProperty(name="productBomVersion",value = "BOM版本号")
+    private String productBomVersion;
 }
