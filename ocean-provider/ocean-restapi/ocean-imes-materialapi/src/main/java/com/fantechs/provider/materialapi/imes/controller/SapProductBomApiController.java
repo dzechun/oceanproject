@@ -1,12 +1,9 @@
 package com.fantechs.provider.materialapi.imes.controller;
 
-import com.fantechs.common.base.general.dto.restapi.DTMESBOMQUERYREQ;
-import com.fantechs.common.base.general.dto.restapi.DTMESBOMQUERYRES;
-import com.fantechs.common.base.general.dto.restapi.SearchSapSupplierApi;
+import com.fantechs.common.base.general.dto.restapi.SearchSapProductBomApi;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.materialapi.imes.service.SapProductBomApiService;
-import com.fantechs.provider.materialapi.imes.service.SapSupplierApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -33,7 +30,7 @@ public class SapProductBomApiController {
 
     @ApiOperation(value = "请求雷赛物料bom信息",notes = "请求雷赛物料bom信息")
     @PostMapping("/getProductBom")
-    public ResponseEntity getSupplier(@ApiParam(value = "查询对象")@RequestBody DTMESBOMQUERYREQ dTMESBOMQUERYREQ) {
-        return ControllerUtil.returnCRUD(sapProductBomApiService.getProductBom(dTMESBOMQUERYREQ));
+    public ResponseEntity getSupplier(@ApiParam(value = "查询对象")@RequestBody SearchSapProductBomApi searchSapProductBomApi) {
+        return ControllerUtil.returnCRUD(sapProductBomApiService.getProductBom(searchSapProductBomApi));
     }
 }

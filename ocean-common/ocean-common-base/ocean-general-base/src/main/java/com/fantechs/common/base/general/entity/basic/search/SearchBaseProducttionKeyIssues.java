@@ -30,4 +30,10 @@ public class SearchBaseProducttionKeyIssues extends BaseQuery implements Seriali
     @ApiModelProperty(name="materialDesc" ,value="产品型号描述")
     private String materialDesc;
 
+    /**
+     * 物料ID
+     */
+    @ApiModelProperty(name="materialId" ,value="物料ID")
+    private Long materialId;
+
 }

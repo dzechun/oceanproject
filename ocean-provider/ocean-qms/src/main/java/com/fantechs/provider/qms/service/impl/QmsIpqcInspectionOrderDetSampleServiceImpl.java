@@ -104,6 +104,10 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        if(StringUtils.isEmpty(qmsIpqcInspectionOrderDetSampleList)){
+            throw new BizErrorException("样本信息不能为空");
+        }
+
         //原数据删除
         Long ipqcInspectionOrderDetId = qmsIpqcInspectionOrderDetSampleList.get(0).getIpqcInspectionOrderDetId();
         Example example = new Example(QmsIpqcInspectionOrderDetSample.class);
