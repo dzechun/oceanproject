@@ -68,6 +68,9 @@
       <if test="materialDesc!=null and materialDesc!=''">
         and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
       </if>
+      <if test="materialId!=null">
+        and bpki.material_id = #{materialId}
+      </if>
       <if test="keyIssuesType!=null">
         and bpki.key_issues_type = #{keyIssuesType}
       </if>

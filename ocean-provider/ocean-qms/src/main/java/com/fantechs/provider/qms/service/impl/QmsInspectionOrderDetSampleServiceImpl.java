@@ -89,6 +89,10 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        if(StringUtils.isEmpty(qmsInspectionOrderDetSampleList)){
+            throw new BizErrorException("样本信息不能为空");
+        }
+
         //原数据删除
         Long inspectionOrderDetId = qmsInspectionOrderDetSampleList.get(0).getInspectionOrderDetId();
         Example example = new Example(QmsInspectionOrderDetSample.class);
