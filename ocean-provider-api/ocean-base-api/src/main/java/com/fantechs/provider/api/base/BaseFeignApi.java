@@ -363,6 +363,6 @@ public interface BaseFeignApi {
 
     @ApiOperation("批量删除bom详情表信息")
     @PostMapping("/baseProductBomDet/batchApiDelete")
-    ResponseEntity batchApiDelete(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated List<BaseProductBomDet> bseProductBomDets);
+    ResponseEntity batchApiDelete(@ApiParam(value = "抽样过程id",required = true) @RequestParam @NotNull(message="productBomId不能为空") Long productBomId);
 
 }
