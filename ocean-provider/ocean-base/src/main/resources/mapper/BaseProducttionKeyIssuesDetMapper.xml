@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseProducttionKeyIssuesDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProducttionKeyIssuesDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="producttion_key_issues_det_id" jdbcType="BIGINT" property="producttionKeyIssuesDetId" />
+    <result column="producttion_key_issues_id" jdbcType="BIGINT" property="producttionKeyIssuesId" />
+    <result column="producttion_key_issues_det_name" jdbcType="VARCHAR" property="producttionKeyIssuesDetName" />
+    <result column="producttion_key_issues_det_desc" jdbcType="VARCHAR" property="producttionKeyIssuesDetDesc" />
+    <result column="judge_type" jdbcType="TINYINT" property="judgeType" />
+    <result column="if_must_pass" jdbcType="TINYINT" property="ifMustPass" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bpkid.producttion_key_issues_det_id,
+    bpkid.producttion_key_issues_id,
+    bpkid.producttion_key_issues_det_name,
+    bpkid.producttion_key_issues_det_desc,
+    bpkid.judge_type,
+    bpkid.if_must_pass,
+    bpkid.`status`,
+    bpkid.remark,
+    bpkid.org_id,
+    bpkid.create_user_id,
+    bpkid.create_time,
+    bpkid.modified_user_id,
+    bpkid.modified_time,
+    bpkid.is_delete,
+    bpkid.option1,
+    bpkid.option2,
+    bpkid.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    SELECT<include refid="Base_Column_List"/>,
+    su.user_name as create_user_name,
+    sus.user_name as modified_user_name,
+    bo.organization_name FROM fantech_imes_v2.base_producttion_key_issues_det bpkid
+    left join ocean_v2.sys_user su ON bpkid.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus ON bpkid.modified_user_id = sus.user_id
+    left join fantech_imes_v2.base_organization bo ON bpkid.org_id = bo.organization_id
+    <where>
+      <if test="producttionKeyIssuesId!=null">
+        and bpkid.producttion_key_issues_id = #{producttionKeyIssuesId}
+      </if>
+      <if test="status!=null">
+        and bpkid.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bpkid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by bpkid.create_time desc
+  </select>
+</mapper>
