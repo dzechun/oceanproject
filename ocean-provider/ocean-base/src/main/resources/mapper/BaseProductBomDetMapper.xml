@@ -25,6 +25,7 @@
         <result column="option1" jdbcType="VARCHAR" property="option1" />
         <result column="option2" jdbcType="VARCHAR" property="option2" />
         <result column="option3" jdbcType="VARCHAR" property="option3" />
+        <result column="if_have_lower_level" jdbcType="TINYINT" property="ifHaveLowerLevel" />
        <!-- <collection property="baseProductBomDets"
                     ofType="com.fantechs.common.base.general.entity.basic.BaseProductBomDet"
                     select="com.fantechs.provider.base.mapper.BaseProductBomDetMapper.findNextLevelProductBomDet"
@@ -54,23 +55,21 @@
 	spbd.is_delete,
 	spbd.option1,
 	spbd.option2,
-	spbd.option3
+	spbd.option3,
+	spbd.if_have_lower_level
   </sql>
     <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBomDet"
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>,
-        sm.material_code as part_material_code,sm.material_name,sm.material_version,sm.material_desc,
-        sml.material_code as sub_material_code,
-        sp.process_name,
-        u.user_name as create_user_name,s.user_name as modified_user_name,
+        sm.material_code as materialCode,sm.material_name,sm.material_version,sm.material_desc,
+        sp.process_name,u.user_name as create_user_name,s.user_name as modified_user_name,
         bo.organization_name
-        from fantech_imes_v2.base_product_bom_det spbd
-        left join fantech_imes_v2.base_material sm on spbd.material_id=sm.material_id
-        left join fantech_imes_v2.base_material sml on spbd.sub_material_id=sml.material_id
-        left join fantech_imes_v2.base_process sp on spbd.process_id=sp.process_id
+        from base_product_bom_det spbd
+        left join base_material sm on spbd.material_id=sm.material_id
+        left join base_process sp on spbd.process_id=sp.process_id
         left join ocean_v2.sys_user u on spbd.create_user_id=u.user_id
         left join ocean_v2.sys_user s on spbd.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON spbd.org_id = bo.organization_id
+        LEFT JOIN base_organization bo ON spbd.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(spbd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -78,18 +77,19 @@
             <if test="productBomId!=null and productBomId!=''">
                 and spbd.product_bom_id=#{productBomId}
             </if>
+            <if test="productBomDetId!=null and productBomDetId!=''">
+                and spbd.product_bom_det_id=#{productBomDetId}
+            </if>
             <if test="materialId!=null and materialId!=''">
                 and spbd.material_id=#{materialId}
             </if>
-            <if test="partMaterialCode!=null and partMaterialCode!=''">
-                and sm.material_code like CONCAT('%', #{partMaterialCode}, '%')
+            <if test="materialCode!=null and materialCode!=''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
             <if test="materialDesc!=null and materialDesc!=''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
-            <if test="productBomDetId!=null and productBomDetId!=''">
-                and sm.parent_id = #{productBomDetId}
-            </if>
+
         </where>
         order by spbd.create_time desc
     </select>
@@ -108,23 +108,20 @@
         left join ocean_v2.sys_user u on spbd.create_user_id=u.user_id
         left join ocean_v2.sys_user s on spbd.modified_user_id=s.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON spbd.org_id = bo.organization_id
-        where parent_id = #{productBomId}
+        where spbd.product_bom_id = #{productBomId}
     </select>
 
     <select id="findNextLevelProductBomDet" parameterType="long" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>,
         sm.material_code as part_material_code,sm.material_name,sm.material_version,sm.material_desc,
-        sml.material_code as sub_material_code,
-        sp.process_name,
-        u.user_name as create_user_name,s.user_name as modified_user_name,
+        sp.process_name,u.user_name as create_user_name,s.user_name as modified_user_name,
         bo.organization_name
         from base_product_bom_det spbd
-        left join fantech_imes_v2.base_material sm on spbd.material_id=sm.material_id
-        left join fantech_imes_v2.base_material sml on spbd.sub_material_id=sml.material_id
-        left join fantech_imes_v2.base_process sp on spbd.process_id=sp.process_id
+        left join base_material sm on spbd.material_id=sm.material_id
+        left join base_process sp on spbd.process_id=sp.process_id
         left join ocean_v2.sys_user u on spbd.create_user_id=u.user_id
         left join ocean_v2.sys_user s on spbd.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON spbd.org_id = bo.organization_id
-        where parent_id = #{productBomDetId}
+        left join base_organization bo on spbd.org_id = bo.organization_id
+        where spbd.product_bom_id = #{productBomId}
     </select>
 </mapper>

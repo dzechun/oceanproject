@@ -68,10 +68,6 @@
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select <include refid="Base_Column_List"></include>,
         sm.material_code,sm.material_name,sm.material_version,sm.material_desc,
-        sms.material_code AS sub_material_code,sms.material_name AS sub_material_name,sms.material_version AS sub_version,
-        sms.material_desc AS sub_material_desc,
-        sp.process_code, sp.process_name, sp.process_desc,
-        spl.pro_code,spl.pro_name,spl.pro_desc,
         u.user_name as create_user_name,s.user_name as modified_user_name,
         bo.organization_name
         from base_product_bom spb
@@ -85,6 +81,9 @@
             </if>
             <if test="productBomCode!=null and productBomCode!=''">
                 and spb.product_bom_code like CONCAT('%', #{productBomCode}, '%')
+            </if>
+            <if test="productBomId!=null and productBomId!=''">
+                and spb.product_bom_id =#{productBomId}
             </if>
             <if test="materialId!=null and materialId!=''">
                 and spb.material_id=#{materialId}

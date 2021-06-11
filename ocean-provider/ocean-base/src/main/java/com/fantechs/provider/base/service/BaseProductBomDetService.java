@@ -16,9 +16,9 @@ public interface BaseProductBomDetService extends IService<BaseProductBomDet> {
 
     List<BaseProductBomDet> findList(SearchBaseProductBomDet searchBaseProductBomDet);
 
-    List<BaseProductBomDet> findNextLevelProductBomDet(Long productBomDetId);
+    List<BaseProductBomDet> findNextLevelProductBomDet(Long productBomId);
 
     BaseProductBomDet addOrUpdate (BaseProductBomDet baseProductBomDet);
 
-    int batchApiDelete(List<BaseProductBomDet> bseProductBomDets);
+    int batchApiDelete(Long productBomId);
 }

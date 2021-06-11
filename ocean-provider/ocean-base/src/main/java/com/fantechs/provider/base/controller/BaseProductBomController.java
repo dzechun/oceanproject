@@ -3,11 +3,13 @@ package com.fantechs.provider.base.controller;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.entity.basic.BaseProductBom;
+import com.fantechs.common.base.general.entity.basic.BaseProductBomDet;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductBom;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProductBomImport;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBomDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -80,6 +82,15 @@ public class BaseProductBomController {
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
+    @ApiOperation("查询下级明细")
+    @PostMapping("/findNextLevelProductBomDet")
+    public ResponseEntity<BaseProductBomDto> findNextLevelProductBomDet(@ApiParam(value = "查询对象") @RequestBody SearchBaseProductBom searchBaseProductBom) {
+        Page<Object> page = PageHelper.startPage(searchBaseProductBom.getStartPage(), searchBaseProductBom.getPageSize());
+        BaseProductBomDto BaseProductBomDto = baseProductBomService.findNextLevelProductBomDet(searchBaseProductBom);
+        return ControllerUtil.returnDataSuccess(BaseProductBomDto, (int) page.getTotal());
+    }
+
+
     @ApiOperation("产品BOM信息历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtProductBom>> findHtList(@ApiParam(value = "查询对象") @RequestBody SearchBaseProductBom searchBaseProductBom) {
@@ -130,6 +141,7 @@ public class BaseProductBomController {
     @PostMapping("/addOrUpdate")
     public ResponseEntity<BaseProductBom> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProductBom baseProductBom) {
         BaseProductBom baseProductBoms = baseProductBomService.addOrUpdate(baseProductBom);
+        System.out.println("===return====="+baseProductBoms);
         return ControllerUtil.returnDataSuccess(baseProductBoms, StringUtils.isEmpty(baseProductBoms) ? 0 : 1);
     }
 }

@@ -214,7 +214,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
         //查询指定层级的产品BOM
         List<BaseProductBomDto> smtProductBomDtos = baseProductBomMapper.findList(map);
 
-        BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
+        /*BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
         if (StringUtils.isNotEmpty(smtProductBomDtos)){
             for (BaseProductBomDto smtProductBomDto : smtProductBomDtos) {
                 //先查出顶级产品的bom
@@ -224,23 +224,25 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
                 find(baseProductBomDets);
                 smtProductBomDto.setBaseProductBomDets(baseProductBomDets);
             }
-        }
+        }*/
         return smtProductBomDtos;
     }
 
-    public void findNextLevelProductBomDet(BaseProductBomDet baseProductBomDet){
+    public BaseProductBomDto findNextLevelProductBomDet(BaseProductBomDto baseProductBomDto){
         Example example = new Example(BaseProductBomDet.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("parentId", baseProductBomDet.getProductBomDetId());
+        criteria.andEqualTo("product_bom_id", baseProductBomDto.getProductBomId());
         //查询出所有的子级明细
         List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseProductBomDets)){
             //将子级明细放进父级实体中返回
-            baseProductBomDet.setBaseProductBomDets(baseProductBomDets);
-            for (BaseProductBomDet productBomDet : baseProductBomDets) {
+            baseProductBomDto.setBaseProductBomDets(baseProductBomDets);
+            //一次只展示一级
+            /*for (BaseProductBomDet productBomDet : baseProductBomDets) {
                 findNextLevelProductBomDet(productBomDet);
-            }
+            }*/
         }
+        return baseProductBomDto;
     }
 
     @Override
@@ -414,7 +416,8 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
         else
             criteria.andEqualTo("productBomVersion", "0");
         BaseProductBom baseProductBomOld = baseProductBomMapper.selectOneByExample(example);
-
+        //添加组织，后续根据实际情况添加
+        baseProductBom.setOrgId((long)1000);
         if (StringUtils.isNotEmpty(baseProductBomOld)){
             baseProductBom.setProductBomId(baseProductBomOld.getProductBomId());
             baseProductBomMapper.updateByPrimaryKey(baseProductBom);
@@ -425,14 +428,22 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             baseProductBomMapper.insertUseGeneratedKeys(baseProductBom);
         }
 
-
         //新增产品BOM历史信息
         /*BaseHtProductBom baseHtProductBom =new BaseHtProductBom();
         BeanUtils.copyProperties(baseProductBom, baseHtProductBom);
         int i = baseHtProductBomMapper.insertSelective(baseHtProductBom);*/
 
-        baseProductBom = baseProductBomMapper.selectOneByExample(example);
-        example.clear();
         return baseProductBom;
+    }
+
+    @Override
+    public BaseProductBomDto findNextLevelProductBomDet(SearchBaseProductBom searchBaseProductBom) {
+        if(StringUtils.isEmpty(searchBaseProductBom.getProductBomId()))  throw new BizErrorException("产品bomId 不能为空");
+        List<BaseProductBomDto> list = baseProductBomMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductBom));
+        if(StringUtils.isEmpty(list))  throw new BizErrorException("未查询到对应的产品bom");
+        BaseProductBomDto dto = list.get(0);
+        List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.findNextLevelProductBomDet(searchBaseProductBom.getProductBomId());
+        dto.setBaseProductBomDets(baseProductBomDets);
+        return dto;
     }
 }
