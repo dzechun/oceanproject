@@ -39,7 +39,7 @@
     qhit.modified_user_id,qhit.modified_time,qhit.is_delete, qhit.organization_id
   </sql>
 
-  <select id="findHtList" resultMap="BaseResultMap">
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>, bo.organization_name
     from fantech_imes_v2.base_ht_inspection_type qhit
     LEFT JOIN fantech_imes_v2.base_organization bo ON qhit.organization_id = bo.organization_id
@@ -58,6 +58,9 @@
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(qhit.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and qhit.org_id=#{orgId}
       </if>
     </where>
     order by create_time desc

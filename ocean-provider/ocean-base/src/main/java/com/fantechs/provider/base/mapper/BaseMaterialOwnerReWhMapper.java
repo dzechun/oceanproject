@@ -11,5 +11,5 @@ import java.util.Map;
 
 @Mapper
 public interface BaseMaterialOwnerReWhMapper extends MyMapper<BaseMaterialOwnerReWh> {
-    List<BaseMaterialOwnerReWhDto> findList(SearchBaseMaterialOwnerReWh searchBaseMaterialOwnerReWh);
+    List<BaseMaterialOwnerReWhDto> findList(Map<String, Object> map);
 }

@@ -40,13 +40,23 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     private BaseFeignApi baseFeignApi;
 
     @Override
-    public List<BaseSafeStockDto> findList(SearchBaseSafeStock searchBaseSafeStock) {
-        return baseSafeStockMapper.findList(searchBaseSafeStock);
+    public List<BaseSafeStockDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseSafeStockMapper.findList(map);
     }
 
     @Override
-    public List<BaseSafeStockDto> findHtList(SearchBaseSafeStock searchBaseSafeStock) {
-        return baseHtSafeStockMapper.findHtList(searchBaseSafeStock);
+    public List<BaseSafeStockDto> findHtList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseHtSafeStockMapper.findHtList(map);
     }
 
     /**
@@ -55,7 +65,7 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
      */
     @Override
     public int inventeryWarning() {
-        List<BaseSafeStockDto> list = findList(new SearchBaseSafeStock());
+        List<BaseSafeStockDto> list = findList(new HashMap<>());
         List<BaseSafeStockDto> oltList = new ArrayList<>();
         for (BaseSafeStockDto oltSafeStockDto : list) {
             BigDecimal qty = baseSafeStockMapper.selectCountByWare(oltSafeStockDto.getWarehouseId(),oltSafeStockDto.getMaterialId());
@@ -97,6 +107,7 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
+        record.setOrganizationId(sysUser.getOrganizationId());
         int num = baseSafeStockMapper.insertUseGeneratedKeys(record);
         recordHistory(record);
         return num;
@@ -108,6 +119,7 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
         SysUser sysUser = currentUser();
         entity.setModifiedUserId(sysUser.getUserId());
         entity.setModifiedTime(new Date());
+        entity.setOrganizationId(sysUser.getOrganizationId());
         int num = baseSafeStockMapper.updateByPrimaryKeySelective(entity);
         recordHistory(entity);
         return num;

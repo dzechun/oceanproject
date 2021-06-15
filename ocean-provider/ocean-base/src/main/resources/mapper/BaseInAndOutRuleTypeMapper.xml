@@ -68,6 +68,9 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(biaort.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
+      <if test="orgId!=null">
+        and biaort.org_id=#{orgId}
+      </if>
     </where>
     order by biaort.create_time desc
   </select>

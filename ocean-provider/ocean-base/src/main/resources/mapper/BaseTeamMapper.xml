@@ -82,6 +82,9 @@
             <if test="workShopName != null and workShopName!=''">
                 and sws.work_shop_name like CONCAT('%', #{workShopName}, '%')
             </if>
+            <if test="orgId!=null">
+                and bt.org_id=#{orgId}
+            </if>
         </where>
         order by create_time desc
     </select>

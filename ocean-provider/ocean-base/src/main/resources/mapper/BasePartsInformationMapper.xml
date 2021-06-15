@@ -57,6 +57,9 @@
       <if test="partsInformationName!=null and partsInformationName!=''">
         and bpi.parts_information_name like CONCAT('%', #{partsInformationName}, '%')
       </if>
+      <if test="orgId!=null">
+        and bpi.org_id=#{orgId}
+      </if>
     </where>
     order by create_time desc
   </select>

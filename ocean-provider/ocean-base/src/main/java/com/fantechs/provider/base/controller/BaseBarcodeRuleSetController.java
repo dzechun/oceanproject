@@ -69,7 +69,7 @@ public class BaseBarcodeRuleSetController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseBarcodeRuleSetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRuleSet searchBaseBarcodeRuleSet) {
         Page<Object> page = PageHelper.startPage(searchBaseBarcodeRuleSet.getStartPage(),searchBaseBarcodeRuleSet.getPageSize());
-        List<BaseBarcodeRuleSetDto> list = baseBarcodeRuleSetService.findList(searchBaseBarcodeRuleSet);
+        List<BaseBarcodeRuleSetDto> list = baseBarcodeRuleSetService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRuleSet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -77,7 +77,7 @@ public class BaseBarcodeRuleSetController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtBarcodeRuleSet>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRuleSet searchBaseBarcodeRuleSet) {
         Page<Object> page = PageHelper.startPage(searchBaseBarcodeRuleSet.getStartPage(),searchBaseBarcodeRuleSet.getPageSize());
-        List<BaseHtBarcodeRuleSet> list = baseHtBarcodeRuleSetService.findList(searchBaseBarcodeRuleSet);
+        List<BaseHtBarcodeRuleSet> list = baseHtBarcodeRuleSetService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRuleSet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -85,7 +85,7 @@ public class BaseBarcodeRuleSetController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchBaseBarcodeRuleSet searchBaseBarcodeRuleSet){
-    List<BaseBarcodeRuleSetDto> list = baseBarcodeRuleSetService.findList(searchBaseBarcodeRuleSet);
+    List<BaseBarcodeRuleSetDto> list = baseBarcodeRuleSetService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRuleSet));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "条码规则集合", BaseBarcodeRuleSetDto.class, "BaseBarcodeRuleSet.xls", response);

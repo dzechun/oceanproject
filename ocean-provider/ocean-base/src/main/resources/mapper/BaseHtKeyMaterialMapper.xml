@@ -100,6 +100,9 @@
             <if test="status!=null">
                 and shkm.status=#{status}
             </if>
+            <if test="orgId!=null">
+                and shkm.org_id=#{orgId}
+            </if>
         </where>
         order by shkm.modified_time desc
     </select>

@@ -77,7 +77,7 @@ public class BaseProductBomDetController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseProductBomDet>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseProductBomDet searchBaseProductBomDet) {
         Page<Object> page = PageHelper.startPage(searchBaseProductBomDet.getStartPage(), searchBaseProductBomDet.getPageSize());
-        List<BaseProductBomDet> list = baseProductBomDetService.findList(searchBaseProductBomDet);
+        List<BaseProductBomDet> list = baseProductBomDetService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductBomDet));
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
@@ -93,7 +93,7 @@ public class BaseProductBomDetController {
     @ApiOperation(value = "导出excel", notes = "导出excel", produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseProductBomDet searchBaseProductBomDet) {
-        List<BaseProductBomDet> list = baseProductBomDetService.findList(searchBaseProductBomDet);
+        List<BaseProductBomDet> list = baseProductBomDetService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductBomDet));
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "导出产品BOM祥细信息", "产品BOM祥细信息", BaseProductBomDet.class, "产品BOM祥细信息.xls", response);

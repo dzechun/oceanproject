@@ -52,6 +52,9 @@
         <if test="sampleTransitionRuleId != null and sampleTransitionRuleId!=''">
           and bstrd.sample_transition_rule_id like CONCAT('%', #{sampleTransitionRuleId}, '%')
         </if>
+          <if test="orgId!=null">
+              and bstrd.org_id=#{orgId}
+          </if>
       </where>
     order by bstrd.create_time desc
   </select>

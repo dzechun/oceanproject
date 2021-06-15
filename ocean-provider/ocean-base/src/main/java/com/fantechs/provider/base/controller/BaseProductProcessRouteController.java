@@ -76,7 +76,7 @@ public class BaseProductProcessRouteController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseProductProcessRoute>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessRoute searchBaseProductProcessRoute) {
         Page<Object> page = PageHelper.startPage(searchBaseProductProcessRoute.getStartPage(), searchBaseProductProcessRoute.getPageSize());
-        List<BaseProductProcessRoute> list = baseProductProcessRouteService.findList(searchBaseProductProcessRoute);
+        List<BaseProductProcessRoute> list = baseProductProcessRouteService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessRoute));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -84,7 +84,7 @@ public class BaseProductProcessRouteController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtProductProcessRoute>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessRoute searchBaseProductProcessRoute) {
         Page<Object> page = PageHelper.startPage(searchBaseProductProcessRoute.getStartPage(), searchBaseProductProcessRoute.getPageSize());
-        List<BaseHtProductProcessRoute> list = baseHtProductProcessRouteService.findList(searchBaseProductProcessRoute);
+        List<BaseHtProductProcessRoute> list = baseHtProductProcessRouteService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessRoute));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -92,7 +92,7 @@ public class BaseProductProcessRouteController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchBaseProductProcessRoute searchBaseProductProcessRoute){
-    List<BaseProductProcessRoute> list = baseProductProcessRouteService.findList(searchBaseProductProcessRoute);
+    List<BaseProductProcessRoute> list = baseProductProcessRouteService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessRoute));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "产品工艺路线信息", "产品工艺路线信息", BaseProductProcessRoute.class, "产品工艺路线信息.xls", response);

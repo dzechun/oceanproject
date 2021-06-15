@@ -56,7 +56,7 @@
 	shw.option3
   </sql>
 
-  <select id="findHtList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse" resultMap="BaseResultMap">
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select  <include refid="Base_Column_List"></include>,
     u.user_name as createUserName, s.user_name as modifiedUserName,
     bo.organization_name
@@ -77,6 +77,9 @@
       <if test="warehouseDesc!=null and warehouseDesc!=''">
         and shw.warehouse_desc like CONCAT('%', #{warehouseDesc}, '%')
       </if>
+        <if test="orgId!=null">
+            and shw.org_id=#{orgId}
+        </if>
     </where>
     order by shw.modified_time desc
   </select>

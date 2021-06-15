@@ -102,6 +102,9 @@
             <if test="status!=null">
                 and skm.status=#{status}
             </if>
+            <if test="orgId!=null">
+                and skm.org_id=#{orgId}
+            </if>
         </where>
         order by skm.create_time desc
     </select>

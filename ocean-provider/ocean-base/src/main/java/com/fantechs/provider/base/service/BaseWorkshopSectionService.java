@@ -14,6 +14,6 @@ import java.util.Map;
  */
 
 public interface BaseWorkshopSectionService extends IService<BaseWorkshopSection> {
-    List<BaseWorkshopSection> findList(SearchBaseWorkshopSection searchBaseWorkshopSection);
+    List<BaseWorkshopSection> findList(Map<String, Object> map);
     Map<String, Object> importExcel(List<BaseWorkshopSectionImport> baseWorkshopSectionImports);
 }

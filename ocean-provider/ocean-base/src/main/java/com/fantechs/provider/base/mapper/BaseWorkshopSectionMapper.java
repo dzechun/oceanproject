@@ -5,7 +5,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkshopSe
 import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseWorkshopSectionMapper extends MyMapper<BaseWorkshopSection> {
-    List<BaseWorkshopSection> findList(SearchBaseWorkshopSection searchBaseWorkshopSection);
+    List<BaseWorkshopSection> findList(Map<String, Object> map);
 }

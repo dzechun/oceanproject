@@ -47,7 +47,7 @@
     bhiaord.option3
   </sql>
 
-  <select id="findHtList" resultMap="BaseResultMap">
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     SELECT<include refid="Base_Column_List"/>,
     biaort.in_and_out_rule_type_name,
     su.user_name as create_user_name,
@@ -66,6 +66,9 @@
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhiaord.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and bhiaord.org_id=#{orgId}
       </if>
     </where>
     order by bhiaord.modified_time desc

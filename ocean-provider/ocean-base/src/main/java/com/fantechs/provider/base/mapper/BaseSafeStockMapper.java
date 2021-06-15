@@ -9,10 +9,11 @@ import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BaseSafeStockMapper extends MyMapper<BaseSafeStock> {
-    List<BaseSafeStockDto> findList(SearchBaseSafeStock searchBaseSafeStock);
+    List<BaseSafeStockDto> findList(Map<String, Object> map);
 
     /**
      * 根据仓库查询总数

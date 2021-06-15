@@ -12,6 +12,22 @@ import java.io.Serializable;
 public class BaseBadnessCauseDto extends BaseBadnessCause implements Serializable {
 
     /**
+     * 不良类别代码
+     */
+    @ApiModelProperty(name="badnessCategoryCode",value = "不良类别代码")
+    @Excel(name = "不良类别代码", height = 20, width = 30,orderNum="4")
+    @Transient
+    private String badnessCategoryCode;
+
+    /**
+     * 不良类别描述
+     */
+    @ApiModelProperty(name="badnessCategoryDesc",value = "不良类别描述")
+    @Excel(name = "不良类别描述", height = 20, width = 30,orderNum="5")
+    @Transient
+    private String badnessCategoryDesc;
+
+    /**
      * 组织名称
      */
     @Transient

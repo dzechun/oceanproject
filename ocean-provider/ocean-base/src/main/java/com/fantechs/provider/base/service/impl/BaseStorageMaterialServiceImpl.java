@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wcz on 2020/09/24.
@@ -107,7 +108,12 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
 
 
     @Override
-    public List<BaseStorageMaterial> findList(SearchBaseStorageMaterial searchBaseStorageMaterial) {
-        return baseStorageMaterialMapper.findList(searchBaseStorageMaterial);
+    public List<BaseStorageMaterial> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseStorageMaterialMapper.findList(map);
     }
 }

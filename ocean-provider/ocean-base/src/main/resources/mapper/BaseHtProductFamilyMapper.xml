@@ -63,6 +63,9 @@
       <if test="status!=null">
         and bhpf.status=#{status}
       </if>
+        <if test="orgId!=null">
+            and bhpf.org_id=#{orgId}
+        </if>
     </where>
     order by modified_time desc
   </select>

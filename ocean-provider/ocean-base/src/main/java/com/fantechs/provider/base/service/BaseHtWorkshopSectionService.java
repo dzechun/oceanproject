@@ -5,7 +5,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkshopSe
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseHtWorkshopSectionService extends IService<BaseHtWorkshopSection> {
-    List<BaseHtWorkshopSection> findList(SearchBaseWorkshopSection searchBaseWorkshopSection);
+    List<BaseHtWorkshopSection> findList(Map<String, Object> map);
 }

@@ -11,6 +11,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -186,12 +187,17 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
 
     @Override
     public List<BasePackageSpecificationDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         List<BasePackageSpecificationDto> basePackageSpecificationDtos = basePackageSpecificationMapper.findList(map);
         SearchBaseMaterialPackage searchBaseMaterialPackage = new SearchBaseMaterialPackage();
 
         for (BasePackageSpecificationDto basePackageSpecificationDto : basePackageSpecificationDtos) {
             searchBaseMaterialPackage.setPackageSpecificationId(basePackageSpecificationDto.getPackageSpecificationId());
-            List<BaseMaterialPackageDto> baseMaterialPackageDtos = baseMaterialPackageMapper.findList(searchBaseMaterialPackage);
+            List<BaseMaterialPackageDto> baseMaterialPackageDtos = baseMaterialPackageMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialPackage));
             if (StringUtils.isNotEmpty(baseMaterialPackageDtos)){
                 basePackageSpecificationDto.setBaseMaterialPackages(baseMaterialPackageDtos);
             }
@@ -207,7 +213,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
 
         for (BasePackageSpecificationDto basePackageSpecificationDto : basePackageSpecificationDtos) {
             searchBaseMaterialPackage.setPackageSpecificationId(basePackageSpecificationDto.getPackageSpecificationId());
-            List<BaseMaterialPackageDto> baseMaterialPackageDtos = baseMaterialPackageMapper.findList(searchBaseMaterialPackage);
+            List<BaseMaterialPackageDto> baseMaterialPackageDtos = baseMaterialPackageMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialPackage));
             if (StringUtils.isNotEmpty(baseMaterialPackageDtos)){
                 basePackageSpecificationDto.setBaseMaterialPackages(baseMaterialPackageDtos);
             }
@@ -281,7 +287,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
                 SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
                 searchBaseBarcodeRule.setBarcodeRuleCode(barcodeRuleCode);
                 searchBaseBarcodeRule.setCodeQueryMark((byte) 1);
-                List<BaseBarcodeRuleDto> baseBarcodeRuleDtos = baseBarcodeRuleMapper.findList(searchBaseBarcodeRule);
+                List<BaseBarcodeRuleDto> baseBarcodeRuleDtos = baseBarcodeRuleMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRule));
                 if (StringUtils.isEmpty(baseBarcodeRuleDtos)){
                     fail.add(i+4);
                     continue;

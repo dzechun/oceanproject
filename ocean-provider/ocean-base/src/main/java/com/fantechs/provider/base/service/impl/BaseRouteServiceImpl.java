@@ -143,8 +143,13 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
      }
 
     @Override
-    public List<BaseRoute> findList(SearchBaseRoute searchBaseRoute) {
-        return baseRouteMapper.findList(searchBaseRoute);
+    public List<BaseRoute> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseRouteMapper.findList(map);
     }
 
     @Override

@@ -68,6 +68,9 @@
             <if test="materialId != null">
                 and sm.material_id = #{materialId}
             </if>
+            <if test="orgId!=null">
+                and bup.org_id=#{orgId}
+            </if>
         </where>
     </select>
 </mapper>

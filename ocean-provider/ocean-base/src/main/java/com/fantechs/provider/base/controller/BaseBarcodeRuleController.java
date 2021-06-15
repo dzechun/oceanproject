@@ -72,7 +72,7 @@ public class BaseBarcodeRuleController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseBarcodeRuleDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRule searchBaseBarcodeRule) {
         Page<Object> page = PageHelper.startPage(searchBaseBarcodeRule.getStartPage(),searchBaseBarcodeRule.getPageSize());
-        List<BaseBarcodeRuleDto> list = baseBarcodeRuleService.findList(searchBaseBarcodeRule);
+        List<BaseBarcodeRuleDto> list = baseBarcodeRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRule));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -87,7 +87,7 @@ public class BaseBarcodeRuleController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtBarcodeRule>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRule searchBaseBarcodeRule) {
         Page<Object> page = PageHelper.startPage(searchBaseBarcodeRule.getStartPage(),searchBaseBarcodeRule.getPageSize());
-        List<BaseHtBarcodeRule> list = baseHtBarcodeRuleService.findList(searchBaseBarcodeRule);
+        List<BaseHtBarcodeRule> list = baseHtBarcodeRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRule));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -95,7 +95,7 @@ public class BaseBarcodeRuleController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchBaseBarcodeRule searchBaseBarcodeRule){
-    List<BaseBarcodeRuleDto> list = baseBarcodeRuleService.findList(searchBaseBarcodeRule);
+    List<BaseBarcodeRuleDto> list = baseBarcodeRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRule));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出条码规则信息", "条码规则信息", BaseBarcodeRuleDto.class, "BaseBarcodeRule.xls", response);

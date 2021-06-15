@@ -87,6 +87,9 @@
             <if test="status!=null">
                 and swa.status=#{status}
             </if>
+            <if test="orgId!=null">
+                and swa.org_id=#{orgId}
+            </if>
         </where>
         order by create_time desc
     </select>

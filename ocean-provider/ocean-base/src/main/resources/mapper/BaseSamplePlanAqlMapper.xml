@@ -70,6 +70,9 @@
       <if test="samplePlanId != null and samplePlanId!=''">
         and bspa.sample_plan_id = #{samplePlanId}
       </if>
+      <if test="orgId!=null">
+        and bspa.org_id=#{orgId}
+      </if>
     </where>
     order by bspa.create_time desc
   </select>

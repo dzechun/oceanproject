@@ -5,6 +5,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMat
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
+
 /**
  *
  * Created by wcz on 2020/09/24.
@@ -12,5 +14,5 @@ import java.util.List;
 
 public interface BaseStorageMaterialService extends IService<BaseStorageMaterial> {
 
-    List<BaseStorageMaterial> findList(SearchBaseStorageMaterial searchBaseStorageMaterial);
+    List<BaseStorageMaterial> findList(Map<String, Object> map);
 }

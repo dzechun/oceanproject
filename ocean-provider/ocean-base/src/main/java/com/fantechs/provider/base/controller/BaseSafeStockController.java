@@ -65,7 +65,7 @@ public class BaseSafeStockController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseSafeStockDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSafeStock searchBaseSafeStock) {
         Page<Object> page = PageHelper.startPage(searchBaseSafeStock.getStartPage(), searchBaseSafeStock.getPageSize());
-        List<BaseSafeStockDto> list = baseSafeStockService.findList(searchBaseSafeStock);
+        List<BaseSafeStockDto> list = baseSafeStockService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSafeStock));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -73,7 +73,7 @@ public class BaseSafeStockController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseSafeStockDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSafeStock searchBaseSafeStock) {
         Page<Object> page = PageHelper.startPage(searchBaseSafeStock.getStartPage(), searchBaseSafeStock.getPageSize());
-        List<BaseSafeStockDto> list = baseSafeStockService.findHtList(searchBaseSafeStock);
+        List<BaseSafeStockDto> list = baseSafeStockService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseSafeStock));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -81,7 +81,7 @@ public class BaseSafeStockController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseSafeStock searchBaseSafeStock){
-    List<BaseSafeStockDto> list = baseSafeStockService.findList(searchBaseSafeStock);
+    List<BaseSafeStockDto> list = baseSafeStockService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSafeStock));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "安全库存信息", BaseSafeStockDto.class, "安全库存信息.xls", response);

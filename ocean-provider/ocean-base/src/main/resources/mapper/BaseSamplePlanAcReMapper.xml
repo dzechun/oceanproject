@@ -75,6 +75,9 @@
       <if test="samplePlanAqlId != null and samplePlanAqlId!=''">
         and bspa.sample_plan_aql_id =  #{samplePlanAqlId}
       </if>
+      <if test="orgId!=null">
+        and bspar.org_id=#{orgId}
+      </if>
     </where>
     order by bspar.create_time desc
   </select>

@@ -6,10 +6,11 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom
 import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseProductBomDetMapper extends MyMapper<BaseProductBomDet> {
 
-    List<BaseProductBomDet> findList(SearchBaseProductBomDet searchBaseProductBomDet);
+    List<BaseProductBomDet> findList(Map<String, Object> map);
 
     List<BaseProductBomDetDto> findNextLevelProductBomDet(Long productBomDetId);
 }

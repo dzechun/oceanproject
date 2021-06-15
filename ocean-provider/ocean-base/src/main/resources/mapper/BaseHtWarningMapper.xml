@@ -61,6 +61,9 @@
       <if test="notificationMethod != null and notificationMethod != ''">
         and bhw.notification_method = #{notificationMethod}
       </if>
+        <if test="orgId!=null">
+            and bhw.org_id=#{orgId}
+        </if>
     </where>
   </select>
 

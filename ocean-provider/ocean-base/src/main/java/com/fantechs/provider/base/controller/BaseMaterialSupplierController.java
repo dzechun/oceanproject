@@ -72,7 +72,7 @@ public class BaseMaterialSupplierController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseMaterialSupplierDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseMaterialSupplier searchBaseMaterialSupplier) {
         Page<Object> page = PageHelper.startPage(searchBaseMaterialSupplier.getStartPage(), searchBaseMaterialSupplier.getPageSize());
-        List<BaseMaterialSupplierDto> list = baseMaterialSupplierService.findList(searchBaseMaterialSupplier);
+        List<BaseMaterialSupplierDto> list = baseMaterialSupplierService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialSupplier));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -80,7 +80,7 @@ public class BaseMaterialSupplierController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchBaseMaterialSupplier searchBaseMaterialSupplier){
-    List<BaseMaterialSupplierDto> list = baseMaterialSupplierService.findList(searchBaseMaterialSupplier);
+    List<BaseMaterialSupplierDto> list = baseMaterialSupplierService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialSupplier));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出物料编码关联客户料号信息", "物料编码关联客户料号信息", BaseMaterialSupplierDto.class, "物料编码关联客户料号.xls", response);

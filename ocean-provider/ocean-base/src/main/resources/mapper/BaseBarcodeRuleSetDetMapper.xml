@@ -27,7 +27,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
-    <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSetDet"
+    <select id="findList" parameterType="map"
             resultMap="BaseResultMapDto">
         select
         sbrsd.barcode_rule_set_det_id,sbrsd.barcode_rule_set_id,sbrsd.barcode_rule_id,sbr.barcode_rule,sbr.barcode_rule_category_id,
@@ -47,6 +47,9 @@
             </if>
             <if test="barcodeRuleSetId!=null and barcodeRuleSetId!=''">
                 and sbrsd.barcode_rule_set_id= #{barcodeRuleSetId}
+            </if>
+            <if test="orgId!=null">
+                and sbrsd.org_id=#{orgId}
             </if>
         </where>
         order by sbrsd.create_time desc

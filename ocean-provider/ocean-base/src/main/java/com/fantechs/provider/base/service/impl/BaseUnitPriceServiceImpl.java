@@ -44,6 +44,11 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
 
     @Override
     public List<BaseUnitPriceDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         List<BaseUnitPriceDto> list = baseUnitPriceMapper.findList(map);
         if (StringUtils.isNotEmpty(list)){
             SearchBaseUnitPriceDet searchBaseUnitPriceDet = new SearchBaseUnitPriceDet();
@@ -79,7 +84,6 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
         baseUnitPrice.setCreateUserId(user.getUserId());
         baseUnitPrice.setModifiedTime(new Date());
         baseUnitPrice.setModifiedUserId(user.getUserId());
-        baseUnitPrice.setOrganizationId(user.getOrganizationId());
         baseUnitPrice.setOrganizationId(user.getOrganizationId());
         int i = baseUnitPriceMapper.insertUseGeneratedKeys(baseUnitPrice);
 

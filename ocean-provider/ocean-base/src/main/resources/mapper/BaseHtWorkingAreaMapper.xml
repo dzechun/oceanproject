@@ -60,6 +60,9 @@
       <if test="warehouseAreaName != null and warehouseAreaName != ''">
         and bwas.warehouse_area_name like CONCAT('%',#{warehouseAreaName},'%')
       </if>
+      <if test="orgId!=null">
+        and bhwa.org_id=#{orgId}
+      </if>
     </where>
     order by modified_time desc
   </select>
