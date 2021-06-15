@@ -24,5 +24,7 @@ public class CloseCartonDto implements Serializable {
     private Boolean print;
     @ApiModelProperty(name = "productCartonId", value = "包箱状态表ID")
     private Long productCartonId;
+    @ApiModelProperty(name = "printName", value = "打印机名称")
+    private String printName;
 
 }

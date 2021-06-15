@@ -54,6 +54,9 @@
       <if test="badnessPhenotypeDesc != null and badnessPhenotypeDesc != ''">
         and bhbp.badness_phenotype_desc like CONCAT('%',#{badnessPhenotypeDesc},'%')
       </if>
+      <if test="orgId!=null">
+        and bhbp.org_id=#{orgId}
+      </if>
     </where>
   </select>
 

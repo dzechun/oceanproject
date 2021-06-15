@@ -95,6 +95,9 @@
       <if test="materialOwnerId != null and materialOwnerId!=''">
         and bc.material_owner_id = #{materialOwnerId}
       </if>
+      <if test="orgId!=null">
+        and bc.org_id=#{orgId}
+      </if>
     </where>
     order by bc.create_time desc
   </select>

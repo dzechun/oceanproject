@@ -103,10 +103,18 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
     /**
      * 单据状态(1-待激活、2-已激活、3-完成、4-异常)
      */
-    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待激活、2-已激活、3-完成、4-挂起 5-已取消)")
-    @Excel(name = "单据状态(1-待激活、2-已激活、3-完成、4-挂起 5-已取消)", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待激活、2-已激活、3-完成、4-挂起 5-已取消 6-已复核)")
+    @Excel(name = "单据状态(1-待激活、2-已激活、3-完成、4-挂起 5-已取消 6-已复核)", height = 20, width = 30,orderNum="")
     @Column(name = "order_status")
     private Byte orderStatus;
+
+    /**
+     * 退拣状态(0-未退拣 1-已退拣)
+     */
+    @ApiModelProperty(name="pickBackStatus",value = "退拣状态(0-未退拣 1-已退拣)")
+    @Excel(name = "退拣状态(0-未退拣 1-已退拣)", height = 20, width = 30,orderNum="")
+    @Column(name = "pick_back_status")
+    private Byte pickBackStatus;
 
     /**
      * 是否已打印条码(0-否 1-是)

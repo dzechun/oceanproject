@@ -79,7 +79,7 @@ public class BaseRouteController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseRoute>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseRoute searchBaseRoute) {
         Page<Object> page = PageHelper.startPage(searchBaseRoute.getStartPage(), searchBaseRoute.getPageSize());
-        List<BaseRoute> list = baseRouteService.findList(searchBaseRoute);
+        List<BaseRoute> list = baseRouteService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseRoute));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -87,7 +87,7 @@ public class BaseRouteController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtRoute>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseRoute searchBaseRoute) {
         Page<Object> page = PageHelper.startPage(searchBaseRoute.getStartPage(), searchBaseRoute.getPageSize());
-        List<BaseHtRoute> list = baseHtRouteService.findList(searchBaseRoute);
+        List<BaseHtRoute> list = baseHtRouteService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseRoute));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -95,7 +95,7 @@ public class BaseRouteController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchBaseRoute searchBaseRoute){
-    List<BaseRoute> list = baseRouteService.findList(searchBaseRoute);
+    List<BaseRoute> list = baseRouteService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseRoute));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出工艺路线信息", "工艺路线信息", BaseRoute.class, "工艺路线信息.xls", response);

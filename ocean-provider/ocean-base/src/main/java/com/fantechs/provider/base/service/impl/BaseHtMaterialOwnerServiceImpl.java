@@ -1,7 +1,12 @@
 package com.fantechs.provider.base.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterialOwner;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseHtMaterialOwnerMapper;
 import com.fantechs.provider.base.service.BaseHtMaterialOwnerService;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,11 @@ public class BaseHtMaterialOwnerServiceImpl extends BaseService<BaseHtMaterialOw
 
     @Override
     public List<BaseHtMaterialOwner> findHtList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         return baseHtMaterialOwnerMapper.findHtList(map);
     }
 }

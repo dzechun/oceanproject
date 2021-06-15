@@ -46,7 +46,7 @@ public class BaseBarCodeController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseBarCodeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarCode searchBaseBarCode) {
         Page<Object> page = PageHelper.startPage(searchBaseBarCode.getStartPage(), searchBaseBarCode.getPageSize());
-        List<BaseBarCodeDto> list = baseBarCodeService.findList(searchBaseBarCode);
+        List<BaseBarCodeDto> list = baseBarCodeService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarCode));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

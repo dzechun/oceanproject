@@ -76,7 +76,7 @@ public class BaseStationController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseStation>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseStation searchBaseStation) {
         Page<Object> page = PageHelper.startPage(searchBaseStation.getStartPage(), searchBaseStation.getPageSize());
-        List<BaseStation> list = baseStationService.findList(searchBaseStation);
+        List<BaseStation> list = baseStationService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStation));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -84,7 +84,7 @@ public class BaseStationController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtStation>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseStation searchBaseStation) {
         Page<Object> page = PageHelper.startPage(searchBaseStation.getStartPage(), searchBaseStation.getPageSize());
-        List<BaseHtStation> list = baseHtStationService.findList(searchBaseStation);
+        List<BaseHtStation> list = baseHtStationService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStation));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -92,7 +92,7 @@ public class BaseStationController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchBaseStation searchBaseStation){
-    List<BaseStation> list = baseStationService.findList(searchBaseStation);
+    List<BaseStation> list = baseStationService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStation));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出工位信息", "工位信息", BaseStation.class, "工位信息.xls", response);

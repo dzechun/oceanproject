@@ -59,6 +59,9 @@
             <if test="userCode != null and userCode != ''">
                 AND su.user_code LIKE CONCAT('%', #{userCode}, '%')
             </if>
+            <if test="warehouseId != null">
+                AND bwh.warehouse_id = #{warehouseId}
+            </if>
             <if test="workerCode != null and workerCode != ''">
                 AND bw.worker_code LIKE CONCAT('%', #{workerCode}, '%')
             </if>
@@ -73,6 +76,9 @@
             </if>
             <if test="createUserName != null and createUserName != ''">
                 AND suc.user_name LIKE CONCAT('%', #{createUserName}, '%')
+            </if>
+            <if test="orgId!=null">
+                and bw.org_id=#{orgId}
             </if>
         </where>
     </select>

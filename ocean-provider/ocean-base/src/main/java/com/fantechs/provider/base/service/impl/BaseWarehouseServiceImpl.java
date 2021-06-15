@@ -13,6 +13,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehousePersonnel;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -180,14 +182,19 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
 
 
     @Override
-    public List<BaseWarehouse> findList(SearchBaseWarehouse searchBaseWarehouse) {
-        List<BaseWarehouse> baseWarehouses = baseWarehouseMapper.findList(searchBaseWarehouse);
+    public List<BaseWarehouse> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        List<BaseWarehouse> baseWarehouses = baseWarehouseMapper.findList(map);
         if (StringUtils.isNotEmpty(baseWarehouses)){
             SearchBaseMaterialOwnerReWh searchBaseMaterialOwnerReWh = new SearchBaseMaterialOwnerReWh();
 
             for (BaseWarehouse baseWarehouse : baseWarehouses) {
                 searchBaseMaterialOwnerReWh.setWarehouseId(baseWarehouse.getWarehouseId());
-                List<BaseMaterialOwnerReWhDto> list = baseMaterialOwnerReWhMapper.findList(searchBaseMaterialOwnerReWh);
+                List<BaseMaterialOwnerReWhDto> list = baseMaterialOwnerReWhMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialOwnerReWh));
                 if (StringUtils.isNotEmpty(list)){
                     baseWarehouse.setBaseMaterialOwnerReWhDtos(list);
                 }

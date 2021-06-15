@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -37,8 +38,13 @@ public class BaseBarcodeRuleSetServiceImpl extends BaseService<BaseBarcodeRuleSe
         private BaseHtBarcodeRuleSetMapper baseHtBarcodeRuleSetMapper;
 
         @Override
-        public List<BaseBarcodeRuleSetDto> findList(SearchBaseBarcodeRuleSet searchBaseBarcodeRuleSet) {
-            return baseBarcodeRuleSetMapper.findList(searchBaseBarcodeRuleSet);
+        public List<BaseBarcodeRuleSetDto> findList(Map<String, Object> map) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
+            return baseBarcodeRuleSetMapper.findList(map);
         }
 
         @Override

@@ -81,6 +81,14 @@ public class BasePackageSpecificationController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("根据物料工序查询列表")
+    @PostMapping("/findByMaterialProcess")
+    public ResponseEntity<List<BasePackageSpecificationDto>> findByMaterialProcess(@ApiParam(value = "查询对象")@RequestBody SearchBasePackageSpecification searchBasePackageSpecification) {
+        Page<Object> page = PageHelper.startPage(searchBasePackageSpecification.getStartPage(), searchBasePackageSpecification.getPageSize());
+        List<BasePackageSpecificationDto> list = basePackageSpecificationService.findByMaterialProcess(ControllerUtil.dynamicConditionByEntity(searchBasePackageSpecification));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtPackageSpecification>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBasePackageSpecification searchBasePackageSpecification) {

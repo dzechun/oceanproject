@@ -9,10 +9,11 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BaseBarcodeRuleSpecMapper extends MyMapper<BaseBarcodeRuleSpec> {
-    List<BaseBarcodeRuleSpecDto> findList(SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec);
+    List<BaseBarcodeRuleSpecDto> findList(Map<String, Object> map);
 
     int updateBatch(List<BaseBarcodeRuleSpec> list);
 

@@ -37,4 +37,7 @@ public class PrintCarCodeDto implements Serializable {
 
     @ApiModelProperty(name="barcode",value = "需打印的条码")
     private String barcode;
+
+    @ApiModelProperty(name = "printName", value = "打印机名称")
+    private String printName;
 }

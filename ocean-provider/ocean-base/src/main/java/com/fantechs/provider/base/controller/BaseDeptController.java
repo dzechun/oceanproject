@@ -56,7 +56,7 @@ public class BaseDeptController {
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchBaseDept searchBaseDept
     ){
         Page<Object> page = PageHelper.startPage(searchBaseDept.getStartPage(), searchBaseDept.getPageSize());
-        List<BaseDept> baseDeptes = baseDeptService.findList(searchBaseDept);
+        List<BaseDept> baseDeptes = baseDeptService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseDept));
         return ControllerUtil.returnDataSuccess(baseDeptes,(int)page.getTotal());
     }
 
@@ -94,7 +94,7 @@ public class BaseDeptController {
     @ApiOperation(value = "导出部门excel",notes = "导出部门excel",produces = "application/octet-stream")
     public void exportDepts(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchBaseDept searchBaseDept){
-        List<BaseDept> list = baseDeptService.findList(searchBaseDept);
+        List<BaseDept> list = baseDeptService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseDept));
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "部门信息表", "部门信息", BaseDept.class, "部门信息.xls", response);
@@ -110,7 +110,7 @@ public class BaseDeptController {
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchBaseDept searchBaseDept
              ) {
         Page<Object> page = PageHelper.startPage(searchBaseDept.getStartPage(), searchBaseDept.getPageSize());
-        List<BaseHtDept> baseHtDepts = baseHtDeptService.selectHtDepts(searchBaseDept);
+        List<BaseHtDept> baseHtDepts = baseHtDeptService.selectHtDepts(ControllerUtil.dynamicConditionByEntity(searchBaseDept));
         return  ControllerUtil.returnDataSuccess(baseHtDepts, (int)page.getTotal());
     }
 

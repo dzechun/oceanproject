@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseSafeStock;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -13,7 +14,7 @@ import java.util.List;
  */
 
 public interface BaseSafeStockService extends IService<BaseSafeStock> {
-    List<BaseSafeStockDto> findList(SearchBaseSafeStock searchBaseSafeStock);
-    List<BaseSafeStockDto> findHtList(SearchBaseSafeStock searchBaseSafeStock);
+    List<BaseSafeStockDto> findList(Map<String, Object> map);
+    List<BaseSafeStockDto> findHtList(Map<String, Object> map);
     int  inventeryWarning();
 }

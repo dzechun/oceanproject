@@ -41,7 +41,7 @@
         shs.option2,
         shs.option3
     </sql>
-    <select id="findHtList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature"
+    <select id="findHtList" parameterType="map"
             resultMap="BaseResultMap">
         select  <include refid="Base_Cloumn_List"></include>,
         sm.material_code as materialCode, sm.material_name as materialName, sm.material_version as materialVersion, sm.material_desc as
@@ -64,6 +64,9 @@
             </if>
             <if test="signatureCode!=null and signatureCode!=''">
                 and shs.signature_code like CONCAT('%', #{signatureCode}, '%')
+            </if>
+            <if test="orgId!=null">
+                and shs.org_id=#{orgId}
             </if>
         </where>
         order by shs.modified_time desc

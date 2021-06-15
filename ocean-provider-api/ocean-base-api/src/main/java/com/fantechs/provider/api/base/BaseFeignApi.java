@@ -309,7 +309,7 @@ public interface BaseFeignApi {
     ResponseEntity<BasePackageSpecification> BasePackageSpecificationDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("获取包装规格信息列表")
-    @PostMapping("/basePackageSpecification/findList")
+    @PostMapping("/basePackageSpecification/findByMaterialProcess")
     ResponseEntity<List<BasePackageSpecificationDto>> findBasePackageSpecificationList(@ApiParam(value = "查询对象") @RequestBody SearchBasePackageSpecification searchBasePackageSpecification);
 
     @ApiOperation("获取工位详情")
@@ -345,7 +345,31 @@ public interface BaseFeignApi {
     @PostMapping("/baseSignature/findList")
     ResponseEntity<List<BaseSignature>> findSignatureList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSignature searchBaseSignature);
 
-    @ApiOperation("接口新增火修改供应商信息")
+    @ApiOperation("接口新增或修改供应商（客户）信息")
     @PostMapping("/baseSupplier/addOrUpdate")
     ResponseEntity addOrUpdate(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody @Validated BaseSupplier baseSupplier);
+
+    @ApiOperation("根据条件查询产品关键事项列表")
+    @PostMapping("/baseProducttionKeyIssues/findList")
+    ResponseEntity<List<BaseProducttionKeyIssues>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProducttionKeyIssues searchBaseProducttionKeyIssues);
+
+    @ApiOperation("接口新增或修改产品bom信息")
+    @PostMapping("/baseProductBom/addOrUpdate")
+    ResponseEntity<BaseProductBom> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProductBom baseProductBom);
+
+    @ApiOperation("接口新增或修改产品bom详情表信息")
+    @PostMapping("/baseProductBomDet/addOrUpdate")
+    ResponseEntity<BaseProductBomDet> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProductBomDet bseProductBomDet);
+
+    @ApiOperation("查询产品bom详情表信息")
+    @PostMapping("/baseProductBomDet/findList")
+    ResponseEntity<List<BaseProductBomDet>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseProductBomDet searchBaseProductBomDet);
+
+    @ApiOperation("批量删除bom详情表信息")
+    @PostMapping("/baseProductBomDet/batchApiDelete")
+    ResponseEntity batchApiDelete(@ApiParam(value = "抽样过程id",required = true) @RequestParam @NotNull(message="productBomId不能为空") Long productBomId);
+
+    @ApiOperation("根据条件查询生产线信息列表")
+    @PostMapping("/baseProLine/findList")
+    ResponseEntity<List<BaseProLine>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProLine searchBaseProLine);
 }

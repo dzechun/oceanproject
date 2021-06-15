@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -147,8 +148,13 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
     }
 
     @Override
-    public List<BaseBarcodeRuleDto> findList(SearchBaseBarcodeRule searchBaseBarcodeRule) {
-        return baseBarcodeRuleMapper.findList(searchBaseBarcodeRule);
+    public List<BaseBarcodeRuleDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId",user.getOrganizationId());
+        return baseBarcodeRuleMapper.findList(map);
     }
 
     @Override

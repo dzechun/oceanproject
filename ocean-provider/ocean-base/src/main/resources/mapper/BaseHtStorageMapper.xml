@@ -84,7 +84,7 @@
         shs.option3
     </sql>
 
-    <select id="findHtList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage"
+    <select id="findHtList" parameterType="map"
             resultMap="BaseResultMap">
         select  <include refid="Base_Column_List"></include>,
         shw.warehouse_name,shw.warehouse_category,bhwa.working_area_code,
@@ -131,6 +131,9 @@
             </if>
             <if test="workingAreaCode!=null and workingAreaCode!=''">
                 and bhwa.working_area_code like CONCAT('%', #{workingAreaCode}, '%')
+            </if>
+            <if test="orgId!=null">
+                and shs.org_id=#{orgId}
             </if>
         </where>
         order by shs.modified_time desc

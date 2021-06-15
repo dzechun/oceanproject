@@ -121,7 +121,7 @@
             </if>
         </where>
     </select>
-    <select id="findList" resultMap="BaseResultMapDto">
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         SELECT<include refid="Base_Column_List"/>bl.print_mode,bl.save_path,su.user_name as
         create_user_name,sus.user_name as modified_user_name, bo.organization_name
         FROM base_bar_code bc
@@ -146,6 +146,9 @@
             </if>
             <if test="barCodeType!=null">
                 and bc.bar_code_type = #{barCodeType}
+            </if>
+            <if test="orgId!=null">
+                and bc.org_id=#{orgId}
             </if>
         </where>
     </select>

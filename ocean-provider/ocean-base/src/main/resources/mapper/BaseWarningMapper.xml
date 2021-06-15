@@ -62,6 +62,9 @@
       <if test="notificationMethod != null and notificationMethod != ''">
         and bw.notification_method = #{materialId}
       </if>
+      <if test="orgId!=null">
+        and bw.org_id=#{orgId}
+      </if>
     </where>
   </select>
 </mapper>

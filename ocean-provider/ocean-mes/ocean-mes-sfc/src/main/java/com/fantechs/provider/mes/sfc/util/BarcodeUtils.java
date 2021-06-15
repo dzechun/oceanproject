@@ -303,7 +303,7 @@ public class BarcodeUtils {
         PrintDto printDto = new PrintDto();
         printDto.setLabelName(labelRuteDto.getLabelName());
         printDto.setLabelVersion(labelRuteDto.getLabelVersion());
-        printDto.setPrintName("测试");
+        printDto.setPrintName(dto.getPrintName());
         List<PrintModel> printModelList = new ArrayList<>();
         printModelList.add(printModel);
         printDto.setPrintModelList(printModelList);

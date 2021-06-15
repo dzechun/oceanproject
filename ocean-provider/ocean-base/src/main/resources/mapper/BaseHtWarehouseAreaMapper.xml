@@ -81,6 +81,9 @@
             <if test="warehouseName != null and warehouseName != ''">
                 and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>
+            <if test="orgId!=null">
+                and shwa.org_id=#{orgId}
+            </if>
         </where>
         order by shwa.modified_time desc
     </select>

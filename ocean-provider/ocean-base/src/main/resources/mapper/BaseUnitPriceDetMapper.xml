@@ -60,6 +60,9 @@
       <if test="unitPriceId != null">
         and bupd.unit_price_id = #{unitPriceId}
       </if>
+      <if test="orgId!=null">
+        and bupd.org_id=#{orgId}
+      </if>
     </where>
   </select>
 </mapper>

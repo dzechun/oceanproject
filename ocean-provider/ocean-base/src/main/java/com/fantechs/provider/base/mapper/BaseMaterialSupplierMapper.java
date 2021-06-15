@@ -7,8 +7,9 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BaseMaterialSupplierMapper extends MyMapper<BaseMaterialSupplier> {
-    List<BaseMaterialSupplierDto> findList(SearchBaseMaterialSupplier searchBaseMaterialSupplier);
+    List<BaseMaterialSupplierDto> findList(Map<String, Object> map);
 }

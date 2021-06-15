@@ -80,21 +80,38 @@
             <if test="packageSpecificationDesc != null and packageSpecificationDesc != ''">
                 and sps.package_specification_desc like CONCAT('%', #{packageSpecificationDesc}, '%')
             </if>
-<!--            <if test="packingUnitId != null">-->
-<!--                and smp.packing_unit_id=#{packingUnitId}-->
-<!--            </if>-->
-<!--            <if test="packingUnitName != null and packingUnitName != ''">-->
-<!--                and spu.packing_unit_name like CONCAT('%', #{packingUnitName}, '%')-->
-<!--            </if>-->
-<!--            <if test="packingUnitDesc != null and packingUnitDesc != ''">-->
-<!--                and spu.packing_unit_desc like CONCAT('%', #{packingUnitDesc}, '%')-->
-<!--            </if>-->
-<!--            <if test="materialCode != null and materialCode != ''">-->
-<!--                and sm.material_code like CONCAT('%', #{materialCode}, '%')-->
-<!--            </if>-->
-<!--            <if test="materialDesc != null and materialDesc != ''">-->
-<!--                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')-->
-<!--            </if>-->
+            <if test="status!=null">
+                and sps.status=#{status}
+            </if>
+            <if test="orgId!=null">
+                and sps.org_id=#{orgId}
+            </if>
+        </where>
+        order by sps.create_time desc
+    </select>
+
+    <select id="findByMaterialProcess" resultMap="BaseResultMapDto" parameterType="map">
+        select<include refid="Base_Column_List"/>,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        bo.organization_name
+        from fantech_imes_v2.base_package_specification sps
+        LEFT JOIN fantech_imes_v2.base_material_package smp ON sps.package_specification_id = smp.package_specification_id
+        LEFT JOIN ocean_v2.sys_user su ON sps.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON sps.modified_user_id = sus.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON sps.org_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(sps.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="packageSpecificationCode != null and packageSpecificationCode != ''">
+                and sps.package_specification_code like CONCAT('%', #{packageSpecificationCode}, '%')
+            </if>
+            <if test="packageSpecificationName != null and packageSpecificationName != ''">
+                and sps.package_specification_name like CONCAT('%', #{packageSpecificationName}, '%')
+            </if>
+            <if test="packageSpecificationDesc != null and packageSpecificationDesc != ''">
+                and sps.package_specification_desc like CONCAT('%', #{packageSpecificationDesc}, '%')
+            </if>
             <if test="materialId != null">
                 and smp.material_id=#{materialId}
             </if>

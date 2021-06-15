@@ -55,7 +55,7 @@
 	sppr.option3
   </sql>
 
-  <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute" resultMap="BaseResultMap">
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
     spl.pro_name, spl.pro_code,
     spm.product_model_code, spm.product_model_name,
@@ -102,6 +102,9 @@
       </if>
       <if test="status!=null">
         and sppr.status=#{status}
+      </if>
+      <if test="orgId!=null">
+        and sppr.org_id=#{orgId}
       </if>
     </where>
     order by sppr.create_time desc

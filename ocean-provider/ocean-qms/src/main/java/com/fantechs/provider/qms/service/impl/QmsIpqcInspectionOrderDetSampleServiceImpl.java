@@ -20,6 +20,8 @@ import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderDetSampleService;
+import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderDetService;
+import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -45,7 +47,7 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
     @Resource
     private QmsIpqcInspectionOrderMapper qmsIpqcInspectionOrderMapper;
     @Resource
-    private BaseFeignApi baseFeignApi;
+    private QmsIpqcInspectionOrderService qmsIpqcInspectionOrderService;
     @Resource
     private SFCFeignApi sfcFeignApi;
     @Resource
@@ -53,6 +55,11 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
 
     @Override
     public List<QmsIpqcInspectionOrderDetSample> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId",user.getOrganizationId());
         return qmsIpqcInspectionOrderDetSampleMapper.findList(map);
     }
 
@@ -104,6 +111,10 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        if(StringUtils.isEmpty(qmsIpqcInspectionOrderDetSampleList)){
+            throw new BizErrorException("样本信息不能为空");
+        }
+
         //原数据删除
         Long ipqcInspectionOrderDetId = qmsIpqcInspectionOrderDetSampleList.get(0).getIpqcInspectionOrderDetId();
         Example example = new Example(QmsIpqcInspectionOrderDetSample.class);
@@ -123,14 +134,14 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
         Map<String,Object> map = new HashMap();
         map.put("ipqcInspectionOrderDetId",ipqcInspectionOrderDetId);
         QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet = qmsIpqcInspectionOrderDetMapper.findList(map).get(0);
-        QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.selectByPrimaryKey(qmsIpqcInspectionOrderDet.getIpqcInspectionOrderId());
-        //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
-        if(qmsIpqcInspectionOrderDet.getSampleProcessType()==(byte)4){
-            BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsIpqcInspectionOrderDet.getSampleProcessId(), qmsIpqcInspectionOrder.getQty()).getData();
-            if(StringUtils.isNotEmpty(baseSampleProcess)) {
-                qmsIpqcInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
-                qmsIpqcInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
-                qmsIpqcInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+        QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderService.selectByKey(qmsIpqcInspectionOrderDet.getIpqcInspectionOrderId());
+
+        //赋值Qty、AC、RE
+        for (QmsIpqcInspectionOrderDet ipqcInspectionOrderDet:qmsIpqcInspectionOrder.getQmsIpqcInspectionOrderDets()){
+            if(ipqcInspectionOrderDetId.equals(ipqcInspectionOrderDet.getIpqcInspectionOrderDetId())){
+                qmsIpqcInspectionOrderDet.setSampleQty(ipqcInspectionOrderDet.getSampleQty());
+                qmsIpqcInspectionOrderDet.setAcValue(ipqcInspectionOrderDet.getAcValue());
+                qmsIpqcInspectionOrderDet.setReValue(ipqcInspectionOrderDet.getReValue());
             }
         }
 

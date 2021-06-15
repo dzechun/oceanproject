@@ -16,6 +16,7 @@
     <result column="worker_user_id" jdbcType="BIGINT" property="workerUserId" />
     <result column="worker_user_name" jdbcType="VARCHAR" property="workerUserName" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="pick_back_status" jdbcType="TINYINT" property="pickBackStatus" />
     <result column="if_already_print" jdbcType="TINYINT" property="ifAlreadyPrint" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -32,8 +33,8 @@
   
   <sql id="Base_Column_List">
     pjo.job_order_id, pjo.job_order_code, pjo.job_order_type, pjo.related_order_code, pjo.despatch_order_code, pjo.warehouse_id, pjo.warehouse_name,
-    pjo.vehicle_id, pjo.worker_user_id, pjo.worker_user_name, pjo.order_status, pjo.if_already_print, pjo.status, pjo.remark, pjo.org_id,
-    pjo.create_user_id, pjo.create_time, pjo.modified_user_id, pjo.modified_time, pjo.is_delete, pjo.option1, pjo.option2, pjo.option3
+    pjo.vehicle_id, pjo.worker_user_id, pjo.worker_user_name, pjo.order_status, pjo.pick_back_status, pjo.if_already_print, pjo.status, pjo.remark,
+    pjo.org_id, pjo.create_user_id, pjo.create_time, pjo.modified_user_id, pjo.modified_time, pjo.is_delete, pjo.option1, pjo.option2, pjo.option3
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.electronic.dto.PtlJobOrderDto">
@@ -42,6 +43,7 @@
   
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
+    tv.vehicle_code as vehicleCode,
     suw.user_code as workerUserCode,
     suc.user_code as createUserCode,
     sum.user_code as modifiedUserCode,
@@ -50,11 +52,13 @@
     LEFT JOIN ocean_v2.sys_user suw ON pjo.worker_user_id = suw.user_id
     LEFT JOIN ocean_v2.sys_user suc ON pjo.create_user_id = suc.user_id
     LEFT JOIN ocean_v2.sys_user sum ON pjo.modified_user_id = sum.user_id
+    LEFT JOIN tem_vehicle tv ON pjo.vehicle_id = tv.vehicle_id
     LEFT JOIN ptl_job_order_det pjod ON pjo.job_order_id = pjod.job_order_id
     LEFT JOIN base_storage bs ON pjod.storage_id = bs.storage_id
     LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id
     LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
     <where>
+      pjo.is_delete = 1
       <if test="jobOrderId != null">
         and pjo.job_order_id = #{jobOrderId}
       </if>
@@ -93,5 +97,6 @@
       </if>
     </where>
     group by pjo.job_order_id
+    order by pjo.create_time desc
   </select>
 </mapper>

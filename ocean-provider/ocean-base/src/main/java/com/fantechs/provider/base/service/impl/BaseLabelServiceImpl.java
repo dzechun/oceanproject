@@ -54,8 +54,13 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
     private BaseLabelCategoryMapper baseLabelCategoryMapper;
 
     @Override
-    public List<BaseLabelDto> findList(SearchBaseLabel searchBaseLabel) {
-        return baseLabelMapper.findList(searchBaseLabel);
+    public List<BaseLabelDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseLabelMapper.findList(map);
     }
 
     @Override

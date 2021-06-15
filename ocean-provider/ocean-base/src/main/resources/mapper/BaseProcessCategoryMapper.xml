@@ -68,6 +68,9 @@
             <if test="status!=null">
                 and spc.status=#{status}
             </if>
+            <if test="orgId!=null">
+                and spc.org_id=#{orgId}
+            </if>
         </where>
         order by create_time desc
     </select>

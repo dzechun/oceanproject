@@ -16,7 +16,7 @@ import java.util.Map;
 
 public interface BaseStorageService extends IService<BaseStorage> {
 
-    List<BaseStorage> findList(SearchBaseStorage searchBaseStorage);
+    List<BaseStorage> findList(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<BaseStorageImport> baseStorageImports);
 

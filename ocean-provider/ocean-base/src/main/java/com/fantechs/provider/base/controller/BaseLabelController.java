@@ -71,7 +71,7 @@ public class BaseLabelController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseLabelDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabel searchBaseLabel) {
         Page<Object> page = PageHelper.startPage(searchBaseLabel.getStartPage(), searchBaseLabel.getPageSize());
-        List<BaseLabelDto> list = baseLabelService.findList(searchBaseLabel);
+        List<BaseLabelDto> list = baseLabelService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabel));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -86,7 +86,7 @@ public class BaseLabelController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtLabel>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabel searchBaseLabel) {
         Page<Object> page = PageHelper.startPage(searchBaseLabel.getStartPage(), searchBaseLabel.getPageSize());
-        List<BaseHtLabel> list = baseHtLabelService.findList(searchBaseLabel);
+        List<BaseHtLabel> list = baseHtLabelService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabel));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -94,7 +94,7 @@ public class BaseLabelController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseLabel searchBaseLabel){
-    List<BaseLabelDto> list = baseLabelService.findList(searchBaseLabel);
+    List<BaseLabelDto> list = baseLabelService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabel));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "BcmLabel信息", BaseLabelDto.class, "BcmLabel.xls", response);

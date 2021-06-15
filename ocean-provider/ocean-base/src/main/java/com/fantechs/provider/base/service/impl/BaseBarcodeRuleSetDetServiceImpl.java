@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSetDet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSetDet;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -36,8 +38,13 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
         private BaseBarcodeRuleMapper baseBarcodeRuleMapper;
 
         @Override
-        public List<BaseBarcodeRuleSetDetDto> findList(SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet) {
-            return baseBarcodeRuleSetDetMapper.findList(searchBaseBarcodeRuleSetDet);
+        public List<BaseBarcodeRuleSetDetDto> findList(Map<String, Object> map) {
+                SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+                if (StringUtils.isEmpty(user)) {
+                        throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+                }
+                map.put("orgId", user.getOrganizationId());
+                return baseBarcodeRuleSetDetMapper.findList(map);
         }
 
         @Override
@@ -59,12 +66,12 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
                 SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
                 for (Long barcodeRuleId : barcodeRuleIds) {
                         searchBaseBarcodeRule.setBarcodeRuleId(barcodeRuleId);
-                        List<BaseBarcodeRuleDto> baseBarcodeRuleDtos = baseBarcodeRuleMapper.findList(searchBaseBarcodeRule);
+                        List<BaseBarcodeRuleDto> baseBarcodeRuleDtos = baseBarcodeRuleMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRule));
                         if (StringUtils.isEmpty(baseBarcodeRuleDtos))
                                 throw new BizErrorException("条码规则不存在");
                         for (BaseBarcodeRuleSetDet baseBarcodeRuleSetDet : list){
                                 searchBaseBarcodeRule.setBarcodeRuleId(baseBarcodeRuleSetDet.getBarcodeRuleId());
-                                List<BaseBarcodeRuleDto> baseBarcodeRuleDtoList = baseBarcodeRuleMapper.findList(searchBaseBarcodeRule);
+                                List<BaseBarcodeRuleDto> baseBarcodeRuleDtoList = baseBarcodeRuleMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRule));
                                 if (StringUtils.isEmpty(baseBarcodeRuleDtoList))
                                         throw new BizErrorException("条码规则不存在");
                                 if (baseBarcodeRuleDtos.get(0).getLabelCategoryId() == baseBarcodeRuleDtoList.get(0).getLabelCategoryId())

@@ -41,7 +41,7 @@
         shpl.remark
     </sql>
 
-    <select id="selectHtProLines" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine"
+    <select id="selectHtProLines" parameterType="map"
             resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>,
@@ -67,6 +67,9 @@
             </if>
             <if test="proDesc!=null and proDesc!=''">
                 and shpl.pro_desc like CONCAT('%', #{proDesc}, '%')
+            </if>
+            <if test="orgId!=null">
+                and shpl.org_id=#{orgId}
             </if>
         </where>
         order by shpl.modified_time desc

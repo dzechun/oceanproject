@@ -58,6 +58,9 @@
       <if test="status!=null">
         and bhss.status=#{status}
       </if>
+        <if test="orgId!=null">
+            and bhss.org_id=#{orgId}
+        </if>
     </where>
     order by bhss.modified_time desc
   </select>

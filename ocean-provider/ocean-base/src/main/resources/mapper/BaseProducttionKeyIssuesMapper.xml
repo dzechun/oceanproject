@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseProducttionKeyIssuesMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProducttionKeyIssues">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="producttion_key_issues_id" jdbcType="BIGINT" property="producttionKeyIssuesId" />
+    <result column="key_issues_type" jdbcType="TINYINT" property="keyIssuesType" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="material_property" jdbcType="TINYINT" property="materialProperty"/>
+    <collection property="baseProducttionKeyIssuesDetList" ofType="com.fantechs.common.base.general.entity.basic.BaseProducttionKeyIssuesDet"
+                column="{producttionKeyIssuesId=producttion_key_issues_id}" select="com.fantechs.provider.base.mapper.BaseProducttionKeyIssuesDetMapper.findList">
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bpki.producttion_key_issues_id,
+    bpki.key_issues_type,
+    bpki.material_id,
+    bpki.`status`,
+    bpki.remark,
+    bpki.org_id,
+    bpki.create_user_id,
+    bpki.create_time,
+    bpki.modified_user_id,
+    bpki.modified_time,
+    bpki.is_delete,
+    bpki.option1,
+    bpki.option2,
+    bpki.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    SELECT<include refid="Base_Column_List"/>,
+    bm.material_code,bm.material_name,bm.material_desc,bm.material_version,bmt.material_property,
+    su.user_name as create_user_name,
+    sus.user_name as modified_user_name,
+    bo.organization_name FROM fantech_imes_v2.base_producttion_key_issues bpki
+    left join fantech_imes_v2.base_material bm on bpki.material_id=bm.material_id
+    left join fantech_imes_v2.base_material_tab bmt on bm.material_id=bmt.material_id
+    left join ocean_v2.sys_user su ON bpki.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus ON bpki.modified_user_id = sus.user_id
+    left join fantech_imes_v2.base_organization bo ON bpki.org_id = bo.organization_id
+    <where>
+      <if test="materialCode!=null and materialCode!=''">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialDesc!=null and materialDesc!=''">
+        and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+      <if test="materialId!=null">
+        and bpki.material_id = #{materialId}
+      </if>
+      <if test="keyIssuesType!=null">
+        and bpki.key_issues_type = #{keyIssuesType}
+      </if>
+      <if test="status!=null">
+        and bpki.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bpki.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and bpki.org_id=#{orgId}
+      </if>
+    </where>
+    order by bpki.create_time desc
+  </select>
+</mapper>

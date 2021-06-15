@@ -63,6 +63,9 @@
       <if test="sampleStandardName != null and sampleStandardName!=''">
         and bss.sample_standard_name like CONCAT('%', #{sampleStandardName}, '%')
       </if>
+      <if test="orgId!=null">
+        and bsp.org_id=#{orgId}
+      </if>
     </where>
     order by create_time desc
   </select>

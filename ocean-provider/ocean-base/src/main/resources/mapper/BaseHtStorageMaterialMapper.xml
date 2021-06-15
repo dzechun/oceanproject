@@ -46,7 +46,7 @@
 	shsm.option3
   </sql>
 
-  <select id="findHtList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial" resultMap="BaseResultMap">
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select
            <include refid="Base_Column_List"/>,
            ss.storage_code as storageCode,ss.storage_name as storageName,ss.storage_desc as storageDesc,
@@ -112,6 +112,9 @@
       </if>
       <if test="replenishTactics != null ">
         and shsm.replenish_tactics = #{replenishTactics}
+      </if>
+      <if test="orgId!=null">
+        and shsm.org_id=#{orgId}
       </if>
     </where>
     order by shsm.modified_time desc

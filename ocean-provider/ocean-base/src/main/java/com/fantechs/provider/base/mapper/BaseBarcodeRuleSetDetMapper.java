@@ -7,8 +7,9 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BaseBarcodeRuleSetDetMapper extends MyMapper<BaseBarcodeRuleSetDet> {
-    List<BaseBarcodeRuleSetDetDto> findList(SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet);
+    List<BaseBarcodeRuleSetDetDto> findList(Map<String, Object> map);
 }

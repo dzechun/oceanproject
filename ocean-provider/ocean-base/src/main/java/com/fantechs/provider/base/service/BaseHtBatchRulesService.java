@@ -13,5 +13,5 @@ import java.util.Map;
  */
 
 public interface BaseHtBatchRulesService extends IService<BaseHtBatchRules> {
-    List<BaseHtBatchRules> findList(SearchBaseBatchRules searchBaseBatchRules);
+    List<BaseHtBatchRules> findList(Map<String, Object> map);
 }

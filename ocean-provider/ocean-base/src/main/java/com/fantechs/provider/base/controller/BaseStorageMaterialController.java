@@ -74,7 +74,7 @@ public class BaseStorageMaterialController {
     public ResponseEntity<List<BaseStorageMaterial>> findList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchBaseStorageMaterial searchBaseStorageMaterial) {
         Page<Object> page = PageHelper.startPage(searchBaseStorageMaterial.getStartPage(), searchBaseStorageMaterial.getPageSize());
         searchBaseStorageMaterial.setCodeQueryMark(2);
-        List<BaseStorageMaterial> list = baseStorageMaterialService.findList(searchBaseStorageMaterial);
+        List<BaseStorageMaterial> list = baseStorageMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStorageMaterial));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -83,7 +83,7 @@ public class BaseStorageMaterialController {
     public ResponseEntity<List<BaseHtStorageMaterial>> findHtList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchBaseStorageMaterial searchBaseStorageMaterial) {
         Page<Object> page = PageHelper.startPage(searchBaseStorageMaterial.getStartPage(), searchBaseStorageMaterial.getPageSize());
         searchBaseStorageMaterial.setCodeQueryMark(2);
-        List<BaseHtStorageMaterial> list = baseHtStorageMaterialService.findHtList(searchBaseStorageMaterial);
+        List<BaseHtStorageMaterial> list = baseHtStorageMaterialService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseStorageMaterial));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -95,7 +95,7 @@ public class BaseStorageMaterialController {
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出物料专用库位信息excel",notes = "导出储位物料信息excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody(required = false) SearchBaseStorageMaterial searchBaseStorageMaterial){
-        List<BaseStorageMaterial> list = baseStorageMaterialService.findList(searchBaseStorageMaterial);
+        List<BaseStorageMaterial> list = baseStorageMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStorageMaterial));
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "物料专用库位信息", "物料专用库位信息", BaseStorageMaterial.class, "物料专用库位.xls", response);

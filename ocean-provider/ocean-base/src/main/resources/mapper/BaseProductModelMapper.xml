@@ -47,7 +47,7 @@
         spm.remark
     </sql>
 
-    <select id="selectProductModels" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProductModel"
+    <select id="selectProductModels" parameterType="map"
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
         bpf.product_family_code, bpf.product_family_name, bpf.product_family_desc,
@@ -70,6 +70,9 @@
             </if>
             <if test="status!=null">
                 and spm.status=#{status}
+            </if>
+            <if test="orgId!=null">
+                and spm.org_id=#{orgId}
             </if>
         </where>
         order by spm.create_time desc

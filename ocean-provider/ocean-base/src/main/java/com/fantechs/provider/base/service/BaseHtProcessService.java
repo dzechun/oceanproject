@@ -5,6 +5,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
+
 /**
  *
  * Created by wcz on 2020/09/25.
@@ -12,5 +14,5 @@ import java.util.List;
 
 public interface BaseHtProcessService extends IService<BaseHtProcess> {
 
-    List<BaseHtProcess> findHtList(SearchBaseProcess searchBaseProcess);
+    List<BaseHtProcess> findHtList(Map<String, Object> map);
 }

@@ -14,11 +14,11 @@ public interface MesSfcPalletWorkService {
 
     List<String> findPalletCarton(Long productPalletId);
 
-    int submitNoFullPallet(List<Long> palletIdList, byte printBarcode) throws Exception;
+    int submitNoFullPallet(List<Long> palletIdList, byte printBarcode, String printName) throws Exception;
 
     Boolean updatePalletType(Long stationId);
 
-    int updateNowPackageSpecQty(Long productPalletId, Double nowPackageSpecQty) throws Exception;
+    int updateNowPackageSpecQty(Long productPalletId, Double nowPackageSpecQty , Boolean print, String printName) throws Exception;
 
     /**
      * 修改栈板状态为已转移

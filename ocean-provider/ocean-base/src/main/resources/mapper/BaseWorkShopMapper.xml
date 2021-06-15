@@ -78,6 +78,9 @@
             <if test="status!=null">
                 and ws.status=#{status}
             </if>
+            <if test="orgId!=null">
+                and ws.org_id=#{orgId}
+            </if>
         </where>
         order by create_time desc
     </select>

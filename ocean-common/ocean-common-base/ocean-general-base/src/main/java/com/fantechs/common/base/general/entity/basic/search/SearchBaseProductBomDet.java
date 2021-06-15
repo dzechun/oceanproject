@@ -27,8 +27,8 @@ public class SearchBaseProductBomDet extends BaseQuery implements Serializable {
     /**
      * 零件料号
      */
-    @ApiModelProperty(name="partMaterialCode" ,value="零件料号")
-    private String partMaterialCode;
+    @ApiModelProperty(name="materialCode" ,value="零件料号")
+    private String materialCode;
 
     /**
      * 物料描述
@@ -42,9 +42,4 @@ public class SearchBaseProductBomDet extends BaseQuery implements Serializable {
     @ApiModelProperty(name="productBomDetId" ,value="产品BOM详细ID")
     private Long productBomDetId;
 
-    /**
-     * 父ID
-     */
-    @ApiModelProperty(name="parentId" ,value="父ID")
-    private Long parentId;
 }

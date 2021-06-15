@@ -6,8 +6,9 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BaseHtBatchRulesMapper extends MyMapper<BaseHtBatchRules> {
-    List<BaseHtBatchRules> findHtList(SearchBaseBatchRules searchBaseBatchRules);
+    List<BaseHtBatchRules> findHtList(Map<String, Object> map);
 }

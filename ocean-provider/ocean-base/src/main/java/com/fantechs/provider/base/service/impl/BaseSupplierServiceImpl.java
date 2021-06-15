@@ -4,9 +4,11 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseAddressDto;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionExemptedList;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -41,6 +43,8 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     private BaseMaterialSupplierMapper baseMaterialSupplierMapper;
     @Resource
     private BaseMaterialMapper baseMaterialMapper;
+    @Resource
+    private BaseOrganizationMapper baseOrganizationMapper;
 
     @Override
     public List<BaseSupplier> findInspectionSupplierList(SearchBaseInspectionExemptedList searchBaseInspectionExemptedList) {
@@ -89,8 +93,13 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     }
 
     @Override
-    public List<BaseSupplier> findList(SearchBaseSupplier searchBaseSupplier) {
-        return baseSupplierMapper.findList(searchBaseSupplier);
+    public List<BaseSupplier> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseSupplierMapper.findList(map);
     }
 
     @Override
@@ -275,6 +284,12 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("supplierCode",baseSupplier.getSupplierCode()); // 前面的字段等于后面的参数
         List<BaseSupplier> baseSuppliers = this.selectByExample(example);
+
+        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+        searchBaseOrganization.setOrganizationName("雷赛");
+        List<BaseOrganizationDto> organizationList = baseOrganizationMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
+        if(StringUtils.isEmpty(organizationList))  throw new BizErrorException("未查询到对应组织");
+        baseSupplier.setOrganizationId((organizationList.get(0).getOrganizationId()));
         if (StringUtils.isEmpty(baseSuppliers)){
             baseSupplier.setCreateTime(new Date());
             baseSupplier.setCreateUserId((long)1);

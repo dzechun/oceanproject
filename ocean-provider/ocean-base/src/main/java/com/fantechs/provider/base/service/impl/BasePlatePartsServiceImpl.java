@@ -50,6 +50,11 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
 
     @Override
     public List<BasePlatePartsDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         return basePlatePartsMapper.findList(map);
     }
 
@@ -191,7 +196,7 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
             SearchBaseRoute searchBaseRoute = new SearchBaseRoute();
             searchBaseRoute.setRouteName(routeName);
             searchBaseRoute.setNameQueryMark(1);
-            List<BaseRoute> baseRoutes = baseRouteMapper.findList(searchBaseRoute);
+            List<BaseRoute> baseRoutes = baseRouteMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseRoute));
             //编码对应的信息不存在或工艺路线的类型不是部件工艺路线
             if (StringUtils.isEmpty(basePartsInformation, baseRoutes, baseMaterials) || baseRoutes.get(0).getRouteType() != 3) {
                 fail.add(i + 4);

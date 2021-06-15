@@ -7,8 +7,9 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BaseLabelMaterialMapper extends MyMapper<BaseLabelMaterial> {
-    List<BaseLabelMaterialDto> findList(SearchBaseLabelMaterial searchBaseLabelMaterial);
+    List<BaseLabelMaterialDto> findList(Map<String, Object> map);
 }

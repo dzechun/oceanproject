@@ -44,8 +44,13 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
     private BaseMaterialMapper baseMaterialMapper;
 
     @Override
-    public List<BaseProductProcessRoute> findList(SearchBaseProductProcessRoute searchBaseProductProcessRoute) {
-        List<BaseProductProcessRoute> list = baseProductProcessRouteMapper.findList(searchBaseProductProcessRoute);
+    public List<BaseProductProcessRoute> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        List<BaseProductProcessRoute> list = baseProductProcessRouteMapper.findList(map);
         for (BaseProductProcessRoute baseProductProcessRoute : list) {
             Integer productType = baseProductProcessRoute.getProductType();
             if (productType == 0) {

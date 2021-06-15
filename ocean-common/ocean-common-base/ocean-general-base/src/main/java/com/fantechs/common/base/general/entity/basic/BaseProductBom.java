@@ -1,6 +1,8 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,217 +12,138 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@Table(name = "base_product_bom")
-@Data
-public class BaseProductBom extends ValidGroup implements Serializable {
-    private static final long serialVersionUID = 8177452637204613229L;
+;
+;
 
+/**
+ * 产品BOM父料
+ * base_product_bom
+ * @author 81947
+ * @date 2021-06-09 20:37:07
+ */
+@Data
+@Table(name = "base_product_bom")
+public class BaseProductBom extends ValidGroup implements Serializable {
     /**
      * 产品BOM ID
      */
+    @ApiModelProperty(name="productBomId",value = "产品BOM ID")
+    @Excel(name = "产品BOM ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "product_bom_id")
-    @ApiModelProperty(name = "productBomId", value = "产品BOM ID")
-    @NotNull(groups = update.class, message = "产品BOM ID不能为空")
     private Long productBomId;
 
     /**
-     * 产品BOM编号
+     * BOM编码
      */
+    @ApiModelProperty(name="productBomCode",value = "BOM编码")
+    @Excel(name = "BOM编码", height = 20, width = 30,orderNum="") 
     @Column(name = "product_bom_code")
-    @ApiModelProperty(name = "productBomCode", value = "BOM ID")
-    @Excel(name = "BOM ID", height = 20, width = 30)
-    @NotBlank(message = "产品BOM编号不能为空")
     private String productBomCode;
+
+    /**
+     * BOM版本号
+     */
+    @ApiModelProperty(name="productBomVersion",value = "BOM版本号")
+    @Excel(name = "BOM版本号", height = 20, width = 30,orderNum="") 
+    @Column(name = "product_bom_version")
+    private String productBomVersion;
 
     /**
      * 产品料号ID
      */
+    @ApiModelProperty(name="materialId",value = "产品料号ID")
+    @Excel(name = "产品料号ID", height = 20, width = 30,orderNum="") 
     @Column(name = "material_id")
-    @ApiModelProperty(name = "materialId", value = "产品料号ID")
-    @NotNull(message = "物料id不能为空")
     private Long materialId;
 
     /**
-     * 线别ID
+     * 节拍(秒)
      */
-    @Column(name = "pro_line_id")
-    @ApiModelProperty(name = "proLineId", value = "线别ID")
-    private Long proLineId;
-
-    /**
-     * 代用物料ID
-     */
-    @Column(name = "sub_material_id")
-    @ApiModelProperty(name="subMaterialId" ,value="代用物料ID")
-    private Long subMaterialId;
-
-    /**
-     * 用量
-     */
-    @ApiModelProperty(name="quantity" ,value="用量")
-    @Excel(name = "用量", height = 20, width = 30)
-    @Column(name = "quantity")
-    private BigDecimal quantity;
-
-    /**
-     * 基准数量
-     */
-    @ApiModelProperty(name="baseQuantity" ,value="基准数量")
-    @Excel(name = "基准数量", height = 20, width = 30)
-    @Column(name = "base_quantity")
-    private BigDecimal baseQuantity;
-
-    /**
-     * 位置
-     */
-    @ApiModelProperty(name="position" ,value="位置")
-    @Excel(name = "位置", height = 20, width = 30)
-    @Column(name = "position")
-    private String position;
-
-    /**
-     * 工序ID
-     */
-    @Column(name = "process_id")
-    @ApiModelProperty(name="processId" ,value="工序ID")
-    private Long processId;
-
-    /**
-     * 配送方式（1、配送优化 2、配送不优化  3、不配送不优化）
-     */
-    @Column(name = "delivery_mode")
-    @ApiModelProperty(name = "deliveryMode", value = "配送方式（1、配送优化 2、配送不优化  3、不配送不优化）")
-    private Integer deliveryMode;
-
-    /**
-     * 发料方式（1、推式  2、拉式）
-     */
-    @Column(name = "issue_method")
-    @ApiModelProperty(name = "issueMethod", value = "发料方式（1、推式  2、拉式）")
-    private Integer issueMethod;
-
-    /**
-     * 损耗率
-     */
-    @Column(name = "loss_rate")
-    @ApiModelProperty(name = "lossRate", value = "损耗率")
-    private BigDecimal lossRate;
-
-    /**
-     * 节拍数量(秒)
-     */
-    @Column(name = "takt")
-    @ApiModelProperty(name = "takt", value = "节拍数量(秒)")
+    @ApiModelProperty(name="takt",value = "节拍(秒)")
+    @Excel(name = "节拍(秒)", height = 20, width = 30,orderNum="") 
     private Integer takt;
-
-    /**
-     * 移转数量
-     */
-    @Column(name = "transfer_quantity")
-    @ApiModelProperty(name = "transferQuantity", value = "移转数量")
-    private Integer transferQuantity;
 
     /**
      * BOM状态(1-未核准 2-已核准)
      */
+    @ApiModelProperty(name="bomStatus",value = "BOM状态(1-未核准 2-已核准)")
+    @Excel(name = "BOM状态(1-未核准 2-已核准)", height = 20, width = 30,orderNum="") 
     @Column(name = "bom_status")
-    @ApiModelProperty(name = "bomStatus", value = "BOM状态(1-未核准 2-已核准)")
     private Byte bomStatus;
-
-    /**
-     * 组织id
-     */
-    @ApiModelProperty(name = "organizationId", value = "组织id")
-    @Column(name = "org_id")
-    private Long organizationId;
-
-    /**
-     * 备注
-     */
-    @ApiModelProperty(name = "remark", value = "备注")
-    @Column(name = "remark")
-    private String remark;
 
     /**
      * 状态（0、无效 1、有效）
      */
-    @ApiModelProperty(name = "status", value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态", height = 20, width = 30, replace = {"无效_0", "有效_1"})
-    @Column(name = "status")
-    private Integer status;
+    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
+    private Byte status;
+
+    private String remark;
 
     /**
-     * 父BOM ID
+     * 组织id
      */
-    @Column(name = "parent_bom_id")
-    @ApiModelProperty(name = "parentBomId", value = "父BOM ID")
-    private Long parentBomId;
+    @ApiModelProperty(name="orgId",value = "组织id")
+    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
+    @Column(name = "org_id")
+    private Long orgId;
 
     /**
      * 创建人ID
      */
+    @ApiModelProperty(name="createUserId",value = "创建人ID")
+    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
-    @ApiModelProperty(name = "createUserId", value = "创建人ID")
     private Long createUserId;
 
     /**
      * 创建时间
      */
+    @ApiModelProperty(name="createTime",value = "创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
-    @ApiModelProperty(name = "createTime", value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30, exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
      * 修改人ID
      */
+    @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
+    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
-    @ApiModelProperty(name = "modifiedUserId", value = "修改人ID")
     private Long modifiedUserId;
 
     /**
      * 修改时间
      */
+    @ApiModelProperty(name="modifiedTime",value = "修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
-    @ApiModelProperty(name = "modifiedTime", value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30, exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**
      * 逻辑删除（0、删除 1、正常）
      */
+    @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
-    @ApiModelProperty(name = "isDelete", value = "逻辑删除")
     private Byte isDelete;
 
-    /**
-     * 扩展字段1
-     */
     private String option1;
 
-    /**
-     * 扩展字段2
-     */
     private String option2;
 
-    /**
-     * 扩展字段3
-     */
     private String option3;
 
-    /*    @ApiModelProperty(name = "baseProductBomDets",value = "产品BOM明细")
-        @Transient
-        private List<SmtProductBomDet> baseProductBomDets;*/
+    private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(name = "baseProductBoms", value = "产品BOM集合")
+    @ApiModelProperty(name = "baseProductBomDets", value = "产品BOM集合")
     @Transient
-    private List<BaseProductBomDto> baseProductBomDtos;
+    private List<BaseProductBomDetDto> baseProductBomDetDtos;
 }

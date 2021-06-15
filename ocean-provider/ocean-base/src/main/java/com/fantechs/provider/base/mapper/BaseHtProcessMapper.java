@@ -5,7 +5,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
 import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseHtProcessMapper extends MyMapper<BaseHtProcess> {
-    List<BaseHtProcess> findHtList(SearchBaseProcess searchBaseProcess);
+    List<BaseHtProcess> findHtList(Map<String, Object> map);
 }
