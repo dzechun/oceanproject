@@ -450,8 +450,12 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
                     baseProductBomDetDtos = baseProductBomDetMapper.findNextLevelProductBomDet(baseProductBom.getProductBomId());
             }
         }
-        if(StringUtils.isEmpty(list))  throw new BizErrorException("未查询到对应的产品bom");
-        BaseProductBomDto dto = list.get(0);
+        BaseProductBomDto dto = null;
+        if(StringUtils.isEmpty(list)) {
+            throw new BizErrorException("未查询到对应的产品bom");
+        }else{
+            dto = list.get(0);
+        }
         dto.setBaseProductBomDetDtos(baseProductBomDetDtos);
         return dto;
     }

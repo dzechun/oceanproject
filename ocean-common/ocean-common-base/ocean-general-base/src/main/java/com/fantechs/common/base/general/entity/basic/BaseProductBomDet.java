@@ -201,4 +201,11 @@ public class BaseProductBomDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "baseProductBomDets", value = "产品BOM集合")
     @Transient
     private List<BaseProductBomDet> baseProductBomDets;
+
+    /**
+     * 父BomDetID
+     */
+    @ApiModelProperty(name="parentProductBomDetId",value = "父BomDetID")
+    @Transient
+    private Long parentProductBomDetId;
 }

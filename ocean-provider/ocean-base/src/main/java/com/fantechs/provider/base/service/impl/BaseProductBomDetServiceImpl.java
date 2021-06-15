@@ -24,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by wcz on 2020/10/12.
@@ -49,10 +47,6 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        BaseProductBom baseProductBom = baseProductBomMapper.selectByPrimaryKey(baseProductBomDet.getProductBomId());
-        if (baseProductBom.getMaterialId().equals(baseProductBomDet.getMaterialId())) {
-            throw new BizErrorException("零件料号不能选择产品料号");
-        }
 
         Example example = new Example(BaseProductBomDet.class);
         Example.Criteria criteria = example.createCriteria();
@@ -62,16 +56,35 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
         if (StringUtils.isNotEmpty(baseProductBomDets)) {
             throw new BizErrorException("零件料号已存在");
         }
+        example.clear();
 
-        if (baseProductBom.getMaterialId().equals(baseProductBomDet.getSubMaterialId()) || baseProductBomDet.getMaterialId().equals(baseProductBomDet.getSubMaterialId())) {
-            throw new BizErrorException("代用料号不能选择产品料号或零件料号");
+        //在最下级的bomDet添加子集
+        if((StringUtils.isEmpty(baseProductBomDet.getProductBomId())|| baseProductBomDet.getProductBomId() ==0 )
+                && StringUtils.isNotEmpty(baseProductBomDet.getParentProductBomDetId())) {
+            BaseProductBomDet parentbaseProductBomDet = baseProductBomDetMapper.selectByPrimaryKey(baseProductBomDet.getParentProductBomDetId());
+            BaseProductBom productBom = new BaseProductBom();
+            productBom.setProductBomVersion("0");
+            productBom.setMaterialId(parentbaseProductBomDet.getMaterialId());
+            productBom.setStatus((byte)1);
+            productBom.setCreateUserId(currentUser.getUserId());
+            productBom.setCreateTime(new Date());
+            productBom.setModifiedUserId(currentUser.getUserId());
+            productBom.setModifiedTime(new Date());
+            productBom.setOrgId(currentUser.getOrganizationId());
+            baseProductBomMapper.insertUseGeneratedKeys(productBom);
+            baseProductBomDet.setProductBomId(productBom.getProductBomId());
+            parentbaseProductBomDet.setIfHaveLowerLevel((byte)1);
+            baseProductBomDetMapper.updateByPrimaryKey(parentbaseProductBomDet);
         }
+
         baseProductBomDet.setCreateUserId(currentUser.getUserId());
         baseProductBomDet.setCreateTime(new Date());
         baseProductBomDet.setModifiedUserId(currentUser.getUserId());
         baseProductBomDet.setModifiedTime(new Date());
         baseProductBomDet.setOrgId(currentUser.getOrganizationId());
         baseProductBomDet.setIfHaveLowerLevel((byte)0);
+        if(StringUtils.isEmpty(baseProductBomDet.getProductBomId())|| baseProductBomDet.getProductBomId() ==0)
+            throw new BizErrorException("保存失败，未找到bomId");
         baseProductBomDetMapper.insertUseGeneratedKeys(baseProductBomDet);
 
         //新增产品BOM详细历史信息
