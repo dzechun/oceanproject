@@ -71,6 +71,7 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
         baseProductBomDet.setModifiedUserId(currentUser.getUserId());
         baseProductBomDet.setModifiedTime(new Date());
         baseProductBomDet.setOrgId(currentUser.getOrganizationId());
+        baseProductBomDet.setIfHaveLowerLevel((byte)0);
         baseProductBomDetMapper.insertUseGeneratedKeys(baseProductBomDet);
 
         //新增产品BOM详细历史信息

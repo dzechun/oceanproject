@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -144,5 +145,5 @@ public class BaseProductBom extends ValidGroup implements Serializable {
 
     @ApiModelProperty(name = "baseProductBomDets", value = "产品BOM集合")
     @Transient
-    private List<BaseProductBomDet> baseProductBomDets;
+    private List<BaseProductBomDetDto> baseProductBomDetDtos;
 }
