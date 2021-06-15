@@ -103,7 +103,15 @@
       <if test="partBarcode != null and partBarcode != ''">
         and mskpr.barcode_code = #{partBarcode}
       </if>
+      <if test="workOrderIds != null">
+        <foreach collection="workOrderIds" index="index" item="item" open="and mskpr.work_order_id in (" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
     </where>
+    <if test="workOrderIds != null">
+      GROUP BY mskpr.material_id
+    </if>
   </select>
   
 </mapper>
