@@ -23,6 +23,8 @@ import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsInspectionOrderDetSampleService;
+import com.fantechs.provider.qms.service.QmsInspectionOrderDetService;
+import com.fantechs.provider.qms.service.QmsInspectionOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,8 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Resource
     private QmsInspectionOrderMapper qmsInspectionOrderMapper;
     @Resource
+    private QmsInspectionOrderService qmsInspectionOrderService;
+    @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
     private SFCFeignApi sfcFeignApi;
@@ -54,6 +58,11 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
 
     @Override
     public List<QmsInspectionOrderDetSample> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId",user.getOrganizationId());
         return qmsInspectionOrderDetSampleMapper.findList(map);
     }
 
@@ -112,14 +121,14 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         Map<String,Object> map = new HashMap();
         map.put("inspectionOrderDetId",inspectionOrderDetId);
         QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.findList(map).get(0);
-        QmsInspectionOrder inspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDet.getInspectionOrderId());
-        //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
-        if(qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
-            BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), inspectionOrder.getOrderQty()).getData();
-            if(StringUtils.isNotEmpty(baseSampleProcess)) {
-                qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
-                qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
-                qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+        QmsInspectionOrder inspectionOrder = qmsInspectionOrderService.selectByKey(qmsInspectionOrderDet.getInspectionOrderId());
+
+        //赋值Qty、AC、RE
+        for (QmsInspectionOrderDet inspectionOrderDet:inspectionOrder.getQmsInspectionOrderDets()){
+            if(inspectionOrderDetId.equals(inspectionOrderDet.getInspectionOrderDetId())){
+                qmsInspectionOrderDet.setSampleQty(inspectionOrderDet.getSampleQty());
+                qmsInspectionOrderDet.setAcValue(inspectionOrderDet.getAcValue());
+                qmsInspectionOrderDet.setReValue(inspectionOrderDet.getReValue());
             }
         }
 
