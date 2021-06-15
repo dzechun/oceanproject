@@ -141,7 +141,6 @@ public class BaseProductBomController {
     @PostMapping("/addOrUpdate")
     public ResponseEntity<BaseProductBom> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProductBom baseProductBom) {
         BaseProductBom baseProductBoms = baseProductBomService.addOrUpdate(baseProductBom);
-        System.out.println("===return====="+baseProductBoms);
         return ControllerUtil.returnDataSuccess(baseProductBoms, StringUtils.isEmpty(baseProductBoms) ? 0 : 1);
     }
 }

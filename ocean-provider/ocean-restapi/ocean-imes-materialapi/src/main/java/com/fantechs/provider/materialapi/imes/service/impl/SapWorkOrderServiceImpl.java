@@ -2,6 +2,7 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
@@ -9,6 +10,7 @@ import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderBomApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
@@ -61,7 +63,11 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 mesPmWorkOrder.setWorkOrderQty(new BigDecimal(restapiWorkOrderApiDto.getGAMNG()));
             //暂时注释、目前还未同步产线
             //mesPmWorkOrder.setProLineId(getProLine(restapiWorkOrderApiDto.getFEVOR()));
-            mesPmWorkOrder.setOrgId((long)1000);
+            SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+            searchBaseOrganization.setOrganizationName("雷赛");
+            ResponseEntity<List<BaseOrganizationDto>> organizationList = baseFeignApi.findOrganizationList(searchBaseOrganization);
+            if(StringUtils.isEmpty(organizationList.getData()))  throw new BizErrorException("未查询到对应组织");
+            mesPmWorkOrder.setOrgId((organizationList.getData().get(0).getOrganizationId()));
             pmFeignApi.updateById(mesPmWorkOrder);
 
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
@@ -80,7 +86,9 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
             bom.setOption1(restapiWorkOrderApiDto.getRSPOS());
             bom.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
          //   bom.setPartMaterialId(getMaterialId(restapiWorkOrderApiDto.getMATNR()));
-            bom.setOrgId((long)1000);
+            bom.setOrgId((organizationList.getData().get(0).getOrganizationId()));
+
+
             if (StringUtils.isEmpty(mesPmWorkOrderBomList.getData())) {
                 if (StringUtils.isEmpty(bom.getCreateTime())) bom.setCreateTime(new Date());
                 pmFeignApi.addMesPmWorkOrderBom(bom);

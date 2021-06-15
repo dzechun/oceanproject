@@ -3,6 +3,7 @@ package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProLineImport;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
@@ -132,4 +133,10 @@ public class BaseProLineController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+   /* @ApiOperation("接口添加或更新物料信息")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "物料信息集合",required = true)@RequestBody List<BaseMaterial> baseMaterials){
+        return ControllerUtil.returnCRUD(baseMaterialService.batchUpdate(baseMaterials));
+    }*/
 }

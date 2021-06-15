@@ -409,11 +409,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             criteria.andEqualTo("productBomVersion", "0");
         BaseProductBom baseProductBomOld = baseProductBomMapper.selectOneByExample(example);
         //添加组织，后续根据实际情况添加
-        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-        searchBaseOrganization.setOrganizationName("雷赛");
-        List<BaseOrganizationDto> organizationList = baseOrganizationMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
-        if(StringUtils.isEmpty(organizationList))  throw new BizErrorException("未查询到对应组织");
-        baseProductBom.setOrgId((organizationList.get(0).getOrganizationId()));
+        baseProductBom.setOrgId(getOrId());
 
 
         baseProductBom.setStatus((byte)1);
@@ -442,23 +438,25 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
 
         List<BaseProductBomDetDto> baseProductBomDetDtos = null;
         List<BaseProductBomDto> list = null;
-        Map<String,Object> map = new HashMap<String,Object>();
+        SearchBaseProductBom searchProductBom = new SearchBaseProductBom();
         if(StringUtils.isNotEmpty(searchBaseProductBom.getProductBomId())){
             baseProductBomDetDtos = baseProductBomDetMapper.findNextLevelProductBomDet(searchBaseProductBom.getProductBomId());
-            map.put("productBomId",searchBaseProductBom.getProductBomId());
-            list = baseProductBomMapper.findList(map);
+            searchProductBom.setProductBomId(searchBaseProductBom.getProductBomId());
+            list = baseProductBomMapper.findList(ControllerUtil.dynamicConditionByEntity(searchProductBom));
 
         }else if(StringUtils.isNotEmpty(searchBaseProductBom.getProductBomDetId())){
             BaseProductBomDet baseProductBomDet = baseProductBomDetMapper.selectByPrimaryKey(searchBaseProductBom.getProductBomDetId());
             Example example = new Example(BaseProductBom.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("materialId", baseProductBomDet.getMaterialId());
+            criteria.andEqualTo("orgId", getOrId());
             List<BaseProductBom> baseProductBoms = baseProductBomMapper.selectByExample(example);
             for(BaseProductBom baseProductBom : baseProductBoms){
-                if(StringUtils.isEmpty(baseProductBom.getProductBomVersion()))
-                    map.put("productBomId",baseProductBom.getProductBomId());
-                    list = baseProductBomMapper.findList(map);
+                if(StringUtils.isEmpty(baseProductBom.getProductBomVersion()) || "0".equals(baseProductBom.getProductBomVersion())) {
+                    searchProductBom.setProductBomId(baseProductBom.getProductBomId());
+                    list = baseProductBomMapper.findList(ControllerUtil.dynamicConditionByEntity(searchProductBom));
                     baseProductBomDetDtos = baseProductBomDetMapper.findNextLevelProductBomDet(baseProductBom.getProductBomId());
+                }
             }
         }
         BaseProductBomDto dto = null;
@@ -469,5 +467,13 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
         }
         dto.setBaseProductBomDetDtos(baseProductBomDetDtos);
         return dto;
+    }
+
+    public Long getOrId() {
+        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+        searchBaseOrganization.setOrganizationName("雷赛");
+        List<BaseOrganizationDto> organizationList = baseOrganizationMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
+        if(StringUtils.isEmpty(organizationList))  throw new BizErrorException("未查询到对应组织");
+        return organizationList.get(0).getOrganizationId();
     }
 }
