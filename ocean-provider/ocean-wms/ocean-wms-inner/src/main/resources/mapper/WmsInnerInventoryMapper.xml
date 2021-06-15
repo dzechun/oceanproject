@@ -168,6 +168,9 @@ wii.storage_id,
     <if test="warehouseId!=null and warehouseId!=''">
       and wii.warehouse_id = #{warehouseId}
     </if>
+      <if test="orgId!=null and orgId!=''">
+        and wii.org_id = #{orgId}
+      </if>
     </where>
     order by wii.create_time desc
   </select>

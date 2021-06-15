@@ -20,4 +20,6 @@ public class SearchWmsOutDespatchOrder extends BaseQuery implements Serializable
     @ApiModelProperty("封条号")
     private String sealNumber;
     private boolean isPda;
+
+    private Long orgId;
 }

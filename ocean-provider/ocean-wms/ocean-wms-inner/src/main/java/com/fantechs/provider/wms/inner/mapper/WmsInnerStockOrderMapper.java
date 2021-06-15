@@ -17,5 +17,5 @@ public interface WmsInnerStockOrderMapper extends MyMapper<WmsInnerStockOrder> {
 
     String findWarehouseName(@Param("warehouseId")Long warehouseId);
 
-    Long findStorageId(@Param("storageName")String storageName);
+    Long findMaterialId(@Param("materialCode")String materialCode);
 }

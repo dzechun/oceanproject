@@ -41,6 +41,8 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     public List<WmsInnerInventoryDto> findList(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
         return wmsInnerInventoryMapper.findList(map);
     }
 

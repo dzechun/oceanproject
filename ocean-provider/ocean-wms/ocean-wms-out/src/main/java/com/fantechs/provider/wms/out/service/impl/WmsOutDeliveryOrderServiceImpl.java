@@ -108,7 +108,9 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
 
         //出库单
-        wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("XSCK-"));
+        if(StringUtils.isEmpty(wmsOutDeliveryOrder.getDeliveryOrderCode())){
+            wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("XSCK-"));
+        }
         wmsOutDeliveryOrder.setCreateTime(new Date());
         wmsOutDeliveryOrder.setCreateUserId(user.getUserId());
         wmsOutDeliveryOrder.setModifiedTime(new Date());

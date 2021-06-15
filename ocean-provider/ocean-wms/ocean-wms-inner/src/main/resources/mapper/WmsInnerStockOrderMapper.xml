@@ -24,6 +24,8 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto">
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
@@ -52,10 +54,13 @@ wiv.modified_time
     FROM wms_inner_stock_order wiv
     LEFT JOIN base_material_owner bmo ON wiv.material_owner_id=bmo.material_owner_id
     LEFT JOIN base_warehouse bw ON wiv.warehouse_id = bw.warehouse_id
-    LEFT JOIN ocean.sys_user su  ON wiv.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON wiv.modified_user_id = sus.user_id
+    LEFT JOIN ocean_v2.sys_user su  ON wiv.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON wiv.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wiv.org_id = bo.organization_id
     <where>
+        <if test="orgId!=null and orgId!=''">
+          and wiv.org_id = #{orgId}
+        </if>
       <if test="stockOrderCode !=null and stockOrderCode!=''">
         and wiv.stock_order_code like CONCAT('%',#{stockOrderCode},'%')
       </if>
@@ -92,7 +97,7 @@ order by wiv.create_time desc
   <select id="findWarehouseName" resultType="java.lang.String">
     select warehouse_name FROM base_warehouse where warehouse_id = #{warehouseId}
   </select>
-  <select id="findStorageId" resultType="java.lang.Long">
-    select storage_id From base_storage where storage_name = #{storageName}
+  <select id="findMaterialId" resultType="java.lang.Long">
+    select material_id From base_material where material_code = #{materialCode}
   </select>
 </mapper>
