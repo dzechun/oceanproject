@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseProductBomDet;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductBomDet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBomDet;
@@ -103,9 +104,9 @@ public class BaseProductBomDetController {
 
     @ApiOperation("查询下级明细")
     @PostMapping("/findNextLevelProductBomDet")
-    public ResponseEntity<List<BaseProductBomDet>> findNextLevelProductBomDet(@ApiParam(value = "查询对象") @RequestBody SearchBaseProductBomDet searchBaseProductBomDet) {
+    public ResponseEntity<List<BaseProductBomDetDto>> findNextLevelProductBomDet(@ApiParam(value = "查询对象") @RequestBody SearchBaseProductBomDet searchBaseProductBomDet) {
         Page<Object> page = PageHelper.startPage(searchBaseProductBomDet.getStartPage(), searchBaseProductBomDet.getPageSize());
-        List<BaseProductBomDet> list = baseProductBomDetService.findNextLevelProductBomDet(searchBaseProductBomDet.getProductBomId());
+        List<BaseProductBomDetDto> list = baseProductBomDetService.findNextLevelProductBomDet(searchBaseProductBomDet);
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 

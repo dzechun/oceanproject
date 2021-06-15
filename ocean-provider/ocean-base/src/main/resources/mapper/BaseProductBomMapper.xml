@@ -67,7 +67,8 @@
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select <include refid="Base_Column_List"></include>,
-        sm.material_code,sm.material_name,sm.material_version,sm.material_desc,
+        sm.material_code as material_code,sm.material_name as material_name,sm.material_version as material_version,
+        sm.material_desc as material_desc,
         u.user_name as create_user_name,s.user_name as modified_user_name,
         bo.organization_name
         from base_product_bom spb

@@ -2,7 +2,9 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProductBom;
 import com.fantechs.common.base.general.entity.basic.BaseProductBomDet;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductBomDet;
@@ -46,7 +48,6 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
 
         BaseProductBom baseProductBom = baseProductBomMapper.selectByPrimaryKey(baseProductBomDet.getProductBomId());
         if (baseProductBom.getMaterialId().equals(baseProductBomDet.getMaterialId())) {
@@ -152,10 +153,24 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
     }
 
     @Override
-    public List<BaseProductBomDet> findNextLevelProductBomDet(Long productBomId) {
-        if(StringUtils.isEmpty(productBomId))  throw new BizErrorException("产品bomId 不能为空");
-        List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.findNextLevelProductBomDet(productBomId);
-        return baseProductBomDets;
+    public List<BaseProductBomDetDto> findNextLevelProductBomDet(SearchBaseProductBomDet searchBaseProductBomDet) {
+        if(StringUtils.isEmpty(searchBaseProductBomDet.getProductBomId()) && StringUtils.isEmpty(searchBaseProductBomDet.getProductBomDetId()))
+            throw new BizErrorException("产品bomId、产品detId不能同时为空");
+        List<BaseProductBomDetDto> baseProductBomDetDtos = null;
+        if(StringUtils.isNotEmpty(searchBaseProductBomDet.getProductBomId())){
+            baseProductBomDetDtos = baseProductBomDetMapper.findNextLevelProductBomDet(searchBaseProductBomDet.getProductBomId());
+        }else if(StringUtils.isNotEmpty(searchBaseProductBomDet.getProductBomDetId())){
+            BaseProductBomDet baseProductBomDet = baseProductBomDetMapper.selectByPrimaryKey(searchBaseProductBomDet.getProductBomDetId());
+            Example example = new Example(BaseProductBom.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("materialId", baseProductBomDet.getMaterialId());
+            List<BaseProductBom> baseProductBoms = baseProductBomMapper.selectByExample(example);
+            for(BaseProductBom baseProductBom : baseProductBoms){
+                if(StringUtils.isEmpty(baseProductBom.getProductBomVersion()))
+                    baseProductBomDetDtos = baseProductBomDetMapper.findNextLevelProductBomDet(baseProductBom.getProductBomId());
+            }
+        }
+        return baseProductBomDetDtos;
     }
 
 
@@ -174,7 +189,6 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
         baseProductBomDet.setOrgId((long)1000);
         baseProductBomDet.setCreateTime(new Date());
         baseProductBomDet.setModifiedTime(new Date());
-        System.out.println("----baseProductBomDet---"+baseProductBomDet);
         int i = baseProductBomDetMapper.insertSelective(baseProductBomDet);
         //新增产品BOM详细历史信息
         /*BaseHtProductBomDet baseHtProductBomDet = new BaseHtProductBomDet();
@@ -188,19 +202,18 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
     @Override
     public int batchApiDelete(Long productBomId) {
         String ids = null;
-        List<BaseProductBomDet> baseProductBomDets = this.findNextLevelProductBomDet(productBomId);
+        List<BaseProductBomDetDto> baseProductBomDetDtos = baseProductBomDetMapper.findNextLevelProductBomDet(productBomId);
 
-        for(BaseProductBomDet  baseProductBomDet : baseProductBomDets){
-            if (StringUtils.isEmpty(baseProductBomDet)){
+        for(BaseProductBomDetDto  baseProductBomDetDto : baseProductBomDetDtos){
+            if (StringUtils.isEmpty(baseProductBomDetDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
             if(ids == null){
-                ids =  baseProductBomDet.getProductBomDetId().toString();
+                ids =  baseProductBomDetDto.getProductBomDetId().toString();
             }else{
-                ids = ids +","+ baseProductBomDet.getProductBomDetId();
+                ids = ids +","+ baseProductBomDetDto.getProductBomDetId();
             }
         }
-        System.out.println("-----ids----"+ids);
         return baseProductBomDetMapper.deleteByIds(ids);
     }
 }
