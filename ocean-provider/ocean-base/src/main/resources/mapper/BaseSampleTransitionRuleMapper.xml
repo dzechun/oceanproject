@@ -60,6 +60,9 @@
       <if test="sampleTransitionRuleDesc != null and sampleTransitionRuleDesc!=''">
         and bstr.sample_transition_rule_desc like CONCAT('%', #{sampleTransitionRuleDesc}, '%')
       </if>
+      <if test="orgId!=null">
+        and bstr.org_id=#{orgId}
+      </if>
     </where>
     order by bstr.create_time desc
   </select>

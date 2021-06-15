@@ -54,7 +54,7 @@
     bl.is_default_label
   </sql>
 
-    <select id="findList" resultMap="BaseResultMap">
+    <select id="findList" parameterType="map" resultMap="BaseResultMap">
         SELECT<include refid="Base_Column_List"/>,blc.label_category_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM fantech_imes_v2.base_ht_label bl
         LEFT JOIN fantech_imes_v2.base_label_category blc ON blc.`label_category_id`= bl.label_category_id
         LEFT JOIN ocean_v2.sys_user su ON bl.create_user_id = su.user_id
@@ -78,6 +78,9 @@
             </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(bl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="orgId!=null">
+                and bl.org_id=#{orgId}
             </if>
         </where>
     </select>

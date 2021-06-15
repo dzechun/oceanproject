@@ -15,7 +15,7 @@ import java.util.Map;
 
 public interface BaseProductProcessRouteService extends IService<BaseProductProcessRoute> {
 
-    List<BaseProductProcessRoute> findList(SearchBaseProductProcessRoute searchBaseProductProcessRoute);
+    List<BaseProductProcessRoute> findList(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<BaseProductProcessRouteImport> baseProductProcessRouteImports);
 }

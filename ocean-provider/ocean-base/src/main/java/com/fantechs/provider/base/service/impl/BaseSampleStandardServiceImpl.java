@@ -36,6 +36,11 @@ public class BaseSampleStandardServiceImpl extends BaseService<BaseSampleStandar
 
     @Override
     public List<BaseSampleStandardDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         return baseSampleStandardMapper.findList(map);
     }
 
@@ -59,7 +64,6 @@ public class BaseSampleStandardServiceImpl extends BaseService<BaseSampleStandar
         baseSampleStandard.setModifiedTime(new Date());
         baseSampleStandard.setModifiedUserId(user.getUserId());
         baseSampleStandard.setStatus((byte) 1);
-        baseSampleStandard.setOrgId(user.getUserId());
         baseSampleStandard.setOrgId(user.getOrganizationId());
         baseSampleStandardMapper.insertUseGeneratedKeys(baseSampleStandard);
 
@@ -86,7 +90,7 @@ public class BaseSampleStandardServiceImpl extends BaseService<BaseSampleStandar
 
         baseSampleStandard.setModifiedTime(new Date());
         baseSampleStandard.setModifiedUserId(user.getUserId());
-        baseSampleStandard.setOrgId(user.getUserId());
+        baseSampleStandard.setOrgId(user.getOrganizationId());
         baseSampleStandardMapper.updateByPrimaryKeySelective(baseSampleStandard);
 
         BaseHtSampleStandard baseHtSampleStandard = new BaseHtSampleStandard();

@@ -70,7 +70,7 @@ public class BaseLabelCategoryController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseLabelCategoryDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelCategory searchBaseLabelCategory) {
         Page<Object> page = PageHelper.startPage(searchBaseLabelCategory.getStartPage(), searchBaseLabelCategory.getPageSize());
-        List<BaseLabelCategoryDto> list = baseLabelCategoryService.findList(searchBaseLabelCategory);
+        List<BaseLabelCategoryDto> list = baseLabelCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabelCategory));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -85,7 +85,7 @@ public class BaseLabelCategoryController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtLabelCategory>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelCategory searchBaseLabelCategory) {
         Page<Object> page = PageHelper.startPage(searchBaseLabelCategory.getStartPage(), searchBaseLabelCategory.getPageSize());
-        List<BaseHtLabelCategory> list = baseHtLabelCategoryService.findList(searchBaseLabelCategory);
+        List<BaseHtLabelCategory> list = baseHtLabelCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabelCategory));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -93,7 +93,7 @@ public class BaseLabelCategoryController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseLabelCategory searchBaseLabelCategory){
-    List<BaseLabelCategoryDto> list = baseLabelCategoryService.findList(searchBaseLabelCategory);
+    List<BaseLabelCategoryDto> list = baseLabelCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabelCategory));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "标签类别信息", BaseLabelCategoryDto.class, "标签类别.xls", response);

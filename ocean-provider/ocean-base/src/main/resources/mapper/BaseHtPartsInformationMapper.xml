@@ -56,6 +56,9 @@
       <if test="partsInformationName!=null and partsInformationName!=''">
         and bhpi.parts_information_name like CONCAT('%', #{partsInformationName}, '%')
       </if>
+      <if test="orgId!=null">
+        and bhpi.org_id=#{orgId}
+      </if>
     </where>
     order by modified_time desc
   </select>

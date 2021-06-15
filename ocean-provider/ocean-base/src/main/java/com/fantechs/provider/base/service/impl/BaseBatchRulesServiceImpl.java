@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -35,8 +36,13 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
     private BaseHtBatchRulesMapper baseHtBatchRulesMapper;
 
     @Override
-    public List<BaseBatchRulesDto> findList(SearchBaseBatchRules searchBaseBatchRules) {
-        return baseBatchRulesMapper.findList(searchBaseBatchRules);
+    public List<BaseBatchRulesDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseBatchRulesMapper.findList(map);
     }
 
     @Override
@@ -49,6 +55,7 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
+        record.setOrgId(sysUser.getOrganizationId());
         int num = baseBatchRulesMapper.insertUseGeneratedKeys(record);
 
         //添加履历
@@ -63,6 +70,7 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
         SysUser sysUser = currentUser();
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
+        entity.setOrgId(sysUser.getOrganizationId());
         int num = baseBatchRulesMapper.updateByPrimaryKeySelective(entity);
 
         //添加履历

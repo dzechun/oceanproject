@@ -135,7 +135,7 @@ public class BaseMaterialController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtMaterial>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseMaterial searchBaseMaterial){
         Page<Object> page = PageHelper.startPage(searchBaseMaterial.getStartPage(), searchBaseMaterial.getPageSize());
-        List<BaseHtMaterial> htMaterials = baseHtMaterialService.findHtList(searchBaseMaterial);
+        List<BaseHtMaterial> htMaterials = baseHtMaterialService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterial));
         return ControllerUtil.returnDataSuccess(htMaterials,(int)page.getTotal());
     }
 

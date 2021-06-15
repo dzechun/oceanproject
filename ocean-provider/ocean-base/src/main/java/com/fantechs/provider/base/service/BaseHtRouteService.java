@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseRoute;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -13,5 +14,5 @@ import java.util.List;
 
 public interface BaseHtRouteService extends IService<BaseHtRoute> {
 
-    List<BaseHtRoute> findList(SearchBaseRoute searchBaseRoute);
+    List<BaseHtRoute> findList(Map<String, Object> map);
 }

@@ -1,14 +1,20 @@
 package com.fantechs.provider.base.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductProcessRoute;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseHtProductProcessRouteMapper;
 import com.fantechs.provider.base.service.BaseHtProductProcessRouteService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -21,8 +27,13 @@ public class BaseHtProductProcessRouteServiceImpl extends BaseService<BaseHtProd
     private BaseHtProductProcessRouteMapper baseHtProductProcessRouteMapper;
 
     @Override
-    public List<BaseHtProductProcessRoute> findList(SearchBaseProductProcessRoute searchBaseProductProcessRoute) {
-        List<BaseHtProductProcessRoute> list = baseHtProductProcessRouteMapper.findList(searchBaseProductProcessRoute);
+    public List<BaseHtProductProcessRoute> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        List<BaseHtProductProcessRoute> list = baseHtProductProcessRouteMapper.findList(map);
         for (BaseHtProductProcessRoute baseHtProductProcessRoute : list) {
             Integer productType = baseHtProductProcessRoute.getProductType();
             if(productType==0){

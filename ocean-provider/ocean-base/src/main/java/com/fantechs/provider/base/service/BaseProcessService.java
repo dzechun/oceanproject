@@ -15,6 +15,6 @@ import java.util.Map;
 
 public interface BaseProcessService extends IService<BaseProcess> {
 
-    List<BaseProcess> findList(SearchBaseProcess searchBaseProcess);
+    List<BaseProcess> findList(Map<String, Object> map);
     Map<String, Object> importExcel(List<BaseProcessImport> baseProcessImports);
 }

@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.basic.BaseMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwnerReWh;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -43,12 +44,18 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
 
     @Override
     public List<BaseMaterialOwnerDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+
         List<BaseMaterialOwnerDto> baseMaterialOwnerDtos = baseMaterialOwnerMapper.findList(map);
         SearchBaseMaterialOwnerReWh searchBaseMaterialOwnerReWh = new SearchBaseMaterialOwnerReWh();
 
         for (BaseMaterialOwnerDto baseMaterialOwnerDto : baseMaterialOwnerDtos) {
             searchBaseMaterialOwnerReWh.setMaterialOwnerId(baseMaterialOwnerDto.getMaterialOwnerId());
-            List<BaseMaterialOwnerReWhDto> baseMaterialOwnerReWhDtos = baseMaterialOwnerReWhMapper.findList(searchBaseMaterialOwnerReWh);
+            List<BaseMaterialOwnerReWhDto> baseMaterialOwnerReWhDtos = baseMaterialOwnerReWhMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialOwnerReWh));
             if (StringUtils.isNotEmpty(baseMaterialOwnerReWhDtos)){
                 baseMaterialOwnerDto.setBaseMaterialOwnerReWhDtos(baseMaterialOwnerReWhDtos);
             }

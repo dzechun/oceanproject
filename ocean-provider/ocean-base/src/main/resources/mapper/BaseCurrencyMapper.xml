@@ -64,6 +64,9 @@
             <if test="status!=null">
                 and sc.status=#{status}
             </if>
+            <if test="orgId!=null">
+                and sc.org_id=#{orgId}
+            </if>
         </where>
         order by sc.create_time desc
     </select>

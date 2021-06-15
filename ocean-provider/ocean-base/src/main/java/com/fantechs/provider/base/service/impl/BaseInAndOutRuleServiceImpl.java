@@ -49,6 +49,11 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
 
     @Override
     public List<BaseInAndOutRule> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         List<BaseInAndOutRule> baseInAndOutRules = baseInAndOutRuleMapper.findList(map);
         SearchBaseInAndOutRuleDet searchBaseInAndOutRuleDet = new SearchBaseInAndOutRuleDet();
 

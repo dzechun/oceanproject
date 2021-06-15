@@ -92,6 +92,9 @@
       <if test="status!=null">
         and bhc.status = #{status}
       </if>
+      <if test="orgId!=null">
+        and bhc.org_id=#{orgId}
+      </if>
     </where>
     order by bhc.modified_time desc
   </select>

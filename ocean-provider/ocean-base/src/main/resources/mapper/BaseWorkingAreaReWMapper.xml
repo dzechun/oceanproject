@@ -44,6 +44,9 @@
             <if test="workerId != null">
                 AND bwarw.worker_id = #{workerId}
             </if>
+            <if test="orgId!=null">
+                and bwarw.org_id=#{orgId}
+            </if>
         </where>
     </select>
 </mapper>

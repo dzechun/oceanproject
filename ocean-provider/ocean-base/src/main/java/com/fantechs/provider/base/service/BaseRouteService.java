@@ -16,7 +16,7 @@ import java.util.Map;
 
 public interface BaseRouteService extends IService<BaseRoute> {
 
-    List<BaseRoute> findList(SearchBaseRoute searchBaseRoute);
+    List<BaseRoute> findList(Map<String, Object> map);
 
     //根据工艺路线是否被修改进行操作（有修改则做新增操作，无修改则不操作）
     int addOrUpdateRoute(BaseRoute baseRoute);

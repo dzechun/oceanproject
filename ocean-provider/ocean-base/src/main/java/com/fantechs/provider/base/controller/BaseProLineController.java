@@ -54,7 +54,7 @@ public class BaseProLineController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseProLine>> selectProLines(@RequestBody(required = false) SearchBaseProLine searchBaseProLine){
         Page<Object> page = PageHelper.startPage(searchBaseProLine.getStartPage(), searchBaseProLine.getPageSize());
-        List<BaseProLine> baseProLines = baseProLineService.findList(searchBaseProLine);
+        List<BaseProLine> baseProLines = baseProLineService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProLine));
         return ControllerUtil.returnDataSuccess(baseProLines,(int)page.getTotal());
     }
 
@@ -92,7 +92,7 @@ public class BaseProLineController {
     @ApiOperation(value = "导出生产线信息excel",notes = "导出生产线信息excel",produces = "application/octet-stream")
     public void exportProLines(HttpServletResponse response, @ApiParam(value = "查询对象")
                                @RequestBody(required = false) SearchBaseProLine searchBaseProLine){
-        List<BaseProLine> list = baseProLineService.findList(searchBaseProLine);
+        List<BaseProLine> list = baseProLineService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProLine));
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "生产线信息导出", "生产线信息", BaseProLine.class, "生产线信息.xls", response);
@@ -105,7 +105,7 @@ public class BaseProLineController {
     @ApiOperation(value = "根据条件查询生产线履历信息",notes = "根据条件查询生产线履历信息")
     public ResponseEntity<List<BaseHtProLine>> selectHtProLines(@ApiParam(value = "查询对象")@RequestBody SearchBaseProLine searchBaseProLine) {
         Page<Object> page = PageHelper.startPage(searchBaseProLine.getStartPage(), searchBaseProLine.getPageSize());
-        List<BaseHtProLine> smtHtDepts= baseHtProLineService.selectHtProLines(searchBaseProLine);
+        List<BaseHtProLine> smtHtDepts= baseHtProLineService.selectHtProLines(ControllerUtil.dynamicConditionByEntity(searchBaseProLine));
         return  ControllerUtil.returnDataSuccess(smtHtDepts, (int)page.getTotal());
     }
 

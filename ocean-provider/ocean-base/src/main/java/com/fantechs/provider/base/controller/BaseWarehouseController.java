@@ -70,7 +70,7 @@ public class BaseWarehouseController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseWarehouse>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWarehouse searchBaseWarehouse) {
         Page<Object> page = PageHelper.startPage(searchBaseWarehouse.getStartPage(), searchBaseWarehouse.getPageSize());
-        List<BaseWarehouse> list = baseWarehouseService.findList(searchBaseWarehouse);
+        List<BaseWarehouse> list = baseWarehouseService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWarehouse));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -78,7 +78,7 @@ public class BaseWarehouseController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtWarehouse>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWarehouse searchBaseWarehouse) {
         Page<Object> page = PageHelper.startPage(searchBaseWarehouse.getStartPage(), searchBaseWarehouse.getPageSize());
-        List<BaseHtWarehouse> list = baseHtWarehouseService.findHtList(searchBaseWarehouse);
+        List<BaseHtWarehouse> list = baseHtWarehouseService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseWarehouse));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -91,7 +91,7 @@ public class BaseWarehouseController {
     @ApiOperation(value = "导出仓库信息excel",notes = "导出仓库信息excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                               @RequestBody(required = false) SearchBaseWarehouse searchBaseWarehouse){
-        List<BaseWarehouse> list = baseWarehouseService.findList(searchBaseWarehouse);
+        List<BaseWarehouse> list = baseWarehouseService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWarehouse));
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "导出仓库信息", "仓库信息", BaseWarehouse.class, "仓库信息.xls", response);

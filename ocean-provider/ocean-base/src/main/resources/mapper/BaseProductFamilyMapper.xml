@@ -66,6 +66,9 @@
       <if test="status!=null">
         and bpf.status=#{status}
       </if>
+      <if test="orgId!=null">
+        and bpf.org_id=#{orgId}
+      </if>
     </where>
     order by create_time desc
   </select>

@@ -155,14 +155,19 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
     }
 
     @Override
-    public List<BaseProcess> findList(SearchBaseProcess searchBaseProcess) {
-        List<BaseProcess> baseProcesses = baseProcessMapper.findList(searchBaseProcess);
+    public List<BaseProcess> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        List<BaseProcess> baseProcesses = baseProcessMapper.findList(map);
 
         for (BaseProcess baseProcess : baseProcesses) {
             SearchBaseStaffProcess searchBaseStaffProcess = new SearchBaseStaffProcess();
             searchBaseStaffProcess.setProcessId(baseProcess.getProcessId());
-            searchBaseStaffProcess.setStaffId(searchBaseProcess.getStaffId());
-            List<BaseStaffProcess> baseStaffProcesses = baseStaffProcessMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProcess));
+            searchBaseStaffProcess.setStaffId((Long)map.get("staffId"));
+            List<BaseStaffProcess> baseStaffProcesses = baseStaffProcessMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStaffProcess));
             if (StringUtils.isNotEmpty(baseStaffProcesses)) {
                 BaseStaffProcess baseStaffProcess = baseStaffProcesses.get(0);
                 baseProcess.setEffectiveStartTime(baseStaffProcess.getEffectiveStartTime());

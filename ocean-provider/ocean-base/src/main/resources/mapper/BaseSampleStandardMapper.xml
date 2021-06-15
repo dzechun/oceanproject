@@ -58,6 +58,9 @@
       <if test="status!=null">
         and bss.status=#{status}
       </if>
+      <if test="orgId!=null">
+        and bss.org_id=#{orgId}
+      </if>
     </where>
     order by bss.create_time desc
   </select>

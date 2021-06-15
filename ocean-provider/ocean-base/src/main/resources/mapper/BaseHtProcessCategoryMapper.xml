@@ -66,6 +66,9 @@
           <if test="processCategoryDesc != null and processCategoryDesc != ''">
               and shpc.process_category_desc like CONCAT('%',#{processCategoryDesc},'%')
           </if>
+        <if test="orgId!=null">
+          and shpc.org_id=#{orgId}
+        </if>
       </where>
       order by shpc.modified_time desc
   </select>

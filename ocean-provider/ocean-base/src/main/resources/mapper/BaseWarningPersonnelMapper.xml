@@ -60,6 +60,9 @@
             <if test="warningId!= null">
                 and bwp.warning_id = #{warningId}
             </if>
+            <if test="orgId!=null">
+                and bwp.org_id=#{orgId}
+            </if>
         </where>
     </select>
 

@@ -46,6 +46,9 @@
       <if test="staffId != null and staffId != ''">
         and bsp.staff_id = #{staffId}
       </if>
+        <if test="orgId!=null">
+            and bsp.org_id=#{orgId}
+        </if>
     </where>
   </select>
 

@@ -7,9 +7,10 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseDept;
 import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseDeptMapper extends MyMapper<BaseDept> {
-    List<BaseDept> findList(SearchBaseDept searchBaseDept);
+    List<BaseDept> findList(Map<String, Object> map);
 
     List<BaseDept> findById(Long parentId);
 }

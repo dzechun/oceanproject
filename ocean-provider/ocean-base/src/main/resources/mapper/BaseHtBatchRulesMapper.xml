@@ -63,7 +63,7 @@ bbr.option2,
 bbr.option3
   </sql>
 
-  <select id="findHtList" resultMap="BaseResultMap">
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="BaseColumnMap"/>,bw.warehouse_name,bmo.material_owner_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name FROM base_ht_batch_rules bbr
     left join base_warehouse bw on bbr.warehouse_id = bw.warehouse_id
     left join base_material_owner bmo on bbr.material_owner_id = bmo.material_owner_id
@@ -88,6 +88,9 @@ bbr.option3
       </if>
       <if test="createUserName !='' and createUserName!=null">
         and su.user_name like concat('%',#{createUserName},'%')
+      </if>
+      <if test="orgId!=null">
+        and bbr.org_id=#{orgId}
       </if>
     </where>
     order by bbr.create_time desc

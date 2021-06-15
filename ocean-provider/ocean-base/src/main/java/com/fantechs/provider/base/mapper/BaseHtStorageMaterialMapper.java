@@ -5,7 +5,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMat
 import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseHtStorageMaterialMapper extends MyMapper<BaseHtStorageMaterial> {
-    List<BaseHtStorageMaterial> findHtList(SearchBaseStorageMaterial searchBaseStorageMaterial);
+    List<BaseHtStorageMaterial> findHtList(Map<String, Object> map);
 }

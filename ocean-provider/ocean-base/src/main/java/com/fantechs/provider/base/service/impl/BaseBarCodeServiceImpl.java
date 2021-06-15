@@ -16,6 +16,7 @@ import com.fantechs.common.base.general.entity.basic.BaseBarCode;
 import com.fantechs.common.base.general.entity.basic.BaseBarCodeDet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarCode;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -69,8 +70,13 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
     private Integer port;
 
     @Override
-    public List<BaseBarCodeDto> findList(SearchBaseBarCode searchBaseBarCode) {
-        return baseBarCodeMapper.findList(searchBaseBarCode);
+    public List<BaseBarCodeDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseBarCodeMapper.findList(map);
     }
 
     /**
@@ -87,7 +93,7 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
         //生成规则
         SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
         searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCodeWorkDto.getBarcodeRuleId());
-        List<BaseBarcodeRuleSpecDto> list = baseBarcodeRuleSpecMapper.findList(searchBaseBarcodeRuleSpec);
+        List<BaseBarcodeRuleSpecDto> list = baseBarcodeRuleSpecMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRuleSpec));
         ArrayList<BaseBarcodeRuleSpec> baseBarcodeRuleSpecs = new ArrayList<>();
         if (StringUtils.isNotEmpty(list)){
             for (BaseBarcodeRuleSpecDto baseBarcodeRuleSpecDto : list) {

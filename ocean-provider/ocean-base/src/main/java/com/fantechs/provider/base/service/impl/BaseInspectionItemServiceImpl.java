@@ -43,6 +43,11 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
 
     @Override
     public List<BaseInspectionItem> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         List<BaseInspectionItem> baseInspectionItemList = baseInspectionItemMapper.findList(map);
         SearchBaseInspectionItem searchBaseInspectionItem = new SearchBaseInspectionItem();
 
@@ -59,6 +64,11 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
 
     @Override
     public List<BaseInspectionItem> findDetList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         return baseInspectionItemMapper.findDetList(map);
     }
 

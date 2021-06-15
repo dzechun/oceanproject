@@ -56,7 +56,7 @@
         shppr.option3
     </sql>
 
-    <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute"
+    <select id="findList" parameterType="map"
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
         spm.product_model_code, spm.product_model_name,
@@ -95,6 +95,9 @@
             </if>
             <if test="routeCode != null and routeCode != ''">
                 and sr.route_code like CONCAT('%', #{routeCode}, '%')
+            </if>
+            <if test="orgId!=null">
+                and shppr.org_id=#{orgId}
             </if>
         </where>
         order by shppr.modified_time desc

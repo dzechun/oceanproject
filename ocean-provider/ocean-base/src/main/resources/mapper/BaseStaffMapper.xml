@@ -106,6 +106,9 @@
             <if test="status !=null">
                 and bs.status=#{status}
             </if>
+            <if test="orgId!=null">
+                and bs.org_id=#{orgId}
+            </if>
 
             <if test="searchType==1 and processId!=null and processId!= ''">
                 and bs.staff_id IN (SELECT bsp.staff_id FROM base_staff_process bsp WHERE bsp.process_id=#{processId})

@@ -166,6 +166,9 @@
       <if test="productModelId != null">
         and bmt.product_model_id = #{productModelId}
       </if>
+        <if test="orgId!=null">
+            and bmt.org_id=#{orgId}
+        </if>
     </where>
   </select>
 </mapper>

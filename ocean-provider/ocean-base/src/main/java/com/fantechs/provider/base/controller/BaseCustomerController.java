@@ -65,7 +65,7 @@ public class BaseCustomerController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseCustomer>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseCustomer searchBaseCustomer) {
         Page<Object> page = PageHelper.startPage(searchBaseCustomer.getStartPage(), searchBaseCustomer.getPageSize());
-        List<BaseCustomer> list = baseCustomerService.findList(searchBaseCustomer);
+        List<BaseCustomer> list = baseCustomerService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseCustomer));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -74,7 +74,7 @@ public class BaseCustomerController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                           @RequestBody(required = false) SearchBaseCustomer searchBaseCustomer){
-    List<BaseCustomer> list = baseCustomerService.findList(searchBaseCustomer);
+    List<BaseCustomer> list = baseCustomerService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseCustomer));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出客户信息", "客户信息", BaseCustomer.class, "客户信息.xls", response);

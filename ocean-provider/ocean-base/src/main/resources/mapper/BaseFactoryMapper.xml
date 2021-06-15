@@ -70,6 +70,9 @@
             <if test="status!=null">
                 and sf.status=#{status}
             </if>
+            <if test="orgId!=null">
+                and sf.org_id=#{orgId}
+            </if>
         </where>
         order by create_time desc
     </select>

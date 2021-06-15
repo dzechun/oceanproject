@@ -15,7 +15,7 @@ import java.util.Map;
 
 public interface BaseSupplierService extends IService<BaseSupplier> {
     List<BaseSupplier> findInspectionSupplierList(SearchBaseInspectionExemptedList searchBaseInspectionExemptedList);
-    List<BaseSupplier> findList(SearchBaseSupplier searchBaseSupplier);
+    List<BaseSupplier> findList(Map<String, Object> map);
     Map<String, Object> importExcel(List<BaseSupplierImport> baseSupplierImports, Byte supplierType);
 
     int addOrUpdate (BaseSupplier baseSupplier);

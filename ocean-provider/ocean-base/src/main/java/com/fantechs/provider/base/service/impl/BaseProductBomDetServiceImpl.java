@@ -170,8 +170,13 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
     }
 
     @Override
-    public List<BaseProductBomDet> findList(SearchBaseProductBomDet searchBaseProductBomDet) {
-        return baseProductBomDetMapper.findList(searchBaseProductBomDet);
+    public List<BaseProductBomDet> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseProductBomDetMapper.findList(map);
     }
 
     @Override

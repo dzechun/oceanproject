@@ -95,7 +95,7 @@ public class BaseProductBomController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtProductBom>> findHtList(@ApiParam(value = "查询对象") @RequestBody SearchBaseProductBom searchBaseProductBom) {
         Page<Object> page = PageHelper.startPage(searchBaseProductBom.getStartPage(), searchBaseProductBom.getPageSize());
-        List<BaseHtProductBom> list = baseHtProductBomService.findList(searchBaseProductBom);
+        List<BaseHtProductBom> list = baseHtProductBomService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductBom));
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 

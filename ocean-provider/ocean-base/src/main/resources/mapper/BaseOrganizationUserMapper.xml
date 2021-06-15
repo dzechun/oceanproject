@@ -32,6 +32,9 @@
       <if test="userId!=null and userId!=''">
         and bo.userId=#{userId}
       </if>
+      <if test="orgId!=null">
+        and bou.org_id=#{orgId}
+      </if>
     </where>
   </select>
 </mapper>

@@ -208,7 +208,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
                 if(StringUtils.isNotEmpty(list)){
                     SearchBaseProductBomDet searchProductBomDet = new SearchBaseProductBomDet();
                     searchProductBomDet.setProductBomId(list.get(0).getProductBomId());
-                    List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.findList(searchProductBomDet);
+                    List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchProductBomDet));
                     baseProductBomDet.setBaseProductBomDets(baseProductBomDets);
                     find(baseProductBomDets);
                 }
@@ -218,7 +218,11 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
 
     @Override
     public List<BaseProductBomDto> findList(Map<String,Object> map) {
-
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         //查询指定层级的产品BOM
         List<BaseProductBomDto> smtProductBomDtos = baseProductBomMapper.findList(map);
 

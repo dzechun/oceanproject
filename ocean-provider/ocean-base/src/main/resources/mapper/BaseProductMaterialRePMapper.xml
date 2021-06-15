@@ -74,6 +74,9 @@
       <if test="status!=null">
         and bpmrp.status=#{status}
       </if>
+      <if test="orgId!=null">
+        and bpmrp.org_id=#{orgId}
+      </if>
     </where>
     order by bpmrp.create_time desc
   </select>
