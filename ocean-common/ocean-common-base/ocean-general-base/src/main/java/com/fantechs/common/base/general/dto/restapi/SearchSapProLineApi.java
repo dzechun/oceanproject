@@ -12,12 +12,12 @@ public class SearchSapProLineApi extends BaseQuery implements Serializable {
     /**
      * 开始时间
      */
-    @ApiModelProperty(name="startTime" ,value="开始时间(yyyyMMdd)")
-    private String startTime;
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    private String materialCode;
 
     /**
      * 结束时间
      */
-    @ApiModelProperty(name="endTime" ,value="结束时间(yyyyMMdd)")
-    private String endTime;
+    @ApiModelProperty(name="werks" ,value="工厂")
+    private String werks;
 }

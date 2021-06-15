@@ -2,19 +2,23 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProductBom;
 import com.fantechs.common.base.general.entity.basic.BaseProductBomDet;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductBomDet;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBomDet;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseHtProductBomDetMapper;
+import com.fantechs.provider.base.mapper.BaseOrganizationMapper;
 import com.fantechs.provider.base.mapper.BaseProductBomDetMapper;
 import com.fantechs.provider.base.mapper.BaseProductBomMapper;
 import com.fantechs.provider.base.service.BaseProductBomDetService;
@@ -38,6 +42,10 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
     private BaseHtProductBomDetMapper baseHtProductBomDetMapper;
     @Resource
     private BaseProductBomMapper baseProductBomMapper;
+    @Resource
+    private BaseOrganizationMapper baseOrganizationMapper;
+
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -200,7 +208,13 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
             throw new BizErrorException("零件料号已存在");
         }
         //添加组织，后续根据实际情况添加
-        baseProductBomDet.setOrgId((long)1000);
+
+        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+        searchBaseOrganization.setOrganizationName("雷赛");
+        List<BaseOrganizationDto> organizationList = baseOrganizationMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
+        if(StringUtils.isEmpty(organizationList))  throw new BizErrorException("未查询到对应组织");
+        baseProductBomDet.setOrgId((organizationList.get(0).getOrganizationId()));
+
         baseProductBomDet.setCreateTime(new Date());
         baseProductBomDet.setModifiedTime(new Date());
         int i = baseProductBomDetMapper.insertSelective(baseProductBomDet);

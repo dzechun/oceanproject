@@ -2,16 +2,19 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductBom;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProductBomImport;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBomDet;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -44,6 +47,8 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
     private BaseProLineMapper baseProLineMapper;
     @Resource
     private BaseProcessMapper baseProcessMapper;
+    @Resource
+    private BaseOrganizationMapper baseOrganizationMapper;
 
 
     @Override
@@ -404,7 +409,13 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             criteria.andEqualTo("productBomVersion", "0");
         BaseProductBom baseProductBomOld = baseProductBomMapper.selectOneByExample(example);
         //添加组织，后续根据实际情况添加
-        baseProductBom.setOrgId((long)1000);
+        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+        searchBaseOrganization.setOrganizationName("雷赛");
+        List<BaseOrganizationDto> organizationList = baseOrganizationMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
+        if(StringUtils.isEmpty(organizationList))  throw new BizErrorException("未查询到对应组织");
+        baseProductBom.setOrgId((organizationList.get(0).getOrganizationId()));
+
+
         baseProductBom.setStatus((byte)1);
         baseProductBom.setModifiedTime(new Date());
         if (StringUtils.isNotEmpty(baseProductBomOld)){
