@@ -54,15 +54,17 @@ public class MesPmProducttionKeyIssuesOrderServiceImpl extends BaseService<MesPm
         List<MesPmProducttionKeyIssuesOrder> list = mesPmProducttionKeyIssuesOrderMapper.findList(map);
 
         MesPmProducttionKeyIssuesOrder mesPmProducttionKeyIssuesOrder = new MesPmProducttionKeyIssuesOrder();
+        //不存在数据则新增,存在则直接返回
         if(StringUtils.isEmpty(list)){
-            //不存在数据则新增
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
             searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+            searchMesPmWorkOrder.setCodeQueryMark(1);
             List<MesPmWorkOrderDto> mesPmWorkOrderDtos = mesPmWorkOrderMapper.findList(searchMesPmWorkOrder);
             if(StringUtils.isEmpty(mesPmWorkOrderDtos)){
                 throw new BizErrorException("不存在此工单");
             }
             MesPmWorkOrderDto mesPmWorkOrderDto = mesPmWorkOrderDtos.get(0);
+
             //产前关键事项设值
             mesPmProducttionKeyIssuesOrder.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
             mesPmProducttionKeyIssuesOrder.setMaterialId(mesPmWorkOrderDto.getMaterialId());
@@ -94,11 +96,11 @@ public class MesPmProducttionKeyIssuesOrderServiceImpl extends BaseService<MesPm
                 }
             }
             mesPmProducttionKeyIssuesOrder.setMesPmProducttionKeyIssuesOrderDetList(mesPmProducttionKeyIssuesOrderDets);
+
             //新增
             this.save(mesPmProducttionKeyIssuesOrder);
             mesPmProducttionKeyIssuesOrder = this.PDAFindOne(workOrderCode);
         }else {
-            //存在则直接返回
             mesPmProducttionKeyIssuesOrder = list.get(0);
         }
 
@@ -107,6 +109,12 @@ public class MesPmProducttionKeyIssuesOrderServiceImpl extends BaseService<MesPm
 
     @Override
     public List<MesPmProducttionKeyIssuesOrder> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        map.put("orgId", user.getOrganizationId());
         return mesPmProducttionKeyIssuesOrderMapper.findList(map);
     }
 

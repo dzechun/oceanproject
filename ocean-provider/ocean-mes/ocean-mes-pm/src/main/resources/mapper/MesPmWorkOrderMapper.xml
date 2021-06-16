@@ -48,11 +48,11 @@
     <resultMap id="BomResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProductBomDet">
         <result column="product_bom_det_id" jdbcType="BIGINT" property="productBomDetId"/>
         <result column="product_bom_id" jdbcType="BIGINT" property="productBomId"/>
-        <result column="part_material_id" jdbcType="BIGINT" property="partMaterialId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="sub_material_id" jdbcType="BIGINT" property="subMaterialId"/>
         <result column="process_id" jdbcType="BIGINT" property="processId"/>
-        <result column="quantity" jdbcType="DECIMAL" property="quantity"/>
-        <result column="base_quantity" jdbcType="DECIMAL" property="baseQuantity"/>
+        <result column="usage_qty" jdbcType="DECIMAL" property="usageQty"/>
+        <result column="base_qty" jdbcType="DECIMAL" property="baseQty"/>
         <result column="position" jdbcType="VARCHAR" property="position"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -151,8 +151,11 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-            <if test="workOrderCode!=null and workOrderCode!=''">
+            <if test="workOrderCode!=null and workOrderCode!='' and codeQueryMark != 1">
                 and swo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!='' and codeQueryMark == 1">
+                and swo.work_order_code = #{workOrderCode}
             </if>
             <if test="workOrderId!=null">
                 and swo.work_order_id =#{workOrderId}
