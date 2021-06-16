@@ -66,8 +66,11 @@
     left join ocean_v2.sys_user sus ON mppkio.modified_user_id = sus.user_id
     left join fantech_imes_v2.base_organization bo ON mppkio.org_id = bo.organization_id
     <where>
-      <if test="workOrderCode!=null and workOrderCode!=''">
+      <if test="workOrderCode!=null and workOrderCode!='' and codeQueryMark != 1">
         and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="workOrderCode!=null and workOrderCode!='' and codeQueryMark == 1">
+        and mpwo.work_order_code = #{workOrderCode}
       </if>
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
