@@ -61,6 +61,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
+        record.setOrganizationId(sysUser.getOrganizationId());
         int num = wmsInventoryVerificationMapper.insertUseGeneratedKeys(record);
         //库位盘点/全盘
         if(record.getStockType()==(byte)1 || record.getStockType()==(byte)3){
@@ -85,6 +86,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 inventoryVerificationDet.setCreateTime(new Date());
                 inventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
                 inventoryVerificationDet.setModifiedTime(new Date());
+                inventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
             }
             int res = wmsInventoryVerificationDetMapper.insertList(record.getInventoryVerificationDets());
             if(res<0){
@@ -116,6 +118,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             inventoryVerificationDet.setCreateTime(new Date());
             inventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
             inventoryVerificationDet.setModifiedTime(new Date());
+            inventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
             if(entity.getType()==(byte) 2){
                 inventoryVerificationDet.setStockUserId(sysUser.getUserId());
             }
@@ -155,6 +158,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     wmsInventoryVerificationDet.setCreateUserId(sysUser.getUserId());
                     wmsInventoryVerificationDet.setModifiedTime(new Date());
                     wmsInventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
+                    wmsInventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
+                    wmsInventoryVerificationDet.setPalletCode(wmsInnerInventory.getPalletCode());
+                    wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
+                    wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
                     list.add(wmsInventoryVerificationDet);
                 }
             }
@@ -177,6 +184,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInventoryVerificationDet.setCreateUserId(sysUser.getUserId());
                 wmsInventoryVerificationDet.setModifiedTime(new Date());
                 wmsInventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
+                wmsInventoryVerificationDet.setPalletCode(wmsInnerInventory.getPalletCode());
+                wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
+                wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
                 list.add(wmsInventoryVerificationDet);
             }
         }

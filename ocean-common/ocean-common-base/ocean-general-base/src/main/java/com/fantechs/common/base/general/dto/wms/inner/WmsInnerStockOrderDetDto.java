@@ -50,6 +50,14 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
     @Transient
     @ApiModelProperty(name="workName",value = "作业员")
     private String workName;
+
+    /**
+     * 库位编码
+     */
+    @Transient
+    @ApiModelProperty(name = "storageCode",value = "库位编码")
+    private String storageCode;
+
     /**
      * 组织名称
      */
@@ -72,4 +80,11 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
     private String modifiedUserName;
+
+    /**
+     * 库存状态明细
+     */
+    @Transient
+    @ApiModelProperty(name = "inventoryStatusName",value = "库存状态明细")
+    private String inventoryStatusName;
 }
