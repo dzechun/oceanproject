@@ -120,7 +120,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "订单日期", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "order_date")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @NotNull(message = "订单日期不能为空")
@@ -130,7 +130,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 预计发运日期
      */
     @ApiModelProperty(name="planDespatchDate",value = "预计发运日期")
-    @Excel(name = "预计发运日期", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "预计发运日期", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_despatch_date")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     //@NotNull(message = "预计发运日期不能为空")
@@ -149,7 +149,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 要求到达日期
      */
     @ApiModelProperty(name="demandArriveDate",value = "要求到达日期")
-    @Excel(name = "要求到达日期", height = 20, width = 30,orderNum="7",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "要求到达日期", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "demand_arrive_date")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     //@NotNull(message = "要求到达日期不能为空")
@@ -159,7 +159,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 收货人名称
      */
     @ApiModelProperty(name="consignee",value = "收货人名称")
-    @Excel(name = "收货人名称", height = 20, width = 30,orderNum="10")
+    @Excel(name = "收货人名称", height = 20, width = 30,orderNum="13")
     @Column(name = "consignee")
     private String consignee;
 
@@ -167,7 +167,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 联系人名称
      */
     @ApiModelProperty(name="linkManName",value = "联系人名称")
-    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="11")
+    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="14")
     @Column(name = "link_man_name")
     private String linkManName;
 
@@ -175,7 +175,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 联系人电话
      */
     @ApiModelProperty(name="linkManPhone",value = "联系人电话")
-    @Excel(name = "联系人电话", height = 20, width = 30,orderNum="12")
+    @Excel(name = "联系人电话", height = 20, width = 30,orderNum="15")
     @Column(name = "link_man_phone")
     private String linkManPhone;
 
@@ -183,7 +183,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 传真号码
      */
     @ApiModelProperty(name="faxNumber",value = "传真号码")
-    @Excel(name = "传真号码", height = 20, width = 30,orderNum="13")
+    @Excel(name = "传真号码", height = 20, width = 30,orderNum="16")
     @Column(name = "fax_number")
     private String faxNumber;
 
@@ -191,7 +191,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 邮箱地址
      */
     @ApiModelProperty(name="emailAddress",value = "邮箱地址")
-    @Excel(name = "邮箱地址", height = 20, width = 30,orderNum="14")
+    @Excel(name = "邮箱地址", height = 20, width = 30,orderNum="17")
     @Column(name = "e_mail_address")
     private String emailAddress;
 
@@ -199,7 +199,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 详细地址
      */
     @ApiModelProperty(name="detailedAddress",value = "详细地址")
-    @Excel(name = "详细地址", height = 20, width = 30,orderNum="15")
+    @Excel(name = "详细地址", height = 20, width = 30,orderNum="18")
     @Column(name = "detailed_address")
     private String detailedAddress;
 
@@ -214,7 +214,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 单据状态(1-待发货 2-发货中 3-发货完成)
      */
     @ApiModelProperty(name="orderStatus",value = "单据状态(1-待发货 2-发货中 3-发货完成)")
-    @Excel(name = "单据状态(1-待发货 2-发货中 3-发货完成)", height = 20, width = 30,orderNum="16")
+    @Excel(name = "单据状态(1-待发货 2-发货中 3-发货完成)", height = 20, width = 30,orderNum="19")
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -228,7 +228,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="17")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="20")
     private String remark;
 
     /**
@@ -249,7 +249,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="19",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="22",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -265,7 +265,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="21",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="24",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
