@@ -253,9 +253,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //有差异生成复盘单
             if(wmsInventoryVerification.getProjectType()==(byte)1){
                 //判断是否有差异记录
-                if(list.stream().filter(li->StringUtils.isNotEmpty(li.getVarianceQty())&&li.getVarianceQty().compareTo(BigDecimal.ZERO)==1).collect(Collectors.toList()).size()<1){
-                    throw new BizErrorException("没有差异记录");
-                }else{
+                if(list.stream().filter(li->StringUtils.isNotEmpty(li.getVarianceQty())&&li.getVarianceQty().compareTo(BigDecimal.ZERO)==1).collect(Collectors.toList()).size()>0){
                     //新增复盘盘点单
                     WmsInnerStockOrder ws = new WmsInnerStockOrder();
                     BeanUtil.copyProperties(wmsInventoryVerification,ws);
@@ -351,14 +349,21 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
     public int PdaAscertained(String ids) {
         //盘点确认
-        int num = this.ascertained(ids);
-        return 0;
+        WmsInnerStockOrder wmsInnerStockOrder = new WmsInnerStockOrder();
+        wmsInnerStockOrder.setOrderStatus((byte)3);
+        wmsInnerStockOrder.setStockOrderId(Long.parseLong(ids));
+        int num = wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInnerStockOrder);
+        if(num<1){
+            throw new BizErrorException("盘点确认失败");
+        }
+        num+= this.ascertained(ids);
+        return num;
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int PdaCommit(WmsInnerStockOrderDet wmsInnerStockOrderDet){
         SysUser sysUser = currentUser();
         int num = 0;
