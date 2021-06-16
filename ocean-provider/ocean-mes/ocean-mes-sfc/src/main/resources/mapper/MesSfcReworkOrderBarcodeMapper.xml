@@ -8,6 +8,7 @@
     <id column="rework_order_barcode_id" jdbcType="BIGINT" property="reworkOrderBarcodeId" />
     <result column="rework_order_id" jdbcType="BIGINT" property="reworkOrderId" />
     <result column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />

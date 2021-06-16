@@ -7,7 +7,6 @@
     -->
     <id column="rework_order_id" jdbcType="BIGINT" property="reworkOrderId" />
     <result column="rework_order_code" jdbcType="VARCHAR" property="reworkOrderCode" />
-    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="rework_route_id" jdbcType="BIGINT" property="reworkRouteId" />
     <result column="rework_start_process_id" jdbcType="BIGINT" property="reworkStartProcessId" />
     <result column="rework_status" jdbcType="TINYINT" property="reworkStatus" />
@@ -25,7 +24,15 @@
   </resultMap>
 
   <select id="findList" parameterType="map" resultType="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto">
-    SELECT * FROM mes_sfc_rework_order
+    SELECT * FROM mes_sfc_rework_order msro
+    <where>
+      <if test="reworkOrderCode != null">
+        and msro.rework_order_code like CONCAT('%',#{reworkOrderCode},'%')
+      </if>
+      <if test="reworkStatus != null">
+        and msro.rework_status = #{reworkStatus}
+      </if>
+    </where>
   </select>
 
 <!-- 获取今天返工单编码倒序第一条数据 -->

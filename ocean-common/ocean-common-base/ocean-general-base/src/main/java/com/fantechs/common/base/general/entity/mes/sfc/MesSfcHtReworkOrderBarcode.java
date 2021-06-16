@@ -52,6 +52,14 @@ public class MesSfcHtReworkOrderBarcode extends ValidGroup implements Serializab
     private Long workOrderBarcodeId;
 
     /**
+     * 返工工单ID
+     */
+    @ApiModelProperty(name="workOrderId",value = "返工工单ID")
+    @Excel(name = "返工工单ID", height = 20, width = 30,orderNum="")
+    @Column(name = "work_order_id")
+    private Long workOrderId;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

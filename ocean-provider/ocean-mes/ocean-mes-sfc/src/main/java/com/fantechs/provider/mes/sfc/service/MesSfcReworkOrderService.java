@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.sfc.service;
 
+import com.fantechs.common.base.general.dto.mes.sfc.DoReworkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.GenerateReworkOrderCodeDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcHtReworkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto;
@@ -20,4 +21,6 @@ public interface MesSfcReworkOrderService extends IService<MesSfcReworkOrder> {
     List<MesSfcHtReworkOrderDto> findHtList(Map<String, Object> map);
 
     GenerateReworkOrderCodeDto generateReworkOrderCode(SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess);
+
+    int save(DoReworkOrderDto doReworkOrderDto);
 }

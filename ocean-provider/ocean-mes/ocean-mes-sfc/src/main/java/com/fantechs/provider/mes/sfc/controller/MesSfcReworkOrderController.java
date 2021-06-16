@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.sfc.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.sfc.DoReworkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.GenerateReworkOrderCodeDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcHtReworkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto;
@@ -41,9 +42,10 @@ public class MesSfcReworkOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesSfcReworkOrder mesSfcReworkOrder) {
-        return ControllerUtil.returnCRUD(mesSfcReworkOrderService.save(mesSfcReworkOrder));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated DoReworkOrderDto doReworkOrderDto) {
+        return ControllerUtil.returnCRUD(mesSfcReworkOrderService.save(doReworkOrderDto));
     }
+
 
     @ApiOperation("删除")
     @PostMapping("/delete")
