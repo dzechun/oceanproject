@@ -32,6 +32,26 @@
                     column="product_bom_det_id"/>-->
     </resultMap>
 
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto" extends="BaseResultMap">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode"/>
+        <result column="sub_material_name" jdbcType="VARCHAR" property="subMaterialName"/>
+        <result column="sub_material_desc" jdbcType="VARCHAR" property="subMaterialDesc"/>
+        <result column="sub_version" jdbcType="VARCHAR" property="subVersion"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="pro_code" jdbcType="VARCHAR" property="proCode"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="pro_desc" jdbcType="VARCHAR" property="proDesc"/>
+        <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
+        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+        <result column="process_desc" jdbcType="VARCHAR" property="processDesc"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
     spbd.product_bom_det_id,
 	spbd.product_bom_id,
@@ -58,10 +78,11 @@
 	spbd.option3,
 	spbd.if_have_lower_level
   </sql>
-    <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBomDet"
+    <select id="findList" parameterType="map"
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>,
-        sm.material_code as materialCode,sm.material_name,sm.material_version,sm.material_desc,
+        sm.material_code as material_code,sm.material_name as material_name,sm.material_version as material_version ,
+        sm.material_desc as material_desc,
         sp.process_name,u.user_name as create_user_name,s.user_name as modified_user_name,
         bo.organization_name
         from base_product_bom_det spbd
@@ -89,39 +110,27 @@
             <if test="materialDesc!=null and materialDesc!=''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
-
+            <if test="orgId!=null">
+                and spbd.org_id=#{orgId}
+            </if>
         </where>
         order by spbd.create_time desc
     </select>
 
-    <select id="findFirstLevelProductBomDet" parameterType="long" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/>,
-        sm.material_code as part_material_code,sm.material_name,sm.material_version,sm.material_desc,
-        sml.material_code as sub_material_code,
-        sp.process_name,
-        u.user_name as create_user_name,s.user_name as modified_user_name,
-        bo.organization_name
-        from base_product_bom_det spbd
-        left join fantech_imes_v2.base_material sm on spbd.material_id=sm.material_id
-        left join fantech_imes_v2.base_material sml on spbd.sub_material_id=sml.material_id
-        left join fantech_imes_v2.base_process sp on spbd.process_id=sp.process_id
-        left join ocean_v2.sys_user u on spbd.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on spbd.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON spbd.org_id = bo.organization_id
-        where spbd.product_bom_id = #{productBomId}
-    </select>
 
-    <select id="findNextLevelProductBomDet" parameterType="long" resultMap="BaseResultMap">
+    <select id="findNextLevelProductBomDet" parameterType="long" resultMap="BaseResultMapDto">
         select <include refid="Base_Column_List"/>,
-        sm.material_code as part_material_code,sm.material_name,sm.material_version,sm.material_desc,
-        sp.process_name,u.user_name as create_user_name,s.user_name as modified_user_name,
-        bo.organization_name
+        sm.material_code as material_code,sm.material_name as material_name,sm.material_version as material_version,
+        sm.material_desc as material_desc,sp.process_name as process_name ,sp.process_code as process_code,
+        sp.process_desc as process_desc ,u.user_name as create_user_name,
+        s.user_name as modified_user_name,bo.organization_name
         from base_product_bom_det spbd
         left join base_material sm on spbd.material_id=sm.material_id
         left join base_process sp on spbd.process_id=sp.process_id
         left join ocean_v2.sys_user u on spbd.create_user_id=u.user_id
         left join ocean_v2.sys_user s on spbd.modified_user_id=s.user_id
         left join base_organization bo on spbd.org_id = bo.organization_id
+        left join base_process bp on spbd.process_id = bp.process_id
         where spbd.product_bom_id = #{productBomId}
     </select>
 </mapper>

@@ -76,7 +76,7 @@ public class BaseProcessController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseProcess>> findList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchBaseProcess searchBaseProcess) {
         Page<Object> page = PageHelper.startPage(searchBaseProcess.getStartPage(), searchBaseProcess.getPageSize());
-        List<BaseProcess> list = baseProcessService.findList(searchBaseProcess);
+        List<BaseProcess> list = baseProcessService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProcess));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -88,7 +88,7 @@ public class BaseProcessController {
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出工序信息excel",notes = "导出工序信息excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody(required = false) SearchBaseProcess searchBaseProcess){
-    List<BaseProcess> list = baseProcessService.findList(searchBaseProcess);
+    List<BaseProcess> list = baseProcessService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProcess));
         try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "工序信息", "工序信息", BaseProcess.class, "工序信息.xls", response);
@@ -101,7 +101,7 @@ public class BaseProcessController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtProcess>> findHtList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchBaseProcess searchBaseProcess) {
         Page<Object> page = PageHelper.startPage(searchBaseProcess.getStartPage(), searchBaseProcess.getPageSize());
-        List<BaseHtProcess> list = baseHtProcessService.findHtList(searchBaseProcess);
+        List<BaseHtProcess> list = baseHtProcessService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseProcess));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

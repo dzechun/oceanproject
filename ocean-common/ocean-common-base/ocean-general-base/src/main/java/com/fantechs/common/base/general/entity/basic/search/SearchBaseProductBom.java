@@ -48,6 +48,12 @@ public class SearchBaseProductBom extends BaseQuery implements Serializable {
     private Long productBomId;
 
     /**
+     * 产品BOMDET ID
+     */
+    @ApiModelProperty(name="productBomDetId" ,value="产品BOMDET ID")
+    private Long productBomDetId;
+
+    /**
      * 是否查询产品BOM
      */
     @ApiModelProperty(name="isBomDet" ,value="是否查询产品BOM")

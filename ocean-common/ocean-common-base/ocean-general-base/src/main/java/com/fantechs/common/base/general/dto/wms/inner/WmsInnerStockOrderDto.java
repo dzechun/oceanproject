@@ -16,6 +16,13 @@ import java.io.Serializable;
 public class WmsInnerStockOrderDto extends WmsInnerStockOrder implements Serializable {
 
     /**
+     * 货主
+     */
+    @Transient
+    @ApiModelProperty(name = "materialOwnerName",value = "货主")
+    private String materialOwnerName;
+
+    /**
      * 仓库名称
      */
     @Transient

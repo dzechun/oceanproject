@@ -10,13 +10,14 @@ import com.fantechs.common.base.support.IService;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author Mr.Lei
 * @create 2020/12/22.
 */
 public interface BaseBarCodeService extends IService<BaseBarCode> {
-    List<BaseBarCodeDto> findList(SearchBaseBarCode searchBaseBarCode);
+    List<BaseBarCodeDto> findList(Map<String, Object> map);
 
     BaseBarCodeWorkDto work(SearchBaseBarCode searchBaseBarCode);
 

@@ -12,6 +12,6 @@ import java.util.Map;
 
 public interface BaseProductModelService extends IService<BaseProductModel> {
 
-    List<BaseProductModel> selectProductModels(SearchBaseProductModel searchBaseProductModel);
+    List<BaseProductModel> selectProductModels(Map<String, Object> map);
     Map<String, Object> importExcel(List<BaseProductModelImport> baseProductModelImports);
 }

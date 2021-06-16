@@ -39,11 +39,21 @@ public class BaseProductMaterialRePServiceImpl extends BaseService<BaseProductMa
 
     @Override
     public List<BaseProductMaterialReP> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         return baseProductMaterialRePMapper.findList(map);
     }
 
     @Override
     public List<BaseHtProductMaterialReP> findHtList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         return baseHtProductMaterialRePMapper.findHtList(map);
     }
 

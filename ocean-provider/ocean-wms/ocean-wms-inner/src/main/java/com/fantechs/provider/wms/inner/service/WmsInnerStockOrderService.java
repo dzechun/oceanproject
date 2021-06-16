@@ -21,7 +21,7 @@ public interface WmsInnerStockOrderService extends IService<WmsInnerStockOrder> 
      * @param ids
      * @return
      */
-    int activation(String ids,Byte btnType);
+    int activation(String ids,Integer btnType);
 
     /**
      * 盘点确认
@@ -39,15 +39,16 @@ public interface WmsInnerStockOrderService extends IService<WmsInnerStockOrder> 
 
     /**
      * PDA盘点确认
-     * @param wmsInnerStockOrderDets
      * @return
      */
-    int PdaAscertained(List<WmsInnerStockOrderDet> wmsInnerStockOrderDets);
+    int PdaAscertained(String ids);
 
     /**
      * PDA扫条码返回数量
      * @param barcode
      * @return
      */
-    BigDecimal scanBarcode(String barcode);
+    Map<String,Object> scanBarcode(String barcode);
+
+    int PdaCommit(WmsInnerStockOrderDet wmsInnerStockOrderDet);
 }

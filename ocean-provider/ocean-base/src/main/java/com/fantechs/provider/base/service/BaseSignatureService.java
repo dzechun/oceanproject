@@ -15,6 +15,6 @@ import java.util.Map;
 
 public interface BaseSignatureService extends IService<BaseSignature> {
 
-  List<BaseSignature> findList(SearchBaseSignature searchBaseSignature);
+  List<BaseSignature> findList(Map<String, Object> map);
   Map<String, Object> importExcel(List<BaseSignatureImport> baseSignatureImports);
 }

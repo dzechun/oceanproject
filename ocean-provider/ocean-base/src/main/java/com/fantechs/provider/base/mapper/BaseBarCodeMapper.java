@@ -9,10 +9,11 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BaseBarCodeMapper extends MyMapper<BaseBarCode> {
-    List<BaseBarCodeDto> findList(SearchBaseBarCode searchBaseBarCode);
+    List<BaseBarCodeDto> findList(Map<String, Object> map);
 
     BaseBarCodeWorkDto sel_work_order(SearchBaseBarCode searchBaseBarCode);
 

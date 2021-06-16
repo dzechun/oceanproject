@@ -54,8 +54,7 @@
         shp.option3
     </sql>
 
-    <select id="findHtList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess"
-            resultMap="BaseResultMap">
+    <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
         sws.section_name as sectionName,
         spc.process_category_name as processCategoryName,spc.process_category_code as processCategoryCode,
@@ -92,6 +91,9 @@
             </if>
             <if test="processCategoryName!=null and processCategoryName!=''">
                 and spc.process_category_name like CONCAT('%', #{processCategoryName}, '%')
+            </if>
+            <if test="orgId!=null">
+                and shp.org_id=#{orgId}
             </if>
         </where>
         order by shp.modified_time desc

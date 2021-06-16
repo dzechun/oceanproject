@@ -5,8 +5,9 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductPro
 import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseProductProcessRouteMapper extends MyMapper<BaseProductProcessRoute> {
 
-    List<BaseProductProcessRoute> findList(SearchBaseProductProcessRoute searchBaseProductProcessRoute);
+    List<BaseProductProcessRoute> findList(Map<String, Object> map);
 }

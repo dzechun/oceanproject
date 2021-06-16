@@ -69,7 +69,7 @@ public class BaseBatchRulesController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseBatchRulesDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBatchRules searchBaseBatchRules) {
         Page<Object> page = PageHelper.startPage(searchBaseBatchRules.getStartPage(),searchBaseBatchRules.getPageSize());
-        List<BaseBatchRulesDto> list = baseBatchRulesService.findList(searchBaseBatchRules);
+        List<BaseBatchRulesDto> list = baseBatchRulesService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBatchRules));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -77,7 +77,7 @@ public class BaseBatchRulesController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtBatchRules>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBatchRules searchBaseBatchRules) {
         Page<Object> page = PageHelper.startPage(searchBaseBatchRules.getStartPage(),searchBaseBatchRules.getPageSize());
-        List<BaseHtBatchRules> list = baseHtBatchRulesService.findList(searchBaseBatchRules);
+        List<BaseHtBatchRules> list = baseHtBatchRulesService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBatchRules));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -85,7 +85,7 @@ public class BaseBatchRulesController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseBatchRules searchBaseBatchRules){
-    List<BaseBatchRulesDto> list = baseBatchRulesService.findList(searchBaseBatchRules);
+    List<BaseBatchRulesDto> list = baseBatchRulesService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBatchRules));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "BaseBatchRules信息", BaseBatchRulesDto.class, "BaseBatchRules.xls", response);

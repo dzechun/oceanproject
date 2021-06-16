@@ -69,6 +69,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
 
     @Override
     public List<WmsInAsnOrderDto> findList(SearchWmsInAsnOrder searchWmsInAsnOrder) {
+        SysUser sysUser = currentUser();
+        searchWmsInAsnOrder.setOrgId(sysUser.getOrganizationId());
         return wmsInAsnOrderMapper.findList(searchWmsInAsnOrder);
     }
 
@@ -227,6 +229,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         wmsInAsnOrder.setCreateUserId(sysUser.getUserId());
         wmsInAsnOrder.setModifiedUserId(sysUser.getUserId());
         wmsInAsnOrder.setModifiedTime(new Date());
+        wmsInAsnOrder.setOrgId(sysUser.getOrganizationId());
         int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(wmsInAsnOrder);
         WmsInAsnOrderDto wmsInAsnOrderDto = wmsInAsnOrderMapper.findList(SearchWmsInAsnOrder.builder()
                 .asnOrderId(wmsInAsnOrder.getAsnOrderId())
@@ -237,6 +240,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInAsnOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInAsnOrderDet.setModifiedTime(new Date());
             wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
+            wmsInAsnOrderDet.setOrgId(sysUser.getOrganizationId());
             wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wmsInAsnOrderDet);
 
             WmsInAsnOrderDetDto wmsInAsnOrderDetDto = wmsInAsnOrderDetMapper.findList(SearchWmsInAsnOrderDet.builder()
@@ -261,6 +265,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setCreateUserId(sysUser.getUserId());
             wmsInnerInventory.setModifiedTime(new Date());
             wmsInnerInventory.setModifiedUserId(sysUser.getUserId());
+            wmsInnerInventory.setOrgId(sysUser.getOrganizationId());
             ResponseEntity responseEntity = innerFeignApi.insertSelective(wmsInnerInventory);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("库存添加失败");
@@ -406,6 +411,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
+        record.setOrgId(sysUser.getOrganizationId());
         int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(record);
         for (WmsInAsnOrderDet wmsInAsnOrderDet : record.getWmsInAsnOrderDetList()) {
             MesPmWorkOrder mesPmWorkOrder = this.PmQty(wmsInAsnOrderDet.getPackingQty(),wmsInAsnOrderDet.getSourceOrderId());
@@ -421,6 +427,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInAsnOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInAsnOrderDet.setModifiedTime(new Date());
             wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
+            wmsInAsnOrderDet.setOrgId(sysUser.getOrganizationId());
             wmsInAsnOrderDetMapper.insert(wmsInAsnOrderDet);
         }
         return num;
@@ -586,6 +593,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     .startReceivingDate(new Date())
                     .endReceivingDate(new Date())
                     .productPalletId(palletAutoAsnDto.getProductPalletId())
+                    .orgId(sysUser.getOrganizationId())
                     .build();
             int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(wmsInAsnOrder);
             if(num<1){
@@ -599,6 +607,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInAsnOrderDet.setModifiedTime(new Date());
             wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInAsnOrderDet.setReceivingDate(new Date());
+            wmsInAsnOrderDet.setOrgId(sysUser.getOrganizationId());
             wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wmsInAsnOrderDet);
             //新增库存
             int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wmsInAsnOrderDet.getAsnOrderDetId());

@@ -83,6 +83,9 @@
             <if test="status!=null">
                 and sps.status=#{status}
             </if>
+            <if test="orgId!=null">
+                and sps.org_id=#{orgId}
+            </if>
         </where>
         order by sps.create_time desc
     </select>

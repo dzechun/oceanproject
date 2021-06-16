@@ -1,7 +1,12 @@
 package com.fantechs.provider.base.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPackageSpecification;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseHtPackageSpecificationMapper;
 import com.fantechs.provider.base.mapper.BaseMaterialPackageMapper;
 import com.fantechs.provider.base.service.BaseHtPackageSpecificationService;
@@ -24,7 +29,11 @@ public class BaseHtPackageSpecificationServiceImpl extends BaseService<BaseHtPac
 
     @Override
     public List<BaseHtPackageSpecification> findHtList(Map<String, Object> map) {
-
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         List<BaseHtPackageSpecification> baseHtPackageSpecifications = baseHtPackageSpecificationMapper.findHtList(map);
 
         /*SearchSmtMaterialPackage searchSmtMaterialPackage = new SearchSmtMaterialPackage();

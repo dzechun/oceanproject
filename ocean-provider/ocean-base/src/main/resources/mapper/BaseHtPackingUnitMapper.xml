@@ -64,6 +64,9 @@
       <if test="packingUnitDesc != null">
         and shpu.packing_unit_desc like CONCAT('%', #{packingUnitDesc}, '%')
       </if>
+      <if test="orgId!=null">
+        and shpu.org_id=#{orgId}
+      </if>
     </where>
     order by shpu.modified_time desc
   </select>

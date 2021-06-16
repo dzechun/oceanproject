@@ -21,6 +21,7 @@ import com.fantechs.provider.qms.mapper.QmsHtInspectionOrderMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderMapper;
+import com.fantechs.provider.qms.service.QmsInspectionOrderDetService;
 import com.fantechs.provider.qms.service.QmsInspectionOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -47,17 +48,23 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Resource
     private QmsInspectionOrderDetSampleMapper qmsInspectionOrderDetSampleMapper;
     @Resource
-    private BaseFeignApi baseFeignApi;
+    private QmsInspectionOrderDetService qmsInspectionOrderDetService;
 
     @Override
     public List<QmsInspectionOrder> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        map.put("orgId",user.getOrganizationId());
         List<QmsInspectionOrder> qmsInspectionOrders = qmsInspectionOrderMapper.findList(map);
         SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
 
         for (QmsInspectionOrder qmsInspectionOrder : qmsInspectionOrders){
             searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
-            List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
-            this.getAcReQty(qmsInspectionOrder,qmsInspectionOrderDets);
+            List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
+            qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
         }
 
         return qmsInspectionOrders;
@@ -70,28 +77,12 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.findList(map).get(0);
         SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
         searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
-        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
+        qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
 
-        return this.getAcReQty(qmsInspectionOrder,qmsInspectionOrderDets);
-    }
-
-    public QmsInspectionOrder getAcReQty(QmsInspectionOrder qmsInspectionOrder, List<QmsInspectionOrderDet> qmsInspectionOrderDets){
-        if(StringUtils.isNotEmpty(qmsInspectionOrderDets)){
-            for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
-                //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
-                if(qmsInspectionOrderDet.getSampleProcessType()!=null&&qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
-                    BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), qmsInspectionOrder.getOrderQty()).getData();
-                    if(StringUtils.isNotEmpty(baseSampleProcess)) {
-                        qmsInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
-                        qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
-                        qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
-                    }
-                }
-            }
-            qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
-        }
         return qmsInspectionOrder;
     }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)

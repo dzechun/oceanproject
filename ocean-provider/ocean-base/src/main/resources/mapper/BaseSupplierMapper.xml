@@ -82,6 +82,9 @@
             <if test="addressDetail!=null and addressDetail!=''">
                 and sa.address_detail like CONCAT('%', #{addressDetail}, '%')
             </if>
+            <if test="orgId!=null">
+                and ss.org_id=#{orgId}
+            </if>
         </where>
         order by ss.create_time desc
     </select>

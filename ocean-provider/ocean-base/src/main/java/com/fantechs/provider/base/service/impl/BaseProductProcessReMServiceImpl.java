@@ -52,6 +52,11 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
 
     @Override
     public List<BaseProductProcessReM> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         List<BaseProductProcessReM> baseProductProcessReMS = baseProductProcessReMMapper.findList(map);
         SearchBaseProductMaterialReP searchBaseProductMaterialReP = new SearchBaseProductMaterialReP();
 
@@ -67,6 +72,11 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
 
     @Override
     public List<BaseHtProductProcessReM> findHtList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         List<BaseHtProductProcessReM> baseHtProductProcessReMS = baseHtProductProcessReMMapper.findHtList(map);
         SearchBaseProductMaterialReP searchBaseProductMaterialReP = new SearchBaseProductMaterialReP();
 

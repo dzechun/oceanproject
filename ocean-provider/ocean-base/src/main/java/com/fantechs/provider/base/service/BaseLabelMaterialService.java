@@ -6,11 +6,12 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelMater
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author Mr.Lei
 * @create 2020/12/17.
 */
 public interface BaseLabelMaterialService extends IService<BaseLabelMaterial> {
-    List<BaseLabelMaterialDto> findList(SearchBaseLabelMaterial searchBaseLabelMaterial);
+    List<BaseLabelMaterialDto> findList(Map<String, Object> map);
 }

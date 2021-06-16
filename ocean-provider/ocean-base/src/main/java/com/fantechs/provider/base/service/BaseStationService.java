@@ -14,6 +14,6 @@ import java.util.Map;
 
 public interface BaseStationService extends IService<BaseStation> {
 
-    List<BaseStation> findList(SearchBaseStation searchBaseStation);
+    List<BaseStation> findList(Map<String, Object> map);
     Map<String, Object> importExcel(List<BaseStation> baseStations);
 }

@@ -73,4 +73,10 @@ public class SearchMesPmWorkOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="ifPrint",value = "是否打印（0、打印 1、不打印）")
     private Byte ifPrint;
+
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

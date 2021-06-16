@@ -7,10 +7,11 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductMod
 import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseHtProductModelMapper extends MyMapper<BaseHtProductModel> {
 
-    List<BaseHtProductModel> selectHtProductModels(SearchBaseProductModel searchBaseProductModel);
+    List<BaseHtProductModel> selectHtProductModels(Map<String, Object> map);
 
     //int addBatchHtProductModel(List<SmtHtProductModel> list);
 }

@@ -91,7 +91,7 @@ public class BaseStorageController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseStorage>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseStorage searchBaseStorage) {
         Page<Object> page = PageHelper.startPage(searchBaseStorage.getStartPage(), searchBaseStorage.getPageSize());
-        List<BaseStorage> list = baseStorageService.findList(searchBaseStorage);
+        List<BaseStorage> list = baseStorageService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStorage));
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
@@ -99,7 +99,7 @@ public class BaseStorageController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtStorage>> findHtList(@ApiParam(value = "查询对象") @RequestBody SearchBaseStorage searchBaseStorage) {
         Page<Object> page = PageHelper.startPage(searchBaseStorage.getStartPage(), searchBaseStorage.getPageSize());
-        List<BaseHtStorage> list = baseHtStorageService.findHtList(searchBaseStorage);
+        List<BaseHtStorage> list = baseHtStorageService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseStorage));
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
@@ -113,7 +113,7 @@ public class BaseStorageController {
     @ApiOperation(value = "导出库位信息excel", notes = "导出库位信息excel", produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseStorage searchBaseStorage) {
-        List<BaseStorage> list = baseStorageService.findList(searchBaseStorage);
+        List<BaseStorage> list = baseStorageService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStorage));
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "导出库位信息", "库位信息", BaseStorage.class, "库位信息.xls", response);

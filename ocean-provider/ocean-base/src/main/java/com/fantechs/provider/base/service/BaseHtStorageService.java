@@ -5,6 +5,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
+
 /**
  *
  * Created by wcz on 2020/09/23.
@@ -12,5 +14,5 @@ import java.util.List;
 
 public interface BaseHtStorageService extends IService<BaseHtStorage> {
 
-    List<BaseHtStorage> findHtList(SearchBaseStorage searchBaseStorage);
+    List<BaseHtStorage> findHtList(Map<String, Object> map);
 }

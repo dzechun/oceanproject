@@ -70,6 +70,9 @@
       <if test="status!=null">
         and bhpmrp.status=#{status}
       </if>
+      <if test="orgId!=null">
+        and bhpmrp.org_id=#{orgId}
+      </if>
     </where>
     order by bhpmrp.create_time desc
   </select>

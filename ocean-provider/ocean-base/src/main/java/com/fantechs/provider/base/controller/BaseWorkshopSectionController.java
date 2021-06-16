@@ -75,7 +75,7 @@ public class BaseWorkshopSectionController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseWorkshopSection>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWorkshopSection searchBaseWorkshopSection) {
         Page<Object> page = PageHelper.startPage(searchBaseWorkshopSection.getStartPage(), searchBaseWorkshopSection.getPageSize());
-        List<BaseWorkshopSection> list = baseWorkshopSectionService.findList(searchBaseWorkshopSection);
+        List<BaseWorkshopSection> list = baseWorkshopSectionService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorkshopSection));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -83,7 +83,7 @@ public class BaseWorkshopSectionController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtWorkshopSection>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWorkshopSection searchBaseWorkshopSection){
         Page<Object> page = PageHelper.startPage(searchBaseWorkshopSection.getStartPage(), searchBaseWorkshopSection.getPageSize());
-        List<BaseHtWorkshopSection> list = baseHtWorkshopSectionService.findList(searchBaseWorkshopSection);
+        List<BaseHtWorkshopSection> list = baseHtWorkshopSectionService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorkshopSection));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -91,7 +91,7 @@ public class BaseWorkshopSectionController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseWorkshopSection searchBaseWorkshopSection){
-        List<BaseWorkshopSection> list = baseWorkshopSectionService.findList(searchBaseWorkshopSection);
+        List<BaseWorkshopSection> list = baseWorkshopSectionService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorkshopSection));
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "工段信息导出", "工段信息", BaseWorkshopSection.class, "工段信息.xls", response);

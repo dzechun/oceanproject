@@ -70,7 +70,7 @@ public class BaseLabelMaterialController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseLabelMaterialDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelMaterial searchBaseLabelMaterial) {
         Page<Object> page = PageHelper.startPage(searchBaseLabelMaterial.getStartPage(), searchBaseLabelMaterial.getPageSize());
-        List<BaseLabelMaterialDto> list = baseLabelMaterialService.findList(searchBaseLabelMaterial);
+        List<BaseLabelMaterialDto> list = baseLabelMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabelMaterial));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -78,7 +78,7 @@ public class BaseLabelMaterialController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtLabelMaterial>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseLabelMaterial searchBaseLabelMaterial) {
         Page<Object> page = PageHelper.startPage(searchBaseLabelMaterial.getStartPage(), searchBaseLabelMaterial.getPageSize());
-        List<BaseHtLabelMaterial> list = baseHtLabelMaterialService.findList(searchBaseLabelMaterial);
+        List<BaseHtLabelMaterial> list = baseHtLabelMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabelMaterial));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -86,7 +86,7 @@ public class BaseLabelMaterialController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseLabelMaterial searchBaseLabelMaterial){
-    List<BaseLabelMaterialDto> list = baseLabelMaterialService.findList(searchBaseLabelMaterial);
+    List<BaseLabelMaterialDto> list = baseLabelMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabelMaterial));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "标签关联物料信息", BaseLabelMaterialDto.class, "标签关联物料信息.xls", response);

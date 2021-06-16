@@ -1,14 +1,20 @@
 package com.fantechs.provider.base.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseHtWarehouseMapper;
 import com.fantechs.provider.base.service.BaseHtWarehouseService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -21,7 +27,12 @@ public class BaseHtWarehouseServiceImpl extends BaseService<BaseHtWarehouse> imp
     private BaseHtWarehouseMapper baseHtWarehouseMapper;
 
     @Override
-    public List<BaseHtWarehouse> findHtList(SearchBaseWarehouse searchBaseWarehouse) {
-        return baseHtWarehouseMapper.findHtList(searchBaseWarehouse);
+    public List<BaseHtWarehouse> findHtList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseHtWarehouseMapper.findHtList(map);
     }
 }

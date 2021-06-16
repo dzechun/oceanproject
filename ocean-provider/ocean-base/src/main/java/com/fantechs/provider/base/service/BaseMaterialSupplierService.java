@@ -16,6 +16,6 @@ import java.util.Map;
 
 public interface BaseMaterialSupplierService extends IService<BaseMaterialSupplier> {
 
-    List<BaseMaterialSupplierDto> findList(SearchBaseMaterialSupplier searchBaseMaterialSupplier);
+    List<BaseMaterialSupplierDto> findList(Map<String, Object> map);
     Map<String, Object> importExcel(List<BaseMaterialSupplierImport> baseMaterialSupplierImports);
 }

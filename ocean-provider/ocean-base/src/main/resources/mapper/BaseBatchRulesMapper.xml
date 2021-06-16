@@ -61,7 +61,7 @@ bbr.option1,
 bbr.option2,
 bbr.option3
   </sql>
-  <select id="findList" resultMap="BaseResultMapDto">
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
 select <include refid="BaseColumnMap"/>,bw.warehouse_name,bmo.material_owner_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name FROM base_batch_rules bbr
     left join base_warehouse bw on bbr.warehouse_id = bw.warehouse_id
     left join base_material_owner bmo on bbr.material_owner_id = bmo.material_owner_id
@@ -87,6 +87,9 @@ select <include refid="BaseColumnMap"/>,bw.warehouse_name,bmo.material_owner_nam
 <if test="createUserName !='' and createUserName!=null">
   and su.user_name like concat('%',#{createUserName},'%')
 </if>
+  <if test="orgId!=null">
+    and bbr.org_id=#{orgId}
+  </if>
 </where>
 order by bbr.create_time desc
   </select>

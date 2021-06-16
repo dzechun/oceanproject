@@ -147,8 +147,13 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
     }
 
     @Override
-    public List<BaseSignature> findList(SearchBaseSignature searchBaseSignature) {
-        return baseSignatureMapper.findList(searchBaseSignature);
+    public List<BaseSignature> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseSignatureMapper.findList(map);
     }
 
     @Override

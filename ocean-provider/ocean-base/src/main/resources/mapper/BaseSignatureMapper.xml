@@ -41,7 +41,7 @@
         ss.option3
     </sql>
 
-    <select id="findList" parameterType="com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature"
+    <select id="findList" parameterType="map"
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
         sm.material_code as materialCode, sm.material_name as materialName, sm.material_version as materialVersion, sm.material_desc as materialDesc,
@@ -66,6 +66,9 @@
             </if>
             <if test="status!=null">
                 and ss.status=#{status}
+            </if>
+            <if test="orgId!=null">
+                and ss.org_id=#{orgId}
             </if>
             <if test="materialIds!=null">
                 <foreach collection="materialIds" index="index" item="item" open="and ss.material_id in (" close=")" separator=",">

@@ -77,6 +77,9 @@
             <if test="createUserName != null and createUserName != ''">
                 AND suc.user_name LIKE CONCAT('%', #{createUserName}, '%')
             </if>
+            <if test="orgId!=null">
+                and bw.org_id=#{orgId}
+            </if>
         </where>
     </select>
 

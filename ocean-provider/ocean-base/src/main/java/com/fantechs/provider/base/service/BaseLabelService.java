@@ -7,13 +7,14 @@ import com.fantechs.common.base.support.IService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author Mr.Lei
 * @create 2020/12/17.
 */
 public interface BaseLabelService extends IService<BaseLabel> {
-    List<BaseLabelDto> findList(SearchBaseLabel searchBaseLabel);
+    List<BaseLabelDto> findList(Map<String, Object> map);
 
     int add(BaseLabel baseLabel, MultipartFile file);
 

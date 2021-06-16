@@ -5,7 +5,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
 import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseHtSignatureMapper extends MyMapper<BaseHtSignature> {
-    List<BaseHtSignature> findHtList(SearchBaseSignature searchBaseSignature);
+    List<BaseHtSignature> findHtList(Map<String, Object> map);
 }

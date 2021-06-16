@@ -61,6 +61,9 @@
             <if test="factoryDesc != null">
                 and hf.factory_desc like CONCAT('%', #{factoryDesc}, '%')
             </if>
+            <if test="orgId!=null">
+                and hf.org_id=#{orgId}
+            </if>
         </where>
         order by hf.modified_time desc
     </select>

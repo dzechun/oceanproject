@@ -79,7 +79,7 @@ public class BaseSignatureController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseSignature>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSignature searchBaseSignature) {
         Page<Object> page = PageHelper.startPage(searchBaseSignature.getStartPage(), searchBaseSignature.getPageSize());
-        List<BaseSignature> list = baseSignatureService.findList(searchBaseSignature);
+        List<BaseSignature> list = baseSignatureService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSignature));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -92,7 +92,7 @@ public class BaseSignatureController {
     @ApiOperation(value = "导出物料特征码信息excel",notes = "导出物料特征码信息excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchBaseSignature searchBaseSignature){
-    List<BaseSignature> list = baseSignatureService.findList(searchBaseSignature);
+    List<BaseSignature> list = baseSignatureService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSignature));
         try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出物料特征码信息", "物料特征码信息", BaseSignature.class, "物料特征码信息.xls", response);
@@ -105,7 +105,7 @@ public class BaseSignatureController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtSignature>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSignature searchBaseSignature) {
         Page<Object> page = PageHelper.startPage(searchBaseSignature.getStartPage(), searchBaseSignature.getPageSize());
-        List<BaseHtSignature> list = baseHtSignatureService.findHtList(searchBaseSignature);
+        List<BaseHtSignature> list = baseHtSignatureService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseSignature));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

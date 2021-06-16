@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRul
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -14,7 +15,7 @@ import java.util.List;
 
 public interface BaseBarcodeRuleService extends IService<BaseBarcodeRule> {
 
-    List<BaseBarcodeRuleDto> findList(SearchBaseBarcodeRule searchBaseBarcodeRule);
+    List<BaseBarcodeRuleDto> findList(Map<String, Object> map);
 
     int preserve(BaseBarcodeRule baseBarcodeRule);
 

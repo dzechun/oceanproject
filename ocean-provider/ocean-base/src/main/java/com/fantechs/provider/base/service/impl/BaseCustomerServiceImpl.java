@@ -18,6 +18,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -30,8 +31,13 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
     private BaseCustomerMapper baseCustomerMapper;
 
     @Override
-    public List<BaseCustomer> findList(SearchBaseCustomer searchBaseCustomer) {
-        return baseCustomerMapper.findList(searchBaseCustomer);
+    public List<BaseCustomer> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseCustomerMapper.findList(map);
     }
 
     @Override

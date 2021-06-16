@@ -43,8 +43,13 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
     private BaseProductFamilyMapper baseProductFamilyMapper;
 
     @Override
-    public List<BaseProductModel> selectProductModels(SearchBaseProductModel searchBaseProductModel) {
-        return baseProductModelMapper.selectProductModels(searchBaseProductModel);
+    public List<BaseProductModel> selectProductModels(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseProductModelMapper.selectProductModels(map);
     }
 
     @Override

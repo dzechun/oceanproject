@@ -70,7 +70,7 @@ public class BaseBarcodeRuleSetDetController {
     @PostMapping("/findList")
     public ResponseEntity<List<BaseBarcodeRuleSetDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet) {
         Page<Object> page = PageHelper.startPage(searchBaseBarcodeRuleSetDet.getStartPage(), searchBaseBarcodeRuleSetDet.getPageSize());
-        List<BaseBarcodeRuleSetDetDto> list = baseBarcodeRuleSetDetService.findList(searchBaseBarcodeRuleSetDet);
+        List<BaseBarcodeRuleSetDetDto> list = baseBarcodeRuleSetDetService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRuleSetDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

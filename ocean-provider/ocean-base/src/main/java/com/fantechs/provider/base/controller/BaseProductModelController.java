@@ -57,7 +57,7 @@ public class BaseProductModelController {
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchBaseProductModel searchBaseProductModel
     ){
         Page<Object> page = PageHelper.startPage(searchBaseProductModel.getStartPage(), searchBaseProductModel.getPageSize());
-        List<BaseProductModel> baseProductModels = baseProductModelService.selectProductModels(searchBaseProductModel);
+        List<BaseProductModel> baseProductModels = baseProductModelService.selectProductModels(ControllerUtil.dynamicConditionByEntity(searchBaseProductModel));
         return ControllerUtil.returnDataSuccess(baseProductModels,(int)page.getTotal());
     }
 
@@ -99,7 +99,7 @@ public class BaseProductModelController {
     @ApiOperation(value = "导出excel",notes = "导出产品型号excel",produces = "application/octet-stream")
     public void exportProductModels(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
                                    @RequestBody(required = false) SearchBaseProductModel searchBaseProductModel){
-        List<BaseProductModel> list = baseProductModelService.selectProductModels(searchBaseProductModel);
+        List<BaseProductModel> list = baseProductModelService.selectProductModels(ControllerUtil.dynamicConditionByEntity(searchBaseProductModel));
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "产品型号信息导出", "产品型号信息", BaseProductModel.class, "产品型号信息.xls", response);
@@ -114,7 +114,7 @@ public class BaseProductModelController {
     public ResponseEntity<List<BaseHtProductModel>> selectHtProductModels(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchBaseProductModel searchBaseProductModel) {
         Page<Object> page = PageHelper.startPage(searchBaseProductModel.getStartPage(), searchBaseProductModel.getPageSize());
-        List<BaseHtProductModel> baseHtProductModels = baseHtProductModelService.selectHtProductModels(searchBaseProductModel);
+        List<BaseHtProductModel> baseHtProductModels = baseHtProductModelService.selectHtProductModels(ControllerUtil.dynamicConditionByEntity(searchBaseProductModel));
         return  ControllerUtil.returnDataSuccess(baseHtProductModels, (int)page.getTotal());
     }
 

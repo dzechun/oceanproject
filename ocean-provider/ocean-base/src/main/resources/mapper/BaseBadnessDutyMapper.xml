@@ -55,6 +55,9 @@
       <if test="badnessCategoryDesc != null and badnessCategoryDesc != ''">
         and bbd.badness_duty_desc like CONCAT('%',#{badnessDutyDesc},'%')
       </if>
+        <if test="orgId!=null">
+            and bbd.org_id=#{orgId}
+        </if>
     </where>
   </select>
 

@@ -65,6 +65,9 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
+      <if test="orgId!=null">
+        and bii.organization_id=#{orgId}
+      </if>
     </where>
     order by bii.create_time desc
   </select>
@@ -91,6 +94,9 @@
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and bii.organization_id=#{orgId}
       </if>
     </where>
     order by bii.create_time desc

@@ -153,8 +153,13 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     }
 
     @Override
-    public List<BaseStorage> findList(SearchBaseStorage searchBaseStorage) {
-        return baseStorageMapper.findList(searchBaseStorage);
+    public List<BaseStorage> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return baseStorageMapper.findList(map);
     }
 
     @Override

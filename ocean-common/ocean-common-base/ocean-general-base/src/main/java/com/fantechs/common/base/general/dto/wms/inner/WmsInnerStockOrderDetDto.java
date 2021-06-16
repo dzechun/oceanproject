@@ -17,6 +17,34 @@ import java.io.Serializable;
 public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements Serializable {
 
     /**
+     * 库位名称
+     */
+    @Transient
+    @ApiModelProperty(name = "storageName",value = "库位名称")
+    private String storageName;
+
+    /**
+     * 库位描述
+     */
+    @Transient
+    @ApiModelProperty(name = "storageDesc",value = "库位描述")
+    private String storageDesc;
+
+    /**
+     * 物料编码
+     */
+    @Transient
+    @ApiModelProperty(name = "materialCode",value = "物料编码")
+    private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @Transient
+    @ApiModelProperty(name = "materialName",value = "物料名称")
+    private String materialName;
+
+    /**
      * 作业员
      */
     @Transient

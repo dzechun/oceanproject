@@ -5,7 +5,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseCustomer;
 import com.fantechs.common.base.mybatis.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseCustomerMapper extends MyMapper<BaseCustomer> {
-    List<BaseCustomer> findList(SearchBaseCustomer searchBaseCustomer);
+    List<BaseCustomer> findList(Map<String, Object> map);
 }

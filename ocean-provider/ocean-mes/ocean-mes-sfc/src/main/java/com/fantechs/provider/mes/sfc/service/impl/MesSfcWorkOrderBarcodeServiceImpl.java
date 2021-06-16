@@ -77,8 +77,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int print(String ids,Byte printType) {
-        if(StringUtils.isEmpty(ids)){
+    public int print(String ids,Byte printType,String printName) {
+        if(StringUtils.isEmpty(ids,printName)){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数传递错误");
         }
         String[] arrId = ids.split(",");
@@ -103,7 +103,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 }
             }
             PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(mesSfcWorkOrderBarcode.getLabelCategoryId(), mesSfcWorkOrderBarcode.getWorkOrderId());
-            //printModel.setSize(labelRuteDto.getOncePrintQty());
+            printModel.setSize(labelRuteDto.getOncePrintQty());
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
             }
@@ -151,7 +151,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             PrintDto printDto = new PrintDto();
             printDto.setLabelName(labelRuteDto.getLabelName());
             printDto.setLabelVersion(labelRuteDto.getLabelVersion());
-            printDto.setPrintName("测试");
+            printDto.setPrintName(printName);
             List<PrintModel> printModelList = new ArrayList<>();
             printModelList.add(printModel);
             printDto.setPrintModelList(printModelList);

@@ -54,6 +54,9 @@
       <if test="sampleSransitionRuleDesc != null and sampleSransitionRuleDesc!=''">
         and bhstr.sample_transition_rule_desc like CONCAT('%', #{sampleSransitionRuleDesc}, '%')
       </if>
+      <if test="orgId!=null">
+        and bhstr.org_id=#{orgId}
+      </if>
     </where>
     order by create_time desc
   </select>
