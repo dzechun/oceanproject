@@ -14,4 +14,6 @@ public interface BaseProLineService extends IService<BaseProLine> {
     //根据条件查询生产线信息列表
     List<BaseProLine> findList(Map<String, Object> map);
     Map<String, Object> importExcel(List<BaseProLineImport> baseProLineImports);
+
+    BaseProLine addOrUpdate (BaseProLine baseProLine);
 }

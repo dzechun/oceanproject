@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.*;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
+import com.fantechs.common.base.general.entity.basic.BaseWorkshopSection;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -44,6 +45,7 @@ public class SapProLineApiServiceImpl implements SapProLineApiService {
         DTMESPROCESSQUERYRES res = out.siMESPROCESSQUERYOut(req);
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())){
             if(StringUtils.isEmpty(res.getPROCESS())) throw new BizErrorException("请求结果为空");
+            //保存或更新工艺路线
             BaseMaterial baseMaterial = getBaseMaterial(searchSapProLineApi.getMaterialCode());
             BaseProLine proLine = new BaseProLine();
             proLine.setProName(baseMaterial.getMaterialName());
@@ -51,9 +53,15 @@ public class SapProLineApiServiceImpl implements SapProLineApiService {
             proLine.setProCode(baseMaterial.getMaterialCode());
             proLine.setStatus(1);
             proLine.setOrganizationId(getOrId());
-            /*baseFeignApi.*/
+            baseFeignApi.addOrUpdate(proLine);
 
-
+            BaseWorkshopSection baseWorkshopSection = new BaseWorkshopSection();
+            baseWorkshopSection.setSectionCode(baseMaterial.getMaterialCode());
+            baseWorkshopSection.setSectionName(baseMaterial.getMaterialName());
+            baseWorkshopSection.setSectionDesc(baseMaterial.getMaterialName());
+            baseWorkshopSection.setStatus((byte)1);
+            baseWorkshopSection.setOrganizationId(getOrId());
+            baseFeignApi.addOrUpdate(baseWorkshopSection);
 
 
            /* List<BaseMaterial> addList = new ArrayList<BaseMaterial>();

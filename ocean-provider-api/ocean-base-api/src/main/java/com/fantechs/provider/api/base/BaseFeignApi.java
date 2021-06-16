@@ -372,4 +372,12 @@ public interface BaseFeignApi {
     @ApiOperation("根据条件查询生产线信息列表")
     @PostMapping("/baseProLine/findList")
     ResponseEntity<List<BaseProLine>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProLine searchBaseProLine);
+
+    @ApiOperation("新增或修改工艺路线表信息")
+    @PostMapping("/baseProLine/addOrUpdate")
+    ResponseEntity<BaseProLine> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProLine baseProLine);
+
+    @ApiOperation("新增或修改工段表信息")
+    @PostMapping("/baseWorkshopSection/addOrUpdate")
+    ResponseEntity<BaseWorkshopSection> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseWorkshopSection baseWorkshopSection);
 }

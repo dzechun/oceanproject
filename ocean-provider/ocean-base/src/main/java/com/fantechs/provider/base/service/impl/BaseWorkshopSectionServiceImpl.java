@@ -2,6 +2,7 @@ package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.imports.BaseWorkshopSectionImport;
+import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseWorkshopSection;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkshopSection;
@@ -210,4 +211,24 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
     }
+
+    @Override
+    public BaseWorkshopSection addOrUpdate(BaseWorkshopSection baseWorkshopSection) {
+
+        Example example = new Example(BaseWorkshopSection.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("sectionCode", baseWorkshopSection.getSectionCode());
+        List<BaseWorkshopSection> baseWorkshopSections = workshopSectionMapper.selectByExample(example);
+
+        baseWorkshopSection.setModifiedTime(new Date());
+        if (StringUtils.isNotEmpty(baseWorkshopSections)){
+            baseWorkshopSection.setSectionId(baseWorkshopSections.get(0).getSectionId());
+            workshopSectionMapper.updateByPrimaryKey(baseWorkshopSection);
+        }else{
+            baseWorkshopSection.setCreateTime(new Date());
+            workshopSectionMapper.insertUseGeneratedKeys(baseWorkshopSection);
+        }
+        return baseWorkshopSection;
+    }
+
 }

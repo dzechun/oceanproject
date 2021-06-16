@@ -5,6 +5,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProLineImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
+import com.fantechs.common.base.general.entity.basic.BaseProductBom;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -134,9 +135,10 @@ public class BaseProLineController {
         }
     }
 
-   /* @ApiOperation("接口添加或更新物料信息")
-    @PostMapping("/batchUpdate")
-    public ResponseEntity batchUpdate(@ApiParam(value = "物料信息集合",required = true)@RequestBody List<BaseMaterial> baseMaterials){
-        return ControllerUtil.returnCRUD(baseMaterialService.batchUpdate(baseMaterials));
-    }*/
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity<BaseProLine> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProLine baseProLine) {
+        BaseProLine baseProLines = baseProLineService.addOrUpdate(baseProLine);
+        return ControllerUtil.returnDataSuccess(baseProLines, StringUtils.isEmpty(baseProLines) ? 0 : 1);
+    }
 }
