@@ -10,7 +10,9 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProducttio
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProducttionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProducttionKeyIssuesOrderDet;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtProducttionKeyIssuesOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProducttionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -49,11 +51,12 @@ public class MesPmProducttionKeyIssuesOrderServiceImpl extends BaseService<MesPm
 
     @Override
     public MesPmProducttionKeyIssuesOrder PDAFindOne(String workOrderCode) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("workOrderCode",workOrderCode);
-        List<MesPmProducttionKeyIssuesOrder> list = mesPmProducttionKeyIssuesOrderMapper.findList(map);
-
         MesPmProducttionKeyIssuesOrder mesPmProducttionKeyIssuesOrder = new MesPmProducttionKeyIssuesOrder();
+
+        SearchMesPmProducttionKeyIssuesOrder searchMesPmProducttionKeyIssuesOrder = new SearchMesPmProducttionKeyIssuesOrder();
+        searchMesPmProducttionKeyIssuesOrder.setWorkOrderCode(workOrderCode);
+        searchMesPmProducttionKeyIssuesOrder.setCodeQueryMark(1);
+        List<MesPmProducttionKeyIssuesOrder> list = mesPmProducttionKeyIssuesOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmProducttionKeyIssuesOrder));
         //不存在数据则新增,存在则直接返回
         if(StringUtils.isEmpty(list)){
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();

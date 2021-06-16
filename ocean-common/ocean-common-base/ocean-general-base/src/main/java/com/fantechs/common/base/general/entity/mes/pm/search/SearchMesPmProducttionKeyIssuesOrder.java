@@ -28,4 +28,10 @@ public class SearchMesPmProducttionKeyIssuesOrder extends BaseQuery implements S
      */
     @ApiModelProperty(name="materialDesc" ,value="产品型号描述")
     private String materialDesc;
+
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

@@ -62,7 +62,8 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
         baseOrderType.setCreateUserId(currentUser.getUserId());
         baseOrderType.setModifiedTime(new Date());
         baseOrderType.setModifiedUserId(currentUser.getUserId());
-        int i = baseOrderTypeMapper.insertSelective(baseOrderType);
+        baseOrderType.setOrgId(currentUser.getOrganizationId());
+        int i = baseOrderTypeMapper.insertUseGeneratedKeys(baseOrderType);
 
         //新增履历
         BaseHtOrderType baseHtOrderType = new BaseHtOrderType();
@@ -92,6 +93,7 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
 
         baseOrderType.setModifiedTime(new Date());
         baseOrderType.setModifiedUserId(currentUser.getUserId());
+        baseOrderType.setOrgId(currentUser.getOrganizationId());
         int i = baseOrderTypeMapper.updateByPrimaryKeySelective(baseOrderType);
 
         //新增履历
