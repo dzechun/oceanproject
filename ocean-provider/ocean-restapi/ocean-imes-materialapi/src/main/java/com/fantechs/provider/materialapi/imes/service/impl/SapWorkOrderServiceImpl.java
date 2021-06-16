@@ -63,11 +63,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 mesPmWorkOrder.setWorkOrderQty(new BigDecimal(restapiWorkOrderApiDto.getGAMNG()));
             //暂时注释、目前还未同步产线
             //mesPmWorkOrder.setProLineId(getProLine(restapiWorkOrderApiDto.getFEVOR()));
-            SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-            searchBaseOrganization.setOrganizationName("雷赛");
-            ResponseEntity<List<BaseOrganizationDto>> organizationList = baseFeignApi.findOrganizationList(searchBaseOrganization);
-            if(StringUtils.isEmpty(organizationList.getData()))  throw new BizErrorException("未查询到对应组织");
-            mesPmWorkOrder.setOrgId((organizationList.getData().get(0).getOrganizationId()));
+            mesPmWorkOrder.setOrgId((long)1000);
             pmFeignApi.updateById(mesPmWorkOrder);
 
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
@@ -86,7 +82,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
             bom.setOption1(restapiWorkOrderApiDto.getRSPOS());
             bom.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
          //   bom.setPartMaterialId(getMaterialId(restapiWorkOrderApiDto.getMATNR()));
-            bom.setOrgId((organizationList.getData().get(0).getOrganizationId()));
+            bom.setOrgId((long)1000);
 
 
             if (StringUtils.isEmpty(mesPmWorkOrderBomList.getData())) {
@@ -116,6 +112,8 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
     public Long getMaterialId(String materialCode){
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
         searchBaseMaterial.setMaterialCode(materialCode);
+        searchBaseMaterial.setOrganizationId((long)1000);
+        System.out.println("---searchBaseMaterial---"+searchBaseMaterial);
         ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findSmtMaterialList(searchBaseMaterial);
         if(StringUtils.isEmpty(parentMaterialList.getData()))
             throw new BizErrorException("未查询到对应的物料："+materialCode);
@@ -125,10 +123,18 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
     public Long getProLine(String proLineCode){
         SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
         searchBaseProLine.setProCode(proLineCode);
+        searchBaseProLine.setOrganizationId((long)1000);
         ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);
         if(StringUtils.isEmpty(list.getData()))
             throw new BizErrorException("未查询到对应的产线："+proLineCode);
         return list.getData().get(0).getProLineId();
     }
 
+    /*public Long getOrId() {
+        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+        searchBaseOrganization.setOrganizationName("雷赛");
+        ResponseEntity<List<BaseOrganizationDto>> organizationList = baseFeignApi.findOrganizationList(searchBaseOrganization);
+        if (StringUtils.isEmpty(organizationList.getData())) throw new BizErrorException("未查询到对应组织");
+        return organizationList.getData().get(0).getOrganizationId();
+    }*/
 }

@@ -279,4 +279,25 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
         resultMap.put("操作失败行数", fail);
         return resultMap;
     }
+
+    @Override
+    public BaseProcess addOrUpdate (BaseProcess baseProcess) {
+
+        Example example = new Example(BaseProcess.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("sectionId", baseProcess.getSectionId());
+        criteria.andEqualTo("organizationId", baseProcess.getOrganizationId());
+        List<BaseProcess> baseProcessOld = baseProcessMapper.selectByExample(example);
+
+        baseProcess.setModifiedTime(new Date());
+        if (StringUtils.isNotEmpty(baseProcessOld)){
+            baseProcess.setProcessId(baseProcessOld.get(0).getProcessId());
+            baseProcessMapper.updateByPrimaryKey(baseProcess);
+        }else{
+            baseProcess.setCreateTime(new Date());
+            baseProcessMapper.insertUseGeneratedKeys(baseProcess);
+        }
+        return baseProcess;
+    }
+
 }

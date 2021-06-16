@@ -1,8 +1,10 @@
 package com.fantechs.provider.materialapi.imes.controller;
 
+import com.fantechs.common.base.general.dto.restapi.SearchSapRouteApi;
 import com.fantechs.common.base.general.dto.restapi.SearchSapSupplierApi;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.provider.materialapi.imes.service.SapRouteApiService;
 import com.fantechs.provider.materialapi.imes.service.SapSupplierApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,17 +22,19 @@ import javax.annotation.Resource;
  * Created by leifengzhi on 2021/05/31.
  */
 @RestController
-@Api(tags = "请求雷赛供应商信息接口")
-@RequestMapping("/sapSupplierApi")
+@Api(tags = "请求雷赛工艺路线信息接口")
+@RequestMapping("/sapRouteApi")
 @Validated
-public class SapProLineApiController {
+public class SapRouteApiController {
 
     @Resource
-    private SapSupplierApiService sapSupplierApiService;
+    private SapRouteApiService sapRouteApiService;
 
-    @ApiOperation(value = "请求雷赛工序信息",notes = "请求雷赛工序信息")
-    @PostMapping("/getProLine")
-    public ResponseEntity getProLine(@ApiParam(value = "查询对象")@RequestBody SearchSapSupplierApi searchSapSupplierApi) {
-        return ControllerUtil.returnCRUD(sapSupplierApiService.getSupplier(searchSapSupplierApi));
+    @ApiOperation(value = "请求雷赛工艺路线信息",notes = "请求雷赛工艺路线信息")
+    @PostMapping("/getRoute")
+    public ResponseEntity getProLine(@ApiParam(value = "查询对象")@RequestBody SearchSapRouteApi searchSapRouteApi) {
+        return ControllerUtil.returnCRUD(sapRouteApiService.getRoute(searchSapRouteApi));
     }
+
+
 }

@@ -74,11 +74,14 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
 
     @Override
     public List<BaseMaterialDto> findList(Map<String, Object> map){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("organizationId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+
+            map.put("organizationId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
         List<BaseMaterialDto> smtMaterialDtos = baseMaterialMapper.findList(map);
         if (StringUtils.isNotEmpty(smtMaterialDtos)) {
             for (BaseMaterialDto smtMaterialDto : smtMaterialDtos) {

@@ -316,4 +316,24 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
         resultMap.put("操作失败行", fail);
         return resultMap;
     }
+
+    @Override
+    public BaseRoute addOrUpdate (BaseRoute baseRoute) {
+
+        Example example = new Example(BaseRoute.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("routeCode", baseRoute.getRouteCode());
+        criteria.andEqualTo("organizationId", baseRoute.getOrganizationId());
+        List<BaseRoute> baseRouteOld = baseRouteMapper.selectByExample(example);
+
+        baseRoute.setModifiedTime(new Date());
+        if (StringUtils.isNotEmpty(baseRouteOld)){
+            baseRoute.setRouteId(baseRouteOld.get(0).getRouteId());
+            baseRouteMapper.updateByPrimaryKey(baseRoute);
+        }else{
+            baseRoute.setCreateTime(new Date());
+            baseRouteMapper.insertUseGeneratedKeys(baseRoute);
+        }
+        return baseRoute;
+    }
 }

@@ -301,4 +301,26 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
         resultMap.put("操作失败行", fail);
         return resultMap;
     }
+
+
+    @Override
+    public BaseProductProcessRoute addOrUpdate(BaseProductProcessRoute baseProductProcessRoute) {
+        Example example = new Example(BaseProductProcessRoute.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("materialId", baseProductProcessRoute.getMaterialId());
+        criteria.andEqualTo("routeId", baseProductProcessRoute.getRouteId());
+        criteria.andEqualTo("organizationId", baseProductProcessRoute.getOrganizationId());
+        List<BaseProductProcessRoute> baseProductProcessRouteOld = baseProductProcessRouteMapper.selectByExample(example);
+
+        baseProductProcessRoute.setModifiedTime(new Date());
+        if (StringUtils.isNotEmpty(baseProductProcessRouteOld)){
+            baseProductProcessRoute.setProductProcessRouteId(baseProductProcessRouteOld.get(0).getProductProcessRouteId());
+            baseProductProcessRouteMapper.updateByPrimaryKey(baseProductProcessRoute);
+        }else{
+            baseProductProcessRoute.setCreateTime(new Date());
+            baseProductProcessRouteMapper.insertUseGeneratedKeys(baseProductProcessRoute);
+        }
+        return baseProductProcessRoute;
+    }
+
 }
