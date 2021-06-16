@@ -62,7 +62,6 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
         record.setModifiedTime(new Date());
         record.setModifiedUserId(user.getUserId());
         record.setOrgId(user.getOrganizationId());
-        record.setOrgId(user.getOrganizationId());
 
         int i = baseSampleTransitionRuleMapper.insertUseGeneratedKeys(record);
         if (StringUtils.isNotEmpty(record.getList())){

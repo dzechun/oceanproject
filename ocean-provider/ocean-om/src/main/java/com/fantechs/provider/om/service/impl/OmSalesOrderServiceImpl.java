@@ -236,6 +236,12 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 
     @Override
     public List<OmSalesOrderDto> findList(Map<String, Object> map) {
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUserInfo)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        map.put("orgId",currentUserInfo.getOrganizationId());
         List<OmSalesOrderDto> omSalesOrderDtoList = omSalesOrderMapper.findList(map);
         for(OmSalesOrderDto omSalesOrderDto : omSalesOrderDtoList) {
             Map<String, Object> omSalesOrderDetMap = new HashMap<>();
@@ -285,6 +291,11 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         return idsString.toString();
     }
 
+    /**
+     * 下发生成销售出库单
+     * @param id
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int issueWarehouse(Long id) {
@@ -305,6 +316,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         }
         wmsOutDeliveryOrder.setMaterialOwnerId(baseMaterialOwnerDtos.get(0).getMaterialOwnerId());
         wmsOutDeliveryOrder.setOrderDate(new Date());
+        wmsOutDeliveryOrder.setOrderTypeId((long)1);
         wmsOutDeliveryOrder.setDetailedAddress(omSalesOrderDto.getOmSalesOrderDetDtoList().size() > 0 ? omSalesOrderDto.getOmSalesOrderDetDtoList().get(0).getDeliveryAddress() : null);
 
 

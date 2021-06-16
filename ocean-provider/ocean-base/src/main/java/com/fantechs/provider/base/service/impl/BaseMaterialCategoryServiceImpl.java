@@ -55,6 +55,7 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
         baseMaterialCategory.setCreateUserId(user.getUserId());
         baseMaterialCategory.setModifiedTime(new Date());
         baseMaterialCategory.setModifiedUserId(user.getUserId());
+        baseMaterialCategory.setOrganizationId(user.getOrganizationId());
         baseMaterialCategory.setStatus(StringUtils.isEmpty(baseMaterialCategory.getStatus())?1: baseMaterialCategory.getStatus());
 
         int i = baseMaterialCategoryMapper.insertUseGeneratedKeys(baseMaterialCategory);
@@ -74,6 +75,7 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
         }
         baseMaterialCategory.setModifiedTime(new Date());
         baseMaterialCategory.setModifiedUserId(user.getUserId());
+        baseMaterialCategory.setOrganizationId(user.getOrganizationId());
 
         BaseHtMaterialCategory baseHtMaterialCategory = new BaseHtMaterialCategory();
         BeanUtils.copyProperties(baseMaterialCategory, baseHtMaterialCategory);

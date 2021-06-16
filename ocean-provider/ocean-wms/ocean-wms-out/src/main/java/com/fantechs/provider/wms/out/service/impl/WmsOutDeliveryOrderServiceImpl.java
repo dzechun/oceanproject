@@ -56,11 +56,15 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     private WmsOutHtDeliveryOrderDetMapper wmsOutHtDeliveryOrderDetMapper;
     @Resource
     private InnerFeignApi innerFeignApi;
-    @Resource
-    private OMFeignApi omFeignApi;
 
     @Override
     public List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        map.put("orgId",user.getOrganizationId());
         List<WmsOutDeliveryOrderDto> wmsOutDeliveryOrderDtos = wmsOutDeliveryOrderMapper.findList(map);
 
         for (WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto : wmsOutDeliveryOrderDtos) {
@@ -82,6 +86,12 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
     @Override
     public List<WmsOutHtDeliveryOrder> findHtList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        map.put("orgId",user.getOrganizationId());
         List<WmsOutHtDeliveryOrder> wmsOutHtDeliveryOrders = wmsOutHtDeliveryOrderMapper.findHtList(map);
 
         for (WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder : wmsOutHtDeliveryOrders) {
@@ -159,7 +169,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         searchWmsInnerJobOrder.setSourceOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
         if(StringUtils.isNotEmpty(wmsInnerJobOrderDtos)){
-            throw new BizErrorException("对应的拣货作业单已存在,该销售出库单不允许修改！");
+            throw new BizErrorException("对应的拣货作业单已存在,该出库单不允许修改！");
         }
 
         //出库单
@@ -261,7 +271,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrderDto.getWmsOutDeliveryOrderDetList();
         if (StringUtils.isEmpty(wmsOutDeliveryOrderDetList)) {
-            throw new BizErrorException("销售出库单明细为空时无法创建作业单");
+            throw new BizErrorException("出库单明细为空时无法创建作业单");
         }
 
         //查询是否创建作业单
