@@ -64,6 +64,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
+        SysUser sysUser = currentUser();
+        searchWmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
         return wmsInPutawayOrderMapper.findList(searchWmsInnerJobOrder);
     }
 
@@ -701,6 +703,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
+        record.setOrgId(sysUser.getOrganizationId());
         int num = wmsInPutawayOrderMapper.insertUseGeneratedKeys(record);
         for (WmsInnerJobOrderDet wmsInPutawayOrderDet : record.getWmsInPutawayOrderDets()) {
             wmsInPutawayOrderDet.setJobOrderId(record.getJobOrderId());
@@ -708,6 +711,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsInPutawayOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInPutawayOrderDet.setModifiedTime(new Date());
             wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
+            wmsInPutawayOrderDet.setOrgId(sysUser.getOrganizationId());
             wmsInPutawayOrderDetMapper.insert(wmsInPutawayOrderDet);
             if(record.getJobOrderType()==(byte)3) {
                 WmsInAsnOrderDto wmsInAsnOrderDto = inFeignApi.findList(SearchWmsInAsnOrder.builder()
@@ -736,6 +740,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     .createUserId(sysUser.getUserId())
                     .modifiedTime(new Date())
                     .modifiedUserId(sysUser.getUserId())
+                    .orgId(sysUser.getOrganizationId())
                     .build();
             int res = wmsInnerJobOrderReMsppMapper.insertSelective(wmsInnerJobOrderReMspp);
             if(res<=0){
@@ -816,6 +821,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             inv.setJobStatus((byte)2);
             inv.setInventoryId(null);
             inv.setJobOrderDetId(wmsInnerJobOrderDetDto.getJobOrderDetId());
+            inv.setOrgId(sysUser.getOrganizationId());
+            inv.setCreateUserId(sysUser.getUserId());
+            inv.setCreateTime(new Date());
+            inv.setModifiedTime(new Date());
+            inv.setModifiedUserId(sysUser.getUserId());
             return wmsInnerInventoryMapper.insertSelective(inv);
         }else{
             //原库存
@@ -869,6 +879,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             inv.setJobStatus((byte)1);
             inv.setJobOrderDetId(newDto.getJobOrderDetId());
             inv.setInventoryId(null);
+            inv.setCreateUserId(sysUser.getUserId());
+            inv.setCreateTime(new Date());
+            inv.setModifiedTime(new Date());
+            inv.setModifiedUserId(sysUser.getUserId());
             return wmsInnerInventoryMapper.insertSelective(inv);
         }else{
             //原库存

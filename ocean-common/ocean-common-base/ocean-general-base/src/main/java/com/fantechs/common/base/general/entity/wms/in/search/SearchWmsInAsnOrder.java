@@ -35,4 +35,6 @@ public class SearchWmsInAsnOrder extends BaseQuery implements Serializable {
     private String warehouseName;
 
     private Long asnOrderId;
+
+    private Long orgId;
 }

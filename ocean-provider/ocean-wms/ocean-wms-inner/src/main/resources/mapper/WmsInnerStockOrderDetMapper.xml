@@ -27,6 +27,10 @@
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetDto">
     <result column="work_name" jdbcType="VARCHAR" property="workName"/>
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+    <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
@@ -53,16 +57,16 @@ wivd.modified_time,
 wivd.barcode
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    SELECT <include refid="Base_Column_List"/>,bs.storage_name,bm.material_code,bm.material_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+    SELECT <include refid="Base_Column_List"/>,bs.storage_name,bs.storage_desc,bm.material_code,bm.material_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
     FROM wms_inner_stock_order_det wivd
     LEFT JOIN base_storage bs ON wivd.storage_id = bs.storage_id
     LEFT JOIN base_material bm ON wivd.material_id = bm.material_id
-    LEFT JOIN ocean.sys_user su  ON wivd.create_user_id = su.user_id
-    LEFT JOIN ocean.sys_user sus ON wivd.modified_user_id = sus.user_id
-    LEFT JOIN base_organization bo ON wivd.organization_id = bo.organization_id
+    LEFT JOIN ocean_v2.sys_user su  ON wivd.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON wivd.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wivd.org_id = bo.organization_id
     <where>
         <if test="stockOrderId !=null and stockOrderId!=''">
-          and wivd.inventory_verification_id = #{inventoryVerificationId}
+          and wivd.stock_order_id = #{stockOrderId}
         </if>
         <if test="storageName!=null and storageName!=''">
           and bs.storage_name like CONCAT('%',#{storageName},'%')
@@ -72,6 +76,9 @@ wivd.barcode
         </if>
         <if test="materialName!=null and materialName!=''">
           and bm.material_name like CONCAT('%',#{materialName},'%')
+        </if>
+        <if test="storageCode!=null and storageCode!=''">
+          and bs.storage_code = #{storageCode}
         </if>
     </where>
   </select>

@@ -59,6 +59,8 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
 
     @Override
     public List<WmsOutDespatchOrderDto> findList(SearchWmsOutDespatchOrder searchWmsOutDespatchOrder) {
+        SysUser sysUser = currentUser();
+        searchWmsOutDespatchOrder.setOrgId(sysUser.getOrganizationId());
         return wmsOutDespatchOrderMapper.findList(searchWmsOutDespatchOrder);
     }
 
@@ -177,6 +179,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
+        record.setOrgId(sysUser.getOrganizationId());
         int num = wmsOutDespatchOrderMapper.insertUseGeneratedKeys(record);
         for (WmsOutDespatchOrderReJo wms : record.getWmsOutDespatchOrderReJo()) {
             SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();

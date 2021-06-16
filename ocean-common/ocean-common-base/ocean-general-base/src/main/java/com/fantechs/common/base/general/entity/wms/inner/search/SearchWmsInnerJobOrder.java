@@ -60,4 +60,6 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     private Boolean isPick;
 
     private List<Byte> orderStatusList;
+
+    private Long orgId;
 }

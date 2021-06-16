@@ -81,7 +81,7 @@ public class WmsInnerStockOrderController {
     @ApiOperation("盘点单激活作废")
     @PostMapping("/activation")
     public ResponseEntity activation(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,
-                                     @ApiParam(value = "按钮类型 1-激活 2作废",required = true)@RequestParam @NotBlank(message = "作业类型不能为空")Byte btnType){
+                                     @ApiParam(value = "按钮类型 1-激活 2作废",required = true)@RequestParam Integer btnType){
         return ControllerUtil.returnCRUD(wmsInventoryVerificationService.activation(ids,btnType));
     }
 
