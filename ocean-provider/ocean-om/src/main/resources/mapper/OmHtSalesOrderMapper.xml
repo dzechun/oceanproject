@@ -77,6 +77,10 @@
                 and hso.status = #{status}
             </if>
 
+            <if test="orgId != null">
+                and hso.org_id = #{orgId}
+            </if>
+
             <if test="salesOrderCode != null and salesOrderCode != ''">
                 and hso.sales_order_code like CONCAT('%', #{salesOrderCode}, '%')
             </if>

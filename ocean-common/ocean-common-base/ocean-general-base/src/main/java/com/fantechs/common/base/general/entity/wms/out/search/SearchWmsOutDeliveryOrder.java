@@ -16,6 +16,12 @@ public class SearchWmsOutDeliveryOrder extends BaseQuery implements Serializable
     private Long deliveryOrderId;
 
     /**
+     * 单据类型ID（1-销售出库单 2-调拨出库单）
+     */
+    @ApiModelProperty(name="orderTypeId",value = "单据类型ID")
+    private Long orderTypeId;
+
+    /**
      * 销售出库单号
      */
     @ApiModelProperty(name="deliveryOrderCode",value = "销售出库单号")

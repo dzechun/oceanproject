@@ -350,8 +350,8 @@ public interface BaseFeignApi {
     ResponseEntity addOrUpdate(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody @Validated BaseSupplier baseSupplier);
 
     @ApiOperation("根据条件查询产品关键事项列表")
-    @PostMapping("/baseProducttionKeyIssues/findList")
-    ResponseEntity<List<BaseProducttionKeyIssues>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProducttionKeyIssues searchBaseProducttionKeyIssues);
+    @PostMapping("/baseProductionKeyIssues/findList")
+    ResponseEntity<List<BaseProductionKeyIssues>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductionKeyIssues searchBaseProductionKeyIssues);
 
     @ApiOperation("接口新增或修改产品bom信息")
     @PostMapping("/baseProductBom/addOrUpdate")

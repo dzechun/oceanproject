@@ -9,7 +9,7 @@ spring:
     name: @pom.artifactId@
   rabbitmq:
     #host: 192.168.61.55
-    host: 192.168.204.164
+    host: 192.168.204.163
     port: 5672
     username: admin
 #    password: admin
@@ -27,4 +27,4 @@ spring:
       max-file-size: 500MB
       max-request-size: 500MB
 wmsAPI:
-  finishPtlJobOrderUrl: http://129.211.33.122:8090/ptl/finishOrder
+  finishPtlJobOrderUrl: http://wms.8ma.net:8090/bmwms/ptl/finishOrder

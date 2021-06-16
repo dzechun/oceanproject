@@ -63,6 +63,7 @@ public class ElectronicTagReceiver {
         String encoded = new String(bytes, "UTF-8");
         MQResponseEntity mqResponseEntity = JsonUtils.jsonToPojo(encoded, MQResponseEntity.class);
         log.info("接收到客户端消息：" + mqResponseEntity);
+        RabbitMQDTO rabbitMQDTO1 = new RabbitMQDTO();
         //电子标签熄灭动作
         try {
             if (mqResponseEntity.getCode() == 106) {
@@ -73,7 +74,6 @@ public class ElectronicTagReceiver {
 
                 List<RabbitMQDTO> list = new LinkedList<>();
                 List<RabbitMQDTO> rabbitMQDTOS = new LinkedList<>();
-                RabbitMQDTO rabbitMQDTO1 = new RabbitMQDTO();
                 rabbitMQDTO1.setEquipmentTagId(equipmentTagId);
                 rabbitMQDTO1.setElectronicTagId(b.toString());
                 rabbitMQDTOS.add(rabbitMQDTO1);
@@ -218,12 +218,12 @@ public class ElectronicTagReceiver {
                             ptlJobOrderDTO.setStatus("F");
                             // 回写PTL作业任务
                             log.info("电子作业标签完成，回传WMS" + JSONObject.toJSONString(ptlJobOrderDTO));
-//                            String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, finishPtlJobOrderUrl);
-                            log.info("电子作业标签回写返回信息：" + "result");
-//                            ResponseEntityDTO responseEntityDTO = JsonUtils.jsonToPojo(result, ResponseEntityDTO.class);
-//                            if (!"s".equals(responseEntityDTO.getSuccess())) {
-//                                throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntityDTO.getMessage());
-//                            }
+                            String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, finishPtlJobOrderUrl);
+                            log.info("电子作业标签回写返回信息：" + result);
+                            ResponseEntityDTO responseEntityDTO = JsonUtils.jsonToPojo(result, ResponseEntityDTO.class);
+                            if (!"s".equals(responseEntityDTO.getSuccess())) {
+                                throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntityDTO.getMessage());
+                            }
                         }
                     }
                 }
@@ -251,18 +251,8 @@ public class ElectronicTagReceiver {
                 }
             }
         } catch (Exception e) {
-            MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
-            mQResponseEntity.setCode(500);
-            mQResponseEntity.setMessage(e.getMessage());
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("currentTime", System.currentTimeMillis());
-            mQResponseEntity.setData(map);
-            log.info("===========开始发送异常消息给客户端===============");
-            // 出现异常，发送给PDA展示异常状态
-            fanoutSender.send(RabbitConfig.TOPIC_QUEUE_PDA, JSONObject.toJSONString(mQResponseEntity));
-            log.info("===========队列名称:" + RabbitConfig.TOPIC_QUEUE_PDA);
-            log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
-            log.info("===========发送消息给客户端完成===============");
+            electronicTagStorageService.fanoutSender(1001, rabbitMQDTO1, null);
+            log.info("===========发送消息给客户端控制该储位对应的电子标签再次亮灯完成===============");
             //第二个参数设为true为自动应答，false为手动ack
 //            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
             //重新放入队列
