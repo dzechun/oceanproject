@@ -1,7 +1,11 @@
 package com.fantechs.provider.om.service;
 
+import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
 import com.fantechs.common.base.support.IService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -9,5 +13,7 @@ import com.fantechs.common.base.support.IService;
  */
 
 public interface OmPurchaseOrderService extends IService<OmPurchaseOrder> {
-   /* List<OmPurchaseOrderDto> findList(Map<String, Object> map);*/
+    List<OmPurchaseOrderDto> findList(Map<String, Object> map);
+
+    OmPurchaseOrder addOrUpdate (OmPurchaseOrder omPurchaseOrder);
 }

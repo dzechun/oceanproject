@@ -218,11 +218,14 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
 
     @Override
     public List<BaseProductBomDto> findList(Map<String,Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
         //查询指定层级的产品BOM
         List<BaseProductBomDto> smtProductBomDtos = baseProductBomMapper.findList(map);
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="sscom.fantechs.mapper.purchase.OmPurchaseOrderDetMapper">
+<mapper namespace="com.fantechs.provider.om.mapper.OmPurchaseOrderDetMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet">
     <!--
       WARNING - @mbg.generated
@@ -27,4 +27,33 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
+  <sql id="Base_Column_List">
+    opod.purchase_order_det_id, opod.purchase_order_id, opod.project_code, opod.material_id, opod.unit_name,opod.order_qty,
+    opod.actual_qty, opod.warehouse_id, opod.factory_id, opod.delivery_date,opod.status, opod.remark,opod.org_id, opod.create_user_id,
+    opod.create_time, opod.modified_user_id, opod.modified_time,opod.is_delete, opod.option1, opod.option2, opod.option3
+  </sql>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmPurchaseOrderDetDto">
+  </resultMap>
+
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select
+    <include refid="Base_Column_List"/>
+    from om_purchase_order_det opod
+    left join ocean_v2.sys_user suc on opod.create_user_id = suc.user_id
+    left join base_organization bo on opod.org_id = bo.organization_id
+    left join ocean_v2.sys_user sumod on opod.modified_user_id = sumod.user_id
+    <where>
+
+      <if test="status != null">
+        and opod.status = #{status}
+      </if>
+      <if test="orgId != null">
+        and opod.org_id = #{orgId}
+      </if>
+    </where>
+    order by opod.modified_time desc
+  </select>
 </mapper>

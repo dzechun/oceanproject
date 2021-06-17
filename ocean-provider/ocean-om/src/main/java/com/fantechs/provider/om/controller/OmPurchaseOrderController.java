@@ -1,10 +1,10 @@
 package com.fantechs.provider.om.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.om.service.OmPurchaseOrderService;
 import com.github.pagehelper.Page;
@@ -16,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/06/17.
  */
 @RestController
-@Api(tags = "omPurchaseOrder控制器")
+@Api(tags = "采购订单")
 @RequestMapping("/omPurchaseOrder")
 @Validated
 public class OmPurchaseOrderController {
@@ -59,7 +58,7 @@ public class OmPurchaseOrderController {
         return  ControllerUtil.returnDataSuccess(omPurchaseOrder,StringUtils.isEmpty(omPurchaseOrder)?0:1);
     }
 
-/*    @ApiOperation("列表")
+   @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<OmPurchaseOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmPurchaseOrder searchOmPurchaseOrder) {
         Page<Object> page = PageHelper.startPage(searchOmPurchaseOrder.getStartPage(),searchOmPurchaseOrder.getPageSize());
@@ -67,24 +66,11 @@ public class OmPurchaseOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation("历史列表")
-    @PostMapping("/findHtList")
-    public ResponseEntity<List<OmPurchaseOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmPurchaseOrder searchOmPurchaseOrder) {
-        Page<Object> page = PageHelper.startPage(searchOmPurchaseOrder.getStartPage(),searchOmPurchaseOrder.getPageSize());
-        List<OmPurchaseOrder> list = omPurchaseOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchOmPurchaseOrder));
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }
 
-    @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
-    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchOmPurchaseOrder searchOmPurchaseOrder){
-    List<OmPurchaseOrderDto> list = omPurchaseOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmPurchaseOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "OmPurchaseOrder信息", OmPurchaseOrderDto.class, "OmPurchaseOrder.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
-    }*/
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity<OmPurchaseOrder> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated OmPurchaseOrder omPurchaseOrder) {
+        OmPurchaseOrder omPurchaseOrders = omPurchaseOrderService.addOrUpdate(omPurchaseOrder);
+        return ControllerUtil.returnDataSuccess(omPurchaseOrders, StringUtils.isEmpty(omPurchaseOrders) ? 0 : 1);
+    }
 }

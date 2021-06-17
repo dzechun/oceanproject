@@ -6,7 +6,6 @@ import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
-import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderBomApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -50,7 +49,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
             if (!check.equals("1")) {
                 return check;
             }
-
+            Long orgId = getOrId();
             //保存或更新工单
             MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
             mesPmWorkOrder.setWorkOrderCode(restapiWorkOrderApiDto.getAUFNR());
@@ -58,12 +57,12 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 mesPmWorkOrder.setPlanStartTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGSTRP()));
             if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGLTRP()))
                 mesPmWorkOrder.setPlanEndTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGLTRP()));
-            mesPmWorkOrder.setMaterialId(getMaterialId(restapiWorkOrderApiDto.getMATNR()));
+            mesPmWorkOrder.setMaterialId(getBaseMaterial(restapiWorkOrderApiDto.getMATNR()).getMaterialId());
             if(StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGAMNG()))
                 mesPmWorkOrder.setWorkOrderQty(new BigDecimal(restapiWorkOrderApiDto.getGAMNG()));
             //暂时注释、目前还未同步产线
             //mesPmWorkOrder.setProLineId(getProLine(restapiWorkOrderApiDto.getFEVOR()));
-            mesPmWorkOrder.setOrgId((long)1000);
+            mesPmWorkOrder.setOrgId(orgId);
             pmFeignApi.updateById(mesPmWorkOrder);
 
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
@@ -81,8 +80,8 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
             bom.setUsageQty(new BigDecimal(restapiWorkOrderApiDto.getMENGE()));
             bom.setOption1(restapiWorkOrderApiDto.getRSPOS());
             bom.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
-         //   bom.setPartMaterialId(getMaterialId(restapiWorkOrderApiDto.getMATNR()));
-            bom.setOrgId((long)1000);
+            bom.setPartMaterialId(getBaseMaterial(restapiWorkOrderApiDto.getZJMATNR()).getMaterialId());
+            bom.setOrgId(orgId);
 
 
             if (StringUtils.isEmpty(mesPmWorkOrderBomList.getData())) {
@@ -109,32 +108,31 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         return "1";
     }
 
-    public Long getMaterialId(String materialCode){
-        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-        searchBaseMaterial.setMaterialCode(materialCode);
-        searchBaseMaterial.setOrganizationId((long)1000);
-        System.out.println("---searchBaseMaterial---"+searchBaseMaterial);
-        ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findSmtMaterialList(searchBaseMaterial);
-        if(StringUtils.isEmpty(parentMaterialList.getData()))
-            throw new BizErrorException("未查询到对应的物料："+materialCode);
-        return parentMaterialList.getData().get(0).getMaterialId();
-    }
-
-    public Long getProLine(String proLineCode){
+    public Long getProLine(String proLineCode,Long orgId){
         SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
         searchBaseProLine.setProCode(proLineCode);
-        searchBaseProLine.setOrganizationId((long)1000);
+        searchBaseProLine.setOrganizationId(orgId);
         ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);
         if(StringUtils.isEmpty(list.getData()))
             throw new BizErrorException("未查询到对应的产线："+proLineCode);
         return list.getData().get(0).getProLineId();
     }
 
-    /*public Long getOrId() {
+    public Long getOrId() {
         SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
         searchBaseOrganization.setOrganizationName("雷赛");
         ResponseEntity<List<BaseOrganizationDto>> organizationList = baseFeignApi.findOrganizationList(searchBaseOrganization);
         if (StringUtils.isEmpty(organizationList.getData())) throw new BizErrorException("未查询到对应组织");
         return organizationList.getData().get(0).getOrganizationId();
-    }*/
+    }
+
+    public BaseMaterial getBaseMaterial(String materialCode){
+        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+        searchBaseMaterial.setMaterialCode(materialCode);
+        searchBaseMaterial.setOrganizationId(getOrId());
+        ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findSmtMaterialList(searchBaseMaterial);
+        if(StringUtils.isEmpty(parentMaterialList.getData()))
+            throw new BizErrorException("未查询到对应的物料："+materialCode);
+        return parentMaterialList.getData().get(0);
+    }
 }

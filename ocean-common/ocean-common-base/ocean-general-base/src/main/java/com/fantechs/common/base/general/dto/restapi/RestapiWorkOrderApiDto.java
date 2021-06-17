@@ -39,6 +39,13 @@ public class RestapiWorkOrderApiDto implements Serializable {
     protected String EINHEIT;   //组件单位
     protected String XLOEK;   //组件状态
 
+    //新增
+    protected String AUART;   //工单类型
+    protected String WERKS;   //工厂
+    protected String LGORT;   //收货仓库
+
+
+
 //    protected List<RestapiWorkOrderprocessApiDto> workOrderProcess;  //工序
 //    protected List<RestapiWorkOrderBomApiDto> workOrderBom;    //工单bom
 }

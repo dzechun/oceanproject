@@ -3,6 +3,7 @@ package com.fantechs.provider.materialapi.imes.config;
 import com.fantechs.provider.materialapi.imes.service.MaterialService;
 
 import com.fantechs.provider.materialapi.imes.service.impl.MaterialServiceImpl;
+import com.fantechs.provider.materialapi.imes.service.impl.SapPurchaseOrderServiceImpl;
 import com.fantechs.provider.materialapi.imes.service.impl.SapWorkOrderServiceImpl;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
@@ -40,10 +41,16 @@ public class CxfConfig {
     }
 
     @Bean
-    public Endpoint another_endpoint() {
+    public Endpoint workOrder_endpoint() {
             EndpointImpl endpoint = new EndpointImpl(springBus(),  new SapWorkOrderServiceImpl());
-            endpoint.publish("/workOrder");   //发布地址
+            endpoint.publish("/workOrder");   //工单接口发布地址
             return endpoint;
     }
 
+    @Bean
+    public Endpoint purchaseOrder_endpoint() {
+        EndpointImpl endpoint = new EndpointImpl(springBus(),  new SapPurchaseOrderServiceImpl());
+        endpoint.publish("/purchaseOrder");   //采购订单发布地址
+        return endpoint;
+    }
 }
