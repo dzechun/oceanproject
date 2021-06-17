@@ -14,12 +14,26 @@ import java.math.BigDecimal;
  */
 @Data
 public class OmTransferOrderDetDto extends OmTransferOrderDet implements Serializable {
+
+    /**
+     * 物料编码
+     */
+    @Transient
+    @ApiModelProperty(name = "materialCode",value = "物料编码")
+    private String materialCode;
     /**
      * 物料名称
      */
     @Transient
     @ApiModelProperty(name = "materialName",value = "物料名称")
     private String materialName;
+
+    /**
+     * 包装单位
+     */
+    @Transient
+    @ApiModelProperty(name = "mainUnit",value = "包装单位")
+    private String mainUnit;
 
     /**
      * 体积

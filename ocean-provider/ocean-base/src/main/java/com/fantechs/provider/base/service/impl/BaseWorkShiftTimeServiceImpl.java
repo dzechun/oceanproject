@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +61,13 @@ public class BaseWorkShiftTimeServiceImpl extends BaseService<BaseWorkShiftTime>
             throw new BizErrorException("添加的时间段冲突");
         }
 
+        baseWorkShiftTime.setCreateTime(new Date());
+        baseWorkShiftTime.setCreateUserId(user.getUserId());
+        baseWorkShiftTime.setModifiedTime(new Date());
+        baseWorkShiftTime.setModifiedUserId(user.getUserId());
+        baseWorkShiftTime.setStatus(StringUtils.isEmpty(baseWorkShiftTime.getStatus())?1:baseWorkShiftTime.getStatus());
+        baseWorkShiftTime.setOrganizationId(user.getOrganizationId());
+
         return super.save(baseWorkShiftTime);
     }
 
@@ -87,6 +95,10 @@ public class BaseWorkShiftTimeServiceImpl extends BaseService<BaseWorkShiftTime>
         if ( StringUtils.isNotEmpty(baseWorkShiftTimes) || StringUtils.isNotEmpty(baseWorkShiftTimes2)){
             throw new BizErrorException("添加的时间段冲突");
         }
+
+        baseWorkShiftTime.setModifiedTime(new Date());
+        baseWorkShiftTime.setModifiedUserId(user.getUserId());
+        baseWorkShiftTime.setOrganizationId(user.getOrganizationId());
 
         return super.update(baseWorkShiftTime);
     }

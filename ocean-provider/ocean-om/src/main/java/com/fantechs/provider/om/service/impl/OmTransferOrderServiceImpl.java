@@ -3,6 +3,7 @@ package com.fantechs.provider.om.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import com.fantechs.common.base.general.entity.om.OmTransferOrderDet;
@@ -21,10 +22,8 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  *
@@ -44,7 +43,29 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     public List<OmTransferOrderDto> findList(Map<String, Object> map) {
         SysUser sysUser = currentUser();
         map.put("orgId",sysUser.getOrganizationId());
-        return omTransferOrderMapper.findList(map);
+        List<OmTransferOrderDto> list = omTransferOrderMapper.findList(map);
+        for (OmTransferOrderDto omTransferOrderDto : list) {
+            Map<String,Object> map1 = new HashMap<>();
+            map1.put("transferOrderId",omTransferOrderDto.getTransferOrderId());
+            List<OmTransferOrderDetDto> omTransferOrderDetDtos = omTransferOrderDetMapper.findList(map1);
+            BigDecimal countQty = omTransferOrderDetDtos.stream()
+                    .map(OmTransferOrderDet::getOrderQty)
+                    .reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal countVolume = omTransferOrderDetDtos.stream()
+                    .map(OmTransferOrderDetDto::getVolume)
+                    .reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal countNetWeight = omTransferOrderDetDtos.stream()
+                    .map(OmTransferOrderDetDto::getNetWeight)
+                    .reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal countGrossWeight = omTransferOrderDetDtos.stream()
+                    .map(OmTransferOrderDetDto::getGrossWeight)
+                    .reduce(BigDecimal.ZERO,BigDecimal::add);
+            omTransferOrderDto.setCountOrderQty(countQty);
+            omTransferOrderDto.setCountVolume(countVolume);
+            omTransferOrderDto.setCountNetWeight(countNetWeight);
+            omTransferOrderDto.setCountGrossWeight(countGrossWeight);
+        }
+        return list;
     }
 
     /**
@@ -61,6 +82,9 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             OmTransferOrder omTransferOrder = omTransferOrderMapper.selectByPrimaryKey(id);
             if(StringUtils.isEmpty(omTransferOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            if(omTransferOrder.getOrderStatus()>1){
+                throw new BizErrorException(omTransferOrder.getOrderStatus()==2?"订单已下发，无法修改":"订单已完成");
             }
             Example example = new Example(OmTransferOrderDet.class);
             example.createCriteria().andEqualTo("transferOrderId",omTransferOrder.getTransferOrderId());
@@ -128,6 +152,9 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     @Override
     public int update(OmTransferOrder entity) {
         SysUser sysUser = currentUser();
+        if(entity.getOrderStatus()>1){
+            throw new BizErrorException(entity.getOrderStatus()==2?"订单已下发，无法修改":"订单已完成");
+        }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
         //删除原有明细

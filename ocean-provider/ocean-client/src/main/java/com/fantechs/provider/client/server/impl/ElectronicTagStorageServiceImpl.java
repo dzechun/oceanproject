@@ -209,7 +209,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             searchPtlJobOrder.setJobOrderCode(ptlJobOrderDTO.getTaskNo());
             List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
             if (StringUtils.isNotEmpty(ptlJobOrderDtoList)) {
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "重复分拣单");
+                continue;
+//                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "重复分拣单");
             }
             SearchBaseWarehouse searchBaseWarehouse = new SearchBaseWarehouse();
             searchBaseWarehouse.setWarehouseCode(ptlJobOrderDTO.getWarehouseCode());
@@ -291,9 +292,13 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 ptlJobOrderDet.setMaterialCode(ptlJobOrderDetDTO.getGoodsCode());
                 ptlJobOrderDet.setMaterialName(baseMaterials.get(0).getMaterialName());
                 if (StringUtils.isNotEmpty(ptlJobOrderDetDTO.getW_qty())) {
-                    ptlJobOrderDet.setWholeOrScattered((byte) 1);
-                    ptlJobOrderDet.setWholeQty(BigDecimal.valueOf(ptlJobOrderDetDTO.getW_qty()));
-                    ptlJobOrderDet.setWholeUnitName(ptlJobOrderDetDTO.getW_unit());
+                    if (ptlJobOrderDetDTO.getW_qty() - 0.0 > 0.000001) {
+                        ptlJobOrderDet.setWholeOrScattered((byte) 1);
+                        ptlJobOrderDet.setWholeQty(BigDecimal.valueOf(ptlJobOrderDetDTO.getW_qty()));
+                        ptlJobOrderDet.setWholeUnitName(ptlJobOrderDetDTO.getW_unit());
+                    } else {
+                        ptlJobOrderDet.setWholeOrScattered((byte) 0);
+                    }
                 } else {
                     ptlJobOrderDet.setWholeOrScattered((byte) 0);
                 }
@@ -320,7 +325,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         }
 
         ResponseEntityDTO responseEntityDTO = new ResponseEntityDTO();
-        responseEntityDTO.setCode(0);
+        responseEntityDTO.setCode(ptlJobOrderDTOList.get(0).getCustomerNo());
         responseEntityDTO.setMessage("保存成功");
         responseEntityDTO.setSuccess("s");
 
@@ -410,12 +415,12 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         ptlJobOrderDTO.setStatus("F");
         // 回写PTL作业任务
         log.info("电子作业标签完成/异常，回传WMS" + JSONObject.toJSONString(ptlJobOrderDTO));
-//        String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, finishPtlJobOrderUrl);
-        log.info("电子作业标签回写返回信息：" + "result");
-//        ResponseEntityDTO responseEntityDTO = JsonUtils.jsonToPojo(result, ResponseEntityDTO.class);
-//        if (!"s".equals(responseEntityDTO.getSuccess())) {
-//            throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntityDTO.getMessage());
-//        }
+        String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, finishPtlJobOrderUrl);
+        log.info("电子作业标签回写返回信息：" + result);
+        ResponseEntityDTO responseEntityDTO = JsonUtils.jsonToPojo(result, ResponseEntityDTO.class);
+        if (!"s".equals(responseEntityDTO.getSuccess())) {
+            throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntityDTO.getMessage());
+        }
 
         if (!list.isEmpty()) {
             fanoutSender(1003, null, list);
@@ -642,7 +647,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         }
 
         ResponseEntityDTO responseEntityDTO = new ResponseEntityDTO();
-        responseEntityDTO.setCode(0);
+        responseEntityDTO.setCode(ptlJobOrderDTO.getCustomerNo());
         responseEntityDTO.setMessage("保存成功");
         responseEntityDTO.setSuccess("s");
 

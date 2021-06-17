@@ -23,7 +23,9 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto">
-    <result column="maertial_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
     <result column="volume" jdbcType="DECIMAL" property="volume"/>
     <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
     <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight"/>
@@ -50,12 +52,12 @@ otod.modified_user_id,
 otod.modified_time
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>,bm.maertial_name,bmb.volume,bmb.net_weight,bmb.gross_weight FROM om_transfer_order_det otod
+    SELECT <include refid="Base_Column_List"/>,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight FROM om_transfer_order_det otod
     LEFT JOIN base_material bm ON otod.material_id = bm.material_id
     left join base_material_tab bmb ON bm.material_id = bmb.material_id
-    left join ocean_v2.sys_user su on oto.create_user_id = su.user_id
-    left join ocean_v2.sys_user sus on oto.modified_user_id = sus.user_id
-    left join base_organization bo on oto.org_id = bo.organization_id
+    left join ocean_v2.sys_user su on otod.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus on otod.modified_user_id = sus.user_id
+    left join base_organization bo on otod.org_id = bo.organization_id
 <where>
   <if test="transferOrderId!=null and transferOrderId!=''">
     and otod.transfer_order_id = #{transferOrderId}

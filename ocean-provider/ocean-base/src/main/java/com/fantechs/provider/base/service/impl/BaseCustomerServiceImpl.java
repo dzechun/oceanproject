@@ -60,6 +60,7 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
         baseCustomer.setCreateTime(new Date());
         baseCustomer.setModifiedUserId(currentUser.getUserId());
         baseCustomer.setModifiedTime(new Date());
+        baseCustomer.setOrganizationId(currentUser.getOrganizationId());
         int i = baseCustomerMapper.insertSelective(baseCustomer);
 
         return i;
@@ -106,6 +107,7 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
 
         baseCustomer.setModifiedUserId(currentUser.getUserId());
         baseCustomer.setModifiedTime(new Date());
+        baseCustomer.setOrganizationId(currentUser.getOrganizationId());
         int i= baseCustomerMapper.updateByPrimaryKeySelective(baseCustomer);
 
         return i;

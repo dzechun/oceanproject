@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Author mr.lei
@@ -33,6 +34,34 @@ public class OmTransferOrderDto extends OmTransferOrder implements Serializable 
     @Transient
     @ApiModelProperty(name = "inWarehouseName",value = "调入仓库")
     private String inWarehouseName;
+
+    /**
+     * 总数量
+     */
+    @Transient
+    @ApiModelProperty(name = "countOrderQty",value = "总数量")
+    private BigDecimal countOrderQty;
+
+    /**
+     * 总体积
+     */
+    @Transient
+    @ApiModelProperty(name = "countVolume",value = "总体积")
+    private BigDecimal countVolume;
+
+    /**
+     * 总净重
+     */
+    @Transient
+    @ApiModelProperty(name = "countNetWeight",value = "总净重")
+    private BigDecimal countNetWeight;
+
+    /**
+     * 总毛重
+     */
+    @Transient
+    @ApiModelProperty(name = "countGrossWeight",value = "总毛重")
+    private BigDecimal countGrossWeight;
 
     /**
      * 创建名称

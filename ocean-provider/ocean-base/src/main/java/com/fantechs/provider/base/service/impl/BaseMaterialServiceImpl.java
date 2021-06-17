@@ -249,7 +249,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             //被产品BOM详细引用
             Example example3 = new Example(BaseProductBomDet.class);
             Example.Criteria criteria3 = example3.createCriteria();
-            criteria3.andEqualTo("partMaterialId", materialId);
+            criteria3.andEqualTo("materialId", materialId);
             List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.selectByExample(example3);
 
             //被物料编码关联客户料号引用

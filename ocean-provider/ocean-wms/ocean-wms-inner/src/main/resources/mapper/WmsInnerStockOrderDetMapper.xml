@@ -24,9 +24,13 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
+    <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetDto">
     <result column="work_name" jdbcType="VARCHAR" property="workName"/>
+    <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
     <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
     <result column="storage_desc" jdbcType="VARCHAR" property="storageDesc"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
@@ -54,13 +58,16 @@ wivd.create_user_id,
 wivd.create_time,
 wivd.modified_user_id,
 wivd.modified_time,
-wivd.barcode
+wivd.barcode,
+wivd.pallet_code,
+wivd.inventory_status_id
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    SELECT <include refid="Base_Column_List"/>,bs.storage_name,bs.storage_desc,bm.material_code,bm.material_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+    SELECT <include refid="Base_Column_List"/>,bis.inventory_status_name,bs.storage_code,bs.storage_name,bs.storage_desc,bm.material_code,bm.material_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
     FROM wms_inner_stock_order_det wivd
     LEFT JOIN base_storage bs ON wivd.storage_id = bs.storage_id
     LEFT JOIN base_material bm ON wivd.material_id = bm.material_id
+    LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wivd.inventory_status_id
     LEFT JOIN ocean_v2.sys_user su  ON wivd.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wivd.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wivd.org_id = bo.organization_id

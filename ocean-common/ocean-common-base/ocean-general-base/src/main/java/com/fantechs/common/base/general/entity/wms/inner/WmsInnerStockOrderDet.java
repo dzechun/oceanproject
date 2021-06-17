@@ -155,5 +155,20 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
     @Column(name = "barcode")
     private String barcode;
 
+    /**
+     * 托盘号
+     */
+    @ApiModelProperty(name="palletCode",value = "托盘号")
+    @Excel(name = "托盘号", height = 20, width = 30,orderNum="18")
+    @Column(name = "pallet_code")
+    private String palletCode;
+
+    /**
+     * 库存状态ID
+     */
+    @ApiModelProperty(name="inventoryStatusId",value = "库存状态ID")
+    @Column(name = "inventory_status_id")
+    private Long inventoryStatusId;
+
     private static final long serialVersionUID = 1L;
 }

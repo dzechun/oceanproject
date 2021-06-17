@@ -76,6 +76,10 @@
                 and so.status = #{status}
             </if>
 
+            <if test="orgId != null">
+                and so.org_id = #{orgId}
+            </if>
+
             <if test="salesOrderCode != null and salesOrderCode != ''">
                 and so.sales_order_code like CONCAT('%', #{salesOrderCode}, '%')
             </if>
