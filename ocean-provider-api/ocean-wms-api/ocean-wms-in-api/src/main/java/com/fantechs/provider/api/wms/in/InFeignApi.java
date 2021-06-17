@@ -3,6 +3,7 @@ package com.fantechs.provider.api.wms.in;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
@@ -35,4 +36,8 @@ public interface InFeignApi {
     @ApiOperation("栈板作业生成完工入库单")
     @PostMapping("/wmsInAsnOrder/palletAutoAsnOrder")
     ResponseEntity palletAutoAsnOrder(@RequestBody PalletAutoAsnDto palletAutoAsnDto);
+
+    @ApiOperation("新增调拨入库单")
+    @PostMapping("/wmsInTransfer/save")
+    ResponseEntity save(@RequestBody WmsInAsnOrder wmsInAsnOrder);
 }

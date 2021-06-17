@@ -167,13 +167,15 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int save(WmsOutDespatchOrder record) {
+    public String add(WmsOutDespatchOrder record) {
         SysUser sysUser = currentUser();
         record.setDespatchOrderCode(CodeUtils.getId("TRUCK"));
-        if(StringUtils.isEmpty(record.getWmsOutDespatchOrderReJo())){
-            record.setOrderStatus((byte)1);
-        }else{
-            record.setOrderStatus((byte)2);
+        if(StringUtils.isEmpty(record.getOrderStatus())){
+            if(StringUtils.isEmpty(record.getWmsOutDespatchOrderReJo())){
+                record.setOrderStatus((byte)1);
+            }else{
+                record.setOrderStatus((byte)2);
+            }
         }
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
@@ -209,7 +211,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
             }
         }
 
-        return num;
+        return record.getDespatchOrderId().toString();
     }
 
     @Override
@@ -287,6 +289,10 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
         WmsOutDeliveryOrder wmsOutDeliveryOrder  =  wmsOutDeliveryOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDto.getSourceOrderId());
         if(StringUtils.isEmpty(wmsOutDeliveryOrder)){
             throw new BizErrorException(ErrorCodeEnum.GL9999404);
+        }
+        //单据为调拨出库单 无需反写数量
+        if(wmsOutDeliveryOrder.getOrderTypeId()==2){
+            return 1;
         }
         if(StringUtils.isNotEmpty(wmsOutDeliveryOrder.getSourceOrderId()) && StringUtils.isNotEmpty(wmsOutDeliveryOrderDet.getSourceOrderId())){
             //反写销售订单出库数量

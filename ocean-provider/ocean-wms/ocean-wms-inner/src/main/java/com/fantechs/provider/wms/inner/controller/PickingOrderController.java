@@ -76,4 +76,10 @@ public class PickingOrderController {
     public ResponseEntity retrographyStatus(@RequestBody WmsInnerJobOrderDet wmsInnerJobOrderDet){
         return ControllerUtil.returnCRUD(pickingOrderService.retrographyStatus(wmsInnerJobOrderDet));
     }
+
+    @ApiOperation("调拨出库单快捷发运")
+    @PostMapping("/autoOutOrder")
+    public ResponseEntity autoOutOrder(@RequestParam Long outDeliveryOrderId){
+        return ControllerUtil.returnCRUD(pickingOrderService.autoOutOrder(outDeliveryOrderId));
+    }
 }

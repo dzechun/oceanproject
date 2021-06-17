@@ -21,6 +21,8 @@ public interface WmsOutDespatchOrderService extends IService<WmsOutDespatchOrder
      * 发运
      * @return
      */
+    String add(WmsOutDespatchOrder wmsOutDespatchOrder);
+
     int forwarding(String ids);
 
     int finishTruckloading(String ids);

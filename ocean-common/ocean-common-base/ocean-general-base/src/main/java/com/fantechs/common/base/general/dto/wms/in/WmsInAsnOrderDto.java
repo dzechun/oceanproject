@@ -28,10 +28,10 @@ public class WmsInAsnOrderDto extends WmsInAsnOrder implements Serializable {
     private String supplierName;
 
     /**
-     * 单据状态
+     * 单据名称
      */
     @Transient
-    @ApiModelProperty(name = "orderTypeName",value = "单据状态")
+    @ApiModelProperty(name = "orderTypeName",value = "单据名称")
     private String orderTypeName;
 
     /**
