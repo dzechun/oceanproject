@@ -197,21 +197,21 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     @Transactional(rollbackFor = RuntimeException.class)
     public int writeQty(WmsInAsnOrderDet wmsInAsnOrderDet) {
         WmsInAsnOrderDet wms = wmsInAsnOrderDetMapper.selectByPrimaryKey(wmsInAsnOrderDet.getAsnOrderDetId());
+        WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(wms.getAsnOrderId());
         int num = wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(WmsInAsnOrderDet.builder()
                 .asnOrderDetId(wmsInAsnOrderDet.getAsnOrderDetId())
                 .putawayQty(wms.getPutawayQty()!=null?wms.getPutawayQty().add(wmsInAsnOrderDet.getPutawayQty()):wmsInAsnOrderDet.getPutawayQty())
                 .build());
-//        SearchWmsInAsnOrder searchWmsInAsnOrder = new SearchWmsInAsnOrder();
-//        searchWmsInAsnOrder.setAsnOrderId(wms.getAsnOrderId());
-//        List<WmsInAsnOrderDto> list = this.findList(searchWmsInAsnOrder);
-//        for (WmsInAsnOrderDto wmsInAsnOrderDto : list) {
-//            if(wmsInAsnOrderDto.getPutawayQty().doubleValue()==wmsInAsnOrderDto.getActualQty().doubleValue()){
-//                wmsInAsnOrderMapper.updateByPrimaryKeySelective(WmsInAsnOrder.builder()
-//                        .asnOrderId(wmsInAsnOrderDto.getAsnOrderId())
-//                        .orderStatus((byte)3)
-//                        .build());
-//            }
-//        }
+
+        //订单数量反写
+        switch (wmsInAsnOrder.getOrderTypeId().toString())
+        {
+            //调拨
+            case "3":
+                //反写调拨订单数量
+
+                break;
+        }
         return num;
     }
 

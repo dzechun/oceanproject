@@ -126,7 +126,6 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
         }
         return num;
     }
-
     @Override
     public int save(OmTransferOrder record) {
         SysUser sysUser = currentUser();
