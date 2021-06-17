@@ -39,7 +39,6 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
     public String purchaseOrder(List<RestapiPurchaseOrderApiDto> purchaseOrderApiDtos) throws ParseException {
 
         if(StringUtils.isEmpty(purchaseOrderApiDtos)) return "采购订单参数为空";
-        //ApiUtil util = new ApiUtil();
         for(RestapiPurchaseOrderApiDto purchaseOrderApiDto : purchaseOrderApiDtos) {
             String check = check(purchaseOrderApiDto);
             if (!check.equals("1")) {
