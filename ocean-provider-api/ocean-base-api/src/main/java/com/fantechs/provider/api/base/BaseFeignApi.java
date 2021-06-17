@@ -389,7 +389,7 @@ public interface BaseFeignApi {
     @PostMapping("/baseRoute/addOrUpdate")
     ResponseEntity<BaseRoute> addOrUpdate(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated BaseRoute baseRoute);
 
-    @ApiOperation(value = "新增或修改工艺路线表信息",notes = "新增或修改工艺路线表信息")
+    @ApiOperation(value = "新增或修改产品工艺路线表信息",notes = "新增或修改产品工艺路线表信息")
     @PostMapping("/baseProductProcessRoute/addOrUpdate")
     ResponseEntity<BaseProductProcessRoute> addOrUpdate(@ApiParam(value = "必传：materialId、routeId",required = true)@RequestBody @Validated BaseProductProcessRoute baseProductProcessRoute);
 
