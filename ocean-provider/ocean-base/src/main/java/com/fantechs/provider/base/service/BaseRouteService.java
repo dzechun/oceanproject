@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.service;
 
+import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseRoute;
 import com.fantechs.common.base.general.dto.basic.imports.BaseRouteImport;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseRoute;
@@ -24,4 +25,6 @@ public interface BaseRouteService extends IService<BaseRoute> {
     int configureRout(BaseRoute baseRoute);
 
     Map<String, Object> importExcel(List<BaseRouteImport> baseRouteImports) throws ParseException;
+
+    BaseRoute addOrUpdate (BaseRoute baseRoute);
 }

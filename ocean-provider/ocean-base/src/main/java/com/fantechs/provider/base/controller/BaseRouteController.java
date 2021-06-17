@@ -1,6 +1,7 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseRoute;
 import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtRoute;
@@ -147,5 +148,12 @@ public class BaseRouteController {
             log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
+    }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity<BaseRoute> addOrUpdate(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated BaseRoute baseRoute) {
+        BaseRoute baseRoutes = baseRouteService.addOrUpdate(baseRoute);
+        return ControllerUtil.returnDataSuccess(baseRoutes, StringUtils.isEmpty(baseRoutes) ? 0 : 1);
     }
 }

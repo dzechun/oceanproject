@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.om.mapper.OmPurchaseOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmPurchaseOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="purchase_order_id" jdbcType="BIGINT" property="purchaseOrderId" />
+    <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode" />
+    <result column="order_type" jdbcType="VARCHAR" property="orderType" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
+    <result column="purchase_dept_id" jdbcType="BIGINT" property="purchaseDeptId" />
+    <result column="purchase_user_id" jdbcType="BIGINT" property="purchaseUserId" />
+    <result column="make_order_user_id" jdbcType="BIGINT" property="makeOrderUserId" />
+    <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
+    <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId" />
+    <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    opo.purchase_order_id, opo.purchase_order_code, opo.order_type, opo.order_status, opo.supplier_id,opo.order_date,
+    opo.purchase_dept_id, opo.purchase_user_id, opo.make_order_user_id, opo.make_order_date,opo.audit_user_id, opo.audit_date,
+    opo.status, opo.remark, opo.org_id, opo.create_user_id,opo.create_time, opo.modified_user_id, opo.modified_time,
+    opo.is_delete, opo.option1, opo.option2, opo.option3
+  </sql>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto">
+  </resultMap>
+
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select
+    <include refid="Base_Column_List"/>
+    from om_purchase_order opo
+    left join ocean_v2.sys_user suc on opo.create_user_id = suc.user_id
+    left join base_organization bo on opo.org_id = bo.organization_id
+    left join ocean_v2.sys_user sumod on opo.modified_user_id = sumod.user_id
+    <where>
+
+      <if test="status != null">
+        and opo.status = #{status}
+      </if>
+      <if test="orgId != null">
+        and opo.org_id = #{orgId}
+      </if>
+    </where>
+    order by opo.modified_time desc
+  </select>
+</mapper>

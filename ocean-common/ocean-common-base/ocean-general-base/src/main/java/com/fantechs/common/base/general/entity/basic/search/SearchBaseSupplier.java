@@ -27,4 +27,6 @@ public class SearchBaseSupplier extends BaseQuery implements Serializable {
     private String addressDetail;
     @ApiModelProperty(name = "queryMark",value = "查询方式标记")
     private Byte codeQueryMark;
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    private Long organizationId;
 }

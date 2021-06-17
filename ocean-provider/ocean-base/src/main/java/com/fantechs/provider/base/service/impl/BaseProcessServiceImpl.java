@@ -156,11 +156,13 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
 
     @Override
     public List<BaseProcess> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
         List<BaseProcess> baseProcesses = baseProcessMapper.findList(map);
 
         for (BaseProcess baseProcess : baseProcesses) {
@@ -279,4 +281,25 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
         resultMap.put("操作失败行数", fail);
         return resultMap;
     }
+
+    @Override
+    public BaseProcess addOrUpdate (BaseProcess baseProcess) {
+
+        Example example = new Example(BaseProcess.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("sectionId", baseProcess.getSectionId());
+        criteria.andEqualTo("organizationId", baseProcess.getOrganizationId());
+        List<BaseProcess> baseProcessOld = baseProcessMapper.selectByExample(example);
+
+        baseProcess.setModifiedTime(new Date());
+        if (StringUtils.isNotEmpty(baseProcessOld)){
+            baseProcess.setProcessId(baseProcessOld.get(0).getProcessId());
+            baseProcessMapper.updateByPrimaryKey(baseProcess);
+        }else{
+            baseProcess.setCreateTime(new Date());
+            baseProcessMapper.insertUseGeneratedKeys(baseProcess);
+        }
+        return baseProcess;
+    }
+
 }

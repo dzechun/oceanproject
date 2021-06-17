@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SearchSapProLineApi extends BaseQuery implements Serializable {
+public class SearchSapRouteApi implements Serializable {
 
     /**
      * 开始时间

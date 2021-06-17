@@ -18,4 +18,6 @@ public interface BaseProductProcessRouteService extends IService<BaseProductProc
     List<BaseProductProcessRoute> findList(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<BaseProductProcessRouteImport> baseProductProcessRouteImports);
+
+    BaseProductProcessRoute addOrUpdate (BaseProductProcessRoute baseProductProcessRoute);
 }

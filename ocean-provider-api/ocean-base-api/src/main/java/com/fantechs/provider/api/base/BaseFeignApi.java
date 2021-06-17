@@ -372,4 +372,25 @@ public interface BaseFeignApi {
     @ApiOperation("根据条件查询生产线信息列表")
     @PostMapping("/baseProLine/findList")
     ResponseEntity<List<BaseProLine>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProLine searchBaseProLine);
+
+    @ApiOperation("新增或修改产线表信息")
+    @PostMapping("/baseProLine/addOrUpdate")
+    ResponseEntity<BaseProLine> addOrUpdate(@ApiParam(value = "必传：baseProLine",required = true)@RequestBody @Validated BaseProLine baseProLine);
+
+    @ApiOperation("新增或修改工段表信息")
+    @PostMapping("/baseWorkshopSection/addOrUpdate")
+    ResponseEntity<BaseWorkshopSection> addOrUpdate(@ApiParam(value = "必传：baseWorkshopSection",required = true)@RequestBody @Validated BaseWorkshopSection baseWorkshopSection);
+
+    @ApiOperation("新增或修改工序表信息")
+    @PostMapping("/baseProcess/addOrUpdate")
+    ResponseEntity<BaseProcess> addOrUpdate(@ApiParam(value = "必传：baseProcess",required = true)@RequestBody @Validated BaseProcess baseProcess);
+
+    @ApiOperation(value = "新增或修改工艺路线表信息",notes = "新增或修改工艺路线表信息")
+    @PostMapping("/baseRoute/addOrUpdate")
+    ResponseEntity<BaseRoute> addOrUpdate(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated BaseRoute baseRoute);
+
+    @ApiOperation(value = "新增或修改产品工艺路线表信息",notes = "新增或修改产品工艺路线表信息")
+    @PostMapping("/baseProductProcessRoute/addOrUpdate")
+    ResponseEntity<BaseProductProcessRoute> addOrUpdate(@ApiParam(value = "必传：materialId、routeId",required = true)@RequestBody @Validated BaseProductProcessRoute baseProductProcessRoute);
+
 }

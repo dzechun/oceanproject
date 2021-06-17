@@ -7,6 +7,7 @@ import lombok.Data;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -67,4 +68,10 @@ public class SearchBaseMaterial extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "propertyQueryMark",value = "物料属性查询标记（传1表示查询成品和半成品）")
     private Integer propertyQueryMark;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    private Long organizationId;
 }

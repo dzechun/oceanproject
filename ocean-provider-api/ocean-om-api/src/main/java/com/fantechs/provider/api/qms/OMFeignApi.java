@@ -1,6 +1,7 @@
 package com.fantechs.provider.api.qms;
 
-import com.fantechs.common.base.general.dto.om.SmtOrderDto;
+import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.SmtOrder;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * @Auther: bingo.ren
@@ -39,4 +39,14 @@ public interface OMFeignApi {
     @ApiOperation("修改订单明细")
     @PostMapping("/omSalesOrderDet/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= OmSalesOrderDet.update.class) OmSalesOrderDet omSalesOrderDet);
+
+    @ApiOperation(value = "新增或更新采购订单表信息",notes = "新增或更新采购订单表信息")
+    @PostMapping("/omPurchaseOrder/addOrUpdate")
+    ResponseEntity<OmPurchaseOrder> addOrUpdate(@ApiParam(value = "必传:",required = true)@RequestBody OmPurchaseOrder omPurchaseOrder);
+
+    @ApiOperation(value = "新增或更新采购订单详情表信息",notes = "新增或更新采购订单详情表信息")
+    @PostMapping("/omPurchaseOrderDet/addOrUpdate")
+    ResponseEntity<OmPurchaseOrderDet> addOrUpdate(@ApiParam(value = "必传:",required = true)@RequestBody OmPurchaseOrderDet omPurchaseOrderDet);
+
+
 }
