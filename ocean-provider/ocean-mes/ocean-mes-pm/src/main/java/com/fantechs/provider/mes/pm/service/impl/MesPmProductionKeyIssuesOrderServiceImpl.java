@@ -131,8 +131,7 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
         //判断是否重复
         Example example = new Example(MesPmProductionKeyIssuesOrder.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialId",record.getMaterialId())
-                .orEqualTo("workOrderId",record.getWorkOrderId());
+        criteria.andEqualTo("workOrderId",record.getWorkOrderId());
         List<MesPmProductionKeyIssuesOrder> mesPmProductionKeyIssuesOrderList = mesPmProductionKeyIssuesOrderMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(mesPmProductionKeyIssuesOrderList)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -181,8 +180,7 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
         //判断是否重复
         Example example = new Example(MesPmProductionKeyIssuesOrder.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialId",entity.getMaterialId())
-                .orEqualTo("workOrderId",entity.getWorkOrderId())
+        criteria.andEqualTo("workOrderId",entity.getWorkOrderId())
                 .andNotEqualTo("productionKeyIssuesOrderId",entity.getProductionKeyIssuesOrderId());
         List<MesPmProductionKeyIssuesOrder> mesPmProductionKeyIssuesOrderList = mesPmProductionKeyIssuesOrderMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(mesPmProductionKeyIssuesOrderList)){

@@ -31,7 +31,7 @@ import java.util.List;
  * @date 2021-04-09 15:29:27
  */
 @RestController
-@Api(tags = "mesSfcBarcodeProcessRecord控制器")
+@Api(tags = "生产管理-产品条码过站记录表控制器")
 @RequestMapping("/mesSfcBarcodeProcessRecord")
 @Validated
 public class MesSfcBarcodeProcessRecordController {

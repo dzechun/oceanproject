@@ -29,7 +29,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/05/19.
  */
 @RestController
-@Api(tags = "mesSfcCartonPalletReprint控制器")
+@Api(tags = "生产管理-条码补打控制器")
 @RequestMapping("/mesSfcCartonPalletReprint")
 @Validated
 public class MesSfcCartonPalletReprintController {

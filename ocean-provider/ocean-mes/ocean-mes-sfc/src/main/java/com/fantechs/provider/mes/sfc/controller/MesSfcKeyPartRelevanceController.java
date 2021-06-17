@@ -29,7 +29,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/05/08.
  */
 @RestController
-@Api(tags = "mesSfcKeyPartRelevance控制器")
+@Api(tags = "生产管理-产品关键物料清单控制器")
 @RequestMapping("/mesSfcKeyPartRelevance")
 @Validated
 public class MesSfcKeyPartRelevanceController {
