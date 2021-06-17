@@ -128,6 +128,12 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         if(StringUtils.isNotEmpty(odlSysMenuinfo)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+        criteria.andEqualTo("premenuId", sysMenuInfo.getPremenuId());
+        odlSysMenuinfo = sysMenuInfoMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(odlSysMenuinfo)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001, "菜单路径不能重复");
+        }
+
         sysMenuInfo.setCreateUserId(currentUser.getUserId());
         sysMenuInfo.setCreateTime(new Date());
         sysMenuInfo.setModifiedUserId(currentUser.getUserId());
@@ -242,6 +248,12 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
 
         if(StringUtils.isNotEmpty(odlSysMenuinfo)&&!odlSysMenuinfo.getMenuId().equals(sysMenuInfo.getMenuId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        criteria.andEqualTo("premenuId", sysMenuInfo.getPremenuId());
+        odlSysMenuinfo = sysMenuInfoMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(odlSysMenuinfo) && !odlSysMenuinfo.getMenuId().equals(sysMenuInfo.getMenuId())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001, "菜单路径不能重复");
         }
 
         sysMenuInfo.setModifiedUserId(currentUser.getUserId());

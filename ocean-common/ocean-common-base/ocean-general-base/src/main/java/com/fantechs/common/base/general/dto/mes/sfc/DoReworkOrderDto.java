@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.dto.mes.sfc;
 
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,6 +9,9 @@ import java.util.List;
 
 @Data
 public class DoReworkOrderDto implements Serializable {
+
+    @ApiModelProperty(name = "searchMesSfcBarcodeProcess", value = "返工单搜索条件对象")
+    private SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess;
 
     @ApiModelProperty(name = "reworkOrderCode", value = "返工单号")
     private String reworkOrderCode;
@@ -18,21 +22,12 @@ public class DoReworkOrderDto implements Serializable {
     @ApiModelProperty(name = "processId", value = "工序ID")
     private Long processId;
 
-    @ApiModelProperty(name = "barCode", value = "产品条码")
-    private String barCode;
+    @ApiModelProperty(name = "clearCarton", value = "清除包箱")
+    private Boolean clearCarton;
 
-    @ApiModelProperty(name = "cartonCode", value = "包箱号")
-    private String cartonCode;
+    @ApiModelProperty(name = "clearColorBox", value = "清除彩盒")
+    private Boolean clearColorBox;
 
-    @ApiModelProperty(name = "palletCode", value = "栈板号")
-    private String palletCode;
-
-    @ApiModelProperty(name = "colorBoxCode", value = "彩盒号")
-    private String colorBoxCode;
-
-    @ApiModelProperty(name = "workOrderId", value = "工单ID")
-    private Long workOrderId;
-
-    @ApiModelProperty(name = "materialId", value = "产品物料ID")
-    private Long materialId;
+    @ApiModelProperty(name = "clearPallet", value = "清除栈板")
+    private Boolean clearPallet;
 }

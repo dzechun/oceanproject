@@ -32,7 +32,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/06/15.
  */
 @RestController
-@Api(tags = "mesSfcReworkOrder控制器")
+@Api(tags = "生产管理-返工单管理控制器")
 @RequestMapping("/mesSfcReworkOrder")
 @Validated
 public class MesSfcReworkOrderController {

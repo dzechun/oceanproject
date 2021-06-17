@@ -11,4 +11,11 @@ import java.util.Map;
 @Mapper
 public interface MesSfcBarcodeProcessMapper extends MyMapper<MesSfcBarcodeProcess> {
     List<MesSfcBarcodeProcessDto> findList(Map<String, Object> map);
+
+    /**
+     * 批量修改
+     * @param mesSfcBarcodeProcessList
+     * @return
+     */
+    int batchUpdate(List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList);
 }
