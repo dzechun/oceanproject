@@ -407,7 +407,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         record.setOrderStatus((byte)1);
         record.setAsnCode(CodeUtils.getId("ASN-"));
         record.setCreateTime(new Date());
-        record.setOrderTypeId((long)1);
+        record.setOrderTypeId((long)4);
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
@@ -589,7 +589,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     .createTime(new Date())
                     .createUserId(sysUser.getUserId())
                     .orderStatus((byte)3)
-                    .orderTypeId((long)106)
+                    .orderTypeId((long)4)
                     .startReceivingDate(new Date())
                     .endReceivingDate(new Date())
                     .productPalletId(palletAutoAsnDto.getProductPalletId())

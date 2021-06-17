@@ -213,10 +213,16 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             List<WmsInnerStockOrderDet> list = wmsInventoryVerificationDetMapper.selectByExample(example);
             //库位盘点将盘点单的所有库位下库存更改上锁状态及基础信息库位上锁 货品盘点将
             if(btnType ==1){
+                if(wmsInventoryVerification.getOrderStatus()>1){
+                    throw new BizErrorException("重复操作");
+                }
                 //打开
                 num += this.unlockOrLock((byte) 2,list,wmsInventoryVerification);
                 wmsInventoryVerification.setOrderStatus((byte)2);
             }else if(btnType ==2){
+                if(wmsInventoryVerification.getOrderStatus()>=5){
+                    throw new BizErrorException("单据已完成,无法作废");
+                }
                 //作废
              num += this.unlockOrLock((byte) 1,list,wmsInventoryVerification);
              wmsInventoryVerification.setOrderStatus((byte)4);

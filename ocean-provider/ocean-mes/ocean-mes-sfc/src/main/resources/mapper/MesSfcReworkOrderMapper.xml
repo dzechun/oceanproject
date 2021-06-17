@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcReworkOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcReworkOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="rework_order_id" jdbcType="BIGINT" property="reworkOrderId" />
+    <result column="rework_order_code" jdbcType="VARCHAR" property="reworkOrderCode" />
+    <result column="rework_route_id" jdbcType="BIGINT" property="reworkRouteId" />
+    <result column="rework_start_process_id" jdbcType="BIGINT" property="reworkStartProcessId" />
+    <result column="rework_status" jdbcType="TINYINT" property="reworkStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <select id="findList" parameterType="map" resultType="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto">
+    SELECT * FROM mes_sfc_rework_order msro
+    <where>
+      <if test="reworkOrderCode != null">
+        and msro.rework_order_code like CONCAT('%',#{reworkOrderCode},'%')
+      </if>
+      <if test="reworkStatus != null">
+        and msro.rework_status = #{reworkStatus}
+      </if>
+    </where>
+  </select>
+
+<!-- 获取今天返工单编码倒序第一条数据 -->
+  <select id="getTodayFirstReworkOrder" resultType="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto">
+    SELECT
+      *
+    FROM
+      mes_sfc_rework_order msro
+    WHERE
+      msro.create_time = TO_DAYS(NOW())
+    ORDER BY
+      msro.rework_order_code DESC
+    LIMIT 1
+  </select>
+</mapper>

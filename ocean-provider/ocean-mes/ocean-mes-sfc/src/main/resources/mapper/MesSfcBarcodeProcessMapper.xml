@@ -42,7 +42,7 @@
     <result column="merge_pallet_code" jdbcType="VARCHAR" property="mergePalletCode" />
     <result column="e_c_n_code" jdbcType="VARCHAR" property="eCNCode" />
     <result column="rework_code" jdbcType="VARCHAR" property="reworkCode" />
-    <result column="rework_order_id" jdbcType="VARCHAR" property="reworkOrderId" />
+    <result column="rework_order_id" jdbcType="BIGINT" property="reworkOrderId" />
     <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode" />
     <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
     <result column="pass_station_count" jdbcType="INTEGER" property="passStationCount" />
@@ -84,4 +84,22 @@
       </if>
     </where>
   </select>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="mesSfcBarcodeProcessList" item="item" index="index" open="" close="" separator=";">
+      update mes_sfc_barcode_process
+      <set>
+        route_id = #{item.routeId},
+        route_code = #{routeCode},
+        route_name = #{item.routeName},
+        next_process_id = #{item.nextProcessId},
+        next_process_code = #{item.nextProcessCode},
+        next_process_name = #{item.nextProcessName},
+        next_process_name = #{item.nextProcessName},
+        barcode_status = #{item.barcodeStatus},
+        rework_order_id = #{item.reworkOrderId},
+      </set>
+      where barcode_process_id =#{item.barcodeProcessId}
+    </foreach>
+  </update>
 </mapper>

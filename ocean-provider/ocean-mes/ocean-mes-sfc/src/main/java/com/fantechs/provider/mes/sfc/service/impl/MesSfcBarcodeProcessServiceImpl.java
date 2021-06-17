@@ -48,4 +48,9 @@ public class MesSfcBarcodeProcessServiceImpl extends BaseService<MesSfcBarcodePr
        List<MesSfcBarcodeProcess> list = mesSfcBarcodeProcessMapper.selectByExample(example);
         return list;
     }
+
+    @Override
+    public int batchUpdate(List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList) {
+        return mesSfcBarcodeProcessMapper.batchUpdate(mesSfcBarcodeProcessList);
+    }
 }

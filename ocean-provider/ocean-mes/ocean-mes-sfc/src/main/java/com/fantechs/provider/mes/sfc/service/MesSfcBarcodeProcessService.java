@@ -16,4 +16,11 @@ public interface MesSfcBarcodeProcessService extends IService<MesSfcBarcodeProce
     List<MesSfcBarcodeProcessDto> findList(Map<String, Object> map);
 
     List<MesSfcBarcodeProcess> findBarcode(SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess);
+
+    /**
+     * 批量修改
+     * @param mesSfcBarcodeProcessList
+     * @return
+     */
+    int batchUpdate(List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList);
 }

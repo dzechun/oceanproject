@@ -39,8 +39,8 @@ public class WmsOutDespatchOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutDespatchOrder wmsOutDespatchOrder) {
-        return ControllerUtil.returnCRUD(wmsOutDespatchOrderService.save(wmsOutDespatchOrder));
+    public ResponseEntity<String> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutDespatchOrder wmsOutDespatchOrder) {
+        return ControllerUtil.returnSuccess("操作成功",wmsOutDespatchOrderService.add(wmsOutDespatchOrder));
     }
 
     @ApiOperation("删除")

@@ -351,7 +351,7 @@ public class MesSfcBarcodeProcess extends ValidGroup implements Serializable {
     @ApiModelProperty(name="reworkOrderId",value = "返工单ID")
     @Excel(name = "返工单ID", height = 20, width = 30,orderNum="")
     @Column(name = "rework_order_id")
-    private String reworkOrderId;
+    private Long reworkOrderId;
 
 
     /**
