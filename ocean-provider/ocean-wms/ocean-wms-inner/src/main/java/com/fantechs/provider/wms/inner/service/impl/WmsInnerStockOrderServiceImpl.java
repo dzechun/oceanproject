@@ -61,6 +61,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
+        record.setOrganizationId(sysUser.getOrganizationId());
         int num = wmsInventoryVerificationMapper.insertUseGeneratedKeys(record);
         //库位盘点/全盘
         if(record.getStockType()==(byte)1 || record.getStockType()==(byte)3){
@@ -85,6 +86,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 inventoryVerificationDet.setCreateTime(new Date());
                 inventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
                 inventoryVerificationDet.setModifiedTime(new Date());
+                inventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
             }
             int res = wmsInventoryVerificationDetMapper.insertList(record.getInventoryVerificationDets());
             if(res<0){
@@ -116,6 +118,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             inventoryVerificationDet.setCreateTime(new Date());
             inventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
             inventoryVerificationDet.setModifiedTime(new Date());
+            inventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
             if(entity.getType()==(byte) 2){
                 inventoryVerificationDet.setStockUserId(sysUser.getUserId());
             }
@@ -155,6 +158,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     wmsInventoryVerificationDet.setCreateUserId(sysUser.getUserId());
                     wmsInventoryVerificationDet.setModifiedTime(new Date());
                     wmsInventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
+                    wmsInventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
+                    wmsInventoryVerificationDet.setPalletCode(wmsInnerInventory.getPalletCode());
+                    wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
+                    wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
                     list.add(wmsInventoryVerificationDet);
                 }
             }
@@ -177,6 +184,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInventoryVerificationDet.setCreateUserId(sysUser.getUserId());
                 wmsInventoryVerificationDet.setModifiedTime(new Date());
                 wmsInventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
+                wmsInventoryVerificationDet.setPalletCode(wmsInnerInventory.getPalletCode());
+                wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
+                wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
                 list.add(wmsInventoryVerificationDet);
             }
         }
@@ -243,9 +253,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //有差异生成复盘单
             if(wmsInventoryVerification.getProjectType()==(byte)1){
                 //判断是否有差异记录
-                if(list.stream().filter(li->StringUtils.isNotEmpty(li.getVarianceQty())&&li.getVarianceQty().compareTo(BigDecimal.ZERO)==1).collect(Collectors.toList()).size()<1){
-                    throw new BizErrorException("没有差异记录");
-                }else{
+                if(list.stream().filter(li->StringUtils.isNotEmpty(li.getVarianceQty())&&li.getVarianceQty().compareTo(BigDecimal.ZERO)==1).collect(Collectors.toList()).size()>0){
                     //新增复盘盘点单
                     WmsInnerStockOrder ws = new WmsInnerStockOrder();
                     BeanUtil.copyProperties(wmsInventoryVerification,ws);
@@ -341,14 +349,21 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
     public int PdaAscertained(String ids) {
         //盘点确认
-        int num = this.ascertained(ids);
-        return 0;
+        WmsInnerStockOrder wmsInnerStockOrder = new WmsInnerStockOrder();
+        wmsInnerStockOrder.setOrderStatus((byte)3);
+        wmsInnerStockOrder.setStockOrderId(Long.parseLong(ids));
+        int num = wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInnerStockOrder);
+        if(num<1){
+            throw new BizErrorException("盘点确认失败");
+        }
+        num+= this.ascertained(ids);
+        return num;
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int PdaCommit(WmsInnerStockOrderDet wmsInnerStockOrderDet){
         SysUser sysUser = currentUser();
         int num = 0;

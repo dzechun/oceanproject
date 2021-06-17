@@ -33,7 +33,7 @@ public class ElectronicTagStorageController {
             return electronicTagStorageService.createPtlJobOrder(ptlJobOrderDTOList);
         } catch (Exception e) {
             ResponseEntityDTO responseEntityDTO = new ResponseEntityDTO();
-            responseEntityDTO.setCode(ErrorCodeEnum.GL99990500.getCode());
+            responseEntityDTO.setCode(ptlJobOrderDTOList.get(0).getCustomerNo());
             responseEntityDTO.setMessage(e.getMessage());
             responseEntityDTO.setSuccess("e");
             return responseEntityDTO;
@@ -101,7 +101,7 @@ public class ElectronicTagStorageController {
             return electronicTagStorageService.cancelPtrlJobOrder(ptlJobOrderDTO);
         } catch (Exception e) {
             ResponseEntityDTO responseEntityDTO = new ResponseEntityDTO();
-            responseEntityDTO.setCode(ErrorCodeEnum.GL99990500.getCode());
+            responseEntityDTO.setCode(ptlJobOrderDTO.getCustomerNo());
             responseEntityDTO.setMessage(e.getMessage());
             responseEntityDTO.setSuccess("e");
             return responseEntityDTO;

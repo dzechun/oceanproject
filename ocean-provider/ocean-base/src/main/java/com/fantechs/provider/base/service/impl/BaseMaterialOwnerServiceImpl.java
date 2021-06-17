@@ -229,6 +229,7 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
             baseMaterialOwner.setModifiedTime(new Date());
             baseMaterialOwner.setModifiedUserId(user.getUserId());
             baseMaterialOwner.setStatus(StringUtils.isEmpty(baseMaterialOwner.getStatus())?1:baseMaterialOwner.getStatus());
+            baseMaterialOwner.setOrgId(user.getOrganizationId());
             list.add(baseMaterialOwner);
         }
 

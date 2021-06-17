@@ -249,4 +249,14 @@ public class WmsOutHtDeliveryOrderDet extends ValidGroup implements Serializable
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="10")
     private String modifiedUserName;
+
+    @Transient
+    @ApiModelProperty(name="storageCode" ,value="库位编码")
+    @Excel(name = "库位编码", height = 20, width = 30)
+    private String storageCode;
+
+    @Transient
+    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30)
+    private String warehouseName;
 }

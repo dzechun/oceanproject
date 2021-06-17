@@ -34,6 +34,8 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -66,10 +68,13 @@
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
     select<include refid="Base_Column_List"/>,
+    bw.warehouse_name,bs.storage_code,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name
     from fantech_imes_v2.wms_out_ht_delivery_order_det wohdod
+    LEFT JOIN fantech_imes_v2.base_warehouse bw ON wohdod.warehouse_id = bw.warehouse_id
+    LEFT JOIN fantech_imes_v2.base_storage bs ON wohdod.storage_id = bs.storage_id
     LEFT JOIN ocean_v2.sys_user su ON wohdod.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wohdod.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON wohdod.org_id = bo.organization_id

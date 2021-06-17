@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.pm.mapper.MesPmProductionKeyIssuesOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="production_key_issues_order_det_id" jdbcType="BIGINT" property="productionKeyIssuesOrderDetId" />
+    <result column="production_key_issues_order_id" jdbcType="BIGINT" property="productionKeyIssuesOrderId" />
+    <result column="production_key_issues_det_id" jdbcType="BIGINT" property="productionKeyIssuesDetId" />
+    <result column="yes_or_no" jdbcType="TINYINT" property="yesOrNo" />
+    <result column="value" jdbcType="DECIMAL" property="value" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="production_key_issues_det_name" jdbcType="VARCHAR" property="productionKeyIssuesDetName"/>
+    <result column="production_key_issues_det_desc" jdbcType="VARCHAR" property="productionKeyIssuesDetDesc"/>
+    <result column="judge_type" jdbcType="TINYINT" property="judgeType"/>
+    <result column="if_must_pass" jdbcType="TINYINT" property="ifMustPass"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    mppkiod.production_key_issues_order_det_id,
+    mppkiod.production_key_issues_order_id,
+    mppkiod.production_key_issues_det_id,
+    mppkiod.yes_or_no,
+    mppkiod.value,
+    mppkiod.`status`,
+    mppkiod.remark,
+    mppkiod.org_id,
+    mppkiod.create_user_id,
+    mppkiod.create_time,
+    mppkiod.modified_user_id,
+    mppkiod.modified_time,
+    mppkiod.is_delete,
+    mppkiod.option1,
+    mppkiod.option2,
+    mppkiod.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    SELECT<include refid="Base_Column_List"/>,
+    bpkid.production_key_issues_det_name,bpkid.production_key_issues_det_desc,
+    bpkid.judge_type,bpkid.if_must_pass,
+    su.user_name as create_user_name,
+    sus.user_name as modified_user_name,
+    bo.organization_name FROM fantech_imes_v2.mes_pm_production_key_issues_order_det mppkiod
+    left join fantech_imes_v2.base_production_key_issues_det bpkid on mppkiod.production_key_issues_det_id=bpkid.production_key_issues_det_id
+    left join ocean_v2.sys_user su ON mppkiod.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus ON mppkiod.modified_user_id = sus.user_id
+    left join fantech_imes_v2.base_organization bo ON mppkiod.org_id = bo.organization_id
+    <where>
+      <if test="productionKeyIssuesOrderId!=null">
+        and mppkiod.production_key_issues_order_id = #{productionKeyIssuesOrderId}
+      </if>
+      <if test="status!=null">
+        and mppkiod.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(mppkiod.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by mppkiod.create_time desc
+  </select>
+</mapper>

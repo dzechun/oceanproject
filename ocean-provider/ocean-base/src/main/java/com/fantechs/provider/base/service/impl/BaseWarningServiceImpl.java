@@ -84,6 +84,7 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
         baseWarning.setCreateUserId(user.getUserId());
         baseWarning.setModifiedTime(new Date());
         baseWarning.setModifiedUserId(user.getUserId());
+        baseWarning.setOrganizationId(user.getOrganizationId());
         int i = baseWarningMapper.insertUseGeneratedKeys(baseWarning);
 
         //新增预警信息履历
@@ -126,6 +127,7 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
         //更新预警信息
         baseWarning.setModifiedUserId(user.getUserId());
         baseWarning.setModifiedTime(new Date());
+        baseWarning.setOrganizationId(user.getOrganizationId());
         int i = baseWarningMapper.updateByPrimaryKeySelective(baseWarning);
 
         //新增履历

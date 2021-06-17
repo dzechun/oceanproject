@@ -68,6 +68,7 @@ public class BaseKeyMaterialServiceImpl extends BaseService<BaseKeyMaterial> imp
         baseKeyMaterial.setCreateUserId(currentUser.getUserId());
         baseKeyMaterial.setModifiedUserId(currentUser.getUserId());
         baseKeyMaterial.setModifiedTime(new Date());
+        baseKeyMaterial.setOrganizationId(currentUser.getOrganizationId());
         baseKeyMaterial.setStatus(StringUtils.isEmpty(baseKeyMaterial.getStatus())?1: baseKeyMaterial.getStatus());
         int i = baseKeyMaterialMapper.insertUseGeneratedKeys(baseKeyMaterial);
 
@@ -101,6 +102,7 @@ public class BaseKeyMaterialServiceImpl extends BaseService<BaseKeyMaterial> imp
 
         baseKeyMaterial.setMaterialId(currentUser.getUserId());
         baseKeyMaterial.setModifiedTime(new Date());
+        baseKeyMaterial.setOrganizationId(currentUser.getOrganizationId());
 
         BaseHtKeyMaterial baseHtKeyMaterial = new BaseHtKeyMaterial();
         BeanUtils.copyProperties(baseKeyMaterial, baseHtKeyMaterial);

@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -56,11 +57,16 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     private WmsOutHtDeliveryOrderDetMapper wmsOutHtDeliveryOrderDetMapper;
     @Resource
     private InnerFeignApi innerFeignApi;
-    @Resource
-    private OMFeignApi omFeignApi;
 
     @Override
     public List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        map.put("orderTypeId",1);
+        map.put("orgId",user.getOrganizationId());
         List<WmsOutDeliveryOrderDto> wmsOutDeliveryOrderDtos = wmsOutDeliveryOrderMapper.findList(map);
 
         for (WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto : wmsOutDeliveryOrderDtos) {
@@ -80,8 +86,58 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         return wmsOutDeliveryOrderDtos;
     }
 
+    /**
+     * 查询调拨出库单
+     * @param map
+     * @return
+     */
+    @Override
+    public List<WmsOutTransferDeliveryOrderDto> transferFindList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        map.put("orderTypeId",2);
+        map.put("orgId",user.getOrganizationId());
+        List<WmsOutDeliveryOrderDto> wmsOutDeliveryOrderDtos = wmsOutDeliveryOrderMapper.findList(map);
+
+        List<WmsOutTransferDeliveryOrderDto> wmsOutTransferDeliveryOrderDtos = new ArrayList<>();
+        for (WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto : wmsOutDeliveryOrderDtos) {
+            SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
+            searchWmsOutDeliveryOrderDet.setDeliveryOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
+            List<WmsOutDeliveryOrderDetDto> list = wmsOutDeliveryOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrderDet));
+            wmsOutDeliveryOrderDto.setWmsOutDeliveryOrderDetList(list);
+            //计算总数量
+            BigDecimal packingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            wmsOutDeliveryOrderDto.setTotalPackingQty(packingSum);
+            BigDecimal pickingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPickingQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
+            wmsOutDeliveryOrderDto.setTotalPickingQty(pickingSum);
+            BigDecimal dispatchSum = list.stream().map(WmsOutDeliveryOrderDetDto::getDispatchQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
+            //修改单据状态
+            this.updateOrderStatus(wmsOutDeliveryOrderDto);
+
+            //赋值
+            WmsOutTransferDeliveryOrderDto wmsOutTransferDeliveryOrderDto = new WmsOutTransferDeliveryOrderDto();
+            BeanUtils.copyProperties(wmsOutDeliveryOrderDto,wmsOutTransferDeliveryOrderDto);
+            wmsOutTransferDeliveryOrderDto.setTotalDispatchQty(dispatchSum);
+            wmsOutTransferDeliveryOrderDto.setWarehouseName(list.size()>0?list.get(0).getWarehouseName():null);
+            wmsOutTransferDeliveryOrderDto.setStorageCode(list.size()>0?list.get(0).getStorageCode():null);
+            wmsOutTransferDeliveryOrderDtos.add(wmsOutTransferDeliveryOrderDto);
+        }
+
+        return wmsOutTransferDeliveryOrderDtos;
+    }
+
     @Override
     public List<WmsOutHtDeliveryOrder> findHtList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        map.put("orderTypeId",1);
+        map.put("orgId",user.getOrganizationId());
         List<WmsOutHtDeliveryOrder> wmsOutHtDeliveryOrders = wmsOutHtDeliveryOrderMapper.findHtList(map);
 
         for (WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder : wmsOutHtDeliveryOrders) {
@@ -97,6 +153,42 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
 
         return wmsOutHtDeliveryOrders;
+    }
+
+    @Override
+    public List<WmsOutTransferDeliveryOrderDto> transferFindHtList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        map.put("orderTypeId",2);
+        map.put("orgId",user.getOrganizationId());
+        List<WmsOutHtDeliveryOrder> wmsOutHtDeliveryOrders = wmsOutHtDeliveryOrderMapper.findHtList(map);
+
+        List<WmsOutTransferDeliveryOrderDto> wmsOutTransferDeliveryOrderDtos = new ArrayList<>();
+        for (WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder : wmsOutHtDeliveryOrders) {
+            SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
+            searchWmsOutDeliveryOrderDet.setDeliveryOrderId(wmsOutHtDeliveryOrder.getDeliveryOrderId());
+            List<WmsOutHtDeliveryOrderDet> list = wmsOutHtDeliveryOrderDetMapper.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrderDet));
+            wmsOutHtDeliveryOrder.setWmsOutHtDeliveryOrderDets(list);
+            //计算总数量
+            BigDecimal packingSum = list.stream().map(WmsOutHtDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            wmsOutHtDeliveryOrder.setTotalPackingQty(packingSum);
+            BigDecimal pickingSum = list.stream().map(WmsOutHtDeliveryOrderDet::getPickingQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal dispatchSum = list.stream().map(WmsOutHtDeliveryOrderDet::getDispatchQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
+            wmsOutHtDeliveryOrder.setTotalPickingQty(pickingSum);
+
+            //赋值
+            WmsOutTransferDeliveryOrderDto wmsOutTransferDeliveryOrderDto = new WmsOutTransferDeliveryOrderDto();
+            BeanUtils.copyProperties(wmsOutHtDeliveryOrder,wmsOutTransferDeliveryOrderDto);
+            wmsOutTransferDeliveryOrderDto.setTotalDispatchQty(dispatchSum);
+            wmsOutTransferDeliveryOrderDto.setWarehouseName(list.size()>0?list.get(0).getWarehouseName():null);
+            wmsOutTransferDeliveryOrderDto.setStorageCode(list.size()>0?list.get(0).getStorageCode():null);
+            wmsOutTransferDeliveryOrderDtos.add(wmsOutTransferDeliveryOrderDto);
+        }
+
+        return wmsOutTransferDeliveryOrderDtos;
     }
 
     @Override
@@ -159,7 +251,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         searchWmsInnerJobOrder.setSourceOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
         if(StringUtils.isNotEmpty(wmsInnerJobOrderDtos)){
-            throw new BizErrorException("对应的拣货作业单已存在,该销售出库单不允许修改！");
+            throw new BizErrorException("对应的拣货作业单已存在,该出库单不允许修改！");
         }
 
         //出库单
@@ -261,7 +353,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrderDto.getWmsOutDeliveryOrderDetList();
         if (StringUtils.isEmpty(wmsOutDeliveryOrderDetList)) {
-            throw new BizErrorException("销售出库单明细为空时无法创建作业单");
+            throw new BizErrorException("出库单明细为空时无法创建作业单");
         }
 
         //查询是否创建作业单

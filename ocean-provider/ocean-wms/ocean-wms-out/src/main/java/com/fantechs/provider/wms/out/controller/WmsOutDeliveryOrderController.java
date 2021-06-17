@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.out.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
@@ -79,6 +80,22 @@ public class WmsOutDeliveryOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("调拨出库单列表")
+    @PostMapping("/transferFindList")
+    public ResponseEntity<List<WmsOutTransferDeliveryOrderDto>> transferFindList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutDeliveryOrder searchWmsOutDeliveryOrder) {
+        Page<Object> page = PageHelper.startPage(searchWmsOutDeliveryOrder.getStartPage(),searchWmsOutDeliveryOrder.getPageSize());
+        List<WmsOutTransferDeliveryOrderDto> list = wmsOutDeliveryOrderService.transferFindList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("调拨出库单历史列表")
+    @PostMapping("/transferFindHtList")
+    public ResponseEntity<List<WmsOutTransferDeliveryOrderDto>> transferFindHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutDeliveryOrder searchWmsOutDeliveryOrder) {
+        Page<Object> page = PageHelper.startPage(searchWmsOutDeliveryOrder.getStartPage(),searchWmsOutDeliveryOrder.getPageSize());
+        List<WmsOutTransferDeliveryOrderDto> list = wmsOutDeliveryOrderService.transferFindHtList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<WmsOutHtDeliveryOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutDeliveryOrder searchWmsOutDeliveryOrder) {
@@ -94,9 +111,22 @@ public class WmsOutDeliveryOrderController {
     List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "出库单信息", WmsOutDeliveryOrderDto.class, "出库单信息.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "销售出库单信息", WmsOutDeliveryOrderDto.class, "销售出库单信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    @PostMapping(value = "/transferExport")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void transferExportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchWmsOutDeliveryOrder searchWmsOutDeliveryOrder){
+        List<WmsOutTransferDeliveryOrderDto> list = wmsOutDeliveryOrderService.transferFindList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrder));
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出信息", "调拨出库单信息", WmsOutTransferDeliveryOrderDto.class, "调拨出库单信息.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
         }
     }
 }
