@@ -38,7 +38,6 @@
     mppkiod.yes_or_no,
     mppkiod.value,
     mppkiod.`status`,
-    mppkiod.remark,
     mppkiod.org_id,
     mppkiod.create_user_id,
     mppkiod.create_time,
@@ -52,7 +51,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     SELECT<include refid="Base_Column_List"/>,
-    bpkid.production_key_issues_det_name,bpkid.production_key_issues_det_desc,
+    bpkid.production_key_issues_det_name,bpkid.production_key_issues_det_desc,bpkid.remark,
     bpkid.judge_type,bpkid.if_must_pass,
     su.user_name as create_user_name,
     sus.user_name as modified_user_name,

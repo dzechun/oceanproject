@@ -170,7 +170,6 @@ public class BaseProductionKeyIssuesServiceImpl extends BaseService<BaseProducti
         baseProductionKeyIssuesDetMapper.deleteByExample(example1);
 
         //新增明细
-
         if (StringUtils.isNotEmpty(baseProductionKeyIssuesDetList)){
             for (BaseProductionKeyIssuesDet baseProductionKeyIssuesDet : baseProductionKeyIssuesDetList) {
                 if(idList.contains(baseProductionKeyIssuesDet.getProductionKeyIssuesDetId())){
@@ -183,8 +182,8 @@ public class BaseProductionKeyIssuesServiceImpl extends BaseService<BaseProducti
                 baseProductionKeyIssuesDet.setModifiedUserId(user.getUserId());
                 baseProductionKeyIssuesDet.setOrgId(user.getOrganizationId());
                 baseProductionKeyIssuesDet.setStatus(StringUtils.isEmpty(baseProductionKeyIssuesDet.getStatus())?(byte)1:baseProductionKeyIssuesDet.getStatus());
+                baseProductionKeyIssuesDetMapper.insert(baseProductionKeyIssuesDet);
             }
-            baseProductionKeyIssuesDetMapper.insertList(baseProductionKeyIssuesDetList);
         }
 
         return i;

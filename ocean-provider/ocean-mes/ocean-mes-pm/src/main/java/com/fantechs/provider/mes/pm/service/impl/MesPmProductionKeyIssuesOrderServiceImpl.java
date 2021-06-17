@@ -73,7 +73,6 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
 
             //产前关键事项明细设值
             List<MesPmProductionKeyIssuesOrderDet> mesPmProductionKeyIssuesOrderDets = new ArrayList<>();
-            MesPmProductionKeyIssuesOrderDet mesPmProductionKeyIssuesOrderDet = new MesPmProductionKeyIssuesOrderDet();
 
             SearchBaseProductionKeyIssues searchBaseProductionKeyIssues = new SearchBaseProductionKeyIssues();
             searchBaseProductionKeyIssues.setMaterialId(mesPmWorkOrderDto.getMaterialId());
@@ -82,6 +81,7 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
             if(StringUtils.isNotEmpty(baseProductionKeyIssuesList)){
                 List<BaseProductionKeyIssuesDet> baseProductionKeyIssuesDetList = baseProductionKeyIssuesList.get(0).getBaseProductionKeyIssuesDetList();
                 for (BaseProductionKeyIssuesDet baseProductionKeyIssuesDet:baseProductionKeyIssuesDetList){
+                    MesPmProductionKeyIssuesOrderDet mesPmProductionKeyIssuesOrderDet = new MesPmProductionKeyIssuesOrderDet();
                     mesPmProductionKeyIssuesOrderDet.setProductionKeyIssuesDetId(baseProductionKeyIssuesDet.getProductionKeyIssuesDetId());
                     mesPmProductionKeyIssuesOrderDets.add(mesPmProductionKeyIssuesOrderDet);
                 }
@@ -92,6 +92,7 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
                 if(StringUtils.isNotEmpty(baseProductionKeyIssuesList1)) {
                     List<BaseProductionKeyIssuesDet> baseProductionKeyIssuesDetList = baseProductionKeyIssuesList1.get(0).getBaseProductionKeyIssuesDetList();
                     for (BaseProductionKeyIssuesDet baseProductionKeyIssuesDet : baseProductionKeyIssuesDetList) {
+                        MesPmProductionKeyIssuesOrderDet mesPmProductionKeyIssuesOrderDet = new MesPmProductionKeyIssuesOrderDet();
                         mesPmProductionKeyIssuesOrderDet.setProductionKeyIssuesDetId(baseProductionKeyIssuesDet.getProductionKeyIssuesDetId());
                         mesPmProductionKeyIssuesOrderDets.add(mesPmProductionKeyIssuesOrderDet);
                     }
