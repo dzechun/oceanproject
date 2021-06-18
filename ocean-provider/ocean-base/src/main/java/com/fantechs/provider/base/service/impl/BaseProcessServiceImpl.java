@@ -288,6 +288,7 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
         Example example = new Example(BaseProcess.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("sectionId", baseProcess.getSectionId());
+        criteria.andEqualTo("processCode", baseProcess.getProcessCode());
         criteria.andEqualTo("organizationId", baseProcess.getOrganizationId());
         List<BaseProcess> baseProcessOld = baseProcessMapper.selectByExample(example);
 
