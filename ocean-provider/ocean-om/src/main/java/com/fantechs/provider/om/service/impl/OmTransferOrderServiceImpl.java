@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import com.fantechs.common.base.general.entity.om.OmTransferOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
@@ -103,20 +104,21 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             wmsOutDeliveryOrder.setOrderStatus((byte)1);
             wmsOutDeliveryOrder.setOrderDate(new Date());
             wmsOutDeliveryOrder.setOrgId(sysUser.getOrganizationId());
-            List<WmsOutDeliveryOrderDet> wmsOutDeliveryOrderDets = new ArrayList<>();
+            List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = new ArrayList<>();
             int i = 1;
             for (OmTransferOrderDet omTransferOrderDet : list) {
-                WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = new WmsOutDeliveryOrderDet();
-                wmsOutDeliveryOrderDet.setWarehouseId(omTransferOrder.getOutWarehouseId());
-                wmsOutDeliveryOrderDet.setSourceOrderId(omTransferOrder.getTransferOrderId());
-                wmsOutDeliveryOrderDet.setOrderDetId(omTransferOrderDet.getTransferOrderDetId());
-                wmsOutDeliveryOrderDet.setLineNumber(i);
-                wmsOutDeliveryOrderDet.setPackingUnitName(omTransferOrderDet.getUnitName());
-                wmsOutDeliveryOrderDet.setPackingQty(omTransferOrderDet.getOrderQty());
-                wmsOutDeliveryOrderDet.setBatchCode(omTransferOrderDet.getBatchCode());
-                wmsOutDeliveryOrderDets.add(wmsOutDeliveryOrderDet);
+                WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto = new WmsOutDeliveryOrderDetDto();
+                wmsOutDeliveryOrderDetDto.setWarehouseId(omTransferOrder.getOutWarehouseId());
+                wmsOutDeliveryOrderDetDto.setSourceOrderId(omTransferOrder.getTransferOrderId());
+                wmsOutDeliveryOrderDetDto.setOrderDetId(omTransferOrderDet.getTransferOrderDetId());
+                wmsOutDeliveryOrderDetDto.setLineNumber(i);
+                wmsOutDeliveryOrderDetDto.setPackingUnitName(omTransferOrderDet.getUnitName());
+                wmsOutDeliveryOrderDetDto.setPackingQty(omTransferOrderDet.getOrderQty());
+                wmsOutDeliveryOrderDetDto.setBatchCode(omTransferOrderDet.getBatchCode());
+                wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);
                 i++;
             }
+            wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetDtos);
             ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryOrder);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("生成出库单失败");
