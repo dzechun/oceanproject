@@ -27,9 +27,17 @@ public interface PMFeignApi {
     @PostMapping("/mesPmWorkOrder/findList")
     ResponseEntity<List<MesPmWorkOrderDto>> findWorkOrderList(@ApiParam(value = "查询对象") @RequestBody SearchMesPmWorkOrder searchMesPmWorkOrder);
 
+    @ApiOperation("工单列表")
+    @PostMapping("/mesPmWorkOrder/getWorkOrderList")
+    ResponseEntity<List<MesPmWorkOrder>> getWorkOrderList(@ApiParam(value = "查询对象") @RequestBody List<String> workOrderIds);
+
     @ApiOperation("修改工单")
     @PostMapping("/mesPmWorkOrder/update")
     ResponseEntity updateSmtWorkOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrder mesPmWorkOrder);
+
+    @ApiOperation("批量修改完工数量")
+    @PostMapping("/mesPmWorkOrder/batchUpdate")
+    ResponseEntity batchUpdate(List<MesPmWorkOrder> mesPmWorkOrders);
 
     @ApiOperation("更新工单状态")
     @PostMapping("/mesPmWorkOrder/updateStatus")

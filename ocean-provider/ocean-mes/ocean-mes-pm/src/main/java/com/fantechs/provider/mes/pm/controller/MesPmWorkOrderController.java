@@ -68,6 +68,12 @@ public class MesPmWorkOrderController {
         return ControllerUtil.returnCRUD(mesPmWorkOrderService.update(mesPmWorkOrder));
     }
 
+    @ApiOperation("批量修改完工数量")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(List<MesPmWorkOrder> mesPmWorkOrders){
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.batchUpdate(mesPmWorkOrders));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<MesPmWorkOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
@@ -81,6 +87,13 @@ public class MesPmWorkOrderController {
         Page<Object> page = PageHelper.startPage(searchMesPmWorkOrder.getStartPage(), searchMesPmWorkOrder.getPageSize());
         List<MesPmWorkOrderDto> list = mesPmWorkOrderService.findList(searchMesPmWorkOrder);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("工单列表")
+    @PostMapping("/getWorkOrderList")
+    public ResponseEntity<List<MesPmWorkOrder>> getWorkOrderList(@ApiParam(value = "查询对象") @RequestBody List<String> workOrderIds){
+        List<MesPmWorkOrder> workOrderList = mesPmWorkOrderService.getWorkOrderList(workOrderIds);
+        return ControllerUtil.returnDataSuccess(workOrderList, workOrderList.size());
     }
 
     @ApiOperation("工单历史列表")

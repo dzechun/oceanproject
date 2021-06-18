@@ -24,6 +24,9 @@
     <result column="section_id" jdbcType="BIGINT" property="sectionId" />
     <result column="section_code" jdbcType="VARCHAR" property="sectionCode" />
     <result column="section_name" jdbcType="VARCHAR" property="sectionName" />
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="station_code" jdbcType="VARCHAR" property="stationCode" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="process_code" jdbcType="VARCHAR" property="processCode" />
     <result column="process_name" jdbcType="VARCHAR" property="processName" />
@@ -95,7 +98,15 @@
         next_process_id = #{item.nextProcessId},
         next_process_code = #{item.nextProcessCode},
         next_process_name = #{item.nextProcessName},
-        next_process_name = #{item.nextProcessName},
+        section_id = #{item.sectionId},
+        section_code = #{item.sectionCode},
+        section_name = #{item.sectionName},
+        station_id = #{item.stationId},
+        station_code = #{item.stationCode},
+        station_name = #{item.stationName},
+        pro_line_id = #{item.proLineId},
+        pro_code = #{item.proCode},
+        pro_name = #{item.proName},
         barcode_status = #{item.barcodeStatus},
         rework_order_id = #{item.reworkOrderId},
       </set>

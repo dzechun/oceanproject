@@ -108,9 +108,14 @@
           #{item}
         </foreach>
       </if>
+      <if test="workOrderBarcodeIds != null">
+        <foreach collection="workOrderBarcodeIds" index="index" item="item" open="and mskpr.work_order_id in (" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
     </where>
     <if test="workOrderIds != null">
-      GROUP BY mskpr.material_id
+      GROUP BY mskpr.material_id，mskpr.label_category_id
     </if>
   </select>
   

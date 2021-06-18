@@ -153,18 +153,24 @@ public class BarcodeUtils {
         mesSfcBarcodeProcess.setProcessId(dto.getNowProcessId());
         mesSfcBarcodeProcess.setProcessCode(baseProcess.getProcessCode());
         mesSfcBarcodeProcess.setProcessName(baseProcess.getProcessName());
-        // 更新工位和工段
-        ResponseEntity<BaseStation> stationResponseEntity = barcodeUtils.baseFeignApi.findStationDetail(dto.getNowStationId());
-        if (stationResponseEntity.getCode() != 0) {
+        // 更新工位、工段、产线
+        BaseStation baseStation = barcodeUtils.baseFeignApi.findStationDetail(dto.getNowStationId()).getData();
+        if (baseStation == null) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003, "没有找到对对应的工位");
         }
-        BaseStation baseStation = stationResponseEntity.getData();
         mesSfcBarcodeProcess.setStationId(baseStation.getStationId());
         mesSfcBarcodeProcess.setStationCode(baseStation.getStationCode());
         mesSfcBarcodeProcess.setStationName(baseStation.getStationName());
         mesSfcBarcodeProcess.setSectionId(baseProcess.getSectionId());
         mesSfcBarcodeProcess.setSectionCode(baseProcess.getSectionCode());
         mesSfcBarcodeProcess.setSectionName(baseProcess.getSectionName());
+        BaseProLine baseProLine = barcodeUtils.baseFeignApi.getProLineDetail(dto.getProLineId()).getData();
+        if (baseProLine == null) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003, "该产线不存在或已被删除");
+        }
+        mesSfcBarcodeProcess.setProLineId(baseProLine.getProLineId());
+        mesSfcBarcodeProcess.setProCode(baseProLine.getProCode());
+        mesSfcBarcodeProcess.setProName(baseProLine.getProName());
         mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcess.getPassStationCount() != null ? mesSfcBarcodeProcess.getPassStationCount() + 1 : 1);
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId())) {
             mesSfcBarcodeProcess.setDevoteTime(new Date());

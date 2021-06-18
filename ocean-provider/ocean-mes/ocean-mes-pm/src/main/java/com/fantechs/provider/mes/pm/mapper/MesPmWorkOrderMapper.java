@@ -17,4 +17,8 @@ public interface MesPmWorkOrderMapper extends MyMapper<MesPmWorkOrder> {
     List<BaseRouteProcess> selectRouteProcessByRouteId(@Param(value = "routeId")Long routeId);
 
     List<MesPmWorkOrderDto> pdaFindList(SearchMesPmWorkOrder searchMesPmWorkOrder);
+
+    List<MesPmWorkOrder> getWorkOrderList(List<String> workOrderIds);
+
+    int batchUpdate(List<MesPmWorkOrder> mesPmWorkOrders);
 }

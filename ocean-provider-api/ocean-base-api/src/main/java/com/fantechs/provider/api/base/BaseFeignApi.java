@@ -373,6 +373,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseProLine/findList")
     ResponseEntity<List<BaseProLine>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProLine searchBaseProLine);
 
+    @ApiOperation("获取详情")
+    @PostMapping("/baseProLine/detail")
+    ResponseEntity<BaseProLine> getProLineDetail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+
     @ApiOperation("新增或修改产线表信息")
     @PostMapping("/baseProLine/addOrUpdate")
     ResponseEntity<BaseProLine> addOrUpdate(@ApiParam(value = "必传：baseProLine",required = true)@RequestBody @Validated BaseProLine baseProLine);
