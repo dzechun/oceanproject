@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -19,6 +20,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -66,6 +68,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     private RedisUtil redisUtil;
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
+    private OMFeignApi omFeignApi;
 
     @Override
     public List<WmsInAsnOrderDto> findList(SearchWmsInAsnOrder searchWmsInAsnOrder) {
@@ -197,21 +201,38 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     @Transactional(rollbackFor = RuntimeException.class)
     public int writeQty(WmsInAsnOrderDet wmsInAsnOrderDet) {
         WmsInAsnOrderDet wms = wmsInAsnOrderDetMapper.selectByPrimaryKey(wmsInAsnOrderDet.getAsnOrderDetId());
+        WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(wms.getAsnOrderId());
         int num = wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(WmsInAsnOrderDet.builder()
                 .asnOrderDetId(wmsInAsnOrderDet.getAsnOrderDetId())
                 .putawayQty(wms.getPutawayQty()!=null?wms.getPutawayQty().add(wmsInAsnOrderDet.getPutawayQty()):wmsInAsnOrderDet.getPutawayQty())
                 .build());
-//        SearchWmsInAsnOrder searchWmsInAsnOrder = new SearchWmsInAsnOrder();
-//        searchWmsInAsnOrder.setAsnOrderId(wms.getAsnOrderId());
-//        List<WmsInAsnOrderDto> list = this.findList(searchWmsInAsnOrder);
-//        for (WmsInAsnOrderDto wmsInAsnOrderDto : list) {
-//            if(wmsInAsnOrderDto.getPutawayQty().doubleValue()==wmsInAsnOrderDto.getActualQty().doubleValue()){
-//                wmsInAsnOrderMapper.updateByPrimaryKeySelective(WmsInAsnOrder.builder()
-//                        .asnOrderId(wmsInAsnOrderDto.getAsnOrderId())
-//                        .orderStatus((byte)3)
-//                        .build());
-//            }
-//        }
+        //订单数量反写
+        switch (wmsInAsnOrder.getOrderTypeId().toString())
+        {
+            //调拨
+            case "3":
+                //反写调拨订单状态
+                Example example = new Example(WmsInAsnOrderDet.class);
+                example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId());
+                List<WmsInAsnOrderDet> wmsInAsnOrderDets = wmsInAsnOrderDetMapper.selectByExample(example);
+                BigDecimal actualQty = wmsInAsnOrderDets.stream()
+                        .map(WmsInAsnOrderDet::getActualQty)
+                        .reduce(BigDecimal.ZERO,BigDecimal::add);
+                BigDecimal putawayQty = wmsInAsnOrderDets.stream()
+                        .map(WmsInAsnOrderDet::getPutawayQty)
+                        .reduce(BigDecimal.ZERO,BigDecimal::add);
+                //数量相等时更改调拨订单状态未完成状态
+                if(actualQty.compareTo(putawayQty)==0){
+                    OmTransferOrder omTransferOrder = new OmTransferOrder();
+                    omTransferOrder.setTransferOrderId(wmsInAsnOrder.getSourceOrderId());
+                    omTransferOrder.setOrderStatus((byte)3);
+                    ResponseEntity responseEntity = omFeignApi.updateStatus(omTransferOrder);
+                    if(responseEntity.getCode()!=0){
+                        throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                    }
+                }
+                break;
+        }
         return num;
     }
 

@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -20,4 +21,6 @@ public interface OmTransferOrderService extends IService<OmTransferOrder> {
      * @return
      */
     int packageAutoOutOrder(String ids);
+
+    int updateStatus(OmTransferOrder omTransferOrder);
 }

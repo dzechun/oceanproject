@@ -9,6 +9,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.security.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 ;
 
@@ -35,6 +38,9 @@ public class LoginController {
 
     @Resource
     private SecurityFeignApi securityFeignApi;
+
+    @Resource
+    private SysUserService sysUserService;
 
     @PostMapping("/meslogin")
     @ApiOperation(value = "登陆接口")
@@ -82,5 +88,19 @@ public class LoginController {
     public ResponseEntity<SysUser> getUserinfo() throws TokenValidationFailedException {
         SysUser loginUser = CurrentUserInfoUtils.getCurrentUserInfo();
         return ControllerUtil.returnDataSuccess(loginUser, StringUtils.isEmpty(loginUser)?0:1);
+    }
+
+    @ApiOperation(value = "为客户端赋予一个可访问的token")
+    @GetMapping("/clientGetToken")
+    public ResponseEntity<String> clientGetToken(@RequestParam(value = "orgId") Long orgId) {
+
+        log.info("--------------为客户端赋予一个可访问的token--------------");
+        SysUser sysUser = sysUserService.selectByCode("admin");
+        sysUser.setOrganizationId(orgId);
+        String token = "client_" + TokenUtil.generateToken("", sysUser, null);
+        TokenUtil.save(token, sysUser);
+        log.info("--------------返回一个可访问的token : " + token + "--------------");
+
+        return ControllerUtil.returnDataSuccess("生成client_token成功", token);
     }
 }

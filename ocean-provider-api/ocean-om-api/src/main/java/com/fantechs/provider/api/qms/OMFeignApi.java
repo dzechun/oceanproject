@@ -1,9 +1,6 @@
 package com.fantechs.provider.api.qms;
 
-import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
-import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
-import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
-import com.fantechs.common.base.general.entity.om.SmtOrder;
+import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -48,5 +45,7 @@ public interface OMFeignApi {
     @PostMapping("/omPurchaseOrderDet/addOrUpdate")
     ResponseEntity<OmPurchaseOrderDet> addOrUpdate(@ApiParam(value = "必传:",required = true)@RequestBody OmPurchaseOrderDet omPurchaseOrderDet);
 
-
+    @ApiOperation("修改单据状态")
+    @PostMapping("/omTransferOrder/updateStatus")
+    ResponseEntity updateStatus(@RequestBody OmTransferOrder omTransferOrder);
 }
