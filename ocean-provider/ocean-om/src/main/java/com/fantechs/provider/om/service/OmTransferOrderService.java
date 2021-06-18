@@ -21,4 +21,6 @@ public interface OmTransferOrderService extends IService<OmTransferOrder> {
      * @return
      */
     int packageAutoOutOrder(String ids);
+
+    int updateStatus(OmTransferOrder omTransferOrder);
 }

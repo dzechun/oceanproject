@@ -19,6 +19,7 @@ import com.fantechs.provider.om.mapper.OmTransferOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
 import com.fantechs.provider.om.service.OmTransferOrderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -190,6 +191,20 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             omTransferOrderDetMapper.deleteByExample(example);
         }
         return omTransferOrderMapper.deleteByIds(ids);
+    }
+
+    /**
+     * 更改单据状态
+     * @param omTransferOrder
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int updateStatus(OmTransferOrder omTransferOrder) {
+        SysUser sysUser = currentUser();
+        omTransferOrder.setModifiedUserId(sysUser.getUserId());
+        omTransferOrder.setModifiedTime(new Date());
+        return omTransferOrderMapper.updateByPrimaryKeySelective(omTransferOrder);
     }
 
     private SysUser currentUser(){
