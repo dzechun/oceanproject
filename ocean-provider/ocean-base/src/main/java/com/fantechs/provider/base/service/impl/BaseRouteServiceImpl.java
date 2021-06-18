@@ -144,11 +144,13 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
 
     @Override
     public List<BaseRoute> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
         return baseRouteMapper.findList(map);
     }
 
@@ -315,5 +317,25 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
         resultMap.put("操作成功总数", success);
         resultMap.put("操作失败行", fail);
         return resultMap;
+    }
+
+    @Override
+    public BaseRoute addOrUpdate (BaseRoute baseRoute) {
+
+        Example example = new Example(BaseRoute.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("routeCode", baseRoute.getRouteCode());
+        criteria.andEqualTo("organizationId", baseRoute.getOrganizationId());
+        List<BaseRoute> baseRouteOld = baseRouteMapper.selectByExample(example);
+
+        baseRoute.setModifiedTime(new Date());
+        if (StringUtils.isNotEmpty(baseRouteOld)){
+            baseRoute.setRouteId(baseRouteOld.get(0).getRouteId());
+            baseRouteMapper.updateByPrimaryKey(baseRoute);
+        }else{
+            baseRoute.setCreateTime(new Date());
+            baseRouteMapper.insertUseGeneratedKeys(baseRoute);
+        }
+        return baseRoute;
     }
 }

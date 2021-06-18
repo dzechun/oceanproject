@@ -2,6 +2,7 @@ package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.imports.BaseWorkshopSectionImport;
+import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseWorkshopSection;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkshopSection;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkshopSection;
@@ -123,5 +124,12 @@ public class BaseWorkshopSectionController {
             log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
+    }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity<BaseWorkshopSection> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseWorkshopSection baseWorkshopSection) {
+        BaseWorkshopSection baseWorkshopSections = baseWorkshopSectionService.addOrUpdate(baseWorkshopSection);
+        return ControllerUtil.returnDataSuccess(baseWorkshopSections, StringUtils.isEmpty(baseWorkshopSections) ? 0 : 1);
     }
 }

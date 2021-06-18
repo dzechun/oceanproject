@@ -111,6 +111,9 @@
       <if test="orgId!=null and orgId!=''">
         and wiao.org_id = #{orgId}
       </if>
+      <if test="orderTypeId!=null and orderTypeId!=''">
+        and wiao.order_type_id = #{orderTypeId}
+      </if>
 </where>
 order by wiao.create_time desc
     </select>

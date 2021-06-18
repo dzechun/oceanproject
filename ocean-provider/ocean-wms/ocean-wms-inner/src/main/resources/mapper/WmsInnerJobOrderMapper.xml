@@ -142,4 +142,7 @@ wipo.option3
     <select id="findAsnCode" resultType="java.lang.String" parameterType="java.lang.Long">
         select asn_code FROM  wms_in_asn_order where asn_order_id = #{asnOrderId}
     </select>
+    <select id="findOmWarehouseId" resultType="java.lang.Long">
+        select in_warehouse_id FROM om_transfer_order where transfer_order_id=#{sourceId}
+    </select>
 </mapper>

@@ -2,21 +2,21 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProLineImport;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShop;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProLine;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.mapper.BaseHtProLineMapper;
-import com.fantechs.provider.base.mapper.BaseProLineMapper;
-import com.fantechs.provider.base.mapper.BaseProductProcessRouteMapper;
-import com.fantechs.provider.base.mapper.BaseWorkShopMapper;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseProLineService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -40,6 +40,9 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
 
     @Resource
     private BaseWorkShopMapper baseWorkShopMapper;
+    @Resource
+    private BaseOrganizationMapper baseOrganizationMapper;
+
 
     @Override
     public List<BaseProLine> findList(Map<String, Object> map) {
@@ -241,4 +244,26 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
         resultMap.put("操作失败行数",fail);
         return resultMap;
     }
+
+
+    @Override
+    public BaseProLine addOrUpdate(BaseProLine baseProLine) {
+
+        Example example = new Example(BaseProLine.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("proCode", baseProLine.getProCode());
+        List<BaseProLine> baseProLines = baseProLineMapper.selectByExample(example);
+
+        baseProLine.setStatus(1);
+        baseProLine.setModifiedTime(new Date());
+        if (StringUtils.isNotEmpty(baseProLines)){
+            baseProLine.setProLineId(baseProLines.get(0).getProLineId());
+            baseProLineMapper.updateByPrimaryKey(baseProLine);
+        }else{
+            baseProLine.setCreateTime(new Date());
+            baseProLineMapper.insertUseGeneratedKeys(baseProLine);
+        }
+        return baseProLine;
+    }
+
 }

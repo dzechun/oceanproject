@@ -125,4 +125,12 @@ public class BaseProductProcessRouteController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity<BaseProductProcessRoute> addOrUpdate(@ApiParam(value = "必传：materialId、routeId",required = true)@RequestBody @Validated BaseProductProcessRoute baseProductProcessRoute) {
+        BaseProductProcessRoute baseProductProcessRoutes = baseProductProcessRouteService.addOrUpdate(baseProductProcessRoute);
+        return ControllerUtil.returnDataSuccess(baseProductProcessRoutes, StringUtils.isEmpty(baseProductProcessRoutes) ? 0 : 1);
+    }
 }

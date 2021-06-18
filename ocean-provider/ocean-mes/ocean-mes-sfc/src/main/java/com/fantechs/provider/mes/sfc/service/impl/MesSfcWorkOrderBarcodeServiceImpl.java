@@ -81,6 +81,9 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(ids,printName)){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数传递错误");
         }
+        if(StringUtils.isEmpty(printName)){
+            throw new BizErrorException("请设置打印机名称");
+        }
         String[] arrId = ids.split(",");
         for (String s : arrId) {
             //查询模版信息

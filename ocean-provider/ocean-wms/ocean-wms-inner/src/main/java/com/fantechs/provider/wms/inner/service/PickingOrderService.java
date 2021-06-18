@@ -53,4 +53,11 @@ public interface PickingOrderService {
     List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder);
 
     int retrographyStatus(WmsInnerJobOrderDet wmsInnerJobOrderDet);
+
+    /**
+     * 新增装车作业单
+     * @param outDeliveryOrderId
+     * @return
+     */
+    int autoOutOrder(Long outDeliveryOrderId);
 }

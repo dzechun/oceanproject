@@ -37,4 +37,6 @@ public class SearchWmsInAsnOrder extends BaseQuery implements Serializable {
     private Long asnOrderId;
 
     private Long orgId;
+
+    private Long orderTypeId;
 }

@@ -1,12 +1,14 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.DTMESMATERIAL;
 import com.fantechs.common.base.general.dto.restapi.DTMESMATERIALQUERYREQ;
 import com.fantechs.common.base.general.dto.restapi.DTMESMATERIALQUERYRES;
 import com.fantechs.common.base.general.dto.restapi.SearchSapMaterialApi;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -67,7 +69,13 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
         searchBaseMaterial.setMaterialCode(material.getMATNR());
         ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
         BaseMaterial baseMaterial = new BaseMaterial();
-        baseMaterial.setOrganizationId((long)1000);
+
+        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+        searchBaseOrganization.setOrganizationName("雷赛");
+        ResponseEntity<List<BaseOrganizationDto>> organizationList = baseFeignApi.findOrganizationList(searchBaseOrganization);
+        if(StringUtils.isEmpty(organizationList.getData()))  throw new BizErrorException("未查询到对应组织");
+        baseMaterial.setOrganizationId((organizationList.getData().get(0).getOrganizationId()));
+
         if(StringUtils.isEmpty(list.getData())){
             baseMaterial.setMaterialName(material.getMAKTX());
             baseMaterial.setMaterialDesc(material.getMAKTX());

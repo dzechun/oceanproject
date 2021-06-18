@@ -41,4 +41,10 @@ public class BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
     private Byte status;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="orgId",value = "组织id")
+    private Long orgId;
 }
