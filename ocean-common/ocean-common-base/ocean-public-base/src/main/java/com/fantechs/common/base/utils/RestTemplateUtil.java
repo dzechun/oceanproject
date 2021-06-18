@@ -102,6 +102,15 @@ public class RestTemplateUtil {
     }
 
     /**
+     * 返回String
+     *
+     * @param url 请求路径
+     */
+    public static String getForStringNoJson(String url) {
+        return getForResponseDTO(url).getData().toString();
+    }
+
+    /**
      * 返回ResponseDTO
      * @param url 请求路径
      * @return
