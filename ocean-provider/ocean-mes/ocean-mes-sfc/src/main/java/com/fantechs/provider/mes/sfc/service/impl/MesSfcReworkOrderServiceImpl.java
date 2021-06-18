@@ -22,11 +22,10 @@ import com.fantechs.provider.mes.sfc.mapper.MesSfcHtReworkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcHtReworkOrderMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcReworkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcReworkOrderMapper;
-import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeProcessService;
-import com.fantechs.provider.mes.sfc.service.MesSfcKeyPartRelevanceService;
-import com.fantechs.provider.mes.sfc.service.MesSfcReworkOrderService;
+import com.fantechs.provider.mes.sfc.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -51,6 +50,14 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
     private MesSfcBarcodeProcessService mesSfcBarcodeProcessService;
     @Resource
     private MesSfcKeyPartRelevanceService mesSfcKeyPartRelevanceService;
+    @Resource
+    private MesSfcProductCartonService mesSfcProductCartonService;
+    @Resource
+    private MesSfcProductCartonDetService mesSfcProductCartonDetService;
+    @Resource
+    private MesSfcProductPalletService mesSfcProductPalletService;
+    @Resource
+    private MesSfcProductPalletDetService mesSfcProductPalletDetService;
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
@@ -142,18 +149,31 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         // 获取需要处理条码
         List<MesSfcBarcodeProcessDto> barcodeProcessDtos = mesSfcBarcodeProcessService.findList(ControllerUtil.dynamicConditionByEntity(doReworkOrderDto.getSearchMesSfcBarcodeProcess()));
 
-        // 获取条码所有工单
         List<String> orderIds = new ArrayList<>();
         List<String> workOrderBarcodeIds = new ArrayList<>();
+        List<String> cartonCodeList = new ArrayList<>();
+        List<String> palletCodeList = new ArrayList<>();
         for (MesSfcBarcodeProcessDto dto : barcodeProcessDtos){
             if(!orderIds.contains(dto.getWorkOrderId().toString())){
                 orderIds.add(dto.getWorkOrderId().toString());
-                workOrderBarcodeIds.add(dto.getWorkOrderBarcodeId().toString());
             }
+            workOrderBarcodeIds.add(dto.getWorkOrderBarcodeId().toString());
+            cartonCodeList.add(dto.getCartonCode());
+            palletCodeList.add(dto.getPalletCode());
         }
+        // 获取条码所有工单
         List<MesPmWorkOrder> mesPmWorkOrders = pmFeignApi.getWorkOrderList(orderIds).getData();
         if(mesPmWorkOrders == null || mesPmWorkOrders.size() <= 0){
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "条码所属工单不存在或已被删除");
+        }
+
+        if(doReworkOrderDto.getClearCarton()){
+        }
+        // 清除彩盒
+        if(doReworkOrderDto.getClearColorBox()){
+        }
+        // 清除栈板
+        if(doReworkOrderDto.getClearPallet()){
         }
 
         List<MesSfcReworkOrderBarcode> mesSfcReworkOrderBarcodeList = new ArrayList<>();
@@ -220,8 +240,6 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             BeanUtils.copyProperties(mesSfcReworkOrderBarcode, mesSfcHtReworkOrderBarcode);
             mesSfcHtReworkOrderBarcodeList.add(mesSfcHtReworkOrderBarcode);
 
-
-
         }
         // 批量保存返工单条码关系表
         mesSfcReworkOrderBarcodeMapper.insertList(mesSfcReworkOrderBarcodeList);
@@ -231,6 +249,30 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         mesSfcBarcodeProcessService.batchUpdate(mesSfcBarcodeProcessList);
         // 批量修改工单完工数量
         pmFeignApi.batchUpdate(mesPmWorkOrders);
+
+        if(doReworkOrderDto.getClearCarton()){
+            // 批量删除包箱条码关系表
+            Example example = new Example(MesSfcProductCartonDet.class);
+            example.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
+            mesSfcProductCartonDetService.deleteByExample(example);
+            // 清除包箱
+
+
+        }
+        if(doReworkOrderDto.getClearColorBox()){
+            // 清除彩盒关系表
+
+            // 清除彩盒
+
+        }
+        if(doReworkOrderDto.getClearPallet()){
+            // 批量删除栈板条码关系表
+            Example example = new Example(MesSfcProductPalletDet.class);
+            example.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
+            mesSfcProductPalletDetService.deleteByExample(example);
+            // 清除栈板
+
+        }
 
         // 清除条码部件关系表
         Map<String, Object> map = new HashMap<>();
