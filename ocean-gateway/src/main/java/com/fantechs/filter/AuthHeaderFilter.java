@@ -41,6 +41,9 @@ public class AuthHeaderFilter extends ZuulFilter {
 	@Resource
 	private RedisUtil redisUtil;
 
+	@Value("${url.securityUrl}")
+	private String securityUrl;
+
 	@Value("${constant-base.orgId}")
 	private Long orgId;
 
@@ -114,7 +117,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 					break;
 				}
 			} else {
-				token = RestTemplateUtil.getForStringNoJson("http://localhost:8768/ocean-security/clientGetToken?orgId=" + orgId);
+				token = RestTemplateUtil.getForStringNoJson(securityUrl + "?orgId=" + orgId);
 				log.info("---------为客户端赋予一个可访问的token : " + token + "---------------");
 			}
 		}

@@ -75,5 +75,8 @@ logging:
     org.springframework.cloud.gateway: debug
   file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
 
+url:
+  securityUrl: http://localhost:8768/ocean-security/clientGetToken
+
 constant-base:
   orgId: 36
