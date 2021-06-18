@@ -15,16 +15,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.common.base.utils.TokenUtil;
+import com.fantechs.common.base.utils.*;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -36,14 +38,21 @@ import java.util.Set;
 @Component
 public class AuthHeaderFilter extends ZuulFilter {
 
+	@Resource
+	private RedisUtil redisUtil;
+
+	@Value("${constant-base.orgId}")
+	private Long orgId;
+
 	//排除过滤的 uri 地址
-	private static final String LOGIN_URI = "/ocean-security/meslogin,/ocean-security/refreshtoken," +
+	private static final String LOGIN_URI = "/ocean-security/meslogin,/ocean-security/refreshtoken,/ocean-security/clientGetToken," +
 			"/ocean-security/userinfo,/ocean-security/logout,/ocean-fileserver/file/download,/ocean-fileserver/file/multipleFileBase64" +
 			",/ocean-fileserver/file/upload,/ocean-fileserver/file/uploadToSVG,/ocean-imes-materialapi/material/api" +
 			",/ocean-security/sysSpecItem/findList,/ocean-exhibition-client/RCSAPI/agvCallback,/ocean-base/baseOrganization/findList"+
-			"/ocean-imes-materialapi/material/workOrder,/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder"+
-			"/ocean-imes-materialapi/material/purchaseOrder";
+			"/ocean-imes-materialapi/material/workOrder,/ocean-imes-materialapi/material/purchaseOrder";
 	private static final String SWAGGER_URI = "/v2/api-docs";
+
+	private static final String CLIENT_URI = "/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder";
 
 	/**
 	 * Filter type string.
@@ -95,6 +104,20 @@ public class AuthHeaderFilter extends ZuulFilter {
 		HttpServletRequest request = requestContext.getRequest();
 
 		String token =request .getHeader("token");
+		Boolean tokenBoolean = false;
+		if (StringUtils.isEmpty(token) && CLIENT_URI.contains(request.getRequestURI())) {
+			tokenBoolean = true;
+			Set<String> set = redisUtil.keys("client_token*");
+			if (set.size() > 0) {
+				for (String str : set) {
+					token = str;
+					break;
+				}
+			} else {
+				token = RestTemplateUtil.getForStringNoJson("http://localhost:8768/ocean-security/clientGetToken?orgId=" + orgId);
+				log.info("---------为客户端赋予一个可访问的token : " + token + "---------------");
+			}
+		}
 		boolean flag =false;
 		ResponseEntity<String> result = new ResponseEntity<>();
 		if (StringUtils.isEmpty(token)) {
@@ -117,6 +140,22 @@ public class AuthHeaderFilter extends ZuulFilter {
 			requestContext.getResponse().setContentType("text/html;charset=UTF-8");
 			return requestContext;
 		}else{
+			if (StringUtils.isEmpty(user.getAuthority()) && tokenBoolean) {
+				Set<String> permsSet = new HashSet<>();
+				String[] clientUris = CLIENT_URI.split(",");
+				for (String clientUri : clientUris) {
+					//去除服务名，获取权限URL
+					String[] pathArr =  clientUri.split("/");
+					StringBuffer sb = new StringBuffer();
+					for(int i=2;i<pathArr.length;i++){
+						sb.append("/").append(pathArr[i]);
+					}
+					String url =sb.toString();
+					permsSet.add(url);
+				}
+				log.info("--------------设置可访问的菜单地址-----------------");
+				user.setAuthority(permsSet);
+			}
 			if(StringUtils.isNotEmpty(user.getAuthority())){
 				StringBuffer sb = new StringBuffer();
 				String path = request.getServletPath();
@@ -142,7 +181,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			requestContext.setResponseBody(JSONObject.toJSONString(result));
 			requestContext.getResponse().setContentType("text/html;charset=UTF-8");
 		}else{
-			requestContext.addZuulRequestHeader("token", request.getHeader("token"));
+			requestContext.addZuulRequestHeader("token", token);
 			requestContext.addZuulRequestHeader("user-agent", request.getHeader("user-agent"));
 			requestContext.setSendZuulResponse(true);// 对该请求进行路由
 			requestContext.setResponseStatusCode(HttpStatus.OK.value());
