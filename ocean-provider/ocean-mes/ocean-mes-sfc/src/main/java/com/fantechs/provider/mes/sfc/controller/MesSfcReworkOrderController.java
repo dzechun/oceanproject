@@ -42,7 +42,7 @@ public class MesSfcReworkOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated DoReworkOrderDto doReworkOrderDto) {
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated DoReworkOrderDto doReworkOrderDto) throws Exception {
         return ControllerUtil.returnCRUD(mesSfcReworkOrderService.save(doReworkOrderDto));
     }
 

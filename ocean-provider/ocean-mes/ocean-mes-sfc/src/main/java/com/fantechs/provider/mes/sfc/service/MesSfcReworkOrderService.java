@@ -22,5 +22,5 @@ public interface MesSfcReworkOrderService extends IService<MesSfcReworkOrder> {
 
     GenerateReworkOrderCodeDto generateReworkOrderCode(SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess);
 
-    int save(DoReworkOrderDto doReworkOrderDto);
+    int save(DoReworkOrderDto doReworkOrderDto) throws Exception;
 }

@@ -8,13 +8,16 @@ import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseRoute;
+import com.fantechs.common.base.general.entity.basic.BaseWorkshopSection;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseRoute;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcHtReworkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcHtReworkOrderMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcReworkOrderBarcodeMapper;
@@ -26,6 +29,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -49,6 +53,8 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
     private MesSfcKeyPartRelevanceService mesSfcKeyPartRelevanceService;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private PMFeignApi pmFeignApi;
 
     @Override
     public List<MesSfcReworkOrderDto> findList(Map<String, Object> map) {
@@ -88,7 +94,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
     }
 
     @Override
-    public int save(DoReworkOrderDto doReworkOrderDto) {
+    public int save(DoReworkOrderDto doReworkOrderDto) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -107,6 +113,12 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         BaseProcess baseProcess = baseFeignApi.processDetail(doReworkOrderDto.getProcessId()).getData();
         if(baseProcess == null){
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "工序不存在或已被删除");
+        }
+
+        // 工段
+        BaseWorkshopSection workshopSection = baseFeignApi.sectionDetail(baseProcess.getSectionId()).getData();
+        if(workshopSection == null){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404, "工序所属工段不存在或已被删除");
         }
 
         MesSfcReworkOrder mesSfcReworkOrder = new MesSfcReworkOrder();
@@ -130,10 +142,33 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         // 获取需要处理条码
         List<MesSfcBarcodeProcessDto> barcodeProcessDtos = mesSfcBarcodeProcessService.findList(ControllerUtil.dynamicConditionByEntity(doReworkOrderDto.getSearchMesSfcBarcodeProcess()));
 
+        // 获取条码所有工单
+        List<String> orderIds = new ArrayList<>();
+        List<String> workOrderBarcodeIds = new ArrayList<>();
+        for (MesSfcBarcodeProcessDto dto : barcodeProcessDtos){
+            if(!orderIds.contains(dto.getWorkOrderId().toString())){
+                orderIds.add(dto.getWorkOrderId().toString());
+                workOrderBarcodeIds.add(dto.getWorkOrderBarcodeId().toString());
+            }
+        }
+        List<MesPmWorkOrder> mesPmWorkOrders = pmFeignApi.getWorkOrderList(orderIds).getData();
+        if(mesPmWorkOrders == null || mesPmWorkOrders.size() <= 0){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404, "条码所属工单不存在或已被删除");
+        }
+
         List<MesSfcReworkOrderBarcode> mesSfcReworkOrderBarcodeList = new ArrayList<>();
         List<MesSfcHtReworkOrderBarcode> mesSfcHtReworkOrderBarcodeList = new ArrayList<>();
         List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = new ArrayList<>();
         for (MesSfcBarcodeProcessDto mesSfcBarcodeProcessDto : barcodeProcessDtos){
+            // 判断是否最后一道工序，是则工单的完工数量减1
+            for (MesPmWorkOrder mesPmWorkOrder : mesPmWorkOrders){
+                if(mesSfcBarcodeProcessDto.getWorkOrderId().equals(mesPmWorkOrder.getWorkOrderId())
+                        && mesPmWorkOrder.getOutputProcessId().equals(mesSfcBarcodeProcessDto.getNextProcessId())){
+                    mesPmWorkOrder.setOutputQty(mesPmWorkOrder.getOutputQty().subtract(BigDecimal.ONE));
+                    break;
+                }
+            }
+
             // 重置条码过站数据
             MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
             BeanUtils.copyProperties(mesSfcBarcodeProcessDto, mesSfcBarcodeProcess);
@@ -143,14 +178,26 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             mesSfcBarcodeProcess.setRouteId(doReworkOrderDto.getRouteId());
             mesSfcBarcodeProcess.setRouteCode(baseRoute.getRouteCode());
             mesSfcBarcodeProcess.setRouteName(baseRoute.getRouteName());
+            mesSfcBarcodeProcess.setSectionId(workshopSection.getSectionId());
+            mesSfcBarcodeProcess.setSectionCode(workshopSection.getSectionCode());
+            mesSfcBarcodeProcess.setSectionName(workshopSection.getSectionName());
+            mesSfcBarcodeProcess.setProLineId(null);
+            mesSfcBarcodeProcess.setProCode(null);
+            mesSfcBarcodeProcess.setProName(null);
+            mesSfcBarcodeProcess.setStationId(null);
+            mesSfcBarcodeProcess.setStationCode(null);
+            mesSfcBarcodeProcess.setStationName(null);
             mesSfcBarcodeProcess.setBarcodeStatus((byte) 1);
             mesSfcBarcodeProcess.setReworkOrderId(mesSfcReworkOrder.getReworkOrderId());
+            // 清除包箱
             if(doReworkOrderDto.getClearCarton()){
                 mesSfcBarcodeProcess.setCartonCode("");
             }
+            // 清除彩盒
             if(doReworkOrderDto.getClearColorBox()){
                 mesSfcBarcodeProcess.setColorBoxCode("");
             }
+            // 清除栈板
             if(doReworkOrderDto.getClearPallet()){
                 mesSfcBarcodeProcess.setPalletCode("");
             }
@@ -174,26 +221,32 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             mesSfcHtReworkOrderBarcodeList.add(mesSfcHtReworkOrderBarcode);
 
 
-        }
 
+        }
         // 批量保存返工单条码关系表
         mesSfcReworkOrderBarcodeMapper.insertList(mesSfcReworkOrderBarcodeList);
         // 批量保存返工单条码关系历史表
         mesSfcHtReworkOrderBarcodeMapper.insertList(mesSfcHtReworkOrderBarcodeList);
         // 批量修改条码过站表
         mesSfcBarcodeProcessService.batchUpdate(mesSfcBarcodeProcessList);
-
-        // 清除工单产出时间状态
-
-        // 清除包箱
-
-        // 清除彩盒
-
-        // 清除栈板
+        // 批量修改工单完工数量
+        pmFeignApi.batchUpdate(mesPmWorkOrders);
 
         // 清除条码部件关系表
-
-
+        Map<String, Object> map = new HashMap<>();
+        map.put("workOrderBarcodeIds", workOrderBarcodeIds);
+        List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
+        List<MesSfcKeyPartRelevance> deleteKeypartRelevances = new ArrayList<>();
+        for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
+            for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto1 : doReworkOrderDto.getKeyPartRelevanceDtos()){
+                if(keyPartRelevanceDto.getLabelCategoryId().equals(keyPartRelevanceDto1.getLabelCategoryId())
+                        || keyPartRelevanceDto.getMaterialId().equals(keyPartRelevanceDto1.getMaterialId())){
+                    deleteKeypartRelevances.add(keyPartRelevanceDto);
+                    break;
+                }
+            }
+        }
+        mesSfcKeyPartRelevanceService.batchDelete(deleteKeypartRelevances);
 
         return 1;
     }

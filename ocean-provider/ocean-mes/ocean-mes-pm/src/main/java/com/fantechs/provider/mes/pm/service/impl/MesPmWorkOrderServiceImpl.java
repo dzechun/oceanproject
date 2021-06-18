@@ -218,4 +218,14 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         return mesPmWorkOrder;
     }
 
+    @Override
+    public List<MesPmWorkOrder> getWorkOrderList(List<String> workOrderIds) {
+        return mesPmWorkOrderMapper.getWorkOrderList(workOrderIds);
+    }
+
+    @Override
+    public int batchUpdate(List<MesPmWorkOrder> mesPmWorkOrders) {
+        return mesPmWorkOrderMapper.batchUpdate(mesPmWorkOrders);
+    }
+
 }
