@@ -7,7 +7,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://10.10.200.34:3306/fantech_imes?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+    url: jdbc:mysql://10.10.200.34:3306/fantech_imes_v2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
     type: com.alibaba.druid.pool.DruidDataSource
     username: bmwms_ptl
     password: wTZ2rf5PeFCFtfAc
