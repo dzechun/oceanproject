@@ -16,4 +16,6 @@ public interface BaseProcessCategoryService extends IService<BaseProcessCategory
 
     List<BaseProcessCategoryDto> findList(Map<String,Object> map);
     Map<String, Object> importExcel(List<BaseProcessCategoryDto> smtProcessCategoryDtos);
+
+    BaseProcessCategory addOrUpdate (BaseProcessCategory baseProcessCategory);
 }

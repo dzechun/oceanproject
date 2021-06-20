@@ -387,7 +387,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("新增或修改工序表信息")
     @PostMapping("/baseProcess/addOrUpdate")
-    ResponseEntity<BaseProcess> addOrUpdate(@ApiParam(value = "必传：baseProcess",required = true)@RequestBody @Validated BaseProcess baseProcess);
+    ResponseEntity<BaseProcess> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseProcess baseProcess);
 
     @ApiOperation(value = "新增或修改工艺路线表信息",notes = "新增或修改工艺路线表信息")
     @PostMapping("/baseRoute/addOrUpdate")
@@ -397,4 +397,8 @@ public interface BaseFeignApi {
     @PostMapping("/baseProductProcessRoute/addOrUpdate")
     ResponseEntity<BaseProductProcessRoute> addOrUpdate(@ApiParam(value = "必传：materialId、routeId",required = true)@RequestBody @Validated BaseProductProcessRoute baseProductProcessRoute);
 
+
+    @ApiOperation(value = "新增或修改工序类别表信息",notes = "新增或修改工序类别表信息")
+    @PostMapping("/baseProcessCategory/addOrUpdate")
+    ResponseEntity<BaseProcessCategory> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseProcessCategory baseProcessCategory);
 }
