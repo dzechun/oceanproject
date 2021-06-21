@@ -3,6 +3,7 @@ package com.fantechs.provider.base.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessCategoryDto;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessCategory;
+import com.fantechs.common.base.general.entity.basic.BaseRoute;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCategory;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBadnessCategory;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -93,5 +94,12 @@ public class BaseBadnessCategoryController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity<BaseBadnessCategory> addOrUpdate(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated BaseBadnessCategory baseBadnessCategory) {
+        BaseBadnessCategory baseBadnessCategorys = baseBadnessCategoryService.addOrUpdate(baseBadnessCategory);
+        return ControllerUtil.returnDataSuccess(baseBadnessCategorys, StringUtils.isEmpty(baseBadnessCategorys) ? 0 : 1);
     }
 }

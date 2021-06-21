@@ -125,4 +125,25 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
     }
+
+
+    @Override
+    public BaseBadnessCategory addOrUpdate(BaseBadnessCategory baseBadnessCategory) {
+        Example example = new Example(BaseBadnessCategory.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("badnessCategoryCode", baseBadnessCategory.getBadnessCategoryCode());
+        criteria.andEqualTo("orgId", baseBadnessCategory.getOrgId());
+        List<BaseBadnessCategory> baseBadnessCategoryOld = baseBadnessCategoryMapper.selectByExample(example);
+
+        baseBadnessCategory.setModifiedTime(new Date());
+        if (StringUtils.isNotEmpty(baseBadnessCategoryOld)){
+            baseBadnessCategory.setBadnessCategoryId(baseBadnessCategoryOld.get(0).getBadnessCategoryId());
+            baseBadnessCategoryMapper.updateByPrimaryKey(baseBadnessCategory);
+        }else{
+            baseBadnessCategory.setCreateTime(new Date());
+            baseBadnessCategoryMapper.insertUseGeneratedKeys(baseBadnessCategory);
+        }
+        return baseBadnessCategory;
+    }
+
 }

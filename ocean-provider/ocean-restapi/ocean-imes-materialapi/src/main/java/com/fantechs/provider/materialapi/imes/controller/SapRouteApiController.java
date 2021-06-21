@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  * Created by leifengzhi on 2021/05/31.
  */
 @RestController
-@Api(tags = "请求雷赛工艺路线信息接口")
+@Api(tags = "雷赛工艺路线信息接口")
 @RequestMapping("/routeApi")
 @Validated
 public class SapRouteApiController {

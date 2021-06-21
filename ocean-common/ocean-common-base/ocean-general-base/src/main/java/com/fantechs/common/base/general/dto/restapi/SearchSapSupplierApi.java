@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class SearchSapSupplierApi implements Serializable {
 
     /**
-     * 开始时间
+     * 工厂
      */
     @ApiModelProperty(name="werks" ,value="工厂")
     private String werks;

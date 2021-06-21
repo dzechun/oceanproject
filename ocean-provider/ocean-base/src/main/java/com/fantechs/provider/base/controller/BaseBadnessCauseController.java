@@ -4,6 +4,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessCauseDto;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessCause;
 import com.fantechs.common.base.general.entity.basic.BaseHtBadnessCause;
+import com.fantechs.common.base.general.entity.basic.BaseRoute;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBadnessCause;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -92,5 +93,12 @@ public class BaseBadnessCauseController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity<BaseBadnessCause> addOrUpdate(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated BaseBadnessCause baseBadnessCause) {
+        BaseBadnessCause baseBadnessCauses = baseBadnessCauseService.addOrUpdate(baseBadnessCause);
+        return ControllerUtil.returnDataSuccess(baseBadnessCauses, StringUtils.isEmpty(baseBadnessCauses) ? 0 : 1);
     }
 }

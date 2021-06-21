@@ -20,7 +20,7 @@ import javax.annotation.Resource;
  * Created by leifengzhi on 2021/05/31.
  */
 @RestController
-@Api(tags = "请求物料接口")
+@Api(tags = "物料接口")
 @RequestMapping("/materialApi")
 @Validated
 public class SapMaterialApiController {

@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessCauseDto;
+import com.fantechs.common.base.general.entity.basic.BaseBadnessCategory;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessCause;
 import com.fantechs.common.base.general.entity.basic.BaseHtBadnessCause;
 import com.fantechs.common.base.support.BaseService;
@@ -126,5 +127,24 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
 
         baseHtBadnessCauseMapper.insertList(htList);
         return baseBadnessCauseMapper.deleteByIds(ids);
+    }
+
+    @Override
+    public BaseBadnessCause addOrUpdate(BaseBadnessCause baseBadnessCause) {
+        Example example = new Example(BaseBadnessCause.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("badnessCauseCode", baseBadnessCause.getBadnessCauseCode());
+        criteria.andEqualTo("orgId", baseBadnessCause.getOrgId());
+        List<BaseBadnessCause> baseBadnessCauseOld = baseBadnessCauseMapper.selectByExample(example);
+
+        baseBadnessCause.setModifiedTime(new Date());
+        if (StringUtils.isNotEmpty(baseBadnessCauseOld)){
+            baseBadnessCause.setBadnessCauseId(baseBadnessCauseOld.get(0).getBadnessCauseId());
+            baseBadnessCauseMapper.updateByPrimaryKey(baseBadnessCause);
+        }else{
+            baseBadnessCause.setCreateTime(new Date());
+            baseBadnessCauseMapper.insertUseGeneratedKeys(baseBadnessCause);
+        }
+        return baseBadnessCause;
     }
 }
