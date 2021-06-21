@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  * Created by leifengzhi on 2021/05/31.
  */
 @RestController
-@Api(tags = "返写报工数据")
+@Api(tags = "返写报工数据接口")
 @RequestMapping("/reportWorkApi")
 @Validated
 public class SapReportWorkApiController {
