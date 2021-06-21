@@ -1,13 +1,12 @@
 package com.fantechs.common.base.general.dto.restapi;
 
-import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class SearchSapReportWorkApi extends BaseQuery implements Serializable {
+public class SearchSapReportWorkApi implements Serializable {
 
 
     @ApiModelProperty(name="workOrderCode" ,value="工单号")

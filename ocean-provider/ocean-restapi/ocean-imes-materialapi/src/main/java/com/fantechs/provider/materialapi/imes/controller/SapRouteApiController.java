@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @Api(tags = "请求雷赛工艺路线信息接口")
-@RequestMapping("/sapRouteApi")
+@RequestMapping("/routeApi")
 @Validated
 public class SapRouteApiController {
 

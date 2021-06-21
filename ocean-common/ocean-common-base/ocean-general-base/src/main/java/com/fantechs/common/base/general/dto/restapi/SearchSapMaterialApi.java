@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class SearchSapMaterialApi extends BaseQuery implements Serializable {
+public class SearchSapMaterialApi implements Serializable {
 
     /**
      * 开始时间

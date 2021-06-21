@@ -21,7 +21,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @Api(tags = "请求物料接口")
-@RequestMapping("/sapMaterialApi")
+@RequestMapping("/materialApi")
 @Validated
 public class SapMaterialApiController {
 

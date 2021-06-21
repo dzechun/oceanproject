@@ -21,7 +21,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @Api(tags = "请求雷赛物料bom信息接口")
-@RequestMapping("/sapProductBomApi")
+@RequestMapping("/productBomApi")
 @Validated
 public class SapProductBomApiController {
 
