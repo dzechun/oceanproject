@@ -25,6 +25,7 @@ import com.fantechs.provider.mes.sfc.mapper.MesSfcReworkOrderMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -101,6 +102,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
     }
 
     @Override
+    @Transactional
     public int save(DoReworkOrderDto doReworkOrderDto) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -158,138 +160,228 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                 orderIds.add(dto.getWorkOrderId().toString());
             }
             workOrderBarcodeIds.add(dto.getWorkOrderBarcodeId().toString());
-            cartonCodeList.add(dto.getCartonCode());
-            palletCodeList.add(dto.getPalletCode());
+            if(!cartonCodeList.contains(dto.getCartonCode()) && doReworkOrderDto.getClearCarton()){
+                cartonCodeList.add(dto.getCartonCode());
+            }
+            if(!cartonCodeList.contains(dto.getCartonCode()) && doReworkOrderDto.getClearPallet()){
+                palletCodeList.add(dto.getPalletCode());
+            }
         }
         // 获取条码所有工单
         List<MesPmWorkOrder> mesPmWorkOrders = pmFeignApi.getWorkOrderList(orderIds).getData();
-        if(mesPmWorkOrders == null || mesPmWorkOrders.size() <= 0){
+        if (mesPmWorkOrders != null && mesPmWorkOrders.size() > 0) {
+            List<MesSfcReworkOrderBarcode> mesSfcReworkOrderBarcodeList = new ArrayList<>();
+            List<MesSfcHtReworkOrderBarcode> mesSfcHtReworkOrderBarcodeList = new ArrayList<>();
+            List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = new ArrayList<>();
+            for (MesSfcBarcodeProcessDto mesSfcBarcodeProcessDto : barcodeProcessDtos) {
+                // 判断是否最后一道工序，是则工单的完工数量减1
+                for (MesPmWorkOrder mesPmWorkOrder : mesPmWorkOrders) {
+                    if (mesSfcBarcodeProcessDto.getWorkOrderId().equals(mesPmWorkOrder.getWorkOrderId())
+                            && mesPmWorkOrder.getOutputProcessId().equals(mesSfcBarcodeProcessDto.getNextProcessId())) {
+                        mesPmWorkOrder.setOutputQty(mesPmWorkOrder.getOutputQty().subtract(BigDecimal.ONE));
+                        break;
+                    }
+                }
+
+                // 重置条码过站数据
+                MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
+                BeanUtils.copyProperties(mesSfcBarcodeProcessDto, mesSfcBarcodeProcess);
+                mesSfcBarcodeProcess.setNextProcessId(doReworkOrderDto.getProcessId());
+                mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
+                mesSfcBarcodeProcess.setNextProcessName(baseRoute.getProcessName());
+                mesSfcBarcodeProcess.setRouteId(doReworkOrderDto.getRouteId());
+                mesSfcBarcodeProcess.setRouteCode(baseRoute.getRouteCode());
+                mesSfcBarcodeProcess.setRouteName(baseRoute.getRouteName());
+                mesSfcBarcodeProcess.setSectionId(workshopSection.getSectionId());
+                mesSfcBarcodeProcess.setSectionCode(workshopSection.getSectionCode());
+                mesSfcBarcodeProcess.setSectionName(workshopSection.getSectionName());
+                mesSfcBarcodeProcess.setProLineId(null);
+                mesSfcBarcodeProcess.setProCode(null);
+                mesSfcBarcodeProcess.setProName(null);
+                mesSfcBarcodeProcess.setStationId(null);
+                mesSfcBarcodeProcess.setStationCode(null);
+                mesSfcBarcodeProcess.setStationName(null);
+                mesSfcBarcodeProcess.setBarcodeStatus((byte) 1);
+                mesSfcBarcodeProcess.setReworkOrderId(mesSfcReworkOrder.getReworkOrderId());
+                // 清除包箱
+                if (doReworkOrderDto.getClearCarton()) {
+                    mesSfcBarcodeProcess.setCartonCode("");
+                }
+                // 清除彩盒
+                if (doReworkOrderDto.getClearColorBox()) {
+                    mesSfcBarcodeProcess.setColorBoxCode("");
+                }
+                // 清除栈板
+                if (doReworkOrderDto.getClearPallet()) {
+                    mesSfcBarcodeProcess.setPalletCode("");
+                }
+                mesSfcBarcodeProcessList.add(mesSfcBarcodeProcessDto);
+
+                // 构造返工单条码数据
+                MesSfcReworkOrderBarcode mesSfcReworkOrderBarcode = new MesSfcReworkOrderBarcode();
+                mesSfcReworkOrderBarcode.setReworkOrderId(mesSfcReworkOrder.getReworkOrderId());
+                mesSfcReworkOrderBarcode.setWorkOrderId(mesSfcBarcodeProcessDto.getWorkOrderId());
+                mesSfcReworkOrderBarcode.setWorkOrderBarcodeId(mesSfcBarcodeProcessDto.getWorkOrderBarcodeId());
+                mesSfcReworkOrderBarcode.setStatus((byte) 1);
+                mesSfcReworkOrderBarcode.setCreateUserId(user.getUserId());
+                mesSfcReworkOrderBarcode.setCreateTime(new Date());
+                mesSfcReworkOrderBarcode.setOrgId(user.getOrganizationId());
+                mesSfcReworkOrderBarcode.setIsDelete((byte) 1);
+                mesSfcReworkOrderBarcodeList.add(mesSfcReworkOrderBarcode);
+
+                // 构造历史返工单条码数据
+                MesSfcHtReworkOrderBarcode mesSfcHtReworkOrderBarcode = new MesSfcHtReworkOrderBarcode();
+                BeanUtils.copyProperties(mesSfcReworkOrderBarcode, mesSfcHtReworkOrderBarcode);
+                mesSfcHtReworkOrderBarcodeList.add(mesSfcHtReworkOrderBarcode);
+
+            }
+            // 批量保存返工单条码关系表
+            mesSfcReworkOrderBarcodeMapper.insertList(mesSfcReworkOrderBarcodeList);
+            // 批量保存返工单条码关系历史表
+            mesSfcHtReworkOrderBarcodeMapper.insertList(mesSfcHtReworkOrderBarcodeList);
+            // 批量修改条码过站表
+            mesSfcBarcodeProcessService.batchUpdate(mesSfcBarcodeProcessList);
+            // 批量修改工单完工数量
+            pmFeignApi.batchUpdate(mesPmWorkOrders);
+
+            if (doReworkOrderDto.getClearCarton()) {
+                // 所有包箱
+                Example cartonExample = new Example(MesSfcProductCarton.class);
+                cartonExample.createCriteria().andIn("cartonCode", cartonCodeList);
+                List<MesSfcProductCarton> sfcProductCartons = mesSfcProductCartonService.selectByExample(cartonExample);
+                List<Long> cartonIds = new ArrayList<>();
+                for (MesSfcProductCarton mesSfcProductCarton : sfcProductCartons){
+                    cartonIds.add(mesSfcProductCarton.getProductCartonId());
+                }
+                // 包箱下所有包箱条码关系
+                Example cartonDetExample = new Example(MesSfcProductCartonDet.class);
+                cartonDetExample.createCriteria().andIn("productCartonId", cartonIds);
+                List<MesSfcProductCartonDet> productCartonDets = mesSfcProductCartonDetService.selectByExample(cartonDetExample);
+                // 需删除包箱条码关系
+                Example cartonDetDeleteExample = new Example(MesSfcProductCartonDet.class);
+                cartonDetDeleteExample.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
+                List<MesSfcProductCartonDet> deleteProductCartonDets = mesSfcProductCartonDetService.selectByExample(cartonDetDeleteExample);
+                // 计算所有需要删除的包箱
+                Map<Long, Integer> map = new HashMap<>();
+                for (MesSfcProductCarton mesSfcProductCarton : sfcProductCartons){
+                    for (MesSfcProductCartonDet mesSfcProductCartonDet : productCartonDets){
+                        if(mesSfcProductCarton.getProductCartonId().equals(mesSfcProductCartonDet.getProductCartonId())){
+                            Integer count = map.get(mesSfcProductCarton.getProductCartonId());
+                            if(count != null){
+                                map.put(mesSfcProductCarton.getProductCartonId(), ++count);
+                                continue;
+                            }
+                        }
+                        map.put(mesSfcProductCarton.getProductCartonId(), 1);
+                    }
+
+                    for (MesSfcProductCartonDet mesSfcProductCartonDet : deleteProductCartonDets){
+                        if(mesSfcProductCarton.getProductCartonId().equals(mesSfcProductCartonDet.getProductCartonId())){
+                            Integer count = map.get(mesSfcProductCarton.getProductCartonId());
+                            if(count != null){
+                                map.put(mesSfcProductCarton.getProductCartonId(), count - 1);
+                                continue;
+                            }
+                        }
+                    }
+                }
+                List<Long> deleteProductCartonIds = new ArrayList<>();
+                for (Map.Entry<Long, Integer> entry : map.entrySet()) {
+                    if (entry.getValue() <= 0) {
+                        deleteProductCartonIds.add(entry.getKey());
+                    }
+                }
+                // 清除包箱
+                if(deleteProductCartonIds.size() > 0){
+                    Example cartonDeleteExample = new Example(MesSfcProductCarton.class);
+                    cartonDeleteExample.createCriteria().andIn("productCartonId", deleteProductCartonIds);
+                    mesSfcProductCartonService.deleteByExample(cartonDeleteExample);
+                }
+                // 批量删除包箱条码关系表
+                mesSfcProductCartonDetService.deleteByExample(cartonDetDeleteExample);
+            }
+            if (doReworkOrderDto.getClearColorBox()) {
+                // 清除彩盒关系表
+
+                // 清除彩盒
+
+            }
+            if (doReworkOrderDto.getClearPallet()) {
+                // 所有包箱
+                Example palletExample = new Example(MesSfcProductPallet.class);
+                palletExample.createCriteria().andIn("palletCode", palletCodeList);
+                List<MesSfcProductPallet> sfcProductPallets = mesSfcProductPalletService.selectByExample(palletExample);
+                List<Long> palletIds = new ArrayList<>();
+                for (MesSfcProductPallet mesSfcProductPallet : sfcProductPallets){
+                    palletIds.add(mesSfcProductPallet.getProductPalletId());
+                }
+                // 包箱下所有包箱条码关系
+                Example palletDetExample = new Example(MesSfcProductPalletDet.class);
+                palletDetExample.createCriteria().andIn("productPalletId", palletIds);
+                List<MesSfcProductPalletDet> productPalletDets = mesSfcProductPalletDetService.selectByExample(palletDetExample);
+                // 需删除包箱条码关系
+                Example palletDetDeleteExample = new Example(MesSfcProductCartonDet.class);
+                palletDetDeleteExample.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
+                List<MesSfcProductPalletDet> deleteProductPalletDets = mesSfcProductPalletDetService.selectByExample(palletDetDeleteExample);
+                // 计算所有需要删除的包箱
+                Map<Long, Integer> map = new HashMap<>();
+                for (MesSfcProductPallet mesSfcProductPallet : sfcProductPallets){
+                    for (MesSfcProductPalletDet mesSfcProductPalletDet : productPalletDets){
+                        if(mesSfcProductPallet.getProductPalletId().equals(mesSfcProductPalletDet.getProductPalletId())){
+                            Integer count = map.get(mesSfcProductPallet.getProductPalletId());
+                            if(count != null){
+                                map.put(mesSfcProductPallet.getProductPalletId(), ++count);
+                                continue;
+                            }
+                        }
+                        map.put(mesSfcProductPallet.getProductPalletId(), 1);
+                    }
+
+                    for (MesSfcProductPalletDet mesSfcProductPalletDet : deleteProductPalletDets){
+                        if(mesSfcProductPallet.getProductPalletId().equals(mesSfcProductPalletDet.getProductPalletId())){
+                            Integer count = map.get(mesSfcProductPallet.getProductPalletId());
+                            if(count != null){
+                                map.put(mesSfcProductPallet.getProductPalletId(), count - 1);
+                            }
+                        }
+                    }
+                }
+                List<Long> deleteProductPalletIds = new ArrayList<>();
+                for (Map.Entry<Long, Integer> entry : map.entrySet()) {
+                    if (entry.getValue() <= 0) {
+                        deleteProductPalletIds.add(entry.getKey());
+                    }
+                }
+                // 清除包箱
+                if(deleteProductPalletIds.size() > 0){
+                    Example palletDeleteExample = new Example(MesSfcProductPallet.class);
+                    palletDeleteExample.createCriteria().andIn("productPalletId", deleteProductPalletIds);
+                    mesSfcProductPalletService.deleteByExample(palletDeleteExample);
+                }
+                // 批量删除包箱条码关系表
+                mesSfcProductPalletDetService.deleteByExample(palletDetDeleteExample);
+            }
+
+            // 清除条码部件关系表
+            Map<String, Object> map = new HashMap<>();
+            map.put("workOrderBarcodeIds", workOrderBarcodeIds);
+            List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
+            List<MesSfcKeyPartRelevance> deleteKeypartRelevances = new ArrayList<>();
+            for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos) {
+                for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto1 : doReworkOrderDto.getKeyPartRelevanceDtos()) {
+                    if (keyPartRelevanceDto.getLabelCategoryId().equals(keyPartRelevanceDto1.getLabelCategoryId())
+                            || keyPartRelevanceDto.getMaterialId().equals(keyPartRelevanceDto1.getMaterialId())) {
+                        deleteKeypartRelevances.add(keyPartRelevanceDto);
+                        break;
+                    }
+                }
+            }
+            mesSfcKeyPartRelevanceService.batchDelete(deleteKeypartRelevances);
+
+            return 1;
+        } else {
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "条码所属工单不存在或已被删除");
         }
 
-        if(doReworkOrderDto.getClearCarton()){
-        }
-        // 清除彩盒
-        if(doReworkOrderDto.getClearColorBox()){
-        }
-        // 清除栈板
-        if(doReworkOrderDto.getClearPallet()){
-        }
-
-        List<MesSfcReworkOrderBarcode> mesSfcReworkOrderBarcodeList = new ArrayList<>();
-        List<MesSfcHtReworkOrderBarcode> mesSfcHtReworkOrderBarcodeList = new ArrayList<>();
-        List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = new ArrayList<>();
-        for (MesSfcBarcodeProcessDto mesSfcBarcodeProcessDto : barcodeProcessDtos){
-            // 判断是否最后一道工序，是则工单的完工数量减1
-            for (MesPmWorkOrder mesPmWorkOrder : mesPmWorkOrders){
-                if(mesSfcBarcodeProcessDto.getWorkOrderId().equals(mesPmWorkOrder.getWorkOrderId())
-                        && mesPmWorkOrder.getOutputProcessId().equals(mesSfcBarcodeProcessDto.getNextProcessId())){
-                    mesPmWorkOrder.setOutputQty(mesPmWorkOrder.getOutputQty().subtract(BigDecimal.ONE));
-                    break;
-                }
-            }
-
-            // 重置条码过站数据
-            MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
-            BeanUtils.copyProperties(mesSfcBarcodeProcessDto, mesSfcBarcodeProcess);
-            mesSfcBarcodeProcess.setNextProcessId(doReworkOrderDto.getProcessId());
-            mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
-            mesSfcBarcodeProcess.setNextProcessName(baseRoute.getProcessName());
-            mesSfcBarcodeProcess.setRouteId(doReworkOrderDto.getRouteId());
-            mesSfcBarcodeProcess.setRouteCode(baseRoute.getRouteCode());
-            mesSfcBarcodeProcess.setRouteName(baseRoute.getRouteName());
-            mesSfcBarcodeProcess.setSectionId(workshopSection.getSectionId());
-            mesSfcBarcodeProcess.setSectionCode(workshopSection.getSectionCode());
-            mesSfcBarcodeProcess.setSectionName(workshopSection.getSectionName());
-            mesSfcBarcodeProcess.setProLineId(null);
-            mesSfcBarcodeProcess.setProCode(null);
-            mesSfcBarcodeProcess.setProName(null);
-            mesSfcBarcodeProcess.setStationId(null);
-            mesSfcBarcodeProcess.setStationCode(null);
-            mesSfcBarcodeProcess.setStationName(null);
-            mesSfcBarcodeProcess.setBarcodeStatus((byte) 1);
-            mesSfcBarcodeProcess.setReworkOrderId(mesSfcReworkOrder.getReworkOrderId());
-            // 清除包箱
-            if(doReworkOrderDto.getClearCarton()){
-                mesSfcBarcodeProcess.setCartonCode("");
-            }
-            // 清除彩盒
-            if(doReworkOrderDto.getClearColorBox()){
-                mesSfcBarcodeProcess.setColorBoxCode("");
-            }
-            // 清除栈板
-            if(doReworkOrderDto.getClearPallet()){
-                mesSfcBarcodeProcess.setPalletCode("");
-            }
-            mesSfcBarcodeProcessList.add(mesSfcBarcodeProcessDto);
-
-            // 构造返工单条码数据
-            MesSfcReworkOrderBarcode mesSfcReworkOrderBarcode = new MesSfcReworkOrderBarcode();
-            mesSfcReworkOrderBarcode.setReworkOrderId(mesSfcReworkOrder.getReworkOrderId());
-            mesSfcReworkOrderBarcode.setWorkOrderId(mesSfcBarcodeProcessDto.getWorkOrderId());
-            mesSfcReworkOrderBarcode.setWorkOrderBarcodeId(mesSfcBarcodeProcessDto.getWorkOrderBarcodeId());
-            mesSfcReworkOrderBarcode.setStatus((byte) 1);
-            mesSfcReworkOrderBarcode.setCreateUserId(user.getUserId());
-            mesSfcReworkOrderBarcode.setCreateTime(new Date());
-            mesSfcReworkOrderBarcode.setOrgId(user.getOrganizationId());
-            mesSfcReworkOrderBarcode.setIsDelete((byte) 1);
-            mesSfcReworkOrderBarcodeList.add(mesSfcReworkOrderBarcode);
-
-            // 构造历史返工单条码数据
-            MesSfcHtReworkOrderBarcode mesSfcHtReworkOrderBarcode = new MesSfcHtReworkOrderBarcode();
-            BeanUtils.copyProperties(mesSfcReworkOrderBarcode, mesSfcHtReworkOrderBarcode);
-            mesSfcHtReworkOrderBarcodeList.add(mesSfcHtReworkOrderBarcode);
-
-        }
-        // 批量保存返工单条码关系表
-        mesSfcReworkOrderBarcodeMapper.insertList(mesSfcReworkOrderBarcodeList);
-        // 批量保存返工单条码关系历史表
-        mesSfcHtReworkOrderBarcodeMapper.insertList(mesSfcHtReworkOrderBarcodeList);
-        // 批量修改条码过站表
-        mesSfcBarcodeProcessService.batchUpdate(mesSfcBarcodeProcessList);
-        // 批量修改工单完工数量
-        pmFeignApi.batchUpdate(mesPmWorkOrders);
-
-        if(doReworkOrderDto.getClearCarton()){
-            // 批量删除包箱条码关系表
-            Example example = new Example(MesSfcProductCartonDet.class);
-            example.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
-            mesSfcProductCartonDetService.deleteByExample(example);
-            // 清除包箱
-
-
-        }
-        if(doReworkOrderDto.getClearColorBox()){
-            // 清除彩盒关系表
-
-            // 清除彩盒
-
-        }
-        if(doReworkOrderDto.getClearPallet()){
-            // 批量删除栈板条码关系表
-            Example example = new Example(MesSfcProductPalletDet.class);
-            example.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
-            mesSfcProductPalletDetService.deleteByExample(example);
-            // 清除栈板
-
-        }
-
-        // 清除条码部件关系表
-        Map<String, Object> map = new HashMap<>();
-        map.put("workOrderBarcodeIds", workOrderBarcodeIds);
-        List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
-        List<MesSfcKeyPartRelevance> deleteKeypartRelevances = new ArrayList<>();
-        for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
-            for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto1 : doReworkOrderDto.getKeyPartRelevanceDtos()){
-                if(keyPartRelevanceDto.getLabelCategoryId().equals(keyPartRelevanceDto1.getLabelCategoryId())
-                        || keyPartRelevanceDto.getMaterialId().equals(keyPartRelevanceDto1.getMaterialId())){
-                    deleteKeypartRelevances.add(keyPartRelevanceDto);
-                    break;
-                }
-            }
-        }
-        mesSfcKeyPartRelevanceService.batchDelete(deleteKeypartRelevances);
-
-        return 1;
     }
 }
