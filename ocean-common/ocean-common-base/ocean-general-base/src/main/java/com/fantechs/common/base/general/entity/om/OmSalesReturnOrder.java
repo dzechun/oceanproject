@@ -30,14 +30,6 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
     private Long salesReturnOrderId;
 
     /**
-     * 销售订单ID
-     */
-    @ApiModelProperty(name="salesOrderId",value = "销售订单ID")
-    @Excel(name = "销售订单ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "sales_order_id")
-    private Long salesOrderId;
-
-    /**
      * 销退入库单号
      */
     @ApiModelProperty(name="salesReturnOrderCode",value = "销退入库单号")
@@ -112,7 +104,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
     /**
      * 订单状态(1-打开 2-下发中  3-已下发 4-完成)
      */
-    @ApiModelProperty(name="orderStatus",value = "订单状态(1-打开 2-下发中  3-已下发 4-完成)")
+    @ApiModelProperty(name="orderStatus",value = "订单状态(1-打开  3-已下发 4-完成)")
     @Excel(name = "订单状态(1-打开 2-下发中  3-已下发 4-完成)", height = 20, width = 30,orderNum="") 
     @Column(name = "order_status")
     private Byte orderStatus;
@@ -131,6 +123,14 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
     @Excel(name = "订单日期", height = 20, width = 30,orderNum="") 
     @Column(name = "order_date")
     private Date orderDate;
+
+    /**
+     * 订单日期
+     */
+    @ApiModelProperty(name="completeDate",value = "要求完成日期")
+    @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="")
+    @Column(name = "complete_date")
+    private Date completeDate;
 
     /**
      * 备注

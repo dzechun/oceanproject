@@ -93,4 +93,10 @@ public class OmSalesReturnOrderController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation("下发生成出库单")
+    @PostMapping("/packageAutoOutOrder")
+    public ResponseEntity packageAutoOutOrder(@RequestBody(required = true)OmSalesReturnOrder omSalesReturnOrder){
+        return ControllerUtil.returnCRUD(omSalesReturnOrderService.packageAutoOutOrder(omSalesReturnOrder));
+    }
 }

@@ -18,6 +18,7 @@
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
+    <result column="complete_date" jdbcType="TIMESTAMP" property="completeDate"/>
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -49,6 +50,7 @@ oio.total_gross_weight,
 oio.order_status,
 oio.status,
 oio.order_date,
+oio.complete_date,
 oio.remark,
 oio.org_id,
 oio.create_user_id,

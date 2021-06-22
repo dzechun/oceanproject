@@ -11,6 +11,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -40,4 +41,8 @@ public interface InFeignApi {
     @ApiOperation("新增调拨入库单")
     @PostMapping("/wmsInTransfer/save")
     ResponseEntity save(@RequestBody WmsInAsnOrder wmsInAsnOrder);
+
+    @ApiOperation(value = "新增",notes = "新增")
+    @PostMapping("/wmsInAsnOrder/add")
+    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInAsnOrder wmsInAsnOrder);
 }

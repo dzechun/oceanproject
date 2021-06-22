@@ -37,6 +37,14 @@ public class OmOtherInOrderDet extends ValidGroup implements Serializable {
     private Long otherInOrderId;
 
     /**
+     * 仓库ID
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    @Excel(name = "仓库ID", height = 20, width = 30,orderNum="")
+    @Column(name = "warehouseId")
+    private Long warehouseId;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
@@ -158,6 +166,10 @@ public class OmOtherInOrderDet extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    @Transient
+    @ApiModelProperty("下发数量")
+    private BigDecimal qty;
 
     private static final long serialVersionUID = 1L;
 }
