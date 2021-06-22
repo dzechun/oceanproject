@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
@@ -16,6 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -45,6 +47,12 @@ public class WmsInnerInventoryDetController {
     @PostMapping("/add")
     public ResponseEntity add(@RequestBody List<WmsInnerInventoryDet> wmsInnerInventoryDets){
         return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.add(wmsInnerInventoryDets));
+    }
+
+    @ApiOperation("修改")
+    @PostMapping("/update")
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= WmsInnerInventoryDet.update.class) WmsInnerInventoryDet wmsInnerInventoryDet) {
+        return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.update(wmsInnerInventoryDet));
     }
 
     @ApiOperation("减库存明细")
