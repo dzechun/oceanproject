@@ -1,15 +1,15 @@
 package com.fantechs.provider.api.mes.sfc;
 
 import com.fantechs.common.base.general.dto.mes.sfc.*;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductCarton;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.*;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -64,4 +64,8 @@ public interface SFCFeignApi {
     @ApiOperation("获取栈板详情")
     @PostMapping("/mesSfcProductPallet/detail")
     ResponseEntity<MesSfcProductPallet> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
+    @ApiOperation("产品条码过站记录列表")
+    @PostMapping("/mesSfcBarcodeProcessRecord/findList")
+    ResponseEntity<List<MesSfcBarcodeProcessRecordDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcBarcodeProcessRecord searchMesSfcBarcodeProcessRecord);
 }

@@ -73,7 +73,7 @@
         and msbpr.work_order_barcode_id = #{workOrderBarcodeId}
       </if>
       <if test="barcode != null and barcode != ''">
-        and msbpr.barcode CONCAT CONCAT('%', #{barcode}, '%')
+        and msbpr.barcode like CONCAT('%', #{barcode}, '%')
       </if>
       <if test="workOrderId != null">
         and msbpr.work_order_id = #{workOrderId}

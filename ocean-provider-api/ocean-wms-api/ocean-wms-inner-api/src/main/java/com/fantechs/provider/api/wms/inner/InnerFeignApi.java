@@ -3,7 +3,11 @@ package com.fantechs.provider.api.wms.inner;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.*;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.StringUtils;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -54,6 +58,10 @@ public interface InnerFeignApi {
     @PostMapping("/pickingOrder/retrographyStatus")
     ResponseEntity retrographyStatus(@RequestBody WmsInnerJobOrderDet wmsInnerJobOrderDet);
 
+    @ApiOperation("装车拣货单列表")
+    @PostMapping("/pickingOrder/findList")
+    ResponseEntity<List<WmsInnerJobOrderDto>> findPickingOrderList(@RequestBody SearchWmsInnerJobOrder searchWmsInnerJobOrder);
+
     @ApiOperation("按条件查询明细")
     @PostMapping("/wmsInnerInventoryDet/findByDet")
     ResponseEntity<WmsInnerInventoryDet> findByDet(@RequestParam String barCode);
@@ -65,4 +73,12 @@ public interface InnerFeignApi {
     @ApiOperation("减库存明细")
     @PostMapping("/wmsInnerInventoryDet/subtract")
     ResponseEntity subtract(@RequestBody WmsInnerInventoryDet wmsInnerInventoryDet);
+
+    @ApiOperation("列表")
+    @PostMapping("/wmsInnerInventoryDet/findList")
+    ResponseEntity<List<WmsInnerInventoryDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerInventoryDet searchWmsInnerInventoryDet);
+
+    @ApiOperation("修改")
+    @PostMapping("/wmsInnerInventoryDet/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= WmsInnerInventoryDet.update.class) WmsInnerInventoryDet wmsInnerInventoryDet);
 }

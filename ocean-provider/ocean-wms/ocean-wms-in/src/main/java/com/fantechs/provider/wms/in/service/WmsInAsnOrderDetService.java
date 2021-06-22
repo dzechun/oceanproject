@@ -14,4 +14,6 @@ import java.util.List;
 
 public interface WmsInAsnOrderDetService extends IService<WmsInAsnOrderDet> {
     List<WmsInAsnOrderDetDto> findList(SearchWmsInAsnOrderDet searchWmsInAsnOrderDet);
+    WmsInAsnOrderDetDto checkBarcode(WmsInAsnOrderDetDto wmsInAsnOrderDetDto);
+    int update(WmsInAsnOrderDetDto wmsInAsnOrderDetDto);
 }
