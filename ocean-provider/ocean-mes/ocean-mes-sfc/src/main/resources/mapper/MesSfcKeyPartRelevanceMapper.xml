@@ -115,7 +115,7 @@
       </if>
     </where>
     <if test="workOrderIds != null">
-      GROUP BY mskpr.material_id，mskpr.label_category_id
+      GROUP BY mskpr.material_id, mskpr.label_category_id
     </if>
   </select>
   

@@ -33,7 +33,6 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- *
  * Created by leifengzhi on 2021/06/15.
  */
 @Service
@@ -80,16 +79,26 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
 
         // 生成返工单号
         MesSfcReworkOrderDto mesSfcReworkOrderDto = mesSfcReworkOrderMapper.getFirstTodayReworkOrder();
-        String serialNum = mesSfcReworkOrderDto.getReworkOrderCode().substring(mesSfcReworkOrderDto.getReworkOrderCode().length() - 4);
+        String serialNum = "";
+        if (mesSfcReworkOrderDto != null) {
+            serialNum = mesSfcReworkOrderDto.getReworkOrderCode().substring(mesSfcReworkOrderDto.getReworkOrderCode().length() - 4);
+        }else {
+            serialNum = "0000";
+        }
         Integer num = Integer.valueOf(serialNum) + 1;
-        String reworkOrderCode = "FG" + DateUtil.format(new Date(), "YYYYMMDD") + num;
+        serialNum = num.toString();
+        int digits = 4 - num.toString().length();
+        for (int i = 1; i <= digits; i++){
+            serialNum = "0" + serialNum;
+        }
+        String reworkOrderCode = "FG" + DateUtil.format(new Date(), "YYYYMMdd") + serialNum;
         generateReworkOrderCodeDto.setReworkOrderCode(reworkOrderCode);
 
         // 所有符合条码
         List<MesSfcBarcodeProcessDto> barcodeProcessDtos = mesSfcBarcodeProcessService.findList(ControllerUtil.dynamicConditionByEntity(searchMesSfcBarcodeProcess));
         List<String> orderIds = new ArrayList<>();
-        for (MesSfcBarcodeProcessDto dto : barcodeProcessDtos){
-            if(!orderIds.contains(dto.getWorkOrderId().toString())){
+        for (MesSfcBarcodeProcessDto dto : barcodeProcessDtos) {
+            if (!orderIds.contains(dto.getWorkOrderId().toString())) {
                 orderIds.add(dto.getWorkOrderId().toString());
             }
         }
@@ -114,19 +123,19 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         SearchBaseRoute searchBaseRoute = new SearchBaseRoute();
         searchBaseRoute.setRouteId(doReworkOrderDto.getRouteId());
         List<BaseRoute> baseRoutes = baseFeignApi.findRouteList(searchBaseRoute).getData();
-        if(baseRoutes == null || baseRoutes.size() <= 0){
+        if (baseRoutes == null || baseRoutes.size() <= 0) {
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "工艺路线不存在或已被删除");
         }
         BaseRoute baseRoute = baseRoutes.get(0);
         // 工序
         BaseProcess baseProcess = baseFeignApi.processDetail(doReworkOrderDto.getProcessId()).getData();
-        if(baseProcess == null){
+        if (baseProcess == null) {
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "工序不存在或已被删除");
         }
 
         // 工段
         BaseWorkshopSection workshopSection = baseFeignApi.sectionDetail(baseProcess.getSectionId()).getData();
-        if(workshopSection == null){
+        if (workshopSection == null) {
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "工序所属工段不存在或已被删除");
         }
 
@@ -155,15 +164,15 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         List<String> workOrderBarcodeIds = new ArrayList<>();
         List<String> cartonCodeList = new ArrayList<>();
         List<String> palletCodeList = new ArrayList<>();
-        for (MesSfcBarcodeProcessDto dto : barcodeProcessDtos){
-            if(!orderIds.contains(dto.getWorkOrderId().toString())){
+        for (MesSfcBarcodeProcessDto dto : barcodeProcessDtos) {
+            if (!orderIds.contains(dto.getWorkOrderId().toString())) {
                 orderIds.add(dto.getWorkOrderId().toString());
             }
             workOrderBarcodeIds.add(dto.getWorkOrderBarcodeId().toString());
-            if(!cartonCodeList.contains(dto.getCartonCode()) && doReworkOrderDto.getClearCarton()){
+            if (!cartonCodeList.contains(dto.getCartonCode()) && doReworkOrderDto.getClearCarton()) {
                 cartonCodeList.add(dto.getCartonCode());
             }
-            if(!cartonCodeList.contains(dto.getCartonCode()) && doReworkOrderDto.getClearPallet()){
+            if (!cartonCodeList.contains(dto.getCartonCode()) && doReworkOrderDto.getClearPallet()) {
                 palletCodeList.add(dto.getPalletCode());
             }
         }
@@ -250,7 +259,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                 cartonExample.createCriteria().andIn("cartonCode", cartonCodeList);
                 List<MesSfcProductCarton> sfcProductCartons = mesSfcProductCartonService.selectByExample(cartonExample);
                 List<Long> cartonIds = new ArrayList<>();
-                for (MesSfcProductCarton mesSfcProductCarton : sfcProductCartons){
+                for (MesSfcProductCarton mesSfcProductCarton : sfcProductCartons) {
                     cartonIds.add(mesSfcProductCarton.getProductCartonId());
                 }
                 // 包箱下所有包箱条码关系
@@ -263,11 +272,11 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                 List<MesSfcProductCartonDet> deleteProductCartonDets = mesSfcProductCartonDetService.selectByExample(cartonDetDeleteExample);
                 // 计算所有需要删除的包箱
                 Map<Long, Integer> map = new HashMap<>();
-                for (MesSfcProductCarton mesSfcProductCarton : sfcProductCartons){
-                    for (MesSfcProductCartonDet mesSfcProductCartonDet : productCartonDets){
-                        if(mesSfcProductCarton.getProductCartonId().equals(mesSfcProductCartonDet.getProductCartonId())){
+                for (MesSfcProductCarton mesSfcProductCarton : sfcProductCartons) {
+                    for (MesSfcProductCartonDet mesSfcProductCartonDet : productCartonDets) {
+                        if (mesSfcProductCarton.getProductCartonId().equals(mesSfcProductCartonDet.getProductCartonId())) {
                             Integer count = map.get(mesSfcProductCarton.getProductCartonId());
-                            if(count != null){
+                            if (count != null) {
                                 map.put(mesSfcProductCarton.getProductCartonId(), ++count);
                                 continue;
                             }
@@ -275,10 +284,10 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                         map.put(mesSfcProductCarton.getProductCartonId(), 1);
                     }
 
-                    for (MesSfcProductCartonDet mesSfcProductCartonDet : deleteProductCartonDets){
-                        if(mesSfcProductCarton.getProductCartonId().equals(mesSfcProductCartonDet.getProductCartonId())){
+                    for (MesSfcProductCartonDet mesSfcProductCartonDet : deleteProductCartonDets) {
+                        if (mesSfcProductCarton.getProductCartonId().equals(mesSfcProductCartonDet.getProductCartonId())) {
                             Integer count = map.get(mesSfcProductCarton.getProductCartonId());
-                            if(count != null){
+                            if (count != null) {
                                 map.put(mesSfcProductCarton.getProductCartonId(), count - 1);
                                 continue;
                             }
@@ -292,7 +301,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                     }
                 }
                 // 清除包箱
-                if(deleteProductCartonIds.size() > 0){
+                if (deleteProductCartonIds.size() > 0) {
                     Example cartonDeleteExample = new Example(MesSfcProductCarton.class);
                     cartonDeleteExample.createCriteria().andIn("productCartonId", deleteProductCartonIds);
                     mesSfcProductCartonService.deleteByExample(cartonDeleteExample);
@@ -312,7 +321,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                 palletExample.createCriteria().andIn("palletCode", palletCodeList);
                 List<MesSfcProductPallet> sfcProductPallets = mesSfcProductPalletService.selectByExample(palletExample);
                 List<Long> palletIds = new ArrayList<>();
-                for (MesSfcProductPallet mesSfcProductPallet : sfcProductPallets){
+                for (MesSfcProductPallet mesSfcProductPallet : sfcProductPallets) {
                     palletIds.add(mesSfcProductPallet.getProductPalletId());
                 }
                 // 包箱下所有包箱条码关系
@@ -325,11 +334,11 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                 List<MesSfcProductPalletDet> deleteProductPalletDets = mesSfcProductPalletDetService.selectByExample(palletDetDeleteExample);
                 // 计算所有需要删除的包箱
                 Map<Long, Integer> map = new HashMap<>();
-                for (MesSfcProductPallet mesSfcProductPallet : sfcProductPallets){
-                    for (MesSfcProductPalletDet mesSfcProductPalletDet : productPalletDets){
-                        if(mesSfcProductPallet.getProductPalletId().equals(mesSfcProductPalletDet.getProductPalletId())){
+                for (MesSfcProductPallet mesSfcProductPallet : sfcProductPallets) {
+                    for (MesSfcProductPalletDet mesSfcProductPalletDet : productPalletDets) {
+                        if (mesSfcProductPallet.getProductPalletId().equals(mesSfcProductPalletDet.getProductPalletId())) {
                             Integer count = map.get(mesSfcProductPallet.getProductPalletId());
-                            if(count != null){
+                            if (count != null) {
                                 map.put(mesSfcProductPallet.getProductPalletId(), ++count);
                                 continue;
                             }
@@ -337,10 +346,10 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                         map.put(mesSfcProductPallet.getProductPalletId(), 1);
                     }
 
-                    for (MesSfcProductPalletDet mesSfcProductPalletDet : deleteProductPalletDets){
-                        if(mesSfcProductPallet.getProductPalletId().equals(mesSfcProductPalletDet.getProductPalletId())){
+                    for (MesSfcProductPalletDet mesSfcProductPalletDet : deleteProductPalletDets) {
+                        if (mesSfcProductPallet.getProductPalletId().equals(mesSfcProductPalletDet.getProductPalletId())) {
                             Integer count = map.get(mesSfcProductPallet.getProductPalletId());
-                            if(count != null){
+                            if (count != null) {
                                 map.put(mesSfcProductPallet.getProductPalletId(), count - 1);
                             }
                         }
@@ -353,7 +362,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                     }
                 }
                 // 清除包箱
-                if(deleteProductPalletIds.size() > 0){
+                if (deleteProductPalletIds.size() > 0) {
                     Example palletDeleteExample = new Example(MesSfcProductPallet.class);
                     palletDeleteExample.createCriteria().andIn("productPalletId", deleteProductPalletIds);
                     mesSfcProductPalletService.deleteByExample(palletDeleteExample);
@@ -368,7 +377,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
             List<MesSfcKeyPartRelevance> deleteKeypartRelevances = new ArrayList<>();
             for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos) {
-                for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto1 : doReworkOrderDto.getKeyPartRelevanceDtos()) {
+                for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto1 : doReworkOrderDto.getKeyPartRelevanceDtoList()) {
                     if (keyPartRelevanceDto.getLabelCategoryId().equals(keyPartRelevanceDto1.getLabelCategoryId())
                             || keyPartRelevanceDto.getMaterialId().equals(keyPartRelevanceDto1.getMaterialId())) {
                         deleteKeypartRelevances.add(keyPartRelevanceDto);

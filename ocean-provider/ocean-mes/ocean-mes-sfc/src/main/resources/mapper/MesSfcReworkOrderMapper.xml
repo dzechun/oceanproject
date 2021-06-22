@@ -36,7 +36,7 @@
   </select>
 
 <!-- 获取今天返工单编码倒序第一条数据 -->
-  <select id="getTodayFirstReworkOrder" resultType="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto">
+  <select id="getFirstTodayReworkOrder" resultType="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto">
     SELECT
       *
     FROM
