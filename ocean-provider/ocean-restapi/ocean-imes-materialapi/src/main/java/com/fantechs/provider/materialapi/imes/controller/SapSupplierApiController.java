@@ -22,8 +22,8 @@ import javax.annotation.Resource;
  * Created by leifengzhi on 2021/05/31.
  */
 @RestController
-@Api(tags = "请求雷赛供应商信息接口")
-@RequestMapping("/sapSupplierApi")
+@Api(tags = "雷赛供应商信息接口")
+@RequestMapping("/supplierApi")
 @Validated
 public class SapSupplierApiController {
 

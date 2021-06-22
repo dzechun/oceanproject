@@ -84,6 +84,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if (ptlJobOrder.getOrderStatus() == 5) {
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该任务单已取消");
         }
+        if (ptlJobOrder.getIfAlreadyPrint() != 1) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该任务单未打印标签，请先进行打印");
+        }
 
         SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
         searchPtlJobOrderDet.setJobOrderId(jobOrderId);
@@ -441,9 +444,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         }
 
         PtlJobOrder ptlJobOrder = electronicTagFeignApi.ptlJobOrderDetail(jobOrderId).getData();
-        if (ptlJobOrder.getIfAlreadyPrint() == 1) {
-            throw new Exception("该任务单已打印过标签，请不要重复操作");
-        }
+//        if (ptlJobOrder.getIfAlreadyPrint() == 1) {
+//            throw new Exception("该任务单已打印过标签，请不要重复操作");
+//        }
         SysUser sysUser = securityFeignApi.selectUserById(workUserId).getData();
         String vehicleCode = "";
         if (StringUtils.isNotEmpty(ptlJobOrder.getVehicleId())) {

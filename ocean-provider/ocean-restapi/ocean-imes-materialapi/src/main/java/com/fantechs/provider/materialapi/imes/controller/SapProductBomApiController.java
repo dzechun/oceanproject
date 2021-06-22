@@ -20,8 +20,8 @@ import javax.annotation.Resource;
  * Created by leifengzhi on 2021/05/31.
  */
 @RestController
-@Api(tags = "请求雷赛物料bom信息接口")
-@RequestMapping("/sapProductBomApi")
+@Api(tags = "雷赛物料bom信息接口")
+@RequestMapping("/productBomApi")
 @Validated
 public class SapProductBomApiController {
 

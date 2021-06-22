@@ -63,6 +63,8 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
             //暂时注释、目前还未同步产线
             //mesPmWorkOrder.setProLineId(getProLine(restapiWorkOrderApiDto.getFEVOR()));
             mesPmWorkOrder.setOrgId(orgId);
+            //保存工序号，因为可能不使用雷赛的工序、工艺路线，因此直接使用该字段保存
+            mesPmWorkOrder.setOption1(restapiWorkOrderApiDto.getVORNR());
             pmFeignApi.updateById(mesPmWorkOrder);
 
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();

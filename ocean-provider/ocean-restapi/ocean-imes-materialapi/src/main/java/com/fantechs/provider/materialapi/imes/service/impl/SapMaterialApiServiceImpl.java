@@ -30,7 +30,6 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
     @Resource
     private BaseFeignApi baseFeignApi;
 
-   // private static Logger logger = LoggerFactory.getLogger(SocketClient.class);
     private String userName = "MESPIALEUSER"; //雷赛wsdl用户名
     private String password = "1234qwer"; //雷赛wsdl密码
 
@@ -54,8 +53,6 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
                 //判断物料信息为新增或者修改，并填充
                 saveAndUpdate(material,addList,updateList);
             }
-           /* logger.info("-----物料接口添加数量----"+ addList.size());
-            logger.info("-----物料接口更新数量----"+ updateList.size());*/
             baseFeignApi.addList(addList);
             baseFeignApi.batchUpdateByCode(updateList);
             return 1;

@@ -40,14 +40,12 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
         req.setMATNR(searchSapRouteApi.getMaterialCode());
         req.setWERKS(searchSapRouteApi.getWerks());
         DTMESPROCESSQUERYRES res = out.siMESPROCESSQUERYOut(req);
-        //这个接口雷赛出现问题，暂无type
-       // if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE()) ){
-        if(StringUtils.isNotEmpty(res) ){
+        if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE()) ){
             if(StringUtils.isEmpty(res.getPROCESS())) throw new BizErrorException("请求结果为空");
             //保存或更新工艺路线
             BaseMaterial baseMaterial = getBaseMaterial(searchSapRouteApi.getMaterialCode());
             if(StringUtils.isEmpty(baseMaterial)) throw new BizErrorException("未查询到对应的物料信息");
-
+            Long orgId = getOrId();
             //保存工艺路线
             BaseRoute baseRoute = new BaseRoute();
             baseRoute.setRouteName(res.getPROCESS().get(0).getKTEXT());
@@ -55,8 +53,8 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             baseRoute.setRouteCode(baseMaterial.getMaterialCode());
             baseRoute.setRouteType(1);
             baseRoute.setStatus(1);
-            baseRoute.setOrganizationId(getOrId());
-            ResponseEntity<BaseRoute> baseRouteResponseEntity = baseFeignApi.addOrUpdate(baseRoute);
+            baseRoute.setOrganizationId(orgId);
+            baseFeignApi.addOrUpdate(baseRoute);
 
             //保存产品工艺路线
             BaseProductProcessRoute  baseProductProcessRoute = new BaseProductProcessRoute();
@@ -64,10 +62,9 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             baseProductProcessRoute.setMaterialId(getBaseMaterial(searchSapRouteApi.getMaterialCode()).getMaterialId());
             baseProductProcessRoute.setRouteId(baseRoute.getRouteId());
             baseProductProcessRoute.setStatus(1);
-            baseProductProcessRoute.setOrganizationId(getOrId());
-            ResponseEntity<BaseProductProcessRoute> baseProductProcessRouteResponseEntity = baseFeignApi.addOrUpdate(baseProductProcessRoute);
+            baseProductProcessRoute.setOrganizationId(orgId);
+            baseFeignApi.addOrUpdate(baseProductProcessRoute);
 
-            System.out.println("----baseProductProcessRoute----"+baseProductProcessRoute);
 
             //保存工段
             BaseWorkshopSection baseWorkshopSection = new BaseWorkshopSection();
@@ -75,8 +72,17 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             baseWorkshopSection.setSectionName(res.getPROCESS().get(0).getKTEXT());
             baseWorkshopSection.setSectionDesc(res.getPROCESS().get(0).getKTEXT());
             baseWorkshopSection.setStatus((byte)1);
-            baseWorkshopSection.setOrganizationId(getOrId());
+            baseWorkshopSection.setOrganizationId(orgId);
             ResponseEntity<BaseWorkshopSection> baseWorkshopSectionResponseEntity = baseFeignApi.addOrUpdate(baseWorkshopSection);
+
+            //保存工序类别
+            BaseProcessCategory baseProcessCategory = new BaseProcessCategory();
+            baseProcessCategory.setProcessCategoryName(res.getPROCESS().get(0).getKTEXT());
+            baseProcessCategory.setProcessCategoryDesc(res.getPROCESS().get(0).getKTEXT());
+            baseProcessCategory.setProcessCategoryCode(res.getPROCESS().get(0).getKTEXT());
+            baseProcessCategory.setStatus((byte)1);
+            baseProcessCategory.setOrganizationId(orgId);
+            ResponseEntity<BaseProcessCategory> baseProcessCategoryResponseEntity = baseFeignApi.addOrUpdate(baseProcessCategory);
 
             System.out.println("----baseWorkshopSection----"+baseWorkshopSection);
             //保存工序
@@ -87,7 +93,8 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
                 baseProcess.setProcessCode(process.getVORNR());
                 baseProcess.setSectionId(baseWorkshopSectionResponseEntity.getData().getSectionId());
                 baseProcess.setSectionCode(baseWorkshopSectionResponseEntity.getData().getSectionCode());
-                baseProcess.setOrganizationId(getOrId());
+                baseProcess.setOrganizationId(orgId);
+                baseProcess.setProcessCategoryId(baseProcessCategoryResponseEntity.getData().getProcessCategoryId());
                 baseFeignApi.addOrUpdate(baseProcess);
             }
 

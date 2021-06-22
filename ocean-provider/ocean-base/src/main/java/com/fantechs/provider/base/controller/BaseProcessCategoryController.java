@@ -126,4 +126,11 @@ public class BaseProcessCategoryController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/addOrUpdate")
+    public ResponseEntity<BaseProcessCategory> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProcessCategory baseProcessCategory) {
+        BaseProcessCategory baseProcessCategorys = baseProcessCategoryService.addOrUpdate(baseProcessCategory);
+        return ControllerUtil.returnDataSuccess(baseProcessCategorys, StringUtils.isEmpty(baseProcessCategorys) ? 0 : 1);
+    }
 }

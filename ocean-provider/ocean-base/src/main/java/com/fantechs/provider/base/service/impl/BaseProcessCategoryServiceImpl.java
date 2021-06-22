@@ -203,4 +203,24 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
     }
+
+    @Override
+    public BaseProcessCategory addOrUpdate (BaseProcessCategory baseProcessCategory) {
+
+        Example example = new Example(BaseProcessCategory.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("processCategoryCode", baseProcessCategory.getProcessCategoryCode());
+        criteria.andEqualTo("organizationId", baseProcessCategory.getOrganizationId());
+        List<BaseProcessCategory> baseProcessCategoryOld = baseProcessCategoryMapper.selectByExample(example);
+
+        baseProcessCategory.setModifiedTime(new Date());
+        if (StringUtils.isNotEmpty(baseProcessCategoryOld)){
+            baseProcessCategory.setProcessCategoryId(baseProcessCategoryOld.get(0).getProcessCategoryId());
+            baseProcessCategoryMapper.updateByPrimaryKey(baseProcessCategory);
+        }else{
+            baseProcessCategory.setCreateTime(new Date());
+            baseProcessCategoryMapper.insertUseGeneratedKeys(baseProcessCategory);
+        }
+        return baseProcessCategory;
+    }
 }

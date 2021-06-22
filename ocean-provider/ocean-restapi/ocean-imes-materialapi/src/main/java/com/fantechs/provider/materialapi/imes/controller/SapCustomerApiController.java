@@ -21,8 +21,8 @@ import javax.annotation.Resource;
  * Created by leifengzhi on 2021/05/31.
  */
 @RestController
-@Api(tags = "请求雷赛客户信息接口")
-@RequestMapping("/sapCustomerApi")
+@Api(tags = "雷赛客户信息接口")
+@RequestMapping("/customerApi")
 @Validated
 public class SapCustomerApiController {
 

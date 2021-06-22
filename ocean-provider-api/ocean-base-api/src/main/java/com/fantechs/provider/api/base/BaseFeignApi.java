@@ -387,7 +387,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("新增或修改工序表信息")
     @PostMapping("/baseProcess/addOrUpdate")
-    ResponseEntity<BaseProcess> addOrUpdate(@ApiParam(value = "必传：baseProcess",required = true)@RequestBody @Validated BaseProcess baseProcess);
+    ResponseEntity<BaseProcess> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseProcess baseProcess);
 
     @ApiOperation(value = "新增或修改工艺路线表信息",notes = "新增或修改工艺路线表信息")
     @PostMapping("/baseRoute/addOrUpdate")
@@ -396,5 +396,17 @@ public interface BaseFeignApi {
     @ApiOperation(value = "新增或修改产品工艺路线表信息",notes = "新增或修改产品工艺路线表信息")
     @PostMapping("/baseProductProcessRoute/addOrUpdate")
     ResponseEntity<BaseProductProcessRoute> addOrUpdate(@ApiParam(value = "必传：materialId、routeId",required = true)@RequestBody @Validated BaseProductProcessRoute baseProductProcessRoute);
+
+    @ApiOperation(value = "新增或修改工序类别表信息",notes = "新增或修改工序类别表信息")
+    @PostMapping("/baseProcessCategory/addOrUpdate")
+    ResponseEntity<BaseProcessCategory> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseProcessCategory baseProcessCategory);
+
+    @ApiOperation(value = "新增或修改不良代码类别表信息",notes = "新增或修改不良代码类别表信息")
+    @PostMapping("/baseBadnessCategory/addOrUpdate")
+    ResponseEntity<BaseBadnessCategory> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseBadnessCategory baseBadnessCategory);
+
+    @ApiOperation(value = "新增或修改不良代码原因表信息",notes = "新增或修改不良代码原因表信息")
+    @PostMapping("/baseBadnessCause/addOrUpdate")
+    ResponseEntity<BaseBadnessCause> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseBadnessCause bseBadnessCause);
 
 }
