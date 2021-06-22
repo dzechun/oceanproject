@@ -82,13 +82,13 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         String serialNum = "";
         if (mesSfcReworkOrderDto != null) {
             serialNum = mesSfcReworkOrderDto.getReworkOrderCode().substring(mesSfcReworkOrderDto.getReworkOrderCode().length() - 4);
-        }else {
+        } else {
             serialNum = "0000";
         }
         Integer num = Integer.valueOf(serialNum) + 1;
         serialNum = num.toString();
         int digits = 4 - num.toString().length();
-        for (int i = 1; i <= digits; i++){
+        for (int i = 1; i <= digits; i++) {
             serialNum = "0" + serialNum;
         }
         String reworkOrderCode = "FG" + DateUtil.format(new Date(), "YYYYMMdd") + serialNum;
@@ -160,6 +160,10 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         // 获取需要处理条码
         List<MesSfcBarcodeProcessDto> barcodeProcessDtos = mesSfcBarcodeProcessService.findList(ControllerUtil.dynamicConditionByEntity(doReworkOrderDto.getSearchMesSfcBarcodeProcess()));
 
+        if (barcodeProcessDtos == null || barcodeProcessDtos.size() <= 0) {
+            throw new BizErrorException("查询不到需返工条码");
+        }
+
         List<String> orderIds = new ArrayList<>();
         List<String> workOrderBarcodeIds = new ArrayList<>();
         List<String> cartonCodeList = new ArrayList<>();
@@ -224,7 +228,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                 if (doReworkOrderDto.getClearPallet()) {
                     mesSfcBarcodeProcess.setPalletCode("");
                 }
-                mesSfcBarcodeProcessList.add(mesSfcBarcodeProcessDto);
+                mesSfcBarcodeProcessList.add(mesSfcBarcodeProcess);
 
                 // 构造返工单条码数据
                 MesSfcReworkOrderBarcode mesSfcReworkOrderBarcode = new MesSfcReworkOrderBarcode();
@@ -253,61 +257,63 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             // 批量修改工单完工数量
             pmFeignApi.batchUpdate(mesPmWorkOrders);
 
-            if (doReworkOrderDto.getClearCarton()) {
+            if (doReworkOrderDto.getClearCarton() && cartonCodeList.size() > 0) {
                 // 所有包箱
                 Example cartonExample = new Example(MesSfcProductCarton.class);
                 cartonExample.createCriteria().andIn("cartonCode", cartonCodeList);
                 List<MesSfcProductCarton> sfcProductCartons = mesSfcProductCartonService.selectByExample(cartonExample);
-                List<Long> cartonIds = new ArrayList<>();
-                for (MesSfcProductCarton mesSfcProductCarton : sfcProductCartons) {
-                    cartonIds.add(mesSfcProductCarton.getProductCartonId());
-                }
-                // 包箱下所有包箱条码关系
-                Example cartonDetExample = new Example(MesSfcProductCartonDet.class);
-                cartonDetExample.createCriteria().andIn("productCartonId", cartonIds);
-                List<MesSfcProductCartonDet> productCartonDets = mesSfcProductCartonDetService.selectByExample(cartonDetExample);
-                // 需删除包箱条码关系
-                Example cartonDetDeleteExample = new Example(MesSfcProductCartonDet.class);
-                cartonDetDeleteExample.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
-                List<MesSfcProductCartonDet> deleteProductCartonDets = mesSfcProductCartonDetService.selectByExample(cartonDetDeleteExample);
-                // 计算所有需要删除的包箱
-                Map<Long, Integer> map = new HashMap<>();
-                for (MesSfcProductCarton mesSfcProductCarton : sfcProductCartons) {
-                    for (MesSfcProductCartonDet mesSfcProductCartonDet : productCartonDets) {
-                        if (mesSfcProductCarton.getProductCartonId().equals(mesSfcProductCartonDet.getProductCartonId())) {
-                            Integer count = map.get(mesSfcProductCarton.getProductCartonId());
-                            if (count != null) {
-                                map.put(mesSfcProductCarton.getProductCartonId(), ++count);
-                                continue;
-                            }
-                        }
-                        map.put(mesSfcProductCarton.getProductCartonId(), 1);
+                if (sfcProductCartons != null && sfcProductCartons.size() > 0) {
+                    List<Long> cartonIds = new ArrayList<>();
+                    for (MesSfcProductCarton mesSfcProductCarton : sfcProductCartons) {
+                        cartonIds.add(mesSfcProductCarton.getProductCartonId());
                     }
+                    // 包箱下所有包箱条码关系
+                    Example cartonDetExample = new Example(MesSfcProductCartonDet.class);
+                    cartonDetExample.createCriteria().andIn("productCartonId", cartonIds);
+                    List<MesSfcProductCartonDet> productCartonDets = mesSfcProductCartonDetService.selectByExample(cartonDetExample);
+                    // 需删除包箱条码关系
+                    Example cartonDetDeleteExample = new Example(MesSfcProductCartonDet.class);
+                    cartonDetDeleteExample.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
+                    List<MesSfcProductCartonDet> deleteProductCartonDets = mesSfcProductCartonDetService.selectByExample(cartonDetDeleteExample);
+                    // 计算所有需要删除的包箱
+                    Map<Long, Integer> map = new HashMap<>();
+                    for (MesSfcProductCarton mesSfcProductCarton : sfcProductCartons) {
+                        for (MesSfcProductCartonDet mesSfcProductCartonDet : productCartonDets) {
+                            if (mesSfcProductCarton.getProductCartonId().equals(mesSfcProductCartonDet.getProductCartonId())) {
+                                Integer count = map.get(mesSfcProductCarton.getProductCartonId());
+                                if (count != null) {
+                                    map.put(mesSfcProductCarton.getProductCartonId(), ++count);
+                                    continue;
+                                }
+                            }
+                            map.put(mesSfcProductCarton.getProductCartonId(), 1);
+                        }
 
-                    for (MesSfcProductCartonDet mesSfcProductCartonDet : deleteProductCartonDets) {
-                        if (mesSfcProductCarton.getProductCartonId().equals(mesSfcProductCartonDet.getProductCartonId())) {
-                            Integer count = map.get(mesSfcProductCarton.getProductCartonId());
-                            if (count != null) {
-                                map.put(mesSfcProductCarton.getProductCartonId(), count - 1);
-                                continue;
+                        for (MesSfcProductCartonDet mesSfcProductCartonDet : deleteProductCartonDets) {
+                            if (mesSfcProductCarton.getProductCartonId().equals(mesSfcProductCartonDet.getProductCartonId())) {
+                                Integer count = map.get(mesSfcProductCarton.getProductCartonId());
+                                if (count != null) {
+                                    map.put(mesSfcProductCarton.getProductCartonId(), count - 1);
+                                    continue;
+                                }
                             }
                         }
                     }
-                }
-                List<Long> deleteProductCartonIds = new ArrayList<>();
-                for (Map.Entry<Long, Integer> entry : map.entrySet()) {
-                    if (entry.getValue() <= 0) {
-                        deleteProductCartonIds.add(entry.getKey());
+                    List<Long> deleteProductCartonIds = new ArrayList<>();
+                    for (Map.Entry<Long, Integer> entry : map.entrySet()) {
+                        if (entry.getValue() <= 0) {
+                            deleteProductCartonIds.add(entry.getKey());
+                        }
                     }
+                    // 清除包箱
+                    if (deleteProductCartonIds.size() > 0) {
+                        Example cartonDeleteExample = new Example(MesSfcProductCarton.class);
+                        cartonDeleteExample.createCriteria().andIn("productCartonId", deleteProductCartonIds);
+                        mesSfcProductCartonService.deleteByExample(cartonDeleteExample);
+                    }
+                    // 批量删除包箱条码关系表
+                    mesSfcProductCartonDetService.deleteByExample(cartonDetDeleteExample);
                 }
-                // 清除包箱
-                if (deleteProductCartonIds.size() > 0) {
-                    Example cartonDeleteExample = new Example(MesSfcProductCarton.class);
-                    cartonDeleteExample.createCriteria().andIn("productCartonId", deleteProductCartonIds);
-                    mesSfcProductCartonService.deleteByExample(cartonDeleteExample);
-                }
-                // 批量删除包箱条码关系表
-                mesSfcProductCartonDetService.deleteByExample(cartonDetDeleteExample);
             }
             if (doReworkOrderDto.getClearColorBox()) {
                 // 清除彩盒关系表
@@ -315,60 +321,62 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                 // 清除彩盒
 
             }
-            if (doReworkOrderDto.getClearPallet()) {
-                // 所有包箱
+            if (doReworkOrderDto.getClearPallet() && palletCodeList.size() > 0) {
+                // 所有栈板
                 Example palletExample = new Example(MesSfcProductPallet.class);
                 palletExample.createCriteria().andIn("palletCode", palletCodeList);
                 List<MesSfcProductPallet> sfcProductPallets = mesSfcProductPalletService.selectByExample(palletExample);
-                List<Long> palletIds = new ArrayList<>();
-                for (MesSfcProductPallet mesSfcProductPallet : sfcProductPallets) {
-                    palletIds.add(mesSfcProductPallet.getProductPalletId());
-                }
-                // 包箱下所有包箱条码关系
-                Example palletDetExample = new Example(MesSfcProductPalletDet.class);
-                palletDetExample.createCriteria().andIn("productPalletId", palletIds);
-                List<MesSfcProductPalletDet> productPalletDets = mesSfcProductPalletDetService.selectByExample(palletDetExample);
-                // 需删除包箱条码关系
-                Example palletDetDeleteExample = new Example(MesSfcProductCartonDet.class);
-                palletDetDeleteExample.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
-                List<MesSfcProductPalletDet> deleteProductPalletDets = mesSfcProductPalletDetService.selectByExample(palletDetDeleteExample);
-                // 计算所有需要删除的包箱
-                Map<Long, Integer> map = new HashMap<>();
-                for (MesSfcProductPallet mesSfcProductPallet : sfcProductPallets) {
-                    for (MesSfcProductPalletDet mesSfcProductPalletDet : productPalletDets) {
-                        if (mesSfcProductPallet.getProductPalletId().equals(mesSfcProductPalletDet.getProductPalletId())) {
-                            Integer count = map.get(mesSfcProductPallet.getProductPalletId());
-                            if (count != null) {
-                                map.put(mesSfcProductPallet.getProductPalletId(), ++count);
-                                continue;
-                            }
-                        }
-                        map.put(mesSfcProductPallet.getProductPalletId(), 1);
+                if (sfcProductPallets != null && sfcProductPallets.size() > 0) {
+                    List<Long> palletIds = new ArrayList<>();
+                    for (MesSfcProductPallet mesSfcProductPallet : sfcProductPallets) {
+                        palletIds.add(mesSfcProductPallet.getProductPalletId());
                     }
+                    // 包箱下所有栈板条码关系
+                    Example palletDetExample = new Example(MesSfcProductPalletDet.class);
+                    palletDetExample.createCriteria().andIn("productPalletId", palletIds);
+                    List<MesSfcProductPalletDet> productPalletDets = mesSfcProductPalletDetService.selectByExample(palletDetExample);
+                    // 需删除栈板条码关系
+                    Example palletDetDeleteExample = new Example(MesSfcProductCartonDet.class);
+                    palletDetDeleteExample.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
+                    List<MesSfcProductPalletDet> deleteProductPalletDets = mesSfcProductPalletDetService.selectByExample(palletDetDeleteExample);
+                    // 计算所有需要删除的栈板
+                    Map<Long, Integer> map = new HashMap<>();
+                    for (MesSfcProductPallet mesSfcProductPallet : sfcProductPallets) {
+                        for (MesSfcProductPalletDet mesSfcProductPalletDet : productPalletDets) {
+                            if (mesSfcProductPallet.getProductPalletId().equals(mesSfcProductPalletDet.getProductPalletId())) {
+                                Integer count = map.get(mesSfcProductPallet.getProductPalletId());
+                                if (count != null) {
+                                    map.put(mesSfcProductPallet.getProductPalletId(), ++count);
+                                    continue;
+                                }
+                            }
+                            map.put(mesSfcProductPallet.getProductPalletId(), 1);
+                        }
 
-                    for (MesSfcProductPalletDet mesSfcProductPalletDet : deleteProductPalletDets) {
-                        if (mesSfcProductPallet.getProductPalletId().equals(mesSfcProductPalletDet.getProductPalletId())) {
-                            Integer count = map.get(mesSfcProductPallet.getProductPalletId());
-                            if (count != null) {
-                                map.put(mesSfcProductPallet.getProductPalletId(), count - 1);
+                        for (MesSfcProductPalletDet mesSfcProductPalletDet : deleteProductPalletDets) {
+                            if (mesSfcProductPallet.getProductPalletId().equals(mesSfcProductPalletDet.getProductPalletId())) {
+                                Integer count = map.get(mesSfcProductPallet.getProductPalletId());
+                                if (count != null) {
+                                    map.put(mesSfcProductPallet.getProductPalletId(), count - 1);
+                                }
                             }
                         }
                     }
-                }
-                List<Long> deleteProductPalletIds = new ArrayList<>();
-                for (Map.Entry<Long, Integer> entry : map.entrySet()) {
-                    if (entry.getValue() <= 0) {
-                        deleteProductPalletIds.add(entry.getKey());
+                    List<Long> deleteProductPalletIds = new ArrayList<>();
+                    for (Map.Entry<Long, Integer> entry : map.entrySet()) {
+                        if (entry.getValue() <= 0) {
+                            deleteProductPalletIds.add(entry.getKey());
+                        }
                     }
+                    // 清除包箱
+                    if (deleteProductPalletIds.size() > 0) {
+                        Example palletDeleteExample = new Example(MesSfcProductPallet.class);
+                        palletDeleteExample.createCriteria().andIn("productPalletId", deleteProductPalletIds);
+                        mesSfcProductPalletService.deleteByExample(palletDeleteExample);
+                    }
+                    // 批量删除栈板条码关系表
+                    mesSfcProductPalletDetService.deleteByExample(palletDetDeleteExample);
                 }
-                // 清除包箱
-                if (deleteProductPalletIds.size() > 0) {
-                    Example palletDeleteExample = new Example(MesSfcProductPallet.class);
-                    palletDeleteExample.createCriteria().andIn("productPalletId", deleteProductPalletIds);
-                    mesSfcProductPalletService.deleteByExample(palletDeleteExample);
-                }
-                // 批量删除包箱条码关系表
-                mesSfcProductPalletDetService.deleteByExample(palletDetDeleteExample);
             }
 
             // 清除条码部件关系表
