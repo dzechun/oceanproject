@@ -13,8 +13,8 @@ public class DoReworkOrderDto implements Serializable {
     @ApiModelProperty(name = "searchMesSfcBarcodeProcess", value = "返工单搜索条件对象")
     private SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess;
 
-    @ApiModelProperty(name = "keyPartRelevanceDtos", value = "需清除部件列表")
-    private List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos;
+    @ApiModelProperty(name = "keyPartRelevanceDtoList", value = "需清除部件列表")
+    private List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtoList;
 
     @ApiModelProperty(name = "reworkOrderCode", value = "返工单号")
     private String reworkOrderCode;

@@ -377,7 +377,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
             List<MesSfcKeyPartRelevance> deleteKeypartRelevances = new ArrayList<>();
             for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos) {
-                for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto1 : doReworkOrderDto.getKeyPartRelevanceDtos()) {
+                for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto1 : doReworkOrderDto.getKeyPartRelevanceDtoList()) {
                     if (keyPartRelevanceDto.getLabelCategoryId().equals(keyPartRelevanceDto1.getLabelCategoryId())
                             || keyPartRelevanceDto.getMaterialId().equals(keyPartRelevanceDto1.getMaterialId())) {
                         deleteKeypartRelevances.add(keyPartRelevanceDto);
