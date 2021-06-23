@@ -47,29 +47,100 @@
 
     <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder"
             resultMap="BaseResultMap">
-        select
-        shwo.ht_work_order_id,shwo.work_order_id,shwo.work_order_code,shwo.sales_order_id,shwo.material_id,sm.material_code,sm.material_name,sm.version,sm.material_desc,
-        shwo.work_order_quantity,shwo.production_quantity,shwo.output_quantity,shwo.scheduled_quantity,shwo.work_order_status,shwo.pro_line_id,spl.pro_name,shwo.route_id,sr.route_name,shwo.barcode_rule_set_id,
-        shwo.work_order_type,shwo.planned_start_time,shwo.planned_end_time,shwo.actual_start_time,shwo.actual_end_time,shwo.create_user_id,
-        u.user_name as create_user_name,shwo.create_time,shwo.modified_user_id,s.user_name as
-        modified_user_name,shwo.modified_time, shwo.is_delete, shwo.organization_id, shwo.remark, bo.organization_name
-        from fantech_imes_v2.smt_ht_work_order shwo
-        left join fantech_imes_v2.smt_material sm on shwo.material_id=sm.material_id
-        left join fantech_imes_v2.smt_route sr on shwo.route_id=sr.route_id
-        left join fantech_imes_v2.smt_pro_line spl on shwo.pro_line_id=spl.pro_line_id
-        left join ocean_v2.sys_user u on shwo.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on shwo.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON shwo.organization_id = bo.organization_id
+        SELECT
+        mphwo.work_order_id,
+        mphwo.work_order_code,
+        mphwo.parent_id,
+        mphwo.sales_order_id,
+        mphwo.material_id,
+        mphwo.work_order_qty,
+        mphwo.production_qty,
+        mphwo.output_qty,
+        mphwo.scheduled_qty,
+        mphwo.work_order_status,
+        mphwo.pro_line_id,
+        mphwo.barcode_rule_set_id,
+        mphwo.route_id,
+        mphwo.work_order_type,
+        mphwo.schedule_date,
+        mphwo.plan_start_time,
+        mphwo.plan_end_time,
+        mphwo.actual_start_time,
+        mphwo.actual_end_time,
+        mphwo.create_user_id,
+        mphwo.create_time,
+        mphwo.modified_user_id,
+        mphwo.modified_time,
+        mphwo.is_delete,
+        mphwo.org_id,
+        mphwo.put_into_process_id,
+        mphwo.output_process_id,
+        mphwo.scrap_qty,
+        mphwo.inventory_qty,
+        mphwo.remark,
+        mphwo.contract_no,
+        sm.material_code AS 'materialCode',
+        sm.material_name AS 'materialName',
+        sm.material_version AS 'materialVersion',
+        sm.material_desc AS 'materialDesc',
+        bt.main_unit AS 'mainUnit',
+        bt.transfer_quantity AS 'transferQuantity',
+        spl.pro_code AS 'proCode',
+        spl.pro_name AS 'proName',
+        sr.route_name AS 'routeName',
+        sr.route_code AS 'routeCode',
+        sbrs.barcode_rule_set_name AS 'barcodeRuleSetName',
+        u.user_name AS 'createUserName',
+        s.user_name AS 'modifiedUserName',
+        bo.organization_name AS 'organizationName',
+        bt.color AS 'color',
+        spm.product_model_name AS 'productModelName',
+        sps.package_specification_quantity AS 'packageSpecificationQuantity',
+        putbp.process_name AS 'putIntoProcessName',
+        outbp.process_name AS 'outputProcessName',
+        oso.sales_order_code AS 'salesOrderCode'
+        FROM
+        mes_pm_ht_work_order mphwo
+        left join base_material sm on mphwo.material_id=sm.material_id
+        LEFT JOIN base_material_tab bt on bt.material_id = sm.material_id
+        left join base_package_specification sps on sps.package_specification_id = bt.package_specification_id
+        left join base_product_model spm on spm.product_model_id = bt.product_model_id
+        left join base_route sr on mphwo.route_id=sr.route_id
+        left join base_pro_line spl on mphwo.pro_line_id=spl.pro_line_id
+        left join base_barcode_rule_set sbrs on mphwo.barcode_rule_set_id=sbrs.barcode_rule_set_id
+        left join ocean_v2.sys_user u on mphwo.create_user_id=u.user_id
+        left join ocean_v2.sys_user s on mphwo.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON mphwo.org_id = bo.organization_id
+        left join base_process putbp ON putbp.process_id = mphwo.put_into_process_id
+        left join base_process outbp ON outbp.process_id = mphwo.output_process_id
+        left join om_sales_order oso ON oso.sales_order_id = mphwo.sales_order_id
         <where>
-            1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-                and date_format(shwo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                and date_format(mphwo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-            <if test="workOrderCode!=null and workOrderCode!=''">
-                and shwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            <if test="workOrderCode!=null and workOrderCode!='' and codeQueryMark != 1">
+                and mphwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!='' and codeQueryMark == 1">
+                and mphwo.work_order_code = #{workOrderCode}
+            </if>
+            <if test="workOrderId!=null">
+                and mphwo.work_order_id =#{workOrderId}
+            </if>
+            <if test="parentId!=null">
+                and mphwo.parent_id like CONCAT('%', #{parentId}, '%')
             </if>
             <if test="materialId!=null and materialId!=''">
-                and shwo.material_id=#{materialId}
+                and mphwo.material_id=#{materialId}
+            </if>
+            <if test="workOrderStatus!=null and (workOrderStatusList == null or workOrderStatusList.size() = 0)">
+                and mphwo.work_order_status =#{workOrderStatus}
+            </if>
+            <if test="workOrderStatusList != null and workOrderStatusList.size() > 0">
+                and mphwo.work_order_status
+                <foreach collection="workOrderStatusList" open="in (" close=")" item="item" separator="," index="index">
+                    #{item}
+                </foreach>
             </if>
             <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
@@ -77,7 +148,8 @@
             <if test="materialDesc!=null and materialDesc!=''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
+            and mphwo.is_delete = 1
         </where>
-        order by shwo.modified_time desc
+        order by mphwo.modified_time desc
     </select>
 </mapper>
