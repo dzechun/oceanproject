@@ -59,6 +59,8 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
     @Resource
     private MesSfcProductPalletDetService mesSfcProductPalletDetService;
     @Resource
+    private MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
+    @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
     private PMFeignApi pmFeignApi;
@@ -256,6 +258,16 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             mesSfcBarcodeProcessService.batchUpdate(mesSfcBarcodeProcessList);
             // 批量修改工单完工数量
             pmFeignApi.batchUpdate(mesPmWorkOrders);
+            // 重置生产订单条码状态
+            Example workOrderBarcodeExample = new Example(MesSfcWorkOrderBarcode.class);
+            workOrderBarcodeExample.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
+            List<MesSfcWorkOrderBarcode> workOrderBarcodes = mesSfcWorkOrderBarcodeService.selectByExample(workOrderBarcodeExample);
+            if(workOrderBarcodes != null && workOrderBarcodes.size() > 0){
+                for(MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode : workOrderBarcodes){
+                    mesSfcWorkOrderBarcode.setBarcodeType((byte) 1);
+                }
+                mesSfcWorkOrderBarcodeService.batchUpdate(workOrderBarcodes);
+            }
 
             if (doReworkOrderDto.getClearCarton() && cartonCodeList.size() > 0) {
                 // 所有包箱

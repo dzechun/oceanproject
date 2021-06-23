@@ -1,38 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
-    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
-    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
-    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
-    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
-    <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
-      <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
-  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+        <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+        <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus"/>
+        <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+    <resultMap id="BaseResultDtoMap" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-        <result column="material_id" jdbcType="BIGINT" property="materialId" />
-</resultMap>
-<resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto">
-</resultMap>
-  <sql id="BaseColumnList">
-  mswob.work_order_barcode_id,
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+    </resultMap>
+    <resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto">
+    </resultMap>
+    <sql id="BaseColumnList">
+        mswob
+        .
+        work_order_barcode_id
+        ,
   mswob.parent_id,
   mswob.barcode,
   mswob.work_order_id,
@@ -46,71 +50,100 @@
   mswob.modified_user_id,
   mswob.modified_time,
   mswob.is_delete
-</sql>
- <select id="findList" resultMap="BaseResultDtoMap" parameterType="com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode">
-  select <include refid="BaseColumnList"/>,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,mpwo.material_id
-  FROM mes_sfc_work_order_barcode mswob
-   LEFT JOIN ocean_v2.sys_user su ON mswob.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON mswob.modified_user_id = sus.user_id
+    </sql>
+    <select id="findList" resultMap="BaseResultDtoMap"
+            parameterType="com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode">
+        select<include refid="BaseColumnList"/>,su.user_name as create_user_name,sus.user_name as
+        modified_user_name,bo.organization_name,mpwo.material_id
+        FROM mes_sfc_work_order_barcode mswob
+        LEFT JOIN ocean_v2.sys_user su ON mswob.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON mswob.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON mswob.org_id = bo.organization_id
         LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
         <where>
-        <if test="workOrderId != null">
-            and mswob.work_order_id = #{workOrderId}
-        </if>
-        <if test="labelCategoryId != null">
-            and mswob.labelCategoryId = #{labelCategoryId}
-        </if>
-        <if test="barcode != null and barcode != ''">
-            and mswob.barcode like CONCAT('%',#{barcode},'%')
-        </if>
-</where>
- </select>
- <select id="findMaxCode" resultType="java.lang.String">
- select barcode FROM mes_sfc_work_order_barcode where labelCategoryId = #{barcodeType} and work_order_id=#{workOrderId} order by work_order_barcode_id desc LIMIT 1
-</select>
-<!--查询条码解析码及标签模版（工单条码打印）-->
-<select id="findRule" resultMap="BaseRuleMap">
-    SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',bl.label_code as 'labelCode',
-           bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode',lm.once_print_count as 'oncePrintQty' FROM mes_pm_work_order mpwo
-                                                                                                                 left join base_barcode_rule_set_det brs on brs.barcode_rule_set_id = mpwo.barcode_rule_set_id
-                                                                                                                 LEFT JOIN base_barcode_rule br ON brs.barcode_rule_id = br.barcode_rule_id
-                                                                                                                 LEFT JOIN base_label_material lm ON mpwo.material_id=lm.material_id
-                                                                                                                 LEFT JOIN base_label bl ON lm.label_id = bl.label_id
-                                                                                                                 LEFT JOIN base_label_category lc ON bl.label_category_id = lc.label_category_id AND bl.label_category_id=lc.label_category_id
-    where mpwo.work_order_id = #{workOrderId} and br.barcode_rule_category_id = lc.label_category_id AND lc.label_category_code=#{code}
-</select>
-<!--查询默认模版-->
-<select id="DefaultLabel" resultMap="BaseRuleMap">
-    SELECT bl.label_code,bl.label_name,bl.label_version FROM base_label bl
-    LEFT JOIN base_label_category blc ON bl.label_category_id = blc.label_category_id
-    WHERE blc.label_category_code = #{labelCategoryCode}
-</select>
-<select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
-select * FROM <choose>
-    <when test="barcodeType==56">
-        view_workOrder
-    </when>
-    <when test="barcodeType==57">
-        view_order
-    </when>
-</choose>
-<where>
-    id = #{id}
-</where>
-</select>
+            <if test="workOrderId != null">
+                and mswob.work_order_id = #{workOrderId}
+            </if>
+            <if test="labelCategoryId != null">
+                and mswob.labelCategoryId = #{labelCategoryId}
+            </if>
+            <if test="barcode != null and barcode != ''">
+                and mswob.barcode like CONCAT('%',#{barcode},'%')
+            </if>
+        </where>
+    </select>
+    <select id="findMaxCode" resultType="java.lang.String">
+        select barcode
+        FROM mes_sfc_work_order_barcode
+        where labelCategoryId = #{barcodeType}
+          and work_order_id = #{workOrderId}
+        order by work_order_barcode_id desc LIMIT 1
+    </select>
+    <!--查询条码解析码及标签模版（工单条码打印）-->
+    <select id="findRule" resultMap="BaseRuleMap">
+        SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',bl.label_code as 'labelCode', bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode',lm.once_print_count as 'oncePrintQty'
+        FROM mes_pm_work_order mpwo
+                 left join base_barcode_rule_set_det brs on brs.barcode_rule_set_id = mpwo.barcode_rule_set_id
+                 LEFT JOIN base_barcode_rule br ON brs.barcode_rule_id = br.barcode_rule_id
+                 LEFT JOIN base_label_material lm ON mpwo.material_id = lm.material_id
+                 LEFT JOIN base_label bl ON lm.label_id = bl.label_id
+                 LEFT JOIN base_label_category lc ON bl.label_category_id = lc.label_category_id AND
+                                                     bl.label_category_id = lc.label_category_id
+        where mpwo.work_order_id = #{workOrderId}
+          and br.barcode_rule_category_id = lc.label_category_id
+          AND lc.label_category_code = #{code}
+    </select>
+    <!--查询默认模版-->
+    <select id="DefaultLabel" resultMap="BaseRuleMap">
+        SELECT bl.label_code, bl.label_name, bl.label_version
+        FROM base_label bl
+                 LEFT JOIN base_label_category blc ON bl.label_category_id = blc.label_category_id
+        WHERE blc.label_category_code = #{labelCategoryCode}
+    </select>
+    <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
+        select * FROM
+        <choose>
+            <when test="barcodeType==56">
+                view_workOrder
+            </when>
+            <when test="barcodeType==57">
+                view_order
+            </when>
+        </choose>
+        <where>
+            id = #{id}
+        </where>
+    </select>
     <select id="findByOneLabel" resultType="java.lang.String">
-        select blc.label_category_name FROM base_label_category blc
-        LEFT JOIN base_label bl ON bl.label_category_id = blc.label_category_id
-        where bl.label_Name =#{labelName}
+        select blc.label_category_name
+        FROM base_label_category blc
+                 LEFT JOIN base_label bl ON bl.label_category_id = blc.label_category_id
+        where bl.label_Name = #{labelName}
     </select>
     <select id="finByTypeId" resultType="java.lang.Long">
-        select label_category_id FROM base_label_category where label_category_name = #{labelCategoryName}
+        select label_category_id
+        FROM base_label_category
+        where label_category_name = #{labelCategoryName}
     </select>
     <select id="findCountCode" resultType="java.lang.Integer">
-        select COUNT(*) FROM mes_sfc_work_order_barcode where label_category_id=#{barcodeType} and work_order_id=#{workOrderId}
+        select COUNT(*)
+        FROM mes_sfc_work_order_barcode
+        where label_category_id = #{barcodeType}
+          and work_order_id = #{workOrderId}
     </select>
     <select id="findVersion" resultType="java.lang.String">
-        select label_version From base_label where label_name=#{labelName}
+        select label_version
+        From base_label
+        where label_name = #{labelName}
     </select>
+
+    <update id="batchUpdate" parameterType="java.util.ArrayList">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update mes_sfc_work_order_barcode
+            <set>
+                barcode_status = #{item.barcodeStatus}
+            </set>
+            where work_order_barcode_id =#{item.workOrderBarcodeId}
+        </foreach>
+    </update>
 </mapper>

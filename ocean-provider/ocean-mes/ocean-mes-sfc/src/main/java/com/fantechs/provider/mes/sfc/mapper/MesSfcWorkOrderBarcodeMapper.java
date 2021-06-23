@@ -33,4 +33,11 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
     String findVersion(@Param("labelName")String labelName);
 
     Long finByTypeId(@Param("labelCategoryName")String labelCategoryName);
+
+    /**
+     * 批量修改生产订单条码状态
+     * @param workOrderBarcodes
+     * @return
+     */
+    int batchUpdate(List<MesSfcWorkOrderBarcode> workOrderBarcodes);
 }

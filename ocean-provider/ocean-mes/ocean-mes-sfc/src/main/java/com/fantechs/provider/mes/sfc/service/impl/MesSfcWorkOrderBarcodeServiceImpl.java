@@ -320,6 +320,11 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         return mesSfcWorkOrderBarcode;
     }
 
+    @Override
+    public int batchUpdate(List<MesSfcWorkOrderBarcode> workOrderBarcodes) {
+        return mesSfcWorkOrderBarcodeMapper.batchUpdate(workOrderBarcodes);
+    }
+
     /**
      * 获取当前登录用户
      * @return
