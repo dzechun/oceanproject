@@ -88,9 +88,8 @@
         and bot.business_type=#{businessType}
       </if>
       <if test="orgId!=null">
-        and bot.org_id=#{orgId}
+        and (bot.org_id=#{orgId} or bot.org_id is null)
       </if>
-        OR bot.org_id IS NULL
     </where>
     order by bot.create_time desc
   </select>
