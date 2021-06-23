@@ -45,6 +45,14 @@ public class OmHtOtherInOrderDet extends ValidGroup implements Serializable {
     private Long otherInOrderId;
 
     /**
+     * 仓库id
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库id")
+    @Excel(name = "仓库id", height = 20, width = 30,orderNum="")
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")

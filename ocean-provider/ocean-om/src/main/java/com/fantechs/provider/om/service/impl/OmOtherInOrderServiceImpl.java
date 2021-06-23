@@ -105,6 +105,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             throw new BizErrorException(responseEntity.getMessage());
         }
         num+=this.updateStatus(omOtherInOrder);
+        this.addHt(omOtherInOrder, omOtherInOrder.getOmOtherInOrderDets());
         //更新订单状态
         return num;
     }

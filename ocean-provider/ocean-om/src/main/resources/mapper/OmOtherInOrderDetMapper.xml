@@ -40,7 +40,7 @@
   <sql id="Base_Column_List">
     oiod.other_in_order_det_id,
     oiod.other_in_order_id,
-oiod.warehouseId,
+oiod.warehouse_id,
 oiod.material_id,
 oiod.unit_name,
 oiod.order_qty,

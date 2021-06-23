@@ -11,4 +11,5 @@ import java.io.Serializable;
  */
 @Data
 public class SearchOmOtherInOrderDet extends BaseQuery implements Serializable {
+    private Long otherInOrderId;
 }

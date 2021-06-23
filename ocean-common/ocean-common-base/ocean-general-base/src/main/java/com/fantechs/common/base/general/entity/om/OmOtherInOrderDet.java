@@ -41,7 +41,7 @@ public class OmOtherInOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="warehouseId",value = "仓库ID")
     @Excel(name = "仓库ID", height = 20, width = 30,orderNum="")
-    @Column(name = "warehouseId")
+    @Column(name = "warehouse_id")
     private Long warehouseId;
 
     /**

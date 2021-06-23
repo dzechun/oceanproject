@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.dto.om;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class OmSalesReturnOrderDto extends OmSalesReturnOrder implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建名称")
+    @Excel(name = "创建名称", height = 20, width = 30,orderNum="15")
     private String createUserName;
 
     /**
@@ -32,6 +34,7 @@ public class OmSalesReturnOrderDto extends OmSalesReturnOrder implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改人")
+    @Excel(name = "修改人", height = 20, width = 30,orderNum="16")
     private String modifiedUserName;
 
     /**

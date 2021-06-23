@@ -8,6 +8,7 @@
     <id column="ht_other_in_order_det_id" jdbcType="BIGINT" property="htOtherInOrderDetId" />
     <result column="other_in_order_det_id" jdbcType="BIGINT" property="otherInOrderDetId" />
     <result column="other_in_order_id" jdbcType="BIGINT" property="otherInOrderId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
     <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
@@ -25,7 +26,8 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
   </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmOtherInOrderDetDto">
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.om.OmOtherInOrderDetDto">
+    <result column="warehouseName" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
@@ -39,6 +41,7 @@
   <sql id="Base_Column_List">
     oiod.other_in_order_det_id,
     oiod.other_in_order_id,
+oiod.warehouse_id,
 oiod.material_id,
 oiod.unit_name,
 oiod.order_qty,

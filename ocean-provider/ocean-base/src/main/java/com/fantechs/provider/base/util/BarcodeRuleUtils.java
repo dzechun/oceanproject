@@ -6,12 +6,15 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseBarcodeRuleSpecService;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -210,6 +213,14 @@ public class BarcodeRuleUtils {
                 length=customizeValue.length();
             }else {
                 length = baseBarcodeRuleSpec.getBarcodeLength();
+                if(StringUtils.isNotEmpty(maxCode)){
+                    Boolean bool = getNewDate(specification,customizeValue,sum,sum+length,maxCode);
+                    if(bool){
+                        return null;
+                    }else {
+                        continue;
+                    }
+                }
             }
             if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
                 if(StringUtils.isNotEmpty(maxCode)){
@@ -224,6 +235,18 @@ public class BarcodeRuleUtils {
             sum+=length;
         }
         return maxSerialNumber;
+    }
+
+    private static boolean getNewDate(String specification,String customizeValue,int beginIndex,int endIndex,String maxCode){
+        if("[M]".equals(specification)||"[W]".equals(specification)||"[D]".equals(specification)||"[K]".equals(specification)
+                ||"[A]".equals(specification)||"[y]".equals(specification)||"[m]".equals(specification)||"[d]".equals(specification)||"[w]".equals(specification)){
+            String data = maxCode.substring(beginIndex,endIndex);
+            String newData = CodeUtils.getTypeCode(specification,customizeValue);
+            if(!data.equals(newData)){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
