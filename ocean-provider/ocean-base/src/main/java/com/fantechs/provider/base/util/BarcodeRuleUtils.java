@@ -215,10 +215,8 @@ public class BarcodeRuleUtils {
                 length = baseBarcodeRuleSpec.getBarcodeLength();
                 if(StringUtils.isNotEmpty(maxCode)){
                     Boolean bool = getNewDate(specification,customizeValue,sum,sum+length,maxCode);
-                    if(bool){
+                    if(!bool){
                         return null;
-                    }else {
-                        continue;
                     }
                 }
             }
