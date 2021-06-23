@@ -31,6 +31,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by leifengzhi on 2021/06/15.
@@ -106,8 +107,8 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         }
         // 获取所有条码的部件清单并集
         Map<String, Object> map = new HashMap<>();
-        map.put("workOrderBarcodeId", workOrderBarcodeIds);
-        List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
+        map.put("workOrderBarcodeIds", workOrderBarcodeIds);
+        List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findListForGroup(map);
         generateReworkOrderCodeDto.setKeyPartRelevanceDtos(keyPartRelevanceDtos);
         return generateReworkOrderCodeDto;
     }

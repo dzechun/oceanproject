@@ -68,7 +68,7 @@ public class MesSfcReworkOrderController {
 
     @ApiOperation("获取返工单号")
     @PostMapping("/generateReworkOrderCode")
-    public ResponseEntity<GenerateReworkOrderCodeDto> generateReworkOrderCode(SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess){
+    public ResponseEntity<GenerateReworkOrderCodeDto> generateReworkOrderCode(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess){
         GenerateReworkOrderCodeDto reworkOrderCodeDto = mesSfcReworkOrderService.generateReworkOrderCode(searchMesSfcBarcodeProcess);
         return ControllerUtil.returnDataSuccess(reworkOrderCodeDto, 1);
     }

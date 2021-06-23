@@ -13,4 +13,6 @@ import java.util.Map;
 
 public interface MesSfcKeyPartRelevanceService extends IService<MesSfcKeyPartRelevance> {
     List<MesSfcKeyPartRelevanceDto> findList(Map<String, Object> map);
+
+    List<MesSfcKeyPartRelevanceDto> findListForGroup(Map<String, Object> map);
 }
