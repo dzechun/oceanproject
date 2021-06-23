@@ -90,6 +90,7 @@
       <if test="orgId!=null">
         and bot.org_id=#{orgId}
       </if>
+        OR bot.org_id IS NULL
     </where>
     order by bot.create_time desc
   </select>
