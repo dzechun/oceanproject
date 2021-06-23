@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -14,6 +15,6 @@ import java.util.List;
 
 public interface WmsInAsnOrderDetService extends IService<WmsInAsnOrderDet> {
     List<WmsInAsnOrderDetDto> findList(SearchWmsInAsnOrderDet searchWmsInAsnOrderDet);
-    WmsInAsnOrderDetDto checkBarcode(WmsInAsnOrderDetDto wmsInAsnOrderDetDto);
+    BigDecimal checkBarcode(WmsInAsnOrderDetDto wmsInAsnOrderDetDto);
     int update(WmsInAsnOrderDetDto wmsInAsnOrderDetDto);
 }
