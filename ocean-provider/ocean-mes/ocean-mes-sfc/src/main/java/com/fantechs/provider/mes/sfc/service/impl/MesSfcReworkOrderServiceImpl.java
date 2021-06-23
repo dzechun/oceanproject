@@ -98,15 +98,15 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
 
         // 所有符合条码
         List<MesSfcBarcodeProcessDto> barcodeProcessDtos = mesSfcBarcodeProcessService.findList(ControllerUtil.dynamicConditionByEntity(searchMesSfcBarcodeProcess));
-        List<String> orderIds = new ArrayList<>();
+        List<String> workOrderBarcodeIds = new ArrayList<>();
         for (MesSfcBarcodeProcessDto dto : barcodeProcessDtos) {
-            if (!orderIds.contains(dto.getWorkOrderId().toString())) {
-                orderIds.add(dto.getWorkOrderId().toString());
+            if (!workOrderBarcodeIds.contains(dto.getWorkOrderBarcodeId().toString())) {
+                workOrderBarcodeIds.add(dto.getWorkOrderBarcodeId().toString());
             }
         }
-        // 获取所有工单的部件清单并集
+        // 获取所有条码的部件清单并集
         Map<String, Object> map = new HashMap<>();
-        map.put("workOrderIds", orderIds);
+        map.put("workOrderBarcodeId", workOrderBarcodeIds);
         List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
         generateReworkOrderCodeDto.setKeyPartRelevanceDtos(keyPartRelevanceDtos);
         return generateReworkOrderCodeDto;
