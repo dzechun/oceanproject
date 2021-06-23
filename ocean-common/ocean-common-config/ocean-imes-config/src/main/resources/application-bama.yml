@@ -9,8 +9,8 @@ spring:
   datasource:
     url: jdbc:mysql://10.10.200.34:3306/fantech_imes_v2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
     type: com.alibaba.druid.pool.DruidDataSource
-    username: bmwms_ptl
-    password: wTZ2rf5PeFCFtfAc
+    username: ptl
+    password: hZoBFfwGfV2r0kh1
     driverClassName: com.mysql.cj.jdbc.Driver
     initialSize: 5
     minIdle: 5
@@ -47,7 +47,7 @@ eureka:
     #status-page-url: http://${spring.cloud.client.ip-address}:${server.port}/swagger-ui.html
   client:
     service-url:
-      defaultZone: http://root:root@10.10.200.33:8761/eureka/
+      defaultZone: http://root:root@localhost:8761/eureka/
 ribbon:
   eureka:
     enabled: true

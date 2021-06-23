@@ -1,9 +1,13 @@
 package com.fantechs.provider.electronic.service.Impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDetDto;
 import com.fantechs.common.base.electronic.entity.PtlJobOrderDet;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.electronic.mapper.PtlJobOrderDetMapper;
 import com.fantechs.provider.electronic.service.PtlJobOrderDetService;
@@ -27,6 +31,11 @@ public class PtlJobOrderDetServiceImpl extends BaseService<PtlJobOrderDet> imple
 
     @Override
     public List<PtlJobOrderDetDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         return ptlJobOrderDetMapper.findList(map);
     }
 
@@ -46,9 +55,13 @@ public class PtlJobOrderDetServiceImpl extends BaseService<PtlJobOrderDet> imple
     @LcnTransaction
     public int updateByJobOrderId(PtlJobOrderDet ptlJobOrderDet) {
 
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         Example example = new Example(PtlJobOrderDet.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jobOrderId", ptlJobOrderDet.getJobOrderId());
+        criteria.andEqualTo("jobOrderId", ptlJobOrderDet.getJobOrderId()).andEqualTo("orgId", user.getOrganizationId());
 
         return ptlJobOrderDetMapper.updateByExampleSelective(ptlJobOrderDet, example);
     }

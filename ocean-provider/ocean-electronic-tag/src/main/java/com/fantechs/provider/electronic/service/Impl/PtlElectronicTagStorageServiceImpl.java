@@ -8,6 +8,7 @@ import com.fantechs.common.base.electronic.entity.search.SearchPtlEquipment;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -68,6 +69,7 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
             throw new BizErrorException("绑定关系已存在");
         }
 
+        ptlElectronicTagStorage.setOrgId(user.getOrganizationId());
         ptlElectronicTagStorage.setCreateUserId(user.getUserId());
         ptlElectronicTagStorage.setCreateTime(new Date());
         ptlElectronicTagStorage.setModifiedUserId(user.getUserId());
@@ -130,6 +132,11 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
 
     @Override
     public List<PtlElectronicTagStorageDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         return ptlElectronicTagStorageMapper.findList(map);
     }
 
@@ -147,33 +154,49 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
             PtlElectronicTagStorageDto ptlElectronicTagStorageDto = ptlElectronicTagStorageDtos.get(i);
             String storageCode = ptlElectronicTagStorageDto.getStorageCode();//储位编码
             String equipmentCode = ptlElectronicTagStorageDto.getEquipmentCode();//设备编码
-            String equipmentIp = ptlElectronicTagStorageDto.getEquipmentIp();//设备ip
+            String equipmentAreaCode = ptlElectronicTagStorageDto.getEquipmentAreaCode();//区域设备编码
+            String electronicTagId = ptlElectronicTagStorageDto.getElectronicTagId();//电子标签Id
+            Byte electronicTagLangType = ptlElectronicTagStorageDto.getElectronicTagLangType();//电子标签语言类别
             if (StringUtils.isEmpty(
-                    storageCode,equipmentCode,equipmentIp
+                    storageCode,equipmentCode,equipmentAreaCode,electronicTagId,electronicTagLangType
             )){
                 fail.add(i+3);
                 continue;
             }
 
             //判断该编码对应的储位是否存在
-            BaseStorage storage = baseFeignApi.detail(Long.valueOf(ptlElectronicTagStorageDto.getStorageId())).getData();
+            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            searchBaseStorage.setStorageCode(storageCode);
+            searchBaseStorage.setCodeQueryMark((byte) 1);
+            List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
             //判断该编码对应的设备是否存在
             SearchPtlEquipment searchPtlEquipment = new SearchPtlEquipment();
             searchPtlEquipment.setEquipmentCode(equipmentCode);
             searchPtlEquipment.setCodeQueryMark((byte) 1);
             List<PtlEquipmentDto> ptlEquipmentDtos = smtEquipmentService.findList(ControllerUtil.dynamicConditionByEntity(searchPtlEquipment));
-            PtlEquipmentDto ptlEquipmentDto = ptlEquipmentDtos.get(0);
-            if (StringUtils.isEmpty(storage, ptlEquipmentDto)){
+            //判断该编码对应的区域设备是否存在
+            SearchPtlEquipment searchPtlEquipmentArea = new SearchPtlEquipment();
+            searchPtlEquipmentArea.setEquipmentCode(equipmentAreaCode);
+            searchPtlEquipmentArea.setCodeQueryMark((byte) 1);
+            List<PtlEquipmentDto> ptlEquipmentAreaDtos = smtEquipmentService.findList(ControllerUtil.dynamicConditionByEntity(searchPtlEquipment));
+            if (StringUtils.isEmpty(baseStorages, ptlEquipmentDtos, ptlEquipmentAreaDtos)){
                 fail.add(i+3);
                 continue;
             }
+            ptlElectronicTagStorageDto.setStorageId(baseStorages.get(0).getStorageId().toString());
+            ptlElectronicTagStorageDto.setWarehouseId(baseStorages.get(0).getWarehouseId().toString());
+            ptlElectronicTagStorageDto.setWarehouseAreaId(baseStorages.get(0).getWarehouseAreaId().toString());
+            ptlElectronicTagStorageDto.setEquipmentId(ptlEquipmentDtos.get(0).getEquipmentId().toString());
+            ptlElectronicTagStorageDto.setEquipmentAreaId(ptlEquipmentAreaDtos.get(0).getEquipmentId().toString());
 
             //判断绑定关系是否存在
             Example example = new Example(PtlElectronicTagStorage.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("storageId",storage.getStorageId())
-                    .andEqualTo("equipmentId", ptlEquipmentDto.getEquipmentId())
-                    .andNotEqualTo("equipmentIp", ptlEquipmentDto.getEquipmentId());
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria.andEqualTo("storageId", ptlElectronicTagStorageDto.getStorageId()).andEqualTo("electronicTagLangType", electronicTagLangType);
+            criteria1.andEqualTo("equipmentId", ptlElectronicTagStorageDto.getEquipmentId())
+                    .andEqualTo("electronicTagId", ptlElectronicTagStorageDto.getElectronicTagId());
+            example.or(criteria1);
             List<PtlElectronicTagStorage> ptlElectronicTagStorages = ptlElectronicTagStorageMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(ptlElectronicTagStorages)){
                 fail.add(i+3);
@@ -181,12 +204,13 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
             }
             PtlElectronicTagStorage ptlElectronicTagStorage = new PtlElectronicTagStorage();
             BeanUtils.copyProperties(ptlElectronicTagStorageDto, ptlElectronicTagStorage);
-            ptlElectronicTagStorage.setStorageId(String.valueOf(storage.getStorageId()));
-            ptlElectronicTagStorage.setEquipmentId(String.valueOf(ptlEquipmentDto.getEquipmentId()));
+            ptlElectronicTagStorage.setStatus(1);
+            ptlElectronicTagStorage.setOrgId(currentUser.getOrganizationId());
             ptlElectronicTagStorage.setCreateTime(new Date());
             ptlElectronicTagStorage.setCreateUserId(currentUser.getUserId());
             ptlElectronicTagStorage.setModifiedTime(new Date());
             ptlElectronicTagStorage.setModifiedUserId(currentUser.getUserId());
+            ptlElectronicTagStorage.setIsDelete((byte) 1);
             list.add(ptlElectronicTagStorage);
         }
 

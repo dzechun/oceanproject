@@ -98,12 +98,14 @@ public class ElectronicTagReceiver {
                     if (StringUtils.isEmpty(ptlElectronicTagStorageDtoList)) {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "请先维护储位：" + ptlJobOrderDetDtoList.get(0).getStorageCode() +  "和物料：" + ptlJobOrderDetDtoList.get(0).getMaterialCode() + "以及对应的电子标签关联信息");
                     }
+                    rabbitMQDTO1.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                     // 该储位对应的另一个电子标签灭灯
                     for (PtlElectronicTagStorageDto ptlElectronicTagStorageDto : ptlElectronicTagStorageDtoList) {
                         if (!b.toString().equals(ptlElectronicTagStorageDto.getElectronicTagId())) {
                             RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
                             rabbitMQDTO.setEquipmentTagId(ptlElectronicTagStorageDto.getEquipmentTagId());
                             rabbitMQDTO.setElectronicTagId(ptlElectronicTagStorageDto.getElectronicTagId());
+                            rabbitMQDTO.setQueueName(ptlElectronicTagStorageDto.getQueueName());
                             rabbitMQDTOS.add(rabbitMQDTO);
                         }
                     }
@@ -129,11 +131,11 @@ public class ElectronicTagReceiver {
                                 rabbitMQDTO.setOption3("0");
                                 rabbitMQDTO.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                                 if (ptlJobOrderDetDto.getElectronicTagLangType() == 1) {
-                                    if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getWholeQty()) || ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
+                                    if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getWholeQty()) && ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
                                         materialDesc += ptlJobOrderDetDto.getMaterialName() + " " + ptlJobOrderDetDto.getWholeQty() + ptlJobOrderDetDto.getWholeUnitName();
                                         materialDesc = electronicTagStorageService.intercepting(materialDesc, 24 - ptlJobOrderDetDto.getWholeUnitName().length() * 2) + ptlJobOrderDetDto.getWholeUnitName();
                                     }
-                                    if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getWholeQty()) || ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
+                                    if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getScatteredQty()) && ptlJobOrderDetDto.getScatteredQty().compareTo(BigDecimal.ZERO) != 0) {
                                         materialDesc2 += ptlJobOrderDetDto.getMaterialName() + " " + ptlJobOrderDetDto.getScatteredQty();
                                         materialDesc2 = electronicTagStorageService.intercepting(materialDesc2, 24 - ptlJobOrderDetDto.getScatteredUnitName().length() * 2) + ptlJobOrderDetDto.getScatteredUnitName();
                                     }
@@ -187,6 +189,7 @@ public class ElectronicTagReceiver {
                             //发送给客户端控制通道灯灭灯
                             rabbitMQDTOArea.setEquipmentTagId(ptlElectronicTagStorageDtoList.get(0).getEquipmentTagId());
                             rabbitMQDTOArea.setElectronicTagId(ptlElectronicTagStorageDtoList.get(0).getEquipmentAreaTagId());
+                            rabbitMQDTOArea.setPosition(ptlElectronicTagStorageDtoList.get(0).getPosition());
                             rabbitMQDTOArea.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                         }
                     }
@@ -236,7 +239,7 @@ public class ElectronicTagReceiver {
                 }
 
                 if (StringUtils.isNotEmpty(rabbitMQDTOArea.getElectronicTagId())) {
-                    electronicTagStorageService.fanoutSender(1002, rabbitMQDTOArea, null);
+                    electronicTagStorageService.fanoutSender(1015, rabbitMQDTOArea, null);
                     log.info("===========发送给客户端控制通道灯灭灯===============");
                 }
 

@@ -84,6 +84,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if (ptlJobOrder.getOrderStatus() == 5) {
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该任务单已取消");
         }
+        if (ptlJobOrder.getOrderStatus() == 6) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该任务单已复核完成");
+        }
         if (ptlJobOrder.getIfAlreadyPrint() != 1) {
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该任务单未打印标签，请先进行打印");
         }
@@ -132,8 +135,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                         RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
                         rabbitMQDTO.setEquipmentTagId(ptlElectronicTagStorageDto.getEquipmentTagId());
                         rabbitMQDTO.setElectronicTagId(ptlElectronicTagStorageDto.getEquipmentAreaTagId());
+                        rabbitMQDTO.setPosition(ptlElectronicTagStorageDto.getPosition());
                         rabbitMQDTO.setQueueName(ptlElectronicTagStorageDto.getQueueName());
-                        fanoutSender(1001, rabbitMQDTO, null);
+                        fanoutSender(1014, rabbitMQDTO, null);
                         log.info("===========发送消息给客户端控制通道灯亮灯完成===============");
                         equipmentAreaTagIds.add(ptlElectronicTagStorageDto.getEquipmentAreaTagId());
                     }
@@ -204,6 +208,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @LcnTransaction
     public ResponseEntityDTO createPtlJobOrder(List<PtlJobOrderDTO> ptlJobOrderDTOList) throws Exception {
 
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+
         List<PtlJobOrderDet> list = new LinkedList<>();
         List<RabbitMQDTO> rabbitMQDTOList = new LinkedList<>();
         List<Long> clientIdList = new LinkedList<>();
@@ -233,7 +239,10 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             ptlJobOrder.setPickBackStatus((byte) 0);
             ptlJobOrder.setIfAlreadyPrint((byte) 0);
             ptlJobOrder.setStatus((byte) 1);
+            ptlJobOrder.setOrgId(currentUser.getOrganizationId());
             ptlJobOrder.setCreateTime(new Date());
+            ptlJobOrder.setCreateUserId(currentUser.getUserId());
+
             ptlJobOrder = electronicTagFeignApi.addPtlJobOrder(ptlJobOrder).getData();
             if (StringUtils.isEmpty(ptlJobOrder)) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990005);
@@ -310,7 +319,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 ptlJobOrderDet.setSpec(ptlJobOrderDetDTO.getSpecification());
                 ptlJobOrderDet.setJobStatus((byte) 1);
                 ptlJobOrderDet.setStatus((byte) 1);
+                ptlJobOrderDet.setOrgId(currentUser.getOrganizationId());
                 ptlJobOrderDet.setCreateTime(new Date());
+                ptlJobOrderDet.setCreateUserId(currentUser.getUserId());
                 ptlJobOrderDet.setIsDelete((byte) 1);
                 list.add(ptlJobOrderDet);
             }
@@ -385,8 +396,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
                 rabbitMQDTO.setEquipmentTagId(ptlJobOrderDetDto.getEquipmentTagId());
                 rabbitMQDTO.setElectronicTagId(ptlJobOrderDetDto.getEquipmentAreaTagId());
+                rabbitMQDTO.setPosition(ptlJobOrderDetDto.getPosition());
                 rabbitMQDTO.setQueueName(ptlJobOrderDetDto.getQueueName());
-                fanoutSender(1002, rabbitMQDTO, null);
+                fanoutSender(1015, rabbitMQDTO, null);
                 log.info("===========发送消息给客户端控制任务单通道灯灭灯完成===============");
                 equipmentAreaTagIds.add(ptlJobOrderDetDto.getEquipmentAreaTagId());
             }
@@ -600,6 +612,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 PtlJobOrder ptlJobOrder = new PtlJobOrder();
                 ptlJobOrder.setJobOrderId(ptlJobOrderDto.getJobOrderId());
                 ptlJobOrder.setOrderStatus((byte) 5);
+                if (ptlJobOrder.getOrderStatus() == 1 && ptlJobOrder.getOrderStatus() == 3) {
+                    ptlJobOrder.setPickBackStatus((byte) 1);
+                }
                 ptlJobOrder.setModifiedTime(new Date());
                 electronicTagFeignApi.updatePtlJobOrder(ptlJobOrder);
 
@@ -621,6 +636,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                         rabbitMQDTO.setOption1("0");
                         rabbitMQDTO.setOption2("1");
                         rabbitMQDTO.setOption3("0");
+                        rabbitMQDTO.setQueueName(ptlJobOrderDetDto.getQueueName());
                         list.add(rabbitMQDTO);
                     }
                 }
@@ -700,8 +716,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
                 rabbitMQDTO.setEquipmentTagId(ptlJobOrderDetDto.getEquipmentTagId());
                 rabbitMQDTO.setElectronicTagId(ptlJobOrderDetDto.getEquipmentAreaTagId());
+                rabbitMQDTO.setPosition(ptlJobOrderDetDto.getPosition());
                 rabbitMQDTO.setQueueName(ptlJobOrderDetDto.getQueueName());
-                fanoutSender(1002, rabbitMQDTO, null);
+                fanoutSender(1015, rabbitMQDTO, null);
                 log.info("===========发送消息给客户端控制任务单通道灯灭灯完成===============");
                 equipmentAreaTagIds.add(ptlJobOrderDetDto.getEquipmentAreaTagId());
             }
@@ -709,6 +726,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
             rabbitMQDTO.setEquipmentTagId(ptlJobOrderDetDto.getEquipmentTagId());
             rabbitMQDTO.setElectronicTagId(ptlJobOrderDetDto.getElectronicTagId());
+            rabbitMQDTO.setQueueName(ptlJobOrderDetDto.getQueueName());
             list.add(rabbitMQDTO);
 
             PtlJobOrderDet ptlJobOrderDet = new PtlJobOrderDet();
@@ -732,17 +750,20 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     public void fanoutSender(Integer code, RabbitMQDTO rabbitMQDTO, List<RabbitMQDTO> rabbitMQDTOList) throws Exception {
 
+        String queueName = RabbitConfig.TOPIC_QUEUE_PTL;
         MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
         mQResponseEntity.setCode(code);
         if (StringUtils.isEmpty(rabbitMQDTOList)) {
             mQResponseEntity.setData(rabbitMQDTO);
+            queueName = rabbitMQDTO.getQueueName();
         } else {
             mQResponseEntity.setData(rabbitMQDTOList);
+            queueName = rabbitMQDTOList.get(0).getQueueName();
         }
         log.info("===========开始发送消息给客户端===============");
         //发送给客户端控制亮/灭灯
-        fanoutSender.send(RabbitConfig.TOPIC_QUEUE_PTL, JSONObject.toJSONString(mQResponseEntity));
-        log.info("===========队列名称:" + RabbitConfig.TOPIC_QUEUE_PTL);
+        fanoutSender.send(queueName, JSONObject.toJSONString(mQResponseEntity));
+        log.info("===========队列名称:" + queueName);
         log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
     }
 
@@ -754,6 +775,22 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         }
         while (s.getBytes("GBK").length > number) {
             s = s.substring(1);
+        }
+        String[] ss = s.split("");
+        int count = 0;
+        int length = 0;
+        for (int i = 0; i < ss.length; i++) {
+            if (ss[i].getBytes("GBK").length == 2 && length % 2 == 1) {
+                count++;
+                length++;
+            }
+            length += ss[i].getBytes("GBK").length;
+        }
+        while  (s.getBytes("GBK").length + count > number) {
+            s = s.substring(1);
+        }
+        if (s.getBytes("GBK").length + count < number) {
+            s += " ";
         }
 
         return s;

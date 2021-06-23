@@ -47,4 +47,7 @@ public class SearchPtlJobOrderDet extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="jobOrderDet",value = "是否对作业单明细分组（0-否 1-是）")
     private int jobOrderDet = 1;
+
+    @ApiModelProperty(name="orgId",value = "组织id")
+    private Long orgId;
 }
