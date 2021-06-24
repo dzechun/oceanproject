@@ -47,7 +47,7 @@
   <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto" extends="BaseResultMap">
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName" />
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
-    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
@@ -97,7 +97,7 @@ wii.storage_id,
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"/>,bmo.material_owner_name,bw.warehouse_name,bs.storage_name,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    select <include refid="Base_Column_List"/>,bmo.material_owner_name,bw.warehouse_name,bs.storage_code,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
     ,bis.inventory_status_name
     from wms_inner_inventory wii
     LEFT JOIN base_material_owner bmo ON wii.material_owner_id = bmo.material_owner_id

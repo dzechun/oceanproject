@@ -35,12 +35,12 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
     private String warehouseName;
 
     /**
-     * 库位名称
+     * 库位编码
      */
-    @ApiModelProperty(name="storageName",value = "库位名称")
-    @Excel(name = "库位名称", height = 20, width = 30,orderNum="5")
+    @ApiModelProperty(name="storageCode",value = "库位编码")
+    @Excel(name = "库位编码", height = 20, width = 30,orderNum="5")
     @Transient
-    private String storageName;
+    private String storageCode;
 
     /**
      * 物料编码

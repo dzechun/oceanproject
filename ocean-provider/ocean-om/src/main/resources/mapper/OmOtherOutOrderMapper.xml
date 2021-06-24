@@ -14,6 +14,9 @@
     <result column="consignee_id" jdbcType="BIGINT" property="consigneeId" />
     <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
     <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
+    <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
+    <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
+    <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
@@ -41,6 +44,9 @@
 ouo.other_out_order_code,
 ouo.customer_order_code,
 ouo.material_owner_id,
+ouo.total_volume,
+ouo.total_net_weight,
+ouo.total_gross_weight,
 ouo.consignee_id,
 ouo.link_man_name,
 ouo.order_status,
@@ -87,5 +93,11 @@ ouo.option3
   and ouo.order_status = #{orderStatus}
 </if>
 </where>
+  </select>
+  <select id="findMaterial" resultMap="BaseResultMap">
+    select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as total_net_weight,IFNULL(bmb.gross_weight,0) as total_gross_weight
+    From base_material bm
+           left join base_material_tab bmb ON bm.material_id = bmb.material_id
+    where bm.material_id = #{materialId}
   </select>
 </mapper>

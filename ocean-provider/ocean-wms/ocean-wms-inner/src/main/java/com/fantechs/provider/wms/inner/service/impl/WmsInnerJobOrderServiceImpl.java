@@ -398,8 +398,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int num = 0;
         for (WmsInnerJobOrderDet wmsInPutawayOrderDet : wmsInPutawayOrderDets) {
             WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(wmsInPutawayOrderDet.getJobOrderId());
-            if(wmsInnerJobOrder.getStatus()==6){
-                wmsInnerJobOrder.setStatus((byte)3);
+            if(wmsInnerJobOrder.getOrderStatus()==6){
+                wmsInnerJobOrder.setOrderStatus((byte)3);
             }
             if(wmsInnerJobOrder.getOrderStatus()==(byte)5){
                 throw new BizErrorException("单据确认已完成");

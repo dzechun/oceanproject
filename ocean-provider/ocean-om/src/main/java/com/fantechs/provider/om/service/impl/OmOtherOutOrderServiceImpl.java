@@ -5,10 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
-import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
-import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
-import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
-import com.fantechs.common.base.general.entity.om.OmTransferOrderDet;
+import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -126,6 +123,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
         record.setOrderStatus((byte)1);
+        record = this.calculateWeight(record);
         int num = omOtherOutOrderMapper.insertUseGeneratedKeys(record);
         for (OmOtherOutOrderDet omOtherOutOrderDet : record.getOmOtherOutOrderDets()) {
             omOtherOutOrderDet.setOtherOutOrderId(record.getOtherOutOrderId());
@@ -139,6 +137,30 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         return num;
     }
 
+    /**
+     * 计算重量
+     * @param omOtherOutOrder
+     * @return
+     */
+    private OmOtherOutOrder calculateWeight(OmOtherOutOrder omOtherOutOrder){
+        BigDecimal totalVolume = BigDecimal.ZERO;
+        BigDecimal totalNetWeight = BigDecimal.ZERO;
+        BigDecimal totalGrossWeight = BigDecimal.ZERO;
+        for (OmOtherOutOrderDet omOtherOutOrderDet : omOtherOutOrder.getOmOtherOutOrderDets()) {
+            if(StringUtils.isEmpty(omOtherOutOrderDet.getMaterialId())){
+                throw new BizErrorException("物料错误");
+            }
+            OmOtherOutOrder om = omOtherOutOrderMapper.findMaterial(omOtherOutOrderDet.getMaterialId());
+            totalVolume.add(om.getTotalVolume());
+            totalNetWeight.add(om.getTotalNetWeight());
+            totalGrossWeight.add(om.getTotalGrossWeight());
+        }
+        omOtherOutOrder.setTotalVolume(totalVolume);
+        omOtherOutOrder.setTotalNetWeight(totalNetWeight);
+        omOtherOutOrder.setTotalGrossWeight(totalGrossWeight);
+        return omOtherOutOrder;
+    }
+
     @Override
     public int update(OmOtherOutOrder entity) {
         SysUser sysUser = currentUser();
@@ -147,6 +169,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
+        entity = this.calculateWeight(entity);
         int num = omOtherOutOrderMapper.updateByPrimaryKeySelective(entity);
         //删除原有明细
         Example example = new Example(OmOtherOutOrderDet.class);
