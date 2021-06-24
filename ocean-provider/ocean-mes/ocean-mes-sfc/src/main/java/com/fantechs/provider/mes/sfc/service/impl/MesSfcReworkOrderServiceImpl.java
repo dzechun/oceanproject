@@ -123,13 +123,10 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         }
 
         // 工艺路线
-        SearchBaseRoute searchBaseRoute = new SearchBaseRoute();
-        searchBaseRoute.setRouteId(doReworkOrderDto.getRouteId());
-        List<BaseRoute> baseRoutes = baseFeignApi.findRouteList(searchBaseRoute).getData();
-        if (baseRoutes == null || baseRoutes.size() <= 0) {
+        BaseRoute baseRoute = baseFeignApi.routeDetail(doReworkOrderDto.getRouteId()).getData();
+        if (baseRoute == null) {
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "工艺路线不存在或已被删除");
         }
-        BaseRoute baseRoute = baseRoutes.get(0);
         // 工序
         BaseProcess baseProcess = baseFeignApi.processDetail(doReworkOrderDto.getProcessId()).getData();
         if (baseProcess == null) {
