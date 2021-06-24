@@ -51,13 +51,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
     @Column(name = "material_owner_id")
     private Long materialOwnerId;
 
-    /**
-     * 仓库ID
-     */
-    @ApiModelProperty(name="warehouseId",value = "仓库ID")
-    @Excel(name = "仓库ID", height = 20, width = 30,orderNum="")
-    @Column(name = "warehouse_id")
-    private Long warehouseId;
 
     /**
      * 供应商ID
@@ -73,9 +66,22 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 单据类型ID
      */
     @ApiModelProperty(name="orderTypeId",value = "单据类型ID")
-    @Excel(name = "单据类型ID", height = 20, width = 30,orderNum="") 
     @Column(name = "order_type_id")
     private Long orderTypeId;
+
+    /**
+     * 仓库ID
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
+
+    /**
+     * 库位ID
+     */
+    @ApiModelProperty(name="storageId",value = "库位ID")
+    @Column(name = "storage_id")
+    private Long storageId;
 
 
     /**

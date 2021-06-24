@@ -85,10 +85,10 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
         WmsInAsnOrderDto asnOrderDto = wmsInAsnOrderMapper.findList(searchWmsInAsnOrder).get(0);
 
         String barcode = wmsInAsnOrderDetDto.getBarcode();
-        if(wmsInAsnOrderDetDto.getIsComingMaterial()==1){//是来料
+        if(wmsInAsnOrderDetDto.getIsComingMaterial()!=null&&wmsInAsnOrderDetDto.getIsComingMaterial()==1){//是来料
             return wmsInAsnOrderDetDto.getDefaultQty();
         }else if (barcode.equals(asnOrderDetDto.getMaterialCode())) {//非来料且是物料编码
-            return null;
+            return new BigDecimal(0);
         }else {//非来料且非物料编码
             //判断是否能入库
             if(asnOrderDto.getOrderTypeId()==3) {

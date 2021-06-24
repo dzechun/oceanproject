@@ -121,8 +121,6 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             WmsOutTransferDeliveryOrderDto wmsOutTransferDeliveryOrderDto = new WmsOutTransferDeliveryOrderDto();
             BeanUtils.copyProperties(wmsOutDeliveryOrderDto,wmsOutTransferDeliveryOrderDto);
             wmsOutTransferDeliveryOrderDto.setTotalDispatchQty(dispatchSum);
-            wmsOutTransferDeliveryOrderDto.setWarehouseName(list.size()>0?list.get(0).getWarehouseName():null);
-            wmsOutTransferDeliveryOrderDto.setStorageCode(list.size()>0?list.get(0).getStorageCode():null);
             wmsOutTransferDeliveryOrderDtos.add(wmsOutTransferDeliveryOrderDto);
         }
 
@@ -183,8 +181,6 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             WmsOutTransferDeliveryOrderDto wmsOutTransferDeliveryOrderDto = new WmsOutTransferDeliveryOrderDto();
             BeanUtils.copyProperties(wmsOutHtDeliveryOrder,wmsOutTransferDeliveryOrderDto);
             wmsOutTransferDeliveryOrderDto.setTotalDispatchQty(dispatchSum);
-            wmsOutTransferDeliveryOrderDto.setWarehouseName(list.size()>0?list.get(0).getWarehouseName():null);
-            wmsOutTransferDeliveryOrderDto.setStorageCode(list.size()>0?list.get(0).getStorageCode():null);
             wmsOutTransferDeliveryOrderDtos.add(wmsOutTransferDeliveryOrderDto);
         }
 

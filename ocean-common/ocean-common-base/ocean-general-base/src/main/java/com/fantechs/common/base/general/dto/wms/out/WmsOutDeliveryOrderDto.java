@@ -19,6 +19,14 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
     @Excel(name = "货主名称", height = 20, width = 30,orderNum="3")
     private String materialOwnerName;
 
+    @Transient
+    @ApiModelProperty(name="storageCode" ,value="库位编码")
+    private String storageCode;
+
+    @Transient
+    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    private String warehouseName;
+
     /**
      * 总数量
      */
