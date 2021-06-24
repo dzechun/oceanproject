@@ -88,7 +88,11 @@
   wiao.is_delete
   </sql>
     <select id="findList" resultMap="BaseResultDto">
-      select <include refid="BaseColumn"/><if test="orderTypeId==5">,osro.sales_return_order_code</if>,bw.warehouse_name,bws.storage_code,
+      select <include refid="BaseColumn"/>
+      <if test="orderTypeId==5">,osro.sales_return_order_code</if>
+    <if test="orderTypeId==6">,oio.other_in_order_code</if>
+    <if test="orderTypeId==7">,ouo.other_out_order_id</if>
+        ,bw.warehouse_name,bws.storage_code,
       (select SUM(wiaod.packing_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as packing_qty,
       (select SUM(wiaod.actual_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as actual_qty,
       (select SUM(wiaod.putaway_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as putaway_qty,
@@ -99,6 +103,12 @@
       <if test="orderTypeId==5">
         LEFT JOIN om_sales_return_order osro ON osro.sales_return_order_id = wiao.source_order_id
       </if>
+    <if test="orderTypeId==6">
+      LEFT JOIN om_other_in_order oio ON oio.other_in_order_id = wiao.source_order_id
+    </if>
+            <if test="orderTypeId==7">
+              LEFT JOIN om_other_out_order ouo ON ouo.other_out_order_id = wiao.source_order_id
+            </if>
       left join base_material_owner bmo ON wiao.material_owner_id=bmo.material_owner_id
       LEFT JOIN base_warehouse bw ON wiao.warehouse_id = bw.warehouse_id
       LEFT JOIN base_storage bws ON wiao.storage_id = bws.storage_id

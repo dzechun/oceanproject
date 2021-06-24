@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import com.fantechs.common.base.general.entity.om.OmTransferOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
@@ -15,6 +16,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmTransferOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
@@ -40,6 +42,8 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     private OmTransferOrderDetMapper omTransferOrderDetMapper;
     @Resource
     private OutFeignApi outFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<OmTransferOrderDto> findList(Map<String, Object> map) {
@@ -94,12 +98,18 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             if(list.size()<1){
                 throw new BizErrorException("下发失败");
             }
+            //获取仓库联系人
+            BaseWarehouse baseWarehouse = baseFeignApi.getWarehouseDetail(omTransferOrder.getOutWarehouseId()).getData();
             //出库单表头
             WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
             wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("DBCK-"));
             wmsOutDeliveryOrder.setMaterialOwnerId(omTransferOrder.getMaterialOwnerId());
             wmsOutDeliveryOrder.setSourceOrderId(omTransferOrder.getTransferOrderId());
             wmsOutDeliveryOrder.setRelatedOrderCode1(omTransferOrder.getTransferOrderCode());
+            wmsOutDeliveryOrder.setWarehouseId(omTransferOrder.getOutWarehouseId());
+            wmsOutDeliveryOrder.setStorageId(Long.parseLong("5517"));
+            wmsOutDeliveryOrder.setLinkManName(baseWarehouse.getLinkManName());
+            wmsOutDeliveryOrder.setLinkManPhone(baseWarehouse.getLinkManPhone());
             wmsOutDeliveryOrder.setOrderTypeId((long)2);
             wmsOutDeliveryOrder.setOrderStatus((byte)1);
             wmsOutDeliveryOrder.setOrderDate(new Date());
@@ -111,6 +121,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
                 wmsOutDeliveryOrderDetDto.setWarehouseId(omTransferOrder.getOutWarehouseId());
                 wmsOutDeliveryOrderDetDto.setSourceOrderId(omTransferOrder.getTransferOrderId());
                 wmsOutDeliveryOrderDetDto.setOrderDetId(omTransferOrderDet.getTransferOrderDetId());
+                wmsOutDeliveryOrderDetDto.setMaterialId(omTransferOrderDet.getMaterialId());
                 wmsOutDeliveryOrderDetDto.setLineNumber(i);
                 wmsOutDeliveryOrderDetDto.setPackingUnitName(omTransferOrderDet.getUnitName());
                 wmsOutDeliveryOrderDetDto.setPackingQty(omTransferOrderDet.getOrderQty());

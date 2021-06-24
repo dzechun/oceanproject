@@ -1002,6 +1002,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         wmsInAsnOrder.setRelatedOrderCode2(res.getDeliveryOrderCode());
         wmsInAsnOrder.setCustomerOrderCode(res.getCustomerOrderCode());
         wmsInAsnOrder.setOrderDate(res.getOrderDate());
+        wmsInAsnOrder.setWarehouseId(res.getWarehouseId());
+        wmsInAsnOrder.setStorageId(Long.parseLong("5516"));
         wmsInAsnOrder.setPlanAgoDate(new Date());
         wmsInAsnOrder.setLinkManName(res.getLinkManName());
         wmsInAsnOrder.setLinkManPhone(res.getLinkManPhone());

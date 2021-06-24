@@ -244,11 +244,14 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 break;
                 //销退入库单
             case "5":
-                //反写销退订单收货数量
                 OmSalesReturnOrderDet omSalesReturnOrderDet = new OmSalesReturnOrderDet();
+                omSalesReturnOrderDet.setSalesReturnOrderId(wms.getSourceOrderId());
                 omSalesReturnOrderDet.setSalesReturnOrderDetId(wms.getOrderDetId());
                 omSalesReturnOrderDet.setReceivingQty(wmsInAsnOrderDet.getPutawayQty());
-                //ResponseEntity responseEntity =
+                ResponseEntity responseEntity = omFeignApi.writeQty(omSalesReturnOrderDet);
+                if(responseEntity.getCode()!=0){
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                }
                 break;
                 //其他入库单
             case "6":
