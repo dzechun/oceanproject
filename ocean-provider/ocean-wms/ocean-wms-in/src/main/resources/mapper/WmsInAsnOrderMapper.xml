@@ -8,9 +8,10 @@
     <id column="asn_order_id" jdbcType="BIGINT" property="asnOrderId" />
     <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId" />
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="asn_code" jdbcType="VARCHAR" property="asnCode" />
     <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
     <result column="related_order_code_1" jdbcType="VARCHAR" property="relatedOrderCode1" />
@@ -41,6 +42,7 @@
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
     <result column="sales_return_order_code" jdbcType="VARCHAR" property="salesReturnOrderCode"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
     <result column="order_type_name" jdbcType="VARCHAR" property="orderTypeName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
@@ -55,9 +57,10 @@
     wiao.asn_order_id,
       wiao.source_order_id,
   wiao.material_owner_id,
-wiao.warehouse_id,
   wiao.supplier_id,
   wiao.order_type_id,
+    wiao.warehouse_id,
+    wiao.storage_id,
   wiao.asn_code,
   wiao.customer_order_code,
   wiao.related_order_code_1,
@@ -85,7 +88,7 @@ wiao.warehouse_id,
   wiao.is_delete
   </sql>
     <select id="findList" resultMap="BaseResultDto">
-      select <include refid="BaseColumn"/><if test="orderTypeId==5">,osro.sales_return_order_code</if>,bw.warehouse_name,
+      select <include refid="BaseColumn"/><if test="orderTypeId==5">,osro.sales_return_order_code</if>,bw.warehouse_name,bws.storage_code,
       (select SUM(wiaod.packing_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as packing_qty,
       (select SUM(wiaod.actual_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as actual_qty,
       (select SUM(wiaod.putaway_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as putaway_qty,
@@ -97,7 +100,8 @@ wiao.warehouse_id,
         LEFT JOIN om_sales_return_order osro ON osro.sales_return_order_id = wiao.source_order_id
       </if>
       left join base_material_owner bmo ON wiao.material_owner_id=bmo.material_owner_id
-          left join base_warehouse bw on bw.warehouse_id = wiao.warehouse_id
+      LEFT JOIN base_warehouse bw ON wiao.warehouse_id = bw.warehouse_id
+      LEFT JOIN base_storage bws ON wiao.storage_id = bws.storage_id
       LEFT JOIN base_supplier bs ON bs.supplier_id=wiao.supplier_id
         LEFT join base_order_type boy on wiao.order_type_id = boy.order_type_id
       LEFT JOIN ocean_v2.sys_user su ON wiao.create_user_id = su.user_id
@@ -121,6 +125,12 @@ wiao.warehouse_id,
       </if>
       <if test="orderTypeId!=null and orderTypeId!=''">
         and wiao.order_type_id = #{orderTypeId}
+      </if>
+      <if test="orderStatusList != null and orderStatusList.size()>0">
+        and wiao.order_status
+        <foreach collection="orderStatusList" open="in (" close=")" item="item" separator="," index="index">
+          #{item}
+        </foreach>
       </if>
 </where>
 order by wiao.create_time desc
