@@ -4,6 +4,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
+import com.fantechs.common.base.general.entity.om.OmTransferOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmTransferOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

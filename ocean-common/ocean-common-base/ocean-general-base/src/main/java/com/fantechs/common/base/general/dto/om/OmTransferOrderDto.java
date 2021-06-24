@@ -1,9 +1,11 @@
 package com.fantechs.common.base.general.dto.om;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,6 +16,14 @@ import java.math.BigDecimal;
  */
 @Data
 public class OmTransferOrderDto extends OmTransferOrder implements Serializable {
+
+    /**
+     * 订单总数量
+     */
+    @Transient
+    @ApiModelProperty(name="totalQty",value = "订单总数量")
+    private BigDecimal totalQty;
+
     /**
      * 货主
      */

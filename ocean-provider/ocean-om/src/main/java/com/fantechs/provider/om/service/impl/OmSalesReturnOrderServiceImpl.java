@@ -93,7 +93,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                         .materialId(omSalesReturnOrderDet.getMaterialId())
                         .packingUnitName(omSalesReturnOrderDet.getUnitName())
                         .batchCode(omSalesReturnOrderDet.getBatchCode())
-                        .packingQty(omSalesReturnOrderDet.getOrderQty())
+                        .packingQty(omSalesReturnOrderDet.getQty())
                         .productionDate(omSalesReturnOrderDet.getProductionDate())
                         .expiredDate(omSalesReturnOrderDet.getExpiredDate())
                         .lineNumber(i++)
@@ -238,6 +238,29 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 num+=omHtSalesReturnOrderDetMapper.insertSelective(omHtSalesReturnOrderDet);
             }
         }
+        return num;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int writeQty(OmSalesReturnOrderDet omSalesReturnOrderDet){
+        OmSalesReturnOrder omSalesReturnOrder = omSalesReturnOrderMapper.selectByPrimaryKey(omSalesReturnOrderDet.getSalesOrderId());
+        if(StringUtils.isEmpty(omSalesReturnOrder)){
+            throw new BizErrorException("查询订单失败");
+        }
+        OmSalesReturnOrderDet omSalesReturnOrderDet1 = omSalesReturnOrderDetMapper.selectByPrimaryKey(omSalesReturnOrderDet.getSalesReturnOrderDetId());
+        if(StringUtils.isEmpty(omSalesReturnOrderDet1)){
+            throw new BizErrorException("未获取到订单信息");
+        }
+        if(StringUtils.isEmpty(omSalesReturnOrderDet1.getReceivingQty())){
+            omSalesReturnOrderDet1.setReceivingQty(BigDecimal.ZERO);
+        }
+        omSalesReturnOrderDet.setReceivingQty(omSalesReturnOrderDet1.getReceivingQty().add(omSalesReturnOrderDet.getReceivingQty()));
+        if(omSalesReturnOrderDet.getReceivingQty().compareTo(omSalesReturnOrderDet1.getIssueQty())==0){
+            omSalesReturnOrder.setOrderStatus((byte)4);
+        }
+        int num = omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
+        num+=omSalesReturnOrderMapper.updateByPrimaryKeySelective(omSalesReturnOrder);
         return num;
     }
 

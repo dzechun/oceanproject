@@ -11,7 +11,6 @@
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
     <result column="out_warehouse_id" jdbcType="BIGINT" property="outWarehouseId" />
     <result column="in_warehouse_id" jdbcType="BIGINT" property="inWarehouseId" />
-    <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
@@ -27,6 +26,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmTransferOrderDto">
+      <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
     <result column="out_warehouse_name" jdbcType="VARCHAR" property="outWarehouseName"/>
     <result column="in_warehouse_name" jdbcType="VARCHAR" property="inWarehouseName"/>

@@ -41,11 +41,8 @@
 ouo.other_out_order_code,
 ouo.customer_order_code,
 ouo.material_owner_id,
-ouo.total_issue_qty,
-ouo.total_dispatch_qty,
 ouo.consignee_id,
 ouo.link_man_name,
-ouo.total_qty,
 ouo.order_status,
 ouo.status,
 ouo.order_date,
@@ -63,10 +60,10 @@ ouo.option2,
 ouo.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,bc.consignee_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
-    (SELECT SUM(osrod.order_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_qty,
-    (SELECT SUM(osrod.issue_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_issue_qty,
-    (SELECT SUM(osrod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_dispatch_qty
+    SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,bc.consignee_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+    (SELECT SUM(ouod.order_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_qty,
+    (SELECT SUM(ouod.issue_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_issue_qty,
+    (SELECT SUM(ouod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_dispatch_qty
     FROM om_other_out_order ouo
     LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = ouo.material_owner_id
         LEFT JOIN base_consignee bc ON  ouo.consignee_id = bc.consignee_id

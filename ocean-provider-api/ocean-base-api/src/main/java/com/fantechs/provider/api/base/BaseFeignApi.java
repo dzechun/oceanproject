@@ -130,6 +130,9 @@ public interface BaseFeignApi {
     @PostMapping("/baseWarehouse/findList")
     ResponseEntity<List<BaseWarehouse>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseWarehouse searchBaseWarehouse);
 
+    @ApiOperation("获取详情")
+    @PostMapping("/baseWarehouse/detail")
+    ResponseEntity<BaseWarehouse> getWarehouseDetail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("根据条件查询线别")
     @PostMapping("/baseProLine/findList")

@@ -29,5 +29,8 @@ public class StorageDistributionRuleUtils {
         storageDistributionRuleUtils.baseStorageService = this.baseStorageService;
     }
 
+    /**
+     * 上架分配主规则
+     */
     //public static List<>
 }

@@ -48,4 +48,8 @@ public interface OMFeignApi {
     @ApiOperation("修改单据状态")
     @PostMapping("/omTransferOrder/updateStatus")
     ResponseEntity updateStatus(@RequestBody OmTransferOrder omTransferOrder);
+
+    @ApiOperation("反写销退入库订单收货数量")
+    @PostMapping("/omSalesReturnOrder/writeQty")
+    ResponseEntity writeQty(@RequestBody OmSalesReturnOrderDet omSalesReturnOrderDet);
 }
