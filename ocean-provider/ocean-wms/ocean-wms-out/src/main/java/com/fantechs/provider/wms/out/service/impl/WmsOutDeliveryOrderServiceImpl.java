@@ -342,12 +342,15 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     public int createJobOrder(Long id) {
         Map<String, Object> map = new HashMap<>();
         map.put("deliveryOrderId", id);
-        List<WmsOutDeliveryOrderDto> list = this.findList(map);
+        List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderMapper.findList(map);
         if (StringUtils.isEmpty(list)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
         WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
-        List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrderDto.getWmsOutDeliveryOrderDetList();
+
+        SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
+        searchWmsOutDeliveryOrderDet.setDeliveryOrderId(id);
+        List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrderDet));
         if (StringUtils.isEmpty(wmsOutDeliveryOrderDetList)) {
             throw new BizErrorException("出库单明细为空时无法创建作业单");
         }
