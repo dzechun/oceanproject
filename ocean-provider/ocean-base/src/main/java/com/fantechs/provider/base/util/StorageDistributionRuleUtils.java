@@ -29,5 +29,5 @@ public class StorageDistributionRuleUtils {
         storageDistributionRuleUtils.baseStorageService = this.baseStorageService;
     }
 
-    public static List<>
+    //public static List<>
 }
