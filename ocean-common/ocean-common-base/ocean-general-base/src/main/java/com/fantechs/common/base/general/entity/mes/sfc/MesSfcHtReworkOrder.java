@@ -44,6 +44,14 @@ public class MesSfcHtReworkOrder extends ValidGroup implements Serializable {
     private String reworkOrderCode;
 
     /**
+     * 返工物料ID
+     */
+    @ApiModelProperty(name="materialId",value = "返工物料ID")
+    @Excel(name = "返工物料ID", height = 20, width = 30,orderNum="")
+    @Column(name = "material_id")
+    private Long materialId;
+
+    /**
      * 返工工艺路线ID
      */
     @ApiModelProperty(name="reworkRouteId",value = "返工工艺路线ID")

@@ -142,8 +142,16 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "工序所属工段不存在或已被删除");
         }
 
+        // 获取需要处理条码
+        List<MesSfcBarcodeProcessDto> barcodeProcessDtos = mesSfcBarcodeProcessService.findList(ControllerUtil.dynamicConditionByEntity(doReworkOrderDto.getSearchMesSfcBarcodeProcess()));
+
+        if (barcodeProcessDtos == null || barcodeProcessDtos.size() <= 0) {
+            throw new BizErrorException("查询不到需返工条码");
+        }
+
         MesSfcReworkOrder mesSfcReworkOrder = new MesSfcReworkOrder();
         mesSfcReworkOrder.setReworkOrderCode(doReworkOrderDto.getReworkOrderCode());
+        mesSfcReworkOrder.setMaterialId(barcodeProcessDtos.get(0).getMaterialId());
         mesSfcReworkOrder.setCreateTime(new Date());
         mesSfcReworkOrder.setReworkStatus((byte) 1);
         mesSfcReworkOrder.setReworkRouteId(doReworkOrderDto.getRouteId());
@@ -159,13 +167,6 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         mesSfcHtReworkOrderMapper.insert(mesSfcHtReworkOrder);
         // 保存返工单
         mesSfcReworkOrderMapper.insert(mesSfcReworkOrder);
-
-        // 获取需要处理条码
-        List<MesSfcBarcodeProcessDto> barcodeProcessDtos = mesSfcBarcodeProcessService.findList(ControllerUtil.dynamicConditionByEntity(doReworkOrderDto.getSearchMesSfcBarcodeProcess()));
-
-        if (barcodeProcessDtos == null || barcodeProcessDtos.size() <= 0) {
-            throw new BizErrorException("查询不到需返工条码");
-        }
 
         List<String> orderIds = new ArrayList<>();
         List<String> workOrderBarcodeIds = new ArrayList<>();
