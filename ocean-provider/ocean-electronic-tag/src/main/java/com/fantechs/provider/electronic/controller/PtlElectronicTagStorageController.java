@@ -97,7 +97,7 @@ public class PtlElectronicTagStorageController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtos = EasyPoiUtils.importExcel(file, PtlElectronicTagStorageDto.class);
+            List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtos = EasyPoiUtils.importExcel(file, 1,1, PtlElectronicTagStorageDto.class);
             Map<String, Object> resultMap = ptlElectronicTagStorageService.importElectronicTagController(ptlElectronicTagStorageDtos);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {

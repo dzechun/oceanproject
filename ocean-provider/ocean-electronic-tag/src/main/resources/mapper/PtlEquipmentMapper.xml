@@ -7,6 +7,7 @@
         -->
         <id column="equipment_id" jdbcType="BIGINT" property="equipmentId"/>
         <result column="equipment_tag_id" jdbcType="VARCHAR" property="equipmentTagId"/>
+        <result column="position" jdbcType="VARCHAR" property="position"/>
         <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
         <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
         <result column="equipment_data" jdbcType="VARCHAR" property="equipmentData"/>
@@ -32,9 +33,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-      se.equipment_id,se.equipment_tag_id, se.client_id, se.equipment_code, se.equipment_name, se.equipment_data, se.equipment_ip, se.equipment_port,
-      se.equipment_type, se.org_id, se.remark, se.status, se.create_user_id, se.create_time, se.modified_user_id,
-      se.modified_time
+      se.equipment_id,se.equipment_tag_id, se.position, se.client_id, se.equipment_code, se.equipment_name, se.equipment_data, se.equipment_ip,
+      se.equipment_port, se.equipment_type, se.org_id, se.remark, se.status, se.create_user_id, se.create_time, se.modified_user_id, se.modified_time
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
@@ -77,6 +77,9 @@
             </if>
             <if test="status!=null">
                 and se.status=#{status}
+            </if>
+            <if test="orgId!=null">
+                and se.org_id=#{orgId}
             </if>
         </where>
         order by create_time desc

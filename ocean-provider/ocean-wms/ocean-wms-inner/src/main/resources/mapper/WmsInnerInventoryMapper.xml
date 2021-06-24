@@ -123,6 +123,9 @@ wii.storage_id,
       <if test="warehouseName!=null and warehouseName != ''">
         and wii.warehouse_name like CONCAT("%",#{warehouseName},"%")
       </if>
+      <if test="storageId!=null and storageId != ''">
+        and wii.storage_id = #{storageId}
+      </if>
       <if test="storageName!=null and storageName != ''">
         and wii.storage_name like CONCAT("%",#{storageName},"%")
       </if>

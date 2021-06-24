@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -35,9 +36,9 @@ public class WmsInAsnOrderDetController {
 
     @ApiOperation("检查条码")
     @PostMapping("/checkBarcode")
-    public ResponseEntity<WmsInAsnOrderDetDto> checkBarcode(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInAsnOrderDetDto wmsInAsnOrderDetDto) {
-        WmsInAsnOrderDetDto asnOrderDetDto = wmsInAsnOrderDetService.checkBarcode(wmsInAsnOrderDetDto);
-        return  ControllerUtil.returnDataSuccess(asnOrderDetDto,StringUtils.isEmpty(asnOrderDetDto)?0:1);
+    public ResponseEntity<BigDecimal> checkBarcode(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInAsnOrderDetDto wmsInAsnOrderDetDto) {
+        BigDecimal num = wmsInAsnOrderDetService.checkBarcode(wmsInAsnOrderDetDto);
+        return  ControllerUtil.returnDataSuccess(num,1);
     }
 
     @ApiOperation("提交")

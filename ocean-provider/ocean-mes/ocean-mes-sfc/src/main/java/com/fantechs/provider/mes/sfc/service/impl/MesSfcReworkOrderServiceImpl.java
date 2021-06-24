@@ -31,6 +31,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by leifengzhi on 2021/06/15.
@@ -58,6 +59,8 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
     private MesSfcProductPalletService mesSfcProductPalletService;
     @Resource
     private MesSfcProductPalletDetService mesSfcProductPalletDetService;
+    @Resource
+    private MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
@@ -96,16 +99,16 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
 
         // 所有符合条码
         List<MesSfcBarcodeProcessDto> barcodeProcessDtos = mesSfcBarcodeProcessService.findList(ControllerUtil.dynamicConditionByEntity(searchMesSfcBarcodeProcess));
-        List<String> orderIds = new ArrayList<>();
+        List<String> workOrderBarcodeIds = new ArrayList<>();
         for (MesSfcBarcodeProcessDto dto : barcodeProcessDtos) {
-            if (!orderIds.contains(dto.getWorkOrderId().toString())) {
-                orderIds.add(dto.getWorkOrderId().toString());
+            if (!workOrderBarcodeIds.contains(dto.getWorkOrderBarcodeId().toString())) {
+                workOrderBarcodeIds.add(dto.getWorkOrderBarcodeId().toString());
             }
         }
-        // 获取所有工单的部件清单并集
+        // 获取所有条码的部件清单并集
         Map<String, Object> map = new HashMap<>();
-        map.put("workOrderIds", orderIds);
-        List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
+        map.put("workOrderBarcodeIds", workOrderBarcodeIds);
+        List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findListForGroup(map);
         generateReworkOrderCodeDto.setKeyPartRelevanceDtos(keyPartRelevanceDtos);
         return generateReworkOrderCodeDto;
     }
@@ -256,6 +259,16 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             mesSfcBarcodeProcessService.batchUpdate(mesSfcBarcodeProcessList);
             // 批量修改工单完工数量
             pmFeignApi.batchUpdate(mesPmWorkOrders);
+            // 重置生产订单条码状态
+            Example workOrderBarcodeExample = new Example(MesSfcWorkOrderBarcode.class);
+            workOrderBarcodeExample.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
+            List<MesSfcWorkOrderBarcode> workOrderBarcodes = mesSfcWorkOrderBarcodeService.selectByExample(workOrderBarcodeExample);
+            if(workOrderBarcodes != null && workOrderBarcodes.size() > 0){
+                for(MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode : workOrderBarcodes){
+                    mesSfcWorkOrderBarcode.setBarcodeType((byte) 1);
+                }
+                mesSfcWorkOrderBarcodeService.batchUpdate(workOrderBarcodes);
+            }
 
             if (doReworkOrderDto.getClearCarton() && cartonCodeList.size() > 0) {
                 // 所有包箱

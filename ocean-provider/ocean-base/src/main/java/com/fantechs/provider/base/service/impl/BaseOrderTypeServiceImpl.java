@@ -93,7 +93,6 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
 
         baseOrderType.setModifiedTime(new Date());
         baseOrderType.setModifiedUserId(currentUser.getUserId());
-        baseOrderType.setOrgId(currentUser.getOrganizationId());
         int i = baseOrderTypeMapper.updateByPrimaryKeySelective(baseOrderType);
 
         //新增履历

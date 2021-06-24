@@ -25,4 +25,9 @@ public class MesSfcKeyPartRelevanceServiceImpl extends BaseService<MesSfcKeyPart
     public List<MesSfcKeyPartRelevanceDto> findList(Map<String, Object> map) {
         return mesSfcKeyPartRelevanceMapper.findList(map);
     }
+
+    @Override
+    public List<MesSfcKeyPartRelevanceDto> findListForGroup(Map<String, Object> map) {
+        return mesSfcKeyPartRelevanceMapper.findListForGroup(map);
+    }
 }

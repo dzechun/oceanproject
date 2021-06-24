@@ -28,4 +28,11 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
     List<MesSfcWorkOrderBarcode> add(MesSfcWorkOrderBarcode record);
 
     MesSfcWorkOrderBarcode findBarcode(String barcode);
+
+    /**
+     * 批量修改生产订单条码状态
+     * @param workOrderBarcodes
+     * @return
+     */
+    int batchUpdate(List<MesSfcWorkOrderBarcode> workOrderBarcodes);
 }

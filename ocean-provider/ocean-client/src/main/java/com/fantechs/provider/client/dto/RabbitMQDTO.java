@@ -12,6 +12,9 @@ public class RabbitMQDTO {
     @ApiModelProperty(name="electronicTagId",value = "电子标签id")
     private String electronicTagId;
 
+    @ApiModelProperty(name="position",value = "设备标签ID顺序位置")
+    private String position;
+
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
     private String materialDesc;
 

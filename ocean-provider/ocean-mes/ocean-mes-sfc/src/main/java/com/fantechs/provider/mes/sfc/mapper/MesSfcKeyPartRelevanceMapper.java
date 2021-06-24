@@ -12,4 +12,6 @@ import java.util.Map;
 public interface MesSfcKeyPartRelevanceMapper extends MyMapper<MesSfcKeyPartRelevance> {
 
     List<MesSfcKeyPartRelevanceDto> findList(Map<String, Object> map);
+
+    List<MesSfcKeyPartRelevanceDto> findListForGroup(Map<String, Object> map);
 }

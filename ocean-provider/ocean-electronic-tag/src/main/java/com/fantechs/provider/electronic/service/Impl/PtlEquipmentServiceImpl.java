@@ -43,6 +43,7 @@ public class PtlEquipmentServiceImpl extends BaseService<PtlEquipment> implement
         if(StringUtils.isNotEmpty(equipment)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+        ptlEquipment.setOrgId(user.getOrganizationId());
         ptlEquipment.setCreateUserId(user.getUserId());
         ptlEquipment.setCreateTime(new Date());
         ptlEquipment.setModifiedUserId(user.getUserId());
@@ -94,6 +95,11 @@ public class PtlEquipmentServiceImpl extends BaseService<PtlEquipment> implement
 
     @Override
     public List<PtlEquipmentDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         return ptlEquipmentMapper.findList(map);
     }
 }

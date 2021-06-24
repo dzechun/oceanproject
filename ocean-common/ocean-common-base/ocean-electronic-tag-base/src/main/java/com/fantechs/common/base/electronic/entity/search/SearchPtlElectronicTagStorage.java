@@ -74,4 +74,10 @@ public class SearchPtlElectronicTagStorage extends BaseQuery implements Serializ
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")
     private String materialCode;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="orgId",value = "组织id")
+    private Long orgId;
 }

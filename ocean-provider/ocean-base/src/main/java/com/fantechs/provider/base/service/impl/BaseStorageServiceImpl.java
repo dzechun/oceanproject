@@ -206,6 +206,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
                 fail.add(i+4);
                 continue;
             }
+            baseStorageImport.setWarehouseId(baseWarehouseArea.getWarehouseId());
             baseStorageImport.setWarehouseAreaId(baseWarehouseArea.getWarehouseAreaId());
 
             //判断工作区是否存在
