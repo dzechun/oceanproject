@@ -205,7 +205,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                 BeanUtils.copyProperties(mesSfcBarcodeProcessDto, mesSfcBarcodeProcess);
                 mesSfcBarcodeProcess.setNextProcessId(doReworkOrderDto.getProcessId());
                 mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
-                mesSfcBarcodeProcess.setNextProcessName(baseRoute.getProcessName());
+                mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
                 mesSfcBarcodeProcess.setRouteId(doReworkOrderDto.getRouteId());
                 mesSfcBarcodeProcess.setRouteCode(baseRoute.getRouteCode());
                 mesSfcBarcodeProcess.setRouteName(baseRoute.getRouteName());
