@@ -99,8 +99,8 @@
             <if test="status!=null">
                 and sm.status=#{status}
             </if>
-            <if test="orgId!=null">
-                and sm.org_id=#{orgId}
+            <if test="organizationId!=null">
+                and sm.org_id=#{organizationId}
             </if>
         </where>
         order by sm.create_time desc
