@@ -2,6 +2,7 @@ package com.fantechs.provider.electronic.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.PtlElectronicTagStorageDto;
+import com.fantechs.common.base.electronic.dto.PtlElectronicTagStorageImport;
 import com.fantechs.common.base.electronic.entity.PtlElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchPtlElectronicTagStorage;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -97,8 +98,8 @@ public class PtlElectronicTagStorageController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtos = EasyPoiUtils.importExcel(file, 1,1, PtlElectronicTagStorageDto.class);
-            Map<String, Object> resultMap = ptlElectronicTagStorageService.importElectronicTagController(ptlElectronicTagStorageDtos);
+            List<PtlElectronicTagStorageImport> ptlElectronicTagStorageImports = EasyPoiUtils.importExcel(file, PtlElectronicTagStorageImport.class);
+            Map<String, Object> resultMap = ptlElectronicTagStorageService.importElectronicTagController(ptlElectronicTagStorageImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();
