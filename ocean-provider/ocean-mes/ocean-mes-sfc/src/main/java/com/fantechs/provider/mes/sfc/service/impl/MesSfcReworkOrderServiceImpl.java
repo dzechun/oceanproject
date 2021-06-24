@@ -123,13 +123,10 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         }
 
         // 工艺路线
-        SearchBaseRoute searchBaseRoute = new SearchBaseRoute();
-        searchBaseRoute.setRouteId(doReworkOrderDto.getRouteId());
-        List<BaseRoute> baseRoutes = baseFeignApi.findRouteList(searchBaseRoute).getData();
-        if (baseRoutes == null || baseRoutes.size() <= 0) {
+        BaseRoute baseRoute = baseFeignApi.routeDetail(doReworkOrderDto.getRouteId()).getData();
+        if (baseRoute == null) {
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "工艺路线不存在或已被删除");
         }
-        BaseRoute baseRoute = baseRoutes.get(0);
         // 工序
         BaseProcess baseProcess = baseFeignApi.processDetail(doReworkOrderDto.getProcessId()).getData();
         if (baseProcess == null) {
@@ -205,7 +202,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                 BeanUtils.copyProperties(mesSfcBarcodeProcessDto, mesSfcBarcodeProcess);
                 mesSfcBarcodeProcess.setNextProcessId(doReworkOrderDto.getProcessId());
                 mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
-                mesSfcBarcodeProcess.setNextProcessName(baseRoute.getProcessName());
+                mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
                 mesSfcBarcodeProcess.setRouteId(doReworkOrderDto.getRouteId());
                 mesSfcBarcodeProcess.setRouteCode(baseRoute.getRouteCode());
                 mesSfcBarcodeProcess.setRouteName(baseRoute.getRouteName());
@@ -400,7 +397,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             List<MesSfcKeyPartRelevance> deleteKeypartRelevances = new ArrayList<>();
             for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos) {
                 for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto1 : doReworkOrderDto.getKeyPartRelevanceDtoList()) {
-                    if (keyPartRelevanceDto.getLabelCategoryId().equals(keyPartRelevanceDto1.getLabelCategoryId())
+                    if ((keyPartRelevanceDto.getLabelCategoryId() != null && keyPartRelevanceDto.getLabelCategoryId().equals(keyPartRelevanceDto1.getLabelCategoryId()))
                             || keyPartRelevanceDto.getMaterialId().equals(keyPartRelevanceDto1.getMaterialId())) {
                         deleteKeypartRelevances.add(keyPartRelevanceDto);
                         break;

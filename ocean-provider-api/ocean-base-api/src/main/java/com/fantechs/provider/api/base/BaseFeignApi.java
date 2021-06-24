@@ -183,6 +183,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseRoute/findList")
     ResponseEntity<List<BaseRoute>> findRouteList(@ApiParam(value = "查询对象") @RequestBody SearchBaseRoute searchBaseRoute);
 
+    @ApiOperation("获取工艺路线详情")
+    @PostMapping("/baseRoute/detail")
+    ResponseEntity<BaseRoute> routeDetail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
+
     @ApiOperation("根据条件查询工序信息列表")
     @PostMapping("/baseProcess/findList")
     ResponseEntity<List<BaseProcess>> findProcessList(@ApiParam(value = "查询对象") @RequestBody(required = false) SearchBaseProcess searchBaseProcess);
