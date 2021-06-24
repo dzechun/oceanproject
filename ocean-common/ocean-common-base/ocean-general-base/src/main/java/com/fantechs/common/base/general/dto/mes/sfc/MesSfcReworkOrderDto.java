@@ -26,4 +26,10 @@ public class MesSfcReworkOrderDto extends MesSfcReworkOrder implements Serializa
 
     @ApiModelProperty(value = "materialName", name = "物料名称")
     private String materialName;
+
+    @ApiModelProperty(value = "productModelCode", name = "产品型号编码")
+    private String productModelCode;
+
+    @ApiModelProperty(value = "productModelName", name = "产品型号名称")
+    private String productModelName;
 }
