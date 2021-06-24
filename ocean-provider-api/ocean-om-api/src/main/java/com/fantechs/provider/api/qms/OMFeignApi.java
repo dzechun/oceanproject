@@ -1,5 +1,7 @@
 package com.fantechs.provider.api.qms;
 
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
+import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
 import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @Auther: bingo.ren
@@ -52,4 +55,9 @@ public interface OMFeignApi {
     @ApiOperation("反写销退入库订单收货数量")
     @PostMapping("/omSalesReturnOrder/writeQty")
     ResponseEntity writeQty(@RequestBody OmSalesReturnOrderDet omSalesReturnOrderDet);
+
+    @ApiOperation("销售列表")
+    @PostMapping("/omSalesOrder/findList")
+    ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDto searchOmSalesOrderDto);
+
 }

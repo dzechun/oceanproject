@@ -25,4 +25,10 @@ public class SearchOmSalesOrderDto extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(value = "合同号", example = "合同号")
     private String contractCode;
+
+    /**
+     * 工单号
+     */
+    @ApiModelProperty(value = "合同号", example = "合同号")
+    private Long workOrderId;
 }

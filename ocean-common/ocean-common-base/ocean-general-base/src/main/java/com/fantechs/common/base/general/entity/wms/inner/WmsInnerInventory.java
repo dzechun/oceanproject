@@ -309,4 +309,13 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     private Long jobOrderDetId;
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 检验单号
+     */
+    @ApiModelProperty(name = "inspectionOrderCode",value = "检验单号")
+    @Column(name = "inspection_order_code")
+    private String inspectionOrderCode;
+
+
 }

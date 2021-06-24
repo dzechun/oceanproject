@@ -96,4 +96,10 @@ public class PalletAutoAsnDto extends WmsInAsnOrderDet implements Serializable {
      */
     @ApiModelProperty(name = "productPalletId",value = "车间管理模块栈板表ID")
     private Long productPalletId;
+
+    /**
+     * 工单ID
+     */
+    @ApiModelProperty(name = "workOrderId",value = "工单ID")
+    private Long workOrderId;
 }
