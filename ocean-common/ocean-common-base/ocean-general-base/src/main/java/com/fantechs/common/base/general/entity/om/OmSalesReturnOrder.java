@@ -56,25 +56,25 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
     /**
      * 总加入数量
      */
+    @Transient
     @ApiModelProperty(name="totalIssueQty",value = "总加入数量")
     @Excel(name = "总加入数量", height = 20, width = 30,orderNum="3")
-    @Column(name = "total_issue_qty")
     private BigDecimal totalIssueQty;
 
     /**
      * 总收货数量
      */
+    @Transient
     @ApiModelProperty(name="totalReceivingQty",value = "总收货数量")
     @Excel(name = "总收货数量", height = 20, width = 30,orderNum="4")
-    @Column(name = "total_receiving_qty")
     private BigDecimal totalReceivingQty;
 
     /**
      * 订单总数量
      */
+    @Transient
     @ApiModelProperty(name="totalQty",value = "订单总数量")
     @Excel(name = "订单总数量", height = 20, width = 30,orderNum="5")
-    @Column(name = "total_qty")
     private BigDecimal totalQty;
 
     /**

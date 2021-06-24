@@ -70,14 +70,6 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
     private Long inWarehouseId;
 
     /**
-     * 订单总数量
-     */
-    @ApiModelProperty(name="totalQty",value = "订单总数量")
-    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_qty")
-    private BigDecimal totalQty;
-
-    /**
      * 订单总体积
      */
     @ApiModelProperty(name="totalVolume",value = "订单总体积")

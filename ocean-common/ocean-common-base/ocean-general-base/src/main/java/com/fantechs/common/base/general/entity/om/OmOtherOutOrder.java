@@ -56,17 +56,17 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
     /**
      * 总加入数量
      */
+    @Transient
     @ApiModelProperty(name="totalIssueQty",value = "总加入数量")
-    @Excel(name = "总加入数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_issue_qty")
+    @Excel(name = "总加入数量", height = 20, width = 30,orderNum="")
     private BigDecimal totalIssueQty;
 
     /**
      * 累计发货数量
      */
+    @Transient
     @ApiModelProperty(name="totalDispatchQty",value = "累计发货数量")
-    @Excel(name = "累计发货数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_dispatch_qty")
+    @Excel(name = "累计发货数量", height = 20, width = 30,orderNum="")
     private BigDecimal totalDispatchQty;
 
     /**
@@ -88,9 +88,9 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
     /**
      * 订单总数量
      */
+    @Transient
     @ApiModelProperty(name="totalQty",value = "订单总数量")
-    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_qty")
+    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="")
     private BigDecimal totalQty;
 
     /**
