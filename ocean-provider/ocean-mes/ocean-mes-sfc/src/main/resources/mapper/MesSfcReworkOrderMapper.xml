@@ -58,13 +58,13 @@
   </select>
 
 <!-- 获取今天返工单编码倒序第一条数据 -->
-  <select id="getFirstTodayReworkOrder" resultType="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto">
+  <select id="getFirstTodayReworkOrder" resultMap="BaseResultDtoMap">
     SELECT
       *
     FROM
       mes_sfc_rework_order msro
     WHERE
-      msro.create_time = TO_DAYS(NOW())
+      TO_DAYS(msro.create_time) = TO_DAYS(NOW())
     ORDER BY
       msro.rework_order_code DESC
     LIMIT 1
