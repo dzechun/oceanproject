@@ -12,9 +12,6 @@
     <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
     <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty" />
     <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
-    <result column="total_volume" jdbcType="DECIMAL" property="totalVolume" />
-    <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight" />
-    <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
@@ -44,9 +41,6 @@ oio.material_owner_id,
 oio.total_issue_qty,
 oio.total_receiving_qty,
 oio.total_qty,
-oio.total_volume,
-oio.total_net_weight,
-oio.total_gross_weight,
 oio.order_status,
 oio.status,
 oio.order_date,
@@ -63,7 +57,11 @@ oio.option2,
 oio.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_other_in_order oio
+    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+    (SELECT SUM(oiod.order_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id = oio.other_in_order_id) as total_qty,
+    (SELECT SUM(oiod.issue_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id = oio.other_in_order_id) as total_issue_qty,
+    (SELECT SUM(oiod.receiving_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id = oio.other_in_order_id) as total_receiving_qty
+    FROM om_other_in_order oio
     LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = oio.material_owner_id
     left join ocean_v2.sys_user su on oio.create_user_id = su.user_id
     left join ocean_v2.sys_user sus on oio.modified_user_id = sus.user_id

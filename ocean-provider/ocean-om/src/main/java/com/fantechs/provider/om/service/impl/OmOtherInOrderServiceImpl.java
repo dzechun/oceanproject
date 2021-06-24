@@ -66,7 +66,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     @Override
     public int packageAutoOutOrder(OmOtherInOrder omOtherInOrder) {
         SysUser sysUser = currentUser();
-        if(omOtherInOrder.getOrderStatus()>3){
+        if(omOtherInOrder.getOrderStatus()>=3){
             throw new BizErrorException("订单已下发完成");
         }
         int num = 0;
@@ -114,6 +114,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         int num = 0;
         for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrder.getOmOtherInOrderDets()) {
             OmOtherInOrderDet omOtherInOrderDet1 = omOtherInOrderDetMapper.selectByPrimaryKey(omOtherInOrderDet.getOtherInOrderDetId());
+            if(StringUtils.isEmpty(omOtherInOrderDet1.getIssueQty())){
+                omOtherInOrderDet1.setIssueQty(BigDecimal.ZERO);
+                omOtherInOrderDet.setIssueQty(BigDecimal.ZERO);
+            }
             omOtherInOrderDet.setIssueQty(omOtherInOrderDet.getQty().add(omOtherInOrderDet1.getIssueQty()));
             num+=omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
         }
@@ -159,6 +163,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
+        record.setOrderStatus((byte)1);
         int num = omOtherInOrderMapper.insertUseGeneratedKeys(record);
         for (OmOtherInOrderDet omOtherInOrderDet : record.getOmOtherInOrderDets()) {
             omOtherInOrderDet.setOtherInOrderId(record.getOtherInOrderId());

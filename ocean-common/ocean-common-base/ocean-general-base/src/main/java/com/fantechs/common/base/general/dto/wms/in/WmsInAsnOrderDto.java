@@ -21,6 +21,13 @@ public class WmsInAsnOrderDto extends WmsInAsnOrder implements Serializable {
     private String materialOwnerName;
 
     /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    private String warehouseName;
+
+    /**
      * 供应商
      */
     @Transient

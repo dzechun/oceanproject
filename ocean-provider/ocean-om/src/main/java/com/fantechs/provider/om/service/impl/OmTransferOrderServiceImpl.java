@@ -132,11 +132,13 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     @Override
     public int save(OmTransferOrder record) {
         SysUser sysUser = currentUser();
+        record.setTransferOrderCode(CodeUtils.getId("DBOD-"));
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
+        record.setOrderStatus((byte)1);
         int num = omTransferOrderMapper.insertUseGeneratedKeys(record);
         for (OmTransferOrderDet omTransferOrderDet : record.getOmTransferOrderDets()) {
             omTransferOrderDet.setTransferOrderId(record.getTransferOrderId());
@@ -146,8 +148,8 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             omTransferOrderDet.setModifiedTime(new Date());
             omTransferOrderDet.setModifiedUserId(sysUser.getUserId());
             omTransferOrderDet.setOrgId(sysUser.getOrganizationId());
+            num+=omTransferOrderDetMapper.insertSelective(omTransferOrderDet);
         }
-        num+=omTransferOrderDetMapper.insertList(record.getOmTransferOrderDets());
         return num;
     }
 

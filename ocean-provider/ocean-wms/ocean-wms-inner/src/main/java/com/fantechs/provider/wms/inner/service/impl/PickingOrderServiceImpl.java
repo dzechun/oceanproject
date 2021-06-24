@@ -995,6 +995,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         wmsInAsnOrder.setSourceOrderId(res.getSourceOrderId());
         wmsInAsnOrder.setMaterialOwnerId(res.getMaterialOwnerId());
         wmsInAsnOrder.setSupplierId(res.getSupplierId());
+        wmsInAsnOrder.setWarehouseId(wmsOutDespatchOrder.getWarehouseId());
         //调拨订单号
         wmsInAsnOrder.setRelatedOrderCode1(res.getRelatedOrderCode1());
         //调拨出库单号

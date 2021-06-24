@@ -12,9 +12,6 @@
     <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
     <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty" />
     <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
-    <result column="total_volume" jdbcType="DECIMAL" property="totalVolume" />
-    <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight" />
-    <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
@@ -41,12 +38,6 @@
     osro.sales_return_order_code,
     osro.related_order_code,
 osro.material_owner_id,
-osro.total_issue_qty,
-osro.total_receiving_qty,
-osro.total_qty,
-osro.total_volume,
-osro.total_net_weight,
-osro.total_gross_weight,
 osro.order_status,
 osro.status,
 osro.order_date,
@@ -63,7 +54,11 @@ osro.option2,
 osro.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_sales_return_order osro
+    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+    (SELECT SUM(osrod.order_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_qty,
+    (SELECT SUM(osrod.issue_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_issue_qty,
+    (SELECT SUM(osrod.receiving_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_receiving_qty
+FROM om_sales_return_order osro
 LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = osro.material_owner_id
 left join ocean_v2.sys_user su on osro.create_user_id = su.user_id
 left join ocean_v2.sys_user sus on osro.modified_user_id = sus.user_id

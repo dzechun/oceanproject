@@ -72,19 +72,23 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int packageAutoOutOrder(OmSalesReturnOrder omSalesReturnOrder) {
         SysUser sysUser = currentUser();
         int num = 0;
             List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
             int i = 0;
             for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrder.getOmSalesReturnOrderDets()) {
+                if(StringUtils.isEmpty(omSalesReturnOrderDet.getIssueQty())){
+                    omSalesReturnOrderDet.setIssueQty(BigDecimal.ZERO);
+                }
                 BigDecimal total = omSalesReturnOrderDet.getIssueQty().add(omSalesReturnOrderDet.getQty());
                 if(total.compareTo(omSalesReturnOrderDet.getOrderQty())==1){
                     throw new BizErrorException("下发数量不能大于工单数量");
                 }
                 WmsInAsnOrderDet wmsInAsnOrderDet = WmsInAsnOrderDet.builder()
                         .sourceOrderId(omSalesReturnOrderDet.getSalesOrderId())
-                        .asnOrderDetId(omSalesReturnOrderDet.getSalesReturnOrderDetId())
+                        .orderDetId(omSalesReturnOrderDet.getSalesReturnOrderDetId())
                         .warehouseId(omSalesReturnOrderDet.getWarehouseId())
                         .materialId(omSalesReturnOrderDet.getMaterialId())
                         .packingUnitName(omSalesReturnOrderDet.getUnitName())
@@ -123,13 +127,24 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         int num = 0;
         for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrder.getOmSalesReturnOrderDets()) {
             OmSalesReturnOrderDet omSalesReturnOrderDet1 = omSalesReturnOrderDetMapper.selectByPrimaryKey(omSalesReturnOrderDet.getSalesReturnOrderDetId());
+            if(StringUtils.isEmpty(omSalesReturnOrderDet1.getIssueQty()) || StringUtils.isEmpty(omSalesReturnOrderDet.getIssueQty())){
+                omSalesReturnOrderDet1.setIssueQty(BigDecimal.ZERO);
+                omSalesReturnOrderDet.setIssueQty(BigDecimal.ZERO);
+            }
             omSalesReturnOrderDet.setIssueQty(omSalesReturnOrderDet.getQty().add(omSalesReturnOrderDet1.getIssueQty()));
             num+=omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
         }
-        BigDecimal total = omSalesReturnOrder.getOmSalesReturnOrderDets().stream()
+        //统计总订单数量
+        Example example = new Example(OmSalesReturnOrderDet.class);
+        example.createCriteria().andEqualTo("salesReturnOrderId",omSalesReturnOrder.getSalesReturnOrderId());
+        List<OmSalesReturnOrderDet> list = omSalesReturnOrderDetMapper.selectByExample(example);
+        BigDecimal totalQty = list.stream()
+                .map(OmSalesReturnOrderDet::getOrderQty)
+                .reduce(BigDecimal.ZERO,BigDecimal::add);
+        BigDecimal totalIssuseQty  = list.stream()
                 .map(OmSalesReturnOrderDet::getIssueQty)
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
-        if(total.compareTo(omSalesReturnOrder.getTotalIssueQty())==0){
+        if(totalQty.compareTo(totalIssuseQty)==0){
             omSalesReturnOrder.setOrderStatus((byte)3);
         }else{
             omSalesReturnOrder.setOrderStatus((byte)2);

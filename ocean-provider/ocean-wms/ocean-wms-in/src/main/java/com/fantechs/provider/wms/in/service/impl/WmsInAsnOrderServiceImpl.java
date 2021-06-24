@@ -232,6 +232,15 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     }
                 }
                 break;
+                //完工入库单
+            case "4":
+                break;
+                //销退入库单
+            case "5":
+                break;
+                //其他入库单
+            case "6":
+                break;
         }
         return num;
     }
@@ -428,20 +437,24 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         record.setOrderStatus((byte)1);
         record.setAsnCode(CodeUtils.getId("ASN-"));
         record.setCreateTime(new Date());
-        record.setOrderTypeId((long)4);
+        if(StringUtils.isEmpty(record.getOrderTypeId())){
+            record.setOrderTypeId((long)4);
+        }
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setOrgId(sysUser.getOrganizationId());
         int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(record);
         for (WmsInAsnOrderDet wmsInAsnOrderDet : record.getWmsInAsnOrderDetList()) {
-            MesPmWorkOrder mesPmWorkOrder = this.PmQty(wmsInAsnOrderDet.getPackingQty(),wmsInAsnOrderDet.getSourceOrderId());
-            mesPmWorkOrder.setInventoryQty(StringUtils.isEmpty(mesPmWorkOrder.getInventoryQty())?wmsInAsnOrderDet.getPackingQty():mesPmWorkOrder.getInventoryQty().add(wmsInAsnOrderDet.getPackingQty()));
-            mesPmWorkOrder.setModifiedTime(new Date());
-            mesPmWorkOrder.setModifiedUserId(sysUser.getUserId());
-            ResponseEntity rs = pmFeignApi.updateInventory(mesPmWorkOrder);
-            if(rs.getCode()!=0){
-                throw new BizErrorException(rs.getMessage());
+            if(record.getOrderTypeId()==4){
+                MesPmWorkOrder mesPmWorkOrder = this.PmQty(wmsInAsnOrderDet.getPackingQty(),wmsInAsnOrderDet.getSourceOrderId());
+                mesPmWorkOrder.setInventoryQty(StringUtils.isEmpty(mesPmWorkOrder.getInventoryQty())?wmsInAsnOrderDet.getPackingQty():mesPmWorkOrder.getInventoryQty().add(wmsInAsnOrderDet.getPackingQty()));
+                mesPmWorkOrder.setModifiedTime(new Date());
+                mesPmWorkOrder.setModifiedUserId(sysUser.getUserId());
+                ResponseEntity rs = pmFeignApi.updateInventory(mesPmWorkOrder);
+                if(rs.getCode()!=0){
+                    throw new BizErrorException(rs.getMessage());
+                }
             }
             wmsInAsnOrderDet.setAsnOrderId(record.getAsnOrderId());
             wmsInAsnOrderDet.setCreateTime(new Date());
@@ -465,17 +478,23 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             throw new BizErrorException("单据已经完成收货，无法修改");
         }
         //删除原有明细
-        this.deleteQty(entity.getAsnOrderId());
+        if(entity.getOrderTypeId()==4){
+            this.deleteQty(entity.getAsnOrderId());
+        }
         for (WmsInAsnOrderDet wmsInAsnOrderDet : entity.getWmsInAsnOrderDetList()) {
             wmsInAsnOrderDet.setAsnOrderDetId(null);
-            MesPmWorkOrder mesPmWorkOrder = this.PmQty(wmsInAsnOrderDet.getPackingQty(),wmsInAsnOrderDet.getSourceOrderId());
-            mesPmWorkOrder.setInventoryQty(StringUtils.isEmpty(mesPmWorkOrder.getInventoryQty())?wmsInAsnOrderDet.getPackingQty():mesPmWorkOrder.getInventoryQty().add(wmsInAsnOrderDet.getPackingQty()));
-            mesPmWorkOrder.setModifiedTime(new Date());
-            mesPmWorkOrder.setModifiedUserId(sysUser.getUserId());
-            ResponseEntity rs = pmFeignApi.updateInventory(mesPmWorkOrder);
-            if(rs.getCode()!=0){
-                throw new BizErrorException(rs.getMessage());
+            if(entity.getOrderTypeId()==4){
+                MesPmWorkOrder mesPmWorkOrder = this.PmQty(wmsInAsnOrderDet.getPackingQty(),wmsInAsnOrderDet.getSourceOrderId());
+                mesPmWorkOrder.setInventoryQty(StringUtils.isEmpty(mesPmWorkOrder.getInventoryQty())?wmsInAsnOrderDet.getPackingQty():mesPmWorkOrder.getInventoryQty().add(wmsInAsnOrderDet.getPackingQty()));
+                mesPmWorkOrder.setModifiedTime(new Date());
+                mesPmWorkOrder.setModifiedUserId(sysUser.getUserId());
+                ResponseEntity rs = pmFeignApi.updateInventory(mesPmWorkOrder);
+                if(rs.getCode()!=0){
+                    throw new BizErrorException(rs.getMessage());
+                }
             }
+            wmsInAsnOrderDet.setCreateUserId(sysUser.getUserId());
+            wmsInAsnOrderDet.setCreateTime(new Date());
             wmsInAsnOrderDet.setAsnOrderId(entity.getAsnOrderId());
             wmsInAsnOrderDet.setModifiedTime(new Date());
             wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
