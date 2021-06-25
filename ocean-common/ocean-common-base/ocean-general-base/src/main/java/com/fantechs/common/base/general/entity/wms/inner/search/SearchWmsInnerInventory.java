@@ -1,7 +1,7 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -77,7 +77,7 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
      * 收货日期
      */
     @ApiModelProperty(name="receivingDate",value = "收货日期")
-    private Date receivingDate;
+    private String receivingDate;
 
     /**
      * 批次号

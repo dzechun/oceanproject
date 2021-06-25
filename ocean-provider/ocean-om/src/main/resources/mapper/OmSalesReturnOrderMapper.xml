@@ -86,6 +86,7 @@ left join base_organization bo on osro.org_id = bo.organization_id
         and date_format(osro.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
   </where>
+order by osro.create_time desc
   </select>
   <select id="findMaterial" resultMap="BaseResultMap">
     select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as total_net_weight,IFNULL(bmb.gross_weight,0) as total_gross_weight

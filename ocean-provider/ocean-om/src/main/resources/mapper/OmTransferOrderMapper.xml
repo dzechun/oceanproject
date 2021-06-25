@@ -11,6 +11,9 @@
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
     <result column="out_warehouse_id" jdbcType="BIGINT" property="outWarehouseId" />
     <result column="in_warehouse_id" jdbcType="BIGINT" property="inWarehouseId" />
+      <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
+      <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
+      <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
@@ -41,6 +44,9 @@ oto.related_order_code,
 oto.material_owner_id,
 oto.out_warehouse_id,
 oto.in_warehouse_id,
+oto.total_volume,
+oto.total_net_weight,
+oto.total_gross_weight,
 oto.order_status,
 oto.status,
 oto.order_date,
@@ -77,7 +83,7 @@ oto.option3
       and oto.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
     </if>
     <if test="outWarehouseName!=null and outWarehouseName!=''">
-      and bw.out_warehouse_name like CONCAT('%',#{outWarehouseName},'%')
+      and bw.warehouse_name like CONCAT('%',#{outWarehouseName},'%')
     </if>
   <if test="inWarehouseName!=null and inWarehouseName!=''">
     and bw1.warehouse_name like CONCAT('%',#{inWarehouseName},'%')
@@ -91,4 +97,10 @@ oto.option3
 </where>
 order BY oto.create_time desc
   </select>
+    <select id="findMaterial" resultMap="BaseResultMap">
+        select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as total_net_weight,IFNULL(bmb.gross_weight,0) as total_gross_weight
+        From base_material bm
+                 left join base_material_tab bmb ON bm.material_id = bmb.material_id
+        where bm.material_id = #{materialId}
+    </select>
 </mapper>
