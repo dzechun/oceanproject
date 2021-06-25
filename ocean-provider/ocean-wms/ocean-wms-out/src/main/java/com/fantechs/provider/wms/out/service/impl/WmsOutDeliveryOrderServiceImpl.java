@@ -335,6 +335,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         return i;
     }
 
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int createJobOrder(Long id) {
@@ -410,5 +411,27 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             throw new BizErrorException("拣货作业单已存在");
         }
         return 1;
+    }
+
+    /**
+     * 发运反写出库单状态
+     * @param deliverOrderId
+     * @param orderStatus
+     * @return
+     */
+    @Override
+    public int forwardingStatus(Long deliverOrderId, Byte orderStatus) {
+        SysUser sysUser =CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(sysUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        WmsOutDeliveryOrder wms = wmsOutDeliveryOrderMapper.selectByPrimaryKey(deliverOrderId);
+        if(StringUtils.isEmpty(wms)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012000,deliverOrderId);
+        }
+        wms.setOrderStatus(orderStatus);
+        wms.setModifiedTime(new Date());
+        wms.setModifiedUserId(sysUser.getUserId());
+        return wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wms);
     }
 }

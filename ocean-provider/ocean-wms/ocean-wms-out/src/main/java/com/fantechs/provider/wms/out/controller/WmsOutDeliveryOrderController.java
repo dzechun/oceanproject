@@ -129,4 +129,10 @@ public class WmsOutDeliveryOrderController {
             throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation("发运反写出库单状态")
+    @PostMapping("/forwardingStatus")
+    public ResponseEntity forwardingStatus(@RequestParam Long deliverOrderId,@RequestParam Byte orderStatus){
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.forwardingStatus(deliverOrderId,orderStatus));
+    }
 }
