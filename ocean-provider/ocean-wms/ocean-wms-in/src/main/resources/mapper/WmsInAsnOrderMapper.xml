@@ -10,8 +10,6 @@
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="asn_code" jdbcType="VARCHAR" property="asnCode" />
     <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
     <result column="related_order_code_1" jdbcType="VARCHAR" property="relatedOrderCode1" />
@@ -40,9 +38,6 @@
   </resultMap>
   <resultMap id="BaseResultDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto">
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
-    <result column="sales_return_order_code" jdbcType="VARCHAR" property="salesReturnOrderCode"/>
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
-    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
     <result column="order_type_name" jdbcType="VARCHAR" property="orderTypeName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
@@ -59,8 +54,6 @@
   wiao.material_owner_id,
   wiao.supplier_id,
   wiao.order_type_id,
-    wiao.warehouse_id,
-    wiao.storage_id,
   wiao.asn_code,
   wiao.customer_order_code,
   wiao.related_order_code_1,
@@ -142,6 +135,9 @@
           #{item}
         </foreach>
       </if>
+    <if test="orderTypeName!=null and orderTypeName!=''">
+        and boy.order_type_name = #{orderTypeName}
+    </if>
 </where>
 order by wiao.create_time desc
     </select>

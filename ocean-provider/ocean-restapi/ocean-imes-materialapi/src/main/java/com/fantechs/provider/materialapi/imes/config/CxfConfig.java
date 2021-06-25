@@ -4,6 +4,7 @@ import com.fantechs.provider.materialapi.imes.service.MaterialService;
 
 import com.fantechs.provider.materialapi.imes.service.impl.MaterialServiceImpl;
 import com.fantechs.provider.materialapi.imes.service.impl.SapPurchaseOrderServiceImpl;
+import com.fantechs.provider.materialapi.imes.service.impl.SapTestServiceImpl;
 import com.fantechs.provider.materialapi.imes.service.impl.SapWorkOrderServiceImpl;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
@@ -51,6 +52,13 @@ public class CxfConfig {
     public Endpoint purchaseOrder_endpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(),  new SapPurchaseOrderServiceImpl());
         endpoint.publish("/purchaseOrder");   //采购订单发布地址
+        return endpoint;
+    }
+
+    @Bean
+    public Endpoint test_endpoint() {
+        EndpointImpl endpoint = new EndpointImpl(springBus(),  new SapTestServiceImpl());
+        endpoint.publish("/test");   //订单测试地址
         return endpoint;
     }
 }

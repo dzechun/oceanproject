@@ -45,6 +45,11 @@ public class SearchWmsInAsnOrder extends BaseQuery implements Serializable {
 
     private Long orgId;
 
-    @ApiModelProperty(name = "orderTypeId",value = "3-调拨入库、4-完工入库、5-销退入库、6-其他入库")
     private Long orderTypeId;
+
+    @ApiModelProperty(name="orderStatus",value = "单据状态")
+    private Byte orderStatus;
+
+    @ApiModelProperty(name="orderTypeName",value = "单据类型")
+    private String orderTypeName;
 }

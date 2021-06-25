@@ -133,10 +133,10 @@ wii.storage_id,
         and wii.material_id = #{materialId}
       </if>
       <if test="materialCode!=null and materialCode != ''">
-        and wii.material_code like CONCAT("%",#{materialCode},"%")
+        and bm.material_code like CONCAT("%",#{materialCode},"%")
       </if>
       <if test="materialName!=null and materialName != ''">
-        and wii.material_name like CONCAT("%",#{materialName},"%")
+        and bm.material_name like CONCAT("%",#{materialName},"%")
       </if>
       <if test="relevanceOrderCode!=null and relevanceOrderCode != ''">
         and wii.relevance_order_code like CONCAT("%",#{relevanceOrderCode},"%")

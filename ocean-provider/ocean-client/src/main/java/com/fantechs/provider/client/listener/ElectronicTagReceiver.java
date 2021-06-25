@@ -116,6 +116,8 @@ public class ElectronicTagReceiver {
                     searchPtlJobOrderDet1.setStorageId(ptlJobOrderDetDtoList.get(0).getStorageId());
                     searchPtlJobOrderDet1.setJobStatus((byte) 2);
                     searchPtlJobOrderDet1.setJobOrderDet(0);
+                    searchPtlJobOrderDet1.setStartPage(1);
+                    searchPtlJobOrderDet1.setPageSize(9999);
                     List<PtlJobOrderDetDto> ptlJobOrderDetDtoList1 = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet1).getData();
                     if (ptlJobOrderDetDtoList1.size() > 1) {
                         String materialDesc = "";
@@ -184,6 +186,8 @@ public class ElectronicTagReceiver {
                         searchPtlJobOrderDet2.setJobOrderId(ptlJobOrderDetDtoList.get(0).getJobOrderId());
                         searchPtlJobOrderDet2.setEquipmentAreaId(ptlElectronicTagStorageDtoList.get(0).getEquipmentAreaId());
                         searchPtlJobOrderDet2.setIfHangUp((byte) 1);
+                        searchPtlJobOrderDet2.setStartPage(1);
+                        searchPtlJobOrderDet2.setPageSize(9999);
                         List<PtlJobOrderDetDto> ptlJobOrderDetDtos = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet2).getData();
                         if (ptlJobOrderDetDtos.size() == 1) {
                             //发送给客户端控制通道灯灭灯
@@ -198,6 +202,8 @@ public class ElectronicTagReceiver {
                     SearchPtlJobOrderDet searchPtlJobOrderDet2 = new SearchPtlJobOrderDet();
                     searchPtlJobOrderDet2.setJobOrderId(ptlJobOrderDetDtoList.get(0).getJobOrderId());
                     searchPtlJobOrderDet2.setIfHangUp((byte) 1);
+                    searchPtlJobOrderDet2.setStartPage(1);
+                    searchPtlJobOrderDet2.setPageSize(9999);
                     List<PtlJobOrderDetDto> ptlJobOrderDetDtos = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet2).getData();
                     //电子作业标签完成，回传给WMS
                     if (ptlJobOrderDetDtos.size() == 1) {

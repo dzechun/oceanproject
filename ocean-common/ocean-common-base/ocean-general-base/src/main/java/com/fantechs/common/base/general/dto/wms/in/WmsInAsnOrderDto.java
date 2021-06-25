@@ -98,4 +98,5 @@ public class WmsInAsnOrderDto extends WmsInAsnOrder implements Serializable {
     @ApiModelProperty(name="putawayQty",value = "上架数量")
     @Excel(name = "上架数量", height = 20, width = 30,orderNum="")
     private BigDecimal putawayQty;
+
 }

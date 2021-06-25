@@ -3,20 +3,37 @@ package com.fantechs.provider.qms.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.entity.basic.BaseInAndOutRule;
-import com.fantechs.common.base.general.entity.basic.BaseInAndOutRuleDet;
-import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
+import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
+import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInAndOutRule;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionStandard;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.qms.*;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrderDet;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
+import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
+import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.qms.OMFeignApi;
+import com.fantechs.provider.api.wms.in.InFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.qms.mapper.QmsHtInspectionOrderMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
@@ -49,6 +66,14 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     private QmsInspectionOrderDetSampleMapper qmsInspectionOrderDetSampleMapper;
     @Resource
     private QmsInspectionOrderDetService qmsInspectionOrderDetService;
+    @Resource
+    private InFeignApi inFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
+    @Resource
+    private OMFeignApi oMFeignApi;
+    @Resource
+    private InnerFeignApi innerFeignApi;
 
     @Override
     public List<QmsInspectionOrder> findList(Map<String, Object> map) {
@@ -122,6 +147,20 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             qmsInspectionOrderDetMapper.insertList(qmsInspectionOrderDets);
         }
 
+        //手动添加变更质检锁
+        if(StringUtils.isNotEmpty(qmsInspectionOrder.getInventoryIds())){
+            String[] ids = qmsInspectionOrder.getInventoryIds().split(",");
+            for(String id : ids){
+                SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
+                searchWmsInnerInventory.setInventoryId(Long.valueOf(id).longValue());
+                ResponseEntity<List<WmsInnerInventoryDto>> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory);
+                if(StringUtils.isEmpty(innerInventoryDtoList.getData())) throw new BizErrorException("未查询到对应库存信息");
+                WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.getData().get(0);
+                wmsInnerInventoryDto.setQcLock((byte)1);
+                wmsInnerInventoryDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+                innerFeignApi.update(wmsInnerInventoryDto);
+            }
+        }
         return i;
     }
 
@@ -224,6 +263,17 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             qmsInspectionOrder.setInspectionOrderId(inspectionOrderId);
             qmsInspectionOrder.setInspectionStatus((byte) 3);
             qmsInspectionOrder.setInspectionResult(qualifiedCount==qmsInspectionOrderDetList.size() ? (byte)1 : (byte)0);
+
+            //检验结果返写回仓库
+            SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
+            searchWmsInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+            ResponseEntity<List<WmsInnerInventoryDto>> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory);
+            if(StringUtils.isEmpty(innerInventoryDtoList.getData())) throw new BizErrorException("未查询到对应库存信息");
+            WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.getData().get(0);
+            wmsInnerInventoryDto.setQcLock((byte)0);
+            wmsInnerInventoryDto.setInventoryStatusId(qualifiedCount==qmsInspectionOrderDetList.size() ? (long)102 : (long)104);
+            innerFeignApi.update(wmsInnerInventoryDto);
+
             return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
         }
 
@@ -269,4 +319,70 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         return qmsInspectionOrderMapper.deleteByIds(ids);
     }
+
+    @Override
+    public int autoAdd() {
+
+        //获取完工入库单
+        SearchWmsInAsnOrder searchWmsInAsnOrder = new SearchWmsInAsnOrder();
+        searchWmsInAsnOrder.setOrderStatus((byte)3);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, -1);
+        Date date = calendar.getTime();
+        searchWmsInAsnOrder.setStartTime(DateUtils.getDateString(date));
+        searchWmsInAsnOrder.setEndTime(DateUtils.getDateString(date));
+        searchWmsInAsnOrder.setOrderTypeName("完工入库");
+        ResponseEntity<List<WmsInAsnOrderDto>> wmsInAsnOrderList = inFeignApi.findList(searchWmsInAsnOrder);
+
+        if(StringUtils.isNotEmpty(wmsInAsnOrderList.getData())){
+            for(WmsInAsnOrderDto wmsInAsnOrderDto : wmsInAsnOrderList.getData()){
+                SearchWmsInAsnOrderDet  searchWmsInAsnOrderDet = new SearchWmsInAsnOrderDet();
+                searchWmsInAsnOrderDet.setAsnOrderId(wmsInAsnOrderDto.getAsnOrderId());
+                searchWmsInAsnOrderDet.setInventoryStatusId((long)103);
+                ResponseEntity<List<WmsInAsnOrderDetDto>> detList = inFeignApi.findDetList(searchWmsInAsnOrderDet);
+                if(StringUtils.isEmpty(detList.getData()))  throw new BizErrorException("未查询到可生成检验单的入库信息");
+                for(WmsInAsnOrderDetDto wmsInAsnOrderDetDto : detList.getData()){
+
+                    QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
+                    qmsInspectionOrder.setMaterialCode(wmsInAsnOrderDetDto.getMaterialCode());
+                    qmsInspectionOrder.setMaterialDesc(wmsInAsnOrderDetDto.getMaterialName());
+                    qmsInspectionOrder.setOrderQty(wmsInAsnOrderDetDto.getActualQty());
+                    qmsInspectionOrder.setInspectionWayId((long)42);
+                    qmsInspectionOrder.setInspectionStatus((byte)1);
+
+                    SearchOmSalesOrderDto searchOmSalesOrderDto = new SearchOmSalesOrderDto();
+                    searchOmSalesOrderDto.setWorkOrderId(wmsInAsnOrderDetDto.getSourceOrderId());
+                    ResponseEntity<List<OmSalesOrderDto>> salesOrderDtoList = oMFeignApi.findList(searchOmSalesOrderDto);
+                    if(StringUtils.isEmpty(salesOrderDtoList.getData())) throw new BizErrorException("未查询到客户信息");
+                    qmsInspectionOrder.setCustomerId(salesOrderDtoList.getData().get(0).getSupplierId());
+
+                    SearchBaseInspectionStandard searchBaseInspectionStandard = new SearchBaseInspectionStandard();
+                    searchBaseInspectionStandard.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
+                    searchBaseInspectionStandard.setSupplierId(salesOrderDtoList.getData().get(0).getSupplierId());
+                    ResponseEntity<List<BaseInspectionStandard>> inspectionStandardList = baseFeignApi.findList(searchBaseInspectionStandard);
+                    qmsInspectionOrder.setInspectionStandardId(inspectionStandardList.getData().get(0).getInspectionStandardId());
+                    this.save(qmsInspectionOrder);
+
+                    //修改质检锁
+                    SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
+                    searchWmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
+                    searchWmsInnerInventory.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
+                    ResponseEntity<List<WmsInnerInventoryDto>> list = innerFeignApi.findList(searchWmsInnerInventory);
+                    if(StringUtils.isEmpty(list.getData()))
+                        throw new BizErrorException("未查询到对应库存，asnCode为："+wmsInAsnOrderDto.getAsnCode()+",物料id为："+wmsInAsnOrderDetDto.getMaterialId());
+                    WmsInnerInventoryDto wmsInnerInventory = list.getData().get(0);
+                    wmsInnerInventory.setQcLock((byte)1);
+                    wmsInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+                    System.out.println("--------未确定是否有值--------"+qmsInspectionOrder.getInspectionOrderCode());
+                    innerFeignApi.update(wmsInnerInventory);
+                }
+
+            }
+        }
+        return 1;
+    }
+
+
+
 }

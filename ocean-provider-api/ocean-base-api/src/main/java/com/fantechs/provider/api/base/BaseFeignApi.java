@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionIte
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.StringUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -415,5 +416,10 @@ public interface BaseFeignApi {
     @ApiOperation(value = "新增或修改不良代码原因表信息",notes = "新增或修改不良代码原因表信息")
     @PostMapping("/baseBadnessCause/addOrUpdate")
     ResponseEntity<BaseBadnessCause> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseBadnessCause bseBadnessCause);
+
+    @ApiOperation("列表")
+    @PostMapping("/baseInspectionStandard/findList")
+    ResponseEntity<List<BaseInspectionStandard>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionStandard searchBaseInspectionStandard);
+
 
 }

@@ -16,4 +16,6 @@ import java.util.Map;
 public interface QmsInspectionOrderService extends IService<QmsInspectionOrder> {
     List<QmsInspectionOrder> findList(Map<String, Object> map);
     int writeBack(Long inspectionOrderId);
+
+    int autoAdd();
 }

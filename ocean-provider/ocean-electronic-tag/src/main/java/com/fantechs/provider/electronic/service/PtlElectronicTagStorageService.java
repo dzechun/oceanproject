@@ -1,6 +1,7 @@
 package com.fantechs.provider.electronic.service;
 
 import com.fantechs.common.base.electronic.dto.PtlElectronicTagStorageDto;
+import com.fantechs.common.base.electronic.dto.PtlElectronicTagStorageImport;
 import com.fantechs.common.base.electronic.entity.PtlElectronicTagStorage;
 import com.fantechs.common.base.support.IService;
 
@@ -15,7 +16,7 @@ public interface PtlElectronicTagStorageService extends IService<PtlElectronicTa
 
     List<PtlElectronicTagStorageDto> findList(Map<String, Object> map);
 
-    Map<String,Object> importElectronicTagController(List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtos);
+    Map<String,Object> importElectronicTagController(List<PtlElectronicTagStorageImport> ptlElectronicTagStorageImports);
 
 
 

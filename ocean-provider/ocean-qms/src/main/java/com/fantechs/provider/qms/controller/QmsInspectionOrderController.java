@@ -100,4 +100,10 @@ public class QmsInspectionOrderController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation(value = "定时自动新增",notes = "定时自动新增")
+    @PostMapping("/autoAdd")
+    public ResponseEntity autoAdd(@ApiParam(value = "必传：",required = true) @RequestParam  Long test) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.autoAdd());
+    }
 }

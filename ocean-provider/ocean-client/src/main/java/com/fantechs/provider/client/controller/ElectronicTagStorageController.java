@@ -117,4 +117,17 @@ public class ElectronicTagStorageController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }
     }
+
+    @GetMapping("/activateAndPrint")
+    @ApiOperation(value = "激活任务单并打印", notes = "激活任务单并打印")
+    public ResponseEntity activateAndPrint(
+            @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId,
+            @ApiParam(value = "作业人员Id", required = true) @RequestParam Long workUserId) {
+        try {
+            int i = electronicTagStorageService.activateAndPrint(jobOrderId, workUserId);
+            return ControllerUtil.returnCRUD(i);
+        } catch (Exception e) {
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+        }
+    }
 }

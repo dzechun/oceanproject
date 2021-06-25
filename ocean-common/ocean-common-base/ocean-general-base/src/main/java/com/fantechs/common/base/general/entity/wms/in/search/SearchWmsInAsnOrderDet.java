@@ -27,4 +27,11 @@ public class SearchWmsInAsnOrderDet extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
     private String materialCode;
+
+    /**
+     * 库存状态ID
+     */
+    @ApiModelProperty(name="inventoryStatusId",value = "库存状态ID")
+    private Long inventoryStatusId;
+
 }
