@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentCategory;
+import com.fantechs.common.base.general.entity.eam.EamStandingBook;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentCategory;
 import com.fantechs.common.base.support.BaseService;
@@ -17,6 +18,7 @@ import com.fantechs.provider.eam.service.EamEquipmentService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -64,6 +66,14 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        Example example = new Example(EamEquipment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("equipmentCode", record.getEquipmentCode());
+        EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(eamEquipment)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
@@ -85,6 +95,15 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Example example = new Example(EamEquipment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("equipmentCode", entity.getEquipmentCode())
+                .andNotEqualTo("equipmentId",entity.getEquipmentId());
+        EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(eamEquipment)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
         entity.setModifiedTime(new Date());

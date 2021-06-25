@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamStandingBookDto;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
 import com.fantechs.common.base.general.entity.eam.EamMaintainProject;
 import com.fantechs.common.base.general.entity.eam.EamStandingBook;
 import com.fantechs.common.base.general.entity.eam.history.EamHtMaintainProject;
@@ -18,6 +19,7 @@ import com.fantechs.provider.eam.service.EamStandingBookService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -65,6 +67,14 @@ public class EamStandingBookServiceImpl extends BaseService<EamStandingBook> imp
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        Example example = new Example(EamStandingBook.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("assetCode", record.getAssetCode());
+        EamStandingBook eamStandingBook = eamStandingBookMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(eamStandingBook)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
@@ -86,6 +96,15 @@ public class EamStandingBookServiceImpl extends BaseService<EamStandingBook> imp
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Example example = new Example(EamStandingBook.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("assetCode", entity.getAssetCode())
+                .andNotEqualTo("standingBookId",entity.getStandingBookId());
+        EamStandingBook eamStandingBook = eamStandingBookMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(eamStandingBook)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
         entity.setModifiedTime(new Date());
