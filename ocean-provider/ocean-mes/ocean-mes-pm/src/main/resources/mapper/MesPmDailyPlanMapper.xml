@@ -64,12 +64,9 @@
       <if test="status!=null">
         and mpdp.status = #{status}
       </if>
-      <if test="planTime!=null and planTime!=''">
-        and date_format(mpdp.plan_time, '%Y-%m-%d') = #{planTime}
-      </if>
-     <!-- <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+      <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
         and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>-->
+      </if>
     </where>
     order by mpdp.create_time desc
   </select>

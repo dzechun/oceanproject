@@ -1,0 +1,125 @@
+package com.fantechs.provider.eam.service.impl;
+
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
+import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentCategory;
+import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
+import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentCategory;
+import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.eam.mapper.EamEquipmentMapper;
+import com.fantechs.provider.eam.mapper.EamHtEquipmentMapper;
+import com.fantechs.provider.eam.service.EamEquipmentService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *
+ * Created by leifengzhi on 2021/06/25.
+ */
+@Service
+public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implements EamEquipmentService {
+
+    @Resource
+    private EamEquipmentMapper eamEquipmentMapper;
+    @Resource
+    private EamHtEquipmentMapper eamHtEquipmentMapper;
+
+    @Override
+    public List<EamEquipmentDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return eamEquipmentMapper.findList(map);
+    }
+
+    @Override
+    public List<EamHtEquipment> findHtList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        return eamHtEquipmentMapper.findHtList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int save(EamEquipment record) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        record.setCreateUserId(user.getUserId());
+        record.setCreateTime(new Date());
+        record.setModifiedUserId(user.getUserId());
+        record.setModifiedTime(new Date());
+        record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
+        record.setOrgId(user.getOrganizationId());
+        int i = eamEquipmentMapper.insertUseGeneratedKeys(record);
+
+        EamHtEquipment eamHtEquipment = new EamHtEquipment();
+        BeanUtils.copyProperties(record, eamHtEquipment);
+        eamHtEquipmentMapper.insert(eamHtEquipment);
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int update(EamEquipment entity) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        entity.setModifiedTime(new Date());
+        entity.setModifiedUserId(user.getUserId());
+
+        EamHtEquipment eamHtEquipment = new EamHtEquipment();
+        BeanUtils.copyProperties(entity, eamHtEquipment);
+        eamHtEquipmentMapper.insert(eamHtEquipment);
+
+        return eamEquipmentMapper.updateByPrimaryKeySelective(entity);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchDelete(String ids) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        List<EamHtEquipment> list = new ArrayList<>();
+        String[] idArry = ids.split(",");
+        for (String id : idArry) {
+            EamEquipment eamEquipment = eamEquipmentMapper.selectByPrimaryKey(id);
+            if(StringUtils.isEmpty(eamEquipment)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+
+            EamHtEquipment eamHtEquipment = new EamHtEquipment();
+            BeanUtils.copyProperties(eamEquipment, eamHtEquipment);
+            list.add(eamHtEquipment);
+        }
+
+        eamHtEquipmentMapper.insertList(list);
+
+        return eamEquipmentMapper.deleteByIds(ids);
+    }
+}
