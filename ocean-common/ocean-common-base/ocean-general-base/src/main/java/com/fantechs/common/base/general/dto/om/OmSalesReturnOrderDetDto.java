@@ -14,6 +14,20 @@ import java.math.BigDecimal;
  */
 @Data
 public class OmSalesReturnOrderDetDto extends OmSalesReturnOrderDet implements Serializable {
+
+    /**
+     * 销售订单号
+     */
+    @Transient
+    @ApiModelProperty(name = "salesOrderCode",value = "销售订单号")
+    private String salesOrderCode;
+
+    /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    private String warehouseName;
     /**
      * 物料编码
      */

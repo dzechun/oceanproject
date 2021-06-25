@@ -208,7 +208,12 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
 
     @Override
     public List<BasePackageSpecificationDto> findByMaterialProcess(Map<String, Object> map) {
-        List<BasePackageSpecificationDto> basePackageSpecificationDtos = basePackageSpecificationMapper.findList(map);
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
+        List<BasePackageSpecificationDto> basePackageSpecificationDtos = basePackageSpecificationMapper.findByMaterialProcess(map);
         SearchBaseMaterialPackage searchBaseMaterialPackage = new SearchBaseMaterialPackage();
 
         for (BasePackageSpecificationDto basePackageSpecificationDto : basePackageSpecificationDtos) {

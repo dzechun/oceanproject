@@ -109,14 +109,50 @@
         </foreach>
       </if>
       <if test="workOrderBarcodeIds != null">
-        <foreach collection="workOrderBarcodeIds" index="index" item="item" open="and mskpr.work_order_id in (" close=")" separator=",">
+        <foreach collection="workOrderBarcodeIds" index="index" item="item" open="and mskpr.work_order_barcode_id in (" close=")" separator=",">
           #{item}
         </foreach>
       </if>
     </where>
-    <if test="workOrderIds != null">
-      GROUP BY mskpr.material_id，mskpr.label_category_id
-    </if>
+  </select>
+
+  <select id="findListForGroup" resultMap="BaseResultDtoMap" parameterType="map">
+    select <include refid="BaseColumnList"/>
+    FROM mes_sfc_key_part_relevance mskpr
+    <where>
+      <if test="keyPartRelevanceId != null">
+        and mskpr.key_part_relevance_id = #{keyPartRelevanceId}
+      </if>
+      <if test="workOrderId != null">
+        and mskpr.work_order_id = #{workOrderId}
+      </if>
+      <if test="workOrderBarcodeId != null">
+        and mskpr.work_order_barcode_id = #{workOrderBarcodeId}
+      </if>
+      <if test="processId != null">
+        and mskpr.process_id = #{processId}
+      </if>
+      <if test="stationId != null">
+        and mskpr.station_id = #{stationId}
+      </if>
+      <if test="materialId != null">
+        and mskpr.material_id = #{materialId}
+      </if>
+      <if test="partBarcode != null and partBarcode != ''">
+        and mskpr.barcode_code = #{partBarcode}
+      </if>
+      <if test="workOrderIds != null">
+        <foreach collection="workOrderIds" index="index" item="item" open="and mskpr.work_order_id in (" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+      <if test="workOrderBarcodeIds != null">
+        <foreach collection="workOrderBarcodeIds" index="index" item="item" open="and mskpr.work_order_barcode_id in (" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+    GROUP BY mskpr.material_id, mskpr.label_category_id
   </select>
   
 </mapper>

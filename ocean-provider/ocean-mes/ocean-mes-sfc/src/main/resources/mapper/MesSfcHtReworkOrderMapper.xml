@@ -8,6 +8,7 @@
     <id column="ht_rework_order_id" jdbcType="BIGINT" property="htReworkOrderId" />
     <result column="rework_order_id" jdbcType="BIGINT" property="reworkOrderId" />
     <result column="rework_order_code" jdbcType="VARCHAR" property="reworkOrderCode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="rework_route_id" jdbcType="BIGINT" property="reworkRouteId" />
     <result column="rework_start_process_id" jdbcType="BIGINT" property="reworkStartProcessId" />
     <result column="rework_status" jdbcType="TINYINT" property="reworkStatus" />

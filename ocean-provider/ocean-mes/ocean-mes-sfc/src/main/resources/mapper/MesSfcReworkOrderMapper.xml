@@ -7,6 +7,7 @@
     -->
     <id column="rework_order_id" jdbcType="BIGINT" property="reworkOrderId" />
     <result column="rework_order_code" jdbcType="VARCHAR" property="reworkOrderCode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="rework_route_id" jdbcType="BIGINT" property="reworkRouteId" />
     <result column="rework_start_process_id" jdbcType="BIGINT" property="reworkStartProcessId" />
     <result column="rework_status" jdbcType="TINYINT" property="reworkStatus" />
@@ -23,8 +24,35 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <select id="findList" parameterType="map" resultType="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto">
-    SELECT * FROM mes_sfc_rework_order msro
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto">
+    <result column="route_code" jdbcType="VARCHAR" property="routeCcode" />
+    <result column="route_name" jdbcType="VARCHAR" property="routeName" />
+    <result column="process_code" jdbcType="VARCHAR" property="processCode" />
+    <result column="process_name" jdbcType="VARCHAR" property="processName" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+  </resultMap>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultDtoMap">
+    SELECT
+    msro.*,
+    br.route_code,
+    br.route_name,
+    bp.process_code,
+    bp.process_name,
+    bm.material_code,
+    bm.material_name,
+    bpm.product_model_code,
+    bpm.product_model_name
+    FROM
+    mes_sfc_rework_order msro
+    LEFT JOIN base_route br ON br.route_id = msro.rework_route_id
+    LEFT JOIN base_process bp ON bp.process_id = msro.rework_start_process_id
+    LEFT JOIN base_material bm ON bm.material_id = msro.material_id
+    LEFT JOIN base_material_tab bmt ON bmt.material_id = msro.material_id
+    LEFT JOIN base_product_model bpm ON bpm.product_model_id = bmt.product_model_id
     <where>
       <if test="reworkOrderCode != null">
         and msro.rework_order_code like CONCAT('%',#{reworkOrderCode},'%')
@@ -36,13 +64,13 @@
   </select>
 
 <!-- 获取今天返工单编码倒序第一条数据 -->
-  <select id="getTodayFirstReworkOrder" resultType="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto">
+  <select id="getFirstTodayReworkOrder" resultMap="BaseResultDtoMap">
     SELECT
       *
     FROM
       mes_sfc_rework_order msro
     WHERE
-      msro.create_time = TO_DAYS(NOW())
+      TO_DAYS(msro.create_time) = TO_DAYS(NOW())
     ORDER BY
       msro.rework_order_code DESC
     LIMIT 1

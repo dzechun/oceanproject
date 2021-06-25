@@ -6,6 +6,8 @@ import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class WmsInAsnOrderDetDto extends WmsInAsnOrderDet implements Serializable {
@@ -40,8 +42,8 @@ public class WmsInAsnOrderDetDto extends WmsInAsnOrderDet implements Serializabl
      * 库位
      */
     @Transient
-    @ApiModelProperty(name="storageName",value = "库位")
-    private String storageName;
+    @ApiModelProperty(name="storageCode",value = "库位")
+    private String storageCode;
 
     /**
      * 库存状态
@@ -69,4 +71,32 @@ public class WmsInAsnOrderDetDto extends WmsInAsnOrderDet implements Serializabl
     @Transient
     @ApiModelProperty(name="modifiedUserName",value = "修改人")
     private String modifiedUserName;
+
+    /**
+     * 是否来料（0-否 1-是）
+     */
+    @Transient
+    @ApiModelProperty(name="isComingMaterial",value = "是否来料（0-否 1-是）")
+    private Integer isComingMaterial;
+
+    /**
+     * 默认数值
+     */
+    @Transient
+    @ApiModelProperty(name="defaultQty",value = "默认数值")
+    private BigDecimal defaultQty;
+
+    /**
+     * 条码
+     */
+    @Transient
+    @ApiModelProperty(name="barcode",value = "条码")
+    private String barcode;
+
+    /**
+     * 条码集合
+     */
+    @Transient
+    @ApiModelProperty(name="barcodes",value = "条码集合")
+    private List<String> barcodes;
 }

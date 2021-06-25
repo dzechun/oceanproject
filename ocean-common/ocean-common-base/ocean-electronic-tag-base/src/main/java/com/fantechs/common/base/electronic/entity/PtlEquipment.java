@@ -40,6 +40,14 @@ public class PtlEquipment extends ValidGroup implements Serializable {
     private String equipmentTagId;
 
     /**
+     * 设备标签ID顺序位置
+     */
+    @ApiModelProperty(name="position",value = "设备标签ID顺序位置")
+    @Excel(name = "设备标签ID顺序位置", height = 20, width = 30,orderNum="")
+    @Column(name = "position")
+    private String position;
+
+    /**
      * 客户端id
      */
     @ApiModelProperty(name="clientId",value = "客户端id")

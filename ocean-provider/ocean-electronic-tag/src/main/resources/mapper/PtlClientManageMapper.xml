@@ -70,6 +70,9 @@
             <if test="status!=null">
                 and scm.status=#{status}
             </if>
+            <if test="orgId!=null">
+                and scm.org_id=#{orgId}
+            </if>
         </where>
         order by scm.create_time desc
     </select>

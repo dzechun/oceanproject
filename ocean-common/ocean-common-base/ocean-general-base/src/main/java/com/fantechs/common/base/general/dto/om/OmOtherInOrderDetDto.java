@@ -14,6 +14,14 @@ import java.math.BigDecimal;
  */
 @Data
 public class OmOtherInOrderDetDto extends OmOtherInOrderDet implements Serializable {
+
+    /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    private String warehouseName;
+
     /**
      * 物料编码
      */

@@ -254,19 +254,19 @@
         order by srp.order_num
     </select>
 
-    <select id="getWorkOrderList" parameterType="java.util.List" resultMap="BaseResultMap">
+    <select id="getWorkOrderList" parameterType="java.util.ArrayList" resultMap="BaseResultMap">
         SELECT * FROM mes_pm_work_order
         <where>
-            <if test="workOrderIds != null">
-                <foreach collection="workOrderIds" open="and work_order_id in (" separator="," close=")" item="value">
+            <if test="list != null">
+                <foreach collection="list" open="and work_order_id in (" separator="," close=")" item="value">
                     #{value}
                 </foreach>
             </if>
         </where>
     </select>
 
-    <update id="batchUpdate" parameterType="java.util.List">
-        <foreach collection="mesPmWorkOrders" item="item" index="index" open="" close="" separator=";">
+    <update id="batchUpdate" parameterType="java.util.ArrayList">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             update mes_pm_work_order
             <set>
                 output_qty = #{item.outputQty}

@@ -52,7 +52,7 @@ otod.modified_user_id,
 otod.modified_time
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_transfer_order_det otod
+    SELECT <include refid="Base_Column_List"/>,bm.material_code,bm.material_name,bmb.main_unit,IFNULL(bmb.volume,0) as volume,IFNULL(bmb.net_weight,0) as net_weight,IFNULL(bmb.gross_weight,0) as gross_weight,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_transfer_order_det otod
     LEFT JOIN base_material bm ON otod.material_id = bm.material_id
     left join base_material_tab bmb ON bm.material_id = bmb.material_id
     left join ocean_v2.sys_user su on otod.create_user_id = su.user_id

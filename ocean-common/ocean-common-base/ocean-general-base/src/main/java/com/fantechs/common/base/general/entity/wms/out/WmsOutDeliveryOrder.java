@@ -77,6 +77,20 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     private Long orderTypeId;
 
     /**
+     * 仓库ID
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
+
+    /**
+     * 库位ID
+     */
+    @ApiModelProperty(name="storageId",value = "库位ID")
+    @Column(name = "storage_id")
+    private Long storageId;
+
+    /**
      * 出库单编码
      */
     @ApiModelProperty(name="deliveryOrderCode",value = "出库单编码")

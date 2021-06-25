@@ -130,6 +130,9 @@ public interface BaseFeignApi {
     @PostMapping("/baseWarehouse/findList")
     ResponseEntity<List<BaseWarehouse>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseWarehouse searchBaseWarehouse);
 
+    @ApiOperation("获取详情")
+    @PostMapping("/baseWarehouse/detail")
+    ResponseEntity<BaseWarehouse> getWarehouseDetail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("根据条件查询线别")
     @PostMapping("/baseProLine/findList")
@@ -179,6 +182,10 @@ public interface BaseFeignApi {
     @ApiOperation("查询工艺路线信息列表")
     @PostMapping("/baseRoute/findList")
     ResponseEntity<List<BaseRoute>> findRouteList(@ApiParam(value = "查询对象") @RequestBody SearchBaseRoute searchBaseRoute);
+
+    @ApiOperation("获取工艺路线详情")
+    @PostMapping("/baseRoute/detail")
+    ResponseEntity<BaseRoute> routeDetail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message = "id不能为空") Long id);
 
     @ApiOperation("根据条件查询工序信息列表")
     @PostMapping("/baseProcess/findList")

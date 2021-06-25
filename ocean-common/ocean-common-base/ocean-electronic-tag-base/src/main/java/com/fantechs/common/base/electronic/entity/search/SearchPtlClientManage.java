@@ -33,4 +33,10 @@ public class SearchPtlClientManage extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="secretKey",value = "登录密钥")
     private String secretKey;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="orgId",value = "组织id")
+    private Long orgId;
 }

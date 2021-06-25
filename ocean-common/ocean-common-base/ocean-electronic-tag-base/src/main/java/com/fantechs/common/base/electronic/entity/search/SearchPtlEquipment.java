@@ -57,4 +57,10 @@ public class SearchPtlEquipment extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "queryMark",value = "查询方式标记")
     private Byte codeQueryMark;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="orgId",value = "组织id")
+    private Long orgId;
 }

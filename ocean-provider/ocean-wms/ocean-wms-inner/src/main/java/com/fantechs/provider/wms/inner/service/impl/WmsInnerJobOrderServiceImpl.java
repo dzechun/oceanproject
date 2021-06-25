@@ -120,7 +120,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             //待激活
             wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
-            wmsInnerJobOrder.setOrderStatus((byte)6);
+            if(wmsInnerJobOrder.getOrderTypeId()==4){
+                wmsInnerJobOrder.setOrderStatus((byte)6);
+            }else{
+                wmsInnerJobOrder.setOrderStatus((byte)3);
+            }
             wmsInnerJobOrder.setModifiedTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
@@ -189,10 +193,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //如果货品全部分配完成更改表头状态为待作业状态
             if(dto.stream().filter(li->li.getOrderStatus()==(byte)3).collect(Collectors.toList()).size()==dto.size()){
                 //更新表头状态
+                //完工入库单需要激活状态 其他则不需要
+                Byte status = 3;
+                if(wmsInnerJobOrder.getOrderTypeId()==4){
+                    status=6;
+                }
                 wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                         .jobOrderId(wmsInPutawayOrderDet.getJobOrderId())
                         //待激活
-                        .orderStatus((byte)6)
+                        .orderStatus(status)
                         .workerId(sysUser.getUserId())
                         .build());
             }else{
@@ -289,7 +298,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //旧
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("relevanceOrderCode",wmsInAsnOrderDto.getAsnCode()).andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId()).andEqualTo("warehouseName",wmsInAsnOrderDetDto.getWarehouseName()).andEqualTo("storageName",wmsInAsnOrderDetDto.getStorageName());
+        criteria.andEqualTo("relevanceOrderCode",wmsInAsnOrderDto.getAsnCode()).andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId()).andEqualTo("warehouseName",wmsInAsnOrderDetDto.getWarehouseName()).andEqualTo("storageCode",wmsInAsnOrderDetDto.getStorageCode());
         if(!StringUtils.isEmpty(wmsInAsnOrderDetDto.getBatchCode())){
             criteria.andEqualTo("batchCode",wmsInAsnOrderDetDto.getBatchCode());
         }
@@ -389,8 +398,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int num = 0;
         for (WmsInnerJobOrderDet wmsInPutawayOrderDet : wmsInPutawayOrderDets) {
             WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(wmsInPutawayOrderDet.getJobOrderId());
-            if(wmsInnerJobOrder.getStatus()==6){
-                wmsInnerJobOrder.setStatus((byte)3);
+            if(wmsInnerJobOrder.getOrderStatus()==6){
+                wmsInnerJobOrder.setOrderStatus((byte)3);
             }
             if(wmsInnerJobOrder.getOrderStatus()==(byte)5){
                 throw new BizErrorException("单据确认已完成");

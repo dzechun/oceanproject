@@ -33,6 +33,7 @@ public class PtlClientManageServiceImpl extends BaseService<PtlClientManage> imp
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        ptlClientManage.setOrgId(user.getOrganizationId());
         ptlClientManage.setCreateUserId(user.getUserId());
         ptlClientManage.setCreateTime(new Date());
         ptlClientManage.setModifiedUserId(user.getUserId());
@@ -73,6 +74,11 @@ public class PtlClientManageServiceImpl extends BaseService<PtlClientManage> imp
 
     @Override
     public List<PtlClientManageDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        map.put("orgId", user.getOrganizationId());
         return ptlClientManageMapper.findList(map);
     }
 }

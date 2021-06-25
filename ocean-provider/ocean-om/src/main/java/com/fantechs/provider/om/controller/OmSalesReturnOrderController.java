@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.om.OmHtSalesReturnOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDto;
 import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrder;
+import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesReturnOrder;
 import com.fantechs.provider.om.service.OmSalesReturnOrderService;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -92,5 +93,16 @@ public class OmSalesReturnOrderController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation("下发生成出库单")
+    @PostMapping("/packageAutoOutOrder")
+    public ResponseEntity packageAutoOutOrder(@RequestBody(required = true)OmSalesReturnOrder omSalesReturnOrder){
+        return ControllerUtil.returnCRUD(omSalesReturnOrderService.packageAutoOutOrder(omSalesReturnOrder));
+    }
+
+    @PostMapping("/writeQty")
+    public ResponseEntity writeQty(@RequestBody OmSalesReturnOrderDet omSalesReturnOrderDet){
+        return ControllerUtil.returnCRUD(omSalesReturnOrderService.writeQty(omSalesReturnOrderDet));
     }
 }

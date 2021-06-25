@@ -90,4 +90,10 @@ public class OmOtherInOrderController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation("下发生成出库单")
+    @PostMapping("/packageAutoOutOrder")
+    public ResponseEntity packageAutoOutOrder(@RequestBody(required = true) OmOtherInOrder omOtherInOrder){
+        return ControllerUtil.returnCRUD(omOtherInOrderService.packageAutoOutOrder(omOtherInOrder));
+    }
 }

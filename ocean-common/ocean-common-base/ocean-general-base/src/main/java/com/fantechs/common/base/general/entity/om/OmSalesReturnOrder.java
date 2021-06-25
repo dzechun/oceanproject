@@ -30,18 +30,10 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
     private Long salesReturnOrderId;
 
     /**
-     * 销售订单ID
-     */
-    @ApiModelProperty(name="salesOrderId",value = "销售订单ID")
-    @Excel(name = "销售订单ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "sales_order_id")
-    private Long salesOrderId;
-
-    /**
      * 销退入库单号
      */
     @ApiModelProperty(name="salesReturnOrderCode",value = "销退入库单号")
-    @Excel(name = "销退入库单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "销退入库单号", height = 20, width = 30,orderNum="1")
     @Column(name = "sales_return_order_code")
     private String salesReturnOrderCode;
 
@@ -49,7 +41,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 相关单号
      */
     @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
-    @Excel(name = "相关单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "相关单号", height = 20, width = 30,orderNum="2")
     @Column(name = "related_order_code")
     private String relatedOrderCode;
 
@@ -64,32 +56,32 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
     /**
      * 总加入数量
      */
+    @Transient
     @ApiModelProperty(name="totalIssueQty",value = "总加入数量")
-    @Excel(name = "总加入数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_issue_qty")
+    @Excel(name = "总加入数量", height = 20, width = 30,orderNum="3")
     private BigDecimal totalIssueQty;
 
     /**
      * 总收货数量
      */
+    @Transient
     @ApiModelProperty(name="totalReceivingQty",value = "总收货数量")
-    @Excel(name = "总收货数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_receiving_qty")
+    @Excel(name = "总收货数量", height = 20, width = 30,orderNum="4")
     private BigDecimal totalReceivingQty;
 
     /**
      * 订单总数量
      */
+    @Transient
     @ApiModelProperty(name="totalQty",value = "订单总数量")
-    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_qty")
+    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="5")
     private BigDecimal totalQty;
 
     /**
      * 订单总体积
      */
     @ApiModelProperty(name="totalVolume",value = "订单总体积")
-    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="") 
+    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="6")
     @Column(name = "total_volume")
     private BigDecimal totalVolume;
 
@@ -97,7 +89,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 订单总净重
      */
     @ApiModelProperty(name="totalNetWeight",value = "订单总净重")
-    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="") 
+    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="7")
     @Column(name = "total_net_weight")
     private BigDecimal totalNetWeight;
 
@@ -105,15 +97,15 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 订单总毛重
      */
     @ApiModelProperty(name="totalGrossWeight",value = "订单总毛重")
-    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="") 
+    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="8")
     @Column(name = "total_gross_weight")
     private BigDecimal totalGrossWeight;
 
     /**
      * 订单状态(1-打开 2-下发中  3-已下发 4-完成)
      */
-    @ApiModelProperty(name="orderStatus",value = "订单状态(1-打开 2-下发中  3-已下发 4-完成)")
-    @Excel(name = "订单状态(1-打开 2-下发中  3-已下发 4-完成)", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="orderStatus",value = "订单状态(1-打开  3-已下发 4-完成)")
+    @Excel(name = "订单状态(1-打开 2-下发中  3-已下发 4-完成)", height = 20, width = 30,orderNum="9")
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -121,22 +113,30 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="10")
     private Byte status;
 
     /**
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "订单日期", height = 20, width = 30,orderNum="11")
     @Column(name = "order_date")
     private Date orderDate;
+
+    /**
+     * 要求完成日期
+     */
+    @ApiModelProperty(name="completeDate",value = "要求完成日期")
+    @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="12")
+    @Column(name = "complete_date")
+    private Date completeDate;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备注", height = 20, width = 30,orderNum="13")
     private String remark;
 
     /**
@@ -159,7 +159,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -176,7 +176,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="16",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

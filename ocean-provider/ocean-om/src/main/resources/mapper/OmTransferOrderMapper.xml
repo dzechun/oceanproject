@@ -11,10 +11,6 @@
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
     <result column="out_warehouse_id" jdbcType="BIGINT" property="outWarehouseId" />
     <result column="in_warehouse_id" jdbcType="BIGINT" property="inWarehouseId" />
-    <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
-    <result column="total_volume" jdbcType="DECIMAL" property="totalVolume" />
-    <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight" />
-    <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
@@ -30,6 +26,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmTransferOrderDto">
+      <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
     <result column="out_warehouse_name" jdbcType="VARCHAR" property="outWarehouseName"/>
     <result column="in_warehouse_name" jdbcType="VARCHAR" property="inWarehouseName"/>
@@ -44,10 +41,6 @@ oto.related_order_code,
 oto.material_owner_id,
 oto.out_warehouse_id,
 oto.in_warehouse_id,
-oto.total_qty,
-oto.total_volume,
-oto.total_net_weight,
-oto.total_gross_weight,
 oto.order_status,
 oto.status,
 oto.order_date,
@@ -64,7 +57,8 @@ oto.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,bw.warehouse_name as 'out_warehouse_name',bw1.warehouse_name as 'in_warehouse_name',
-    su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
+    su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+      (SELECT SUM(otod.order_qty) FROM om_transfer_order_det otod where otod.transfer_order_id = oto.transfer_order_id) as total_qty
     FROM om_transfer_order oto
                   LEFT JOIN base_material_owner bmo ON oto.material_owner_id = bmo.material_owner_id
                   LEFT JOIN base_warehouse bw ON oto.out_warehouse_id = bw.warehouse_id

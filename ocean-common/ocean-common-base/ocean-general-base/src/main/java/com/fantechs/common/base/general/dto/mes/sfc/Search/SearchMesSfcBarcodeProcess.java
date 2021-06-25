@@ -18,8 +18,8 @@ public class SearchMesSfcBarcodeProcess extends BaseQuery implements Serializabl
     /**
      * 产品条码
      */
-    @ApiModelProperty(name = "barCode", value = "产品条码")
-    private String barCode;
+    @ApiModelProperty(name = "barcode", value = "产品条码")
+    private String barcode;
 
     /**
      * 包箱号

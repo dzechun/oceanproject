@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Builder
@@ -34,9 +35,16 @@ public class SearchWmsInAsnOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="warehouseName",value = "仓库")
     private String warehouseName;
 
+    /**
+     * 单据状态(1-待收货 2-收货中 3-收货完成)
+     */
+    @ApiModelProperty(name="orderStatusList",value = "单据状态(1-待收货 2-收货中 3-收货完成)")
+    private List<String> orderStatusList;
+
     private Long asnOrderId;
 
     private Long orgId;
 
+    @ApiModelProperty(name = "orderTypeId",value = "3-调拨入库、4-完工入库、5-销退入库、6-其他入库")
     private Long orderTypeId;
 }

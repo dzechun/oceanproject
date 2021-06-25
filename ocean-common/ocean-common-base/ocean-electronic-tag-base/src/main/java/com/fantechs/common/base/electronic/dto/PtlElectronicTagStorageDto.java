@@ -16,23 +16,19 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      * 单据类型（1-分拣单 2-上料单）
      */
     @ApiModelProperty(name="orderType",value = "单据类型（1-分拣单 2-上料单）")
-    @Excel(name = "单据类型（1-分拣单 2-上料单）", height = 20, width = 30,orderNum="1")
-    @Transient
     private Byte orderType;
 
     /**
      * 储位描述
      */
     @ApiModelProperty(name = "storageDesc",value = "储位描述")
-    @Excel(name = "储位描述", height = 20, width = 30,orderNum = "2")
-    @Transient
     private String storageDesc;
 
     /**
      * 储位名称
      */
     @ApiModelProperty(name = "storageName",value = "储位名称")
-    @Excel(name = "储位名称", height = 20, width = 30,orderNum = "3")
+    @Excel(name = "储位名称", height = 20, width = 30,orderNum = "2")
     @Transient
     private String storageName;
 
@@ -46,7 +42,7 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      * 设备名称
      */
     @ApiModelProperty(name="equipmentName",value = "设备名称")
-    @Excel(name = "电子标签控制器名称", height = 20, width = 30,orderNum="17")
+    @Excel(name = "电子标签控制器名称", height = 20, width = 30,orderNum="4")
     @Transient
     private String equipmentName;
 
@@ -54,7 +50,7 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      * 设备编码
      */
     @ApiModelProperty(name="equipmentCode",value = "电子标签控制器编码")
-    @Excel(name = "电子标签控制器编码", height = 20, width = 30,orderNum="18")
+    @Excel(name = "电子标签控制器编码(必填)", height = 20, width = 30,orderNum="3")
     @Transient
     private String equipmentCode;
 
@@ -62,7 +58,7 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      * 设备ip
      */
     @ApiModelProperty(name="equipmentIp",value = "设备ip")
-    @Excel(name = "电子标签控制器ip", height = 20, width = 30,orderNum="19")
+    @Excel(name = "电子标签控制器ip", height = 20, width = 30,orderNum="7")
     @Transient
     private String equipmentIp;
 
@@ -70,7 +66,7 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      * 设备端口
      */
     @ApiModelProperty(name="equipmentPort",value = "设备端口")
-    @Excel(name = "设备端口", height = 20, width = 30,orderNum="20")
+    @Excel(name = "设备端口", height = 20, width = 30,orderNum="8")
     @Transient
     private String equipmentPort;
 
@@ -81,10 +77,16 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
     private String equipmentAreaTagId;
 
     /**
+     * 区域设备标签ID顺序位置
+     */
+    @ApiModelProperty(name="position",value = "区域设备标签ID顺序位置")
+    private String position;
+
+    /**
      * 区域设备名称
      */
     @ApiModelProperty(name="equipmentName",value = "区域设备名称")
-    @Excel(name = "区域设备名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "区域设备名称", height = 20, width = 30,orderNum="6")
     @Transient
     private String equipmentAreaName;
 
@@ -92,7 +94,7 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      * 区域设备编码
      */
     @ApiModelProperty(name="equipmentCode",value = "区域设备编码")
-    @Excel(name = "区域设备编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "区域设备编码(必填)", height = 20, width = 30,orderNum="5")
     @Transient
     private String equipmentAreaCode;
 
@@ -100,23 +102,19 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      * 区域设备ip
      */
     @ApiModelProperty(name="equipmentIp",value = "区域设备ip")
-    @Excel(name = "区域设备ip", height = 20, width = 30,orderNum="")
-    @Transient
     private String equipmentAreaIp;
 
     /**
      * 区域设备端口
      */
     @ApiModelProperty(name="equipmentPort",value = "区域设备端口")
-    @Excel(name = "区域设备端口", height = 20, width = 30,orderNum="")
-    @Transient
     private String equipmentAreaPort;
 
     /**
      * 仓库名称
      */
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30,orderNum = "6")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum = "12")
     @Transient
     private String warehouseName;
 
@@ -124,7 +122,7 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      * 仓库区域名称
      */
     @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
-    @Excel(name = "仓库区域名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "仓库区域名称", height = 20, width = 30,orderNum="14")
     @Transient
     private String warehouseAreaName;
 
@@ -132,24 +130,18 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      * 物料名称
      */
     @ApiModelProperty(name="materialName" ,value="物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="10")
-    @Transient
     private String materialName;
 
     /**
      * 物料描述
      */
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "物料描述", height = 20, width = 30,orderNum="11")
-    @Transient
     private String materialDesc;
 
     /**
      * 物料版本
      */
     @ApiModelProperty(name="materialVersion" ,value="物料版本")
-    @Excel(name = "物料版本", height = 20, width = 30,orderNum="12")
-    @Transient
     private String materialVersion;
 
     /**
@@ -157,7 +149,7 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建账号", height = 20, width = 30,orderNum="13")
+    @Excel(name = "创建账号", height = 20, width = 30,orderNum="16")
     private String createUserName;
 
     /**
@@ -165,7 +157,7 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改账号", height = 20, width = 30,orderNum="15")
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum="18")
     private String modifiedUserName;
 
     @ApiModelProperty(name="clientId",value = "客户端id")
@@ -176,7 +168,6 @@ public class PtlElectronicTagStorageDto extends PtlElectronicTagStorage implemen
      */
     @Transient
     @ApiModelProperty(name="queueName" ,value="队列名称")
-    @Excel(name = "队列名称", height = 20, width = 30,orderNum="16")
     private String  queueName;
 
     /**

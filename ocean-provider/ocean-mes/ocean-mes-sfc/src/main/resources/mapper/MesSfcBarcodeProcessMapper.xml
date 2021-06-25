@@ -67,11 +67,25 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto" extends="BaseResultMap">
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+    <result column="product_family_code" jdbcType="VARCHAR" property="productFamilyCode" />
+    <result column="product_family_name" jdbcType="VARCHAR" property="productFamilyName" />
+  </resultMap>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     SELECT
-      *
+    msbp.*,
+    bpm.product_model_code,
+    bpm.product_model_name,
+    bpf.product_family_code,
+    bpf.product_family_name
     FROM
       mes_sfc_barcode_process msbp
+    LEFT JOIN base_material_tab bmt ON msbp.material_id = bmt.material_id
+    LEFT JOIN base_product_model bpm ON bmt.product_model_id = bpm.product_model_id
+    LEFT JOIN base_product_family bpf ON bpm.product_family_id = bpf.product_family_id
     <where>
       <if test="barcode != null">
         AND msbp.barcode = #{barcode}
@@ -88,12 +102,12 @@
     </where>
   </select>
 
-  <update id="batchUpdate" parameterType="java.util.List">
-    <foreach collection="mesSfcBarcodeProcessList" item="item" index="index" open="" close="" separator=";">
+  <update id="batchUpdate" parameterType="java.util.ArrayList">
+    <foreach collection="list" item="item" index="index" open="" close="" separator=";">
       update mes_sfc_barcode_process
       <set>
         route_id = #{item.routeId},
-        route_code = #{routeCode},
+        route_code = #{item.routeCode},
         route_name = #{item.routeName},
         next_process_id = #{item.nextProcessId},
         next_process_code = #{item.nextProcessCode},
@@ -109,6 +123,9 @@
         pro_name = #{item.proName},
         barcode_status = #{item.barcodeStatus},
         rework_order_id = #{item.reworkOrderId},
+        carton_code = #{item.cartonCode},
+        pallet_code = #{item.palletCode},
+        color_box_code = #{item.colorBoxCode},
       </set>
       where barcode_process_id =#{item.barcodeProcessId}
     </foreach>

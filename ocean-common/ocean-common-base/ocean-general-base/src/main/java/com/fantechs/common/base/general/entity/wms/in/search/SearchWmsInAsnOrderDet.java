@@ -21,4 +21,10 @@ public class SearchWmsInAsnOrderDet extends BaseQuery implements Serializable {
     private Long asnOrderId;
 
     private Long asnOrderDetId;
+
+    /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialCode",value = "物料编码")
+    private String materialCode;
 }

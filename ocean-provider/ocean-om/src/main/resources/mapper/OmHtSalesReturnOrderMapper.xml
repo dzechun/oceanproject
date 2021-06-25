@@ -7,7 +7,6 @@
     -->
     <id column="ht_sales_return_order_id" jdbcType="BIGINT" property="htSalesReturnOrderId" />
     <result column="sales_return_order_id" jdbcType="BIGINT" property="salesReturnOrderId" />
-    <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId" />
     <result column="sales_return_order_code" jdbcType="VARCHAR" property="salesReturnOrderCode" />
     <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
@@ -20,6 +19,7 @@
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
+    <result column="complete_date" jdbcType="TIMESTAMP" property="completeDate"/>
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -40,7 +40,6 @@
   <sql id="Base_Column_List">
 osro.ht_sales_return_order_id,
     osro.sales_return_order_id,
-    osro.sales_order_id,
     osro.sales_return_order_code,
     osro.related_order_code,
 osro.material_owner_id,
@@ -53,6 +52,7 @@ osro.total_gross_weight,
 osro.order_status,
 osro.status,
 osro.order_date,
+osro.complete_date,
 osro.remark,
 osro.org_id,
 osro.create_user_id,

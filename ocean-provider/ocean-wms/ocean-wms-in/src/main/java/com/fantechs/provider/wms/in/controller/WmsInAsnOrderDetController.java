@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.in.controller;
 
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -31,6 +33,19 @@ public class WmsInAsnOrderDetController {
 
     @Resource
     private WmsInAsnOrderDetService wmsInAsnOrderDetService;
+
+    @ApiOperation("检查条码")
+    @PostMapping("/checkBarcode")
+    public ResponseEntity<BigDecimal> checkBarcode(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInAsnOrderDetDto wmsInAsnOrderDetDto) {
+        BigDecimal num = wmsInAsnOrderDetService.checkBarcode(wmsInAsnOrderDetDto);
+        return  ControllerUtil.returnDataSuccess(num,1);
+    }
+
+    @ApiOperation("提交")
+    @PostMapping("/update")
+    public ResponseEntity update(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInAsnOrderDetDto wmsInAsnOrderDetDto) {
+        return ControllerUtil.returnCRUD(wmsInAsnOrderDetService.update(wmsInAsnOrderDetDto));
+    }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")

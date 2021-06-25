@@ -34,8 +34,8 @@ public class MesSfcBarcodeProcessServiceImpl extends BaseService<MesSfcBarcodePr
     public List<MesSfcBarcodeProcess> findBarcode(SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess) {
         Example example = new Example(MesSfcBarcodeProcess.class);
         Example.Criteria criteria = example.createCriteria();
-        if(!StringUtils.isEmpty(searchMesSfcBarcodeProcess.getBarCode())){
-            criteria.andEqualTo("barcode",searchMesSfcBarcodeProcess.getBarCode());
+        if(!StringUtils.isEmpty(searchMesSfcBarcodeProcess.getBarcode())){
+            criteria.andEqualTo("barcode",searchMesSfcBarcodeProcess.getBarcode());
         }else if(!StringUtils.isEmpty(searchMesSfcBarcodeProcess.getCartonCode())){
             criteria.andEqualTo("cartonCode",searchMesSfcBarcodeProcess.getCartonCode());
         }else if(!StringUtils.isEmpty(searchMesSfcBarcodeProcess.getPalletCode())){

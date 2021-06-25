@@ -41,7 +41,7 @@ public class PtlElectronicTagStorage extends ValidGroup implements Serializable 
      * 储位编码
      */
     @ApiModelProperty(name = "storageCode",value = "储位编码")
-    @Excel(name = "储位编码", height = 20, width = 30,orderNum = "1")
+    @Excel(name = "储位编码(必填)", height = 20, width = 30,orderNum = "1")
     @Column(name = "storage_code")
     private String storageCode;
 
@@ -79,7 +79,6 @@ public class PtlElectronicTagStorage extends ValidGroup implements Serializable 
      * 仓库区域id
      */
     @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域id")
-    @Excel(name = "仓库区域id", height = 20, width = 30,orderNum = "11")
     @Column(name = "warehouse_area_id")
     private String warehouseAreaId;
 
@@ -95,7 +94,6 @@ public class PtlElectronicTagStorage extends ValidGroup implements Serializable 
      * 物料id
      */
     @ApiModelProperty(name = "materialId",value = "物料Id")
-    @Excel(name = "物料Id", height = 20, width = 30,orderNum = "11")
     @Column(name = "material_id")
     private String materialId;
 
@@ -104,7 +102,6 @@ public class PtlElectronicTagStorage extends ValidGroup implements Serializable 
      */
     @Column(name = "material_code")
     @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30)
     private String materialCode;
 
 
@@ -112,7 +109,7 @@ public class PtlElectronicTagStorage extends ValidGroup implements Serializable 
      * 电子标签id
      */
     @ApiModelProperty(name="electronicTagId",value = "电子标签id")
-    @Excel(name = "电子标签id", height = 20, width = 30,orderNum="7")
+    @Excel(name = "电子标签id(必填)", height = 20, width = 30,orderNum="9")
     @Column(name = "electronic_tag_id")
     @NotBlank(message = "电子标签id不能为空")
     private String electronicTagId;
@@ -121,7 +118,7 @@ public class PtlElectronicTagStorage extends ValidGroup implements Serializable 
      * 电子标签语言类别(1-中文 2-英文)
      */
     @ApiModelProperty(name="electronicTagLangType",value = "电子标签语言类别(1-中文 2-英文)")
-    @Excel(name = "电子标签语言类别(1-中文 2-英文)", height = 20, width = 30,orderNum="")
+    @Excel(name = "电子标签语言类别(1-中文 2-英文)(必填)", height = 20, width = 30,orderNum="10")
     @Column(name = "electronic_tag_lang_type")
     private Byte electronicTagLangType;
 
@@ -143,7 +140,7 @@ public class PtlElectronicTagStorage extends ValidGroup implements Serializable 
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="9",replace = {"无效_0","有效_1"})
+//    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="9",replace = {"无效_0","有效_1"})
     private Integer status;
 
     /**

@@ -41,4 +41,7 @@ public class SearchPtlJobOrder extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="warehouseAreaId",value = "仓库区域ID")
     private Long warehouseAreaId;
+
+    @ApiModelProperty(name="orgId",value = "组织id")
+    private Long orgId;
 }
