@@ -79,7 +79,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             }
             WmsInAsnOrderDet wmsInAsnOrderDet = WmsInAsnOrderDet.builder()
                     .sourceOrderId(omOtherInOrderDet.getOtherInOrderId())
-                    .asnOrderDetId(omOtherInOrderDet.getOtherInOrderDetId())
+                    .orderDetId(omOtherInOrderDet.getOtherInOrderDetId())
                     .warehouseId(omOtherInOrderDet.getWarehouseId())
                     .materialId(omOtherInOrderDet.getMaterialId())
                     .packingUnitName(omOtherInOrderDet.getUnitName())
@@ -95,7 +95,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 .sourceOrderId(omOtherInOrder.getOtherInOrderId())
                 .materialOwnerId(omOtherInOrder.getMaterialOwnerId())
                 //销退入库单
-                .orderTypeId(Long.parseLong("5"))
+                .orderTypeId(Long.parseLong("6"))
                 .relatedOrderCode1(omOtherInOrder.getRelatedOrderCode())
                 .orderDate(new Date())
                 .wmsInAsnOrderDetList(wmsInAsnOrderDets)

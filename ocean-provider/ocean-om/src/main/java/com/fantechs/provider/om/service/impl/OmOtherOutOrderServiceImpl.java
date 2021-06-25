@@ -74,7 +74,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         wmsOutDeliveryOrder.setMaterialOwnerId(omOtherOutOrder.getMaterialOwnerId());
         wmsOutDeliveryOrder.setSourceOrderId(omOtherOutOrder.getOtherOutOrderId());
         wmsOutDeliveryOrder.setRelatedOrderCode1(omOtherOutOrder.getOtherOutOrderCode());
-        wmsOutDeliveryOrder.setOrderTypeId((long)2);
+        wmsOutDeliveryOrder.setOrderTypeId((long)7);
         wmsOutDeliveryOrder.setOrderStatus((byte)1);
         wmsOutDeliveryOrder.setOrderDate(new Date());
         wmsOutDeliveryOrder.setOrgId(sysUser.getOrganizationId());

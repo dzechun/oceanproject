@@ -1,10 +1,13 @@
 package com.fantechs.provider.base.util;
 
 import com.fantechs.provider.base.service.BaseStorageService;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +34,19 @@ public class StorageDistributionRuleUtils {
 
     /**
      * 上架分配主规则
+     * @param packageQty
+     * @return
      */
-    //public static List<>
+    public static List<T> JobMainRule(BigDecimal packageQty){
+        //可用库位列表
+        List<T> list = new ArrayList<>();
+        //待上架总数包装数量
+        BigDecimal jobTotalPackageQty_BU = packageQty;
+        //基准动线号排序：DOWN-降序、ASC-升序
+        String SART = "ASC";
+        if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
+
+        }
+        return list;
+    }
 }

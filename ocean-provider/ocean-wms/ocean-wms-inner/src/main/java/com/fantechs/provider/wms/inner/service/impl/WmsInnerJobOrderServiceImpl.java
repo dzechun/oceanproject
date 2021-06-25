@@ -510,7 +510,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         WmsInAsnOrderDet wms = inFeignApi.findDetList(SearchWmsInAsnOrderDet.builder()
                 .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
                 .build()).getData().get(0);
-        BigDecimal qty = InBarcodeUtil.checkBarCode(wms.getSourceOrderId(),barCode);
+        BigDecimal qty = InBarcodeUtil.getInventoryDetQty(wmsInnerJobOrderDet.getMaterialId(),barCode);
         return qty;
     }
 
@@ -520,7 +520,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     private int addInventoryDet(Long asnOrderId,WmsInnerJobOrderDet wmsInnerJobOrderDet){
         //获取完工入库单单号
-
         String asnOrderCode = wmsInPutawayOrderMapper.findAsnCode(asnOrderId);
         Example example = new Example(WmsInnerInventoryDet.class);
         example.createCriteria().andEqualTo("relatedOrderCode",asnOrderCode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId());
@@ -899,6 +898,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             return wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
         }
     }
+//    private void checkBarCode(){
+//        //1、判断是否展板自动收货还是PDA收货
+//        //2、栈板自动收货匹配栈板条码还是成品条码
+//        //一个成品条码数量为1、一个栈板返回栈板数量
+//        //如果收到收货直接匹配库存明细
+//    }
     /**
      * 获取当前登录用户
      * @return

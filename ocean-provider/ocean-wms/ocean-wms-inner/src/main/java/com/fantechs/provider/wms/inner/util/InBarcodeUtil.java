@@ -8,11 +8,13 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPa
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderReMspp;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderReMsppMapper;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 入库条码校验
@@ -34,6 +37,8 @@ public class InBarcodeUtil {
     //Feign
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
+    private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
 
     private static InBarcodeUtil inBarcodeUtil;
 
@@ -42,6 +47,7 @@ public class InBarcodeUtil {
     public void init(){
         inBarcodeUtil = this;
         inBarcodeUtil.sfcFeignApi = sfcFeignApi;
+        inBarcodeUtil.wmsInnerInventoryDetMapper = wmsInnerInventoryDetMapper;
     }
 
     /**
@@ -80,5 +86,28 @@ public class InBarcodeUtil {
             throw new BizErrorException("暂无数量");
         }
         return qty;
+    }
+
+    /**
+     * 上架获取扫码条码的数量
+     * @param materialId 物料ID
+     * @param barCode 条码
+     * @return
+     */
+    public static BigDecimal getInventoryDetQty(Long materialId,String barCode){
+        //查询库存明细是否存在改条码
+        Example example = new Example(WmsInnerInventoryDet.class);
+        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode);
+        List<WmsInnerInventoryDet> list = inBarcodeUtil.wmsInnerInventoryDetMapper.selectByExample(example);
+        if(list.size()<1){
+            throw new BizErrorException("条码不存在");
+        }
+        BigDecimal totalQty =list.stream()
+                .map(WmsInnerInventoryDet::getMaterialQty)
+                .reduce(BigDecimal.ZERO,BigDecimal::add);
+        if(totalQty.compareTo(BigDecimal.ZERO)==0){
+            throw new BizErrorException("暂无入库数量");
+        }
+        return totalQty;
     }
 }
