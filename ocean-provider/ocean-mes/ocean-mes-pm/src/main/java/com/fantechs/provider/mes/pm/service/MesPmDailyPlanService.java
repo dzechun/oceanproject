@@ -19,5 +19,8 @@ public interface MesPmDailyPlanService extends IService<MesPmDailyPlan> {
 
     List<MesPmDailyPlanDto> findList(SearchMesPmDailyPlan searchMesPmDailyPlan);
 
+    List<MesPmDailyPlanDto> findDaysList(SearchMesPmDailyPlan searchMesPmDailyPlan) throws ParseException;
+
     int batchRemove(List<MesPmDailyPlan> list);
+
 }

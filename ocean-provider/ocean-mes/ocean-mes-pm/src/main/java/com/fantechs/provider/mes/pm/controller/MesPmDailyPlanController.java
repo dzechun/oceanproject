@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -94,6 +95,12 @@ public class MesPmDailyPlanController {
         }
     }
 
-
+    @ApiOperation("未来三日列表列表")
+    @PostMapping("/findDaysList")
+    public ResponseEntity<List<MesPmDailyPlanDto>> findDaysList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmDailyPlan searchMesPmDailyPlan) throws ParseException {
+        Page<Object> page = PageHelper.startPage(searchMesPmDailyPlan.getStartPage(),searchMesPmDailyPlan.getPageSize());
+        List<MesPmDailyPlanDto> list = mesPmDailyPlanService.findDaysList(searchMesPmDailyPlan);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
 }
