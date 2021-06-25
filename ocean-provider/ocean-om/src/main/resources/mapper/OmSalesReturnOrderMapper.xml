@@ -12,6 +12,9 @@
     <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
     <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty" />
     <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
+    <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
+    <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
+    <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
@@ -38,6 +41,9 @@
     osro.sales_return_order_code,
     osro.related_order_code,
 osro.material_owner_id,
+osro.total_volume,
+osro.total_net_weight,
+osro.total_gross_weight,
 osro.order_status,
 osro.status,
 osro.order_date,
@@ -80,5 +86,11 @@ left join base_organization bo on osro.org_id = bo.organization_id
         and date_format(osro.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
   </where>
+  </select>
+  <select id="findMaterial" resultMap="BaseResultMap">
+    select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as total_net_weight,IFNULL(bmb.gross_weight,0) as total_gross_weight
+    From base_material bm
+    left join base_material_tab bmb ON bm.material_id = bmb.material_id
+where bm.material_id = #{materialId}
   </select>
 </mapper>

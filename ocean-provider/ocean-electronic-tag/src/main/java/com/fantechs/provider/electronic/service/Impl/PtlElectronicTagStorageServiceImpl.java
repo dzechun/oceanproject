@@ -2,6 +2,7 @@ package com.fantechs.provider.electronic.service.Impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.PtlElectronicTagStorageDto;
+import com.fantechs.common.base.electronic.dto.PtlElectronicTagStorageImport;
 import com.fantechs.common.base.electronic.dto.PtlEquipmentDto;
 import com.fantechs.common.base.electronic.entity.PtlElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchPtlEquipment;
@@ -141,7 +142,7 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
     }
 
     @Override
-    public Map<String, Object> importElectronicTagController(List<PtlElectronicTagStorageDto> ptlElectronicTagStorageDtos) {
+    public Map<String, Object> importElectronicTagController(List<PtlElectronicTagStorageImport> ptlElectronicTagStorageImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -150,13 +151,13 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<PtlElectronicTagStorage> list = new LinkedList<>();
-        for (int i = 0; i < ptlElectronicTagStorageDtos.size(); i++) {
-            PtlElectronicTagStorageDto ptlElectronicTagStorageDto = ptlElectronicTagStorageDtos.get(i);
-            String storageCode = ptlElectronicTagStorageDto.getStorageCode();//储位编码
-            String equipmentCode = ptlElectronicTagStorageDto.getEquipmentCode();//设备编码
-            String equipmentAreaCode = ptlElectronicTagStorageDto.getEquipmentAreaCode();//区域设备编码
-            String electronicTagId = ptlElectronicTagStorageDto.getElectronicTagId();//电子标签Id
-            Byte electronicTagLangType = ptlElectronicTagStorageDto.getElectronicTagLangType();//电子标签语言类别
+        for (int i = 0; i < ptlElectronicTagStorageImports.size(); i++) {
+            PtlElectronicTagStorageImport ptlElectronicTagStorageImport = ptlElectronicTagStorageImports.get(i);
+            String storageCode = ptlElectronicTagStorageImport.getStorageCode();//储位编码
+            String equipmentCode = ptlElectronicTagStorageImport.getEquipmentCode();//设备编码
+            String equipmentAreaCode = ptlElectronicTagStorageImport.getEquipmentAreaCode();//区域设备编码
+            String electronicTagId = ptlElectronicTagStorageImport.getElectronicTagId();//电子标签Id
+            Integer electronicTagLangType = ptlElectronicTagStorageImport.getElectronicTagLangType();//电子标签语言类别
             if (StringUtils.isEmpty(
                     storageCode,equipmentCode,equipmentAreaCode,electronicTagId,electronicTagLangType
             )){
@@ -183,19 +184,19 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
                 fail.add(i+3);
                 continue;
             }
-            ptlElectronicTagStorageDto.setStorageId(baseStorages.get(0).getStorageId().toString());
-            ptlElectronicTagStorageDto.setWarehouseId(baseStorages.get(0).getWarehouseId().toString());
-            ptlElectronicTagStorageDto.setWarehouseAreaId(baseStorages.get(0).getWarehouseAreaId().toString());
-            ptlElectronicTagStorageDto.setEquipmentId(ptlEquipmentDtos.get(0).getEquipmentId().toString());
-            ptlElectronicTagStorageDto.setEquipmentAreaId(ptlEquipmentAreaDtos.get(0).getEquipmentId().toString());
+            ptlElectronicTagStorageImport.setStorageId(baseStorages.get(0).getStorageId().toString());
+            ptlElectronicTagStorageImport.setWarehouseId(baseStorages.get(0).getWarehouseId().toString());
+            ptlElectronicTagStorageImport.setWarehouseAreaId(baseStorages.get(0).getWarehouseAreaId().toString());
+            ptlElectronicTagStorageImport.setEquipmentId(ptlEquipmentDtos.get(0).getEquipmentId().toString());
+            ptlElectronicTagStorageImport.setEquipmentAreaId(ptlEquipmentAreaDtos.get(0).getEquipmentId().toString());
 
             //判断绑定关系是否存在
             Example example = new Example(PtlElectronicTagStorage.class);
             Example.Criteria criteria = example.createCriteria();
             Example.Criteria criteria1 = example.createCriteria();
-            criteria.andEqualTo("storageId", ptlElectronicTagStorageDto.getStorageId()).andEqualTo("electronicTagLangType", electronicTagLangType);
-            criteria1.andEqualTo("equipmentId", ptlElectronicTagStorageDto.getEquipmentId())
-                    .andEqualTo("electronicTagId", ptlElectronicTagStorageDto.getElectronicTagId());
+            criteria.andEqualTo("storageId", ptlElectronicTagStorageImport.getStorageId()).andEqualTo("electronicTagLangType", electronicTagLangType);
+            criteria1.andEqualTo("equipmentId", ptlElectronicTagStorageImport.getEquipmentId())
+                    .andEqualTo("electronicTagId", ptlElectronicTagStorageImport.getElectronicTagId());
             example.or(criteria1);
             List<PtlElectronicTagStorage> ptlElectronicTagStorages = ptlElectronicTagStorageMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(ptlElectronicTagStorages)){
@@ -203,7 +204,7 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
                 continue;
             }
             PtlElectronicTagStorage ptlElectronicTagStorage = new PtlElectronicTagStorage();
-            BeanUtils.copyProperties(ptlElectronicTagStorageDto, ptlElectronicTagStorage);
+            BeanUtils.copyProperties(ptlElectronicTagStorageImport, ptlElectronicTagStorage);
             ptlElectronicTagStorage.setStatus(1);
             ptlElectronicTagStorage.setOrgId(currentUser.getOrganizationId());
             ptlElectronicTagStorage.setCreateTime(new Date());

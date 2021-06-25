@@ -24,4 +24,6 @@ public interface ElectronicTagStorageService {
     int ptlJobOrderLightOff(Long jobOrderId) throws Exception;
     void fanoutSender(Integer code, RabbitMQDTO rabbitMQDTO, List<RabbitMQDTO> rabbitMQDTOList) throws Exception;
     String intercepting(String s, int number) throws UnsupportedEncodingException;
+
+    int activateAndPrint(Long jobOrderId, Long workUserId) throws Exception;
 }
