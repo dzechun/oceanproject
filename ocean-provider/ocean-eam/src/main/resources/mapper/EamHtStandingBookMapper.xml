@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.eam.mapper.EamHtStandingBookMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eam.history.EamHtStandingBook">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_standing_book_id" jdbcType="BIGINT" property="htStandingBookId" />
+    <result column="standing_book_id" jdbcType="BIGINT" property="standingBookId" />
+    <result column="equipment_id" jdbcType="BIGINT" property="equipmentId" />
+    <result column="asset_code" jdbcType="VARCHAR" property="assetCode" />
+    <result column="degree_of_importance" jdbcType="TINYINT" property="degreeOfImportance" />
+    <result column="dept_id" jdbcType="BIGINT" property="deptId" />
+    <result column="depreciable_life" jdbcType="DECIMAL" property="depreciableLife" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
+    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
+    <result column="equipment_desc" jdbcType="VARCHAR" property="equipmentDesc"/>
+    <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel"/>
+    <result column="equipment_category_desc" jdbcType="VARCHAR" property="equipmentCategoryDesc"/>
+    <result column="power" jdbcType="DECIMAL" property="power"/>
+    <result column="weight" jdbcType="DECIMAL" property="weight"/>
+    <result column="release_date" jdbcType="TIMESTAMP" property="releaseDate"/>
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ehsb.ht_standing_book_id,
+    ehsb.standing_book_id,
+    ehsb.equipment_id,
+    ehsb.asset_code,
+    ehsb.degree_of_importance,
+    ehsb.dept_id,
+    ehsb.depreciable_life,
+    ehsb.`status`,
+    ehsb.remark,
+    ehsb.org_id,
+    ehsb.create_user_id,
+    ehsb.create_time,
+    ehsb.modified_user_id,
+    ehsb.modified_time,
+    ehsb.option1,
+    ehsb.option2,
+    ehsb.option3
+  </sql>
+
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    ee.equipment_code,ee.equipment_name,ee.equipment_desc,ee.equipment_model,
+    eec.equipment_category_desc,ee.power,ee.weight,ee.release_date,
+    bd.dept_name,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.eam_ht_standing_book ehsb
+    left join fantech_imes_v2.eam_equipment ep on ehsb.equipment_id=ep.equipment_id
+    left join fantech_imes_v2.eam_equipment_category eec on ee.equipment_category_id=eec.equipment_category_id
+    left join fantech_imes_v2.base_dept bd on ehsb.dept_id=bd.dept_id
+    left join ocean_v2.sys_user u on ehsb.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on ehsb.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON ehsb.org_id = bo.organization_id
+    <where>
+      <if test="assetCode != null and assetCode!=''">
+        and ehsb.asset_code like CONCAT('%', #{assetCode}, '%')
+      </if>
+      <if test="equipmentCode != null and equipmentCode!=''">
+        and ep.equipment_code like CONCAT('%', #{equipmentCode}, '%')
+      </if>
+      <if test="equipmentName != null and equipmentName!=''">
+        and ep.equipment_name like CONCAT('%', #{equipmentName}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(ehsb.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="status!=null">
+        and ehsb.status = #{status}
+      </if>
+      <if test="orgId!=null">
+        and ehsb.org_id=#{orgId}
+      </if>
+    </where>
+    order by ehsb.create_time desc
+  </select>
+</mapper>
