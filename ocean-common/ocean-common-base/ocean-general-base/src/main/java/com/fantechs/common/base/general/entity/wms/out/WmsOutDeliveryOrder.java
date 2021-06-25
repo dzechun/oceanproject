@@ -225,10 +225,10 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     private String descr;
 
     /**
-     * 单据状态(1-待发货 2-发货中 3-发货完成)
+     * 单据状态(1-待拣货，2-拣货中，3-待发运、4-部分发运、5-发运完成)
      */
-    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待发货 2-发货中 3-发货完成)")
-    @Excel(name = "单据状态(1-待发货 2-发货中 3-发货完成)", height = 20, width = 30,orderNum="19")
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待拣货，2-拣货中，3-待发运、4-部分发运、5-发运完成)")
+    @Excel(name = "单据状态(1-待拣货，2-拣货中，3-待发运、4-部分发运、5-发运完成)", height = 20, width = 30,orderNum="19")
     @Column(name = "order_status")
     private Byte orderStatus;
 

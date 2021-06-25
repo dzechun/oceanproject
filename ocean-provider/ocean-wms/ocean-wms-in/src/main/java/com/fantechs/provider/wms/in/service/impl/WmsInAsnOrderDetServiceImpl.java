@@ -91,12 +91,6 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
 
         String barcode = wmsInAsnOrderDetDto.getBarcode();
         if (wmsInAsnOrderDetDto.getIsComingMaterial() != null && wmsInAsnOrderDetDto.getIsComingMaterial() == 1) {//是来料
-            //判断在库存明细中是否存在（除调拨入库单外）
-            WmsInnerInventoryDet inventoryDet = innerFeignApi.findByDet(barcode).getData();
-            if (StringUtils.isNotEmpty(inventoryDet)) {
-                throw new BizErrorException("库存明细中已存在该条码");
-            }
-
             return wmsInAsnOrderDetDto.getDefaultQty();
         }else if (barcode.equals(asnOrderDetDto.getMaterialCode())) {//非来料且是物料编码
             return new BigDecimal(0);
@@ -230,7 +224,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
             //修改库存
             WmsInnerInventory wmsInnerInventory = new WmsInnerInventory();
             wmsInnerInventory.setInventoryId(wmsInnerInventoryDtos.get(0).getInventoryId());
-            wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().add(wmsInAsnOrderDetDto.getActualQty()));
+            wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty()==null ? wmsInAsnOrderDetDto.getActualQty() : wmsInnerInventory.getInventoryTotalQty().add(wmsInAsnOrderDetDto.getActualQty()));
             ResponseEntity responseEntity = innerFeignApi.update(wmsInnerInventory);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("库存修改失败");

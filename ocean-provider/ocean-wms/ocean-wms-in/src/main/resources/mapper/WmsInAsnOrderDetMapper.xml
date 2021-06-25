@@ -94,7 +94,7 @@ wiaod.is_delete
         and wiaod.asn_order_det_id = #{asnOrderDetId}
       </if>
       <if test="materialCode !=null and materialCode !=''">
-        and bm.material_code=#{materialCode}
+        and bm.material_code like CONCAT('%',#{materialCode},'%')
       </if>
       <if test="asnOrderDetId !=null and asnOrderDetId!=''">
         and wiaod.asn_order_det_id = #{asnOrderDetId}

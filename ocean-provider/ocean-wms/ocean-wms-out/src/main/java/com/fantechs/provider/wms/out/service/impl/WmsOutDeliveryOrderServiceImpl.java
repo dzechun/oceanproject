@@ -133,7 +133,6 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        map.put("orderTypeId",1);
         map.put("orgId",user.getOrganizationId());
         List<WmsOutHtDeliveryOrder> wmsOutHtDeliveryOrders = wmsOutHtDeliveryOrderMapper.findHtList(map);
 
