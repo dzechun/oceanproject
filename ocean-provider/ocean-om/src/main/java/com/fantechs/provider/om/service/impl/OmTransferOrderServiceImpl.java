@@ -10,7 +10,6 @@ import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import com.fantechs.common.base.general.entity.om.OmTransferOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -150,6 +149,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
         record.setOrderStatus((byte)1);
+        record = this.calculateWeight(record);
         int num = omTransferOrderMapper.insertUseGeneratedKeys(record);
         for (OmTransferOrderDet omTransferOrderDet : record.getOmTransferOrderDets()) {
             omTransferOrderDet.setTransferOrderId(record.getTransferOrderId());
@@ -172,6 +172,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
+        entity = this.calculateWeight(entity);
         //删除原有明细
         Example example = new Example(OmTransferOrderDet.class);
         example.createCriteria().andEqualTo("transferOrderId",entity.getTransferOrderId());
@@ -206,6 +207,30 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             omTransferOrderDetMapper.deleteByExample(example);
         }
         return omTransferOrderMapper.deleteByIds(ids);
+    }
+
+    /**
+     * 计算重量
+     * @param omTransferOrder
+     * @return
+     */
+    private OmTransferOrder calculateWeight(OmTransferOrder omTransferOrder){
+        BigDecimal totalVolume = BigDecimal.ZERO;
+        BigDecimal totalNetWeight = BigDecimal.ZERO;
+        BigDecimal totalGrossWeight = BigDecimal.ZERO;
+        for (OmTransferOrderDet omTransferOrderDet : omTransferOrder.getOmTransferOrderDets()) {
+            if(StringUtils.isEmpty(omTransferOrderDet.getMaterialId())){
+                throw new BizErrorException("物料错误");
+            }
+            OmTransferOrder om = omTransferOrderMapper.findMaterial(omTransferOrderDet.getMaterialId());
+            totalVolume.add(om.getTotalVolume());
+            totalNetWeight.add(om.getTotalNetWeight());
+            totalGrossWeight.add(om.getTotalGrossWeight());
+        }
+        omTransferOrder.setTotalVolume(totalVolume);
+        omTransferOrder.setTotalNetWeight(totalNetWeight);
+        omTransferOrder.setTotalGrossWeight(totalGrossWeight);
+        return omTransferOrder;
     }
 
     /**

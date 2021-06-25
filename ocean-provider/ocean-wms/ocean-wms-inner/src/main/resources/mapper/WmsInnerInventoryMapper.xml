@@ -145,7 +145,7 @@ wii.storage_id,
         and wii.pallet_code like CONCAT("%",#{palletCode},"%")
       </if>
       <if test="receivingDate!=null and receivingDate != ''">
-        and date_format(wii.receiving_date, '%Y-%m-%d') like CONCAT("%",#{receivingDate},"%")
+        and date_format(wii.receiving_date, '%Y-%m-%d')=#{receivingDate}
       </if>
       <if test="batchCode!=null and batchCode != ''">
         and wii.batch_code like CONCAT("%",#{batchCode},"%")
