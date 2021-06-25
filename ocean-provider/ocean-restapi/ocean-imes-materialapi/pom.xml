@@ -117,7 +117,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>C:/work/workSpace/d/materialapi</outputDirectory>
+            <outputDirectory>D:/IMES/lib/materialapi</outputDirectory>
             </configuration>
             </execution>
             </executions>

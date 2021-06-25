@@ -66,7 +66,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>C:/work/workSpace/d/gateway</outputDirectory>
+            <outputDirectory>D:/IMES/lib/gateway</outputDirectory>
             </configuration>
             </execution>
             </executions>

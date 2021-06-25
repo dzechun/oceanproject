@@ -97,7 +97,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>C:/work/workSpace/d/inner</outputDirectory>
+            <outputDirectory>D:/IMES/lib/inner</outputDirectory>
             </configuration>
             </execution>
             </executions>

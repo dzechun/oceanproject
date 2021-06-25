@@ -114,7 +114,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>C:/work/workSpace/d/qms</outputDirectory>
+            <outputDirectory>D:/IMES/lib/qms</outputDirectory>
             </configuration>
             </execution>
             </executions>
