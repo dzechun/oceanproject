@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderReJoReDetDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrderReJoReDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -286,25 +287,39 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
             throw new BizErrorException("未匹配到关联的出库单");
         }
         wmsOutDeliveryOrderDet.setDispatchQty(wmsInnerJobOrderDetDto.getActualQty());
+        //查询出库单下所有拣货作业
+//        Example example = new Example(WmsInnerJobOrder.class);
+//        example.createCriteria().andEqualTo("sourceOrderId",wmsOutDeliveryOrderDet.getDeliveryOrderId());
+//        List<WmsInnerJobOrder> list =
+
         WmsOutDeliveryOrder wmsOutDeliveryOrder  =  wmsOutDeliveryOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDto.getSourceOrderId());
         if(StringUtils.isEmpty(wmsOutDeliveryOrder)){
             throw new BizErrorException(ErrorCodeEnum.GL9999404);
         }
-        //单据为调拨出库单 无需反写数量
-        if(wmsOutDeliveryOrder.getOrderTypeId()==2){
-            return 1;
+        int num = 0;
+        switch (wmsOutDeliveryOrder.getOrderTypeId().toString()){
+            //销售订单
+            case "1":
+                if(StringUtils.isNotEmpty(wmsOutDeliveryOrder.getSourceOrderId()) && StringUtils.isNotEmpty(wmsOutDeliveryOrderDet.getSourceOrderId())){
+                    //反写销售订单出库数量
+                    OmSalesOrderDet omSalesOrderDet = new OmSalesOrderDet();
+                    omSalesOrderDet.setSalesOrderDetId(wmsOutDeliveryOrderDet.getSourceOrderId());
+                    omSalesOrderDet.setActualQty(wmsInnerJobOrderDetDto.getActualQty());
+                    ResponseEntity responseEntity = omFeignApi.update(omSalesOrderDet);
+                    if(responseEntity.getCode()!=0){
+                        throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                    }
+                }
+                num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
+                break;
+                //调拨无需反写订单数量
+            case "2":
+                break;
+                //其他出库
+            case "7":
+                break;
         }
-        if(StringUtils.isNotEmpty(wmsOutDeliveryOrder.getSourceOrderId()) && StringUtils.isNotEmpty(wmsOutDeliveryOrderDet.getSourceOrderId())){
-            //反写销售订单出库数量
-            OmSalesOrderDet omSalesOrderDet = new OmSalesOrderDet();
-            omSalesOrderDet.setSalesOrderDetId(wmsOutDeliveryOrderDet.getSourceOrderId());
-            omSalesOrderDet.setActualQty(wmsInnerJobOrderDetDto.getActualQty());
-            ResponseEntity responseEntity = omFeignApi.update(omSalesOrderDet);
-            if(responseEntity.getCode()!=0){
-                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
-            }
-        }
-        return wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
+       return num;
     }
 
     /**
