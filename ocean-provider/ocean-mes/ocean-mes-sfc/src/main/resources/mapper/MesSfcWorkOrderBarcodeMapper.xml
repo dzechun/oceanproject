@@ -136,6 +136,23 @@
         From base_label
         where label_name = #{labelName}
     </select>
+    <select id="findByWorkOrderGroup" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BaseColumnList"/>
+        FROM
+            mes_sfc_product_carton_det mspcd
+        LEFT JOIN mes_sfc_work_order_barcode mswob ON mswob.work_order_barcode_id = mspcd.work_order_barcode_id
+        LEFT JOIN mes_sfc_product_carton mspc ON mspc.product_carton_id = mspcd.product_carton_id
+        <where>
+            <if test="productCartonId != null">
+                and mspcd.product_carton_id = #{productCartonId}
+            </if>
+            <if test="cartonCode != null">
+                and mspc.carton_code = #{cartonCode}
+            </if>
+        </where>
+        GROUP BY mswob.work_order_id
+    </select>
 
     <update id="batchUpdate" parameterType="java.util.ArrayList">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">

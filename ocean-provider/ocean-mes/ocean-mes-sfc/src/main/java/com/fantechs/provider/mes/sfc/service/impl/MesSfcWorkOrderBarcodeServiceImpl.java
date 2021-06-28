@@ -42,6 +42,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -323,6 +324,11 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     public int batchUpdate(List<MesSfcWorkOrderBarcode> workOrderBarcodes) {
         return mesSfcWorkOrderBarcodeMapper.batchUpdate(workOrderBarcodes);
+    }
+
+    @Override
+    public List<MesSfcWorkOrderBarcodeDto> findByWorkOrderGroup(Map<String, Object> map) {
+        return mesSfcWorkOrderBarcodeMapper.findByWorkOrderGroup(map);
     }
 
     /**

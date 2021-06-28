@@ -25,4 +25,11 @@ public interface WmsInnerJobOrderMapper extends MyMapper<WmsInnerJobOrder> {
     String findAsnCode(@Param("asnOrderId")Long asnOrderId);
 
     Long findOmWarehouseId(@Param("sourceId")Long sourceId);
+
+    /**
+     * 移位单查询
+     * @param map
+     * @return
+     */
+    List<WmsInnerJobOrderDto> findShiftList(Map<String, Object> map);
 }

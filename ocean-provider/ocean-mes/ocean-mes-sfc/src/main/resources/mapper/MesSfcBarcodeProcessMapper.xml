@@ -99,6 +99,9 @@
       <if test="colorBoxCode != null">
       AND msbp.color_box_code = #{colorBoxCode}
       </if>
+      <if test="workOrderBarcodeId != null">
+        AND msbp.work_order_barcode_id = #{workOrderBarcodeId}
+      </if>
     </where>
   </select>
 

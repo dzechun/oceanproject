@@ -32,6 +32,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
@@ -53,6 +54,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Resource
     MesSfcProductCartonDetService mesSfcProductCartonDetService;
+
+    @Resource
+    MesSfcBarcodeProcessService mesSfcBarcodeProcessService;
 
     @Resource
     PMFeignApi pmFeignApi;
@@ -91,6 +95,15 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if (mesSfcProductCartonDtoList.get(0).getCloseStatus() == 0) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该条码对应的包箱未关闭，请先进行包箱关闭");
             }
+
+            if(requestPalletWorkScanDto.getPalletType() == 1){
+                // 判断是否同一工单
+                List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = mesSfcWorkOrderBarcodeService.findByWorkOrderGroup(map);
+                if(workOrderBarcodeDtos.size() > 0){
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012034);
+                }
+            }
+
             workOrderId = mesSfcProductCartonDtoList.get(0).getWorkOrderId();
             // 获取箱号绑定产品条码
             cartonCode = requestPalletWorkScanDto.getBarcode();
@@ -116,6 +129,22 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码未绑定产品条码");
                 }
                 workOrderBarcodeId = mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderBarcodeId();
+            }
+
+            if(requestPalletWorkScanDto.getPalletType() == 1){
+                Map<String, Object> map = new HashMap<>();
+                map.put("workOrderBarcodeId", workOrderBarcodeId);
+                List<MesSfcBarcodeProcessDto> processServiceList = mesSfcBarcodeProcessService.findList(map);
+                if(processServiceList == null && processServiceList.size() <= 0){
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012000);
+                }
+                map.clear();
+                map.put("cartonCode", processServiceList.get(0).getCartonCode());
+                // 判断是否同一工单
+                List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = mesSfcWorkOrderBarcodeService.findByWorkOrderGroup(map);
+                if(workOrderBarcodeDtos.size() > 0){
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012034);
+                }
             }
             Map<String, Object> productCartonDetMap = new HashMap<>();
             productCartonDetMap.put("workOrderBarcodeId", workOrderBarcodeId);
