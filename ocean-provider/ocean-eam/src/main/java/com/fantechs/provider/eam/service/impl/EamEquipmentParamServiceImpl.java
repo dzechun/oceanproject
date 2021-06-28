@@ -4,13 +4,13 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentParamDto;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentParam;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentParamList;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentParam;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.eam.mapper.EamEquipmentParamListMapper;
 import com.fantechs.provider.eam.mapper.EamEquipmentParamMapper;
 import com.fantechs.provider.eam.mapper.EamHtEquipmentParamMapper;
 import com.fantechs.provider.eam.service.EamEquipmentParamService;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,8 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
 
     @Resource
     private EamEquipmentParamMapper eamEquipmentParamMapper;
+    @Resource
+    private EamEquipmentParamListMapper eamEquipmentParamListMapper;
     @Resource
     private EamHtEquipmentParamMapper eamHtEquipmentParamMapper;
 
@@ -68,11 +71,27 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
         record.setModifiedTime(new Date());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
         record.setOrgId(user.getOrganizationId());
-        int i = eamEquipmentParamMapper.insertUseGeneratedKeys(record);
+        eamEquipmentParamMapper.insertUseGeneratedKeys(record);
 
+        //新增明细
+        List<EamEquipmentParamList> equipmentParamLists = record.getList();
+        if(StringUtils.isNotEmpty(equipmentParamLists)){
+            for (EamEquipmentParamList eamEquipmentParamList : equipmentParamLists) {
+                eamEquipmentParamList.setEquipmentParamId(record.getEquipmentParamId());
+                eamEquipmentParamList.setCreateUserId(user.getUserId());
+                eamEquipmentParamList.setCreateTime(new Date());
+                eamEquipmentParamList.setModifiedUserId(user.getUserId());
+                eamEquipmentParamList.setModifiedTime(new Date());
+                eamEquipmentParamList.setStatus(StringUtils.isEmpty(eamEquipmentParamList.getStatus())?1:eamEquipmentParamList.getStatus());
+                eamEquipmentParamList.setOrgId(user.getOrganizationId());
+            }
+            eamEquipmentParamListMapper.insertList(equipmentParamLists);
+        }
+
+        //履历
         EamHtEquipmentParam eamHtEquipmentParam = new EamHtEquipmentParam();
         BeanUtils.copyProperties(record, eamHtEquipmentParam);
-        eamHtEquipmentParamMapper.insert(eamHtEquipmentParam);
+        int i = eamHtEquipmentParamMapper.insert(eamHtEquipmentParam);
 
         return i;
     }
@@ -96,17 +115,65 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
 
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
+        int i = eamEquipmentParamMapper.updateByPrimaryKeySelective(entity);
 
+        //删除原明细
+        Example example1 = new Example(EamEquipmentParamList.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("equipmentParamId", entity.getEquipmentParamId());
+        eamEquipmentParamListMapper.deleteByExample(example1);
+
+        //新增明细
+        List<EamEquipmentParamList> equipmentParamLists = entity.getList();
+        if(StringUtils.isNotEmpty(equipmentParamLists)){
+            for (EamEquipmentParamList eamEquipmentParamList : equipmentParamLists) {
+                eamEquipmentParamList.setEquipmentParamId(entity.getEquipmentParamId());
+                eamEquipmentParamList.setCreateUserId(user.getUserId());
+                eamEquipmentParamList.setCreateTime(new Date());
+                eamEquipmentParamList.setModifiedUserId(user.getUserId());
+                eamEquipmentParamList.setModifiedTime(new Date());
+                eamEquipmentParamList.setStatus(StringUtils.isEmpty(eamEquipmentParamList.getStatus())?1:eamEquipmentParamList.getStatus());
+                eamEquipmentParamList.setOrgId(user.getOrganizationId());
+            }
+            eamEquipmentParamListMapper.insertList(equipmentParamLists);
+        }
+
+        //履历
         EamHtEquipmentParam eamHtEquipmentParam = new EamHtEquipmentParam();
         BeanUtils.copyProperties(entity, eamHtEquipmentParam);
         eamHtEquipmentParamMapper.insert(eamHtEquipmentParam);
 
-        return eamEquipmentParamMapper.updateByPrimaryKeySelective(entity);
+        return i;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        return super.batchDelete(ids);
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        List<EamHtEquipmentParam> list = new ArrayList<>();
+        String[] idArry = ids.split(",");
+        for (String id : idArry) {
+            EamEquipmentParam eamEquipmentParam = eamEquipmentParamMapper.selectByPrimaryKey(id);
+            if(StringUtils.isEmpty(eamEquipmentParam)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            EamHtEquipmentParam eamHtEquipmentParam = new EamHtEquipmentParam();
+            BeanUtils.copyProperties(eamEquipmentParam, eamHtEquipmentParam);
+            list.add(eamHtEquipmentParam);
+
+            //删除明细
+            Example example1 = new Example(EamEquipmentParamList.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("equipmentParamId", eamEquipmentParam.getEquipmentParamId());
+            eamEquipmentParamListMapper.deleteByExample(example1);
+        }
+
+        eamHtEquipmentParamMapper.insertList(list);
+
+        return eamEquipmentParamMapper.deleteByIds(ids);
     }
 }

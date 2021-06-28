@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.dto.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterial;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentParam;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,7 +10,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
-public class EamEquipmentParamDto extends EamEquipmentParam implements Serializable {
+public class EamEquipmentMaterialDto extends EamEquipmentMaterial implements Serializable {
 
     /**
      * 创建用户名称

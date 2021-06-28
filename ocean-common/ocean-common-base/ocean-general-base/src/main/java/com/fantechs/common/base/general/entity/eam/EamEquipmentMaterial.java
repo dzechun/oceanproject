@@ -18,27 +18,27 @@ import java.util.List;
 ;
 
 /**
- * 设备参数设备表
- * eam_equipment_param
+ * 设备绑定产品表头
+ * eam_equipment_material
  * @author admin
- * @date 2021-06-25 17:52:34
+ * @date 2021-06-28 14:09:02
  */
 @Data
-@Table(name = "eam_equipment_param")
-public class EamEquipmentParam extends ValidGroup implements Serializable {
+@Table(name = "eam_equipment_material")
+public class EamEquipmentMaterial extends ValidGroup implements Serializable {
     /**
-     * 设备参数设备表ID
+     * 设备绑定产品表头ID
      */
-    @ApiModelProperty(name="equipmentParamId",value = "设备参数设备表ID")
+    @ApiModelProperty(name="equipmentMaterialId",value = "设备绑定产品表头ID")
     @Id
-    @Column(name = "equipment_param_id")
-    private Long equipmentParamId;
+    @Column(name = "equipment_material_id")
+    private Long equipmentMaterialId;
 
     /**
      * 设备信息ID
      */
     @ApiModelProperty(name="equipmentId",value = "设备信息ID")
-    @Column(name = "equipment__id")
+    @Column(name = "equipment_id")
     private Long equipmentId;
 
     /**
@@ -94,10 +94,10 @@ public class EamEquipmentParam extends ValidGroup implements Serializable {
     private Date modifiedTime;
 
     /**
-     * 设备参数定义明细
+     * 设备绑定产品明细
      */
-    @ApiModelProperty(name="list",value = "设备参数定义明细")
-    private List<EamEquipmentParamList> list = new ArrayList<>();
+    @ApiModelProperty(name="list",value = "设备绑定产品明细")
+    private List<EamEquipmentMaterialList> list = new ArrayList<>();
 
     private String option1;
 
