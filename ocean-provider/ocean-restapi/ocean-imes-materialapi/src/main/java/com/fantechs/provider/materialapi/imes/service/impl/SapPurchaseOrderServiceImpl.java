@@ -50,7 +50,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             omPurchaseOrder.setPurchaseOrderCode(purchaseOrderApiDto.getEBELN());
             omPurchaseOrder.setOrderType(purchaseOrderApiDto.getBSART());
             if(StringUtils.isNotEmpty(purchaseOrderApiDto.getAEDAT()))
-                omPurchaseOrder.setOrderDate(DateUtils.getStrToDate("yyyy/MM/dd", purchaseOrderApiDto.getAEDAT()));
+                omPurchaseOrder.setOrderDate(DateUtils.getStrToDate("yyyyMMdd", purchaseOrderApiDto.getAEDAT()));
             omPurchaseOrder.setSupplierId(getSupplier(purchaseOrderApiDto.getLIFNR(),orgId));
             omPurchaseOrder.setOrgId(orgId);
             ResponseEntity<OmPurchaseOrder> omPurchaseOrderResponseEntity = oMFeignApi.addOrUpdate(omPurchaseOrder);
