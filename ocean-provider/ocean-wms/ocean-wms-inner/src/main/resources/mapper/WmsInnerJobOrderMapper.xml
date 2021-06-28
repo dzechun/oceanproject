@@ -153,6 +153,7 @@
             <if test="sourceOrderId!=null and sourceOrderId!=''">
                 and wipo.source_order_id =#{sourceOrderId}
             </if>
+            and wipo.is_delete = 1
         </where>
         order by wipo.create_time desc
     </select>

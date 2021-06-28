@@ -129,4 +129,13 @@
             </if>
         </where>
     </select>
+    <update id="batchUpdate" parameterType="java.util.ArrayList">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update wms_inner_job_order_det
+            <set>
+                shift_storage_status = #{item.shiftStorageStatus},
+            </set>
+            where job_order_det_id =#{item.jobOrderDetId}
+        </foreach>
+    </update>
 </mapper>

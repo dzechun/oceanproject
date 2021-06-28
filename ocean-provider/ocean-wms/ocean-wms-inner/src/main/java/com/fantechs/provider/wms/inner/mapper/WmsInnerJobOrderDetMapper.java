@@ -12,4 +12,11 @@ import java.util.Map;
 @Mapper
 public interface WmsInnerJobOrderDetMapper extends MyMapper<WmsInnerJobOrderDet> {
     List<WmsInnerJobOrderDetDto> findList(SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet);
+
+    /**
+     * 批量更新
+     * @param list
+     * @return
+     */
+    int batchUpdate(List<WmsInnerJobOrderDet> list);
 }

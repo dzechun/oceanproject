@@ -1,80 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="inventory_det_id" jdbcType="BIGINT" property="inventoryDetId" />
-    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
-    <result column="material_qty" jdbcType="DECIMAL" property="materialQty" />
-    <result column="in_time" jdbcType="TIMESTAMP" property="inTime" />
-    <result column="expiration_date" jdbcType="INTEGER" property="expirationDate" />
-    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
-    <result column="production_batch_code" jdbcType="VARCHAR" property="productionBatchCode" />
-    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-  </resultMap>
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto">
-    <result column="storage_name" jdbcType="VARCHAR" property="storageName" />
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
-    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
-    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    wiid.inventory_det_id,
-    wiid.storage_id,
-wiid.material_id,
-wiid.barcode,
-wiid.material_qty,
-wiid.in_time,
-wiid.expiration_date,
-wiid.production_date,
-wiid.production_batch_code,
-wiid.supplier_id,
-wiid.related_order_code,
-wiid.status,
-wiid.remark,
-wiid.org_id,
-wiid.create_user_id,
-wiid.create_time,
-wiid.modified_user_id,
-wiiid.modified_time,
-wiid.is_delete
-  </sql>
-  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    select <include refid="Base_Column_List"/>,bs.storage_name,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
-    from wms_inner_inventory_det wiid
-           LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
-           LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
-           LEFT JOIN base_supplier bss ON wiid.supplier_id = bss.supplier_id
-           LEFT JOIN ocean_v2.sys_user su  ON wiid.create_user_id = su.user_id
-           LEFT JOIN ocean_v2.sys_user sus ON wiid.modified_user_id = sus.user_id
-           LEFT JOIN base_organization bo ON wiid.org_id = bo.organization_id
-<where>
-  <if test="storageId!=null and storageId!=''">
-    and wiid.storage_id = #{storageId}
-  </if>
-<if test="materialId!=null and materialId!=''">
-  and wiid.material_id = #{materialId}
-</if>
-    <if test="barcode!=null and barcode!=''">
-      and wiid.barcode = #{barcode}
-    </if>
-</where>
-order by wiid.create_time desc
-  </select>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="inventory_det_id" jdbcType="BIGINT" property="inventoryDetId"/>
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+        <result column="material_qty" jdbcType="DECIMAL" property="materialQty"/>
+        <result column="in_time" jdbcType="TIMESTAMP" property="inTime"/>
+        <result column="expiration_date" jdbcType="INTEGER" property="expirationDate"/>
+        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
+        <result column="production_batch_code" jdbcType="VARCHAR" property="productionBatchCode"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+    </resultMap>
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto">
+        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="warehouse_id" jdbcType="VARCHAR" property="warehouseId"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        wiid.inventory_det_id,
+        wiid.storage_id,
+        wiid.material_id,
+        wiid.barcode,
+        wiid.material_qty,
+        wiid.in_time,
+        wiid.expiration_date,
+        wiid.production_date,
+        wiid.production_batch_code,
+        wiid.supplier_id,
+        wiid.related_order_code,
+        wiid.status,
+        wiid.remark,
+        wiid.org_id,
+        wiid.create_user_id,
+        wiid.create_time,
+        wiid.modified_user_id,
+        wiiid.modified_time,
+        wiid.is_delete
+    </sql>
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        select<include refid="Base_Column_List"/>
+        ,bs.storage_name,bs.warehouse_id,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS
+        create_user_name, sus.user_name AS modified_user_name
+        from wms_inner_inventory_det wiid
+        LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
+        LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
+        LEFT JOIN base_supplier bss ON wiid.supplier_id = bss.supplier_id
+        LEFT JOIN ocean_v2.sys_user su ON wiid.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON wiid.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON wiid.org_id = bo.organization_id
+        <where>
+            <if test="storageId!=null and storageId!=''">
+                and wiid.storage_id = #{storageId}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and wiid.material_id = #{materialId}
+            </if>
+            <if test="barcode!=null and barcode!=''">
+                and wiid.barcode = #{barcode}
+            </if>
+            <if test="storageCode!=null and storageCode!=''">
+                and bs.storage_code = #{storageCode}
+            </if>
+        </where>
+        order by wiid.create_time desc
+    </select>
 </mapper>
