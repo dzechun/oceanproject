@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 日计划
@@ -58,6 +59,7 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     @ApiModelProperty(name="planTime",value = "计划时间")
     @Excel(name = "计划时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd")
     @JSONField(format ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "plan_time")
     private Date planTime;
 

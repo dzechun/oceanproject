@@ -13,13 +13,6 @@ import java.math.BigDecimal;
 @Data
 public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
 
-/*    *//**
-     * 计划日期
-     *//*
-    @Transient
-    @ApiModelProperty(name = "planDate",value = "计划日期（yyyy-MM-dd）")
-    private String planDate;*/
-
     /**
      * 生产数量
      */

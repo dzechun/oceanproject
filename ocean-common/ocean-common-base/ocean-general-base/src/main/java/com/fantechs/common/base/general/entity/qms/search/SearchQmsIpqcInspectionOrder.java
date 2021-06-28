@@ -5,6 +5,7 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.List;
 
@@ -53,4 +54,9 @@ public class SearchQmsIpqcInspectionOrder extends BaseQuery implements Serializa
     @ApiModelProperty(name="inspectionResult",value = "检验结果")
     private Byte inspectionResult;
 
+    /**
+     * 检验方式编码
+     */
+    @ApiModelProperty(name="inspectionWayCode" ,value="检验方式编码")
+    private String inspectionWayCode;
 }
