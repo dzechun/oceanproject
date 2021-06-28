@@ -6,7 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="equipment_param_id" jdbcType="BIGINT" property="equipmentParamId" />
-    <result column="equipment__id" jdbcType="BIGINT" property="equipmentId" />
+    <result column="equipment_id" jdbcType="BIGINT" property="equipmentId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -34,7 +34,7 @@
 
   <sql id="Base_Column_List">
     eep.equipment_param_id,
-    eep.equipment__id,
+    eep.equipment_id,
     eep.`status`,
     eep.remark,
     eep.org_id,
