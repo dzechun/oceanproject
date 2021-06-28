@@ -47,7 +47,7 @@ public class ElectronicTagStorageController {
             if (StringUtils.isEmpty(warehouseAreaId)) {
                 warehouseAreaId = Long.valueOf(0);
             }
-            PtlJobOrder ptlJobOrder = electronicTagStorageService.sendElectronicTagStorage(jobOrderId, warehouseAreaId);
+            PtlJobOrder ptlJobOrder = electronicTagStorageService.sendElectronicTagStorage(jobOrderId, warehouseAreaId, 0);
             return ControllerUtil.returnDataSuccess("操作成功", ptlJobOrder);
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());

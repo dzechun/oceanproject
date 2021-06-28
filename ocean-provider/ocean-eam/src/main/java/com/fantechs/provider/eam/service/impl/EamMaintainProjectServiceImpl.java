@@ -4,9 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamMaintainProjectDto;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamMaintainProject;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtMaintainProject;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -72,11 +70,11 @@ public class EamMaintainProjectServiceImpl extends BaseService<EamMaintainProjec
         record.setModifiedTime(new Date());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
         record.setOrgId(user.getOrganizationId());
-        int i = eamMaintainProjectMapper.insertUseGeneratedKeys(record);
+        eamMaintainProjectMapper.insertUseGeneratedKeys(record);
 
         EamHtMaintainProject eamHtMaintainProject = new EamHtMaintainProject();
         BeanUtils.copyProperties(record, eamHtMaintainProject);
-        eamHtMaintainProjectMapper.insert(eamHtMaintainProject);
+        int i = eamHtMaintainProjectMapper.insert(eamHtMaintainProject);
 
         return i;
     }

@@ -157,7 +157,7 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
             String equipmentCode = ptlElectronicTagStorageImport.getEquipmentCode();//设备编码
             String equipmentAreaCode = ptlElectronicTagStorageImport.getEquipmentAreaCode();//区域设备编码
             String electronicTagId = ptlElectronicTagStorageImport.getElectronicTagId();//电子标签Id
-            Integer electronicTagLangType = ptlElectronicTagStorageImport.getElectronicTagLangType();//电子标签语言类别
+            int electronicTagLangType = ptlElectronicTagStorageImport.getElectronicTagLangType();//电子标签语言类别
             if (StringUtils.isEmpty(
                     storageCode,equipmentCode,equipmentAreaCode,electronicTagId,electronicTagLangType
             )){
@@ -179,7 +179,7 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
             SearchPtlEquipment searchPtlEquipmentArea = new SearchPtlEquipment();
             searchPtlEquipmentArea.setEquipmentCode(equipmentAreaCode);
             searchPtlEquipmentArea.setCodeQueryMark((byte) 1);
-            List<PtlEquipmentDto> ptlEquipmentAreaDtos = smtEquipmentService.findList(ControllerUtil.dynamicConditionByEntity(searchPtlEquipment));
+            List<PtlEquipmentDto> ptlEquipmentAreaDtos = smtEquipmentService.findList(ControllerUtil.dynamicConditionByEntity(searchPtlEquipmentArea));
             if (StringUtils.isEmpty(baseStorages, ptlEquipmentDtos, ptlEquipmentAreaDtos)){
                 fail.add(i+3);
                 continue;
@@ -205,6 +205,7 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
             }
             PtlElectronicTagStorage ptlElectronicTagStorage = new PtlElectronicTagStorage();
             BeanUtils.copyProperties(ptlElectronicTagStorageImport, ptlElectronicTagStorage);
+            ptlElectronicTagStorage.setElectronicTagLangType((byte) electronicTagLangType);
             ptlElectronicTagStorage.setStatus(1);
             ptlElectronicTagStorage.setOrgId(currentUser.getOrganizationId());
             ptlElectronicTagStorage.setCreateTime(new Date());

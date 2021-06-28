@@ -26,7 +26,7 @@ public class StorageMonthEndInventoryServiceImpl extends BaseService<StorageMont
     public List<StorageMonthEndInventoryDto> findList(Map<String, Object> map) {
         List<StorageMonthEndInventoryDto> list = storageMonthEndInventoryMapper.findList(map);
         for (StorageMonthEndInventoryDto storageMonthEndInventoryDto : list) {
-            SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
+          /*  SearchWmsInnerStorageInventoryDet searchWmsInnerStorageInventoryDet = new SearchWmsInnerStorageInventoryDet();
             searchWmsInnerStorageInventoryDet.setContractCode(storageMonthEndInventoryDto.getContractCode());
             searchWmsInnerStorageInventoryDet.setStorageId(storageMonthEndInventoryDto.getStorageId());
             searchWmsInnerStorageInventoryDet.setIsBinding((byte)2);
@@ -34,7 +34,7 @@ public class StorageMonthEndInventoryServiceImpl extends BaseService<StorageMont
 
             List<WmsInnerStorageInventoryDetDto> wmsInnerStorageInventoryDetDtos = innerFeignAip.findStorageInventoryDetList(searchWmsInnerStorageInventoryDet).getData();
 
-            storageMonthEndInventoryDto.setList(wmsInnerStorageInventoryDetDtos);
+            storageMonthEndInventoryDto.setList(wmsInnerStorageInventoryDetDtos);*/
         }
         return list;
     }

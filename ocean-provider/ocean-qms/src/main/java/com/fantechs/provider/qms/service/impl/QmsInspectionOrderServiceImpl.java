@@ -337,6 +337,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         if(StringUtils.isNotEmpty(wmsInAsnOrderList.getData())){
             for(WmsInAsnOrderDto wmsInAsnOrderDto : wmsInAsnOrderList.getData()){
+                System.out.println("--------wmsInAsnOrderDto--------"+wmsInAsnOrderDto.getAsnOrderId());
                 SearchWmsInAsnOrderDet  searchWmsInAsnOrderDet = new SearchWmsInAsnOrderDet();
                 searchWmsInAsnOrderDet.setAsnOrderId(wmsInAsnOrderDto.getAsnOrderId());
                 searchWmsInAsnOrderDet.setInventoryStatusId((long)103);
