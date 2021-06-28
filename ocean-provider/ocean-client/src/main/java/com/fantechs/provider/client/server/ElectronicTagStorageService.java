@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface ElectronicTagStorageService {
 
-    PtlJobOrder sendElectronicTagStorage(Long jobOrderId, Long warehouseAreaId) throws Exception;
+    PtlJobOrder sendElectronicTagStorage(Long jobOrderId, Long warehouseAreaId, Integer type) throws Exception;
     ResponseEntityDTO createPtlJobOrder(List<PtlJobOrderDTO> ptlJobOrderDTOList) throws Exception;
     PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId) throws Exception;
     List<PtlJobOrderDetPrintDTO> printPtlJobOrderLabel(Long jobOrderId, Long workUserId) throws Exception;

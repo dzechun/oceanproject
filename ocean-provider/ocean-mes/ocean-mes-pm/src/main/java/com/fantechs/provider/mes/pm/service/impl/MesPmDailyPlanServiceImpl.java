@@ -45,6 +45,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             searchMesPmDailyPlan.setStartTime(searchMesPmDailyPlan.getPlanTime());
             searchMesPmDailyPlan.setEndTime(searchMesPmDailyPlan.getPlanTime());
         }
+        searchMesPmDailyPlan.setStatus((byte)1);
         return mesPmDailyPlanMapper.findList(searchMesPmDailyPlan);
     }
 
@@ -70,7 +71,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
         calendar.add(Calendar.DATE, +2);
         String endTime = DateUtils.getDateString(calendar.getTime());
         searchMesPmDailyPlan.setEndTime(endTime);
-
+        searchMesPmDailyPlan.setStatus((byte)1);
         return mesPmDailyPlanMapper.findList(searchMesPmDailyPlan);
     }
 

@@ -61,11 +61,13 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
 
     @Override
     public List<QmsIpqcInspectionOrder> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId",user.getOrganizationId());
         List<QmsIpqcInspectionOrder> qmsIpqcInspectionOrders = qmsIpqcInspectionOrderMapper.findList(map);
         SearchQmsIpqcInspectionOrderDet searchIpqcQmsInspectionOrderDet = new SearchQmsIpqcInspectionOrderDet();
 
@@ -77,6 +79,7 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
 
         return qmsIpqcInspectionOrders;
     }
+
 
     @Override
     public QmsIpqcInspectionOrder selectByKey(Object key) {

@@ -152,6 +152,6 @@
                 and sets.org_id=#{orgId}
             </if>
         </where>
-        order by sets.create_time desc
+        order by sets.equipment_id, sets.electronic_tag_id, sets.equipment_area_id
     </select>
 </mapper>

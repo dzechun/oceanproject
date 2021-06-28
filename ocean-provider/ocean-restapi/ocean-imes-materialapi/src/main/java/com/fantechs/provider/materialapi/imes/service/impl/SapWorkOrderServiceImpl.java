@@ -59,7 +59,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 mesPmWorkOrder.setPlanEndTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGLTRP()));
             mesPmWorkOrder.setMaterialId(getBaseMaterial(restapiWorkOrderApiDto.getMATNR()).getMaterialId());
             if(StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGAMNG()))
-                mesPmWorkOrder.setWorkOrderQty(new BigDecimal(restapiWorkOrderApiDto.getGAMNG()));
+                mesPmWorkOrder.setWorkOrderQty(new BigDecimal(restapiWorkOrderApiDto.getGAMNG().trim()));
             //暂时注释、目前还未同步产线
             //mesPmWorkOrder.setProLineId(getProLine(restapiWorkOrderApiDto.getFEVOR()));
             mesPmWorkOrder.setOrgId(orgId);
@@ -79,7 +79,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
             ResponseEntity<List<MesPmWorkOrderBomDto>> mesPmWorkOrderBomList = pmFeignApi.findList(searchMesPmWorkOrderBom);
             MesPmWorkOrderBom bom = new MesPmWorkOrderBom();
             if(StringUtils.isNotEmpty(restapiWorkOrderApiDto.getMENGE()))
-            bom.setUsageQty(new BigDecimal(restapiWorkOrderApiDto.getMENGE()));
+                bom.setUsageQty(new BigDecimal(restapiWorkOrderApiDto.getMENGE().trim()));
             bom.setOption1(restapiWorkOrderApiDto.getRSPOS());
             bom.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
             bom.setPartMaterialId(getBaseMaterial(restapiWorkOrderApiDto.getZJMATNR()).getMaterialId());
