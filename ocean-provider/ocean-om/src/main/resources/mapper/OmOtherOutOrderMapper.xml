@@ -92,6 +92,9 @@ ouo.option3
 <if test="orderStatus!=null and orderStatus!=''">
   and ouo.order_status = #{orderStatus}
 </if>
+<if test="otherOutOrderId!=null and otherOutOrderId!=''">
+  and ouo.other_out_order_id = #{otherOutOrderId}
+</if>
 </where>
   </select>
   <select id="findMaterial" resultMap="BaseResultMap">

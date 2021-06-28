@@ -190,6 +190,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 list.add(wmsInventoryVerificationDet);
             }
         }
+        if(list.size()<1){
+            throw new BizErrorException("改条件暂无可盘点库存");
+        }
         return list;
     }
 

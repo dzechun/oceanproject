@@ -38,7 +38,7 @@ public class EamEquipmentParam extends ValidGroup implements Serializable {
      * 设备信息ID
      */
     @ApiModelProperty(name="equipmentId",value = "设备信息ID")
-    @Column(name = "equipment__id")
+    @Column(name = "equipment_id")
     private Long equipmentId;
 
     /**

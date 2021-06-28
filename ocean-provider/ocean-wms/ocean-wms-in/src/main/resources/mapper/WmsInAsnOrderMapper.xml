@@ -37,6 +37,7 @@
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
   <resultMap id="BaseResultDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto">
+    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
     <result column="order_type_name" jdbcType="VARCHAR" property="orderTypeName"/>
@@ -81,11 +82,20 @@
   wiao.is_delete
   </sql>
     <select id="findList" resultMap="BaseResultDto">
-      select <include refid="BaseColumn"/>
-      <if test="orderTypeId==5">,osro.sales_return_order_code</if>
-    <if test="orderTypeId==6">,oio.other_in_order_code</if>
-    <if test="orderTypeId==7">,ouo.other_out_order_id</if>
-        ,bw.warehouse_name,bws.storage_code,
+      select <include refid="BaseColumn"/>,
+        <if test="orderTypeId==3">
+          oto.transfer_order_code as source_order_code,
+        </if>
+      <if test="orderTypeId==5">
+        osro.sales_return_order_code as source_order_code,
+      </if>
+    <if test="orderTypeId==6">
+        oio.other_in_order_code as source_order_code,
+    </if>
+    <if test="orderTypeId==7">
+        ouo.other_out_order_id as source_order_code,
+    </if>
+        bw.warehouse_name,bws.storage_code,
       (select SUM(wiaod.packing_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as packing_qty,
       (select SUM(wiaod.actual_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as actual_qty,
       (select SUM(wiaod.putaway_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as putaway_qty,
@@ -93,6 +103,9 @@
       sus.user_name AS modified_user_name,
       bo.organization_name AS organization_Name
       FROM wms_in_asn_order wiao
+      <if test="orderTypeId==3">
+        LEFT JOIN om_transfer_order oto ON oto.transfer_order_id = wiao.source_order_id
+      </if>
       <if test="orderTypeId==5">
         LEFT JOIN om_sales_return_order osro ON osro.sales_return_order_id = wiao.source_order_id
       </if>

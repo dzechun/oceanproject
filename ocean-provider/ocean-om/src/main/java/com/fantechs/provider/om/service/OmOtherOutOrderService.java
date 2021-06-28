@@ -3,6 +3,7 @@ package com.fantechs.provider.om.service;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
+import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -17,5 +18,5 @@ public interface OmOtherOutOrderService extends IService<OmOtherOutOrder> {
 
     int packageAutoOutOrder(OmOtherOutOrder omOtherOutOrder);
 
-    int writeQty(OmOtherOutOrder omOtherOutOrder);
+    int writeQty(OmOtherOutOrderDet omOtherOutOrderDet);
 }

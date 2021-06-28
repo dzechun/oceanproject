@@ -73,6 +73,9 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
         int i = 0;
         for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrder.getOmOtherInOrderDets()) {
+            if(StringUtils.isEmpty(omOtherInOrderDet.getIssueQty())){
+                omOtherInOrderDet.setIssueQty(BigDecimal.ZERO);
+            }
             BigDecimal total = omOtherInOrderDet.getIssueQty().add(omOtherInOrderDet.getQty());
             if(total.compareTo(omOtherInOrderDet.getOrderQty())==1){
                 throw new BizErrorException("下发数量不能大于工单数量");
@@ -84,7 +87,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     .materialId(omOtherInOrderDet.getMaterialId())
                     .packingUnitName(omOtherInOrderDet.getUnitName())
                     .batchCode(omOtherInOrderDet.getBatchCode())
-                    .packingQty(omOtherInOrderDet.getOrderQty())
+                    .packingQty(omOtherInOrderDet.getQty())
                     .productionDate(omOtherInOrderDet.getProductionDate())
                     .expiredDate(omOtherInOrderDet.getExpiredDate())
                     .lineNumber(i++)
@@ -124,7 +127,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         BigDecimal total = omOtherInOrder.getOmOtherInOrderDets().stream()
                 .map(OmOtherInOrderDet::getIssueQty)
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
-        if(total.compareTo(omOtherInOrder.getTotalIssueQty())==0){
+        if(total.compareTo(omOtherInOrder.getTotalQty())==0){
             omOtherInOrder.setOrderStatus((byte)3);
         }else{
             omOtherInOrder.setOrderStatus((byte)2);

@@ -15,6 +15,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseStorageService;
+import com.fantechs.provider.base.util.StorageRuleDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -273,5 +274,10 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         }
         baseStorage.setSurplusCanPutSalver(baseStorage.getSurplusCanPutSalver()+num);
         return baseStorageMapper.updateByPrimaryKeySelective(baseStorage);
+    }
+
+    @Override
+    public List<StorageRuleDto> findPutawayRule(Long warehouseId, Long materialId) {
+        return baseStorageMapper.findPutawayRule(warehouseId,materialId);
     }
 }

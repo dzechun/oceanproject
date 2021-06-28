@@ -34,7 +34,7 @@
 
   <sql id="Base_Column_List">
     eem.equipment_material_id,
-    eem.equipment__id,
+    eem.equipment_id,
     eem.`status`,
     eem.remark,
     eem.org_id,

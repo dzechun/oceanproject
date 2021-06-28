@@ -21,11 +21,11 @@ public class WmsInAsnOrderDto extends WmsInAsnOrder implements Serializable {
     private String materialOwnerName;
 
     /**
-     * 销退订单号
+     * 来源订单号
      */
     @Transient
-    @ApiModelProperty(name = "salesReturnOrderCode",value = "销退订单号")
-    private String salesReturnOrderCode;
+    @ApiModelProperty(name = "sourceOrderCode",value = "销退订单号")
+    private String sourceOrderCode;
 
     /**
      * 仓库

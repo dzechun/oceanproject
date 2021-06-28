@@ -957,14 +957,14 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int autoOutOrder(Long outDeliveryOrderId) {
-        //查询调拨出库对应的拣货作业
+        //查询调拨出库对应的待发运拣货作业
         Example example = new Example(WmsInnerJobOrder.class);
-        example.createCriteria().andEqualTo("sourceOrderId",outDeliveryOrderId);
+        example.createCriteria().andEqualTo("sourceOrderId",outDeliveryOrderId).andEqualTo("orderStatus",5);
         List<WmsInnerJobOrder> list = wmsInnerJobOrderMapper.selectByExample(example);
         if(list.size()<1){
-            throw new BizErrorException("未获取拣货作业单");
+            throw new BizErrorException("出库单未拣货");
         }
-        if(list.size()>list.stream().filter(li->li.getOrderStatus()==(byte)6).collect(Collectors.toList()).size()){
+        if(list.size()>list.stream().filter(li->li.getOrderStatus()==(byte)5).collect(Collectors.toList()).size()){
             throw new BizErrorException("拣货未完成,发运失败");
         }
         //出库装车单
@@ -978,6 +978,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         wmsOutDespatchOrder.setActualDespatchTime(new Date());
         wmsOutDespatchOrder.setPlanDespatchTime(new Date());
+        wmsOutDespatchOrder.setWmsOutDespatchOrderReJo(wmsOutDespatchOrderReJos);
         ResponseEntity<String> responseEntity = outFeignApi.add(wmsOutDespatchOrder);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(responseEntity.getMessage());
@@ -1021,11 +1022,13 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsInAsnOrderDet.setMaterialId(wmsOutDeliveryOrderDet.getMaterialId());
             wmsInAsnOrderDet.setPackingUnitName(wmsOutDeliveryOrderDet.getPackingUnitName());
             wmsInAsnOrderDet.setPackingQty(wmsOutDeliveryOrderDet.getPackingQty());
-            wmsInAsnOrderDet.setBatchCode(wmsOutDeliveryOrderDet.getBatchCode());wmsInAsnOrderDets.add(wmsInAsnOrderDet);
+            wmsInAsnOrderDet.setBatchCode(wmsOutDeliveryOrderDet.getBatchCode());
+            wmsInAsnOrderDets.add(wmsInAsnOrderDet);
         }
+        wmsInAsnOrder.setWmsInAsnOrderDetList(wmsInAsnOrderDets);
         ResponseEntity rer = inFeignApi.save(wmsInAsnOrder);
-        if(rs.getCode()!=0){
-            throw new BizErrorException(rs.getMessage());
+        if(rer.getCode()!=0){
+            throw new BizErrorException(rer.getMessage());
         }
         return 1;
     }

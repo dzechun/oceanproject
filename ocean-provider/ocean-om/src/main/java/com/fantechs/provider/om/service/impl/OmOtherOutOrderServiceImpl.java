@@ -22,10 +22,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -62,9 +59,11 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             wmsOutDeliveryOrderDetDto.setWarehouseId(omOtherOutOrderDet.getWarehouseId());
             wmsOutDeliveryOrderDetDto.setSourceOrderId(omOtherOutOrderDet.getOtherOutOrderId());
             wmsOutDeliveryOrderDetDto.setOrderDetId(omOtherOutOrderDet.getOtherOutOrderDetId());
+            wmsOutDeliveryOrderDetDto.setMaterialId(omOtherOutOrderDet.getMaterialId());
+            wmsOutDeliveryOrderDetDto.setStorageId(Long.parseLong("5517"));
             wmsOutDeliveryOrderDetDto.setLineNumber(i);
             wmsOutDeliveryOrderDetDto.setPackingUnitName(omOtherOutOrderDet.getUnitName());
-            wmsOutDeliveryOrderDetDto.setPackingQty(omOtherOutOrderDet.getOrderQty());
+            wmsOutDeliveryOrderDetDto.setPackingQty(omOtherOutOrderDet.getQty());
             wmsOutDeliveryOrderDetDto.setBatchCode(omOtherOutOrderDet.getBatchCode());
             wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);
             i++;
@@ -91,7 +90,10 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         int num = 0;
         for (OmOtherOutOrderDet omOtherOutOrderDet : omOtherOutOrder.getOmOtherOutOrderDets()) {
             OmOtherOutOrderDet omOtherOutOrderDet1 = omOtherOutOrderDetMapper.selectByPrimaryKey(omOtherOutOrderDet.getOtherOutOrderDetId());
-            omOtherOutOrderDet.setIssueQty(omOtherOutOrderDet1.getQty().add(omOtherOutOrderDet.getIssueQty()));
+            if(StringUtils.isEmpty(omOtherOutOrderDet1.getIssueQty())){
+                omOtherOutOrderDet1.setIssueQty(BigDecimal.ZERO);
+            }
+            omOtherOutOrderDet.setIssueQty(omOtherOutOrderDet.getQty().add(omOtherOutOrderDet1.getIssueQty()));
             num+=omOtherOutOrderDetMapper.updateByPrimaryKeySelective(omOtherOutOrderDet);
         }
         BigDecimal total = omOtherOutOrder.getOmOtherOutOrderDets().stream()
@@ -108,8 +110,23 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     }
 
     @Override
-    public int writeQty(OmOtherOutOrder omOtherOutOrder) {
-        return 0;
+    public int writeQty(OmOtherOutOrderDet omOtherOutOrderDet) {
+        Map<String,Object> map = new HashMap<>();
+        int num = 0;
+        map.put("otherOutOrderId",omOtherOutOrderDet.getOtherOutOrderId());
+        OmOtherOutOrder omOtherOutOrder = omOtherOutOrderMapper.findList(map).get(0);
+        OmOtherOutOrderDet omOtherOutOrderDet1 = omOtherOutOrderDetMapper.selectByPrimaryKey(omOtherOutOrderDet.getOtherOutOrderDetId());
+        if(StringUtils.isEmpty(omOtherOutOrderDet1.getDispatchQty())){
+            omOtherOutOrderDet1.setDispatchQty(BigDecimal.ZERO);
+        }
+        BigDecimal total = omOtherOutOrderDet1.getDispatchQty().add(omOtherOutOrderDet.getDispatchQty());
+        omOtherOutOrderDet1.setDispatchQty(total);
+        num+=omOtherOutOrderDetMapper.updateByPrimaryKeySelective(omOtherOutOrderDet1);
+        if(omOtherOutOrder.getTotalDispatchQty().add(total).compareTo(omOtherOutOrder.getTotalQty())==0){
+            omOtherOutOrder.setOrderStatus((byte)4);
+            num+=omOtherOutOrderMapper.updateByPrimaryKeySelective(omOtherOutOrder);
+        }
+        return num;
     }
 
     @Override

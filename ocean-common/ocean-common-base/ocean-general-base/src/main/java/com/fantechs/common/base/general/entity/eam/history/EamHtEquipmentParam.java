@@ -47,7 +47,7 @@ public class EamHtEquipmentParam extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="equipmentId",value = "设备信息ID")
     @Excel(name = "设备信息ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "equipment__id")
+    @Column(name = "equipment_id")
     private Long equipmentId;
 
     /**
