@@ -71,7 +71,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public PtlJobOrder sendElectronicTagStorage(Long jobOrderId, Long warehouseAreaId) throws Exception {
+    public PtlJobOrder sendElectronicTagStorage(Long jobOrderId, Long warehouseAreaId, Integer type) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
@@ -87,7 +87,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if (ptlJobOrder.getOrderStatus() == 6) {
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该任务单已复核完成");
         }
-        if (ptlJobOrder.getIfAlreadyPrint() != 1) {
+        if (ptlJobOrder.getIfAlreadyPrint() != 1 && type == 0) {
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该任务单未打印标签，请先进行打印");
         }
 
@@ -392,11 +392,11 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         searchPtlJobOrderDet.setPageSize(9999);
         List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
         List<RabbitMQDTO> list = new LinkedList<>();
-        List<String> equipmentAreaTagIds = new LinkedList<>();
+        List<String> equipmentAreaIds = new LinkedList<>();
         for (PtlJobOrderDetDto ptlJobOrderDetDto : ptlJobOrderDetDtoList) {
 
             // 通道灯灭灯
-            if (!equipmentAreaTagIds.contains(ptlJobOrderDetDto.getEquipmentAreaTagId())) {
+            if (!equipmentAreaIds.contains(ptlJobOrderDetDto.getEquipmentAreaId())) {
                 RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
                 rabbitMQDTO.setEquipmentTagId(ptlJobOrderDetDto.getEquipmentTagId());
                 rabbitMQDTO.setElectronicTagId(ptlJobOrderDetDto.getEquipmentAreaTagId());
@@ -404,7 +404,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 rabbitMQDTO.setQueueName(ptlJobOrderDetDto.getQueueName());
                 fanoutSender(1015, rabbitMQDTO, null);
                 log.info("===========发送消息给客户端控制任务单通道灯灭灯完成===============");
-                equipmentAreaTagIds.add(ptlJobOrderDetDto.getEquipmentAreaTagId());
+                equipmentAreaIds.add(ptlJobOrderDetDto.getEquipmentAreaId());
             }
 
             RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
@@ -616,7 +616,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if ("C".equals(ptlJobOrderDTO.getStatus())) {
             SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
             searchPtlJobOrder.setRelatedOrderCode(ptlJobOrderDTO.getCustomerNo());
-            searchPtlJobOrder.setNotOrderStatus((byte) 3);
             List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
             List<RabbitMQDTO> list = new LinkedList<>();
             for (PtlJobOrderDto ptlJobOrderDto : ptlJobOrderDtoList) {
@@ -724,11 +723,11 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         searchPtlJobOrderDet.setPageSize(9999);
         List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
         List<RabbitMQDTO> list = new LinkedList<>();
-        List<String> equipmentAreaTagIds = new LinkedList<>();
+        List<String> equipmentAreaIds = new LinkedList<>();
         List<PtlJobOrderDet> ptlJobOrderDetList = new LinkedList<>();
         for (PtlJobOrderDetDto ptlJobOrderDetDto : ptlJobOrderDetDtoList) {
             // 通道灯灭灯
-            if (!equipmentAreaTagIds.contains(ptlJobOrderDetDto.getEquipmentAreaTagId())) {
+            if (!equipmentAreaIds.contains(ptlJobOrderDetDto.getEquipmentAreaId())) {
                 RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
                 rabbitMQDTO.setEquipmentTagId(ptlJobOrderDetDto.getEquipmentTagId());
                 rabbitMQDTO.setElectronicTagId(ptlJobOrderDetDto.getEquipmentAreaTagId());
@@ -736,7 +735,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 rabbitMQDTO.setQueueName(ptlJobOrderDetDto.getQueueName());
                 fanoutSender(1015, rabbitMQDTO, null);
                 log.info("===========发送消息给客户端控制任务单通道灯灭灯完成===============");
-                equipmentAreaTagIds.add(ptlJobOrderDetDto.getEquipmentAreaTagId());
+                equipmentAreaIds.add(ptlJobOrderDetDto.getEquipmentAreaId());
             }
 
             RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
@@ -770,7 +769,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
         try {
             printPtlJobOrderLabel(jobOrderId, workUserId);
-            sendElectronicTagStorage(jobOrderId, Long.valueOf(0));
+            sendElectronicTagStorage(jobOrderId, Long.valueOf(0), 1);
         } catch (Exception e) {
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), e.getMessage());
         }
