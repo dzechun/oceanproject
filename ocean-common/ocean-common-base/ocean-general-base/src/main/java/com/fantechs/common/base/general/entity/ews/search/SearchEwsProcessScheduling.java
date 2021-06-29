@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.basic.search;
+package com.fantechs.common.base.general.entity.ews.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @create 2021/3/8
  */
 @Data
-public class SearchBaseProcessScheduling extends BaseQuery implements Serializable {
+public class SearchEwsProcessScheduling extends BaseQuery implements Serializable {
     /**
      * 排程id
      */
