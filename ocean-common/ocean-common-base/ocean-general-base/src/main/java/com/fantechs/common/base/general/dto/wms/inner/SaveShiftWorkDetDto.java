@@ -22,8 +22,26 @@ public class SaveShiftWorkDetDto implements Serializable {
     private Long warehouseId;
 
     /**
-     * 库位条码集合
+     * 上架单明细ID
      */
-    @ApiModelProperty(name="shiftWorkDetBarcodeDtos",value = "库位条码集合")
-    List<SaveShiftWorkDetBarcodeDto> shiftWorkDetBarcodeDtos;
+    @ApiModelProperty(name="jobOrderDetId",value = "上架单明细ID")
+    private Long jobOrderDetId;
+
+    /**
+     * 物料ID
+     */
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    private Long materialId;
+
+    /**
+     * 库位ID
+     */
+    @ApiModelProperty(name="storageId",value = "库位ID")
+    private Long storageId;
+
+    /**
+     * 条码集合
+     */
+    @ApiModelProperty(name="barcodes",value = "条码集合")
+    private List<String> barcodes;
 }

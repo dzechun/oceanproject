@@ -28,12 +28,12 @@ public interface WmsInnerShiftWorkService {
      * @param dto
      * @return
      */
-    int saveShiftWorkDetBarcode(SaveShiftWorkDetDto dto);
+    String saveShiftWorkDetBarcode(SaveShiftWorkDetDto dto);
 
     /**
      * 校验条码库位
      * @param dto
      * @return
      */
-    WmsInnerInventoryDetDto CheckShiftWorkBarcode(CheckShiftWorkBarcodeDto dto);
+    WmsInnerInventoryDetDto checkShiftWorkBarcode(CheckShiftWorkBarcodeDto dto);
 }

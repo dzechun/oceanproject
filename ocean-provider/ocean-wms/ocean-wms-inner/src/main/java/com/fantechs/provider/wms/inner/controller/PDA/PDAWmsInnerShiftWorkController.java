@@ -1,7 +1,6 @@
 package com.fantechs.provider.wms.inner.controller.PDA;
 
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.wms.inner.service.WmsInnerShiftWorkService;
@@ -9,10 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -41,5 +37,19 @@ public class PDAWmsInnerShiftWorkController {
     public ResponseEntity<List<WmsInnerJobOrderDetDto>> pdaFindDetList(@ApiParam(value = "作业单号，非必填", required = true) @RequestParam Long jobOrderId){
         List<WmsInnerJobOrderDetDto> innerJobOrderDetDtos = wmsInnerShiftWorkService.pdaFindDetList(jobOrderId);
         return ControllerUtil.returnDataSuccess(innerJobOrderDetDtos, innerJobOrderDetDtos.size());
+    }
+
+    @ApiOperation("PDA库内移位拣货校验")
+    @PostMapping("/checkShiftWorkBarcode")
+    public ResponseEntity<WmsInnerInventoryDetDto> checkShiftWorkBarcode(@ApiParam(value = "扫码校验DTO", required = true) @RequestBody CheckShiftWorkBarcodeDto dto){
+        WmsInnerInventoryDetDto inventoryDetDto = wmsInnerShiftWorkService.checkShiftWorkBarcode(dto);
+        return ControllerUtil.returnDataSuccess(inventoryDetDto, 1);
+    }
+
+    @ApiOperation("PDA库内移位拣货确认")
+    @PostMapping("/saveShiftWorkDetBarcode")
+    public ResponseEntity<String> saveShiftWorkDetBarcode(@ApiParam(value = "拣货确认实体", required = true) @RequestBody SaveShiftWorkDetDto dto){
+        String jobOrderId = wmsInnerShiftWorkService.saveShiftWorkDetBarcode(dto);
+        return ControllerUtil.returnDataSuccess("成功", jobOrderId);
     }
 }
