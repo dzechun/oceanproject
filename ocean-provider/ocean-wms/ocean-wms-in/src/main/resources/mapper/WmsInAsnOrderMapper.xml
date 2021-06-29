@@ -130,8 +130,17 @@
       <if test="asnCode!=null and asnCode!=''">
         and wiao.asn_code like CONCAT('%',#{asnCode},'%')
       </if>
-  <if test="sourceOrderCode!=null and sourceOrderCode!=''">
-    and source_order_code like CONCAT('%',#{sourceOrderCode},'%')
+  <if test="orderTypeId==3 and sourceOrderCode!=null and sourceOrderCode!=''">
+    and oto.transfer_order_code like CONCAT('%',#{sourceOrderCode},'%')
+  </if>
+  <if test="orderTypeId==5 and sourceOrderCode!=null and sourceOrderCode!=''">
+    and osro.sales_return_order_code like CONCAT('%',#{sourceOrderCode},'%')
+  </if>
+  <if test="orderTypeId==6 and sourceOrderCode!=null and sourceOrderCode!=''">
+    and oio.other_in_order_code like CONCAT('%',#{sourceOrderCode},'%')
+  </if>
+  <if test="orderTypeId==7 and sourceOrderCode!=null and sourceOrderCode!=''">
+    and ouo.other_out_order_code like CONCAT('%',#{sourceOrderCode},'%')
   </if>
     <if test="materialOwnerName!=null and materialOwnerName!=''">
       and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
