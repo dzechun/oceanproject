@@ -76,6 +76,11 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         wmsOutDeliveryOrder.setOrderTypeId((long)7);
         wmsOutDeliveryOrder.setOrderStatus((byte)1);
         wmsOutDeliveryOrder.setOrderDate(new Date());
+        wmsOutDeliveryOrder.setLinkManName(omOtherOutOrder.getLinkManName());
+        wmsOutDeliveryOrder.setLinkManPhone(omOtherOutOrder.getLinkManPhone());
+        wmsOutDeliveryOrder.setEmailAddress(omOtherOutOrder.getEMailAddress());
+        wmsOutDeliveryOrder.setFaxNumber(omOtherOutOrder.getFaxNumber());
+        wmsOutDeliveryOrder.setDetailedAddress(omOtherOutOrder.getAddress());
         wmsOutDeliveryOrder.setOrgId(sysUser.getOrganizationId());
         wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetDtos);
         ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryOrder);

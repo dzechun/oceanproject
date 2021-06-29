@@ -86,6 +86,38 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
     private String linkManName;
 
     /**
+     * 联系人电话
+     */
+    @ApiModelProperty(name="linkManPhone",value = "联系人电话")
+    @Excel(name = "联系电话", height = 20, width = 30,orderNum="")
+    @Column(name = "link_man_phone")
+    private String linkManPhone;
+
+    /**
+     * 传真
+     */
+    @ApiModelProperty(name="faxNumber",value = "传真")
+    @Excel(name = "传真", height = 20, width = 30,orderNum="")
+    @Column(name = "fax_number")
+    private String faxNumber;
+
+    /**
+     * 邮件地址
+     */
+    @ApiModelProperty(name="eMailAddress",value = "邮件地址")
+    @Excel(name = "邮件地址", height = 20, width = 30,orderNum="")
+    @Column(name = "e_mail_address")
+    private String eMailAddress;
+
+    /**
+     * 地址
+     */
+    @ApiModelProperty(name="address",value = "地址")
+    @Excel(name = "地址", height = 20, width = 30,orderNum="")
+    @Column(name = "address")
+    private String address;
+
+    /**
      * 订单总数量
      */
     @Transient

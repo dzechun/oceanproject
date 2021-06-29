@@ -71,6 +71,7 @@
                 and mswob.barcode like CONCAT('%',#{barcode},'%')
             </if>
         </where>
+order by mswob.create_time desc
     </select>
     <select id="findMaxCode" resultType="java.lang.String">
         select barcode

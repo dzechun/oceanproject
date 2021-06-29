@@ -89,6 +89,7 @@ oio.option3
         and date_format(oio.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
+order by oio.create_time desc
   </select>
   <select id="findMaterial" resultMap="BaseResultMap">
     select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as total_net_weight,IFNULL(bmb.gross_weight,0) as total_gross_weight
