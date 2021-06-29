@@ -175,27 +175,69 @@ public class BarcodeUtils {
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId())) {
             mesSfcBarcodeProcess.setDevoteTime(new Date());
         }
-        if (mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
-            mesSfcBarcodeProcess.setProductionTime(new Date());
-            mesSfcBarcodeProcess.setNextProcessId(0L);
-        }else {
-            Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
-                    .filter(i -> dto.getNowProcessId().equals(i.getProcessId()))
+        if (mesSfcBarcodeProcess.getReworkOrderId() != null){
+            // 返工单的工艺路线
+            List<BaseRouteProcess> routeProcesses = barcodeUtils.baseFeignApi.findConfigureRout(mesSfcBarcodeProcess.getRouteId()).getData();
+            Optional<BaseRouteProcess> lastRouteProcessOptional = routeProcesses.stream()
+                    .filter(item -> item.getIsMustPass().equals(1))
+                    .sorted(Comparator.comparing(BaseRouteProcess::getOrderNum).reversed())
                     .findFirst();
-            if (!routeProcessOptional.isPresent()) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getNextProcessId());
+            if(lastRouteProcessOptional.isPresent()){
+                BaseRouteProcess lastRouteProcess = lastRouteProcessOptional.get();
+                if (mesSfcBarcodeProcess.getNextProcessId().equals(lastRouteProcess.getProcessId())) {
+                    // 产出工序置空下一道工序关信息
+                    mesSfcBarcodeProcess.setProductionTime(new Date());
+                    mesSfcBarcodeProcess.setNextProcessId(null);
+                    mesSfcBarcodeProcess.setNextProcessName(null);
+                    mesSfcBarcodeProcess.setNextProcessCode(null);
+                }else {
+                    Optional<BaseRouteProcess> routeProcessOptional = routeProcesses.stream()
+                            .filter(i -> dto.getNowProcessId().equals(i.getProcessId()))
+                            .findFirst();
+                    if (!routeProcessOptional.isPresent()) {
+                        throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getNextProcessId());
+                    }
+                    BaseRouteProcess routeProcess = routeProcessOptional.get();
+                    processResponseEntity = barcodeUtils.baseFeignApi.processDetail(routeProcess.getNextProcessId());
+                    if (processResponseEntity.getCode() != 0) {
+                        throw new BizErrorException(ErrorCodeEnum.PDA40012012, routeProcess.getNextProcessId());
+                    }
+                    baseProcess = processResponseEntity.getData();
+                    // 设置下一工序
+                    mesSfcBarcodeProcess.setNextProcessId(routeProcess.getNextProcessId());
+                    mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
+                    mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
+                }
+            }else {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003, "返工条码工艺路线的产出工序不存在或已被删除");
             }
-            BaseRouteProcess routeProcess = routeProcessOptional.get();
-            processResponseEntity = barcodeUtils.baseFeignApi.processDetail(routeProcess.getNextProcessId());
-            if (processResponseEntity.getCode() != 0) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012012, routeProcess.getNextProcessId());
+        }else {
+            if (mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
+                // 产出工序置空下一道工序关信息
+                mesSfcBarcodeProcess.setProductionTime(new Date());
+                mesSfcBarcodeProcess.setNextProcessId(null);
+                mesSfcBarcodeProcess.setNextProcessName(null);
+                mesSfcBarcodeProcess.setNextProcessCode(null);
+            }else {
+                Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
+                        .filter(i -> dto.getNowProcessId().equals(i.getProcessId()))
+                        .findFirst();
+                if (!routeProcessOptional.isPresent()) {
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getNextProcessId());
+                }
+                BaseRouteProcess routeProcess = routeProcessOptional.get();
+                processResponseEntity = barcodeUtils.baseFeignApi.processDetail(routeProcess.getNextProcessId());
+                if (processResponseEntity.getCode() != 0) {
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012012, routeProcess.getNextProcessId());
+                }
+                baseProcess = processResponseEntity.getData();
+                // 设置下一工序
+                mesSfcBarcodeProcess.setNextProcessId(routeProcess.getNextProcessId());
+                mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
+                mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
             }
-            baseProcess = processResponseEntity.getData();
-            // 设置下一工序
-            mesSfcBarcodeProcess.setNextProcessId(routeProcess.getNextProcessId());
-            mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
-            mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
         }
+
         mesSfcBarcodeProcess.setInProcessTime(new Date());
         mesSfcBarcodeProcess.setOutProcessTime(new Date());
         mesSfcBarcodeProcess.setOperatorUserId(dto.getOperatorUserId());

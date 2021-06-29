@@ -26,4 +26,9 @@ public class WmsInnerJobOrderDetServiceImpl extends BaseService<WmsInnerJobOrder
     public List<WmsInnerJobOrderDetDto> findList(SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet) {
         return wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet);
     }
+
+    @Override
+    public int batchUpdate(List<WmsInnerJobOrderDet> list) {
+        return wmsInPutawayOrderDetMapper.batchUpdate(list);
+    }
 }

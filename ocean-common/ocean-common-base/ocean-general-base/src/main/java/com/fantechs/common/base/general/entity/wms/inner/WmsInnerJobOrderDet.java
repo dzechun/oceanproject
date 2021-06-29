@@ -267,5 +267,13 @@ public class WmsInnerJobOrderDet extends ValidGroup implements Serializable {
     @Column(name = "order_status")
     private Byte orderStatus;
 
+    /**
+     * 移位状态(1-待作业 2-拣货中 3-上架中 4-已完成)
+     */
+    @ApiModelProperty(name="shiftStorageStatus",value = "移位状态(1-待作业 2-拣货中 3-上架中 4-已完成)")
+    @Excel(name = "移位状态(1-待作业 2-拣货中 3-上架中 4-已完成)", height = 20, width = 30,orderNum="")
+    @Column(name = "shift_storage_status")
+    private Byte shiftStorageStatus;
+
     private static final long serialVersionUID = 1L;
 }

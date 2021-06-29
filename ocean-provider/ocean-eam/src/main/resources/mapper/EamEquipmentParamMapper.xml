@@ -6,7 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="equipment_param_id" jdbcType="BIGINT" property="equipmentParamId" />
-    <result column="equipment__id" jdbcType="BIGINT" property="equipmentId" />
+    <result column="equipment_id" jdbcType="BIGINT" property="equipmentId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -17,6 +17,9 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <collection property="list" ofType="com.fantechs.common.base.general.entity.eam.EamEquipmentParamList"
+                column="{equipmentParamId=equipment_param_id}" select="com.fantechs.provider.eam.mapper.EamEquipmentParamListMapper.findList">
+    </collection>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamEquipmentParamDto">
@@ -31,7 +34,7 @@
 
   <sql id="Base_Column_List">
     eep.equipment_param_id,
-    eep.equipment__id,
+    eep.equipment_id,
     eep.`status`,
     eep.remark,
     eep.org_id,

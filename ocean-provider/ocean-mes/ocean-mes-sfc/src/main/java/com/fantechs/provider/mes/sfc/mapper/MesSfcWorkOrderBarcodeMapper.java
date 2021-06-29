@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBarcode> {
@@ -40,4 +41,6 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
      * @return
      */
     int batchUpdate(List<MesSfcWorkOrderBarcode> workOrderBarcodes);
+
+    List<MesSfcWorkOrderBarcodeDto> findByWorkOrderGroup(Map<String, Object> map);
 }

@@ -32,6 +32,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
@@ -53,6 +54,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Resource
     MesSfcProductCartonDetService mesSfcProductCartonDetService;
+
+    @Resource
+    MesSfcBarcodeProcessService mesSfcBarcodeProcessService;
 
     @Resource
     PMFeignApi pmFeignApi;
@@ -91,6 +95,15 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if (mesSfcProductCartonDtoList.get(0).getCloseStatus() == 0) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该条码对应的包箱未关闭，请先进行包箱关闭");
             }
+
+            if(requestPalletWorkScanDto.getPalletType() == 0){
+                // 判断是否同一工单
+                List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = mesSfcWorkOrderBarcodeService.findByWorkOrderGroup(map);
+                if(workOrderBarcodeDtos.size() > 0){
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012034);
+                }
+            }
+
             workOrderId = mesSfcProductCartonDtoList.get(0).getWorkOrderId();
             // 获取箱号绑定产品条码
             cartonCode = requestPalletWorkScanDto.getBarcode();
@@ -116,6 +129,22 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码未绑定产品条码");
                 }
                 workOrderBarcodeId = mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderBarcodeId();
+            }
+
+            if(requestPalletWorkScanDto.getPalletType() == 0){
+                Map<String, Object> map = new HashMap<>();
+                map.put("workOrderBarcodeId", workOrderBarcodeId);
+                List<MesSfcBarcodeProcessDto> processServiceList = mesSfcBarcodeProcessService.findList(map);
+                if(processServiceList == null && processServiceList.size() <= 0){
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012000);
+                }
+                map.clear();
+                map.put("cartonCode", processServiceList.get(0).getCartonCode());
+                // 判断是否同一工单
+                List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = mesSfcWorkOrderBarcodeService.findByWorkOrderGroup(map);
+                if(workOrderBarcodeDtos.size() > 0){
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012034);
+                }
             }
             Map<String, Object> productCartonDetMap = new HashMap<>();
             productCartonDetMap.put("workOrderBarcodeId", workOrderBarcodeId);
@@ -419,70 +448,66 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         criteria.andIn("productPalletId", palletIdList);
         criteria.andEqualTo("closeStatus", 0);
         List<MesSfcProductPallet> productPallets = mesSfcProductPalletService.selectByExample(example);
-        try {
-            for (MesSfcProductPallet item : productPallets){
-                item.setCloseStatus((byte) 1);
-                item.setModifiedUserId(user.getUserId());
-                item.setModifiedTime(new Date());
-                mesSfcProductPalletService.update(item);
-                // 是否打印栈板码
-                if (printBarcode == 1) {
-                    PrintCarCodeDto printCarCodeDto = new PrintCarCodeDto();
-                    printCarCodeDto.setWorkOrderId(item.getWorkOrderId());
-                    printCarCodeDto.setLabelTypeCode("10");
-                    printCarCodeDto.setBarcode(item.getPalletCode());
-                    printCarCodeDto.setPrintName(printName != null ? printName : "测试");
-                    BarcodeUtils.printBarCode(printCarCodeDto);
-                }
-
-                //获取工单信息
-                SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-                searchMesPmWorkOrder.setWorkOrderId(item.getWorkOrderId());
-                List<MesPmWorkOrderDto> mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
-                if (mesPmWorkOrderDtoList.isEmpty()) {
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "没有找到条码绑定的工单");
-                }
-                MesPmWorkOrderDto mesPmWorkOrderDto = mesPmWorkOrderDtoList.get(0);
-                int palletCartons = findPalletCarton(item.getProductPalletId()).size();
-
-                //完工入库
-                PalletAutoAsnDto palletAutoAsnDto = new PalletAutoAsnDto();
-                SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
-                searchBaseMaterialOwner.setAsc((byte)1);
-                ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(searchBaseMaterialOwner);
-                if(StringUtils.isNotEmpty(baseMaterialOwnerDtos.getData())){
-                    palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerId());
-                    palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerName());
-                }else{
-                    throw new BizErrorException("未查询到货主信息");
-                }
-                SearchBaseConsignee searchBaseConsignee = new SearchBaseConsignee();
-                searchBaseConsignee.setMaterialOwnerId(palletAutoAsnDto.getMaterialOwnerId());
-                ResponseEntity<List<BaseConsignee>> baseConsignees = baseFeignApi.findList(searchBaseConsignee);
-                if(StringUtils.isNotEmpty(baseConsignees.getData())){
-                    BeanUtils.autoFillEqFields(baseConsignees.getData().get(0),palletAutoAsnDto);
-                }else{
-                    throw new BizErrorException("未查询到收货人信息");
-                }
-
-                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-                searchBaseStorage.setMinSurplusCanPutSalver(0);
-                ResponseEntity<List<BaseStorage>> baseStorages = baseFeignApi.findList(searchBaseStorage);
-                if(StringUtils.isNotEmpty(baseStorages.getData())){
-                    palletAutoAsnDto.setStorageId(baseStorages.getData().get(0).getStorageId());
-                    palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(0).getWarehouseId());
-                }else{
-                    throw new BizErrorException(ErrorCodeEnum.STO30012000);
-                }
-                palletAutoAsnDto.setSourceOrderId(mesPmWorkOrderDto.getWorkOrderId());
-                palletAutoAsnDto.setMaterialId(mesPmWorkOrderDto.getMaterialId());
-                palletAutoAsnDto.setPackingUnitName(mesPmWorkOrderDto.getPackingUnitName());
-                palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons+1));
-                palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons+1));
-                inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
+        for (MesSfcProductPallet item : productPallets){
+            item.setCloseStatus((byte) 1);
+            item.setModifiedUserId(user.getUserId());
+            item.setModifiedTime(new Date());
+            mesSfcProductPalletService.update(item);
+            // 是否打印栈板码
+            if (printBarcode == 1) {
+                PrintCarCodeDto printCarCodeDto = new PrintCarCodeDto();
+                printCarCodeDto.setWorkOrderId(item.getWorkOrderId());
+                printCarCodeDto.setLabelTypeCode("10");
+                printCarCodeDto.setBarcode(item.getPalletCode());
+                printCarCodeDto.setPrintName(printName != null ? printName : "测试");
+                BarcodeUtils.printBarCode(printCarCodeDto);
             }
-        }catch (Exception e){
-            throw new BizErrorException(ErrorCodeEnum.GL99990005, e.getMessage());
+
+            //获取工单信息
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(item.getWorkOrderId());
+            List<MesPmWorkOrderDto> mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+            if (mesPmWorkOrderDtoList.isEmpty()) {
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "没有找到条码绑定的工单");
+            }
+            MesPmWorkOrderDto mesPmWorkOrderDto = mesPmWorkOrderDtoList.get(0);
+            int palletCartons = findPalletCarton(item.getProductPalletId()).size();
+
+            //完工入库
+            PalletAutoAsnDto palletAutoAsnDto = new PalletAutoAsnDto();
+            SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
+            searchBaseMaterialOwner.setAsc((byte)1);
+            ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(searchBaseMaterialOwner);
+            if(StringUtils.isNotEmpty(baseMaterialOwnerDtos.getData())){
+                palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerId());
+                palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerName());
+            }else{
+                throw new BizErrorException("未查询到货主信息");
+            }
+            SearchBaseConsignee searchBaseConsignee = new SearchBaseConsignee();
+            searchBaseConsignee.setMaterialOwnerId(palletAutoAsnDto.getMaterialOwnerId());
+            ResponseEntity<List<BaseConsignee>> baseConsignees = baseFeignApi.findList(searchBaseConsignee);
+            if(StringUtils.isNotEmpty(baseConsignees.getData())){
+                BeanUtils.autoFillEqFields(baseConsignees.getData().get(0),palletAutoAsnDto);
+            }else{
+                throw new BizErrorException("未查询到收货人信息");
+            }
+
+            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            searchBaseStorage.setMinSurplusCanPutSalver(0);
+            ResponseEntity<List<BaseStorage>> baseStorages = baseFeignApi.findList(searchBaseStorage);
+            if(StringUtils.isNotEmpty(baseStorages.getData())){
+                palletAutoAsnDto.setStorageId(baseStorages.getData().get(0).getStorageId());
+                palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(0).getWarehouseId());
+            }else{
+                throw new BizErrorException(ErrorCodeEnum.STO30012000);
+            }
+            palletAutoAsnDto.setSourceOrderId(mesPmWorkOrderDto.getWorkOrderId());
+            palletAutoAsnDto.setMaterialId(mesPmWorkOrderDto.getMaterialId());
+            palletAutoAsnDto.setPackingUnitName(mesPmWorkOrderDto.getPackingUnitName());
+            palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(palletCartons+1));
+            palletAutoAsnDto.setActualQty(BigDecimal.valueOf(palletCartons+1));
+            inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
 
 

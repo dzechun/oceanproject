@@ -4,6 +4,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
+import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmOtherOutOrder;
 import com.fantechs.provider.om.service.OmOtherOutOrderService;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -96,5 +97,11 @@ public class OmOtherOutOrderController {
     @PostMapping("/packageAutoOutOrder")
     public ResponseEntity packageAutoOutOrder(@RequestBody(required = true) OmOtherOutOrder omOtherOutOrder){
         return ControllerUtil.returnCRUD(omOtherOutOrderService.packageAutoOutOrder(omOtherOutOrder));
+    }
+
+    @ApiOperation("数量反写")
+    @PostMapping("/writeQty")
+    public ResponseEntity writeQty(@RequestBody OmOtherOutOrderDet omOtherOutOrderDet){
+        return ControllerUtil.returnCRUD(omOtherOutOrderService.writeQty(omOtherOutOrderDet));
     }
 }

@@ -52,6 +52,13 @@ public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Seria
     private String materialName;
 
     /**
+     * 物料描述
+     */
+    @Transient
+    @ApiModelProperty(name = "materialDesc",value = "物料描述")
+    private String materialDesc;
+
+    /**
      * 库存状态
      */
     @Transient

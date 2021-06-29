@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderReJoReDetDto;
+import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -312,12 +313,31 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 }
                 num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
                 break;
-                //调拨无需反写订单数量
+                //调拨and其他出库反写数量
             case "2":
+                num+=1;
                 break;
-                //其他出库
             case "7":
+                //其他出库
+                OmOtherOutOrderDet omOtherOutOrderDet = new OmOtherOutOrderDet();
+                omOtherOutOrderDet.setOtherOutOrderId(wmsOutDeliveryOrder.getSourceOrderId());
+                omOtherOutOrderDet.setOtherOutOrderDetId(wmsOutDeliveryOrderDet.getOrderDetId());
+                omOtherOutOrderDet.setDispatchQty(wmsInnerJobOrderDetDto.getActualQty());
+                ResponseEntity responseEntity = omFeignApi.writeQtyToOut(omOtherOutOrderDet);
+                if(responseEntity.getCode()!=0){
+                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                }
+                num+=1;
                 break;
+        }
+        //查询出库单对应拣货单是否都已经发运完成
+        Integer total1 = wmsOutDespatchOrderReJoMapper.findCountQty(wmsOutDeliveryOrder.getDeliveryOrderId(),wmsOutDeliveryOrder.getOrderTypeId());
+        Integer totalCount1 = wmsOutDespatchOrderReJoMapper.findCount(wmsOutDeliveryOrder.getDeliveryOrderId(),wmsOutDeliveryOrder.getOrderTypeId());
+        if(total1.equals(totalCount1)){
+            //更新调拨出库单状态
+            num+=wmsOutDespatchOrderReJoMapper.writeOutQty((byte)5,wmsOutDeliveryOrder.getDeliveryOrderId());
+        }else{
+            num+=wmsOutDespatchOrderReJoMapper.writeOutQty((byte)4,wmsOutDeliveryOrder.getDeliveryOrderId());
         }
        return num;
     }

@@ -35,4 +35,7 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
      * @return
      */
     int batchUpdate(List<MesSfcWorkOrderBarcode> workOrderBarcodes);
+
+    List<MesSfcWorkOrderBarcodeDto> findByWorkOrderGroup(Map<String, Object> map);
+
 }

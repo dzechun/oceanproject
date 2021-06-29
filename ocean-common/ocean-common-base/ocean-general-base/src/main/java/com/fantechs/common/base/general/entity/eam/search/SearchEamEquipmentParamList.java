@@ -10,8 +10,8 @@ import java.io.Serializable;
 public class SearchEamEquipmentParamList extends BaseQuery implements Serializable {
 
     /**
-     * 设备绑定产品表头ID
+     * 设备参数设备表ID
      */
-    @ApiModelProperty(name="equipmentParamId",value = "设备绑定产品表头ID")
+    @ApiModelProperty(name="equipmentParamId",value = "设备参数设备表ID")
     private Long equipmentParamId;
 }

@@ -185,5 +185,27 @@
             where storage_code =#{item.storageCode}
         </foreach>
     </update>
+<!--    库粗分配规则-->
+    <resultMap id="StorageRuleMap" type="com.fantechs.provider.base.util.StorageRuleDto">
 
+    </resultMap>
+    <select id="findPutawayRule" resultMap="StorageRuleMap">
+        SELECT
+            bs.storage_id as storageId,
+            bs.roadway,
+            bs.row_no as rowNo,
+            bs.column_no as columnNo,
+            bs.level_no as levelNo,
+            bs.putaway_move_line_no as putawayMoveLineNo,
+            bs.surplus_load as surplusLoad,
+            bs.surplus_volume as surolusVolume,
+            bs.surplus_can_put_salver as surplusCanPutSalver
+            bmt.bmt.volume
+			bmt.net_weight as netWeight
+        FROM base_storage bs
+                 LEFT JOIN wms_inner_inventory wii ON bs.storage_id = wii.storage_id AND wii.packing_qty>0
+                 LEFT JOIN base_material_tab bmt ON wii.material_id = bmt.material_id
+        WHERE wii.warehouse_id =#{warehouseId}
+          AND wii.material_id =#{materialId}
+    </select>
 </mapper>

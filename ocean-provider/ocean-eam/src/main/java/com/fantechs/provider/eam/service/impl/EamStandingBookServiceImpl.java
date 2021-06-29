@@ -4,13 +4,9 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamStandingBookDto;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
-import com.fantechs.common.base.general.entity.eam.EamMaintainProject;
 import com.fantechs.common.base.general.entity.eam.EamStandingBook;
-import com.fantechs.common.base.general.entity.eam.history.EamHtMaintainProject;
 import com.fantechs.common.base.general.entity.eam.history.EamHtStandingBook;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.eam.mapper.EamHtStandingBookMapper;
@@ -81,11 +77,11 @@ public class EamStandingBookServiceImpl extends BaseService<EamStandingBook> imp
         record.setModifiedTime(new Date());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
         record.setOrgId(user.getOrganizationId());
-        int i = eamStandingBookMapper.insertUseGeneratedKeys(record);
+        eamStandingBookMapper.insertUseGeneratedKeys(record);
 
         EamHtStandingBook eamHtStandingBook = new EamHtStandingBook();
         BeanUtils.copyProperties(record, eamHtStandingBook);
-        eamHtStandingBookMapper.insert(eamHtStandingBook);
+        int i = eamHtStandingBookMapper.insert(eamHtStandingBook);
 
         return i;
     }

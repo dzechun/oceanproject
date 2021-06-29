@@ -62,4 +62,11 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @return
      */
     int activation(Long jobOrderId);
+
+    /**
+     * 移位单查询
+     * @param map
+     * @return
+     */
+    List<WmsInnerJobOrderDto> findShiftList(Map<String, Object> map);
 }

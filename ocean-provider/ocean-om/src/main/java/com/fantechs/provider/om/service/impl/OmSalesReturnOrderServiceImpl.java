@@ -87,7 +87,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     throw new BizErrorException("下发数量不能大于工单数量");
                 }
                 WmsInAsnOrderDet wmsInAsnOrderDet = WmsInAsnOrderDet.builder()
-                        .sourceOrderId(omSalesReturnOrderDet.getSalesOrderId())
+                        .sourceOrderId(omSalesReturnOrderDet.getSalesReturnOrderId())
                         .orderDetId(omSalesReturnOrderDet.getSalesReturnOrderDetId())
                         .warehouseId(omSalesReturnOrderDet.getWarehouseId())
                         .materialId(omSalesReturnOrderDet.getMaterialId())

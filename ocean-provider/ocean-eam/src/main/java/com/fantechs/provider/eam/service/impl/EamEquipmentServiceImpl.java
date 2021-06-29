@@ -5,10 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentCategory;
-import com.fantechs.common.base.general.entity.eam.EamStandingBook;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentCategory;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -80,11 +77,11 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         record.setModifiedTime(new Date());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
         record.setOrgId(user.getOrganizationId());
-        int i = eamEquipmentMapper.insertUseGeneratedKeys(record);
+        eamEquipmentMapper.insertUseGeneratedKeys(record);
 
         EamHtEquipment eamHtEquipment = new EamHtEquipment();
         BeanUtils.copyProperties(record, eamHtEquipment);
-        eamHtEquipmentMapper.insert(eamHtEquipment);
+        int i = eamHtEquipmentMapper.insert(eamHtEquipment);
 
         return i;
     }
