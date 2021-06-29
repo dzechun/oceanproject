@@ -16,16 +16,16 @@ public class SaveShiftWorkDetDto implements Serializable {
     private Long jobOrderId;
 
     /**
-     * 仓库ID
-     */
-    @ApiModelProperty(name="warehouseId",value = "仓库ID,有则必填")
-    private Long warehouseId;
-
-    /**
      * 移位单明细ID
      */
     @ApiModelProperty(name="jobOrderDetId",value = "移位单明细ID,有则必填")
     private Long jobOrderDetId;
+
+    /**
+     * 仓库ID
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    private Long warehouseId;
 
     /**
      * 物料ID
