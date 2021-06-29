@@ -1,7 +1,7 @@
-package com.fantechs.common.base.general.dto.basic;
+package com.fantechs.common.base.general.dto.ews;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.basic.BaseProcessScheduling;
+import com.fantechs.common.base.general.entity.ews.EwsProcessScheduling;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @create 2021/3/8
  */
 @Data
-public class BaseProcessSchedulingDto extends BaseProcessScheduling implements Serializable {
+public class EwsProcessSchedulingDto extends EwsProcessScheduling implements Serializable {
     /**
      * 创建用户名称
      */

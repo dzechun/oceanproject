@@ -356,7 +356,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
         //查询是否创建作业单
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
-        searchWmsInnerJobOrder.setSourceOrderId(id);
+        searchWmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrderDto.getDeliveryOrderCode());
+        searchWmsInnerJobOrder.setCodeQueryMark(1);
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
         //未创建过作业单则新建
         if (StringUtils.isEmpty(wmsInnerJobOrderDtos)) {

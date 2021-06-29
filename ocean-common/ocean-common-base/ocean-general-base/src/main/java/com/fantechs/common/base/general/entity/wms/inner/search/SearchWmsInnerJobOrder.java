@@ -47,6 +47,12 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="workerName",value = "工作人员")
     private String workerName;
 
+    /**
+     * 根据编码查询方式标记（传1则为等值查询）
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "查询方式标记")
+    private Integer codeQueryMark;
+
     private Long jobOrderId;
 
     /**

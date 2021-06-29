@@ -124,7 +124,7 @@
                     #{orderStatus}
                 </foreach>
             </if>
-            <if test="nonShiftStorageStatus !=null">
+            <if test="nonShiftStorageStatus !=null and nonShiftStorageStatus!=''">
                 and wipod.shift_storage_status != #{nonShiftStorageStatus}
             </if>
         </where>
