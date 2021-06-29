@@ -30,6 +30,12 @@ public class SearchWmsInAsnOrder extends BaseQuery implements Serializable {
     private String asnCode;
 
     /**
+     * 订单号
+     */
+    @ApiModelProperty(name="sourceOrderCode",value = "订单号")
+    private String sourceOrderCode;
+
+    /**
      * 仓库
      */
     @ApiModelProperty(name="warehouseName",value = "仓库")

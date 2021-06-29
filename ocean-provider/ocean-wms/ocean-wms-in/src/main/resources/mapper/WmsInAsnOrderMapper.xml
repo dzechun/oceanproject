@@ -93,7 +93,7 @@
         oio.other_in_order_code as source_order_code,
     </if>
     <if test="orderTypeId==7">
-        ouo.other_out_order_id as source_order_code,
+        ouo.other_out_order_code as source_order_code,
     </if>
         bw.warehouse_name,bws.storage_code,
       (select SUM(wiaod.packing_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as packing_qty,
@@ -130,6 +130,9 @@
       <if test="asnCode!=null and asnCode!=''">
         and wiao.asn_code like CONCAT('%',#{asnCode},'%')
       </if>
+  <if test="sourceOrderCode!=null and sourceOrderCode!=''">
+    and source_order_code like CONCAT('%',#{sourceOrderCode},'%')
+  </if>
     <if test="materialOwnerName!=null and materialOwnerName!=''">
       and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
     </if>

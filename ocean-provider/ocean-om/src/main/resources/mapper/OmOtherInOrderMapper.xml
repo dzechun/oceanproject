@@ -73,6 +73,9 @@ oio.option3
       <if test="otherInOrderCode!=null and otherInOrderCode!=''">
         and oio.other_in_order_code like CONCAT('%',#{otherInOrderCode},'%')
       </if>
+      <if test="relatedOrderCode!=null and relatedOrderCode!=''">
+        and oio.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
+      </if>
       <if test="orgId!=null and orgId!=''">
         and oio.org_id = #{orgId}
       </if>
