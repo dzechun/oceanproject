@@ -37,7 +37,7 @@ public interface WmsInnerShiftWorkService {
      * @param dto
      * @return
      */
-    WmsInnerInventoryDetDto checkShiftWorkBarcode(CheckShiftWorkBarcodeDto dto);
+    CheckShiftWorkBarcodeRecordDto checkShiftWorkBarcode(CheckShiftWorkBarcodeDto dto);
 
     /**
      * 移位作业上架确认
