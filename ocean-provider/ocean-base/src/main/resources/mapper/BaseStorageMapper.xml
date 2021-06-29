@@ -205,7 +205,20 @@
         FROM base_storage bs
                  LEFT JOIN wms_inner_inventory wii ON bs.storage_id = wii.storage_id AND wii.packing_qty>0
                  LEFT JOIN base_material_tab bmt ON wii.material_id = bmt.material_id
-        WHERE wii.warehouse_id =#{warehouseId}
-          AND wii.material_id =#{materialId}
+        <where>
+            <if test="warehouseId!=null and warehouseId!=''">
+                and  wii.warehouse_id =#{warehouseId}
+            </if>
+            <if test="">
+                AND wii.material_id =#{materialId}
+            </if>
+            <if test="batchCode!=null and batchCode!=''">
+                AND wii.batch_code = #{batchCode}
+            </if>
+            <if test="prodDate!=null and prodDate!=''">
+                AND date_format(wii.production_date, '%Y-%m-%d') = #{prodDate}
+            </if>
+        </where>
+
     </select>
 </mapper>

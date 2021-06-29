@@ -277,7 +277,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     }
 
     @Override
-    public List<StorageRuleDto> findPutawayRule(Long warehouseId, Long materialId) {
-        return baseStorageMapper.findPutawayRule(warehouseId,materialId);
+    public List<StorageRuleDto> findPutawayRule(Map<String,Object> map) {
+        return baseStorageMapper.findPutawayRule(map);
     }
 }

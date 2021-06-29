@@ -109,4 +109,12 @@ public class EamStandingBookDto extends EamStandingBook implements Serializable 
     @Excel(name = "部门名称", height = 20, width = 30,orderNum="11")
     private String deptName;
 
+    /**
+     * 使用状态(1-使用中 2-空闲)
+     */
+    @Transient
+    @ApiModelProperty(name = "usageStatus",value = "使用状态(1-使用中 2-空闲)")
+    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="12")
+    private Byte usageStatus;
+
 }
