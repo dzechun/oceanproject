@@ -82,7 +82,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             throw new BizErrorException(ErrorCodeEnum.PDA5001006);
         }
         // 判断是否有作业单
-        if (dto.getJobOrderId() != null) {
+        if (!dto.getIsPda()) {
 
             List<WmsInnerJobOrderDet> jobOrderDetList = new ArrayList<>();
             List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
@@ -133,21 +133,31 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(new BigDecimal(dto.getBarcodes().size())) : BigDecimal.ONE);
             wmsInnerJobOrderService.update(innerJobOrder);
         } else {
-            // 创建移位单
-            WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
-            innerJobOrder.setWarehouseId(dto.getWarehouseId());
-            innerJobOrder.setWorkerId(sysUser.getUserId());
-            innerJobOrder.setJobOrderCode(CodeUtils.getId("SHIFT-"));
-            innerJobOrder.setJobOrderType((byte) 2);
-            innerJobOrder.setPlanQty(new BigDecimal(dto.getBarcodes().size()));
-            innerJobOrder.setActualQty(innerJobOrder.getPlanQty());
-            innerJobOrder.setOrderStatus((byte) 3);
-            innerJobOrder.setStatus((byte) 1);
-            innerJobOrder.setOrgId(sysUser.getOrganizationId());
-            innerJobOrder.setCreateTime(new Date());
-            innerJobOrder.setCreateUserId(sysUser.getUserId());
-            innerJobOrder.setIsDelete((byte) 1);
-            wmsInnerJobOrderService.save(innerJobOrder);
+            if(dto.getJobOrderId() != null){
+                // 更新移位单
+                WmsInnerJobOrder innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderId());
+                innerJobOrder.setOrderStatus((byte) 4);
+                innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(new BigDecimal(dto.getBarcodes().size())) : BigDecimal.ONE);
+                innerJobOrder.setPlanQty(innerJobOrder.getActualQty());
+                wmsInnerJobOrderService.update(innerJobOrder);
+            }else {
+                // 创建移位单
+                WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
+                innerJobOrder.setWarehouseId(dto.getWarehouseId());
+                innerJobOrder.setWorkerId(sysUser.getUserId());
+                innerJobOrder.setJobOrderCode(CodeUtils.getId("SHIFT-"));
+                innerJobOrder.setJobOrderType((byte) 2);
+                innerJobOrder.setPlanQty(new BigDecimal(dto.getBarcodes().size()));
+                innerJobOrder.setActualQty(innerJobOrder.getPlanQty());
+                innerJobOrder.setOrderStatus((byte) 4);
+                innerJobOrder.setStatus((byte) 1);
+                innerJobOrder.setOrgId(sysUser.getOrganizationId());
+                innerJobOrder.setCreateTime(new Date());
+                innerJobOrder.setCreateUserId(sysUser.getUserId());
+                innerJobOrder.setIsDelete((byte) 1);
+                wmsInnerJobOrderService.save(innerJobOrder);
+            }
+
 
             for (String barcode : dto.getBarcodes()){
                 // 查询库存信息，同一库位跟同物料有且只有一条数据
@@ -175,6 +185,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             }
             // 创建移位明细
             // 创建库存
+            // 变更减少原库存
             // 创建库存明细
             // 创建条码移位单明细关系
         }
@@ -230,6 +241,18 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
 
         return inventoryDetDto;
+    }
+
+    @Override
+    public int saveJobOrder(SaveShiftJobOrderDto dto) {
+        // 判断是否已有上架单
+        if (dto.getJobOrderId() != null){
+            // 创建上架单
+        }else {
+            // 变更上架单数量
+        }
+        // 创建上架明细单
+        return 1;
     }
 
 
