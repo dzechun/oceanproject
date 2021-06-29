@@ -31,6 +31,9 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <collection property="wmsInPutawayOrderDets" ofType="com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet"
+                    column="{jobOrderId=job_order_id}" select="com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper.findList">
+        </collection>
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto">
@@ -98,8 +101,11 @@
             <if test="warehouseName!=null and warehouseName!=''">
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
             </if>
-            <if test="relatedOrderCode!=null and relatedOrderCode!=''">
+            <if test="relatedOrderCode!=null and relatedOrderCode!='' and codeQueryMark!=1">
                 and wipo.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
+            </if>
+            <if test="relatedOrderCode!=null and relatedOrderCode!='' and codeQueryMark==1">
+                and wipo.related_order_code = #{relatedOrderCode}
             </if>
             <if test="orderTypeId!=null and orderTypeId!=''">
                 and wipo.order_type_id =#{orderTypeId}
