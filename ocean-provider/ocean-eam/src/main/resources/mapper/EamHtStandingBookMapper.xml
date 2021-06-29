@@ -35,6 +35,7 @@
     <result column="weight" jdbcType="DECIMAL" property="weight"/>
     <result column="release_date" jdbcType="TIMESTAMP" property="releaseDate"/>
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+    <result column="usage_status" jdbcType="TINYINT" property="usageStatus"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -60,7 +61,7 @@
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
     ee.equipment_code,ee.equipment_name,ee.equipment_desc,ee.equipment_model,
-    eec.equipment_category_desc,ee.power,ee.weight,ee.release_date,
+    eec.equipment_category_desc,ee.power,ee.weight,ee.release_date,ee.usage_status,
     bd.dept_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
