@@ -151,12 +151,12 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     rabbitMQDTO.setElectronicTagId(ptlElectronicTagStorageDto.getElectronicTagId());
                     if (ptlElectronicTagStorageDto.getElectronicTagLangType() == 1) {
                         if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getWholeQty()) && ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
-                            materialDesc += ptlJobOrderDetDto.getMaterialName() + " " + ptlJobOrderDetDto.getWholeQty();
-                            materialDesc = intercepting(materialDesc, 24 - ptlJobOrderDetDto.getWholeUnitName().length() * 2) + ptlJobOrderDetDto.getWholeUnitName();
+                            materialDesc += intercepting(ptlJobOrderDetDto.getMaterialName(), 24 - ptlJobOrderDetDto.getWholeQty().toString().length() - ptlJobOrderDetDto.getWholeUnitName().length() * 2);
+                            materialDesc += ptlJobOrderDetDto.getWholeQty() + ptlJobOrderDetDto.getWholeUnitName();
                         }
                         if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getScatteredQty()) && ptlJobOrderDetDto.getScatteredQty().compareTo(BigDecimal.ZERO) != 0) {
-                            materialDesc2 += ptlJobOrderDetDto.getMaterialName() + " " + ptlJobOrderDetDto.getScatteredQty();
-                            materialDesc2 = intercepting(materialDesc2, 24 - ptlJobOrderDetDto.getScatteredUnitName().length() * 2)  + ptlJobOrderDetDto.getScatteredUnitName();
+                            materialDesc2 += intercepting(ptlJobOrderDetDto.getMaterialName(), 24 - ptlJobOrderDetDto.getScatteredQty().toString().length() - ptlJobOrderDetDto.getScatteredUnitName().length() * 2);
+                            materialDesc2 += ptlJobOrderDetDto.getScatteredQty() + ptlJobOrderDetDto.getScatteredUnitName();
                         }
                         rabbitMQDTO.setMaterialDesc(materialDesc + materialDesc2);
                     } else {
@@ -186,11 +186,12 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             ptlJobOrderDet.setModifiedUserId(currentUser.getUserId());
             ptlJobOrderDetList.add(ptlJobOrderDet);
         }
-        ptlJobOrder.setJobOrderId(jobOrderId);
-        ptlJobOrder.setOrderStatus((byte) 2);
-        ptlJobOrder.setModifiedTime(new Date());
-        ptlJobOrder.setModifiedUserId(currentUser.getUserId());
-        electronicTagFeignApi.updatePtlJobOrder(ptlJobOrder);
+        PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
+        ptlJobOrderUpdate.setJobOrderId(jobOrderId);
+        ptlJobOrderUpdate.setOrderStatus((byte) 2);
+        ptlJobOrderUpdate.setModifiedTime(new Date());
+        ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
+        electronicTagFeignApi.updatePtlJobOrder(ptlJobOrderUpdate);
         electronicTagFeignApi.batchUpdatePtlJobOrderDet(ptlJobOrderDetList);
 
         if (!listC.isEmpty()) {
@@ -241,6 +242,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             ptlJobOrder.setPickBackStatus((byte) 0);
             ptlJobOrder.setIfAlreadyPrint((byte) 0);
             ptlJobOrder.setStatus((byte) 1);
+            ptlJobOrder.setRemark(ptlJobOrderDTO.getLineno());
             ptlJobOrder.setOrgId(currentUser.getOrganizationId());
             ptlJobOrder.setCreateTime(new Date());
             ptlJobOrder.setCreateUserId(currentUser.getUserId());
@@ -292,6 +294,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                         RabbitMQDTO rabbitMQDTO = new RabbitMQDTO();
                         rabbitMQDTO.setEquipmentTagId(ptlElectronicTagStorageDtoList.get(0).getEquipmentTagId());
                         rabbitMQDTO.setElectronicTagId(ptlEquipmentDtoList.get(0).getEquipmentTagId());
+                        rabbitMQDTO.setOption1("1");
+                        rabbitMQDTO.setOption2("2");
+                        rabbitMQDTO.setOption3("1");
                         rabbitMQDTO.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                         rabbitMQDTOList.add(rabbitMQDTO);
                     }
@@ -338,6 +343,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if (!rabbitMQDTOList.isEmpty()) {
             fanoutSender(1005, null, rabbitMQDTOList);
             log.info("===========发送消息给客户端控制蜂鸣器开启完成===============");
+            fanoutSender(1004, null, rabbitMQDTOList);
+            log.info("===========发送消息给客户端控制蜂鸣器亮灯颜色和频率完成===============");
         }
 
         ResponseEntityDTO responseEntityDTO = new ResponseEntityDTO();
@@ -492,14 +499,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             temVehicle.setModifiedUserId(currentUser.getUserId());
             temVehicleFeignApi.update(temVehicle);
 
-            PtlJobOrder ptlJobOrder1 = new PtlJobOrder();
-            ptlJobOrder1.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
-            ptlJobOrder1.setWorkerUserId(workUserId);
-            ptlJobOrder1.setWorkerUserName(sysUser.getUserName());
-            ptlJobOrder1.setVehicleId(temVehicleDtoList.get(0).getVehicleId());
-            ptlJobOrder1.setModifiedTime(new Date());
-            ptlJobOrder1.setModifiedUserId(currentUser.getUserId());
-            electronicTagFeignApi.updateByRelatedOrderCode(ptlJobOrder1);
+            PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
+            ptlJobOrderUpdate.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
+            ptlJobOrderUpdate.setWorkerUserId(workUserId);
+            ptlJobOrderUpdate.setWorkerUserName(sysUser.getUserName());
+            ptlJobOrderUpdate.setVehicleId(temVehicleDtoList.get(0).getVehicleId());
+            ptlJobOrderUpdate.setModifiedTime(new Date());
+            ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
+            electronicTagFeignApi.updateByRelatedOrderCode(ptlJobOrderUpdate);
         }
         SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
         searchPtlJobOrderDet.setJobOrderId(jobOrderId);
@@ -507,10 +514,13 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         searchPtlJobOrderDet.setPageSize(9999);
         List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
         List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = new LinkedList<>();
+        String queueName = RabbitConfig.TOPIC_QUEUE_PRINT;
+        Boolean scatteredBoolean = true;
         for (PtlJobOrderDetDto ptlJobOrderDetDto : ptlJobOrderDetDtoList) {
+            queueName = ptlJobOrderDetDto.getQueueName() + ".print";
             if (ptlJobOrderDetDto.getWholeOrScattered() == 1) {
-                continue;
-                /*int i = 1;
+//                continue;
+                int i = 1;
                 int cartonNum = ptlJobOrderDetDto.getWholeQty().intValue();
                 while (cartonNum > 0) {
                     PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
@@ -525,13 +535,13 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     ptlJobOrderDetPrintDTO.setWorkerUserName(sysUser.getUserName());
                     ptlJobOrderDetPrintDTO.setWholeOrScattered(ptlJobOrderDetDto.getWholeOrScattered());
                     ptlJobOrderDetPrintDTO.setCartonCode(i + "-" + ptlJobOrderDetDto.getWholeQty().intValue());
-                    ptlJobOrderDetPrintDTO.setVehicleCode(vehicleCode);
+                    ptlJobOrderDetPrintDTO.setVehicleCode(vehicleCode + "(" + ptlJobOrder.getRemark() + ")");
                     ptlJobOrderDetPrintDTOList.add(ptlJobOrderDetPrintDTO);
 
                     cartonNum--;
                     i++;
-                }*/
-            } else {
+                }
+            } else if (scatteredBoolean){
                 PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
                 ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getJobOrderCode());
                 ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
@@ -543,22 +553,26 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 ptlJobOrderDetPrintDTO.setStorageCode(ptlJobOrderDetDto.getStorageCode());
                 ptlJobOrderDetPrintDTO.setWorkerUserName(sysUser.getUserName());
                 ptlJobOrderDetPrintDTO.setWholeOrScattered(ptlJobOrderDetDto.getWholeOrScattered());
-                ptlJobOrderDetPrintDTO.setVehicleCode(vehicleCode);
+                ptlJobOrderDetPrintDTO.setVehicleCode(vehicleCode + "(" + ptlJobOrder.getRemark() + ")");
                 ptlJobOrderDetPrintDTOList.add(ptlJobOrderDetPrintDTO);
+
+                scatteredBoolean = false;
             }
         }
 
-        ptlJobOrder.setIfAlreadyPrint((byte) 1);
-        ptlJobOrder.setModifiedTime(new Date());
-        ptlJobOrder.setModifiedUserId(currentUser.getUserId());
-        electronicTagFeignApi.updatePtlJobOrder(ptlJobOrder);
+        PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
+        ptlJobOrderUpdate.setJobOrderId(ptlJobOrder.getJobOrderId());
+        ptlJobOrderUpdate.setIfAlreadyPrint((byte) 1);
+        ptlJobOrderUpdate.setModifiedTime(new Date());
+        ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
+        electronicTagFeignApi.updatePtlJobOrder(ptlJobOrderUpdate);
 
         MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
         mQResponseEntity.setCode(1101);
         mQResponseEntity.setData(ptlJobOrderDetPrintDTOList);
         log.info("===========开始发送消息给打印客户端===============");
-        fanoutSender.send(RabbitConfig.TOPIC_QUEUE_PRINT, JSONObject.toJSONString(mQResponseEntity));
-        log.info("===========队列名称:" + RabbitConfig.TOPIC_QUEUE_PRINT);
+        fanoutSender.send(queueName, JSONObject.toJSONString(mQResponseEntity));
+        log.info("===========队列名称:" + queueName);
         log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
         log.info("===========发送消息给打印客户端打印整、零标签完成===============");
 
