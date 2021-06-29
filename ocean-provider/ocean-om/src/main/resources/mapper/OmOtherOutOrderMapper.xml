@@ -13,6 +13,10 @@
     <result column="total_dispatch_qty" jdbcType="DECIMAL" property="totalDispatchQty" />
     <result column="consignee_id" jdbcType="BIGINT" property="consigneeId" />
     <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
+    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
+    <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
+    <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress"/>
+    <result column="address" jdbcType="VARCHAR" property="address"/>
     <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
     <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
     <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
@@ -49,6 +53,10 @@ ouo.total_net_weight,
 ouo.total_gross_weight,
 ouo.consignee_id,
 ouo.link_man_name,
+ouo.link_man_phone,
+ouo.fax_number,
+ouo.e_mail_address,
+ouo.address,
 ouo.order_status,
 ouo.status,
 ouo.order_date,
@@ -96,6 +104,7 @@ ouo.option3
   and ouo.other_out_order_id = #{otherOutOrderId}
 </if>
 </where>
+order by ouo.create_time desc
   </select>
   <select id="findMaterial" resultMap="BaseResultMap">
     select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as total_net_weight,IFNULL(bmb.gross_weight,0) as total_gross_weight

@@ -838,6 +838,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             inv.setPackingQty(wmsInnerJobOrderDetDto.getDistributionQty());
             inv.setJobStatus((byte)2);
             inv.setInventoryId(null);
+            inv.setBatchCode(wmsInnerJobOrderDetDto.getBatchCode());
             inv.setJobOrderDetId(wmsInnerJobOrderDetDto.getJobOrderDetId());
             inv.setOrgId(sysUser.getOrganizationId());
             inv.setCreateUserId(sysUser.getUserId());
@@ -895,6 +896,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             inv.setWarehouseId(newDto.getWarehouseId());
             inv.setPackingQty(newDto.getActualQty());
             inv.setJobStatus((byte)1);
+            inv.setBatchCode(newDto.getBatchCode());
             inv.setJobOrderDetId(newDto.getJobOrderDetId());
             inv.setInventoryId(null);
             inv.setCreateUserId(sysUser.getUserId());

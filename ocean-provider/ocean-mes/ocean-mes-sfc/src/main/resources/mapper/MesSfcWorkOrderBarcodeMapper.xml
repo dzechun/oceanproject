@@ -33,23 +33,20 @@
     <resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto">
     </resultMap>
     <sql id="BaseColumnList">
-        mswob
-        .
-        work_order_barcode_id
-        ,
-  mswob.parent_id,
-  mswob.barcode,
-  mswob.work_order_id,
-  mswob.work_order_code,
-  mswob.barcode_status,
-  mswob.label_category_id,
-  mswob.remark,
-  mswob.org_id,
-  mswob.create_user_id,
-  mswob.create_time,
-  mswob.modified_user_id,
-  mswob.modified_time,
-  mswob.is_delete
+        mswob.work_order_barcode_id,
+        mswob.parent_id,
+        mswob.barcode,
+        mswob.work_order_id,
+        mswob.work_order_code,
+        mswob.barcode_status,
+        mswob.label_category_id,
+        mswob.remark,
+        mswob.org_id,
+        mswob.create_user_id,
+        mswob.create_time,
+        mswob.modified_user_id,
+        mswob.modified_time,
+        mswob.is_delete
     </sql>
     <select id="findList" resultMap="BaseResultDtoMap"
             parameterType="com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode">
@@ -71,6 +68,7 @@
                 and mswob.barcode like CONCAT('%',#{barcode},'%')
             </if>
         </where>
+order by mswob.create_time desc
     </select>
     <select id="findMaxCode" resultType="java.lang.String">
         select barcode
