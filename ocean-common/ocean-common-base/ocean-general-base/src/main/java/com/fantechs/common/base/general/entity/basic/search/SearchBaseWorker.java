@@ -13,6 +13,12 @@ import java.util.Date;
 
 @Data
 public class SearchBaseWorker extends BaseQuery implements Serializable {
+
+    /**
+     * 用户ID
+     */
+    @ApiModelProperty(name = "userId",value = "用户ID")
+    private Long userId;
     /**
      * 用户帐号
      */

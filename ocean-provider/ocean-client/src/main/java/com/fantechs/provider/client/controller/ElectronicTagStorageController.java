@@ -57,9 +57,10 @@ public class ElectronicTagStorageController {
     @GetMapping(value = "/writeBackPtlJobOrder")
     @ApiOperation(value = "回写PTL作业任务单", notes = "回写PTL作业任务单")
     public ResponseEntity<PtlJobOrderDto> writeBackPtlJobOrder(
-            @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId) {
+            @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId,
+            @ApiParam(value = "完成类型(1-完成(需要回写) 2-手动完成(不需要回写))", required = true) @RequestParam Integer type) {
         try {
-            PtlJobOrderDto ptlJobOrderDto = electronicTagStorageService.writeBackPtlJobOrder(jobOrderId);
+            PtlJobOrderDto ptlJobOrderDto = electronicTagStorageService.writeBackPtlJobOrder(jobOrderId, type);
             return ControllerUtil.returnDataSuccess("操作成功", ptlJobOrderDto);
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());

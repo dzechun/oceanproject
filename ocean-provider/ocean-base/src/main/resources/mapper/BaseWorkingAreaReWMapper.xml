@@ -23,6 +23,7 @@
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseWorkingAreaReWDto">
         <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode"/>
+        <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     </resultMap>
 
@@ -36,6 +37,7 @@
         SELECT
         <include refid="Base_Column_List"/>,
         bwa.working_area_code,
+        bwha.warehouse_area_id,
         bwha.warehouse_area_name
         FROM base_working_area_re_w bwarw
         LEFT JOIN base_working_area bwa ON bwarw.working_area_id = bwa.working_area_id

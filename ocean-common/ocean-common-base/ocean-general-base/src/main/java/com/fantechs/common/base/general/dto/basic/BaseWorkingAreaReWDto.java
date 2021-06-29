@@ -21,6 +21,11 @@ public class BaseWorkingAreaReWDto extends BaseWorkingAreaReW implements Seriali
     private String workingAreaCode;
 
     /**
+     * 仓库区域ID
+     */
+    @ApiModelProperty(name="warehouseAreaId" ,value="仓库区域ID")
+    private Long warehouseAreaId;
+    /**
      * 库区名称
      */
     @Transient

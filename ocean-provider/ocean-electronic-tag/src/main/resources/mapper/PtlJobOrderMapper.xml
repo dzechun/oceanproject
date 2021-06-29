@@ -94,6 +94,12 @@
       <if test="warehouseAreaId != null">
         and bwa.warehouse_area_id = #{warehouseAreaId}
       </if>
+      <if test="warehouseAreaIds != null and warehouseAreaIds.size() > 0">
+        and bwa.warehouse_area_id in
+        <foreach collection="warehouseAreaIds" open="(" close=")" item="item" separator="," index="index">
+          #{item}
+        </foreach>
+      </if>
       <if test="orgId!=null">
         and pjo.org_id=#{orgId}
       </if>
