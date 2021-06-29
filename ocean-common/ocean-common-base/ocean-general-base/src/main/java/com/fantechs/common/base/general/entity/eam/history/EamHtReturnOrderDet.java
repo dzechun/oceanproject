@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -112,6 +113,86 @@ public class EamHtReturnOrderDet extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    /**
+     * 创建用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="4")
+    private String createUserName;
+
+    /**
+     * 修改用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="6")
+    private String modifiedUserName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
+
+    /**
+     * 设备编码
+     */
+    @ApiModelProperty(name="equipmentCode",value = "设备编码")
+    @Excel(name = "设备编码", height = 20, width = 30,orderNum="1")
+    @Transient
+    private String equipmentCode;
+
+    /**
+     * 设备名称
+     */
+    @ApiModelProperty(name="equipmentName",value = "设备名称")
+    @Excel(name = "设备名称", height = 20, width = 30,orderNum="2")
+    @Transient
+    private String equipmentName;
+
+    /**
+     * 设备描述
+     */
+    @ApiModelProperty(name="equipmentDesc",value = "设备描述")
+    @Excel(name = "设备描述", height = 20, width = 30,orderNum="3")
+    @Transient
+    private String equipmentDesc;
+
+    /**
+     * 设备型号
+     */
+    @ApiModelProperty(name="equipmentModel",value = "设备型号")
+    @Excel(name = "设备型号", height = 20, width = 30,orderNum="4")
+    @Transient
+    private String equipmentModel;
+
+    /**
+     * 设备类别
+     */
+    @Transient
+    @ApiModelProperty(name = "equipmentCategoryDesc",value = "设备类别")
+    @Excel(name = "设备类别", height = 20, width = 30,orderNum="5")
+    private String equipmentCategoryDesc;
+
+    /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="8")
+    private String warehouseName;
+
+    /**
+     * 归还时间
+     */
+    @ApiModelProperty(name="returnTime",value = "归还时间")
+    @Excel(name = "归还时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Transient
+    private Date returnTime;
 
     private String option1;
 

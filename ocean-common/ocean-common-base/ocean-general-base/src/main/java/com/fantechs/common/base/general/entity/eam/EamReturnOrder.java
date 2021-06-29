@@ -10,7 +10,9 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 设备归还单
@@ -118,6 +120,12 @@ public class EamReturnOrder extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    /**
+     * 设备归还明细
+     */
+    @ApiModelProperty(name="list",value = "设备归还明细")
+    private List<EamReturnOrderDet> list = new ArrayList<>();
 
     private String option1;
 
