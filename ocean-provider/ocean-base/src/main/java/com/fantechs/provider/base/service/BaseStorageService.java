@@ -29,5 +29,5 @@ public interface BaseStorageService extends IService<BaseStorage> {
 
     int plusSurplusCanPutSalver(Long storageId, Integer num);
 
-    List<StorageRuleDto> findPutawayRule(Long warehouseId, Long materialId);
+    List<StorageRuleDto> findPutawayRule(Map<String,Object> map);
 }
