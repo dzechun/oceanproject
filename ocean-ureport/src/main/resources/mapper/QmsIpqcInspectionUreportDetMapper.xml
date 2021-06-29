@@ -43,6 +43,9 @@
     <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
     <result column="badness_category_code" jdbcType="VARCHAR" property="badnessCategoryCode"/>
     <result column="badness_category_desc" jdbcType="VARCHAR" property="badnessCategoryDesc"/>
+
+    <result column="max_sample_value" jdbcType="VARCHAR" property="maxSampleValue"/>
+    <result column="min_sample_value" jdbcType="VARCHAR" property="minSampleValue"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -72,19 +75,24 @@
     bii2.inspection_item_desc as inspection_item_desc_big,bii.inspection_item_desc as inspection_item_desc_small,
     bisd.inspection_tag,bisd.specification_upper_limit,bisd.specification_floor,bisd.unit_name,
     bspa.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,bsp.sample_process_type,bsp.sample_process_id,
+    (select MAX(CONVERT(sample_value,SIGNED)) from qms_ipqc_inspection_order_det_sample where
+    qiiods.ipqc_inspection_order_det_id = qiiod.ipqc_inspection_order_det_id) as max_sample_value,
+    (select MIN(CONVERT(sample_value,SIGNED)) from qms_ipqc_inspection_order_det_sample where
+    qiiods.ipqc_inspection_order_det_id = qiiod.ipqc_inspection_order_det_id) as min_sample_value,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.qms_ipqc_inspection_order_det qiiod
-    left join fantech_imes_v2.base_inspection_standard_det bisd on qiiod.inspection_standard_det_id=bisd.inspection_standard_det_id
-    left join fantech_imes_v2.base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
-    left join fantech_imes_v2.base_inspection_item bii2 on bii.parent_id=bii2.inspection_item_id
-    left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
-    left join fantech_imes_v2.base_sample_plan_aql bspa on bsp.sample_plan_aql_id=bspa.sample_plan_aql_id
-    left join fantech_imes_v2.base_badness_category bbc on qiiod.badness_category_id=bbc.badness_category_id
+    from qms_ipqc_inspection_order_det qiiod
+    left join base_inspection_standard_det bisd on qiiod.inspection_standard_det_id=bisd.inspection_standard_det_id
+    left join base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
+    left join base_inspection_item bii2 on bii.parent_id=bii2.inspection_item_id
+    left join base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
+    left join base_sample_plan_aql bspa on bsp.sample_plan_aql_id=bspa.sample_plan_aql_id
+    left join base_badness_category bbc on qiiod.badness_category_id=bbc.badness_category_id
+    left join qms_ipqc_inspection_order_det_sample qiiods on qiiod.ipqc_inspection_order_det_id=qiiods.ipqc_inspection_order_det_id
     left join ocean_v2.sys_user u on qiiod.create_user_id=u.user_id
     left join ocean_v2.sys_user s on qiiod.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON qiiod.org_id = bo.organization_id
+    left join base_organization bo ON qiiod.org_id = bo.organization_id
     <where>
       <if test="ipqcInspectionOrderId!=null">
         and qiiod.ipqc_inspection_order_id = #{ipqcInspectionOrderId}

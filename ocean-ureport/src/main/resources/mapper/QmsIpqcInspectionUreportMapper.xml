@@ -65,6 +65,9 @@
     <result column="inspection_result" jdbcType="VARCHAR" property="inspectionResult"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="modified_time" jdbcType="VARCHAR" property="modifiedTime"/>
+    <collection property="qmsIpqcInspectionOrderDets" ofType="com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet"
+                column="{ipqcInspectionOrderId=ipqc_inspection_order_id}" select="com.fantechs.mapper.QmsIpqcInspectionUreportDetMapper.findList">
+    </collection>
   </resultMap>
 
   <resultMap id="QmsIpqcFirstArticleModel"  type="com.fantechs.entity.QmsIpqcFirstArticleModel">
