@@ -351,7 +351,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId) throws Exception {
+    public PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId, Integer type) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
@@ -427,23 +427,25 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         ptlJobOrderDet.setModifiedTime(new Date());
         electronicTagFeignApi.updateByJobOrderId(ptlJobOrderDet);
 
-        SearchPtlJobOrder searchPtlJobOrderWB = new SearchPtlJobOrder();
-        searchPtlJobOrderWB.setRelatedOrderCode(ptlJobOrderDto.getRelatedOrderCode());
-        searchPtlJobOrderWB.setNotOrderStatus((byte) 3);
-        List<PtlJobOrderDto> ptlJobOrderWBDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrderWB).getData();
-        if (ptlJobOrderWBDtoList.size() == 1) {
-            PtlJobOrderDTO ptlJobOrderDTO = new PtlJobOrderDTO();
-            ptlJobOrderDTO.setCustomerNo(ptlJobOrderDto.getRelatedOrderCode());
-            ptlJobOrderDTO.setWarehouseCode(ptlJobOrderDto.getWarehouseCode());
-            ptlJobOrderDTO.setWorkerCode(ptlJobOrderDto.getWorkerUserCode());
-            ptlJobOrderDTO.setStatus("F");
-            // 回写PTL作业任务
-            log.info("电子作业标签完成/异常，回传WMS" + JSONObject.toJSONString(ptlJobOrderDTO));
-            String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, finishPtlJobOrderUrl);
-            log.info("电子作业标签回写返回信息：" + result);
-            ResponseEntityDTO responseEntityDTO = JsonUtils.jsonToPojo(result, ResponseEntityDTO.class);
-            if (!"s".equals(responseEntityDTO.getSuccess())) {
-                throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntityDTO.getMessage());
+        if (type == 1) {
+            SearchPtlJobOrder searchPtlJobOrderWB = new SearchPtlJobOrder();
+            searchPtlJobOrderWB.setRelatedOrderCode(ptlJobOrderDto.getRelatedOrderCode());
+            searchPtlJobOrderWB.setNotOrderStatus((byte) 3);
+            List<PtlJobOrderDto> ptlJobOrderWBDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrderWB).getData();
+            if (ptlJobOrderWBDtoList.size() == 1) {
+                PtlJobOrderDTO ptlJobOrderDTO = new PtlJobOrderDTO();
+                ptlJobOrderDTO.setCustomerNo(ptlJobOrderDto.getRelatedOrderCode());
+                ptlJobOrderDTO.setWarehouseCode(ptlJobOrderDto.getWarehouseCode());
+                ptlJobOrderDTO.setWorkerCode(ptlJobOrderDto.getWorkerUserCode());
+                ptlJobOrderDTO.setStatus("F");
+                // 回写PTL作业任务
+                log.info("电子作业标签完成/异常，回传WMS" + JSONObject.toJSONString(ptlJobOrderDTO));
+                String result = RestTemplateUtil.postJsonStrForString(ptlJobOrderDTO, finishPtlJobOrderUrl);
+                log.info("电子作业标签回写返回信息：" + result);
+                ResponseEntityDTO responseEntityDTO = JsonUtils.jsonToPojo(result, ResponseEntityDTO.class);
+                if (!"s".equals(responseEntityDTO.getSuccess())) {
+                    throw new Exception("电子作业标签完成，回传WMS失败：" + responseEntityDTO.getMessage());
+                }
             }
         }
 
@@ -507,7 +509,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = new LinkedList<>();
         for (PtlJobOrderDetDto ptlJobOrderDetDto : ptlJobOrderDetDtoList) {
             if (ptlJobOrderDetDto.getWholeOrScattered() == 1) {
-                int i = 1;
+                continue;
+                /*int i = 1;
                 int cartonNum = ptlJobOrderDetDto.getWholeQty().intValue();
                 while (cartonNum > 0) {
                     PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
@@ -527,7 +530,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
                     cartonNum--;
                     i++;
-                }
+                }*/
             } else {
                 PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
                 ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getJobOrderCode());

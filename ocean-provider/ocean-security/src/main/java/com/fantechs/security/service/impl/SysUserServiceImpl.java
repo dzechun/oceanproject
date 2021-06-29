@@ -64,9 +64,10 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        if(StringUtils.isNotEmpty(sysUser.getPassword())){
-            sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUser.getPassword()));
+        if(StringUtils.isEmpty(sysUser.getPassword())){
+            sysUser.setPassword("123456");
         }
+        sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUser.getPassword()));
 
         Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
@@ -82,10 +83,10 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         sysUser.setCreateTime(new Date());
         sysUser.setModifiedUserId(currentUser.getUserId());
         sysUser.setModifiedTime(new Date());
-        sysUser.setIsDelete(StringUtils.isEmpty(sysUser.getIsDelete())?(byte)0:sysUser.getIsDelete());
-        sysUser.setStatus(StringUtils.isEmpty(sysUser.getStatus())?1:sysUser.getStatus());
+        sysUser.setIsDelete(StringUtils.isEmpty(sysUser.getIsDelete()) ? (byte)1 : sysUser.getIsDelete());
+        sysUser.setStatus(StringUtils.isEmpty(sysUser.getStatus()) ? (byte)1 : sysUser.getStatus());
 
-        sysUserMapper.insertSelective(sysUser);
+        sysUserMapper.insertUseGeneratedKeys(sysUser);
 
         //新增用户历史信息
         SysHtUser sysHtUser=new SysHtUser();

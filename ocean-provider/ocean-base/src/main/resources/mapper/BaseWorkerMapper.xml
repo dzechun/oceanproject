@@ -80,6 +80,9 @@
             <if test="orgId!=null">
                 and bw.org_id=#{orgId}
             </if>
+            <if test="userId!=null">
+                and bw.user_id=#{userId}
+            </if>
         </where>
     </select>
 

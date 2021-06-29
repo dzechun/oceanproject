@@ -424,4 +424,8 @@ public interface BaseFeignApi {
     @ApiOperation("检验方式列表")
     @PostMapping("/baseInspectionWay/findList")
     ResponseEntity<List<BaseInspectionWay>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionWay searchBaseInspectionWay);
+    @ApiOperation("工作人员列表")
+    @PostMapping("/baseWorker/findList")
+    ResponseEntity<List<BaseWorkerDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWorker searchBaseWorker);
+
 }

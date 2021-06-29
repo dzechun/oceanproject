@@ -6,10 +6,7 @@ import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -28,6 +25,7 @@ public class SysUser extends ValidGroup implements Serializable {
     @Column(name = "user_id")
     @ApiModelProperty(name="userId" ,value="用户id")
     @NotNull(groups= update.class,message = "用户Id不能为空")
+    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
     private Long userId;
 
     /**

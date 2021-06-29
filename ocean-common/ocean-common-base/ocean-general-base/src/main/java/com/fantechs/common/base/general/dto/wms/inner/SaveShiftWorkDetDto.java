@@ -10,22 +10,22 @@ import java.util.List;
 public class SaveShiftWorkDetDto implements Serializable {
 
     /**
-     * 上架单ID
+     * 移位单ID
      */
-    @ApiModelProperty(name="jobOrderId",value = "上架单ID,有则必填")
+    @ApiModelProperty(name="jobOrderId",value = "移位单ID,有则必填")
     private Long jobOrderId;
+
+    /**
+     * 移位单明细ID
+     */
+    @ApiModelProperty(name="jobOrderDetId",value = "移位单明细ID,有则必填")
+    private Long jobOrderDetId;
 
     /**
      * 仓库ID
      */
-    @ApiModelProperty(name="warehouseId",value = "仓库ID,有则必填")
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
     private Long warehouseId;
-
-    /**
-     * 上架单明细ID
-     */
-    @ApiModelProperty(name="jobOrderDetId",value = "上架单明细ID")
-    private Long jobOrderDetId;
 
     /**
      * 物料ID
@@ -38,6 +38,12 @@ public class SaveShiftWorkDetDto implements Serializable {
      */
     @ApiModelProperty(name="storageId",value = "库位ID")
     private Long storageId;
+
+    /**
+     * 是否pda创建移位单
+     */
+    @ApiModelProperty(name="isPda",value = "是否pda创建移位单")
+    private Boolean isPda;
 
     /**
      * 条码集合
