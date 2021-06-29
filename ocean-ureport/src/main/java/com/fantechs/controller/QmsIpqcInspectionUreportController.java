@@ -6,6 +6,8 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.entity.QmsIpqcDtaticElectricityModel;
+import com.fantechs.entity.QmsIpqcFirstArticleModel;
+import com.fantechs.entity.QmsIpqcProcessInspectionModel;
 import com.fantechs.entity.QmsIpqcSamplingModel;
 import com.fantechs.service.QmsIpqcInspectionUreportService;
 import com.github.pagehelper.Page;
@@ -64,15 +66,50 @@ public class QmsIpqcInspectionUreportController {
         List<QmsIpqcSamplingModel> list = qmsIpqcInspectionUreportService.findSamplingList(searchQmsIpqcInspectionOrder);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "静电地线检测记录", "ElectricityExport信息", QmsIpqcSamplingModel.class, "SamplingExport.xls", response);
+            EasyPoiUtils.exportExcel(list, "抽检日报表记录", "SamplingExport信息", QmsIpqcSamplingModel.class, "SamplingExport.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
     }
 
+    @ApiOperation("首件确认单")
+    @PostMapping("/findFirstArticleList")
+    public ResponseEntity<List<QmsIpqcFirstArticleModel>> findFirstArticleList(@ApiParam(value = "查询对象")@RequestBody SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder) {
+        Page<Object> page = PageHelper.startPage(searchQmsIpqcInspectionOrder.getStartPage(),searchQmsIpqcInspectionOrder.getPageSize());
+        List<QmsIpqcFirstArticleModel> list = qmsIpqcInspectionUreportService.findFirstArticleList(searchQmsIpqcInspectionOrder);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
+    @PostMapping(value = "/firstArticleExport")
+    @ApiOperation(value = "导出首件确认单记录excel",notes = "导出首件确认单记录excel",produces = "application/octet-stream")
+    public void firstArticleExport(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody(required = false) SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder){
+        List<QmsIpqcFirstArticleModel> list = qmsIpqcInspectionUreportService.findFirstArticleList(searchQmsIpqcInspectionOrder);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "首件确认单记录", "FirstArticleExport信息", QmsIpqcFirstArticleModel.class, "FirstArticleExport.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
+    }
 
+    @ApiOperation("制程巡检记录")
+    @PostMapping("/findProcessInspectionList")
+    public ResponseEntity<List<QmsIpqcProcessInspectionModel>> findProcessInspectionList(@ApiParam(value = "查询对象")@RequestBody SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder) {
+        Page<Object> page = PageHelper.startPage(searchQmsIpqcInspectionOrder.getStartPage(),searchQmsIpqcInspectionOrder.getPageSize());
+        List<QmsIpqcProcessInspectionModel> list = qmsIpqcInspectionUreportService.findProcessInspectionList(searchQmsIpqcInspectionOrder);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
-
+    @PostMapping(value = "/processInspectionExport")
+    @ApiOperation(value = "制程巡检记录记录excel",notes = "制程巡检记录记录excel",produces = "application/octet-stream")
+    public void processInspectionExport(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody(required = false) SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder){
+        List<QmsIpqcProcessInspectionModel> list = qmsIpqcInspectionUreportService.findProcessInspectionList(searchQmsIpqcInspectionOrder);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "制程巡检记录记录", "ProcessInspectionExport信息", QmsIpqcFirstArticleModel.class, "ProcessInspectionExport.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
+    }
 
 }

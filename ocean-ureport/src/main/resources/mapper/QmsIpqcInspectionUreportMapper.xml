@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.mapper.QmsIpqcInspectionUreportMapperMapper">
+<mapper namespace="com.fantechs.mapper.QmsIpqcInspectionUreportMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder">
     <!--
       WARNING - @mbg.generated
@@ -67,6 +67,31 @@
     <result column="modified_time" jdbcType="VARCHAR" property="modifiedTime"/>
   </resultMap>
 
+  <resultMap id="QmsIpqcFirstArticleModel"  type="com.fantechs.entity.QmsIpqcFirstArticleModel">
+    <result column="ipqc_inspection_order_code" jdbcType="VARCHAR" property="ipqcInspectionOrderCode"/>
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="modified_time" jdbcType="VARCHAR" property="modifiedTime"/>
+    <collection property="qmsIpqcInspectionOrderDets" ofType="com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet"
+                column="{ipqcInspectionOrderId=ipqc_inspection_order_id}" select="com.fantechs.mapper.QmsIpqcInspectionUreportDetMapper.findList">
+    </collection>
+  </resultMap>
+
+  <resultMap id="QmsIpqcProcessInspectionModel"  type="com.fantechs.entity.QmsIpqcProcessInspectionModel">
+    <result column="ipqc_inspection_order_code" jdbcType="VARCHAR" property="ipqcInspectionOrderCode"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="modified_time" jdbcType="VARCHAR" property="modifiedTime"/>
+    <collection property="qmsIpqcInspectionOrderDets" ofType="com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet"
+                column="{ipqcInspectionOrderId=ipqc_inspection_order_id}" select="com.fantechs.mapper.QmsIpqcInspectionUreportDetMapper.findList">
+    </collection>
+  </resultMap>
+
   <sql id="Base_Column_List">
     qiio.ipqc_inspection_order_id,
     qiio.ipqc_inspection_order_code,
@@ -97,7 +122,7 @@
 
   <select id="findDtaticElectricityList" parameterType="map" resultMap="QmsIpqcInspectionModel">
     select <include refid="Base_Column_List"></include>,
-    biw.inspection_way_desc,bis.inspection_standard_name
+    biw.inspection_way_desc,bis.inspection_standard_name,
     s.user_name as modified_user_name,bo.organization_name
     from qms_ipqc_inspection_order qiio
     left join base_inspection_way biw on qiio.inspection_way_id=biw.inspection_way_id
@@ -113,11 +138,14 @@
       <if test="inspectionWayCode != null and inspectionWayCode!=''">
         and biw.inspection_way_code =#{inspectionWayCode}
       </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qiio.modified_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
       <if test="orgId!=null">
         and qiio.org_id=#{orgId}
       </if>
     </where>
-    order by qiio.create_time desc
+    order by qiio.modified_time desc
   </select>
 
   <select id="findSamplingList" parameterType="map" resultMap="QmsIpqcSamplingModel">
@@ -155,13 +183,92 @@
       <if test="inspectionWayCode != null and inspectionWayCode!=''">
         and biw.inspection_way_code =#{inspectionWayCode}
       </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qiio.modified_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
       <if test="orgId!=null">
         and qiio.org_id=#{orgId}
       </if>
     </where>
-    GROUP BY
-    qiio.ipqc_inspection_order_id
-    order by qiio.create_time desc
+     group by qiio.ipqc_inspection_order_id
+    order by qiio.modified_time desc
   </select>
 
+  <select id="findFirstArticleList" parameterType="map" resultMap="QmsIpqcFirstArticleModel">
+    select <include refid="Base_Column_List"></include>,
+    biw.inspection_way_desc,bis.inspection_standard_name,mpwo.work_order_code,bm.material_code,
+    bm.material_desc,bm.material_version, bpm.product_model_name,s.user_name as modified_user_name,bo.organization_name
+    from qms_ipqc_inspection_order qiio
+    left join base_inspection_way biw on qiio.inspection_way_id=biw.inspection_way_id
+    left join base_inspection_standard bis on qiio.inspection_standard_id=bis.inspection_standard_id
+    left join mes_pm_work_order mpwo on qiio.work_order_id=mpwo.work_order_id
+    left join base_material bm on qiio.material_id=bm.material_id
+    left join base_material_tab bmt on qiio.material_id=bmt.material_id
+    left join base_product_model bpm on bmt.product_model_id=bpm.product_model_id
+    left join ocean_v2.sys_user su on qiio.audit_user_id=su.user_id
+    left join ocean_v2.sys_user u on qiio.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on qiio.modified_user_id=s.user_id
+    left join base_organization bo ON qiio.org_id = bo.organization_id
+    <where>
+      <if test="ipqcInspectionOrderCode != null and ipqcInspectionOrderCode!=''">
+        and qiio.ipqc_inspection_order_code like CONCAT('%', #{ipqcInspectionOrderCode}, '%')
+      </if>
+      <if test="workOrderCode != null and workOrderCode!=''">
+        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="materialCode != null and materialCode!=''">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="inspectionWayCode != null and inspectionWayCode!=''">
+        and biw.inspection_way_code =#{inspectionWayCode}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qiio.modified_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and qiio.org_id=#{orgId}
+      </if>
+    </where>
+    group by qiio.ipqc_inspection_order_id
+    order by qiio.modified_time desc
+  </select>
+
+  <select id="findProcessInspectionList" parameterType="map" resultMap="QmsIpqcProcessInspectionModel">
+    select <include refid="Base_Column_List"></include>,
+    biw.inspection_way_desc,bis.inspection_standard_name,mpwo.work_order_code,bm.material_code,
+    bm.material_desc,bm.material_version, bpm.product_model_name,s.user_name as modified_user_name,bo.organization_name
+    from qms_ipqc_inspection_order qiio
+    left join base_inspection_way biw on qiio.inspection_way_id=biw.inspection_way_id
+    left join base_inspection_standard bis on qiio.inspection_standard_id=bis.inspection_standard_id
+    left join mes_pm_work_order mpwo on qiio.work_order_id=mpwo.work_order_id
+    left join base_material bm on qiio.material_id=bm.material_id
+    left join base_material_tab bmt on qiio.material_id=bmt.material_id
+    left join base_product_model bpm on bmt.product_model_id=bpm.product_model_id
+    left join ocean_v2.sys_user su on qiio.audit_user_id=su.user_id
+    left join ocean_v2.sys_user u on qiio.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on qiio.modified_user_id=s.user_id
+    left join base_organization bo ON qiio.org_id = bo.organization_id
+    <where>
+      <if test="ipqcInspectionOrderCode != null and ipqcInspectionOrderCode!=''">
+        and qiio.ipqc_inspection_order_code like CONCAT('%', #{ipqcInspectionOrderCode}, '%')
+      </if>
+      <if test="workOrderCode != null and workOrderCode!=''">
+        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="materialCode != null and materialCode!=''">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="inspectionWayCode != null and inspectionWayCode!=''">
+        and biw.inspection_way_code =#{inspectionWayCode}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qiio.modified_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and qiio.org_id=#{orgId}
+      </if>
+    </where>
+    group by qiio.ipqc_inspection_order_id
+    order by qiio.modified_time desc
+  </select>
 </mapper>
