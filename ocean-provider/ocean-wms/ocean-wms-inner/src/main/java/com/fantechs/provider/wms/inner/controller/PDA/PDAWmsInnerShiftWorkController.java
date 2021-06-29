@@ -52,4 +52,10 @@ public class PDAWmsInnerShiftWorkController {
         String jobOrderId = wmsInnerShiftWorkService.saveShiftWorkDetBarcode(dto);
         return ControllerUtil.returnDataSuccess("成功", jobOrderId);
     }
+
+    @ApiOperation("PDA库内移位上架确认")
+    @PostMapping("/saveJobOrder")
+    public ResponseEntity saveJobOrder(@ApiParam(value = "上架确认实体", required = true) @RequestBody SaveShiftJobOrderDto dto){
+        return ControllerUtil.returnCRUD(wmsInnerShiftWorkService.saveJobOrder(dto));
+    }
 }

@@ -35,8 +35,8 @@ public class CheckShiftWorkBarcodeDto implements Serializable {
     private Long materialId;
 
     /**
-     * 上架单明细ID
+     * 移位单明细ID
      */
-    @ApiModelProperty(name="jobOrderDetId",value = "上架单明细ID,有则必填")
+    @ApiModelProperty(name="jobOrderDetId",value = "移位单明细ID,有则必填")
     private Long jobOrderDetId;
 }

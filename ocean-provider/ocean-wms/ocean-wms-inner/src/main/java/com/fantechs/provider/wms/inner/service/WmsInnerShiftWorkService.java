@@ -24,7 +24,7 @@ public interface WmsInnerShiftWorkService {
     List<WmsInnerJobOrderDetDto> pdaFindDetList(Long jobOrderId);
 
     /**
-     * 校验移位明细单
+     * 移位作业捡货确认
      * @param dto
      * @return
      */
@@ -36,4 +36,11 @@ public interface WmsInnerShiftWorkService {
      * @return
      */
     WmsInnerInventoryDetDto checkShiftWorkBarcode(CheckShiftWorkBarcodeDto dto);
+
+    /**
+     * 移位作业上架确认
+     * @param dto
+     * @return
+     */
+    int saveJobOrder(SaveShiftJobOrderDto dto);
 }
