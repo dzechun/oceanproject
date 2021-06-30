@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -39,6 +40,7 @@ public class EamEquipment extends ValidGroup implements Serializable {
     @ApiModelProperty(name="equipmentCode",value = "设备编码")
     @Excel(name = "设备编码", height = 20, width = 30,orderNum="1")
     @Column(name = "equipment_code")
+    @NotBlank(message = "设备编码不能为空")
     private String equipmentCode;
 
     /**
@@ -124,6 +126,7 @@ public class EamEquipment extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="lifecycle",value = "生命周期(天)")
     @Excel(name = "生命周期(天)", height = 20, width = 30,orderNum="12")
+    @NotBlank(message = "生命周期不能为空")
     private BigDecimal lifecycle;
 
     /**

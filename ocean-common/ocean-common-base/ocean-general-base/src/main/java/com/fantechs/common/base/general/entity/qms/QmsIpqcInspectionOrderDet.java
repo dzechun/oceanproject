@@ -305,6 +305,23 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     @Excel(name = "不良类别描述", height = 20, width = 30,orderNum="5")
     private String badnessCategoryDesc;
 
+
+    /**
+     * 样本值
+     */
+    @ApiModelProperty(name="maxSampleValue",value = "最大样本值")
+    @Transient
+    private String maxSampleValue;
+
+
+    /**
+     * 样本值
+     */
+    @ApiModelProperty(name="minSampleValue",value = "最小样本值")
+    @Transient
+    private String minSampleValue;
+
+
     private String option1;
 
     private String option2;

@@ -1,14 +1,20 @@
-package com.fantechs.common.base.general.entity.basic;
+package com.fantechs.common.base.general.entity.ews;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.general.entity.basic.search.QuartzSearch;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 程序排程
@@ -17,8 +23,8 @@ import lombok.Data;
  * @date 2021-03-08 17:27:49
  */
 @Data
-@Table(name = "base_process_scheduling")
-public class BaseProcessScheduling extends ValidGroup implements Serializable {
+@Table(name = "ews_process_scheduling")
+public class EwsProcessScheduling extends ValidGroup implements Serializable {
     /**
      * 排程id
      */
@@ -72,7 +78,7 @@ public class BaseProcessScheduling extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
-    @Column(name = "org_id")
+    @Column(name = "organization_id")
     private Long organizationId;
 
     /**

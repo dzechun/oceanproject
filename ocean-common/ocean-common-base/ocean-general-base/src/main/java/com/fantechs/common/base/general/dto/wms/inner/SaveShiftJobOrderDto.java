@@ -19,10 +19,4 @@ public class SaveShiftJobOrderDto implements Serializable {
      */
     @ApiModelProperty(name="jobOrderDetId",value = "移位单明细ID")
     private Long jobOrderDetId;
-
-    /**
-     * 上架单ID
-     */
-    @ApiModelProperty(name="jobOrderId",value = "上架单ID,有则必填")
-    private Long jobOrderId;
 }

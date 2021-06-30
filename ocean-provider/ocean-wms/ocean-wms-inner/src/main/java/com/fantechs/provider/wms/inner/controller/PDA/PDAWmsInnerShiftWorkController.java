@@ -47,9 +47,9 @@ public class PDAWmsInnerShiftWorkController {
 
     @ApiOperation("PDA库内移位拣货校验")
     @PostMapping("/checkShiftWorkBarcode")
-    public ResponseEntity<WmsInnerInventoryDetDto> checkShiftWorkBarcode(@ApiParam(value = "扫码校验DTO", required = true) @RequestBody CheckShiftWorkBarcodeDto dto) {
-        WmsInnerInventoryDetDto inventoryDetDto = wmsInnerShiftWorkService.checkShiftWorkBarcode(dto);
-        return ControllerUtil.returnDataSuccess(inventoryDetDto, 1);
+    public ResponseEntity<CheckShiftWorkBarcodeRecordDto> checkShiftWorkBarcode(@ApiParam(value = "扫码校验DTO", required = true) @RequestBody CheckShiftWorkBarcodeDto dto) {
+        CheckShiftWorkBarcodeRecordDto recordDto = wmsInnerShiftWorkService.checkShiftWorkBarcode(dto);
+        return ControllerUtil.returnDataSuccess(recordDto, 1);
     }
 
     @ApiOperation("PDA库内移位拣货确认")

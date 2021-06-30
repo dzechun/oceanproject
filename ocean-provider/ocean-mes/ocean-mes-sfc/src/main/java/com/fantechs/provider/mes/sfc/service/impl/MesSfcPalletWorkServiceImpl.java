@@ -99,7 +99,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if(requestPalletWorkScanDto.getPalletType() == 0){
                 // 判断是否同一工单
                 List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = mesSfcWorkOrderBarcodeService.findByWorkOrderGroup(map);
-                if(workOrderBarcodeDtos.size() > 0){
+                if(workOrderBarcodeDtos.size() > 1){
                     throw new BizErrorException(ErrorCodeEnum.PDA40012034);
                 }
             }
@@ -142,7 +142,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 map.put("cartonCode", processServiceList.get(0).getCartonCode());
                 // 判断是否同一工单
                 List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = mesSfcWorkOrderBarcodeService.findByWorkOrderGroup(map);
-                if(workOrderBarcodeDtos.size() > 0){
+                if(workOrderBarcodeDtos.size() > 1){
                     throw new BizErrorException(ErrorCodeEnum.PDA40012034);
                 }
             }

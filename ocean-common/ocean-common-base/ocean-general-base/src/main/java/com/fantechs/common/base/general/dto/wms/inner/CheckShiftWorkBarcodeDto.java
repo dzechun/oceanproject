@@ -11,10 +11,10 @@ public class CheckShiftWorkBarcodeDto implements Serializable {
 
 
     /**
-     * 移出库位条码
+     * 移出库位ID
      */
-    @ApiModelProperty(name="storageCode",value = "移出库位条码")
-    private String storageCode;
+    @ApiModelProperty(name="storageId",value = "移出库位ID")
+    private Long storageId;
 
     /**
      * 条码
