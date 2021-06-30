@@ -10,10 +10,28 @@ import java.math.BigDecimal;
 public class CheckShiftWorkBarcodeRecordDto implements Serializable {
 
     /**
+     * 仓库id
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库id")
+    private Long warehouseId;
+
+    /**
      * 仓库名称
      */
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
     private String warehouseName;
+
+    /**
+     * 库位id
+     */
+    @ApiModelProperty(name="storageId",value = "库位id")
+    private Long storageId;
+
+    /**
+     * 库位编码
+     */
+    @ApiModelProperty(name="storageCode",value = "库位编码")
+    private String storageCode;
 
     /**
      * 物料编码
