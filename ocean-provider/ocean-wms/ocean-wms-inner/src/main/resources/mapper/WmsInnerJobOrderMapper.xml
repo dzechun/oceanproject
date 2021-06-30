@@ -44,6 +44,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="isPallet" jdbcType="TINYINT" property="isPallet"/>
     </resultMap>
     <sql id="BaseColumnList">
         wipo.job_order_id,
@@ -79,6 +80,14 @@
         create_user_name,
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name
+        <if test="isPallet!=null and isPallet!='' and isPallet==1">
+            ,
+          CASE
+            WHEN (select COUNT(*) FROM wms_inner_job_order_re_mspp wijorm where wijorm.job_order_id=wipo.job_order_id)>0
+            THEN 1
+            ELSE 0
+        END as isPallet
+        </if>
         FROM wms_inner_job_order wipo
         LEFT JOIN base_material_owner bmo ON wipo.material_owner_id=bmo.material_owner_id
         LEFT JOIN base_warehouse bw ON wipo.warehouse_id = bw.warehouse_id

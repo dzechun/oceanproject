@@ -57,4 +57,11 @@ public class WmsInnerJobOrderDto extends WmsInnerJobOrder implements Serializabl
     @Transient
     @ApiModelProperty(name="modifiedUserName",value = "修改人")
     private String modifiedUserName;
+
+    /**
+     * 是否栈板自动生成(1-是，0-否) PDA标识字段
+     */
+    @Transient
+    @ApiModelProperty(name = "isPallet",value = "是否栈板自动生成(1-是，0-否) PDA标识字段")
+    private Byte isPallet;
 }
