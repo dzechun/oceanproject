@@ -101,7 +101,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             BaseWarehouse baseWarehouse = baseFeignApi.getWarehouseDetail(omTransferOrder.getOutWarehouseId()).getData();
             //获取发货库位
             Long storageId = omTransferOrderMapper.findStorage(omTransferOrder.getOutWarehouseId(),(byte)3);
-            if(StringUtils.isNotEmpty(storageId)){
+            if(StringUtils.isEmpty(storageId)){
                 throw new BizErrorException("未获取到该仓库的发货库位");
             }
             //出库单表头

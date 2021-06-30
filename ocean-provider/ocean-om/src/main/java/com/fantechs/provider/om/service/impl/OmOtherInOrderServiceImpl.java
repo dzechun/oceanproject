@@ -85,7 +85,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             }
             //获取发货库位
             Long storageId = omTransferOrderMapper.findStorage(omOtherInOrderDet.getWarehouseId(),(byte)2);
-            if(StringUtils.isNotEmpty(storageId)){
+            if(StringUtils.isEmpty(storageId)){
                 throw new BizErrorException("未获取到该仓库的发货库位");
             }
             WmsInAsnOrderDet wmsInAsnOrderDet = WmsInAsnOrderDet.builder()

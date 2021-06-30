@@ -60,7 +60,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         for (OmOtherOutOrderDet omOtherOutOrderDet : omOtherOutOrder.getOmOtherOutOrderDets()) {
             //获取发货库位
             Long storageId = omTransferOrderMapper.findStorage(omOtherOutOrderDet.getWarehouseId(),(byte)3);
-            if(StringUtils.isNotEmpty(storageId)){
+            if(StringUtils.isEmpty(storageId)){
                 throw new BizErrorException("未获取到该仓库的发货库位");
             }
             WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto = new WmsOutDeliveryOrderDetDto();
@@ -129,7 +129,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         map.put("otherOutOrderId",omOtherOutOrderDet.getOtherOutOrderId());
         OmOtherOutOrder omOtherOutOrder = omOtherOutOrderMapper.findList(map).get(0);
         OmOtherOutOrderDet omOtherOutOrderDet1 = omOtherOutOrderDetMapper.selectByPrimaryKey(omOtherOutOrderDet.getOtherOutOrderDetId());
-        if(StringUtils.isEmpty(omOtherOutOrderDet1.getDispatchQty())){
+        if(omOtherOutOrderDet1.getDispatchQty().equals(BigDecimal.ZERO)){
             omOtherOutOrderDet1.setDispatchQty(BigDecimal.ZERO);
         }
         BigDecimal total = omOtherOutOrderDet1.getDispatchQty().add(omOtherOutOrderDet.getDispatchQty());
