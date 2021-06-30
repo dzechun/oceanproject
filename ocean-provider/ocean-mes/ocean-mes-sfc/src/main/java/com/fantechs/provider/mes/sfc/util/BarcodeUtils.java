@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcessRecord;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcReworkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.RedisUtil;
@@ -16,11 +17,10 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
-import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeProcessRecordService;
-import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeProcessService;
-import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
+import com.fantechs.provider.mes.sfc.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -49,6 +49,10 @@ public class BarcodeUtils {
     @Resource
     private MesSfcBarcodeProcessRecordService mesSfcBarcodeProcessRecordService;
     @Resource
+    private MesSfcReworkOrderService mesSfcReworkOrderService;
+    @Resource
+    private MesSfcReworkOrderBarcodeService mesSfcReworkOrderBarcodeService;
+    @Resource
     private PMFeignApi pmFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
@@ -68,6 +72,8 @@ public class BarcodeUtils {
         barcodeUtils.mesSfcWorkOrderBarcodeService = this.mesSfcWorkOrderBarcodeService;
         barcodeUtils.mesSfcBarcodeProcessService = this.mesSfcBarcodeProcessService;
         barcodeUtils.mesSfcBarcodeProcessRecordService = this.mesSfcBarcodeProcessRecordService;
+        barcodeUtils.mesSfcReworkOrderService = this.mesSfcReworkOrderService;
+        barcodeUtils.mesSfcReworkOrderService = this.mesSfcReworkOrderService;
         barcodeUtils.pmFeignApi = this.pmFeignApi;
         barcodeUtils.baseFeignApi = this.baseFeignApi;
         barcodeUtils.rabbitProducer = this.rabbitProducer;
@@ -187,9 +193,34 @@ public class BarcodeUtils {
                 if (mesSfcBarcodeProcess.getNextProcessId().equals(lastRouteProcess.getProcessId())) {
                     // 产出工序置空下一道工序关信息
                     mesSfcBarcodeProcess.setProductionTime(new Date());
-                    mesSfcBarcodeProcess.setNextProcessId(null);
-                    mesSfcBarcodeProcess.setNextProcessName(null);
-                    mesSfcBarcodeProcess.setNextProcessCode(null);
+                    mesSfcBarcodeProcess.setNextProcessId(0L);
+                    mesSfcBarcodeProcess.setNextProcessName("");
+                    mesSfcBarcodeProcess.setNextProcessCode("");
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("reworkOrderId", mesSfcBarcodeProcess.getReworkOrderId());
+                    List<MesSfcReworkOrderBarcodeDto> reworkOrderBarcodeDtos = barcodeUtils.mesSfcReworkOrderBarcodeService.findList(map);
+                    List<Long> workOrderBarcodeIds = new ArrayList<>();
+                    for (MesSfcReworkOrderBarcodeDto reworkOrderBarcodeDto : reworkOrderBarcodeDtos){
+                        workOrderBarcodeIds.add(reworkOrderBarcodeDto.getWorkOrderBarcodeId());
+                    }
+                    Example example = new Example(MesSfcBarcodeProcess.class);
+                    example.createCriteria().andIn("workOrderBarcodeId", workOrderBarcodeIds);
+                    List<MesSfcBarcodeProcess> barcodeProcessList = barcodeUtils.mesSfcBarcodeProcessService.selectByExample(example);
+                    boolean flag = true;
+                    for (MesSfcBarcodeProcess item : barcodeProcessList){
+                        if(!item.getBarcodeProcessId().equals(mesSfcBarcodeProcess.getBarcodeProcessId())){
+                            if(item.getProductionTime() == null || item.getNextProcessId().equals(0)){
+                                flag = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (flag){
+                        MesSfcReworkOrder mesSfcReworkOrder = barcodeUtils.mesSfcReworkOrderService.selectByKey(mesSfcBarcodeProcess.getReworkOrderId());
+                        mesSfcReworkOrder.setReworkStatus((byte) 3);
+                        barcodeUtils.mesSfcReworkOrderService.update(mesSfcReworkOrder);
+                    }
                 }else {
                     Optional<BaseRouteProcess> routeProcessOptional = routeProcesses.stream()
                             .filter(i -> dto.getNowProcessId().equals(i.getProcessId()))
@@ -207,7 +238,13 @@ public class BarcodeUtils {
                     mesSfcBarcodeProcess.setNextProcessId(routeProcess.getNextProcessId());
                     mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
                     mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
+                    MesSfcReworkOrder mesSfcReworkOrder = barcodeUtils.mesSfcReworkOrderService.selectByKey(mesSfcBarcodeProcess.getReworkOrderId());
+                    if(!mesSfcReworkOrder.getReworkStatus().equals("2")){
+                        mesSfcReworkOrder.setReworkStatus((byte) 2);
+                        barcodeUtils.mesSfcReworkOrderService.update(mesSfcReworkOrder);
+                    }
                 }
+
             }else {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003, "返工条码工艺路线的产出工序不存在或已被删除");
             }
@@ -215,9 +252,9 @@ public class BarcodeUtils {
             if (mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
                 // 产出工序置空下一道工序关信息
                 mesSfcBarcodeProcess.setProductionTime(new Date());
-                mesSfcBarcodeProcess.setNextProcessId(null);
-                mesSfcBarcodeProcess.setNextProcessName(null);
-                mesSfcBarcodeProcess.setNextProcessCode(null);
+                mesSfcBarcodeProcess.setNextProcessId(0L);
+                mesSfcBarcodeProcess.setNextProcessName("");
+                mesSfcBarcodeProcess.setNextProcessCode("");
             }else {
                 Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
                         .filter(i -> dto.getNowProcessId().equals(i.getProcessId()))

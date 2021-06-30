@@ -9,10 +9,10 @@ import java.io.Serializable;
 public class SaveShiftJobOrderDto implements Serializable {
 
     /**
-     * 移入库位条码
+     * 库位ID
      */
-    @ApiModelProperty(name="storageCode",value = "移入库位条码")
-    private String storageCode;
+    @ApiModelProperty(name="storageId",value = "库位ID")
+    private Long storageId;
 
     /**
      * 移位单明细ID
