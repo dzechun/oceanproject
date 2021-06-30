@@ -47,7 +47,10 @@ public class PDAWmsInnerJobOrderController {
         List<Byte> bytes= new ArrayList<>();
         bytes.add((byte)3);
         bytes.add((byte)4);
-        bytes.add((byte)6);
+        //PDA拣货不展示已完成单据
+        if(searchWmsInnerJobOrder.getJobOrderType()!=(byte)4){
+            bytes.add((byte)6);
+        }
         searchWmsInnerJobOrder.setOrderStatusList(bytes);
         searchWmsInnerJobOrder.setIsPallet((byte)1);
         List<WmsInnerJobOrderDto> list = wmsInnerJobOrderService.findList(searchWmsInnerJobOrder);
