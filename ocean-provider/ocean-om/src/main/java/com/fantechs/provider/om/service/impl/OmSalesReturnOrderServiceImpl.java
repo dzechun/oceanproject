@@ -20,6 +20,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.om.mapper.OmSalesReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmSalesReturnOrderMapper;
+import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtSalesReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtSalesReturnOrderMapper;
 import com.fantechs.provider.om.service.OmSalesReturnOrderService;
@@ -51,6 +52,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     private OmHtSalesReturnOrderDetMapper omHtSalesReturnOrderDetMapper;
     @Resource
     private InFeignApi inFeignApi;
+    @Resource
+    private OmTransferOrderMapper omTransferOrderMapper;
 
     @Override
     public List<OmSalesReturnOrderDto> findList(Map<String, Object> map) {
@@ -86,10 +89,16 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 if(total.compareTo(omSalesReturnOrderDet.getOrderQty())==1){
                     throw new BizErrorException("下发数量不能大于工单数量");
                 }
+                //获取收货库位
+                Long storageId = omTransferOrderMapper.findStorage(omSalesReturnOrderDet.getWarehouseId(),(byte)2);
+                if(StringUtils.isNotEmpty(storageId)){
+                    throw new BizErrorException("未获取到该仓库的发货库位");
+                }
                 WmsInAsnOrderDet wmsInAsnOrderDet = WmsInAsnOrderDet.builder()
                         .sourceOrderId(omSalesReturnOrderDet.getSalesReturnOrderId())
                         .orderDetId(omSalesReturnOrderDet.getSalesReturnOrderDetId())
                         .warehouseId(omSalesReturnOrderDet.getWarehouseId())
+                        .storageId(storageId)
                         .materialId(omSalesReturnOrderDet.getMaterialId())
                         .packingUnitName(omSalesReturnOrderDet.getUnitName())
                         .batchCode(omSalesReturnOrderDet.getBatchCode())

@@ -103,4 +103,7 @@ order BY oto.create_time desc
                  left join base_material_tab bmb ON bm.material_id = bmb.material_id
         where bm.material_id = #{materialId}
     </select>
+    <select id="findStorage" resultType="java.lang.Long">
+        select storage_id From base_storage where warehouse_id = #{warehouseId} and storage_type=#{storageType} limit 1
+    </select>
 </mapper>

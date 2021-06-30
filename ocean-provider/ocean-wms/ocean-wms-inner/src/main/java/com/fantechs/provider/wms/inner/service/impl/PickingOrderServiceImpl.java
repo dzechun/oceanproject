@@ -959,7 +959,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     public int autoOutOrder(Long outDeliveryOrderId) {
         //查询调拨出库对应的待发运拣货作业
         Example example = new Example(WmsInnerJobOrder.class);
-        example.createCriteria().andEqualTo("sourceOrderId",outDeliveryOrderId).andEqualTo("orderStatus",5);
+        example.createCriteria().andEqualTo("sourceOrderId",outDeliveryOrderId).andEqualTo("jobOrderType",4).andEqualTo("orderStatus",5);
         List<WmsInnerJobOrder> list = wmsInnerJobOrderMapper.selectByExample(example);
         if(list.size()<1){
             throw new BizErrorException("出库单未拣货");

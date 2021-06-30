@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -30,6 +31,7 @@ public class EamMaintainProject extends ValidGroup implements Serializable {
     @ApiModelProperty(name="maintainProjectId",value = "保养项目ID")
     @Id
     @Column(name = "maintain_project_id")
+    @NotNull(groups = update.class,message = "保养项目ID不能为空")
     private Long maintainProjectId;
 
     /**

@@ -202,6 +202,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         wmsOutDeliveryOrder.setModifiedTime(new Date());
         wmsOutDeliveryOrder.setModifiedUserId(user.getUserId());
         wmsOutDeliveryOrder.setOrgId(user.getOrganizationId());
+        wmsOutDeliveryOrder.setOrderStatus((byte)1);
         int i = wmsOutDeliveryOrderMapper.insertUseGeneratedKeys(wmsOutDeliveryOrder);
 
         //出库单履历
@@ -316,7 +317,9 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
     public int updateOrderStatus(WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto){
         Byte orderStatus = wmsOutDeliveryOrderDto.getOrderStatus();
-
+        if(wmsOutDeliveryOrderDto.getOrderStatus()==4 || wmsOutDeliveryOrderDto.getOrderStatus()==5){
+            return 1;
+        }
         if(wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(new BigDecimal("0")) == 0){
             wmsOutDeliveryOrderDto.setOrderStatus((byte)1);
         }else if(wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(new BigDecimal("0")) == 1

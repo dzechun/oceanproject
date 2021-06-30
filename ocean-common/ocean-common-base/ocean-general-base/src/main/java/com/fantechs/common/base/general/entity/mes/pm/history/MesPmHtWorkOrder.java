@@ -272,11 +272,11 @@ public class MesPmHtWorkOrder extends ValidGroup implements Serializable {
     private String materialName;
 
     /**
-     * 版本
+     * 物料版本
      */
     @Transient
-    @ApiModelProperty(name="version" ,value="版本")
-    private String version;
+    @ApiModelProperty(name="materialVersion" ,value="物料版本")
+    private String materialVersion;
 
     /**
      * 物料描述

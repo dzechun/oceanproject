@@ -35,4 +35,18 @@ public class EamReturnOrderDto extends EamReturnOrder implements Serializable {
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
 
+    /**
+     * 部门
+     */
+    @Transient
+    @ApiModelProperty(name = "deptName",value = "部门")
+    private String deptName;
+
+    /**
+     * 归还人名称
+     */
+    @Transient
+    @ApiModelProperty(name = "returnUserName",value = "归还人名称")
+    private String returnUserName;
+
 }

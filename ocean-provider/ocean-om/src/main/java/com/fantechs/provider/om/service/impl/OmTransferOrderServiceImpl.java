@@ -99,6 +99,11 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             }
             //获取仓库联系人
             BaseWarehouse baseWarehouse = baseFeignApi.getWarehouseDetail(omTransferOrder.getOutWarehouseId()).getData();
+            //获取发货库位
+            Long storageId = omTransferOrderMapper.findStorage(omTransferOrder.getOutWarehouseId(),(byte)3);
+            if(StringUtils.isNotEmpty(storageId)){
+                throw new BizErrorException("未获取到该仓库的发货库位");
+            }
             //出库单表头
             WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
             wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("DBCK-"));
@@ -106,7 +111,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             wmsOutDeliveryOrder.setSourceOrderId(omTransferOrder.getTransferOrderId());
             wmsOutDeliveryOrder.setRelatedOrderCode1(omTransferOrder.getTransferOrderCode());
             wmsOutDeliveryOrder.setWarehouseId(omTransferOrder.getOutWarehouseId());
-            wmsOutDeliveryOrder.setStorageId(Long.parseLong("5517"));
+            wmsOutDeliveryOrder.setStorageId(storageId);
             wmsOutDeliveryOrder.setLinkManName(baseWarehouse.getLinkManName());
             wmsOutDeliveryOrder.setLinkManPhone(baseWarehouse.getLinkManPhone());
             wmsOutDeliveryOrder.setOrderTypeId((long)2);
