@@ -119,7 +119,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 if(!tag){
                     throw new BizErrorException("调拨入库单：库存明细不存在该条码，不允许入库");
                 }
-            }else {
+            }else if(asnOrderDto.getOrderTypeId()==4){
                 //完工入库
                 //判断在库存明细中是否存在（除调拨入库单外）
                 WmsInnerInventoryDet inventoryDet = innerFeignApi.findByDet(barcode).getData();
@@ -215,6 +215,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
 
         //新增（更新）库存
         SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
+        searchWmsInnerInventory.setBatchCode(wmsInAsnOrderDetDto.getBatchCode());
         searchWmsInnerInventory.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
         searchWmsInnerInventory.setStorageId(wmsInAsnOrderDetDto.getStorageId());
         searchWmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
@@ -242,6 +243,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
             wmsInnerInventory.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
             wmsInnerInventory.setWarehouseId(wmsInAsnOrderDetDto.getWarehouseId());
             wmsInnerInventory.setStorageId(wmsInAsnOrderDetDto.getStorageId());
+            wmsInnerInventory.setBatchCode(wmsInAsnOrderDetDto.getBatchCode());
             wmsInnerInventory.setJobStatus((byte)1);
             wmsInnerInventory.setCreateTime(new Date());
             wmsInnerInventory.setCreateUserId(sysUser.getUserId());
