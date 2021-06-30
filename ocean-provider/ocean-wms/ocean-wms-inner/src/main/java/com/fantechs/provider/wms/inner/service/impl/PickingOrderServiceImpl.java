@@ -993,6 +993,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
         //获取调拨出库单
         WmsOutDeliveryOrder res = outFeignApi.details(outDeliveryOrderId).getData();
+
+        //获取收货库位
+        Long storageId = wmsInnerJobOrderMapper.findStorageId(res.getWarehouseId(),(byte)2);
+        if(StringUtils.isEmpty(storageId)){
+            throw new BizErrorException("未获取到该仓库下的收货库位");
+        }
         wmsInAsnOrder.setSourceOrderId(res.getSourceOrderId());
         wmsInAsnOrder.setMaterialOwnerId(res.getMaterialOwnerId());
         wmsInAsnOrder.setSupplierId(res.getSupplierId());
@@ -1004,7 +1010,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         wmsInAsnOrder.setCustomerOrderCode(res.getCustomerOrderCode());
         wmsInAsnOrder.setOrderDate(res.getOrderDate());
         wmsInAsnOrder.setWarehouseId(res.getWarehouseId());
-        wmsInAsnOrder.setStorageId(Long.parseLong("5516"));
+        wmsInAsnOrder.setStorageId(storageId);
         wmsInAsnOrder.setPlanAgoDate(new Date());
         wmsInAsnOrder.setLinkManName(res.getLinkManName());
         wmsInAsnOrder.setLinkManPhone(res.getLinkManPhone());
@@ -1018,6 +1024,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsInAsnOrderDet.setSourceOrderId(wmsOutDeliveryOrderDet.getDeliveryOrderId());
             wmsInAsnOrderDet.setOrderDetId(wmsOutDeliveryOrderDet.getDeliveryOrderDetId());
             wmsInAsnOrderDet.setWarehouseId(wmsInnerJobOrderMapper.findOmWarehouseId(res.getSourceOrderId()));
+            wmsInAsnOrderDet.setStorageId(storageId);
             wmsInAsnOrderDet.setInventoryStatusId(wmsOutDeliveryOrderDet.getInventoryStatusId());
             wmsInAsnOrderDet.setMaterialId(wmsOutDeliveryOrderDet.getMaterialId());
             wmsInAsnOrderDet.setPackingUnitName(wmsOutDeliveryOrderDet.getPackingUnitName());
