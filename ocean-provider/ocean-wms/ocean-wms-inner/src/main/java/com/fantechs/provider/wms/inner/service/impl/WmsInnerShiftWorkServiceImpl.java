@@ -283,7 +283,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         // 判断是否同个仓库
         WmsInnerJobOrderDet jobOrderDet = wmsInnerJobOrderDetService.selectByKey(dto.getJobOrderDetId());
         SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-        searchBaseStorage.setStorageCode(dto.getStorageCode());
+        searchBaseStorage.setStorageId(dto.getStorageId());
         searchBaseStorage.setWarehouseId(jobOrderDet.getWarehouseId());
         List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
         if (baseStorages == null || baseStorages.size() <= 0) {
