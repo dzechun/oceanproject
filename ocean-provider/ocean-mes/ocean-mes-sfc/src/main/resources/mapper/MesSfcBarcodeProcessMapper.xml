@@ -129,6 +129,7 @@
         carton_code = #{item.cartonCode},
         pallet_code = #{item.palletCode},
         color_box_code = #{item.colorBoxCode},
+        production_time = #{item.productionTime}
       </set>
       where barcode_process_id =#{item.barcodeProcessId}
     </foreach>

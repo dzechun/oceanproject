@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -23,7 +24,7 @@ import java.util.List;
 @RequestMapping("/mesSfcBarcodeReprint")
 public class MesSfcBarcodeReprintController {
 
-    @Autowired
+    @Resource
     MesSfcBarcodeReprintService mesSfcBarcodeReprintService;
 
     @ApiOperation("查询条码（模糊匹配）")

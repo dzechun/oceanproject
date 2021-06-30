@@ -22,7 +22,30 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <select id="findList" parameterType="map" resultType="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderBarcodeDto">
-    SELECT * FROM mes_sfc_rework_order_barcode
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderBarcodeDto">
+  </resultMap>
+
+  <sql id="BaseColumnList">
+    msrob.rework_order_barcode_id,
+    msrob.rework_order_id,
+    msrob.work_order_barcode_id,
+    msrob.work_order_id,
+    msrob.status,
+    msrob.remark,
+    msrob.org_id,
+    msrob.create_user_id,
+    msrob.create_time,
+    msrob.modified_user_id,
+    msrob.modified_time,
+    msrob.is_delete
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultDtoMap">
+    SELECT <include refid="BaseColumnList"/> FROM mes_sfc_rework_order_barcode msrob
+    <where>
+      <if test="reworkOrderId != null">
+        and msrob.rework_order_id = #{reworkOrderId}
+      </if>
+    </where>
   </select>
 </mapper>

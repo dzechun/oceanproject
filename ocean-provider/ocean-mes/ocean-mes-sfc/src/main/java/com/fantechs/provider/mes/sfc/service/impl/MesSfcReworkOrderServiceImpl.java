@@ -163,7 +163,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
         BeanUtils.copyProperties(mesSfcReworkOrder, mesSfcHtReworkOrder);
         mesSfcHtReworkOrderMapper.insert(mesSfcHtReworkOrder);
         // 保存返工单
-        mesSfcReworkOrderMapper.insert(mesSfcReworkOrder);
+        mesSfcReworkOrderMapper.insertUseGeneratedKeys(mesSfcReworkOrder);
 
         List<String> orderIds = new ArrayList<>();
         List<String> workOrderBarcodeIds = new ArrayList<>();
@@ -215,19 +215,20 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
                 mesSfcBarcodeProcess.setStationId(null);
                 mesSfcBarcodeProcess.setStationCode(null);
                 mesSfcBarcodeProcess.setStationName(null);
+                mesSfcBarcodeProcess.setProductionTime(null);
                 mesSfcBarcodeProcess.setBarcodeStatus((byte) 1);
                 mesSfcBarcodeProcess.setReworkOrderId(mesSfcReworkOrder.getReworkOrderId());
                 // 清除包箱
                 if (doReworkOrderDto.getClearCarton()) {
-                    mesSfcBarcodeProcess.setCartonCode("");
+                    mesSfcBarcodeProcess.setCartonCode(null);
                 }
                 // 清除彩盒
                 if (doReworkOrderDto.getClearColorBox()) {
-                    mesSfcBarcodeProcess.setColorBoxCode("");
+                    mesSfcBarcodeProcess.setColorBoxCode(null);
                 }
                 // 清除栈板
                 if (doReworkOrderDto.getClearPallet()) {
-                    mesSfcBarcodeProcess.setPalletCode("");
+                    mesSfcBarcodeProcess.setPalletCode(null);
                 }
                 mesSfcBarcodeProcessList.add(mesSfcBarcodeProcess);
 
@@ -398,7 +399,7 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
             for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos) {
                 for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto1 : doReworkOrderDto.getKeyPartRelevanceDtoList()) {
                     if ((keyPartRelevanceDto.getLabelCategoryId() != null && keyPartRelevanceDto.getLabelCategoryId().equals(keyPartRelevanceDto1.getLabelCategoryId()))
-                            || keyPartRelevanceDto.getMaterialId().equals(keyPartRelevanceDto1.getMaterialId())) {
+                            || (keyPartRelevanceDto.getMaterialId() != null && keyPartRelevanceDto.getMaterialId().equals(keyPartRelevanceDto1.getMaterialId()))) {
                         deleteKeypartRelevances.add(keyPartRelevanceDto);
                         break;
                     }
