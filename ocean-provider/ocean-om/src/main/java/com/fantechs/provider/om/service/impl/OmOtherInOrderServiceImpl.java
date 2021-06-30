@@ -16,6 +16,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.om.mapper.OmOtherInOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmOtherInOrderMapper;
+import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderMapper;
 import com.fantechs.provider.om.service.OmOtherInOrderService;
@@ -48,6 +49,8 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     private OmHtOtherInOrderDetMapper omHtOtherInOrderDetMapper;
     @Resource
     private InFeignApi inFeignApi;
+    @Resource
+    private OmTransferOrderMapper omTransferOrderMapper;
 
     @Override
     public List<OmOtherInOrderDto> findList(Map<String, Object> map) {
@@ -80,10 +83,16 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             if(total.compareTo(omOtherInOrderDet.getOrderQty())==1){
                 throw new BizErrorException("下发数量不能大于工单数量");
             }
+            //获取发货库位
+            Long storageId = omTransferOrderMapper.findStorage(omOtherInOrderDet.getWarehouseId(),(byte)2);
+            if(StringUtils.isNotEmpty(storageId)){
+                throw new BizErrorException("未获取到该仓库的发货库位");
+            }
             WmsInAsnOrderDet wmsInAsnOrderDet = WmsInAsnOrderDet.builder()
                     .sourceOrderId(omOtherInOrderDet.getOtherInOrderId())
                     .orderDetId(omOtherInOrderDet.getOtherInOrderDetId())
                     .warehouseId(omOtherInOrderDet.getWarehouseId())
+                    .storageId(storageId)
                     .materialId(omOtherInOrderDet.getMaterialId())
                     .packingUnitName(omOtherInOrderDet.getUnitName())
                     .batchCode(omOtherInOrderDet.getBatchCode())

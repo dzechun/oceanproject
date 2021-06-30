@@ -903,10 +903,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             inv.setCreateTime(new Date());
             inv.setModifiedTime(new Date());
             inv.setModifiedUserId(sysUser.getUserId());
+            inv.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
             return wmsInnerInventoryMapper.insertSelective(inv);
         }else{
             //原库存
             wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().add(newDto.getActualQty()));
+            wmsInnerInventorys.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
             return wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
         }
     }

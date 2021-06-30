@@ -15,6 +15,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmOtherOutOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmOtherOutOrderMapper;
+import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
 import com.fantechs.provider.om.service.OmOtherOutOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,8 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     private OmOtherOutOrderDetMapper omOtherOutOrderDetMapper;
     @Resource
     private OutFeignApi outFeignApi;
+    @Resource
+    private OmTransferOrderMapper omTransferOrderMapper;
 
     @Override
     public List<OmOtherOutOrderDto> findList(Map<String, Object> map) {
@@ -55,12 +58,17 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = new ArrayList<>();
         int i=1;
         for (OmOtherOutOrderDet omOtherOutOrderDet : omOtherOutOrder.getOmOtherOutOrderDets()) {
+            //获取发货库位
+            Long storageId = omTransferOrderMapper.findStorage(omOtherOutOrderDet.getWarehouseId(),(byte)3);
+            if(StringUtils.isNotEmpty(storageId)){
+                throw new BizErrorException("未获取到该仓库的发货库位");
+            }
             WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto = new WmsOutDeliveryOrderDetDto();
             wmsOutDeliveryOrderDetDto.setWarehouseId(omOtherOutOrderDet.getWarehouseId());
             wmsOutDeliveryOrderDetDto.setSourceOrderId(omOtherOutOrderDet.getOtherOutOrderId());
             wmsOutDeliveryOrderDetDto.setOrderDetId(omOtherOutOrderDet.getOtherOutOrderDetId());
             wmsOutDeliveryOrderDetDto.setMaterialId(omOtherOutOrderDet.getMaterialId());
-            wmsOutDeliveryOrderDetDto.setStorageId(Long.parseLong("5517"));
+            wmsOutDeliveryOrderDetDto.setStorageId(storageId);
             wmsOutDeliveryOrderDetDto.setLineNumber(i);
             wmsOutDeliveryOrderDetDto.setPackingUnitName(omOtherOutOrderDet.getUnitName());
             wmsOutDeliveryOrderDetDto.setPackingQty(omOtherOutOrderDet.getQty());

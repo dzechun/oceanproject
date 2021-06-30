@@ -315,7 +315,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 break;
                 //调拨and其他出库反写数量
             case "2":
-                num+=1;
+                num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
                 break;
             case "7":
                 //其他出库
@@ -327,7 +327,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                 }
-                num+=1;
+                num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
                 break;
         }
         //查询出库单对应拣货单是否都已经发运完成

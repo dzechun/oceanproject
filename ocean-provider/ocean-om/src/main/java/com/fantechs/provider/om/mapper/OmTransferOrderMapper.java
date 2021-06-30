@@ -14,4 +14,6 @@ public interface OmTransferOrderMapper extends MyMapper<OmTransferOrder> {
     List<OmTransferOrderDto> findList(Map<String,Object> map);
 
     OmTransferOrder findMaterial(@Param("materialId")Long materialId);
+
+    Long findStorage(@Param("warehouseId")Long warehouseId,@Param("storageType")Byte storageType);
 }
