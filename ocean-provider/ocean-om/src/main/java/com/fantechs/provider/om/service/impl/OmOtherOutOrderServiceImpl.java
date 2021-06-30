@@ -129,7 +129,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         map.put("otherOutOrderId",omOtherOutOrderDet.getOtherOutOrderId());
         OmOtherOutOrder omOtherOutOrder = omOtherOutOrderMapper.findList(map).get(0);
         OmOtherOutOrderDet omOtherOutOrderDet1 = omOtherOutOrderDetMapper.selectByPrimaryKey(omOtherOutOrderDet.getOtherOutOrderDetId());
-        if(StringUtils.isEmpty(omOtherOutOrderDet1.getDispatchQty())){
+        if(omOtherOutOrderDet1.getDispatchQty().equals(BigDecimal.ZERO)){
             omOtherOutOrderDet1.setDispatchQty(BigDecimal.ZERO);
         }
         BigDecimal total = omOtherOutOrderDet1.getDispatchQty().add(omOtherOutOrderDet.getDispatchQty());

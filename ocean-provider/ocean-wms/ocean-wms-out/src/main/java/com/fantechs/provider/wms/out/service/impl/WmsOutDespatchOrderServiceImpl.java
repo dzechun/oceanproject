@@ -282,6 +282,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
      * @param wmsInnerJobOrderDetDto
      * @return
      */
+    @Transactional(rollbackFor = RuntimeException.class)
     private int writeDeliveryOrderQty(WmsInnerJobOrderDto wmsInnerJobOrderDto,WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto){
         WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectByPrimaryKey(wmsInnerJobOrderDetDto.getSourceDetId());
         if(StringUtils.isEmpty(wmsOutDeliveryOrderDet)){
