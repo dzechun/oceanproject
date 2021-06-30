@@ -156,50 +156,59 @@
   </select>
 
   <select id="findSamplingList" parameterType="map" resultMap="QmsIpqcSamplingModel">
-    select <include refid="Base_Column_List"></include>,
-    biw.inspection_way_desc,bis.inspection_standard_name,mpwo.work_order_code,bm.material_code,
-    bm.material_desc,bm.material_version, bpm.product_model_name,s.user_name as modified_user_name,bo.organization_name,
-    (select group_concat(substr(barcode,length(barcode)-4) separator '') from qms_ipqc_inspection_order_det_sample
-    where qiiods.ipqc_inspection_order_det_id = qiiod.ipqc_inspection_order_det_id) as barcodes
-    from qms_ipqc_inspection_order qiio
-    left join base_inspection_way biw on qiio.inspection_way_id=biw.inspection_way_id
-    left join base_inspection_standard bis on qiio.inspection_standard_id=bis.inspection_standard_id
-    left join mes_pm_work_order mpwo on qiio.work_order_id=mpwo.work_order_id
-    left join base_material bm on qiio.material_id=bm.material_id
-    left join base_material_tab bmt on qiio.material_id=bmt.material_id
-    left join base_product_model bpm on bmt.product_model_id=bpm.product_model_id
-    left join qms_ipqc_inspection_order_det qiiod on qiio.ipqc_inspection_order_id=qiiod.ipqc_inspection_order_id
-    left join qms_ipqc_inspection_order_det_sample qiiods on qiiod.ipqc_inspection_order_det_id=qiiods.ipqc_inspection_order_det_id
-    left join ocean_v2.sys_user su on qiio.audit_user_id=su.user_id
-    left join ocean_v2.sys_user u on qiio.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on qiio.modified_user_id=s.user_id
-    left join base_organization bo ON qiio.org_id = bo.organization_id
+    select * from(
+        select <include refid="Base_Column_List"></include>,
+        biw.inspection_way_desc,bis.inspection_standard_name,mpwo.work_order_code,bm.material_code,
+        bm.material_desc,bm.material_version, bpm.product_model_name,s.user_name as modified_user_name,bo.organization_name,
+        (select group_concat(substr(barcode,length(barcode)-4) separator '') from qms_ipqc_inspection_order_det_sample
+        where qiiods.ipqc_inspection_order_det_id = qiiod.ipqc_inspection_order_det_id) as barcodes
+        from qms_ipqc_inspection_order qiio
+        left join base_inspection_way biw on qiio.inspection_way_id=biw.inspection_way_id
+        left join base_inspection_standard bis on qiio.inspection_standard_id=bis.inspection_standard_id
+        left join mes_pm_work_order mpwo on qiio.work_order_id=mpwo.work_order_id
+        left join base_material bm on qiio.material_id=bm.material_id
+        left join base_material_tab bmt on qiio.material_id=bmt.material_id
+        left join base_product_model bpm on bmt.product_model_id=bpm.product_model_id
+        left join qms_ipqc_inspection_order_det qiiod on qiio.ipqc_inspection_order_id=qiiod.ipqc_inspection_order_id
+        left join qms_ipqc_inspection_order_det_sample qiiods on
+        qiiod.ipqc_inspection_order_det_id=qiiods.ipqc_inspection_order_det_id
+        left join ocean_v2.sys_user su on qiio.audit_user_id=su.user_id
+        left join ocean_v2.sys_user u on qiio.create_user_id=u.user_id
+        left join ocean_v2.sys_user s on qiio.modified_user_id=s.user_id
+        left join base_organization bo ON qiio.org_id = bo.organization_id
+        <where>
+        <if test="ipqcInspectionOrderCode != null and ipqcInspectionOrderCode!=''">
+            and qiio.ipqc_inspection_order_code like CONCAT('%', #{ipqcInspectionOrderCode}, '%')
+        </if>
+        <if test="workOrderCode != null and workOrderCode!=''">
+            and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+        </if>
+        <!--<if test="barcodes != null and barcodes!=''">
+            and (select group_concat(substr(barcode,length(barcode)-4) separator '') from
+            qms_ipqc_inspection_order_det_sample
+            where qiiods.ipqc_inspection_order_det_id = qiiod.ipqc_inspection_order_det_id) like CONCAT('%', #{barcodes},'%')
+        </if>-->
+        <if test="materialCode != null and materialCode!=''">
+            and bm.material_code like CONCAT('%', #{materialCode}, '%')
+        </if>
+        <if test="inspectionWayCode != null and inspectionWayCode!=''">
+            and biw.inspection_way_code =#{inspectionWayCode}
+        </if>
+        <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+            and date_format(qiio.modified_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        </if>
+        <if test="orgId!=null">
+            and qiio.org_id=#{orgId}
+        </if>
+        </where>
+    ) d
     <where>
-      <if test="ipqcInspectionOrderCode != null and ipqcInspectionOrderCode!=''">
-        and qiio.ipqc_inspection_order_code like CONCAT('%', #{ipqcInspectionOrderCode}, '%')
-      </if>
-      <if test="workOrderCode != null and workOrderCode!=''">
-        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
-      </if>
       <if test="barcodes != null and barcodes!=''">
-        and  (select group_concat(substr(barcode,length(barcode)-4) separator '') from qms_ipqc_inspection_order_det_sample
-        where qiiods.ipqc_inspection_order_det_id = qiiod.ipqc_inspection_order_det_id) like CONCAT('%', #{barcodes}, '%')
-      </if>
-      <if test="materialCode != null and materialCode!=''">
-        and bm.material_code like CONCAT('%', #{materialCode}, '%')
-      </if>
-      <if test="inspectionWayCode != null and inspectionWayCode!=''">
-        and biw.inspection_way_code =#{inspectionWayCode}
-      </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(qiio.modified_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="orgId!=null">
-        and qiio.org_id=#{orgId}
+        d.barcodes like CONCAT('%', #{barcodes}, '%')
       </if>
     </where>
-     group by qiio.ipqc_inspection_order_id
-    order by qiio.modified_time desc
+    group by ipqc_inspection_order_id
+    order by modified_time desc
   </select>
 
   <select id="findFirstArticleList" parameterType="map" resultMap="QmsIpqcFirstArticleModel">

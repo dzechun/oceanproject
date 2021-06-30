@@ -106,7 +106,7 @@ public class QmsIpqcInspectionUreportController {
         List<QmsIpqcProcessInspectionModel> list = qmsIpqcInspectionUreportService.findProcessInspectionList(searchQmsIpqcInspectionOrder);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "制程巡检记录记录", "ProcessInspectionExport信息", QmsIpqcFirstArticleModel.class, "ProcessInspectionExport.xls", response);
+            EasyPoiUtils.exportExcel(list, "制程巡检记录记录", "ProcessInspectionExport信息", QmsIpqcProcessInspectionModel.class, "ProcessInspectionExport.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

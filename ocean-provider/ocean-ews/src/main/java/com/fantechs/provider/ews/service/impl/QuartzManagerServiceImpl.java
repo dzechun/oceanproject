@@ -241,8 +241,6 @@ public class QuartzManagerServiceImpl implements QuartzManagerService {
                 JobDetail jobDetail = scheduler.getJobDetail(jobKey);
                 job.put("url",jobDetail.getJobDataMap().get("url"));
                 job.put("method",jobDetail.getJobDataMap().get("method")=="1"?"GET":"POST");
-
-                System.out.println("---jobDetail.getJobDataMap().get(\"map\")----"+jobDetail.getJobDataMap().get("map"));
                 job.put("map",jobDetail.getJobDataMap().get("map")!=null?jobDetail.getJobDataMap().get("map"):"");
                 jobList.add(job);
             }
@@ -277,12 +275,12 @@ public class QuartzManagerServiceImpl implements QuartzManagerService {
         return jobList;
     }
     public enum  STATUS_ENUM{
-        STATE_BLOCKED("BLOCKED","阻塞"),
-        STATE_COMPLETE("COMPLETE","完成"),
-        STATE_ERROR("ERROR","错误"),
-        STATE_NONE("NONE","不存在"),
-        STATE_NORMAL("NORMAL","正常"),
-        STATE_PAUSED("PAUSED","暂停");
+        BLOCKED("BLOCKED","阻塞"),
+        COMPLETE("COMPLETE","完成"),
+        ERROR("ERROR","错误"),
+        NONE("NONE","不存在"),
+        NORMAL("NORMAL","正常"),
+        PAUSED("PAUSED","暂停");
 
         private String name;
         private String status;
