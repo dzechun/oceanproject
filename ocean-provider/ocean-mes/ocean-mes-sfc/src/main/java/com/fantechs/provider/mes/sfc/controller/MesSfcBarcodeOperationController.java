@@ -17,6 +17,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -34,11 +35,11 @@ import java.util.List;
 public class MesSfcBarcodeOperationController {
 
 
-    @Autowired
+    @Resource
     MesSfcBarcodeOperationService mesSfcBarcodeOperationService;
-    @Autowired
+    @Resource
     MesSfcProductCartonService mesSfcProductCartonService;
-    @Autowired
+    @Resource
     MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
 
     @ApiOperation("PDA包箱作业-查询上次作业数据")
