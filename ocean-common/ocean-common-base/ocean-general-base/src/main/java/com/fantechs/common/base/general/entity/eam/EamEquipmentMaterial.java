@@ -9,6 +9,8 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +34,7 @@ public class EamEquipmentMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name="equipmentMaterialId",value = "设备绑定产品表头ID")
     @Id
     @Column(name = "equipment_material_id")
+    @NotNull(groups = update.class,message = "设备绑定产品表头ID不能为空")
     private Long equipmentMaterialId;
 
     /**
@@ -39,6 +42,7 @@ public class EamEquipmentMaterial extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="equipmentId",value = "设备信息ID")
     @Column(name = "equipment_id")
+    @NotNull(message = "设备信息不能为空")
     private Long equipmentId;
 
     /**

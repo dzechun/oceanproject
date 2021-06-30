@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -32,6 +33,7 @@ public class EamEquipment extends ValidGroup implements Serializable {
     @ApiModelProperty(name="equipmentId",value = "设备信息ID")
     @Id
     @Column(name = "equipment_id")
+    @NotNull(groups = update.class,message = "设备信息ID不能为空")
     private Long equipmentId;
 
     /**

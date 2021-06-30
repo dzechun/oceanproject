@@ -19,7 +19,7 @@ public class EamReturnOrderDetDto extends EamReturnOrderDet implements Serializa
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="4")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="8")
     private String createUserName;
 
     /**
@@ -27,7 +27,7 @@ public class EamReturnOrderDetDto extends EamReturnOrderDet implements Serializa
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="10")
     private String modifiedUserName;
 
     /**
@@ -82,14 +82,14 @@ public class EamReturnOrderDetDto extends EamReturnOrderDet implements Serializa
      */
     @Transient
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="6")
     private String warehouseName;
 
     /**
      * 归还时间
      */
     @ApiModelProperty(name="returnTime",value = "归还时间")
-    @Excel(name = "归还时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "归还时间", height = 20, width = 30,orderNum="7",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Transient
     private Date returnTime;

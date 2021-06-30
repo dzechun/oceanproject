@@ -33,6 +33,7 @@ public class EamStandingBook extends ValidGroup implements Serializable {
     @ApiModelProperty(name="standingBookId",value = "台账管理ID")
     @Id
     @Column(name = "standing_book_id")
+    @NotNull(groups = update.class,message = "台账管理ID不能为空")
     private Long standingBookId;
 
     /**

@@ -35,4 +35,18 @@ public class EamRequisitionOrderDto extends EamRequisitionOrder implements Seria
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
 
+    /**
+     * 部门
+     */
+    @Transient
+    @ApiModelProperty(name = "deptName",value = "部门")
+    private String deptName;
+
+    /**
+     * 领用人名称
+     */
+    @Transient
+    @ApiModelProperty(name = "requisitionUserName",value = "领用人名称")
+    private String requisitionUserName;
+
 }

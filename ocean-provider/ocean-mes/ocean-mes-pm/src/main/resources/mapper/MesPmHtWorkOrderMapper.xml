@@ -37,7 +37,7 @@
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-        <result column="version" jdbcType="VARCHAR" property="version"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
         <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
