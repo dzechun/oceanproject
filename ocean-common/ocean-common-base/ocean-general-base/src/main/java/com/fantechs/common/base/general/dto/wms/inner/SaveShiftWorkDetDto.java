@@ -46,6 +46,12 @@ public class SaveShiftWorkDetDto implements Serializable {
     private Boolean isPda;
 
     /**
+     * 移位数量
+     */
+    @ApiModelProperty(name="materialQty",value = "移位数量")
+    private Integer materialQty;
+
+    /**
      * 条码集合
      */
     @ApiModelProperty(name="barcodes",value = "条码集合")

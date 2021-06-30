@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
 
@@ -68,4 +69,10 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     private List<Byte> orderStatusList;
 
     private Long orgId;
+
+    /**
+     * 是否栈板自动生成(1-是，0-否) PDA标识字段
+     */
+    @ApiModelProperty(name = "isPallet",value = "是否栈板自动生成(1-是，0-否) PDA标识字段")
+    private Byte isPallet;
 }

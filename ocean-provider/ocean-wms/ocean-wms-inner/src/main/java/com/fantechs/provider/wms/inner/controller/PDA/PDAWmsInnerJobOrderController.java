@@ -49,6 +49,7 @@ public class PDAWmsInnerJobOrderController {
         bytes.add((byte)4);
         bytes.add((byte)6);
         searchWmsInnerJobOrder.setOrderStatusList(bytes);
+        searchWmsInnerJobOrder.setIsPallet((byte)1);
         List<WmsInnerJobOrderDto> list = wmsInnerJobOrderService.findList(searchWmsInnerJobOrder);
         return ControllerUtil.returnDataSuccess(list, StringUtils.isEmpty(list)?0:1);
     }

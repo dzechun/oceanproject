@@ -60,7 +60,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         for (OmOtherOutOrderDet omOtherOutOrderDet : omOtherOutOrder.getOmOtherOutOrderDets()) {
             //获取发货库位
             Long storageId = omTransferOrderMapper.findStorage(omOtherOutOrderDet.getWarehouseId(),(byte)3);
-            if(StringUtils.isNotEmpty(storageId)){
+            if(StringUtils.isEmpty(storageId)){
                 throw new BizErrorException("未获取到该仓库的发货库位");
             }
             WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto = new WmsOutDeliveryOrderDetDto();
