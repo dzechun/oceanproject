@@ -83,8 +83,11 @@
     left join ocean_v2.sys_user s on ee.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ee.org_id = bo.organization_id
     <where>
-      <if test="equipmentCode != null and equipmentCode!=''">
+      <if test="equipmentCode != null and equipmentCode!='' and codeQueryMark!=1">
         and ee.equipment_code like CONCAT('%', #{equipmentCode}, '%')
+      </if>
+      <if test="equipmentCode != null and equipmentCode!='' and codeQueryMark==1">
+        and ee.equipment_code = #{equipmentCode}
       </if>
       <if test="equipmentName != null and equipmentName!=''">
         and ee.equipment_name like CONCAT('%', #{equipmentName}, '%')

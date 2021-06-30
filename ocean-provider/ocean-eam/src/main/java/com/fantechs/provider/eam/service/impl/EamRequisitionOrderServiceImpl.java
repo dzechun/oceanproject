@@ -60,6 +60,8 @@ public class EamRequisitionOrderServiceImpl extends BaseService<EamRequisitionOr
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        record.setDeptId(user.getDeptId());
+        record.setRequisitionUserId(user.getUserId());
         record.setRequisitionTime(new Date());
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
