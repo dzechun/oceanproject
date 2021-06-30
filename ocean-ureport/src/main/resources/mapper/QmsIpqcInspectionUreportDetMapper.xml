@@ -43,9 +43,9 @@
     <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
     <result column="badness_category_code" jdbcType="VARCHAR" property="badnessCategoryCode"/>
     <result column="badness_category_desc" jdbcType="VARCHAR" property="badnessCategoryDesc"/>
-
     <result column="max_sample_value" jdbcType="VARCHAR" property="maxSampleValue"/>
     <result column="min_sample_value" jdbcType="VARCHAR" property="minSampleValue"/>
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -79,8 +79,7 @@
     qiiods.ipqc_inspection_order_det_id = qiiod.ipqc_inspection_order_det_id) as max_sample_value,
     (select MIN(CONVERT(sample_value,SIGNED)) from qms_ipqc_inspection_order_det_sample where
     qiiods.ipqc_inspection_order_det_id = qiiod.ipqc_inspection_order_det_id) as min_sample_value,
-    u.user_name as create_user_name,
-    s.user_name as modified_user_name,
+    u.user_name as create_user_name,s.user_name as modified_user_name,bd.dept_name as dept_name,
     bo.organization_name
     from qms_ipqc_inspection_order_det qiiod
     left join base_inspection_standard_det bisd on qiiod.inspection_standard_det_id=bisd.inspection_standard_det_id
@@ -92,6 +91,7 @@
     left join qms_ipqc_inspection_order_det_sample qiiods on qiiod.ipqc_inspection_order_det_id=qiiods.ipqc_inspection_order_det_id
     left join ocean_v2.sys_user u on qiiod.create_user_id=u.user_id
     left join ocean_v2.sys_user s on qiiod.modified_user_id=s.user_id
+    left join base_dept bd on s.dept_id=bd.dept_id
     left join base_organization bo ON qiiod.org_id = bo.organization_id
     <where>
       <if test="ipqcInspectionOrderId!=null">

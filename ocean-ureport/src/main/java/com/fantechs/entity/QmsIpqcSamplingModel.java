@@ -25,6 +25,12 @@ import java.util.List;
 public class QmsIpqcSamplingModel extends ValidGroup implements Serializable {
 
     /**
+     * IPQC检验单ID
+     */
+    @ApiModelProperty(name="ipqcInspectionOrderId",value = "IPQC检验单ID")
+    private Long ipqcInspectionOrderId;
+
+    /**
      * IPQC检验单编码
      */
     @ApiModelProperty(name="ipqcInspectionOrderCode",value = "检验单号")

@@ -76,10 +76,10 @@ public class EwsProcessScheduling extends ValidGroup implements Serializable {
     /**
      * 组织id
      */
-    @ApiModelProperty(name="organizationId",value = "组织id")
+    @ApiModelProperty(name="orgId",value = "组织id")
     @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
-    @Column(name = "organization_id")
-    private Long organizationId;
+    @Column(name = "org_id")
+    private Long orgId;
 
     /**
      * 创建人ID

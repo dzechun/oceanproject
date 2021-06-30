@@ -39,6 +39,8 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
 
     @Override
     public List<EwsProcessSchedulingDto> findList(SearchEwsProcessScheduling searchEwsProcessScheduling) {
+        SysUser sysUser = currentUser();
+        searchEwsProcessScheduling.setOrgId(sysUser.getOrganizationId());
         return ewsProcessSchedulingMapper.findList(searchEwsProcessScheduling);
     }
 
@@ -51,6 +53,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
         ewsProcessScheduling.setModifiedUserId(sysUser.getUserId());
         ewsProcessScheduling.setModifiedTime(new Date());
         ewsProcessScheduling.setExecuteStatus((byte)1);
+        ewsProcessScheduling.setOrgId(sysUser.getOrganizationId());
         int num = ewsProcessSchedulingMapper.updateByPrimaryKeySelective(ewsProcessScheduling);
 
         //开始任务
@@ -73,6 +76,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
         ewsProcessScheduling.setModifiedUserId(sysUser.getUserId());
         ewsProcessScheduling.setModifiedTime(new Date());
         ewsProcessScheduling.setExecuteStatus((byte)0);
+        ewsProcessScheduling.setOrgId(sysUser.getOrganizationId());
         int num = ewsProcessSchedulingMapper.updateByPrimaryKeySelective(ewsProcessScheduling);
 
         //开始任务
@@ -103,11 +107,12 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EwsProcessScheduling record) {
-  //      SysUser sysUser = currentUser();
+        SysUser sysUser = currentUser();
         record.setCreateTime(new Date());
-  //      record.setCreateUserId(sysUser.getUserId());
+        record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
-  //      record.setModifiedUserId(sysUser.getUserId());
+        record.setModifiedUserId(sysUser.getUserId());
+        record.setOrgId(sysUser.getOrganizationId());
         int num = ewsProcessSchedulingMapper.insertUseGeneratedKeys(record);
         try {
             if(record.getExecuteObjectType()==(byte)0){

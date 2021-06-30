@@ -6,6 +6,9 @@ import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,7 +21,13 @@ import java.util.Date;
  */
 @Data
 public class QmsIpqcDtaticElectricityModel extends ValidGroup implements Serializable {
-    // QmsIpqcInspectionOrder
+
+    /**
+     * IPQC检验单ID
+     */
+    @ApiModelProperty(name="ipqcInspectionOrderId",value = "IPQC检验单ID")
+    private Long ipqcInspectionOrderId;
+
     /**
      * IPQC检验单编码
      */
