@@ -3,15 +3,10 @@ package com.fantechs.provider.quartz.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseProcessSchedulingDto;
-import com.fantechs.common.base.general.entity.basic.BaseProcessScheduling;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcessScheduling;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.quartz.mapper.SmtProcessSchedulingMapper;
-import com.fantechs.provider.quartz.service.SmtProcessSchedulingService;
 import com.fantechs.provider.quartz.config.QuartzDoInterface;
 import com.fantechs.provider.quartz.service.QuartzManagerService;
 import org.springframework.stereotype.Service;
@@ -27,7 +22,7 @@ import java.util.Map;
  *
  * Created by mr.lei on 2021/03/08.
  */
-@Service
+/*@Service
 public class SmtProcessSchedulingServiceImpl extends BaseService<BaseProcessScheduling> implements SmtProcessSchedulingService {
 
     @Resource
@@ -163,10 +158,10 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<BaseProcessSche
         return smtProcessSchedulingMapper.deleteByIds(ids);
     }
 
-    /**
+    *//**
      * 获取当前登录用户
      * @return
-     */
+     *//*
     private SysUser currentUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -175,4 +170,4 @@ public class SmtProcessSchedulingServiceImpl extends BaseService<BaseProcessSche
         return user;
     }
 
-}
+}*/

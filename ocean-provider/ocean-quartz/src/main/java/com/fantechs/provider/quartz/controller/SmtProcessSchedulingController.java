@@ -1,32 +1,10 @@
 package com.fantechs.provider.quartz.controller;
 
-import com.fantechs.common.base.general.dto.basic.BaseProcessSchedulingDto;
-import com.fantechs.common.base.general.entity.basic.BaseProcessScheduling;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcessScheduling;
-import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.support.ValidGroup;
-import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.quartz.service.QuartzManagerService;
-import com.fantechs.provider.quartz.service.SmtProcessSchedulingService;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.quartz.SchedulerException;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
-import java.util.Map;
-
 /**
  *
  * Created by mr.lei on 2021/03/08.
  */
+/*
 @RestController
 @Api(tags = "程序排程")
 @RequestMapping("/smtProcessScheduling")
@@ -104,3 +82,4 @@ public class SmtProcessSchedulingController {
         return ControllerUtil.returnDataSuccess(allJob, StringUtils.isEmpty(allJob)?0:allJob.size());
     }
 }
+*/
