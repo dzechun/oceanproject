@@ -125,6 +125,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
                 wmsOutDeliveryOrderDetDto.setWarehouseId(omTransferOrder.getOutWarehouseId());
                 wmsOutDeliveryOrderDetDto.setSourceOrderId(omTransferOrder.getTransferOrderId());
                 wmsOutDeliveryOrderDetDto.setOrderDetId(omTransferOrderDet.getTransferOrderDetId());
+                wmsOutDeliveryOrderDetDto.setStorageId(storageId);
                 wmsOutDeliveryOrderDetDto.setMaterialId(omTransferOrderDet.getMaterialId());
                 wmsOutDeliveryOrderDetDto.setLineNumber(i);
                 wmsOutDeliveryOrderDetDto.setPackingUnitName(omTransferOrderDet.getUnitName());

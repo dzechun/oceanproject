@@ -244,6 +244,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         //查询是否创建作业单
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setSourceOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
+        searchWmsInnerJobOrder.setOrderTypeId(wmsOutDeliveryOrder.getOrderTypeId());
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
         if(StringUtils.isNotEmpty(wmsInnerJobOrderDtos)){
             throw new BizErrorException("对应的拣货作业单已存在,该出库单不允许修改！");

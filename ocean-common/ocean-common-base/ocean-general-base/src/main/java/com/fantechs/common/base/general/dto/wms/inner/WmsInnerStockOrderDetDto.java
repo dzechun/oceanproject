@@ -82,9 +82,9 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
     private String modifiedUserName;
 
     /**
-     * 库存状态明细
+     * 库存状态
      */
     @Transient
-    @ApiModelProperty(name = "inventoryStatusName",value = "库存状态明细")
+    @ApiModelProperty(name = "inventoryStatusName",value = "库存状态")
     private String inventoryStatusName;
 }
