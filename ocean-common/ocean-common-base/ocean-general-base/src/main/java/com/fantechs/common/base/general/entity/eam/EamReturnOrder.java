@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +31,7 @@ public class EamReturnOrder extends ValidGroup implements Serializable {
     @Excel(name = "归还单ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "return_order_id")
+    @NotNull(groups = update.class,message = "归还单ID不能为空")
     private Long returnOrderId;
 
     /**

@@ -26,6 +26,8 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+    <result column="return_user_name" jdbcType="VARCHAR" property="returnUserName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -48,10 +50,13 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
+    bd.dept_name,su.nick_name as return_user_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.eam_return_order ero
+    left join fantech_imes_v2.base_dept bd on ero.dept_id=bd.dept_id
+    left join ocean_v2.sys_user su on ero.return_user_id=su.user_id
     left join ocean_v2.sys_user u on ero.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ero.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ero.org_id = bo.organization_id
