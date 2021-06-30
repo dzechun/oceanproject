@@ -313,6 +313,13 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     @Transient
     private String maxSampleValue;
 
+    /**
+     * 检验部门（更新人员部门）
+     */
+    @ApiModelProperty(name="deptName",value = "检验部门")
+    @Transient
+    private String deptName;
+
 
     /**
      * 样本值

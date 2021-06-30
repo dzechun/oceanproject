@@ -46,6 +46,7 @@
   </resultMap>
 
   <resultMap id="QmsIpqcInspectionModel"  type="com.fantechs.entity.QmsIpqcDtaticElectricityModel">
+    <id column="ipqc_inspection_order_id" jdbcType="BIGINT" property="ipqcInspectionOrderId" />
     <result column="ipqc_inspection_order_code" jdbcType="VARCHAR" property="ipqcInspectionOrderCode"/>
     <result column="inspection_way_desc" jdbcType="VARCHAR" property="inspectionWayDesc"/>
     <result column="inspection_result" jdbcType="VARCHAR" property="inspectionResult"/>
@@ -54,6 +55,7 @@
   </resultMap>
 
   <resultMap id="QmsIpqcSamplingModel"  type="com.fantechs.entity.QmsIpqcSamplingModel">
+    <id column="ipqc_inspection_order_id" jdbcType="BIGINT" property="ipqcInspectionOrderId" />
     <result column="ipqc_inspection_order_code" jdbcType="VARCHAR" property="ipqcInspectionOrderCode"/>
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="barcodes" jdbcType="VARCHAR" property="barcodes"/>
@@ -71,6 +73,7 @@
   </resultMap>
 
   <resultMap id="QmsIpqcFirstArticleModel"  type="com.fantechs.entity.QmsIpqcFirstArticleModel">
+    <id column="ipqc_inspection_order_id" jdbcType="BIGINT" property="ipqcInspectionOrderId" />
     <result column="ipqc_inspection_order_code" jdbcType="VARCHAR" property="ipqcInspectionOrderCode"/>
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
@@ -84,6 +87,7 @@
   </resultMap>
 
   <resultMap id="QmsIpqcProcessInspectionModel"  type="com.fantechs.entity.QmsIpqcProcessInspectionModel">
+    <id column="ipqc_inspection_order_id" jdbcType="BIGINT" property="ipqcInspectionOrderId" />
     <result column="ipqc_inspection_order_code" jdbcType="VARCHAR" property="ipqcInspectionOrderCode"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
@@ -155,7 +159,7 @@
     select <include refid="Base_Column_List"></include>,
     biw.inspection_way_desc,bis.inspection_standard_name,mpwo.work_order_code,bm.material_code,
     bm.material_desc,bm.material_version, bpm.product_model_name,s.user_name as modified_user_name,bo.organization_name,
-    (select group_concat(substr(barcode,length(barcode)-3) separator ' ') from qms_ipqc_inspection_order_det_sample
+    (select group_concat(substr(barcode,length(barcode)-4) separator '') from qms_ipqc_inspection_order_det_sample
     where qiiods.ipqc_inspection_order_det_id = qiiod.ipqc_inspection_order_det_id) as barcodes
     from qms_ipqc_inspection_order qiio
     left join base_inspection_way biw on qiio.inspection_way_id=biw.inspection_way_id
@@ -177,8 +181,9 @@
       <if test="workOrderCode != null and workOrderCode!=''">
         and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
       </if>
-      <if test="barcode != null and barcode!=''">
-        and qiiods.barcode like CONCAT('%', #{barcode}, '%')
+      <if test="barcodes != null and barcodes!=''">
+        and  (select group_concat(substr(barcode,length(barcode)-4) separator '') from qms_ipqc_inspection_order_det_sample
+        where qiiods.ipqc_inspection_order_det_id = qiiod.ipqc_inspection_order_det_id) like CONCAT('%', #{barcodes}, '%')
       </if>
       <if test="materialCode != null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
