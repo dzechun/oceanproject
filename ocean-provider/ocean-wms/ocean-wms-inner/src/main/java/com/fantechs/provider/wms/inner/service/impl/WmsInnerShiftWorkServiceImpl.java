@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.*;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -289,6 +290,13 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (baseStorages == null || baseStorages.size() <= 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001013);
         }
+        SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+        searchWmsInnerJobOrder.setSourceOrderId(jobOrderDet.getJobOrderId());
+        List<WmsInnerJobOrderDto> innerJobOrderDtos = wmsInnerJobOrderService.findList(searchWmsInnerJobOrder);
+        if(innerJobOrderDtos == null || innerJobOrderDtos.size() <= 0){
+
+        }
+        WmsInnerJobOrder innerJobOrder = wmsInnerJobOrderService.selectByKey(jobOrderDet.getJobOrderId());
         // 创建上架单
         // 创建上架明细单
         // 变更库存单状态
