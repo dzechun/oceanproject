@@ -74,9 +74,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
 
     @Override
     public List<WmsInAsnOrderDto> findList(SearchWmsInAsnOrder searchWmsInAsnOrder) {
-    //    SysUser sysUser = currentUser();
-    //    searchWmsInAsnOrder.setOrgId(sysUser.getOrganizationId());
-        searchWmsInAsnOrder.setOrgId((long)29);
+        SysUser sysUser = currentUser();
+        searchWmsInAsnOrder.setOrgId(sysUser.getOrganizationId());
         return wmsInAsnOrderMapper.findList(searchWmsInAsnOrder);
     }
 
