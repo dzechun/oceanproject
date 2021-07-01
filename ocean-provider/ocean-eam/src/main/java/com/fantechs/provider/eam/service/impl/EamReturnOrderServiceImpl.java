@@ -61,6 +61,8 @@ public class EamReturnOrderServiceImpl extends BaseService<EamReturnOrder> imple
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        record.setDeptId(user.getDeptId());
+        record.setReturnUserId(user.getUserId());
         record.setReturnTime(new Date());
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
