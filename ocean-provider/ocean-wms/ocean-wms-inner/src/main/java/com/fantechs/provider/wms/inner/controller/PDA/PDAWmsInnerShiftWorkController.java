@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public class PDAWmsInnerShiftWorkController {
     public ResponseEntity<List<WmsInnerJobOrderDto>> pdaFindList(@ApiParam(value = "作业单号，非必填") @RequestBody SearchPdaFindListDto dto) {
         Page<Object> page = PageHelper.startPage(dto.getStartPage(), dto.getPageSize());
         List<WmsInnerJobOrderDto> list = wmsInnerShiftWorkService.pdaFindList(ControllerUtil.dynamicConditionByEntity(dto));
-        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
+        return ControllerUtil.returnDataSuccess(list != null && list.size() > 0 ? list : new ArrayList<>(), (int) page.getTotal());
     }
 
     @ApiOperation("PDA库内移位单明细列表")
@@ -42,7 +43,7 @@ public class PDAWmsInnerShiftWorkController {
     public ResponseEntity<List<WmsInnerJobOrderDetDto>> pdaFindDetList(@ApiParam(value = "作业单号，非必填", required = true) @RequestBody SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet) {
         Page<Object> page = PageHelper.startPage(searchWmsInnerJobOrderDet.getStartPage(), searchWmsInnerJobOrderDet.getPageSize());
         List<WmsInnerJobOrderDetDto> innerJobOrderDetDtos = wmsInnerShiftWorkService.pdaFindDetList(searchWmsInnerJobOrderDet);
-        return ControllerUtil.returnDataSuccess(innerJobOrderDetDtos, (int) page.getTotal());
+        return ControllerUtil.returnDataSuccess(innerJobOrderDetDtos != null && innerJobOrderDetDtos.size() > 0 ? innerJobOrderDetDtos : new ArrayList<>(), (int) page.getTotal());
     }
 
     @ApiOperation("PDA库内移位拣货校验")

@@ -70,8 +70,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (StringUtils.isNotEmpty(map.get("jobOrderCode"))) {
             map.put("jobOrderCode", map.get("jobOrderCode"));
         }
-        wmsInnerJobOrderService.findShiftList(map);
-        return null;
+        return wmsInnerJobOrderService.findShiftList(map);
     }
 
     @Override
