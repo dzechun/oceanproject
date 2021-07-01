@@ -73,8 +73,7 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
         Example example = new Example(BaseLabelCategory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelCategoryCode",record.getLabelCategoryCode());
-//        example.or();
-//        criteria.andEqualTo("labelCategoryName",record.getLabelCategoryName());
+        criteria.andEqualTo("orgId",currentUserInfo.getOrganizationId());
         BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectOneByExample(example);
         if(!StringUtils.isEmpty(baseLabelCategory)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -108,8 +107,12 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
         Example example = new Example(BaseLabelCategory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelCategoryCode",entity.getLabelCategoryCode());
+        criteria.andEqualTo("orgId",currentUserInfo.getOrganizationId());
         criteria.andNotEqualTo("labelCategoryId",entity.getLabelCategoryId());
         BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectOneByExample(example);
+        if(!StringUtils.isEmpty(baseLabelCategory)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
 
         entity.setModifiedUserId(currentUserInfo.getUserId());
         entity.setModifiedTime(new Date());
