@@ -69,4 +69,6 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @return
      */
     List<WmsInnerJobOrderDto> findShiftList(Map<String, Object> map);
+
+    List<WmsInnerJobOrderDto> pdaFindShiftList(Map<String, Object> map);
 }

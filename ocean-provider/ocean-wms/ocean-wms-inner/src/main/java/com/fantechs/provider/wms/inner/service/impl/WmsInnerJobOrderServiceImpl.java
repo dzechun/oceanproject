@@ -71,8 +71,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
     @Override
     public List<WmsInnerJobOrderDto> findShiftList(Map<String, Object> map) {
-        SysUser sysUser = currentUser();
-        map.put("orgId", sysUser.getOrganizationId());
+        return wmsInPutawayOrderMapper.findShiftList(map);
+    }
+
+    @Override
+    public List<WmsInnerJobOrderDto> pdaFindShiftList(Map<String, Object> map) {
         return wmsInPutawayOrderMapper.findShiftList(map);
     }
 

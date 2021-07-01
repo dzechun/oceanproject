@@ -66,11 +66,21 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Override
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId", sysUser.getOrganizationId());
+        map.put("jobOrderType", (byte) 2);
+        return wmsInnerJobOrderService.findShiftList(map);
+    }
+
+    @Override
+    public List<WmsInnerJobOrderDto> pdaFindShiftList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId", sysUser.getOrganizationId());
         map.put("jobOrderType", (byte) 2);
         if (StringUtils.isNotEmpty(map.get("jobOrderCode"))) {
             map.put("jobOrderCode", map.get("jobOrderCode"));
         }
-        return wmsInnerJobOrderService.findShiftList(map);
+        return wmsInnerJobOrderService.pdaFindShiftList(map);
     }
 
     @Override

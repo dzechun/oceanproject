@@ -34,7 +34,7 @@ public class PDAWmsInnerShiftWorkController {
     @PostMapping("/pdaFindList")
     public ResponseEntity<List<WmsInnerJobOrderDto>> pdaFindList(@ApiParam(value = "作业单号，非必填") @RequestBody SearchPdaFindListDto dto) {
         Page<Object> page = PageHelper.startPage(dto.getStartPage(), dto.getPageSize());
-        List<WmsInnerJobOrderDto> list = wmsInnerShiftWorkService.pdaFindList(ControllerUtil.dynamicConditionByEntity(dto));
+        List<WmsInnerJobOrderDto> list = wmsInnerShiftWorkService.pdaFindShiftList(ControllerUtil.dynamicConditionByEntity(dto));
         return ControllerUtil.returnDataSuccess(list != null && list.size() > 0 ? list : new ArrayList<>(), (int) page.getTotal());
     }
 
