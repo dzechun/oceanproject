@@ -118,10 +118,11 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             workOrderId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId();
             Long workOrderBarcodeId = null;
             // 产品条码
-            if (mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId() == 2) {
+            BaseLabelCategory labelCategory = baseFeignApi.findLabelCategoryDetail(mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId()).getData();
+            if (labelCategory.getLabelCategoryCode().equals("01")) {
                 workOrderBarcodeId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId();
                 // 销售订单条码
-            } else if (mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId() == 4) {
+            } else if (labelCategory.getLabelCategoryCode().equals("02")) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("partBarcode", requestPalletWorkScanDto.getBarcode());
                 List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
