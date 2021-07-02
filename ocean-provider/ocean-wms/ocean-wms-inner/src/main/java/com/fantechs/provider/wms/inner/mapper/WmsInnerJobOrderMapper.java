@@ -33,5 +33,5 @@ public interface WmsInnerJobOrderMapper extends MyMapper<WmsInnerJobOrder> {
      */
     List<WmsInnerJobOrderDto> findShiftList(Map<String, Object> map);
 
-    Long findStorageId(@Param("warehouseId")Long warehouseId,Byte storageType);
+    Long findStorageId(Map<String,Object> map);
 }
