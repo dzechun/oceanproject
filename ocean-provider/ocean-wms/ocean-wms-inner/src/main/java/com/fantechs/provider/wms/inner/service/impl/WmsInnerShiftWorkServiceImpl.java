@@ -56,6 +56,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
 
     @Resource
+    WmsInnerHtJobOrderDetBarcodeService wmsInnerHtJobOrderDetBarcodeService;
+
+    @Resource
     WmsInnerInventoryDetService wmsInnerInventoryDetService;
 
     @Resource
@@ -208,6 +211,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
 
         List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
+        List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
         for (String barcode : dto.getBarcodes()) {
             // 查询条码
             MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(barcode).getData();
@@ -225,10 +229,16 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDetBarcode.setCreateUserId(sysUser.getUserId());
             wmsInnerJobOrderDetBarcode.setIsDelete((byte) 1);
             jobOrderDetBarcodeList.add(wmsInnerJobOrderDetBarcode);
+            WmsInnerHtJobOrderDetBarcode innerHtJobOrderDetBarcode = new WmsInnerHtJobOrderDetBarcode();
+            BeanUtil.copyProperties(wmsInnerJobOrderDetBarcode, innerHtJobOrderDetBarcode);
+            htJobOrderDetBarcodes.add(innerHtJobOrderDetBarcode);
         }
 
         if (jobOrderDetBarcodeList.size() > 0) {
             wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
+        }
+        if (htJobOrderDetBarcodes.size() > 0) {
+            wmsInnerHtJobOrderDetBarcodeService.batchSave(htJobOrderDetBarcodes);
         }
 
         return dto.getJobOrderId().toString();
