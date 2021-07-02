@@ -47,7 +47,7 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
         Example example = new Example(BaseWorkShift.class);
         Example.Criteria criteria1 = example.createCriteria();
         //判断编码是否重复
-        criteria1.andEqualTo("orgId", user.getOrganizationId());
+        criteria1.andEqualTo("organizationId", user.getOrganizationId());
         criteria1.andEqualTo("workShiftCode",baseWorkShift.getWorkShiftCode());
         BaseWorkShift baseWorkShift1 = baseWorkShiftMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseWorkShift1)){
@@ -81,7 +81,7 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
         Example example = new Example(BaseWorkShift.class);
         Example.Criteria criteria1 = example.createCriteria();
         //判断编码是否重复
-        criteria1.andEqualTo("orgId", user.getOrganizationId());
+        criteria1.andEqualTo("organizationId", user.getOrganizationId());
         criteria1.andEqualTo("workShiftCode",baseWorkShift.getWorkShiftCode())
                 .andNotEqualTo("workShiftId",baseWorkShift.getWorkShiftId());
         BaseWorkShift baseWorkShift1 = baseWorkShiftMapper.selectOneByExample(example);

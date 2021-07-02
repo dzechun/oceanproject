@@ -62,7 +62,7 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
 
         Example example = new Example(BaseProductModel.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("productModelCode", baseProductModel.getProductModelCode());
         List<BaseProductModel> baseProductModels = baseProductModelMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseProductModels)) {
@@ -91,7 +91,7 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
         }
         Example example = new Example(BaseProductModel.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("productModelCode", baseProductModel.getProductModelCode());
         BaseProductModel productModel = baseProductModelMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(productModel) && !productModel.getProductModelId().equals(baseProductModel.getProductModelId())) {
@@ -190,7 +190,7 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
             //判断编码是否重复
             Example example = new Example(BaseProductModel.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("productModelCode", productModelCode);
             if (StringUtils.isNotEmpty(baseProductModelMapper.selectOneByExample(example))) {
                 fail.add(i + 4);

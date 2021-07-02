@@ -36,7 +36,7 @@ public class BaseAddressServiceImpl extends BaseService<BaseAddress> implements 
         Example example = new Example(BaseAddress.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("addressDetail", baseAddress.getAddressDetail());
-        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         List<BaseAddress> baseAddresses = baseAddressMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseAddresses)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -59,7 +59,7 @@ public class BaseAddressServiceImpl extends BaseService<BaseAddress> implements 
 
         Example example = new Example(BaseAddress.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("addressDetail", baseAddress.getAddressDetail())
         .andNotEqualTo("addressId", baseAddress.getAddressId());
         List<BaseAddress> baseAddresses = baseAddressMapper.selectByExample(example);

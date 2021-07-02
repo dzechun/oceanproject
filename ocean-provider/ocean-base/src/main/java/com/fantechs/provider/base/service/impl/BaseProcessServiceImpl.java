@@ -54,7 +54,7 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
 
         Example example = new Example(BaseProcess.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("processCode", baseProcess.getProcessCode())
                 .orEqualTo("processName", baseProcess.getProcessName());
         List<BaseProcess> baseProcesses = baseProcessMapper.selectByExample(example);
@@ -134,7 +134,7 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
 
         Example example = new Example(BaseProcess.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("processCode", baseProcess.getProcessCode())
                 .orEqualTo("processName", baseProcess.getProcessName());
 
@@ -210,7 +210,7 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
             //判断编码是否重复
             Example example = new Example(BaseProcess.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("processCode", processCode)
                     .orEqualTo("processName",processName);
             List<BaseProcess> processes = baseProcessMapper.selectByExample(example);
@@ -221,7 +221,7 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
             //判断工序类别是否存在
             Example example1 = new Example(BaseProcessCategory.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria1.andEqualTo("processCategoryCode", processCategoryCode);
             BaseProcessCategory baseProcessCategory = baseProcessCategoryMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseProcessCategory)) {
@@ -233,7 +233,7 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
             if (StringUtils.isNotEmpty(sectionCode)) {
                 Example example2 = new Example(BaseWorkshopSection.class);
                 Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria2.andEqualTo("sectionCode", sectionCode);
                 BaseWorkshopSection baseWorkshopSection = baseWorkshopSectionMapper.selectOneByExample(example2);
                 if (StringUtils.isEmpty(baseWorkshopSection)) {

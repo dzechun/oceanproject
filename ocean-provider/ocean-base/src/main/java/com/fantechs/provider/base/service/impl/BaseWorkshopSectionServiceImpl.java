@@ -59,7 +59,7 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
         }
         Example example = new Example(BaseWorkshopSection.class);
         example.createCriteria().andEqualTo("sectionCode", baseWorkshopSection.getSectionCode())
-                                .andEqualTo("orgId", currentUser.getOrganizationId());
+                                .andEqualTo("organizationId", currentUser.getOrganizationId());
         List<BaseWorkshopSection> list = workshopSectionMapper.selectByExample(example);
         if(list !=null && list.size()>0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -88,7 +88,7 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
         }
         Example example = new Example(BaseWorkshopSection.class);
         example.createCriteria().andEqualTo("sectionCode", baseWorkshopSection.getSectionCode())
-                                .andEqualTo("orgId", currentUser.getOrganizationId());
+                                .andEqualTo("organizationId", currentUser.getOrganizationId());
         BaseWorkshopSection workshopSection = workshopSectionMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(workshopSection)&&!workshopSection.getSectionId().equals(baseWorkshopSection.getSectionId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -167,8 +167,8 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
             //判断编码是否重复
             Example example = new Example(BaseWorkshopSection.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("sectionCode",sectionCode);
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             if (StringUtils.isNotEmpty(workshopSectionMapper.selectOneByExample(example))){
                 fail.add(i+4);
                 continue;
@@ -223,11 +223,10 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
         Example example = new Example(BaseWorkshopSection.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("sectionCode", baseWorkshopSection.getSectionCode());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         List<BaseWorkshopSection> baseWorkshopSections = workshopSectionMapper.selectByExample(example);
 
         baseWorkshopSection.setModifiedTime(new Date());

@@ -43,7 +43,7 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
         Example example = new Example(BaseShipmentEnterprise.class);
         Example.Criteria criteria1 = example.createCriteria();
         //判断编码是否重复
-        criteria1.andEqualTo("orgId", user.getOrganizationId());
+        criteria1.andEqualTo("organizationId", user.getOrganizationId());
         criteria1.andEqualTo("shipmentEnterpriseCode",baseShipmentEnterprise.getShipmentEnterpriseCode());
         BaseShipmentEnterprise baseShipmentEnterprise1 = baseShipmentEnterpriseMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseShipmentEnterprise1)){
@@ -53,7 +53,7 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
         Example example1 = new Example(BaseShipmentEnterprise.class);
         Example.Criteria criteria2 = example1.createCriteria();
         //判断名称是否重复
-        criteria2.andEqualTo("orgId", user.getOrganizationId());
+        criteria2.andEqualTo("organizationId", user.getOrganizationId());
         criteria2.andEqualTo("shipmentEnterpriseName",baseShipmentEnterprise.getShipmentEnterpriseCode());
         BaseShipmentEnterprise baseShipmentEnterprise2 = baseShipmentEnterpriseMapper.selectOneByExample(example1);
         if (StringUtils.isNotEmpty(baseShipmentEnterprise2)){
@@ -85,7 +85,7 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
         Example example = new Example(BaseShipmentEnterprise.class);
         Example.Criteria criteria1 = example.createCriteria();
         //判断编码是否重复
-        criteria1.andEqualTo("orgId", user.getOrganizationId());
+        criteria1.andEqualTo("organizationId", user.getOrganizationId());
         criteria1.andEqualTo("shipmentEnterpriseCode",baseShipmentEnterprise.getShipmentEnterpriseCode())
                 .andNotEqualTo("shipmentEnterpriseId",baseShipmentEnterprise.getShipmentEnterpriseId());
         BaseShipmentEnterprise baseShipmentEnterprise1 = baseShipmentEnterpriseMapper.selectOneByExample(example);
@@ -96,7 +96,7 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
         Example example1 = new Example(BaseShipmentEnterprise.class);
         Example.Criteria criteria2 = example1.createCriteria();
         //判断名称是否重复
-        criteria2.andEqualTo("orgId", user.getOrganizationId());
+        criteria2.andEqualTo("organizationId", user.getOrganizationId());
         criteria2.andEqualTo("shipmentEnterpriseName",baseShipmentEnterprise.getShipmentEnterpriseName())
                 .andNotEqualTo("shipmentEnterpriseId",baseShipmentEnterprise.getShipmentEnterpriseId());
         BaseShipmentEnterprise baseShipmentEnterprise2 = baseShipmentEnterpriseMapper.selectOneByExample(example1);
