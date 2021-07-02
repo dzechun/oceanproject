@@ -38,10 +38,16 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     WmsInnerJobOrderService wmsInnerJobOrderService;
 
     @Resource
+    WmsInnerHtJobOrderService wmsInnerHtJobOrderService;
+
+    @Resource
     WmsInnerJobOrderMapper wmsInnerJobOrderMapper;
 
     @Resource
     WmsInnerJobOrderDetService wmsInnerJobOrderDetService;
+
+    @Resource
+    WmsInnerHtJobOrderDetService wmsInnerHtJobOrderDetService;
 
     @Resource
     WmsInnerJobOrderDetMapper wmsInnerJobOrderDetMapper;
@@ -151,6 +157,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 innerJobOrder.setIsDelete((byte) 1);
                 wmsInnerJobOrderMapper.insertUseGeneratedKeys(innerJobOrder);
                 dto.setJobOrderId(innerJobOrder.getJobOrderId());
+                WmsInnerHtJobOrder wmsInnerHtJobOrder = new WmsInnerHtJobOrder();
+                BeanUtil.copyProperties(innerJobOrder, wmsInnerHtJobOrder);
+                wmsInnerHtJobOrderService.save(wmsInnerHtJobOrder);
             }
 
             // 创建移位明细
@@ -179,6 +188,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setIsDelete((byte) 1);
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+            WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
+            BeanUtil.copyProperties(wmsInnerJobOrderDet, innerHtJobOrderDet);
+            wmsInnerHtJobOrderDetService.save(innerHtJobOrderDet);
 
             // 新增待出库存信息
             WmsInnerInventory newInnerInventory = new WmsInnerInventory();
