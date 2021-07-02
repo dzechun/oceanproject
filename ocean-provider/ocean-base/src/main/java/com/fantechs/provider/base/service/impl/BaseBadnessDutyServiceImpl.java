@@ -113,9 +113,14 @@ public class BaseBadnessDutyServiceImpl extends BaseService<BaseBadnessDuty> imp
     }
 
     private void codeIfRepeat(BaseBadnessDuty entity){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         Example example = new Example(BaseBadnessDuty.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("badnessDutyCode",entity.getBadnessDutyCode());
         if (StringUtils.isNotEmpty(entity.getBadnessDutyId())){
             criteria.andNotEqualTo("badnessDutyId",entity.getBadnessDutyId());

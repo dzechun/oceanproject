@@ -113,9 +113,14 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
     }
 
     private void codeIfRepeat(BaseBadnessPhenotype entity){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         Example example = new Example(BaseBadnessPhenotype.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("badnessPhenotypeCode",entity.getBadnessPhenotypeCode());
         if (StringUtils.isNotEmpty(entity.getBadnessPhenotypeId())){
             criteria.andNotEqualTo("badnessPhenotypeId",entity.getBadnessPhenotypeId());

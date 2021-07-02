@@ -63,6 +63,7 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
         }
         Example example = new Example(BaseWorkShop.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", user.getOrganizationId());
         criteria.andEqualTo("workShopCode", baseWorkShop.getWorkShopCode());
         BaseWorkShop odlBaseWorkShop = baseWorkShopMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(odlBaseWorkShop)){
@@ -133,6 +134,7 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
         }
         Example example = new Example(BaseWorkShop.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", user.getOrganizationId());
         criteria.andEqualTo("workShopCode", baseWorkShop.getWorkShopCode());
 
         BaseWorkShop odlsmtWorkShop = baseWorkShopMapper.selectOneByExample(example);
@@ -180,6 +182,7 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
             //判断编码是否重复
             Example example = new Example(BaseWorkShop.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("workShopCode",workShopCode);
             if (StringUtils.isNotEmpty(baseWorkShopMapper.selectOneByExample(example))){
                 fail.add(i+4);
@@ -189,6 +192,7 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
             //判断工厂是否存在
             Example example1 = new Example(BaseFactory.class);
             Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria1.andEqualTo("factoryCode",factoryCode);
             BaseFactory baseFactory = baseFactoryMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseFactory)){

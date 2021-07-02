@@ -56,6 +56,7 @@ public class BaseInspectionWayServiceImpl extends BaseService<BaseInspectionWay>
 
         Example example = new Example(BaseInspectionWay.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("inspectionWayCode", baseInspectionWay.getInspectionWayCode());
         BaseInspectionWay baseInspectionWay1 = baseInspectionWayMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseInspectionWay1)){
@@ -87,6 +88,7 @@ public class BaseInspectionWayServiceImpl extends BaseService<BaseInspectionWay>
 
         Example example = new Example(BaseInspectionWay.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("inspectionWayCode", baseInspectionWay.getInspectionWayCode())
                 .andNotEqualTo("inspectionWayId",baseInspectionWay.getInspectionWayId());
         BaseInspectionWay baseInspectionWay1 = baseInspectionWayMapper.selectOneByExample(example);

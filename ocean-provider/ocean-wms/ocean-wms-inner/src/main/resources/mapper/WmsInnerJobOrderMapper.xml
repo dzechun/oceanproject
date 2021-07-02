@@ -144,8 +144,52 @@
         order by wipo.create_time desc
     </select>
 
-    <!--  移位单查询  -->
     <select id="findShiftList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
+        SELECT<include refid="BaseColumnList"/>
+        ,bmo.material_owner_name,boy.order_type_name,bw.warehouse_name,wr.user_name as work_name,su.user_name AS
+        create_user_name,
+        sus.user_name AS modified_user_name,
+        bo.organization_name AS organization_Name
+        FROM wms_inner_job_order wipo
+        LEFT JOIN base_material_owner bmo ON wipo.material_owner_id=bmo.material_owner_id
+        LEFT JOIN base_warehouse bw ON wipo.warehouse_id = bw.warehouse_id
+        LEFT join base_order_type boy on wipo.order_type_id = boy.order_type_id
+        LEFT JOIN base_worker bwr ON wipo.worker_id = bwr.worker_id
+        LEFT JOIN ocean_v2.sys_user wr ON bwr.user_id = wr.user_id
+        LEFT JOIN ocean_v2.sys_user su ON wipo.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON wipo.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON wipo.org_id = bo.organization_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                and wipo.org_id = #{orgId}
+            </if>
+            <if test="jobOrderCode!=null and jobOrderCode!=''">
+                and wipo.job_order_code like CONCAT('%',#{jobOrderCode},'%')
+            </if>
+            <if test="materialOwnerName!=null and materialOwnerName!=''">
+                and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
+            </if>
+            <if test="warehouseName!=null and warehouseName!=''">
+                and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+            </if>
+            <if test="relatedOrderCode!=null and relatedOrderCode!='' and codeQueryMark!=1">
+                and wipo.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
+            </if>
+            <if test="workerName!=null and workerName!=''">
+                and bwr.worker_name =#{workerName}
+            </if>
+            <if test="jobOrderType !=null and jobOrderType!= ''">
+                and wipo.job_order_type =#{jobOrderType}
+            </if>
+            <if test="orderStatus !=null and orderStatus != ''">
+                and wipo.order_status = #{jobOrderType}
+            </if>
+        </where>
+        order by wipo.create_time desc
+    </select>
+
+    <!--  移位单查询  -->
+    <select id="pdaFindShiftList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
         SELECT <include refid="BaseColumnList"/>,bw.warehouse_name
         FROM wms_inner_job_order wipo
         LEFT JOIN base_warehouse bw ON wipo.warehouse_id = bw.warehouse_id

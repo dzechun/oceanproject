@@ -55,6 +55,7 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
         Example example = new Example(BaseBadnessCause.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("badnessCauseCode",baseBadnessCause.getBadnessCauseCode());
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         BaseBadnessCause baseBadnessCause1 = baseBadnessCauseMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseBadnessCause1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -86,6 +87,7 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
 
         Example example = new Example(BaseBadnessCause.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("badnessCauseCode",baseBadnessCause.getBadnessCauseCode())
                 .andNotEqualTo("badnessCauseId",baseBadnessCause.getBadnessCauseId());
         BaseBadnessCause baseBadnessCause1 = baseBadnessCauseMapper.selectOneByExample(example);

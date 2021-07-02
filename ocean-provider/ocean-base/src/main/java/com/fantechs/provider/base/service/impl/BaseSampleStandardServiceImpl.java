@@ -53,6 +53,7 @@ public class BaseSampleStandardServiceImpl extends BaseService<BaseSampleStandar
 
         Example example = new Example(BaseSampleStandard.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("sampleStandardName",baseSampleStandard.getSampleStandardName());
         BaseSampleStandard baseSampleStandard1 = baseSampleStandardMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseSampleStandard1)){
@@ -81,6 +82,7 @@ public class BaseSampleStandardServiceImpl extends BaseService<BaseSampleStandar
 
         Example example = new Example(BaseSampleStandard.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("sampleStandardName",baseSampleStandard.getSampleStandardName())
                 .andNotEqualTo("sampleStandardId",baseSampleStandard.getSampleStandardId());
         BaseSampleStandard baseSampleStandard1 = baseSampleStandardMapper.selectOneByExample(example);

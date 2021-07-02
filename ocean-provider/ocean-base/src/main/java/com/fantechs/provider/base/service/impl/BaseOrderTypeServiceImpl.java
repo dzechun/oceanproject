@@ -52,6 +52,7 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
 
         Example example = new Example(BaseOrderType.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("orderTypeCode",baseOrderType.getOrderTypeCode());
         List<BaseOrderType> baseOrderTypes = baseOrderTypeMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseOrderTypes)){
@@ -84,6 +85,7 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
 
         Example example = new Example(BaseOrderType.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("orderTypeCode",baseOrderType.getOrderTypeCode())
                 .andNotEqualTo("orderTypeId",baseOrderType.getOrderTypeId());
         List<BaseOrderType> baseOrderTypes = baseOrderTypeMapper.selectByExample(example);

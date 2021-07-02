@@ -62,6 +62,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
 
         Example example = new Example(BaseProductBom.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("productBomCode", baseProductBom.getProductBomCode());
         criteria.andEqualTo("productBomVersion", baseProductBom.getProductBomVersion());
         BaseProductBom baseProductBom1 = baseProductBomMapper.selectOneByExample(example);
@@ -125,6 +126,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
 
         Example example = new Example(BaseProductBom.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("productBomCode", baseProductBom.getProductBomCode())
                 .andEqualTo("productBomVersion", baseProductBom.getProductBomVersion());
         BaseProductBom baseProductBom1 = baseProductBomMapper.selectOneByExample(example);
@@ -278,6 +280,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             //判断产品BOM编码是否重复
             Example example = new Example(BaseProductBom.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("productBomCode",productBomCode);
             BaseProductBom baseProductBom = baseProductBomMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(baseProductBom)){
@@ -288,6 +291,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             //判断物料信息是否存在
             Example example2 = new Example(BaseMaterial.class);
             Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria2.andEqualTo("materialCode",materialCode);
             BaseMaterial baseMaterial = baseMaterialMapper.selectOneByExample(example2);
             if (StringUtils.isEmpty(baseMaterial)){
@@ -299,6 +303,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             if (StringUtils.isNotEmpty(subMaterialCode)){
                 example2.clear();
                 Example.Criteria criteria4 = example2.createCriteria();
+                criteria4.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria4.andEqualTo("subMaterialCode",materialCode);
                 BaseMaterial subMaterial = baseMaterialMapper.selectOneByExample(example2);
                 if (StringUtils.isEmpty(subMaterial)){
@@ -312,6 +317,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             if (StringUtils.isNotEmpty(proCode)){
                 Example example3 = new Example(BaseProLine.class);
                 Example.Criteria criteria3 = example3.createCriteria();
+                criteria3.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria3.andEqualTo("proCode",proCode);
                 BaseProLine baseProLine = baseProLineMapper.selectOneByExample(example3);
                 if (StringUtils.isEmpty(baseProLine)){
@@ -325,6 +331,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             if (StringUtils.isNotEmpty(processCode)){
                 Example example1 = new Example(BaseProcess.class);
                 Example.Criteria criteria1 = example1.createCriteria();
+                criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria1.andEqualTo("processCode",processCode);
                 BaseProcess baseProcess = baseProcessMapper.selectOneByExample(example1);
                 if (StringUtils.isEmpty(baseProcess)){
@@ -372,6 +379,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             if (StringUtils.isNotEmpty(baseProductBomDto.getParentProductBomCode())){
                 Example example = new Example(BaseProductBom.class);
                 Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("orgId", currentUser.getOrganizationId());
                 criteria.andEqualTo("productBomCode",baseProductBomDto.getParentProductBomCode());
                 BaseProductBom baseProductBom = baseProductBomMapper.selectOneByExample(example);
                 if (StringUtils.isNotEmpty(baseProductBom)){

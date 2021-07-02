@@ -5,6 +5,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
@@ -329,6 +330,11 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findByWorkOrderGroup(Map<String, Object> map) {
         return mesSfcWorkOrderBarcodeMapper.findByWorkOrderGroup(map);
+    }
+
+    @Override
+    public List<PalletAutoAsnDto> findListGroupByWorkOrder(Map<String, Object> map) {
+        return mesSfcWorkOrderBarcodeMapper.findListGroupByWorkOrder(map);
     }
 
     /**

@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.*;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -18,6 +19,8 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +38,19 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     WmsInnerJobOrderService wmsInnerJobOrderService;
 
     @Resource
+    WmsInnerHtJobOrderService wmsInnerHtJobOrderService;
+
+    @Resource
+    WmsInnerJobOrderMapper wmsInnerJobOrderMapper;
+
+    @Resource
     WmsInnerJobOrderDetService wmsInnerJobOrderDetService;
+
+    @Resource
+    WmsInnerHtJobOrderDetService wmsInnerHtJobOrderDetService;
+
+    @Resource
+    WmsInnerJobOrderDetMapper wmsInnerJobOrderDetMapper;
 
     @Resource
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
@@ -57,12 +72,21 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Override
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId", sysUser.getOrganizationId());
+        map.put("jobOrderType", (byte) 2);
+        return wmsInnerJobOrderService.findShiftList(map);
+    }
+
+    @Override
+    public List<WmsInnerJobOrderDto> pdaFindShiftList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId", sysUser.getOrganizationId());
         map.put("jobOrderType", (byte) 2);
         if (StringUtils.isNotEmpty(map.get("jobOrderCode"))) {
             map.put("jobOrderCode", map.get("jobOrderCode"));
         }
-        wmsInnerJobOrderService.findShiftList(map);
-        return null;
+        return wmsInnerJobOrderService.pdaFindShiftList(map);
     }
 
     @Override
@@ -131,8 +155,11 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 innerJobOrder.setCreateTime(new Date());
                 innerJobOrder.setCreateUserId(sysUser.getUserId());
                 innerJobOrder.setIsDelete((byte) 1);
-                wmsInnerJobOrderService.save(innerJobOrder);
+                wmsInnerJobOrderMapper.insertUseGeneratedKeys(innerJobOrder);
                 dto.setJobOrderId(innerJobOrder.getJobOrderId());
+                WmsInnerHtJobOrder wmsInnerHtJobOrder = new WmsInnerHtJobOrder();
+                BeanUtil.copyProperties(innerJobOrder, wmsInnerHtJobOrder);
+                wmsInnerHtJobOrderService.save(wmsInnerHtJobOrder);
             }
 
             // 创建移位明细
@@ -160,7 +187,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setCreateTime(new Date());
             wmsInnerJobOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setIsDelete((byte) 1);
-            wmsInnerJobOrderDetService.save(wmsInnerJobOrderDet);
+            wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+            WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
+            BeanUtil.copyProperties(wmsInnerJobOrderDet, innerHtJobOrderDet);
+            wmsInnerHtJobOrderDetService.save(innerHtJobOrderDet);
 
             // 新增待出库存信息
             WmsInnerInventory newInnerInventory = new WmsInnerInventory();
@@ -280,18 +310,12 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Override
     public int saveJobOrder(SaveShiftJobOrderDto dto) {
-        // 判断是否同个仓库
-        WmsInnerJobOrderDet jobOrderDet = wmsInnerJobOrderDetService.selectByKey(dto.getJobOrderDetId());
-        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-        searchBaseStorage.setStorageId(dto.getStorageId());
-        searchBaseStorage.setWarehouseId(jobOrderDet.getWarehouseId());
-        List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
-        if (baseStorages == null || baseStorages.size() <= 0) {
-            throw new BizErrorException(ErrorCodeEnum.PDA5001013);
+        BaseStorage baseStorage = baseFeignApi.detail(dto.getStorageId()).getData();
+        if (baseStorage == null) {
+            throw new BizErrorException(ErrorCodeEnum.PDA5001007);
         }
-        // 创建上架单
-        // 创建上架明细单
-        // 变更库存单状态
+        WmsInnerJobOrder innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderDetId());
+        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderService.scanStorageBackQty(baseStorage.getStorageCode(), dto.getJobOrderDetId(), innerJobOrder.getActualQty());
         return 1;
     }
 

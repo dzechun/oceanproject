@@ -53,6 +53,7 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
 
         Example example = new Example(BaseSignature.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("signatureCode",baseSignature.getSignatureCode());
         List<BaseSignature> baseSignatures = baseSignatureMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(baseSignatures)){
@@ -119,6 +120,7 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
 
         Example example = new Example(BaseSignature.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("signatureCode",baseSignature.getSignatureCode());
 
         BaseSignature signature = baseSignatureMapper.selectOneByExample(example);
@@ -185,6 +187,7 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
             //判断物料信息是否存在
             Example example1 = new Example(BaseMaterial.class);
             Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria1.andEqualTo("materialCode",materialCode);
             BaseMaterial baseMaterial = baseMaterialMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseMaterial)){
@@ -196,6 +199,7 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
             //判断物料和物料的特征码是否已经存在
             Example example = new Example(BaseSignature.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("materialId",baseMaterial.getMaterialId())
                     .orEqualTo("signatureCode",signatureCode);
             if (StringUtils.isNotEmpty(baseSignatureMapper.selectOneByExample(example))){
@@ -207,6 +211,7 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
             if (StringUtils.isNotEmpty(supplierCode)){
                 Example example2 = new Example(BaseSupplier.class);
                 Example.Criteria criteria2 = example2.createCriteria();
+                criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria2.andEqualTo("supplierCode", supplierCode);
                 BaseSupplier baseSupplier = baseSupplierMapper.selectOneByExample(example2);
                 if (StringUtils.isEmpty(baseSupplier)){

@@ -74,9 +74,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
 
     @Override
     public List<WmsInAsnOrderDto> findList(SearchWmsInAsnOrder searchWmsInAsnOrder) {
-    //    SysUser sysUser = currentUser();
-    //    searchWmsInAsnOrder.setOrgId(sysUser.getOrganizationId());
-        searchWmsInAsnOrder.setOrgId((long)29);
+        SysUser sysUser = currentUser();
+        searchWmsInAsnOrder.setOrgId(sysUser.getOrganizationId());
         return wmsInAsnOrderMapper.findList(searchWmsInAsnOrder);
     }
 
@@ -616,7 +615,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             }
             wmsInAsnOrder.setProductPalletId(palletAutoAsnDto.getProductPalletId());
             Example example = new Example(WmsInAsnOrderDet.class);
-            example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId()).andEqualTo("materialId",palletAutoAsnDto.getMaterialId()).andEqualTo("batchCode",palletAutoAsnDto.getBatchCode());
+            example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId())
+                    .andEqualTo("materialId",palletAutoAsnDto.getMaterialId())
+                    .andEqualTo("batchCode",palletAutoAsnDto.getBatchCode())
+                    .andEqualTo("sourceOrderId", palletAutoAsnDto.getSourceOrderId());
             WmsInAsnOrderDet wms = wmsInAsnOrderDetMapper.selectOneByExample(example);
             if(StringUtils.isNotEmpty(wms)){
                 wms.setPackingQty(wms.getPackingQty().add(palletAutoAsnDto.getPackingQty()));

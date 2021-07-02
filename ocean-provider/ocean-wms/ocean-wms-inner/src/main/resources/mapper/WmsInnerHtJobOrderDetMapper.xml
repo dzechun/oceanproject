@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.inner.WmsInnerHtJobOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtJobOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_job_order_det_id" jdbcType="BIGINT" property="htJobOrderDetId" />
+    <result column="job_order_det_id" jdbcType="BIGINT" property="jobOrderDetId" />
+    <result column="job_order_id" jdbcType="BIGINT" property="jobOrderId" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="in_storage_id" jdbcType="BIGINT" property="inStorageId" />
+    <result column="out_storage_id" jdbcType="BIGINT" property="outStorageId" />
+    <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
+    <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
+    <result column="distribution_qty" jdbcType="DECIMAL" property="distributionQty" />
+    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate" />
+    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+    <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate" />
+    <result column="work_start_time" jdbcType="TIMESTAMP" property="workStartTime" />
+    <result column="work_end_time" jdbcType="TIMESTAMP" property="workEndTime" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="shift_storage_status" jdbcType="TINYINT" property="shiftStorageStatus" />
+  </resultMap>
+</mapper>

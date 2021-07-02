@@ -42,6 +42,7 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
 
         Example example = new Example(BasePackingUnit.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUserInfo.getOrganizationId());
         criteria.andEqualTo("packingUnitName", basePackingUnit.getPackingUnitName());
         List<BasePackingUnit> basePackingUnits = basePackingUnitMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(basePackingUnits)) {
@@ -71,6 +72,7 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
 
         Example example = new Example(BasePackingUnit.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUserInfo.getOrganizationId());
         criteria.andEqualTo("packingUnitName", basePackingUnit.getPackingUnitName())
                 .andNotEqualTo("packingUnitId", basePackingUnit.getPackingUnitId());
         List<BasePackingUnit> basePackingUnits = basePackingUnitMapper.selectByExample(example);
@@ -151,6 +153,7 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
             //判断包装单位是否存在
             Example example = new Example(BasePackingUnit.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("packingUnitName",packingUnitName);
             BasePackingUnit basePackingUnit1 = basePackingUnitMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(basePackingUnit1)){

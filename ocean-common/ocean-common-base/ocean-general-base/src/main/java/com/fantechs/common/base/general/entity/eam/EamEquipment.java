@@ -102,6 +102,7 @@ public class EamEquipment extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="releaseDate",value = "出厂日期")
     @Excel(name = "出厂日期", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "release_date")
     private Date releaseDate;
 
@@ -128,7 +129,7 @@ public class EamEquipment extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="lifecycle",value = "生命周期(天)")
     @Excel(name = "生命周期(天)", height = 20, width = 30,orderNum="12")
-    @NotBlank(message = "生命周期不能为空")
+    @NotNull(message = "生命周期不能为空")
     private BigDecimal lifecycle;
 
     /**

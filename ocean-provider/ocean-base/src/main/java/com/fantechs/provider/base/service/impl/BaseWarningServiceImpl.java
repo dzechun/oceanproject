@@ -72,6 +72,7 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
 
         Example example = new Example(BaseWarning.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", user.getOrganizationId());
         criteria.andEqualTo("warningType",baseWarning.getWarningType())
                 .andEqualTo("personnelLevel",baseWarning.getPersonnelLevel());
         BaseWarning baseWarning1 = baseWarningMapper.selectOneByExample(example);
@@ -116,6 +117,7 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
 
         Example example = new Example(BaseWarning.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", user.getOrganizationId());
         criteria.andEqualTo("warningType",baseWarning.getWarningType())
                 .andEqualTo("personnelLevel",baseWarning.getPersonnelLevel())
                 .andNotEqualTo("warningId",baseWarning.getWarningId());

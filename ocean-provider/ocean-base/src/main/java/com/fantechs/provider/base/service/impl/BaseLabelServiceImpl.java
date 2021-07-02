@@ -86,6 +86,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         if(baseLabel.getIsDefaultLabel() != null && baseLabel.getIsDefaultLabel()==(byte)1){
             Example example = new Example(BaseLabel.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUserInfo.getOrganizationId());
             criteria.andEqualTo("labelCategoryId",baseLabel.getLabelCategoryId());
             List<BaseLabel> baseLabels = baseLabelMapper.selectByExample(example);
             if(baseLabels.size()>0){
@@ -94,6 +95,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         }
         Example example = new Example(BaseLabel.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUserInfo.getOrganizationId());
         criteria.andEqualTo("labelCode",baseLabel.getLabelCode());
         criteria.andNotEqualTo("labelId",baseLabel.getLabelId());
         BaseLabel baseLabel1 = baseLabelMapper.selectOneByExample(example);
@@ -138,6 +140,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         }
         Example example = new Example(BaseLabel.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUserInfo.getOrganizationId());
         criteria.andEqualTo("labelCode",baseLabel.getLabelCode());
         criteria.andNotEqualTo("labelId",baseLabel.getLabelId());
         BaseLabel baseLabel1 = baseLabelMapper.selectOneByExample(example);

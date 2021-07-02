@@ -112,7 +112,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         }
         sysUser.setModifiedUserId(currentUser.getUserId());
         sysUser.setModifiedTime(new Date());
-
+        sysUser.setDeptId(StringUtils.isEmpty(sysUser.getDeptId())?0:sysUser.getDeptId());
 
         Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();

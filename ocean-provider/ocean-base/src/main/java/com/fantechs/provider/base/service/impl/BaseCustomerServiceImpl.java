@@ -50,6 +50,7 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
 
         Example example = new Example(BaseCustomer.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("customerCode", baseCustomer.getCustomerCode());
         List<BaseCustomer> baseCustomers = baseCustomerMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(baseCustomers)){
@@ -97,6 +98,7 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
 
         Example example = new Example(BaseCustomer.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("customerCode", baseCustomer.getCustomerCode());
 
         BaseCustomer customer = baseCustomerMapper.selectOneByExample(example);

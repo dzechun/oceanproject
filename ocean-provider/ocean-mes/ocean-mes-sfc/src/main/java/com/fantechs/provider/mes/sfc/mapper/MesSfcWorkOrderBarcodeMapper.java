@@ -3,6 +3,7 @@ package com.fantechs.provider.mes.sfc.mapper;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
@@ -43,4 +44,6 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
     int batchUpdate(List<MesSfcWorkOrderBarcode> workOrderBarcodes);
 
     List<MesSfcWorkOrderBarcodeDto> findByWorkOrderGroup(Map<String, Object> map);
+
+    List<PalletAutoAsnDto> findListGroupByWorkOrder(Map<String, Object> map);
 }

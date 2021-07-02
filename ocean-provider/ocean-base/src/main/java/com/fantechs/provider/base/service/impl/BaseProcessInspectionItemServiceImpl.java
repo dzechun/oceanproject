@@ -58,6 +58,7 @@ public class BaseProcessInspectionItemServiceImpl extends BaseService<BaseProces
         //判断编码是否重复
         Example example = new Example(BaseProcessInspectionItem.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("processInspectionItemCode", baseProcessInspectionItem.getProcessInspectionItemCode());
         BaseProcessInspectionItem baseProcessInspectionItem1 = baseProcessInspectionItemMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseProcessInspectionItem1)){
@@ -107,6 +108,7 @@ public class BaseProcessInspectionItemServiceImpl extends BaseService<BaseProces
         //判断编码是否重复
         Example example = new Example(BaseProcessInspectionItem.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("processInspectionItemCode", baseProcessInspectionItem.getProcessInspectionItemCode())
                 .andNotEqualTo("processInspectionItemId", baseProcessInspectionItem.getProcessInspectionItemId());
         BaseProcessInspectionItem baseProcessInspectionItem1 = baseProcessInspectionItemMapper.selectOneByExample(example);
