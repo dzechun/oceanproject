@@ -59,7 +59,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
 
         Example example = new Example(BasePackageSpecification.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", user.getOrganizationId());
+        criteria.andEqualTo("organizationId", user.getOrganizationId());
         criteria.andEqualTo("packageSpecificationCode", basePackageSpecification.getPackageSpecificationCode());
         List<BasePackageSpecification> basePackageSpecifications = basePackageSpecificationMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(basePackageSpecifications)) {
@@ -82,7 +82,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
                 if (StringUtils.isNotEmpty(baseMaterialPackage.getProcessId())){
                     Example example1 = new Example(BaseMaterialPackage.class);
                     Example.Criteria criteria1 = example1.createCriteria();
-                    criteria1.andEqualTo("orgId", user.getOrganizationId());
+                    criteria1.andEqualTo("organizationId", user.getOrganizationId());
                     criteria1.andEqualTo("materialId", baseMaterialPackage.getMaterialId())
                             .andEqualTo("processId", baseMaterialPackage.getProcessId());
                     List<BaseMaterialPackage> baseMaterialPackages1 = baseMaterialPackageMapper.selectByExample(example1);
@@ -112,7 +112,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
 
         Example example = new Example(BasePackageSpecification.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", user.getOrganizationId());
+        criteria.andEqualTo("organizationId", user.getOrganizationId());
         criteria.andEqualTo("packageSpecificationCode", basePackageSpecification.getPackageSpecificationCode())
         .andNotEqualTo("packageSpecificationId", basePackageSpecification.getPackageSpecificationId());
         List<BasePackageSpecification> basePackageSpecifications = basePackageSpecificationMapper.selectByExample(example);
@@ -141,7 +141,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
             if (StringUtils.isNotEmpty(baseMaterialPackage.getProcessId())){
                 Example example2 = new Example(BaseMaterialPackage.class);
                 Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("orgId", user.getOrganizationId());
+                criteria2.andEqualTo("organizationId", user.getOrganizationId());
                 criteria2.andEqualTo("materialId", baseMaterialPackage.getMaterialId())
                         .andEqualTo("processId", baseMaterialPackage.getProcessId())
                         .andNotEqualTo("packageSpecificationId", basePackageSpecification.getPackageSpecificationId());
@@ -263,7 +263,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
             //判断编码是否重复
             Example example = new Example(BasePackageSpecification.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("packageSpecificationCode",packageSpecificationCode);
             if (StringUtils.isNotEmpty(basePackageSpecificationMapper.selectOneByExample(example))){
                 fail.add(i+4);
@@ -273,7 +273,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
             //物料编码不为空则判断物料信息是否存在
             Example example1 = new Example(BaseMaterial.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria1.andEqualTo("materialCode",materialCode);
             BaseMaterial baseMaterial = baseMaterialMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseMaterial)){
@@ -285,7 +285,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
             //如果工序编码不为空，则判断工序信息是否存在
             Example example2 = new Example(BaseProcess.class);
             Example.Criteria criteria2 = example2.createCriteria();
-            criteria2.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria2.andEqualTo("processCode",processCode);
             BaseProcess baseProcess = baseProcessMapper.selectOneByExample(example2);
             if (StringUtils.isEmpty(baseProcess)){
@@ -311,7 +311,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
             if (StringUtils.isNotEmpty(packingUnitCode)){
                 Example example3 = new Example(BasePackingUnit.class);
                 Example.Criteria criteria3 = example1.createCriteria();
-                criteria3.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria3.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria3.andEqualTo("packingUnitCode",packingUnitCode);
                 BasePackingUnit basePackingUnit = basePackingUnitMapper.selectOneByExample(example3);
                 if (StringUtils.isEmpty(basePackingUnit)){

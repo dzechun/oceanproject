@@ -104,6 +104,6 @@ order BY oto.create_time desc
         where bm.material_id = #{materialId}
     </select>
     <select id="findStorage" resultType="java.lang.Long">
-        select storage_id From base_storage where warehouse_id = #{warehouseId} and storage_type=#{storageType} limit 1
+        select storage_id From base_storage where warehouse_id = #{warehouseId} and storage_type=#{storageType} and org_id=#{orgId} limit 1
     </select>
 </mapper>

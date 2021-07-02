@@ -957,6 +957,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int autoOutOrder(Long outDeliveryOrderId) {
+        SysUser sysUser = currentUser();
         //查询调拨出库对应的待发运拣货作业
         Example example = new Example(WmsInnerJobOrder.class);
         example.createCriteria().andEqualTo("sourceOrderId",outDeliveryOrderId).andEqualTo("jobOrderType",4).andEqualTo("orderStatus",5);
@@ -995,7 +996,11 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         WmsOutDeliveryOrder res = outFeignApi.details(outDeliveryOrderId).getData();
 
         //获取收货库位
-        Long storageId = wmsInnerJobOrderMapper.findStorageId(res.getWarehouseId(),(byte)2);
+        Map<String,Object> map = new HashMap<>();
+        map.put("orgId",sysUser.getOrganizationId());
+        map.put("warehouseId",res.getWarehouseId());
+        map.put("storageType",2);
+        Long storageId = wmsInnerJobOrderMapper.findStorageId(map);
         if(StringUtils.isEmpty(storageId)){
             throw new BizErrorException("未获取到该仓库下的收货库位");
         }

@@ -30,10 +30,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -90,7 +87,11 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     throw new BizErrorException("下发数量不能大于工单数量");
                 }
                 //获取收货库位
-                Long storageId = omTransferOrderMapper.findStorage(omSalesReturnOrderDet.getWarehouseId(),(byte)2);
+                Map<String,Object> map = new HashMap<>();
+                map.put("orgId",sysUser.getOrganizationId());
+                map.put("warehouseId",omSalesReturnOrderDet.getWarehouseId());
+                map.put("storageType",2);
+                Long storageId = omTransferOrderMapper.findStorage(map);
                 if(StringUtils.isEmpty(storageId)){
                     throw new BizErrorException("未获取到该仓库的发货库位");
                 }

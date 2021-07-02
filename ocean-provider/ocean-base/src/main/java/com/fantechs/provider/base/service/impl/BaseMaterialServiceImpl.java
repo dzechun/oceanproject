@@ -126,7 +126,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
 
         Example example = new Example(BaseMaterial.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("materialCode", baseMaterial.getMaterialCode());
         if (StringUtils.isNotEmpty(baseMaterial.getMaterialVersion())) {
             criteria.andEqualTo("materialVersion", baseMaterial.getMaterialVersion());
@@ -167,7 +167,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         }
         Example example = new Example(BaseMaterial.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("materialCode", baseMaterial.getMaterialCode());
         if (StringUtils.isNotEmpty(baseMaterial.getMaterialVersion())) {
             criteria.andEqualTo("materialVersion", baseMaterial.getMaterialVersion());
@@ -193,7 +193,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             //判断该物料的页签是否存在
             Example example1 = new Example(BaseTab.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria1.andEqualTo("materialId",baseMaterial.getMaterialId());
             BaseTab baseTab1 = baseTabMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseTab1)){
@@ -234,14 +234,14 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             //被物料特征码引用
             Example example = new Example(BaseSignature.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("materialId", baseMaterial.getMaterialId());
             List<BaseSignature> baseSignatures = baseSignatureMapper.selectByExample(example);
 
             //被产品工艺路线引用
             Example example1 = new Example(BaseProductProcessRoute.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria1.andEqualTo("materialId", materialId);
             List<BaseProductProcessRoute> baseProductProcessRoutes = baseProductProcessRouteMapper.selectByExample(example1);
 
@@ -262,14 +262,14 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             //被物料编码关联客户料号引用
             Example example4 = new Example(BaseMaterialSupplier.class);
             Example.Criteria criteria4 = example4.createCriteria();
-            criteria4.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria4.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria4.andEqualTo("materialId", materialId);
             List<BaseMaterialSupplier> baseMaterialSuppliers = baseMaterialSupplierMapper.selectByExample(example4);
 
             //被单价信息引用
             Example example5 = new Example(BaseUnitPrice.class);
             Example.Criteria criteria5 = example5.createCriteria();
-            criteria5.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria5.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria5.andEqualTo("materialId",materialId);
             List<BaseUnitPrice> baseUnitPrices = baseUnitPriceMapper.selectByExample(example5);
 
@@ -283,7 +283,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             //删除物料页签对应的履历
             Example example6 = new Example(BaseTab.class);
             Example.Criteria criteria6 = example6.createCriteria();
-            criteria6.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria6.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria6.andEqualTo("materialId",materialId);
             baseTabMapper.deleteByExample(example6);
 
@@ -424,7 +424,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             //判断编码是否重复
             Example example = new Example(BaseMaterial.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("materialCode",materialCode);
             if (StringUtils.isNotEmpty(baseMaterialMapper.selectOneByExample(example))){
                 fail.add(i+4);
@@ -448,7 +448,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             if (StringUtils.isNotEmpty(supplierCode)){
                 Example example1 = new Example(BaseSupplier.class);
                 Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria1.andEqualTo("supplierCode",supplierCode);
                 BaseSupplier baseSupplier = baseSupplierMapper.selectOneByExample(example1);
                 if (StringUtils.isEmpty(baseSupplier)){
@@ -501,7 +501,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             if (StringUtils.isNotEmpty(packageSpecificationCode)){
                 Example example2 = new Example(BasePackageSpecification.class);
                 Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria2.andEqualTo("packageSpecificationCode",packageSpecificationCode);
                 BasePackageSpecification basePackageSpecification = basePackageSpecificationMapper.selectOneByExample(example2);
                 if (StringUtils.isEmpty(basePackageSpecification)){
@@ -515,7 +515,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             if (StringUtils.isNotEmpty(productModelCode)){
                 Example example3 = new Example(BaseProductModel.class);
                 Example.Criteria criteria3 = example3.createCriteria();
-                criteria3.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria3.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria3.andEqualTo("productModelCode",productModelCode);
                 BaseProductModel baseProductModel = baseProductModelMapper.selectOneByExample(example3);
                 if (StringUtils.isEmpty(baseProductModel)){

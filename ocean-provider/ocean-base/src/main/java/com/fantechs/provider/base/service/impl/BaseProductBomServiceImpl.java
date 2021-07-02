@@ -291,7 +291,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             //判断物料信息是否存在
             Example example2 = new Example(BaseMaterial.class);
             Example.Criteria criteria2 = example2.createCriteria();
-            criteria2.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria2.andEqualTo("materialCode",materialCode);
             BaseMaterial baseMaterial = baseMaterialMapper.selectOneByExample(example2);
             if (StringUtils.isEmpty(baseMaterial)){
@@ -303,7 +303,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             if (StringUtils.isNotEmpty(subMaterialCode)){
                 example2.clear();
                 Example.Criteria criteria4 = example2.createCriteria();
-                criteria4.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria4.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria4.andEqualTo("subMaterialCode",materialCode);
                 BaseMaterial subMaterial = baseMaterialMapper.selectOneByExample(example2);
                 if (StringUtils.isEmpty(subMaterial)){
@@ -317,7 +317,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             if (StringUtils.isNotEmpty(proCode)){
                 Example example3 = new Example(BaseProLine.class);
                 Example.Criteria criteria3 = example3.createCriteria();
-                criteria3.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria3.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria3.andEqualTo("proCode",proCode);
                 BaseProLine baseProLine = baseProLineMapper.selectOneByExample(example3);
                 if (StringUtils.isEmpty(baseProLine)){
@@ -331,7 +331,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
             if (StringUtils.isNotEmpty(processCode)){
                 Example example1 = new Example(BaseProcess.class);
                 Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria1.andEqualTo("processCode",processCode);
                 BaseProcess baseProcess = baseProcessMapper.selectOneByExample(example1);
                 if (StringUtils.isEmpty(baseProcess)){

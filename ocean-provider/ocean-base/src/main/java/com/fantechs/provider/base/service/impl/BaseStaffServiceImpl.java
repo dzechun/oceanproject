@@ -67,7 +67,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
         //判断编码是否重复
         Example example = new Example(BaseStaff.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", user.getOrganizationId());
+        criteria.andEqualTo("organizationId", user.getOrganizationId());
         criteria.andEqualTo("staffCode", baseStaff.getStaffCode());
         BaseStaff baseStaff1 = baseStaffMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseStaff1)) {
@@ -111,7 +111,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
         //判断编码是否重复
         Example example = new Example(BaseStaff.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", user.getOrganizationId());
+        criteria.andEqualTo("organizationId", user.getOrganizationId());
         criteria.andEqualTo("staffCode", baseStaff.getStaffCode())
                 .andNotEqualTo("staffId", baseStaff.getStaffId());
         BaseStaff baseStaff1 = baseStaffMapper.selectOneByExample(example);
@@ -204,7 +204,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
             //判断员工编码是否重复
             Example example = new Example(BaseStaff.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("staffCode",staffCode);
             BaseStaff baseStaff = baseStaffMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(baseStaff)){
@@ -227,7 +227,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
                 //判断班组信息是否存在
                 Example example2 = new Example(BaseTeam.class);
                 Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
                 criteria2.andEqualTo("teamCode",teamCode);
                 BaseTeam baseTeam = baseTeamMapper.selectOneByExample(example2);
                 if (StringUtils.isEmpty(baseTeam)){

@@ -15,5 +15,5 @@ public interface OmTransferOrderMapper extends MyMapper<OmTransferOrder> {
 
     OmTransferOrder findMaterial(@Param("materialId")Long materialId);
 
-    Long findStorage(@Param("warehouseId")Long warehouseId,@Param("storageType")Byte storageType);
+    Long findStorage(Map<String,Object> map);
 }
