@@ -193,7 +193,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             //判断该物料的页签是否存在
             Example example1 = new Example(BaseTab.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria1.andEqualTo("materialId",baseMaterial.getMaterialId());
             BaseTab baseTab1 = baseTabMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseTab1)){

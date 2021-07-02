@@ -247,7 +247,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 OmSalesReturnOrderDet omSalesReturnOrderDet = new OmSalesReturnOrderDet();
                 omSalesReturnOrderDet.setSalesReturnOrderId(wms.getSourceOrderId());
                 omSalesReturnOrderDet.setSalesReturnOrderDetId(wms.getOrderDetId());
-                omSalesReturnOrderDet.setReceivingQty(wmsInAsnOrderDet.getPutawayQty());
+                omSalesReturnOrderDet.setReceivingQty(wmsInAsnOrderDet.getActualQty());
                 ResponseEntity responseEntity = omFeignApi.writeQty(omSalesReturnOrderDet);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
