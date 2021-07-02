@@ -56,6 +56,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
 
         Example example = new Example(BaseStorage.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("storageCode", baseStorage.getStorageCode());
         List<BaseStorage> baseStorages = baseStorageMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseStorages)) {
@@ -133,6 +134,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
 
         Example example = new Example(BaseStorage.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("storageCode", storage.getStorageCode());
 
         BaseStorage baseStorage = baseStorageMapper.selectOneByExample(example);
@@ -201,6 +203,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             //判断仓库区域是否存在
             Example example1 = new Example(BaseWarehouseArea.class);
             Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria1.andEqualTo("warehouseAreaCode",warehouseAreaCode);
             BaseWarehouseArea baseWarehouseArea = baseWarehouseAreaMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseWarehouseArea)){
@@ -213,6 +216,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             //判断工作区是否存在
             Example example2 = new Example(BaseWorkingArea.class);
             Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria2.andEqualTo("workingAreaCode",workingAreaCode);
             BaseWorkingArea baseWorkingArea = baseWorkingAreaMapper.selectOneByExample(example2);
             if (StringUtils.isEmpty(baseWorkingArea)){

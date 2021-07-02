@@ -73,6 +73,7 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
 
         Example example = new Example(BaseMaterialOwner.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("materialOwnerCode", baseMaterialOwner.getMaterialOwnerCode());
         BaseMaterialOwner baseMaterialOwner1 = baseMaterialOwnerMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseMaterialOwner1)){
@@ -119,6 +120,7 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
 
         Example example = new Example(BaseMaterialOwner.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("materialOwnerCode", baseMaterialOwner.getMaterialOwnerCode())
                 .andNotEqualTo("materialOwnerId",baseMaterialOwner.getMaterialOwnerId());
         BaseMaterialOwner baseMaterialOwner1 = baseMaterialOwnerMapper.selectOneByExample(example);

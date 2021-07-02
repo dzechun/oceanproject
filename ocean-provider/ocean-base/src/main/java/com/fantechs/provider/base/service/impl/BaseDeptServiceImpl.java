@@ -55,6 +55,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
 
         Example example = new Example(BaseDept.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("deptCode", baseDept.getDeptCode());
         BaseDept baseDept1 = baseDeptMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseDept1)){
@@ -63,6 +64,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
 
         example.clear();
         Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria1.andEqualTo("factoryId", baseDept.getFactoryId())
                 .andEqualTo("deptName", baseDept.getDeptName());
         BaseDept baseDept2 = baseDeptMapper.selectOneByExample(example);
@@ -95,6 +97,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
 
         Example example = new Example(BaseDept.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("deptCode", baseDept.getDeptCode())
                 .andNotEqualTo("deptId", baseDept.getDeptId());
         BaseDept baseDept1 = baseDeptMapper.selectOneByExample(example);
@@ -104,6 +107,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
 
         example.clear();
         Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria1.andEqualTo("factoryId", baseDept.getFactoryId())
                 .andEqualTo("deptName", baseDept.getDeptName())
                 .andNotEqualTo("deptId", baseDept.getDeptId());
@@ -193,6 +197,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
             //判断编码是否重复
             Example example = new Example(BaseDept.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("deptCode",deptCode);
             if (StringUtils.isNotEmpty(baseDeptMapper.selectOneByExample(example))){
                 fail.add(i+4);
@@ -202,6 +207,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
             //判断工厂是否存在
             Example example1 = new Example(BaseFactory.class);
             Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria1.andEqualTo("factoryCode",factoryCode);
             BaseFactory baseFactory = baseFactoryMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseFactory)){
@@ -230,6 +236,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
                 //判断数据库中是否存在
                 example.clear();
                 Example.Criteria criteria2 = example.createCriteria();
+                criteria2.andEqualTo("orgId", currentUser.getOrganizationId());
                 criteria2.andEqualTo("deptCode",parentCode);
                 BaseDept baseDept = baseDeptMapper.selectOneByExample(example);
 
@@ -289,6 +296,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
             if (StringUtils.isNotEmpty(parentCode)){
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("deptCode",parentCode);
+                criteria.andEqualTo("orgId", currentUser.getOrganizationId());
                 BaseDept baseDept1 = baseDeptMapper.selectOneByExample(example);
                 baseDept.setParentId(baseDept1.getDeptId());
                 baseDeptMapper.updateByPrimaryKeySelective(baseDept);

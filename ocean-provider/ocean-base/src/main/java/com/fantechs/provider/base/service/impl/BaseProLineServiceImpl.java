@@ -64,6 +64,7 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
         int i=0;
         Example example = new Example(BaseProLine.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("proCode", baseProLine.getProCode());
         List<BaseProLine> baseProLines = baseProLineMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(baseProLines)){
@@ -94,6 +95,7 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
 
         Example example = new Example(BaseProLine.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("proCode", baseProLine.getProCode());
         BaseProLine proLine = baseProLineMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(proLine)&&!proLine.getProLineId().equals(baseProLine.getProLineId())){

@@ -113,9 +113,15 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
     }
 
     private void codeIfRepeat(BaseBadnessCategory entity){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
         Example example = new Example(BaseBadnessCategory.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("badnessCategoryCode",entity.getBadnessCategoryCode());
         if (StringUtils.isNotEmpty(entity.getBadnessCategoryId())){
             criteria.andNotEqualTo("badnessCategoryId",entity.getBadnessCategoryId());

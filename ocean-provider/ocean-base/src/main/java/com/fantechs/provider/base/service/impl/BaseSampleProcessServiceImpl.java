@@ -91,6 +91,7 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
 
         Example example = new Example(BaseSampleProcess.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("sampleProcessCode", baseSampleProcess.getSampleProcessCode());
         BaseSampleProcess baseSampleProcess1 = baseSampleProcessMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseSampleProcess1)){
@@ -122,6 +123,7 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
 
         Example example = new Example(BaseSampleProcess.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("sampleProcessCode", baseSampleProcess.getSampleProcessCode())
                 .andNotEqualTo("sampleProcessId",baseSampleProcess.getSampleProcessId());
         BaseSampleProcess baseSampleProcess1 = baseSampleProcessMapper.selectOneByExample(example);

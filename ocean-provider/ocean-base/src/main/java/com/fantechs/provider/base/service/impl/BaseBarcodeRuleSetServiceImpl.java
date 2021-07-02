@@ -57,6 +57,7 @@ public class BaseBarcodeRuleSetServiceImpl extends BaseService<BaseBarcodeRuleSe
 
             Example example = new Example(BaseBarcodeRuleSet.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("barcodeRuleSetCode", baseBarcodeRuleSet.getBarcodeRuleSetCode());
             List<BaseBarcodeRuleSet> baseBarcodeRuleSets = baseBarcodeRuleSetMapper.selectByExample(example);
             if(StringUtils.isNotEmpty(baseBarcodeRuleSets)){
@@ -87,6 +88,7 @@ public class BaseBarcodeRuleSetServiceImpl extends BaseService<BaseBarcodeRuleSe
 
             Example example = new Example(BaseBarcodeRuleSet.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("barcodeRuleSetCode", baseBarcodeRuleSet.getBarcodeRuleSetCode());
             BaseBarcodeRuleSet ruleSet = baseBarcodeRuleSetMapper.selectOneByExample(example);
             if(StringUtils.isNotEmpty(ruleSet)&&!ruleSet.getBarcodeRuleSetId().equals(baseBarcodeRuleSet.getBarcodeRuleSetId())){

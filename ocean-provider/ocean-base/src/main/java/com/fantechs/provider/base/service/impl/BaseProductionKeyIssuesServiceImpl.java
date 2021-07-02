@@ -63,6 +63,7 @@ public class BaseProductionKeyIssuesServiceImpl extends BaseService<BaseProducti
         Example.Criteria criteria = example.createCriteria();
         List<BaseProductionKeyIssues> baseProductionKeyIssuesList;
         if(StringUtils.isNotEmpty(baseProductionKeyIssues.getMaterialId())) {
+            criteria.andEqualTo("orgId", user.getOrganizationId());
             criteria.andEqualTo("materialId", baseProductionKeyIssues.getMaterialId());
             baseProductionKeyIssuesList = baseProductionKeyIssuesMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(baseProductionKeyIssuesList)) {
@@ -70,6 +71,7 @@ public class BaseProductionKeyIssuesServiceImpl extends BaseService<BaseProducti
             }
         }else {
             //只能维护一条通用的数据
+            criteria.andEqualTo("orgId", user.getOrganizationId());
             criteria.andEqualTo("keyIssuesType", 2);
             baseProductionKeyIssuesList = baseProductionKeyIssuesMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(baseProductionKeyIssuesList)) {
@@ -122,6 +124,7 @@ public class BaseProductionKeyIssuesServiceImpl extends BaseService<BaseProducti
         Example.Criteria criteria = example.createCriteria();
         List<BaseProductionKeyIssues> baseProductionKeyIssuesList;
         if(StringUtils.isNotEmpty(baseProductionKeyIssues.getMaterialId())) {
+            criteria.andEqualTo("orgId", user.getOrganizationId());
             criteria.andEqualTo("materialId", baseProductionKeyIssues.getMaterialId())
                     .andNotEqualTo("productionKeyIssuesId",baseProductionKeyIssues.getProductionKeyIssuesId());
             baseProductionKeyIssuesList = baseProductionKeyIssuesMapper.selectByExample(example);
@@ -130,6 +133,7 @@ public class BaseProductionKeyIssuesServiceImpl extends BaseService<BaseProducti
             }
         }else {
             //只能维护一条通用的数据
+            criteria.andEqualTo("orgId", user.getOrganizationId());
             criteria.andEqualTo("keyIssuesType", 2)
                     .andNotEqualTo("productionKeyIssuesId",baseProductionKeyIssues.getProductionKeyIssuesId());
             baseProductionKeyIssuesList = baseProductionKeyIssuesMapper.selectByExample(example);

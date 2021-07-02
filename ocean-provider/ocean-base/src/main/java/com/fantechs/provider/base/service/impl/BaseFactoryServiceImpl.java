@@ -65,6 +65,7 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
 
         Example example = new Example(BaseFactory.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("factoryCode", baseFactory.getFactoryCode());
 
         BaseFactory odlsmtFactory = baseFactoryMapper.selectOneByExample(example);
@@ -142,6 +143,7 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
 
         Example example = new Example(BaseFactory.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("factoryCode", baseFactory.getFactoryCode());
 
         BaseFactory odlsmtFactory = baseFactoryMapper.selectOneByExample(example);
@@ -188,6 +190,7 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
             //判断编码是否重复
             Example example = new Example(BaseFactory.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("factoryCode",factoryCode);
             if (StringUtils.isNotEmpty(baseFactoryMapper.selectOneByExample(example))){
                 fail.add(i+4);

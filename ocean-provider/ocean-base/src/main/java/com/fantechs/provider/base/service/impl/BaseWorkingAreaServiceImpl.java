@@ -117,9 +117,15 @@ public class BaseWorkingAreaServiceImpl extends BaseService<BaseWorkingArea> imp
     }
 
     private void codeIfRepeat(BaseWorkingArea entity){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
         Example example = new Example(BaseWorkingArea.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("workingAreaCode",entity.getWorkingAreaCode());
         if (StringUtils.isNotEmpty(entity.getWorkingAreaId())){
             criteria.andNotEqualTo("workingAreaId",entity.getWorkingAreaId());

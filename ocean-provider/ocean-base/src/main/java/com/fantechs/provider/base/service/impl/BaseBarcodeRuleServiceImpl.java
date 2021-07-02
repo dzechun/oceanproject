@@ -54,6 +54,7 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
 
         Example example = new Example(BaseBarcodeRule.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("barcodeRuleCode", baseBarcodeRule.getBarcodeRuleCode());
 
         List<BaseBarcodeRule> baseBarcodeRules = baseBarcodeRuleMapper.selectByExample(example);
@@ -88,6 +89,7 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
 
         Example example = new Example(BaseBarcodeRule.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("barcodeRuleCode", baseBarcodeRule.getBarcodeRuleCode());
 
         BaseBarcodeRule rule = baseBarcodeRuleMapper.selectOneByExample(example);
@@ -171,6 +173,7 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
             //判断条码规则编码是否重复
             Example example = new Example(BaseBarcodeRule.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("barcodeRuleCode", baseBarcodeRule.getBarcodeRuleCode());
             BaseBarcodeRule baseBarcodeRule1 = baseBarcodeRuleMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(baseBarcodeRule1)){

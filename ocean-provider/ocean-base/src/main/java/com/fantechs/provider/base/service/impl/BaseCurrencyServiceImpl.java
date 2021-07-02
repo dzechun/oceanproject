@@ -37,6 +37,7 @@ public class BaseCurrencyServiceImpl extends BaseService<BaseCurrency> implement
         }
         Example example = new Example(BaseCurrency.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("currencyCode", baseCurrency.getCurrencyCode())
                 .orEqualTo("currencyName", baseCurrency.getCurrencyName());
         List<BaseCurrency> smtCurrencies = baseCurrencyMapper.selectByExample(example);
@@ -63,6 +64,7 @@ public class BaseCurrencyServiceImpl extends BaseService<BaseCurrency> implement
         Example example = new Example(BaseCurrency.class);
         Example.Criteria criteria = example.createCriteria();
         Example.Criteria criteria1 = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("currencyCode", baseCurrency.getCurrencyCode())
                 .orEqualTo("currencyName", baseCurrency.getCurrencyName());
         criteria1.andNotEqualTo("currencyId", baseCurrency.getCurrencyId());

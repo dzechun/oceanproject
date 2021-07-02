@@ -58,6 +58,7 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
 
         Example example = new Example(BaseTeam.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("teamCode",baseTeam.getTeamCode());
         BaseTeam baseTeam1 = baseTeamMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseTeam1)){
@@ -86,6 +87,7 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
 
         Example example = new Example(BaseTeam.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("teamCode",baseTeam.getTeamCode())
                 .andNotEqualTo("teamId",baseTeam.getTeamId());
         BaseTeam baseTeam1 = baseTeamMapper.selectOneByExample(example);
@@ -156,6 +158,7 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
             //判断编码是否重复
             Example example = new Example(BaseTeam.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("teamCode",teamCode);
             if (StringUtils.isNotEmpty(baseTeamMapper.selectOneByExample(example))){
                 fail.add(i+4);

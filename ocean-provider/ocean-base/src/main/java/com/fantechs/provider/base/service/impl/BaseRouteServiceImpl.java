@@ -55,6 +55,7 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
 
           Example example = new Example(BaseRoute.class);
           Example.Criteria criteria = example.createCriteria();
+          criteria.andEqualTo("orgId", currentUser.getOrganizationId());
           criteria.andEqualTo("routeName", baseRoute.getRouteName())
                   .orEqualTo("routeCode", baseRoute.getRouteCode());
           List<BaseRoute> baseRoutes = baseRouteMapper.selectByExample(example);
@@ -86,6 +87,7 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
 
           Example example = new Example(BaseRoute.class);
           Example.Criteria criteria = example.createCriteria();
+          criteria.andEqualTo("orgId", currentUser.getOrganizationId());
           criteria.andEqualTo("routeName", baseRoute.getRouteName())
                   .orEqualTo("routeCode", baseRoute.getRouteCode());
 

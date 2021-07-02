@@ -113,7 +113,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         }
         Example example = new Example(BaseSupplier.class);
         example.createCriteria().andEqualTo("supplierCode",record.getSupplierCode())
-                                .andNotEqualTo("supplierId",record.getSupplierId());
+                                .andEqualTo("orgId", currentUser.getOrganizationId());
         List<BaseSupplier> list = baseSupplierMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(list)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -141,7 +141,8 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         Example example = new Example(BaseSupplier.class);
-        example.createCriteria().andEqualTo("supplierCode",entity.getSupplierCode());
+        example.createCriteria().andEqualTo("supplierCode",entity.getSupplierCode())
+                                .andEqualTo("orgId", currentUser.getOrganizationId());
         BaseSupplier baseSupplier = baseSupplierMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(baseSupplier)&&!baseSupplier.getSupplierId().equals(entity.getSupplierId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -237,6 +238,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             //判断编码是否重复
             Example example = new Example(BaseSupplier.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("supplierCode",supplierCode);
             if (StringUtils.isNotEmpty(baseSupplierMapper.selectOneByExample(example))){
                 fail.add(i+4);
