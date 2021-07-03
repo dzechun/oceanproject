@@ -169,6 +169,11 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     }
 
     @Override
+    public int batchUpdate(List<WmsInnerInventory> list) {
+        return wmsInnerInventoryMapper.batchUpdate(list);
+    }
+
+    @Override
     public int save(WmsInnerInventory record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){

@@ -71,4 +71,11 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     List<WmsInnerJobOrderDto> findShiftList(Map<String, Object> map);
 
     List<WmsInnerJobOrderDto> pdaFindShiftList(Map<String, Object> map);
+
+    /**
+     * 移位单批量删除
+     * @param ids
+     * @return
+     */
+    int batchDeleteByShiftWork(String ids);
 }
