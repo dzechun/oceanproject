@@ -134,6 +134,8 @@ public class QuartzManagerServiceImpl implements QuartzManagerService {
         }
         //修改map
         // 按新的trigger重新设置job执行
+        //scheduler.scheduleJob(job, trigger);
+        //scheduler.rescheduleJob(triggerKey, trigger);
         scheduler.rescheduleJob(triggerKey, trigger);
         log.info("任务已被重新执行");
 
@@ -266,7 +268,7 @@ public class QuartzManagerServiceImpl implements QuartzManagerService {
                 job.put("cronExpression", cronExpression);
             }
             JobDetail jobDetail = scheduler.getJobDetail(jobKey);
-            job.put("uri",jobDetail.getJobDataMap().get("uri"));
+            job.put("url",jobDetail.getJobDataMap().get("url"));
             job.put("method",jobDetail.getJobDataMap().get("method")=="1"?"GET":"POST");
             job.put("map",jobDetail.getJobDataMap().get("map")!=null?jobDetail.getJobDataMap().get("map"):"");
             jobList.add(job);
