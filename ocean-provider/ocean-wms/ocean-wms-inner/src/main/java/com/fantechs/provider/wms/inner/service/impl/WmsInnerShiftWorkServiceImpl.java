@@ -274,7 +274,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (baseStorage == null) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001007);
         }
-        if(!baseStorage.getStorageType().equals("1")){
+        if(baseStorage.getStorageType() != (byte)1){
             throw new BizErrorException(ErrorCodeEnum.PDA5001008);
         }
         if (dto.getMaterialId() != null){
