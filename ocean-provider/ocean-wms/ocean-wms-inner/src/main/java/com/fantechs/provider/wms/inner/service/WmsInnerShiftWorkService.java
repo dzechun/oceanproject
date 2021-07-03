@@ -18,6 +18,8 @@ public interface WmsInnerShiftWorkService {
      */
     List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map);
 
+    List<WmsInnerJobOrderDto> pdaFindShiftList(Map<String, Object> map);
+
     /**
      * 查找移位作业明细单
      * @param searchWmsInnerJobOrderDet

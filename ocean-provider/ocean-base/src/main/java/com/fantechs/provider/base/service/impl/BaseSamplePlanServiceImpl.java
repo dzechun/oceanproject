@@ -126,9 +126,14 @@ public class BaseSamplePlanServiceImpl extends BaseService<BaseSamplePlan> imple
     }
 
     private void codeIfRepeat(BaseSamplePlan entity){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         Example example = new Example(BaseSamplePlan.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("samplePlanCode",entity.getSamplePlanCode());
         if (StringUtils.isNotEmpty(entity.getSamplePlanId())){
             criteria.andNotEqualTo("samplePlanId",entity.getSamplePlanId());

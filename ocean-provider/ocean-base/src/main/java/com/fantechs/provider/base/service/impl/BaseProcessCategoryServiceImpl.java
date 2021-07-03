@@ -47,6 +47,7 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
 
         Example example = new Example(BaseProcessCategory.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUserInfo.getOrganizationId());
         criteria.andEqualTo("processCategoryCode", baseProcessCategory.getProcessCategoryCode());
         List<BaseProcessCategory> smtProcessCategories = baseProcessCategoryMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(smtProcessCategories)){
@@ -77,6 +78,7 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
 
         Example example = new Example(BaseProcessCategory.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUserInfo.getOrganizationId());
         criteria.andEqualTo("processCategoryCode", baseProcessCategory.getProcessCategoryCode());
         BaseProcessCategory processCategory = baseProcessCategoryMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(processCategory)&&!processCategory.getProcessCategoryId().equals(baseProcessCategory.getProcessCategoryId())){
@@ -169,6 +171,7 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
             //判断编码是否重复
             Example example = new Example(BaseProcessCategory.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("processCategoryCode",processCategoryCode);
             if (StringUtils.isNotEmpty(baseProcessCategoryMapper.selectOneByExample(example))){
                 fail.add(i+3);

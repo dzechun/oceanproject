@@ -101,7 +101,8 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 出厂日期
      */
     @ApiModelProperty(name="releaseDate",value = "出厂日期")
-    @Excel(name = "出厂日期", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "出厂日期", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd")
     @Column(name = "release_date")
     private Date releaseDate;
 

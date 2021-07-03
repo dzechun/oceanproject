@@ -43,6 +43,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
         Example example = new Example(BaseProductFamily.class);
         Example.Criteria criteria1 = example.createCriteria();
         //判断编码是否重复
+        criteria1.andEqualTo("organizationId", user.getOrganizationId());
         criteria1.andEqualTo("productFamilyCode",baseProductFamily.getProductFamilyCode());
         BaseProductFamily baseProductFamily1 = baseProductFamilyMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseProductFamily1)){
@@ -51,6 +52,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
         Example example1 = new Example(BaseProductFamily.class);
         Example.Criteria criteria2 = example1.createCriteria();
         //判断名称是否重复
+        criteria2.andEqualTo("organizationId", user.getOrganizationId());
         criteria2.andEqualTo("productFamilyName",baseProductFamily.getProductFamilyName());
         BaseProductFamily baseProductFamily2 = baseProductFamilyMapper.selectOneByExample(example1);
         if (StringUtils.isNotEmpty(baseProductFamily2)){
@@ -83,6 +85,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
         Example example = new Example(BaseProductFamily.class);
         Example.Criteria criteria1 = example.createCriteria();
         //判断编码是否重复
+        criteria1.andEqualTo("organizationId", user.getOrganizationId());
         criteria1.andEqualTo("productFamilyCode",baseProductFamily.getProductFamilyCode())
                 .andNotEqualTo("productFamilyId",baseProductFamily.getProductFamilyId());
         BaseProductFamily baseProductFamily1 = baseProductFamilyMapper.selectOneByExample(example);
@@ -93,6 +96,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
         Example example1 = new Example(BaseProductFamily.class);
         Example.Criteria criteria2 = example1.createCriteria();
         //判断名称是否重复
+        criteria2.andEqualTo("organizationId", user.getOrganizationId());
         criteria2.andEqualTo("productFamilyName",baseProductFamily.getProductFamilyName())
                 .andNotEqualTo("productFamilyId",baseProductFamily.getProductFamilyId());
         BaseProductFamily baseProductFamily2 = baseProductFamilyMapper.selectOneByExample(example1);
@@ -176,6 +180,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
             //判断编码是否重复
             Example example = new Example(BaseProductFamily.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("productFamilyCode",productFamilyCode);
             if (StringUtils.isNotEmpty(baseProductFamilyMapper.selectOneByExample(example))){
                 fail.add(i+4);

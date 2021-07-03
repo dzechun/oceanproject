@@ -247,7 +247,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 OmSalesReturnOrderDet omSalesReturnOrderDet = new OmSalesReturnOrderDet();
                 omSalesReturnOrderDet.setSalesReturnOrderId(wms.getSourceOrderId());
                 omSalesReturnOrderDet.setSalesReturnOrderDetId(wms.getOrderDetId());
-                omSalesReturnOrderDet.setReceivingQty(wmsInAsnOrderDet.getPutawayQty());
+                omSalesReturnOrderDet.setReceivingQty(wmsInAsnOrderDet.getActualQty());
                 ResponseEntity responseEntity = omFeignApi.writeQty(omSalesReturnOrderDet);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
@@ -615,7 +615,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             }
             wmsInAsnOrder.setProductPalletId(palletAutoAsnDto.getProductPalletId());
             Example example = new Example(WmsInAsnOrderDet.class);
-            example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId()).andEqualTo("materialId",palletAutoAsnDto.getMaterialId()).andEqualTo("batchCode",palletAutoAsnDto.getBatchCode());
+            example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId())
+                    .andEqualTo("materialId",palletAutoAsnDto.getMaterialId())
+                    .andEqualTo("batchCode",palletAutoAsnDto.getBatchCode())
+                    .andEqualTo("sourceOrderId", palletAutoAsnDto.getSourceOrderId());
             WmsInAsnOrderDet wms = wmsInAsnOrderDetMapper.selectOneByExample(example);
             if(StringUtils.isNotEmpty(wms)){
                 wms.setPackingQty(wms.getPackingQty().add(palletAutoAsnDto.getPackingQty()));

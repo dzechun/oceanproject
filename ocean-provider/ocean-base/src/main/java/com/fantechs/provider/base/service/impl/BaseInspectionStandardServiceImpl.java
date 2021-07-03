@@ -76,6 +76,7 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         //判断编码是否重复
         Example example = new Example(BaseInspectionStandard.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("inspectionStandardCode", baseInspectionStandard.getInspectionStandardCode());
         BaseInspectionStandard baseInspectionStandard1 = baseInspectionStandardMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseInspectionStandard1)){
@@ -133,6 +134,7 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         //判断编码是否重复
         Example example = new Example(BaseInspectionStandard.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("inspectionStandardCode", baseInspectionStandard.getInspectionStandardCode())
                 .andNotEqualTo("inspectionStandardId",baseInspectionStandard.getInspectionStandardId());
         BaseInspectionStandard baseInspectionStandard1 = baseInspectionStandardMapper.selectOneByExample(example);

@@ -78,7 +78,8 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
 
         Example example = new Example(BaseInAndOutRule.class);
         example.createCriteria()
-                .andEqualTo("inAndOutRuleName", baseInAndOutRule.getInAndOutRuleName());
+                .andEqualTo("inAndOutRuleName", baseInAndOutRule.getInAndOutRuleName())
+                .andEqualTo("orgId", user.getOrganizationId());
         BaseInAndOutRule baseInAndOutRule1 = baseInAndOutRuleMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseInAndOutRule1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -86,6 +87,7 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
 
         example.clear();
         example.createCriteria()
+                .andEqualTo("orgId", user.getOrganizationId())
                 .andEqualTo("warehouseId",baseInAndOutRule.getWarehouseId())
                 .andEqualTo("category",baseInAndOutRule.getCategory());
         BaseInAndOutRule baseInAndOutRule2 = baseInAndOutRuleMapper.selectOneByExample(example);
@@ -136,6 +138,7 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
 
         Example example = new Example(BaseInAndOutRule.class);
         example.createCriteria()
+                .andEqualTo("orgId", user.getOrganizationId())
                 .andEqualTo("inAndOutRuleName", baseInAndOutRule.getInAndOutRuleName())
                 .andNotEqualTo("inAndOutRuleId",baseInAndOutRule.getInAndOutRuleId());
         BaseInAndOutRule baseInAndOutRule1 = baseInAndOutRuleMapper.selectOneByExample(example);
@@ -145,6 +148,7 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
 
         example.clear();
         example.createCriteria()
+                .andEqualTo("orgId", user.getOrganizationId())
                 .andEqualTo("warehouseId",baseInAndOutRule.getWarehouseId())
                 .andEqualTo("category",baseInAndOutRule.getCategory())
                 .andNotEqualTo("inAndOutRuleId",baseInAndOutRule.getInAndOutRuleId());

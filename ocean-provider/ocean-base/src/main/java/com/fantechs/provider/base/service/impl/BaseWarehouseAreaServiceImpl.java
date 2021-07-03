@@ -60,6 +60,7 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
         int i=0;
         Example example = new Example(BaseWarehouseArea.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("warehouseAreaCode", baseWarehouseArea.getWarehouseAreaCode());
         List<BaseWarehouseArea> baseWarehouseAreaList = baseWarehouseAreaMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(baseWarehouseAreaList)){
@@ -86,6 +87,17 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        Example example = new Example(BaseWarehouseArea.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        criteria.andEqualTo("warehouseAreaCode", baseWarehouseArea.getWarehouseAreaCode())
+                .andNotEqualTo("warehouseAreaId",baseWarehouseArea.getWarehouseAreaId());
+        List<BaseWarehouseArea> baseWarehouseAreaList = baseWarehouseAreaMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(baseWarehouseAreaList)){
+            throw new BizErrorException (ErrorCodeEnum.OPT20012001);
+        }
+
         int i=0;
         baseWarehouseArea.setModifiedUserId(currentUser.getUserId());
         baseWarehouseArea.setModifiedTime(new Date());

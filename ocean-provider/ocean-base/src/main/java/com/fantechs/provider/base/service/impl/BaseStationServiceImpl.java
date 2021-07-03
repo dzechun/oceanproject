@@ -60,6 +60,7 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
 
         Example example = new Example(BaseStation.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("stationCode", baseStation.getStationCode());
         List<BaseStation> baseStations = baseStationMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(baseStations)){
@@ -119,6 +120,7 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
 
         Example example = new Example(BaseStation.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         criteria.andEqualTo("stationCode", baseStation.getStationCode());
 
         BaseStation station = baseStationMapper.selectOneByExample(example);
@@ -166,6 +168,7 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
             //判断编码是否重复
             Example example = new Example(BaseStation.class);
             Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("stationCode",stationCode);
             if (StringUtils.isNotEmpty(baseStationMapper.selectOneByExample(example))){
                 fail.add(i+3);
@@ -175,6 +178,7 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
             //判断工段是否存在
             Example example1 = new Example(BaseWorkshopSection.class);
             Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria1.andEqualTo("sectionCode",sectionCode);
             BaseWorkshopSection baseWorkshopSection = baseWorkshopSectionMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseWorkshopSection)){
@@ -185,6 +189,7 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
             //判断工序是否存在
             Example example2 = new Example(BaseProcess.class);
             Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria2.andEqualTo("processCode",processCode);
             BaseProcess baseProcess = baseProcessMapper.selectOneByExample(example2);
             if (StringUtils.isEmpty(baseProcess)){

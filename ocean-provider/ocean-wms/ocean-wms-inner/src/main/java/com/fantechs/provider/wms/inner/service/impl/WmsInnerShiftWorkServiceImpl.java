@@ -38,16 +38,25 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     WmsInnerJobOrderService wmsInnerJobOrderService;
 
     @Resource
+    WmsInnerHtJobOrderService wmsInnerHtJobOrderService;
+
+    @Resource
     WmsInnerJobOrderMapper wmsInnerJobOrderMapper;
 
     @Resource
     WmsInnerJobOrderDetService wmsInnerJobOrderDetService;
 
     @Resource
+    WmsInnerHtJobOrderDetService wmsInnerHtJobOrderDetService;
+
+    @Resource
     WmsInnerJobOrderDetMapper wmsInnerJobOrderDetMapper;
 
     @Resource
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
+
+    @Resource
+    WmsInnerHtJobOrderDetBarcodeService wmsInnerHtJobOrderDetBarcodeService;
 
     @Resource
     WmsInnerInventoryDetService wmsInnerInventoryDetService;
@@ -66,11 +75,21 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Override
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId", sysUser.getOrganizationId());
+        map.put("jobOrderType", (byte) 2);
+        return wmsInnerJobOrderService.findShiftList(map);
+    }
+
+    @Override
+    public List<WmsInnerJobOrderDto> pdaFindShiftList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId", sysUser.getOrganizationId());
         map.put("jobOrderType", (byte) 2);
         if (StringUtils.isNotEmpty(map.get("jobOrderCode"))) {
             map.put("jobOrderCode", map.get("jobOrderCode"));
         }
-        return wmsInnerJobOrderService.findShiftList(map);
+        return wmsInnerJobOrderService.pdaFindShiftList(map);
     }
 
     @Override
@@ -141,6 +160,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 innerJobOrder.setIsDelete((byte) 1);
                 wmsInnerJobOrderMapper.insertUseGeneratedKeys(innerJobOrder);
                 dto.setJobOrderId(innerJobOrder.getJobOrderId());
+                WmsInnerHtJobOrder wmsInnerHtJobOrder = new WmsInnerHtJobOrder();
+                BeanUtil.copyProperties(innerJobOrder, wmsInnerHtJobOrder);
+                wmsInnerHtJobOrderService.save(wmsInnerHtJobOrder);
             }
 
             // 创建移位明细
@@ -169,6 +191,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setIsDelete((byte) 1);
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+            WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
+            BeanUtil.copyProperties(wmsInnerJobOrderDet, innerHtJobOrderDet);
+            wmsInnerHtJobOrderDetService.save(innerHtJobOrderDet);
 
             // 新增待出库存信息
             WmsInnerInventory newInnerInventory = new WmsInnerInventory();
@@ -186,6 +211,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
 
         List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
+        List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
         for (String barcode : dto.getBarcodes()) {
             // 查询条码
             MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(barcode).getData();
@@ -203,10 +229,16 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDetBarcode.setCreateUserId(sysUser.getUserId());
             wmsInnerJobOrderDetBarcode.setIsDelete((byte) 1);
             jobOrderDetBarcodeList.add(wmsInnerJobOrderDetBarcode);
+            WmsInnerHtJobOrderDetBarcode innerHtJobOrderDetBarcode = new WmsInnerHtJobOrderDetBarcode();
+            BeanUtil.copyProperties(wmsInnerJobOrderDetBarcode, innerHtJobOrderDetBarcode);
+            htJobOrderDetBarcodes.add(innerHtJobOrderDetBarcode);
         }
 
         if (jobOrderDetBarcodeList.size() > 0) {
             wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
+        }
+        if (htJobOrderDetBarcodes.size() > 0) {
+            wmsInnerHtJobOrderDetBarcodeService.batchSave(htJobOrderDetBarcodes);
         }
 
         return dto.getJobOrderId().toString();

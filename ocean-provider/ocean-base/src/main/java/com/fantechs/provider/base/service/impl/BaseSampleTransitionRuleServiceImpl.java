@@ -135,9 +135,14 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
     }
 
     private void codeIfRepeat(BaseSampleTransitionRule entity){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
         Example example = new Example(BaseSampleTransitionRule.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("sampleTransitionRuleCode",entity.getSampleTransitionRuleCode());
         if (StringUtils.isNotEmpty(entity.getSampleTransitionRuleId())){
             criteria.andNotEqualTo("sampleTransitionRuleId",entity.getSampleTransitionRuleId());

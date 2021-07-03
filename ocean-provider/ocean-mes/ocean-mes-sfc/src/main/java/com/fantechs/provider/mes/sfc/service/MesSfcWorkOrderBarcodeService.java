@@ -2,6 +2,7 @@ package com.fantechs.provider.mes.sfc.service;
 
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.support.IService;
@@ -37,5 +38,7 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
     int batchUpdate(List<MesSfcWorkOrderBarcode> workOrderBarcodes);
 
     List<MesSfcWorkOrderBarcodeDto> findByWorkOrderGroup(Map<String, Object> map);
+
+    List<PalletAutoAsnDto> findListGroupByWorkOrder(Map<String, Object> map);
 
 }
