@@ -82,7 +82,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="totalVolume",value = "订单总体积")
     @Excel(name = "订单总体积", height = 20, width = 30,orderNum="6")
-    @Column(name = "total_volume")
+    @Transient
     private BigDecimal totalVolume;
 
     /**
@@ -90,7 +90,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="totalNetWeight",value = "订单总净重")
     @Excel(name = "订单总净重", height = 20, width = 30,orderNum="7")
-    @Column(name = "total_net_weight")
+    @Transient
     private BigDecimal totalNetWeight;
 
     /**
@@ -98,7 +98,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="totalGrossWeight",value = "订单总毛重")
     @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="8")
-    @Column(name = "total_gross_weight")
+    @Transient
     private BigDecimal totalGrossWeight;
 
     /**

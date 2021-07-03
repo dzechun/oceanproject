@@ -45,6 +45,12 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="isPallet" jdbcType="TINYINT" property="isPallet"/>
+        <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName" />
+        <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
+        <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone" />
+        <result column="fax_number" jdbcType="VARCHAR" property="faxNumber" />
+        <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress" />
+        <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
     </resultMap>
     <sql id="BaseColumnList">
         wipo.job_order_id,
@@ -75,9 +81,10 @@
         wipo.option3
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
-        SELECT<include refid="BaseColumnList"/>
-        ,bmo.material_owner_name,boy.order_type_name,bw.warehouse_name,wr.user_name as work_name,su.user_name AS
-        create_user_name,
+        SELECT<include refid="BaseColumnList"/>,
+        bmo.material_owner_name,boy.order_type_name,bw.warehouse_name,wr.user_name as work_name,
+        wodo.consignee as consignee_name,wodo.link_man_name,wodo.link_man_phone,wodo.fax_number,wodo.e_mail_address,wodo.detailed_address,
+        su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name
         <if test="isPallet!=null and isPallet!='' and isPallet==1">
@@ -89,6 +96,7 @@
         END as isPallet
         </if>
         FROM wms_inner_job_order wipo
+        LEFT JOIN wms_out_delivery_order wodo ON wipo.source_order_id = wodo.delivery_order_id
         LEFT JOIN base_material_owner bmo ON wipo.material_owner_id=bmo.material_owner_id
         LEFT JOIN base_warehouse bw ON wipo.warehouse_id = bw.warehouse_id
         LEFT join base_order_type boy on wipo.order_type_id = boy.order_type_id

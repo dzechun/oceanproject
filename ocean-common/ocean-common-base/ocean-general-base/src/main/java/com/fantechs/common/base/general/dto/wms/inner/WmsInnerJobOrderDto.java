@@ -1,9 +1,11 @@
 package com.fantechs.common.base.general.dto.wms.inner;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -64,4 +66,52 @@ public class WmsInnerJobOrderDto extends WmsInnerJobOrder implements Serializabl
     @Transient
     @ApiModelProperty(name = "isPallet",value = "是否栈板自动生成(1-是，0-否) PDA标识字段")
     private Byte isPallet;
+
+    /**
+     * 收货人名称
+     */
+    @Transient
+    @ApiModelProperty(name="consigneeName",value = "发货人名称")
+    @Excel(name = "发货人名称", height = 20, width = 30,orderNum="")
+    private String consigneeName;
+
+    /**
+     * 联系人名称
+     */
+    @ApiModelProperty(name="linkManName",value = "联系人名称")
+    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="")
+    @Transient
+    private String linkManName;
+
+    /**
+     * 联系人电话
+     */
+    @ApiModelProperty(name="linkManPhone",value = "联系人电话")
+    @Excel(name = "联系人电话", height = 20, width = 30,orderNum="")
+    @Transient
+    private String linkManPhone;
+
+    /**
+     * 传真号码
+     */
+    @Transient
+    @ApiModelProperty(name="faxNumber",value = "传真号码")
+    @Excel(name = "传真号码", height = 20, width = 30,orderNum="")
+    private String faxNumber;
+
+    /**
+     * 邮箱地址
+     */
+    @Transient
+    @ApiModelProperty(name="eMailAddress",value = "邮箱地址")
+    @Excel(name = "邮箱地址", height = 20, width = 30,orderNum="")
+    private String eMailAddress;
+
+    /**
+     * 详细地址
+     */
+    @Transient
+    @ApiModelProperty(name="detailedAddress",value = "详细地址")
+    @Excel(name = "详细地址", height = 20, width = 30,orderNum="")
+    private String detailedAddress;
 }
