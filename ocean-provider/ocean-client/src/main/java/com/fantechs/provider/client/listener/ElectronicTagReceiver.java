@@ -134,11 +134,11 @@ public class ElectronicTagReceiver {
                                 rabbitMQDTO.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                                 if (ptlJobOrderDetDto.getElectronicTagLangType() == 1) {
                                     if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getWholeQty()) && ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
-                                        materialDesc += electronicTagStorageService.intercepting(ptlJobOrderDetDto.getMaterialName(), 24 - ptlJobOrderDetDto.getWholeQty().toString().length() - ptlJobOrderDetDto.getWholeUnitName().length() * 2);
+                                        materialDesc += electronicTagStorageService.intercepting(ptlJobOrderDetDto.getMaterialName() + " ", 24 - ptlJobOrderDetDto.getWholeQty().toString().length() - ptlJobOrderDetDto.getWholeUnitName().length() * 2);
                                         materialDesc += ptlJobOrderDetDto.getWholeQty() + ptlJobOrderDetDto.getWholeUnitName();
                                     }
                                     if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getScatteredQty()) && ptlJobOrderDetDto.getScatteredQty().compareTo(BigDecimal.ZERO) != 0) {
-                                        materialDesc2 += electronicTagStorageService.intercepting(ptlJobOrderDetDto.getMaterialName(), 24 - ptlJobOrderDetDto.getScatteredQty().toString().length() - ptlJobOrderDetDto.getScatteredUnitName().length() * 2);
+                                        materialDesc2 += electronicTagStorageService.intercepting(ptlJobOrderDetDto.getMaterialName() + " ", 24 - ptlJobOrderDetDto.getScatteredQty().toString().length() - ptlJobOrderDetDto.getScatteredUnitName().length() * 2);
                                         materialDesc2 += ptlJobOrderDetDto.getScatteredQty() + ptlJobOrderDetDto.getScatteredUnitName();
                                     }
                                     rabbitMQDTO.setMaterialDesc(materialDesc + materialDesc2);
@@ -160,11 +160,11 @@ public class ElectronicTagReceiver {
                                         rabbitMQDTO2.setQueueName(ptlElectronicTagStorageDtoList.get(0).getQueueName());
                                         if (ptlJobOrderDetDto1.getElectronicTagLangType() == 1) {
                                             if (StringUtils.isNotEmpty(ptlJobOrderDetDto1.getWholeQty()) && ptlJobOrderDetDto1.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
-                                                materialDesc += electronicTagStorageService.intercepting(ptlJobOrderDetDto1.getMaterialName(), 24 - ptlJobOrderDetDto1.getWholeQty().toString().length() - ptlJobOrderDetDto1.getWholeUnitName().length() * 2);
+                                                materialDesc += electronicTagStorageService.intercepting(ptlJobOrderDetDto1.getMaterialName() + " ", 24 - ptlJobOrderDetDto1.getWholeQty().toString().length() - ptlJobOrderDetDto1.getWholeUnitName().length() * 2);
                                                 materialDesc += ptlJobOrderDetDto1.getWholeQty() + ptlJobOrderDetDto1.getWholeUnitName();
                                             }
                                             if (StringUtils.isNotEmpty(ptlJobOrderDetDto1.getScatteredQty()) && ptlJobOrderDetDto1.getScatteredQty().compareTo(BigDecimal.ZERO) != 0) {
-                                                materialDesc2 += electronicTagStorageService.intercepting(ptlJobOrderDetDto1.getMaterialName(), 24 - ptlJobOrderDetDto1.getScatteredQty().toString().length() - ptlJobOrderDetDto1.getScatteredUnitName().length() * 2);
+                                                materialDesc2 += electronicTagStorageService.intercepting(ptlJobOrderDetDto1.getMaterialName() + " ", 24 - ptlJobOrderDetDto1.getScatteredQty().toString().length() - ptlJobOrderDetDto1.getScatteredUnitName().length() * 2);
                                                 materialDesc2 += ptlJobOrderDetDto1.getScatteredQty() + ptlJobOrderDetDto1.getScatteredUnitName();
                                             }
                                             rabbitMQDTO2.setMaterialDesc(materialDesc + materialDesc2);
