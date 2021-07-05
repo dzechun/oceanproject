@@ -11,4 +11,6 @@ import java.util.Map;
 @Mapper
 public interface WmsInnerInventoryMapper extends MyMapper<WmsInnerInventory> {
     List<WmsInnerInventoryDto> findList(Map<String, Object> map);
+
+    int batchUpdate(List<WmsInnerInventory> list);
 }

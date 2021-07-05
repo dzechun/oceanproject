@@ -190,6 +190,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setCreateTime(new Date());
             wmsInnerJobOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setIsDelete((byte) 1);
+            wmsInnerJobOrderDet.setShiftStorageStatus((byte) 2);
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
             WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
             BeanUtil.copyProperties(wmsInnerJobOrderDet, innerHtJobOrderDet);
@@ -274,7 +275,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (baseStorage == null) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001007);
         }
-        if(!baseStorage.getStorageType().equals("1")){
+        if(baseStorage.getStorageType() != (byte)1){
             throw new BizErrorException(ErrorCodeEnum.PDA5001008);
         }
         if (dto.getMaterialId() != null){

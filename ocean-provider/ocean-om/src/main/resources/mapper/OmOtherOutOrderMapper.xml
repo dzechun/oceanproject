@@ -9,6 +9,7 @@
     <result column="other_out_order_code" jdbcType="VARCHAR" property="otherOutOrderCode" />
     <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
     <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
     <result column="total_dispatch_qty" jdbcType="DECIMAL" property="totalDispatchQty" />
     <result column="consignee_id" jdbcType="BIGINT" property="consigneeId" />
@@ -38,6 +39,7 @@
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto">
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
     <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -48,6 +50,7 @@
 ouo.other_out_order_code,
 ouo.customer_order_code,
 ouo.material_owner_id,
+ouo.customer_id,
 ouo.total_volume,
 ouo.total_net_weight,
 ouo.total_gross_weight,
@@ -75,11 +78,13 @@ ouo.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,bc.consignee_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+    bs.supplier_name,
     (SELECT SUM(ouod.order_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_qty,
     (SELECT SUM(ouod.issue_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_issue_qty,
     (SELECT SUM(ouod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_dispatch_qty
     FROM om_other_out_order ouo
     LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = ouo.material_owner_id
+    LEFT JOIN base_supplier bs ON  ouo.customer_id = bs.supplier_id
         LEFT JOIN base_consignee bc ON  ouo.consignee_id = bc.consignee_id
     left join ocean_v2.sys_user su on ouo.create_user_id = su.user_id
     left join ocean_v2.sys_user sus on ouo.modified_user_id = sus.user_id

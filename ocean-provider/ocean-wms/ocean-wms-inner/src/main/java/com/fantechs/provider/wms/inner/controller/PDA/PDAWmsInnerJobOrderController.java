@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author mr.lei
@@ -77,11 +78,11 @@ public class PDAWmsInnerJobOrderController {
         return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?0:1);
     }
 
-    @ApiOperation("标签校验")
+    @ApiOperation("条码校验")
     @PostMapping("/checkBarcode")
-    public ResponseEntity<BigDecimal> checkBarcode(@ApiParam(value = "条码")@RequestParam String barCode,
+    public ResponseEntity<Map<String,Object>> checkBarcode(@ApiParam(value = "条码")@RequestParam String barCode,
                                                    @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId){
-        BigDecimal qty = wmsInnerJobOrderService.checkBarcode(barCode,jobOrderDetId);
+        Map<String,Object> qty = wmsInnerJobOrderService.checkBarcode(barCode,jobOrderDetId);
         return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
     }
 

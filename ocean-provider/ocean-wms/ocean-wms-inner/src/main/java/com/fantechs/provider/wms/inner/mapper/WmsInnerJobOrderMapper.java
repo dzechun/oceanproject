@@ -36,4 +36,6 @@ public interface WmsInnerJobOrderMapper extends MyMapper<WmsInnerJobOrder> {
     List<WmsInnerJobOrderDto> pdaFindShiftList(Map<String, Object> map);
 
     Long findStorageId(Map<String,Object> map);
+
+    String findMaterialCode(@Param("materialId") Long materialId);
 }

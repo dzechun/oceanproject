@@ -3,6 +3,7 @@ package com.fantechs.provider.client.controller;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDto;
 import com.fantechs.common.base.electronic.entity.PtlJobOrder;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
@@ -127,6 +128,16 @@ public class ElectronicTagStorageController {
         try {
             int i = electronicTagStorageService.activateAndPrint(jobOrderId, workUserId);
             return ControllerUtil.returnCRUD(i);
+        } catch (Exception e) {
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+        }
+    }
+
+    @GetMapping("/getPrinter")
+    @ApiOperation(value = "获取当前区域的默认打印用户", notes = "获取当前区域的默认打印用户")
+    public ResponseEntity<SysUser> getPrinter() {
+        try {
+            return ControllerUtil.returnDataSuccess(electronicTagStorageService.getPrinter(), 1);
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }

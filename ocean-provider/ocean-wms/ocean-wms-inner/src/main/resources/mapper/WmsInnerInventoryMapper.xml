@@ -181,4 +181,14 @@ wii.storage_id,
     order by wii.create_time desc
   </select>
 
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+      update wms_inner_inventory
+      <set>
+        packing_qty =#{item.packingQty},
+      </set>
+      where inventory_id =#{item.inventoryId}
+    </foreach>
+  </update>
+
 </mapper>

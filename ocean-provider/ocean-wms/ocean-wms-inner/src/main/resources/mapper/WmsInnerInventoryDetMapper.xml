@@ -25,7 +25,7 @@
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
     </resultMap>
-    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto">
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto">
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
         <result column="warehouse_id" jdbcType="VARCHAR" property="warehouseId"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
@@ -53,7 +53,7 @@
         wiid.create_user_id,
         wiid.create_time,
         wiid.modified_user_id,
-        wiiid.modified_time,
+        wiid.modified_time,
         wiid.is_delete
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">

@@ -16,6 +16,7 @@ import com.fantechs.common.base.electronic.entity.search.SearchPtlJobOrderDet;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.tem.TemVehicleDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
@@ -23,14 +24,12 @@ import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.general.entity.tem.search.SearchTemVehicle;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.JsonUtils;
-import com.fantechs.common.base.utils.RestTemplateUtil;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
@@ -64,6 +63,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     private SecurityFeignApi securityFeignApi;
     @Resource
     private TemVehicleFeignApi temVehicleFeignApi;
+    @Resource
+    private RedisUtil redisUtil;
 
     @Value("${wmsAPI.finishPtlJobOrderUrl}")
     private String finishPtlJobOrderUrl;
@@ -151,11 +152,11 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     rabbitMQDTO.setElectronicTagId(ptlElectronicTagStorageDto.getElectronicTagId());
                     if (ptlElectronicTagStorageDto.getElectronicTagLangType() == 1) {
                         if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getWholeQty()) && ptlJobOrderDetDto.getWholeQty().compareTo(BigDecimal.ZERO) != 0) {
-                            materialDesc += intercepting(ptlJobOrderDetDto.getMaterialName(), 24 - ptlJobOrderDetDto.getWholeQty().toString().length() - ptlJobOrderDetDto.getWholeUnitName().length() * 2);
+                            materialDesc += intercepting(ptlJobOrderDetDto.getMaterialName() + " ", 24 - ptlJobOrderDetDto.getWholeQty().toString().length() - ptlJobOrderDetDto.getWholeUnitName().length() * 2);
                             materialDesc += ptlJobOrderDetDto.getWholeQty() + ptlJobOrderDetDto.getWholeUnitName();
                         }
                         if (StringUtils.isNotEmpty(ptlJobOrderDetDto.getScatteredQty()) && ptlJobOrderDetDto.getScatteredQty().compareTo(BigDecimal.ZERO) != 0) {
-                            materialDesc2 += intercepting(ptlJobOrderDetDto.getMaterialName(), 24 - ptlJobOrderDetDto.getScatteredQty().toString().length() - ptlJobOrderDetDto.getScatteredUnitName().length() * 2);
+                            materialDesc2 += intercepting(ptlJobOrderDetDto.getMaterialName() + " ", 24 - ptlJobOrderDetDto.getScatteredQty().toString().length() - ptlJobOrderDetDto.getScatteredUnitName().length() * 2);
                             materialDesc2 += ptlJobOrderDetDto.getScatteredQty() + ptlJobOrderDetDto.getScatteredUnitName();
                         }
                         rabbitMQDTO.setMaterialDesc(materialDesc + materialDesc2);
@@ -321,8 +322,12 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 } else {
                     ptlJobOrderDet.setWholeOrScattered((byte) 0);
                 }
-                ptlJobOrderDet.setScatteredQty(BigDecimal.valueOf(ptlJobOrderDetDTO.getL_qty()));
-                ptlJobOrderDet.setScatteredUnitName(ptlJobOrderDetDTO.getL_unit());
+                if (StringUtils.isNotEmpty(ptlJobOrderDetDTO.getL_qty())) {
+                    if (ptlJobOrderDetDTO.getL_qty() - 0.0 > 0.000001) {
+                        ptlJobOrderDet.setScatteredQty(BigDecimal.valueOf(ptlJobOrderDetDTO.getL_qty()));
+                        ptlJobOrderDet.setScatteredUnitName(ptlJobOrderDetDTO.getL_unit());
+                    }
+                }
                 ptlJobOrderDet.setSpec(ptlJobOrderDetDTO.getSpecification());
                 ptlJobOrderDet.setJobStatus((byte) 1);
                 ptlJobOrderDet.setStatus((byte) 1);
@@ -340,10 +345,10 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             }
         }
 
-        if (!rabbitMQDTOList.isEmpty()) {
-            fanoutSender(1005, null, rabbitMQDTOList);
+        for (RabbitMQDTO rabbitMQDTO : rabbitMQDTOList) {
+            fanoutSender(1005, rabbitMQDTO, null);
             log.info("===========发送消息给客户端控制蜂鸣器开启完成===============");
-            fanoutSender(1004, null, rabbitMQDTOList);
+            fanoutSender(1004, rabbitMQDTO, null);
             log.info("===========发送消息给客户端控制蜂鸣器亮灯颜色和频率完成===============");
         }
 
@@ -473,12 +478,20 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        SysUser sysUser = securityFeignApi.selectUserById(workUserId).getData();
+        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+        searchBaseWorker.setUserId(currentUser.getUserId());
+        List<BaseWorkerDto> baseWorkerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+        if (StringUtils.isNotEmpty(baseWorkerDtos)) {
+            if (baseWorkerDtos.get(0).getBaseWorkingAreaReWDtoList().size() == 1) {
+                redisUtil.set(baseWorkerDtos.get(0).getBaseWorkingAreaReWDtoList().get(0).getWorkingAreaCode(), sysUser);
+            }
+        }
 
         PtlJobOrder ptlJobOrder = electronicTagFeignApi.ptlJobOrderDetail(jobOrderId).getData();
 //        if (ptlJobOrder.getIfAlreadyPrint() == 1) {
 //            throw new Exception("该任务单已打印过标签，请不要重复操作");
 //        }
-        SysUser sysUser = securityFeignApi.selectUserById(workUserId).getData();
         String vehicleCode = "";
         if (StringUtils.isNotEmpty(ptlJobOrder.getVehicleId())) {
             TemVehicle temVehicle = temVehicleFeignApi.detail(ptlJobOrder.getVehicleId()).getData();
@@ -501,8 +514,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
             PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
             ptlJobOrderUpdate.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
-            ptlJobOrderUpdate.setWorkerUserId(workUserId);
-            ptlJobOrderUpdate.setWorkerUserName(sysUser.getUserName());
             ptlJobOrderUpdate.setVehicleId(temVehicleDtoList.get(0).getVehicleId());
             ptlJobOrderUpdate.setModifiedTime(new Date());
             ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
@@ -524,7 +535,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 int cartonNum = ptlJobOrderDetDto.getWholeQty().intValue();
                 while (cartonNum > 0) {
                     PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
-                    ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getJobOrderCode());
+                    ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getRelatedOrderCode());
                     ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
                     ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
                     ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
@@ -532,7 +543,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     ptlJobOrderDetPrintDTO.setSpec(ptlJobOrderDetDto.getSpec());
                     ptlJobOrderDetPrintDTO.setWarehouseAreaCode(ptlJobOrderDetDto.getWarehouseAreaCode());
                     ptlJobOrderDetPrintDTO.setStorageCode(ptlJobOrderDetDto.getStorageCode());
-                    ptlJobOrderDetPrintDTO.setWorkerUserName(sysUser.getUserName());
+                    ptlJobOrderDetPrintDTO.setWorkerUserName(sysUser.getNickName());
                     ptlJobOrderDetPrintDTO.setWholeOrScattered(ptlJobOrderDetDto.getWholeOrScattered());
                     ptlJobOrderDetPrintDTO.setCartonCode(i + "-" + ptlJobOrderDetDto.getWholeQty().intValue());
                     ptlJobOrderDetPrintDTO.setVehicleCode(vehicleCode + "(" + ptlJobOrder.getRemark() + ")");
@@ -541,28 +552,33 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     cartonNum--;
                     i++;
                 }
-            } else if (scatteredBoolean){
-                PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
-                ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getJobOrderCode());
-                ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
-                ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
-                ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
-                ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
-                ptlJobOrderDetPrintDTO.setSpec(ptlJobOrderDetDto.getSpec());
-                ptlJobOrderDetPrintDTO.setWarehouseAreaCode(ptlJobOrderDetDto.getWarehouseAreaCode());
-                ptlJobOrderDetPrintDTO.setStorageCode(ptlJobOrderDetDto.getStorageCode());
-                ptlJobOrderDetPrintDTO.setWorkerUserName(sysUser.getUserName());
-                ptlJobOrderDetPrintDTO.setWholeOrScattered(ptlJobOrderDetDto.getWholeOrScattered());
-                ptlJobOrderDetPrintDTO.setVehicleCode(vehicleCode + "(" + ptlJobOrder.getRemark() + ")");
-                ptlJobOrderDetPrintDTOList.add(ptlJobOrderDetPrintDTO);
+            }
+            if (scatteredBoolean && StringUtils.isNotEmpty(ptlJobOrderDetDto.getScatteredQty())){
+                if (ptlJobOrderDetDto.getScatteredQty().compareTo(BigDecimal.ZERO) == 1) {
+                    PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
+                    ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getRelatedOrderCode());
+                    ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
+                    ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
+                    ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
+                    ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
+                    ptlJobOrderDetPrintDTO.setSpec(ptlJobOrderDetDto.getSpec());
+                    ptlJobOrderDetPrintDTO.setWarehouseAreaCode(ptlJobOrderDetDto.getWarehouseAreaCode());
+                    ptlJobOrderDetPrintDTO.setStorageCode(ptlJobOrderDetDto.getStorageCode());
+                    ptlJobOrderDetPrintDTO.setWorkerUserName(sysUser.getNickName());
+                    ptlJobOrderDetPrintDTO.setWholeOrScattered(ptlJobOrderDetDto.getWholeOrScattered());
+                    ptlJobOrderDetPrintDTO.setVehicleCode(vehicleCode + "(" + ptlJobOrder.getRemark() + ")");
+                    ptlJobOrderDetPrintDTOList.add(ptlJobOrderDetPrintDTO);
 
-                scatteredBoolean = false;
+                    scatteredBoolean = false;
+                }
             }
         }
 
         PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
         ptlJobOrderUpdate.setJobOrderId(ptlJobOrder.getJobOrderId());
         ptlJobOrderUpdate.setIfAlreadyPrint((byte) 1);
+        ptlJobOrderUpdate.setWorkerUserId(workUserId);
+        ptlJobOrderUpdate.setWorkerUserName(sysUser.getNickName());
         ptlJobOrderUpdate.setModifiedTime(new Date());
         ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
         electronicTagFeignApi.updatePtlJobOrder(ptlJobOrderUpdate);
@@ -792,6 +808,28 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         }
 
         return 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public SysUser getPrinter() throws Exception {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+        searchBaseWorker.setUserId(currentUser.getUserId());
+        List<BaseWorkerDto> baseWorkerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+        SysUser printUser = null;
+        if (StringUtils.isNotEmpty(baseWorkerDtos)) {
+            if (baseWorkerDtos.get(0).getBaseWorkingAreaReWDtoList().size() == 1) {
+                Object o = redisUtil.get(baseWorkerDtos.get(0).getBaseWorkingAreaReWDtoList().get(0).getWorkingAreaCode());
+                printUser = JSONObject.parseObject(JSONObject.toJSONString(o), SysUser.class);
+            }
+        }
+
+        return printUser;
     }
 
     @Override

@@ -10,6 +10,7 @@
     <result column="source_det_id" jdbcType="BIGINT" property="sourceDetId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
     <result column="original_qty" jdbcType="DECIMAL" property="originalQty" />
     <result column="stock_qty" jdbcType="DECIMAL" property="stockQty" />
     <result column="variance_qty" jdbcType="DECIMAL" property="varianceQty" />
@@ -45,6 +46,7 @@ wivd.stock_order_id,
 wivd.source_det_id,
 wivd.storage_id,
 wivd.material_id,
+wivd.packing_unit_name,
 wivd.original_qty,
 wivd.stock_qty,
 wivd.variance_qty,

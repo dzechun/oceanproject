@@ -21,6 +21,13 @@ public class OmOtherOutOrderDto extends OmOtherOutOrder implements Serializable 
     private String materialOwnerName;
 
     /**
+     * 客户
+     */
+    @Transient
+    @ApiModelProperty(name = "supplierName",value = "客户")
+    private String supplierName;
+
+    /**
      * 收货人
      */
     @Transient

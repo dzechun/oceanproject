@@ -2,6 +2,7 @@ package com.fantechs.provider.client.server;
 
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDto;
 import com.fantechs.common.base.electronic.entity.PtlJobOrder;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.provider.client.dto.PtlJobOrderDTO;
 import com.fantechs.provider.client.dto.PtlJobOrderDetPrintDTO;
 import com.fantechs.provider.client.dto.RabbitMQDTO;
@@ -26,4 +27,6 @@ public interface ElectronicTagStorageService {
     String intercepting(String s, int number) throws UnsupportedEncodingException;
 
     int activateAndPrint(Long jobOrderId, Long workUserId) throws Exception;
+
+    SysUser getPrinter() throws Exception;
 }
