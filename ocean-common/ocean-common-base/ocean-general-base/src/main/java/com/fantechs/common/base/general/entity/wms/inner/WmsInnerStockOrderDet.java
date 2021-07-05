@@ -51,6 +51,14 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     * 包装单位
+     */
+    @ApiModelProperty(name = "packingUnitName",value = "包装单位")
+    @Excel(name = "包装单位",height = 20,width = 30,orderNum = "")
+    @Column(name = "packing_unit_name")
+    private String packingUnitName;
+
+    /**
      * 原始数量
      */
     @ApiModelProperty(name="originalQty",value = "原始数量")

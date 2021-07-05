@@ -548,8 +548,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      * @return 包装数量
      */
     @Override
-    public BigDecimal checkBarcode(String barCode,Long jobOrderDetId) {
+    public Map<String,Object> checkBarcode(String barCode,Long jobOrderDetId) {
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInPutawayOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
+        Map<String,Object> map = new HashMap<>();
         if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
@@ -557,8 +558,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         WmsInAsnOrderDet wms = inFeignApi.findDetList(SearchWmsInAsnOrderDet.builder()
                 .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
                 .build()).getData().get(0);
+        String materialCode = wmsInPutawayOrderMapper.findMaterialCode(wms.getMaterialId());
+        if(StringUtils.isNotEmpty(materialCode) && materialCode.equals(barCode)){
+            map.put("SN","true");
+            return map;
+        }
         BigDecimal qty = InBarcodeUtil.getInventoryDetQty(wmsInnerJobOrderDet.getMaterialId(),barCode);
-        return qty;
+        map.put("SN","true");
+        map.put("qty",qty);
+        return map;
     }
 
     /**
