@@ -75,4 +75,10 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "isPallet",value = "是否栈板自动生成(1-是，0-否) PDA标识字段")
     private Byte isPallet;
+
+    /**
+     * 单据状态(1-待分配2-分配中 3-待作业 4-作业中 5-完成 6-待激活)
+     */
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待分配2-分配中 3-待作业 4-作业中 5-完成 6-待激活)")
+    private Byte orderStatus;
 }
