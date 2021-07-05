@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.support.IService;
 import com.fantechs.provider.base.util.StorageRuleDto;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -30,4 +31,6 @@ public interface BaseStorageService extends IService<BaseStorage> {
     int plusSurplusCanPutSalver(Long storageId, Integer num);
 
     List<StorageRuleDto> findPutawayRule(Map<String,Object> map);
+
+    Integer findPutawayNo(Long warehouseId,Long materialId);
 }

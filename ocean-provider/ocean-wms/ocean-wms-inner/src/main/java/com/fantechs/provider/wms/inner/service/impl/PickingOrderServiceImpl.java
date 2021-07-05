@@ -539,7 +539,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 num +=wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
             }else{
                 WmsInnerJobOrder ws = wmsInnerJobOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDto.getJobOrderId());
-                ws.setActualQty(wmsInPutawayOrderDet.getActualQty());
                 ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
                 if(StringUtils.isEmpty(ws.getActualQty())){
                     ws.setActualQty(new BigDecimal("0.00"));

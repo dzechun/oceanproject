@@ -16,12 +16,14 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseStorageService;
 import com.fantechs.provider.base.util.StorageRuleDto;
+import io.swagger.models.auth.In;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -283,5 +285,10 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     @Override
     public List<StorageRuleDto> findPutawayRule(Map<String,Object> map) {
         return baseStorageMapper.findPutawayRule(map);
+    }
+
+    @Override
+    public Integer findPutawayNo(Long warehouseId, Long materialId) {
+        return baseStorageMapper.findPutawayNo(warehouseId,materialId);
     }
 }

@@ -72,8 +72,8 @@ public class PDAWmsInnerJobOrderController {
     @ApiOperation("PDA扫码库位上架")
     @PostMapping("/scanStorageBackQty")
     public ResponseEntity<WmsInnerJobOrderDet> scanStorageBackQty(@ApiParam(value = "库位编码")@RequestParam @NotBlank(message = "库位编码不能为空") String storageCode,
-                                                                  @ApiParam(value = "明细id")@RequestParam @NotBlank(message = "明细唯一标识不能为空") Long jobOrderDetId,
-                                                                  @ApiParam(value = "确认数量")@RequestParam @NotBlank(message = "确认数量不能小于1") BigDecimal qty){
+                                                                  @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId,
+                                                                  @ApiParam(value = "确认数量")@RequestParam BigDecimal qty){
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderService.scanStorageBackQty(storageCode,jobOrderDetId,qty);
         return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?0:1);
     }

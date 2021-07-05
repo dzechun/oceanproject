@@ -1,10 +1,8 @@
 package com.fantechs.provider.base.util;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseStorageService;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,19 +38,59 @@ public class StorageDistributionRuleUtils {
      * @param packageQty
      * @return
      */
-    public static List<StorageRuleDto> JobMainRule(BigDecimal packageQty,Long warehouseId,Long materialId,Integer putawayMoveLineNo){
+    public static List<StorageRuleDto> JobMainRule(BigDecimal packageQty,Long warehouseId,Long materialId,
+                                                   String batchCode,String proDate){
         //可用库位列表
         List<StorageRuleDto> list = new ArrayList<>();
         //待上架总数包装数量
         BigDecimal jobTotalPackageQty_BU = packageQty;
         //基准动线号排序：DOWN-降序、ASC-升序
         String SART = "ASC";
+        //上架动线豪=号
+        Integer putawayMoveLineNo =null;
         if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
             //获取货品专用库位
-            list = storageDistributionRuleUtils.getCanPutawayStorageList(warehouseId,materialId);
+            list = getCanPutawayStorageList(warehouseId,materialId);
             if(StringUtils.isNotEmpty(list) && list.size()>0){
                 //专用库位分配子规则
-                //
+                Map<String ,Object> map = dedicatedStorager(list,jobTotalPackageQty_BU);
+                list = (List<StorageRuleDto>) map.get("list");
+                jobTotalPackageQty_BU = (BigDecimal) map.get("jobTotalPackageQty_BU");
+            }
+        }
+        if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
+            //获取批次相同库位
+            list  = getBatchEqualStorageList(warehouseId,batchCode,proDate);
+            if(StringUtils.isNotEmpty(list) && list.size()>0){
+                Map<String,Object> map = dedicatedStorager(list,jobTotalPackageQty_BU);
+                list = (List<StorageRuleDto>) map.get("list");
+                jobTotalPackageQty_BU = (BigDecimal) map.get("jobTotalPackageQty_BU");
+            }
+        }
+
+        if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
+            //获取空库位
+            putawayMoveLineNo = storageDistributionRuleUtils.baseStorageService.findPutawayNo(warehouseId,materialId);
+            Map<String,Object> map = getCanPutawayEmptyStorageList(warehouseId,putawayMoveLineNo);
+            list = (List<StorageRuleDto>) map.get("list");
+            SART = map.get("SART").toString();
+            if(list.size()>0){
+                map = EmptyStorageRule(list,SART,jobTotalPackageQty_BU);
+                list = (List<StorageRuleDto>) map.get("list");
+                jobTotalPackageQty_BU = (BigDecimal) map.get("jobTotalPackageQty_BU");
+            }
+        }
+
+        if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
+            //获取混放库位
+            putawayMoveLineNo = storageDistributionRuleUtils.baseStorageService.findPutawayNo(warehouseId,materialId);
+            Map<String,Object> map = getCanPutawayEmptyStorageList(warehouseId,putawayMoveLineNo);
+            list = (List<StorageRuleDto>) map.get("list");
+            SART = map.get("SART").toString();
+            if(list.size()>0){
+                map = mixupsStorageRule(list,SART,jobTotalPackageQty_BU);
+                list = (List<StorageRuleDto>) map.get("list");
+                jobTotalPackageQty_BU = (BigDecimal) map.get("jobTotalPackageQty_BU");
             }
         }
         return list;
@@ -64,13 +102,13 @@ public class StorageDistributionRuleUtils {
      * @param materialId 物料id
      * @return 可上架列表
      */
-    private List<StorageRuleDto> getCanPutawayStorageList(Long warehouseId,Long materialId){
+    private static List<StorageRuleDto> getCanPutawayStorageList(Long warehouseId,Long materialId){
         List<StorageRuleDto> list = new ArrayList<>();
         Map<String,Object> map = new HashMap<>();
         map.put("warehouseId",warehouseId);
         map.put("materialId",materialId);
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.findPutawayRule(map);
-        list = storageDistributionRuleUtils.calculateStorage(storageRuleDtos);
+        list = calculateStorage(storageRuleDtos);
 //        if(storageRuleDtos.size()>0){
 //            for (StorageRuleDto storageRuleDto : storageRuleDtos) {
 //                if(StringUtils.isEmpty(storageRuleDto.getVolume(),storageRuleDto.getNetWeight())){
@@ -99,14 +137,14 @@ public class StorageDistributionRuleUtils {
      * @param prodDate
      * @return
      */
-    private List<StorageRuleDto> getBatchEqualStorageList(Long warehouseId, String batchCode, Date prodDate){
-        List<StorageRuleDto> list = new ArrayList<>();
+    private static List<StorageRuleDto> getBatchEqualStorageList(Long warehouseId, String batchCode, String prodDate){
+        List<StorageRuleDto> list;
         Map<String,Object> map = new HashMap<>();
         map.put("warehouseId",warehouseId);
         map.put("batchCode",batchCode);
         map.put("prodDate",prodDate);
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.findPutawayRule(map);
-        list = storageDistributionRuleUtils.calculateStorage(storageRuleDtos);
+        list = calculateStorage(storageRuleDtos);
         return list;
     }
 
@@ -116,9 +154,10 @@ public class StorageDistributionRuleUtils {
      * @param putawayMoveLineNo 上架库位动线号
      * @return 库位列表
      */
-    private List<StorageRuleDto> getCanPutawayEmptyStorageList(Long warehouseId,Integer putawayMoveLineNo){
+    private static Map<String,Object> getCanPutawayEmptyStorageList(Long warehouseId,Integer putawayMoveLineNo){
         List<StorageRuleDto> list = new ArrayList<>();
         List<StorageRuleDto> storageRuleDtos = null;
+        Map<String,Object> mapList = new HashMap<>();
         if(StringUtils.isNotEmpty(putawayMoveLineNo)){
             //生成随机数
             int max=10,min=1;
@@ -145,21 +184,28 @@ public class StorageDistributionRuleUtils {
                     storageRuleDtos = storageDistributionRuleUtils.baseStorageService.findPutawayRule(map);
                 }
             }
+            mapList.put("SART",map.get(SART));
         }
         if(StringUtils.isEmpty(storageRuleDtos)||StringUtils.isEmpty(putawayMoveLineNo)){
             Map<String,Object> map = new HashMap<>();
             map.put("warehouseId",warehouseId);
             storageRuleDtos = storageDistributionRuleUtils.baseStorageService.findPutawayRule(map);
-            list = storageDistributionRuleUtils.calculateStorage(storageRuleDtos);
+            list = calculateStorage(storageRuleDtos);
         }
-        return list;
+        mapList.put("list",list);
+        return mapList;
     }
 
-    private List<StorageRuleDto> getCanMixtureStorageList(){
+    private static List<StorageRuleDto> getCanMixtureStorageList(){
         return null;
     }
 
-    private List<StorageRuleDto> calculateStorage(List<StorageRuleDto> storageRuleDtos){
+    /**
+     * 计算库位可放数量
+     * @param storageRuleDtos
+     * @return
+     */
+    private static List<StorageRuleDto> calculateStorage(List<StorageRuleDto> storageRuleDtos){
         List<StorageRuleDto> list = new ArrayList<>();
         if(StringUtils.isNotEmpty(storageRuleDtos)&&storageRuleDtos.size()>0){
             for (StorageRuleDto storageRuleDto : storageRuleDtos) {
@@ -183,33 +229,84 @@ public class StorageDistributionRuleUtils {
     }
 
     /**
-     * 专用库位分配子规则
+     * 专用库位分配子规则 and 批次规则相同分配子规则
      * @param storageRuleDtos 可上架库位集合
-     * @return 专用库位列表
+     * @return 专用库位列表及可上架数量
      */
-    private List<StorageRuleDto> dedicatedStorager(List<StorageRuleDto> storageRuleDtos,BigDecimal jobTotalPackageQty_BU){
-        List<StorageRuleDto> list = new ArrayList<>();
+    private static Map<String,Object> dedicatedStorager(List<StorageRuleDto> storageRuleDtos,BigDecimal jobTotalPackageQty_BU){
+        Map<String,Object>map = new HashMap<>();
         if(StringUtils.isNotEmpty(storageRuleDtos)&&storageRuleDtos.size()>0){
             //按剩余承载量、体积排序
             storageRuleDtos.stream()
                     .sorted(Comparator.comparing(StorageRuleDto::getSurplusLoad))
                     .sorted(Comparator.comparing(StorageRuleDto::getSurplusVolume))
                     .collect(Collectors.toList());
-            for (StorageRuleDto storageRuleDto : storageRuleDtos) {
-                if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
-                    if(jobTotalPackageQty_BU.compareTo(storageRuleDto.getPutawayQty())>1){
-                        storageRuleDto.setPutawayQty(jobTotalPackageQty_BU);
-                        list.add(storageRuleDto);
-                        jobTotalPackageQty_BU = BigDecimal.ZERO;
-                    }
-                    if(jobTotalPackageQty_BU.compareTo(storageRuleDto.getPutawayQty())==1){
-                        storageRuleDto.setPutawayQty(jobTotalPackageQty_BU);
-                        list.add(storageRuleDto);
-                        jobTotalPackageQty_BU = jobTotalPackageQty_BU.subtract(storageRuleDto.getPutawayQty());
-                    }
+            map = calculateStorageRule(storageRuleDtos,jobTotalPackageQty_BU);
+        }
+        return map;
+    }
+
+    /**
+     * 空库位分配子规则
+     * @param storageRuleDtos
+     * @param SART
+     * @param jobTotalPackageQty_BU
+     * @return
+     */
+    private static Map<String, Object> EmptyStorageRule(List<StorageRuleDto> storageRuleDtos, String SART, BigDecimal jobTotalPackageQty_BU){
+        //上架动线号升序
+        storageRuleDtos.stream()
+                .sorted(Comparator.comparing(StorageRuleDto::getPutawayMoveLineNo))
+                .collect(Collectors.toList());
+        if(SART.equals("DESC")){
+            //降序
+            Collections.reverse(storageRuleDtos);
+        }
+        Map<String ,Object> map = calculateStorageRule(storageRuleDtos,jobTotalPackageQty_BU);
+        return map;
+    }
+
+    /**
+     * 混放库位分配子规则
+     * @param storageRuleDtos
+     * @param SART
+     * @param jobTotalPackageQty_BU
+     * @return
+     */
+    private static Map<String ,Object> mixupsStorageRule(List<StorageRuleDto> storageRuleDtos,String SART,BigDecimal jobTotalPackageQty_BU){
+        //剩余载重、剩余容积、上架动线号升序
+        storageRuleDtos.stream()
+                .sorted(Comparator.comparing(StorageRuleDto::getSurplusLoad))
+                .sorted(Comparator.comparing(StorageRuleDto::getSurplusVolume))
+                .sorted(Comparator.comparing(StorageRuleDto::getPutawayMoveLineNo))
+                .collect(Collectors.toList());
+        if(SART.equals("DESC")){
+            //降序
+            Collections.reverse(storageRuleDtos);
+        }
+        Map<String ,Object> map = calculateStorageRule(storageRuleDtos,jobTotalPackageQty_BU);
+        return map;
+    }
+
+    private static Map<String,Object> calculateStorageRule(List<StorageRuleDto> storageRuleDtos,BigDecimal jobTotalPackageQty_BU){
+        Map<String ,Object> map = new HashMap<>();
+        List<StorageRuleDto> list = new ArrayList<>();
+        for (StorageRuleDto storageRuleDto : storageRuleDtos) {
+            if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
+                if(jobTotalPackageQty_BU.compareTo(storageRuleDto.getPutawayQty())>1){
+                    storageRuleDto.setPutawayQty(jobTotalPackageQty_BU);
+                    list.add(storageRuleDto);
+                    jobTotalPackageQty_BU = BigDecimal.ZERO;
+                }
+                if(jobTotalPackageQty_BU.compareTo(storageRuleDto.getPutawayQty())==1){
+                    storageRuleDto.setPutawayQty(jobTotalPackageQty_BU);
+                    list.add(storageRuleDto);
+                    jobTotalPackageQty_BU = jobTotalPackageQty_BU.subtract(storageRuleDto.getPutawayQty());
                 }
             }
         }
-        return list;
+        map.put("list",list);
+        map.put("jobTotalPackageQty_BU",jobTotalPackageQty_BU);
+        return map;
     }
 }

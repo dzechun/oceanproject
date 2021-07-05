@@ -11,6 +11,8 @@
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
     <result column="asn_code" jdbcType="VARCHAR" property="asnCode" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
     <result column="related_order_code_1" jdbcType="VARCHAR" property="relatedOrderCode1" />
     <result column="related_order_code_2" jdbcType="VARCHAR" property="relatedOrderCode2" />
@@ -44,6 +46,8 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
 
     <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
     <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
@@ -56,6 +60,8 @@
   wiao.supplier_id,
   wiao.order_type_id,
   wiao.asn_code,
+wiao.warehouse_id,
+wiao.storage_id,
   wiao.customer_order_code,
   wiao.related_order_code_1,
   wiao.related_order_code_2,

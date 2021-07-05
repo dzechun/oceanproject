@@ -198,9 +198,9 @@
             bs.level_no as levelNo,
             bs.putaway_move_line_no as putawayMoveLineNo,
             bs.surplus_load as surplusLoad,
-            bs.surplus_volume as surolusVolume,
-            bs.surplus_can_put_salver as surplusCanPutSalver
-            bmt.bmt.volume
+            bs.surplus_volume as surplusVolume,
+            bs.surplus_can_put_salver as surplusCanPutSalver,
+            bmt.volume,
 			bmt.net_weight as netWeight
         FROM base_storage bs
                  LEFT JOIN wms_inner_inventory wii ON bs.storage_id = wii.storage_id AND wii.packing_qty>0
@@ -209,7 +209,7 @@
             <if test="warehouseId!=null and warehouseId!=''">
                 and  wii.warehouse_id =#{warehouseId}
             </if>
-            <if test="">
+            <if test="materialId!=null and materialId!=''">
                 AND wii.material_id =#{materialId}
             </if>
             <if test="batchCode!=null and batchCode!=''">
@@ -218,7 +218,23 @@
             <if test="prodDate!=null and prodDate!=''">
                 AND date_format(wii.production_date, '%Y-%m-%d') = #{prodDate}
             </if>
+            <if test="putawayMoveLineNo!=null and putawayMoveLineNo!=''">
+                AND bs.putaway_move_line_no = #{putawayMoveLineNo}
+            </if>
         </where>
-
+        <if test="SART!=null and SART!=''">
+            <if test="SART=='DESC'">
+                order by bs.putaway_move_line_no DESC
+            </if>
+            <if test="SART=='ASC'">
+                order by bs.putaway_move_line_no ASC
+            </if>
+        </if>
+    </select>
+    <select id="findPutawayNo" resultType="java.lang.Integer">
+        select bs.putaway_move_line_no From wms_inner_inventory wii
+LEFT JOIN base_storage bs and bs.storage_id = wii.storage_id
+where wii.warehouse_id = #{warehouseId} and wii.material_id = #{materialId}
+order by wii.modified_time limit 1
     </select>
 </mapper>
