@@ -1,7 +1,12 @@
 package com.fantechs.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrder;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.entity.QmsIpqcDtaticElectricityModel;
 import com.fantechs.entity.QmsIpqcFirstArticleModel;
 import com.fantechs.entity.QmsIpqcProcessInspectionModel;
@@ -24,7 +29,8 @@ public class QmsIpqcInspectionUreportServiceImpl implements QmsIpqcInspectionUre
     @Override
     public List<QmsIpqcDtaticElectricityModel> findDtaticElectricityList(SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder){
         searchQmsIpqcInspectionOrder.setInspectionWayCode("SYS-JY010");
-        //searchQmsIpqcInspectionOrder.setOrgId((long)29);
+        SysUser user = getUser();
+        searchQmsIpqcInspectionOrder.setOrgId(user.getOrganizationId());
         List<QmsIpqcDtaticElectricityModel> list = qmsIpqcInspectionUreportMapperMapper.findDtaticElectricityList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrder));
         return list;
     }
@@ -33,7 +39,8 @@ public class QmsIpqcInspectionUreportServiceImpl implements QmsIpqcInspectionUre
     @Override
     public List<QmsIpqcSamplingModel> findSamplingList(SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder){
         searchQmsIpqcInspectionOrder.setInspectionWayCode("SYS-JY011");
-        //searchQmsIpqcInspectionOrder.setOrgId((long)29);
+        SysUser user = getUser();
+        searchQmsIpqcInspectionOrder.setOrgId(user.getOrganizationId());
         List<QmsIpqcSamplingModel> samplingList = qmsIpqcInspectionUreportMapperMapper.findSamplingList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrder));
         return samplingList;
     }
@@ -42,7 +49,8 @@ public class QmsIpqcInspectionUreportServiceImpl implements QmsIpqcInspectionUre
     @Override
     public List<QmsIpqcFirstArticleModel> findFirstArticleList(SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder) {
         searchQmsIpqcInspectionOrder.setInspectionWayCode("SYS-JY012");
-        //searchQmsIpqcInspectionOrder.setOrgId((long)29);
+        SysUser user = getUser();
+        searchQmsIpqcInspectionOrder.setOrgId(user.getOrganizationId());
         List<QmsIpqcFirstArticleModel> firstArticleList = qmsIpqcInspectionUreportMapperMapper.findFirstArticleList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrder));
         return firstArticleList;
     }
@@ -51,10 +59,17 @@ public class QmsIpqcInspectionUreportServiceImpl implements QmsIpqcInspectionUre
     @Override
     public List<QmsIpqcProcessInspectionModel> findProcessInspectionList(SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder) {
         searchQmsIpqcInspectionOrder.setInspectionWayCode("SYS-JY013");
-        //searchQmsIpqcInspectionOrder.setOrgId((long)29);
+        SysUser user = getUser();
+        searchQmsIpqcInspectionOrder.setOrgId(user.getOrganizationId());
         List<QmsIpqcProcessInspectionModel> processInspectionList = qmsIpqcInspectionUreportMapperMapper.findProcessInspectionList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrder));
         return processInspectionList;
     }
 
-
+    public SysUser getUser(){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        return user;
+    }
 }

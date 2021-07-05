@@ -1,0 +1,211 @@
+package com.fantechs.provider.wms.inner.service.impl;
+
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSetDet;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
+import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.RedisUtil;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
+import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ *
+ * Created by leifengzhi on 2021/07/03.
+ */
+@Service
+public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMaterialBarcode> implements WmsInnerMaterialBarcodeService {
+
+    @Resource
+    private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
+    @Resource
+    private RedisUtil redisUtil;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
+
+    @Override
+    public List<WmsInnerMaterialBarcodeDto> findList(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode) {
+        return wmsInnerMaterialBarcodeMapper.findList(searchWmsInnerMaterialBarcode);
+    }
+
+    @Override
+    public List<WmsInnerMaterialBarcodeDto> add(WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto) {
+    //    SysUser sysUser = currentUser();
+        if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialId())){
+            throw new BizErrorException("绑定物料编码不能为空");
+        }
+        if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getPrintQty())){
+            throw new BizErrorException("打印条码数量不能为空");
+        }
+
+        SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+        if(StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId())){
+            //特殊处理，默认一个集合只有一个规则
+            SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
+            searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId());
+            ResponseEntity<List<BaseBarcodeRuleSetDetDto>> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet);
+            if(StringUtils.isEmpty(barcodeRuleSetDetList.getData())) throw new BizErrorException("未找到对应条码集合");
+            if(barcodeRuleSetDetList.getData().size()>1) throw new BizErrorException("规则集合配置错误，该规则集合只能配置一条规则");
+            searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleSetDetList.getData().get(0).getBarcodeRuleId());
+        }else{
+            //取系统配置默认编码
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("BaseBarCodeRule");
+            ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
+            if(StringUtils.isEmpty(specItemList.getData())) throw new BizErrorException("未设置默认编码规则，无法生成编码");
+            SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+            searchBaseBarcodeRule.setBarcodeRuleCode(specItemList.getData().get(0).getParaValue());
+            ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
+            if(StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未找到对应条码规则");
+            searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRulList.getData().get(0).getBarcodeRuleId());
+        }
+
+        ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecList= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
+        if(barcodeRuleSpecList.getCode()!=0) throw new BizErrorException(barcodeRuleSpecList.getMessage());
+        if(barcodeRuleSpecList.getData().size()<1) throw new BizErrorException("请设置条码规则");
+        List<BaseBarcodeRuleSpec>  list = barcodeRuleSpecList.getData();
+
+        //根据选择生成的条码数量生成条码
+        List<WmsInnerMaterialBarcodeDto> materialBarcodeList = new ArrayList<>();
+        for(int i=0;i< wmsInnerMaterialBarcodeDto.getBarCodeQty();i++) {
+            WmsInnerMaterialBarcodeDto  wmsInnerMaterialBarCode = new WmsInnerMaterialBarcodeDto();
+            BeanUtils.autoFillEqFields(wmsInnerMaterialBarcodeDto,wmsInnerMaterialBarCode);
+
+            String barCode = creatBarCode(list, wmsInnerMaterialBarcodeDto.getMaterialCode(), wmsInnerMaterialBarcodeDto.getMaterialId());
+            wmsInnerMaterialBarCode.setBarcode(barCode);
+            wmsInnerMaterialBarCode.setBarcodeRuleId(list.get(0).getBarcodeRuleId());
+    //        wmsInnerMaterialBarCode.setOrgId(sysUser.getOrganizationId());
+            wmsInnerMaterialBarCode.setCreateTime(new Date());
+    //        wmsInnerMaterialBarCode.setCreateUserId(sysUser.getUserId());
+            wmsInnerMaterialBarCode.setModifiedTime(new Date());
+    //        wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
+            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
+            materialBarcodeList.add(wmsInnerMaterialBarCode);
+        }
+        return materialBarcodeList;
+    }
+
+    //生成条码
+    private String creatBarCode(List<BaseBarcodeRuleSpec> list,String materialCode,Long materialId){
+        String lastBarCode = null;
+        boolean hasKey = redisUtil.hasKey(this.sub(list));
+        if(hasKey){
+            // 从redis获取上次生成条码
+            Object redisRuleData = redisUtil.get(this.sub(list));
+            lastBarCode = String.valueOf(redisRuleData);
+        }
+        //获取最大流水号
+        String maxCode = baseFeignApi.generateMaxCode(list, lastBarCode).getData();
+        //生成条码
+        ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode,materialCode,materialId.toString());
+        if(rs.getCode()!=0){
+            throw new BizErrorException(rs.getMessage());
+        }
+
+        // 更新redis最新条码
+        redisUtil.set(sub(list), rs.getData());
+
+        return rs.getData();
+    }
+
+
+    @Override
+    public BaseBarcodeRuleDto findLabelRute(Long barcodeRuleSetId) {
+        SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
+        searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
+        ResponseEntity<List<BaseBarcodeRuleSetDetDto>> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet);
+        if(StringUtils.isEmpty(barcodeRuleSetDetList.getData())) throw new BizErrorException("未找到对应条码集合");
+        if(barcodeRuleSetDetList.getData().size()>1) throw new BizErrorException("规则集合配置错误，该规则集合只能配置一条规则");
+
+        SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+        searchBaseBarcodeRule.setBarcodeRuleSetId(barcodeRuleSetId);
+        ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
+        if(StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未找到对应条码");
+        return barcodeRulList.getData().get(0);
+    }
+
+    /**
+     * 打印/补打条码
+     * @param ids 条码唯一标识
+     * @return 1
+     */
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int print(String ids, int printNum) {
+        String[] arrId = ids.split(",");
+        for (String s : arrId) {
+            //查询模版信息
+            WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(s);
+            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+            searchBaseMaterial.setMaterialId(wmsInnerMaterialBarcode.getMaterialId());
+            ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
+            if (StringUtils.isEmpty(list.getData())) throw new BizErrorException("未匹配到对应物料");
+            BaseMaterial material = list.getData().get(0);
+            PrintModel printModel = wmsInnerMaterialBarcodeMapper.findPrintModel(wmsInnerMaterialBarcode.getMaterialBarcodeId());
+            printModel.setSize(printNum);
+            PrintDto printDto = new PrintDto();
+            printDto.setLabelName(material.getMaterialName());
+            printDto.setLabelVersion(material.getMaterialVersion());
+         //   printDto.setPrintName();
+            List<PrintModel> printModelList = new ArrayList<>();
+            printModelList.add(printModel);
+            printDto.setPrintModelList(printModelList);
+            sfcFeignApi.print(printDto);
+        }
+        return 1;
+    }
+
+
+    /**
+     * 获取当前登录用户
+     * @return
+     */
+    private SysUser currentUser(){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        return user;
+    }
+
+    public String sub(List<BaseBarcodeRuleSpec> list){
+        StringBuffer sb = new StringBuffer();
+        for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
+            sb.append(baseBarcodeRuleSpec.getSpecification());
+        }
+        return sb.toString();
+    }
+
+}

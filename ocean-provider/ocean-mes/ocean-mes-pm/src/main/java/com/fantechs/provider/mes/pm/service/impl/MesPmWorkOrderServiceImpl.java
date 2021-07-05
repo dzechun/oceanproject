@@ -195,6 +195,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workOrderCode", mesPmWorkOrder.getWorkOrderCode());
         MesPmWorkOrder mesPmWorkOrderOld = mesPmWorkOrderMapper.selectOneByExample(example);
+        mesPmWorkOrder.setModifiedTime(new Date());
         if(StringUtils.isEmpty(mesPmWorkOrderOld)){
             try {
                 if(StringUtils.isEmpty(mesPmWorkOrder.getCreateTime())) mesPmWorkOrder.setCreateTime(new Date());
