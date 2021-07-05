@@ -31,11 +31,25 @@ public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Seria
     private String outStorageName;
 
     /**
+     * 移出库位编码
+     */
+    @Transient
+    @ApiModelProperty(name = "outStorageCode",value = "移出库位编码")
+    private String outStorageCode;
+
+    /**
      * 移入库位
      */
     @Transient
     @ApiModelProperty(name = "inStorageName",value = "移入库位")
     private String inStorageName;
+
+    /**
+     * 移入库位编码
+     */
+    @Transient
+    @ApiModelProperty(name = "inStorageCode",value = "移入库位编码")
+    private String inStorageCode;
 
     /**
      * 物料编码
