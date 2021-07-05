@@ -4,11 +4,12 @@ server:
 
 spring:
   profiles:
-    active: bama
+    active: dev
   application:
     name: @pom.artifactId@
   rabbitmq:
-    host: 10.10.200.33
+    host: 10.10.20.62
+#    host: 10.10.200.33
 #    host: 192.168.204.163
     port: 5672
     username: admin
@@ -27,4 +28,5 @@ spring:
       max-file-size: 500MB
       max-request-size: 500MB
 wmsAPI:
-  finishPtlJobOrderUrl: http://wms.8ma.net:8090/bmwms/ptl/finishOrder
+#  finishPtlJobOrderUrl: http://wms.8ma.net:8090/bmwms/ptl/finishOrder
+  finishPtlJobOrderUrl: http://10.10.20.61/bmwms/ptl/finishOrder

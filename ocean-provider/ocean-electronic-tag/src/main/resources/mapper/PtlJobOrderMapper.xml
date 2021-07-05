@@ -105,6 +105,6 @@
       </if>
     </where>
     group by pjo.job_order_id
-    order by pjo.create_time desc
+    order by FIELD(pjo.order_status,2,1,4,5,3,6), pjo.related_order_code
   </select>
 </mapper>

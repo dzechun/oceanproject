@@ -54,6 +54,14 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
     private Long materialOwnerId;
 
     /**
+     * 客户ID
+     */
+    @ApiModelProperty(name="customerId",value = "客户ID")
+    @Excel(name = "客户ID", height = 20, width = 30,orderNum="")
+    @Column(name = "customer_id")
+    private Long customerId;
+
+    /**
      * 总加入数量
      */
     @Transient
