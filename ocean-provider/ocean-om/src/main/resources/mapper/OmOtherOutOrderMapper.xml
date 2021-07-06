@@ -10,22 +10,13 @@
     <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
     <result column="customer_id" jdbcType="BIGINT" property="customerId" />
-    <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
-    <result column="total_dispatch_qty" jdbcType="DECIMAL" property="totalDispatchQty" />
     <result column="consignee_id" jdbcType="BIGINT" property="consigneeId" />
-    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
-    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
-    <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
-    <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress"/>
-    <result column="address" jdbcType="VARCHAR" property="address"/>
-    <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
-    <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
-    <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
-    <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
-    <result column="complete_date" jdbcType="TIMESTAMP" property="completeDate"/>
+    <result column="req_arrive_date" jdbcType="TIMESTAMP" property="reqArriveDate"/>
+      <result column="plan_arrive_date" jdbcType="TIMESTAMP" property="planArriveDate"/>
+      <result column="actual_despatch_date" jdbcType="TIMESTAMP" property="actualDespatchDate"/>
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -36,11 +27,23 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+      <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName"/>
+      <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
+      <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
+      <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
+      <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress"/>
+      <result column="address" jdbcType="VARCHAR" property="address"/>
+      <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
+      <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
+      <result column="total_dispatch_qty" jdbcType="DECIMAL" property="totalDispatchQty" />
+      <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
+      <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
+      <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto">
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
-    <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
@@ -51,20 +54,13 @@ ouo.other_out_order_code,
 ouo.customer_order_code,
 ouo.material_owner_id,
 ouo.customer_id,
-ouo.total_volume,
-ouo.total_net_weight,
-ouo.total_gross_weight,
 ouo.consignee_id,
-ouo.link_man_name,
-ouo.link_man_phone,
-ouo.fax_number,
-ouo.e_mail_address,
-ouo.address,
 ouo.order_status,
 ouo.status,
 ouo.order_date,
-ouo.complete_date,
-ouo.complete_date,
+ouo.req_arrive_date,
+ouo.plan_arrive_date,
+ouo.actual_despatch_date,
 ouo.remark,
 ouo.org_id,
 ouo.create_user_id,
@@ -77,15 +73,19 @@ ouo.option2,
 ouo.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,bc.consignee_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
-    bs.supplier_name,
+    SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,bs.supplier_name,
+    bc.consignee_name,bc.link_man_name,bc.link_man_phone,bc.fax_number,bc.e_mail_address,bc.address,
+    su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
     (SELECT SUM(ouod.order_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_qty,
     (SELECT SUM(ouod.issue_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_issue_qty,
-    (SELECT SUM(ouod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_dispatch_qty
+    (SELECT SUM(ouod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_dispatch_qty,
+      (SELECT SUM(bmt.volume) FROM base_material_tab bmt where bmt.material_id in (SELECT ouod.material_id FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id)) as total_volume,
+      (SELECT SUM(bmt.net_weight) FROM base_material_tab bmt where bmt.material_id in (SELECT ouod.material_id FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id)) as total_net_weight,
+      (SELECT SUM(bmt.gross_weight) FROM base_material_tab bmt where bmt.material_id in (SELECT ouod.material_id FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id)) as total_gross_weight
     FROM om_other_out_order ouo
     LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = ouo.material_owner_id
     LEFT JOIN base_supplier bs ON  ouo.customer_id = bs.supplier_id
-        LEFT JOIN base_consignee bc ON  ouo.consignee_id = bc.consignee_id
+    LEFT JOIN base_consignee bc ON  ouo.consignee_id = bc.consignee_id
     left join ocean_v2.sys_user su on ouo.create_user_id = su.user_id
     left join ocean_v2.sys_user sus on ouo.modified_user_id = sus.user_id
     left join base_organization bo on ouo.org_id = bo.organization_id
@@ -93,15 +93,21 @@ ouo.option3
   <if test="otherOutOrderCode!=null and otherOutOrderCode!=''">
     and ouo.other_out_order_code like CONCAT('%',#{otherOutOrderCode},'%')
   </if>
-<if test="customerOrderCode!=null and customerOrderCode!=''">
-  and ouo.customer_order_code like CONCAT('%',#{customerOrderCode},'%')
-</if>
-  <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-    and date_format(ouo.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-  </if>
-<if test="orgId!=null and orgId!=''">
-  and ouo.org_id = #{orgId}
-</if>
+    <if test="customerOrderCode!=null and customerOrderCode!=''">
+        and ouo.customer_order_code like CONCAT('%',#{customerOrderCode},'%')
+    </if>
+    <if test="orderDateStartTime != null and orderDateStartTime != '' and orderDateEndTime != null and orderDateEndTime != ''">
+        and date_format(ouo.order_date, '%Y-%m-%d') BETWEEN #{orderDateStartTime} AND #{orderDateEndTime}
+    </if>
+    <if test="planArriveDateStartTime != null and planArriveDateStartTime != '' and planArriveDateEndTime != null and planArriveDateEndTime != ''">
+        and date_format(ouo.plan_arrive_date, '%Y-%m-%d') BETWEEN #{planArriveDateStartTime} AND #{planArriveDateEndTime}
+    </if>
+    <if test="actualDespatchDateStartTime != null and actualDespatchDateStartTime != '' and actualDespatchDateEndTime != null and actualDespatchDateEndTime != ''">
+        and date_format(ouo.actual_despatch_date, '%Y-%m-%d') BETWEEN #{actualDespatchDateStartTime} AND #{actualDespatchDateEndTime}
+    </if>
+    <if test="orgId!=null and orgId!=''">
+        and ouo.org_id = #{orgId}
+    </if>
 <if test="orderStatus!=null and orderStatus!=''">
   and ouo.order_status = #{orderStatus}
 </if>

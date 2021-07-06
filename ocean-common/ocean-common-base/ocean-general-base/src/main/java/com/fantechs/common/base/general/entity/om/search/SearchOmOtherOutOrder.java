@@ -20,4 +20,40 @@ public class SearchOmOtherOutOrder extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name = "orderStatus",value = "单据状态")
     private Byte orderStatus;
+
+    /**
+     * 订单日期开始时间
+     */
+    @ApiModelProperty(name="orderDateStartTime" ,value="开始时间(YYYY-MM-DD)")
+    private String orderDateStartTime;
+
+    /**
+     * 订单日期结束时间
+     */
+    @ApiModelProperty(name="endTime" ,value="结束时间(YYYY-MM-DD)")
+    private String orderDateEndTime;
+
+    /**
+     * 计划到达日期开始时间
+     */
+    @ApiModelProperty(name="planArriveDateStartTime" ,value="开始时间(YYYY-MM-DD)")
+    private String planArriveDateStartTime;
+
+    /**
+     * 计划到达日期结束时间
+     */
+    @ApiModelProperty(name="planArriveDateEndTime" ,value="结束时间(YYYY-MM-DD)")
+    private String planArriveDateEndTime;
+
+    /**
+     * 实际发运日期开始时间
+     */
+    @ApiModelProperty(name="actualDespatchDateStartTime" ,value="开始时间(YYYY-MM-DD)")
+    private String actualDespatchDateStartTime;
+
+    /**
+     * 实际发运日期结束时间
+     */
+    @ApiModelProperty(name="actualDespatchDateEndTime" ,value="结束时间(YYYY-MM-DD)")
+    private String actualDespatchDateEndTime;
 }
