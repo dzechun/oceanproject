@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.poi.ss.formula.functions.Na;
 
 import javax.persistence.Column;
 import javax.persistence.Transient;
@@ -29,6 +30,13 @@ public class OmOtherOutOrderDto extends OmOtherOutOrder implements Serializable 
     @Transient
     @ApiModelProperty(name = "supplierName",value = "客户")
     private String supplierName;
+
+    /**
+     * 收货人
+     */
+    @Transient
+    @ApiModelProperty(name = "consigneeName",value = "收货人")
+    private String consigneeName;
 
     /**
      * 创建名称

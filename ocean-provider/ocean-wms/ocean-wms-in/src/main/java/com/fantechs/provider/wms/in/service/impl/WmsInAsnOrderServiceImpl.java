@@ -212,6 +212,9 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .asnOrderDetId(wmsInAsnOrderDet.getAsnOrderDetId())
                 .putawayQty(wms.getPutawayQty()!=null?wms.getPutawayQty().add(wmsInAsnOrderDet.getPutawayQty()):wmsInAsnOrderDet.getPutawayQty())
                 .build());
+        if(StringUtils.isEmpty(wms.getSourceOrderId(),wmsInAsnOrder.getSourceOrderId())){
+            return num;
+        }
         //订单数量反写
         switch (wmsInAsnOrder.getOrderTypeId().toString())
         {
@@ -232,7 +235,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 if(actualQty.compareTo(putawayQty)==0){
                     OmTransferOrder omTransferOrder = new OmTransferOrder();
                     omTransferOrder.setTransferOrderId(wmsInAsnOrder.getSourceOrderId());
-                    omTransferOrder.setOrderStatus((byte)4);
+                    omTransferOrder.setOrderStatus((byte)3);
                     ResponseEntity responseEntity = omFeignApi.updateStatus(omTransferOrder);
                     if(responseEntity.getCode()!=0){
                         throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
@@ -789,7 +792,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         List<WmsInnerInventoryDet> wmsInnerInventoryDets = new ArrayList<>();
         wmsInnerInventoryDet= new WmsInnerInventoryDet();
         wmsInnerInventoryDet.setStorageId(wmsInAsnOrderDet.getStorageId());
-        wmsInnerInventoryDet.setMaterialId(wmsInnerInventoryDet.getMaterialId());
+        wmsInnerInventoryDet.setMaterialId(wmsInAsnOrderDet.getMaterialId());
         wmsInnerInventoryDet.setBarcode(barCode);
         wmsInnerInventoryDet.setMaterialQty(wmsInAsnOrderDet.getActualQty());
         wmsInnerInventoryDet.setInTime(new Date());

@@ -266,6 +266,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
         String[] arrIds = ids.split(",");
         for (String id : arrIds) {
             WmsOutDespatchOrder wmsOutDespatchOrder = wmsOutDespatchOrderMapper.selectByPrimaryKey(id);
+            this.recoverStatus(wmsOutDespatchOrder.getDespatchOrderId());
             if(wmsOutDespatchOrder.getOrderStatus()==(4)){
                 throw new BizErrorException("单据已完成，无法删除");
             }
@@ -274,6 +275,31 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
             }
         }
         return super.batchDelete(ids);
+    }
+
+    /**
+     * 恢复拣货作业单据装车状态
+     * @param despatchOrderId
+     */
+    private void recoverStatus(Long despatchOrderId){
+        Example example = new Example(WmsOutDespatchOrderReJo.class);
+        example.createCriteria().andEqualTo("despatchOrderId",despatchOrderId);
+        List<WmsOutDespatchOrderReJo> list = wmsOutDespatchOrderReJoMapper.selectByExample(example);
+        for (WmsOutDespatchOrderReJo wms : list) {
+            example = new Example(WmsOutDespatchOrderReJoReDet.class);
+            example.createCriteria().andEqualTo("despatchOrderReJoId",wms.getDespatchOrderReJoId());
+            List<WmsOutDespatchOrderReJoReDet> wmsOutDespatchOrderReJoReDets = wmsOutDespatchOrderReJoReDetMapper.selectByExample(example);
+            for (WmsOutDespatchOrderReJoReDet wmsOutDespatchOrderReJoReDet : wmsOutDespatchOrderReJoReDets) {
+                ResponseEntity responseEntity = innerFeignApi.retrographyStatus(WmsInnerJobOrderDet.builder()
+                        .jobOrderDetId(wmsOutDespatchOrderReJoReDet.getJobOrderDetId())
+                        .jobOrderId(wms.getJobOrderId())
+                        .orderStatus((byte)5)
+                        .build());
+                if(responseEntity.getCode()!=0){
+                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                }
+            }
+        }
     }
 
     /**
@@ -320,15 +346,17 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 break;
             case "7":
                 //其他出库
-                OmOtherOutOrderDet omOtherOutOrderDet = new OmOtherOutOrderDet();
-                omOtherOutOrderDet.setOtherOutOrderId(wmsOutDeliveryOrder.getSourceOrderId());
-                omOtherOutOrderDet.setOtherOutOrderDetId(wmsOutDeliveryOrderDet.getOrderDetId());
-                omOtherOutOrderDet.setDispatchQty(wmsInnerJobOrderDetDto.getActualQty());
-                ResponseEntity responseEntity = omFeignApi.writeQtyToOut(omOtherOutOrderDet);
-                if(responseEntity.getCode()!=0){
-                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                if(StringUtils.isNotEmpty(wmsOutDeliveryOrder.getSourceOrderId(),wmsOutDeliveryOrderDet.getOrderDetId())){
+                    OmOtherOutOrderDet omOtherOutOrderDet = new OmOtherOutOrderDet();
+                    omOtherOutOrderDet.setOtherOutOrderId(wmsOutDeliveryOrder.getSourceOrderId());
+                    omOtherOutOrderDet.setOtherOutOrderDetId(wmsOutDeliveryOrderDet.getOrderDetId());
+                    omOtherOutOrderDet.setDispatchQty(wmsInnerJobOrderDetDto.getActualQty());
+                    ResponseEntity responseEntity = omFeignApi.writeQtyToOut(omOtherOutOrderDet);
+                    if(responseEntity.getCode()!=0){
+                        throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                    }
+                    num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
                 }
-                num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
                 break;
         }
         //查询出库单对应拣货单是否都已经发运完成

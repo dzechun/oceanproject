@@ -687,6 +687,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             num +=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
         }
+        //反写完工入库单
+        inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                .putawayQty(qty)
+                .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
+                .build());
         return wmsInnerJobOrderDet;
     }
 

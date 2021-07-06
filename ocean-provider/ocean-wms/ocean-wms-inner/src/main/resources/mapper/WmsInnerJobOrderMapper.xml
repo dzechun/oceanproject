@@ -144,6 +144,7 @@
             </if>
             <if test="isPick==true">
                 and wipo.job_order_type =4 and wipo.order_status = 5
+                and wipo.job_order_id NOT IN(SELECT wodor.job_order_id From wms_out_despatch_order_re_jo wodor where wodor.job_order_id=wipo.job_order_id)
             </if>
             <if test="orderStatusList !=null and orderStatusList.size()!=0">
                 and wipo.order_status in
