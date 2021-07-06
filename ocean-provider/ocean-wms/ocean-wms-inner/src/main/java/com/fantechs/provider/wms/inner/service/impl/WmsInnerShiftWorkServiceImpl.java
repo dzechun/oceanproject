@@ -280,7 +280,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
         // 查询库存信息，同一库位跟同物料有且只有一条数据
         map.clear();
-        map.put("materialId", dto.getMaterialId());
         map.put("storageId", dto.getStorageId());
         map.put("jobStatus", (byte) 2);
         map.put("lockStatus", (byte) 0);
