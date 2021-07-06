@@ -1,11 +1,14 @@
 package com.fantechs.common.base.general.dto.om;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Author mr.lei
@@ -26,13 +29,6 @@ public class OmOtherOutOrderDto extends OmOtherOutOrder implements Serializable 
     @Transient
     @ApiModelProperty(name = "supplierName",value = "客户")
     private String supplierName;
-
-    /**
-     * 收货人
-     */
-    @Transient
-    @ApiModelProperty(name = "consigneeName",value = "收货人")
-    private String consigneeName;
 
     /**
      * 创建名称

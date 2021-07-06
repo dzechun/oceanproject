@@ -57,6 +57,10 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
     @Override
     public List<WmsInnerMaterialBarcodeDto> findList(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode) {
+        if(StringUtils.isEmpty(searchWmsInnerMaterialBarcode.getOrgId())){
+            SysUser sysUser = currentUser();
+            searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+        }
         return wmsInnerMaterialBarcodeMapper.findList(searchWmsInnerMaterialBarcode);
     }
 
@@ -71,7 +75,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         }
 
         SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
-        if(StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId())){
+        if(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId() !=0 ){
             //特殊处理，默认一个集合只有一个规则
             SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
             searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId());
@@ -143,16 +147,29 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
     @Override
     public BaseBarcodeRuleDto findLabelRute(Long barcodeRuleSetId) {
-        SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
-        searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
-        ResponseEntity<List<BaseBarcodeRuleSetDetDto>> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet);
-        if(StringUtils.isEmpty(barcodeRuleSetDetList.getData())) throw new BizErrorException("未找到对应条码集合");
-        if(barcodeRuleSetDetList.getData().size()>1) throw new BizErrorException("规则集合配置错误，该规则集合只能配置一条规则");
+        ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = null;
+        if(barcodeRuleSetId != 0) {
+            SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
+            searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
+            ResponseEntity<List<BaseBarcodeRuleSetDetDto>> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet);
+            if (StringUtils.isEmpty(barcodeRuleSetDetList.getData())) throw new BizErrorException("未找到对应条码集合");
+            if (barcodeRuleSetDetList.getData().size() > 1) throw new BizErrorException("规则集合配置错误，该规则集合只能配置一条规则");
 
-        SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
-        searchBaseBarcodeRule.setBarcodeRuleSetId(barcodeRuleSetId);
-        ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
-        if(StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未找到对应条码");
+            SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+            searchBaseBarcodeRule.setBarcodeRuleSetId(barcodeRuleSetId);
+            barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
+            if (StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未找到对应条码");
+        }else{
+            //无id值则取默认生成规则
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("BaseBarCodeRule");
+            ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
+            if(StringUtils.isEmpty(specItemList.getData())) throw new BizErrorException("未设置默认编码规则，无法生成编码");
+            SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+            searchBaseBarcodeRule.setBarcodeRuleCode(specItemList.getData().get(0).getParaValue());
+            barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
+
+        }
         return barcodeRulList.getData().get(0);
     }
 

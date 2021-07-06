@@ -50,7 +50,7 @@
         wimb.option3
     </sql>
 
-  <select id="findList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
+  <select id="findList" resultMap="BaseResultMapDto">
     SELECT<include refid="BaseColumnList"/>,
     wr.user_name as work_name,
     su.user_name AS create_user_name,
