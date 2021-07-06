@@ -139,6 +139,9 @@
             <if test="sourceOrderId!=null and sourceOrderId!=''">
                 and wipo.source_order_id =#{sourceOrderId}
             </if>
+            <if test="orderStatus!=null and orderStatus!=''">
+                and wipo.order_status =#{orderStatus}
+            </if>
             <if test="isPick==true">
                 and wipo.job_order_type =4 and wipo.order_status = 5
             </if>
@@ -260,5 +263,8 @@
 
     <select id="findStorageId" resultType="java.lang.Long">
         select storage_id From base_storage where warehouse_id = #{warehouseId} and storage_type=#{storageType} and org_id=#{orgId} limit 1
+    </select>
+    <select id="findMaterialCode" resultType="java.lang.String">
+        select material_code FROM base_material where material_id = #{materialId}
     </select>
 </mapper>

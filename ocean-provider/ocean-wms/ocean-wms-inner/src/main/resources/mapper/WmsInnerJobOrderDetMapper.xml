@@ -44,7 +44,9 @@
         <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="out_storage_name" jdbcType="VARCHAR" property="outStorageName"/>
+        <result column="out_storage_code" jdbcType="VARCHAR" property="outStorageCode"/>
         <result column="in_storage_name" jdbcType="VARCHAR" property="inStorageName"/>
+        <result column="in_storage_code" jdbcType="VARCHAR" property="inStorageCode"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
@@ -93,7 +95,9 @@
         bmo.material_owner_name,
         bw.warehouse_name,
         bso.storage_code AS out_storage_name,
+        bso.storage_code AS out_storage_code,
         bsi.storage_code AS in_storage_name,
+        bsi.storage_code AS in_storage_code,
         bm.material_code,
         bm.material_name,
         bm.material_desc,

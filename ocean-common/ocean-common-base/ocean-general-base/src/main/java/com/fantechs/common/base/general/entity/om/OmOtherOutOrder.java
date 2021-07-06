@@ -62,100 +62,12 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
     private Long customerId;
 
     /**
-     * 总加入数量
-     */
-    @Transient
-    @ApiModelProperty(name="totalIssueQty",value = "总加入数量")
-    @Excel(name = "总加入数量", height = 20, width = 30,orderNum="")
-    private BigDecimal totalIssueQty;
-
-    /**
-     * 累计发货数量
-     */
-    @Transient
-    @ApiModelProperty(name="totalDispatchQty",value = "累计发货数量")
-    @Excel(name = "累计发货数量", height = 20, width = 30,orderNum="")
-    private BigDecimal totalDispatchQty;
-
-    /**
      * 收货人ID
      */
     @ApiModelProperty(name="consigneeId",value = "收货人ID")
     @Excel(name = "收货人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "consignee_id")
     private Long consigneeId;
-
-    /**
-     * 联系人名称
-     */
-    @ApiModelProperty(name="linkManName",value = "联系人名称")
-    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="") 
-    @Column(name = "link_man_name")
-    private String linkManName;
-
-    /**
-     * 联系人电话
-     */
-    @ApiModelProperty(name="linkManPhone",value = "联系人电话")
-    @Excel(name = "联系电话", height = 20, width = 30,orderNum="")
-    @Column(name = "link_man_phone")
-    private String linkManPhone;
-
-    /**
-     * 传真
-     */
-    @ApiModelProperty(name="faxNumber",value = "传真")
-    @Excel(name = "传真", height = 20, width = 30,orderNum="")
-    @Column(name = "fax_number")
-    private String faxNumber;
-
-    /**
-     * 邮件地址
-     */
-    @ApiModelProperty(name="eMailAddress",value = "邮件地址")
-    @Excel(name = "邮件地址", height = 20, width = 30,orderNum="")
-    @Column(name = "e_mail_address")
-    private String eMailAddress;
-
-    /**
-     * 地址
-     */
-    @ApiModelProperty(name="address",value = "地址")
-    @Excel(name = "地址", height = 20, width = 30,orderNum="")
-    @Column(name = "address")
-    private String address;
-
-    /**
-     * 订单总数量
-     */
-    @Transient
-    @ApiModelProperty(name="totalQty",value = "订单总数量")
-    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="")
-    private BigDecimal totalQty;
-
-    /**
-     * 订单总体积
-     */
-    @ApiModelProperty(name="totalVolume",value = "订单总体积")
-    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_volume")
-    private BigDecimal totalVolume;
-
-    /**
-     * 订单总净重
-     */
-    @ApiModelProperty(name="totalNetWeight",value = "订单总净重")
-    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_net_weight")
-    private BigDecimal totalNetWeight;
-
-    /**
-     * 订单总毛重
-     */
-    @ApiModelProperty(name="totalGrossWeight",value = "订单总毛重")
-    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_gross_weight")
-    private BigDecimal totalGrossWeight;
 
     /**
      * 订单状态(1-打开 2-下发中  3-已下发 4-完成)
@@ -173,6 +85,101 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
     private Byte status;
 
     /**
+     * 收货人
+     */
+    @Transient
+    @ApiModelProperty(name = "consigneeName",value = "收货人")
+    private String consigneeName;
+
+    /**
+     * 联系人名称
+     */
+    @ApiModelProperty(name="linkManName",value = "联系人名称")
+    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="")
+    @Transient
+    private String linkManName;
+
+    /**
+     * 联系人电话
+     */
+    @ApiModelProperty(name="linkManPhone",value = "联系人电话")
+    @Excel(name = "联系电话", height = 20, width = 30,orderNum="")
+    @Transient
+    private String linkManPhone;
+
+    /**
+     * 传真
+     */
+    @ApiModelProperty(name="faxNumber",value = "传真")
+    @Excel(name = "传真", height = 20, width = 30,orderNum="")
+    @Transient
+    private String faxNumber;
+
+    /**
+     * 邮件地址
+     */
+    @ApiModelProperty(name="eMailAddress",value = "邮件地址")
+    @Excel(name = "邮件地址", height = 20, width = 30,orderNum="")
+    @Transient
+    private String eMailAddress;
+
+    /**
+     * 地址
+     */
+    @ApiModelProperty(name="address",value = "地址")
+    @Excel(name = "地址", height = 20, width = 30,orderNum="")
+    @Transient
+    private String address;
+
+    /**
+     * 总加入数量
+     */
+    @Transient
+    @ApiModelProperty(name="totalIssueQty",value = "总加入数量")
+    @Excel(name = "总加入数量", height = 20, width = 30,orderNum="")
+    private BigDecimal totalIssueQty;
+
+    /**
+     * 累计发货数量
+     */
+    @Transient
+    @ApiModelProperty(name="totalDispatchQty",value = "累计发货数量")
+    @Excel(name = "累计发货数量", height = 20, width = 30,orderNum="")
+    private BigDecimal totalDispatchQty;
+
+    /**
+     * 订单总数量
+     */
+    @Transient
+    @ApiModelProperty(name="totalQty",value = "订单总数量")
+    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="")
+    private BigDecimal totalQty;
+
+    /**
+     * 订单总体积
+     */
+    @ApiModelProperty(name="totalVolume",value = "订单总体积")
+    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="")
+    @Transient
+    private BigDecimal totalVolume;
+
+    /**
+     * 订单总净重
+     */
+    @ApiModelProperty(name="totalNetWeight",value = "订单总净重")
+    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="")
+    @Transient
+    private BigDecimal totalNetWeight;
+
+    /**
+     * 订单总毛重
+     */
+    @ApiModelProperty(name="totalGrossWeight",value = "订单总毛重")
+    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="")
+    @Transient
+    private BigDecimal totalGrossWeight;
+
+    /**
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
@@ -181,12 +188,28 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
     private Date orderDate;
 
     /**
-     * 要求完成日期
+     * 要求到达日期
      */
-    @ApiModelProperty(name="completeDate",value = "要求完成日期")
-    @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="14")
-    @Column(name = "complete_date")
-    private Date completeDate;
+    @ApiModelProperty(name="reqArriveDate",value = "要求到达日期")
+    @Excel(name = "要求到达日期", height = 20, width = 30,orderNum="14")
+    @Column(name = "req_arrive_date")
+    private Date reqArriveDate;
+
+    /**
+     * 计划到达日期
+     */
+    @ApiModelProperty(name="planArriveDate",value = "计划到达日期")
+    @Excel(name = "计划到达日期", height = 20, width = 30,orderNum="15")
+    @Column(name = "plan_arrive_date")
+    private Date planArriveDate;
+
+    /**
+     * 实际发运日期
+     */
+    @ApiModelProperty(name="actualDespatchDate",value = "实际发运日期")
+    @Excel(name = "实际发运日期", height = 20, width = 30,orderNum="16")
+    @Column(name = "actual_despatch_date")
+    private Date actualDespatchDate;
 
     /**
      * 备注

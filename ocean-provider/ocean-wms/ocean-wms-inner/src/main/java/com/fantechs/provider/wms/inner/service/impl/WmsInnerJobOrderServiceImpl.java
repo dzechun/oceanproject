@@ -517,7 +517,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num +=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
             }else{
                 WmsInnerJobOrder ws = wmsInPutawayOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDto.getJobOrderId());
-                ws.setActualQty(wmsInPutawayOrderDet.getActualQty());
                 ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
                 if(StringUtils.isEmpty(ws.getActualQty())){
                     ws.setActualQty(new BigDecimal("0.00"));
@@ -548,8 +547,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      * @return 包装数量
      */
     @Override
-    public BigDecimal checkBarcode(String barCode,Long jobOrderDetId) {
+    public Map<String,Object> checkBarcode(String barCode,Long jobOrderDetId) {
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInPutawayOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
+        Map<String,Object> map = new HashMap<>();
         if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
@@ -557,8 +557,16 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         WmsInAsnOrderDet wms = inFeignApi.findDetList(SearchWmsInAsnOrderDet.builder()
                 .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
                 .build()).getData().get(0);
-        BigDecimal qty = InBarcodeUtil.getInventoryDetQty(wmsInnerJobOrderDet.getMaterialId(),barCode);
-        return qty;
+        String materialCode = wmsInPutawayOrderMapper.findMaterialCode(wms.getMaterialId());
+        if(StringUtils.isNotEmpty(materialCode) && materialCode.equals(barCode)){
+            map.put("SN","false");
+            return map;
+        }else{
+            BigDecimal qty = InBarcodeUtil.getInventoryDetQty(wmsInnerJobOrderDet.getMaterialId(),barCode);
+            map.put("SN","true");
+            map.put("qty",qty);
+        }
+        return map;
     }
 
     /**
@@ -572,7 +580,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         example.createCriteria().andEqualTo("relatedOrderCode",asnOrderCode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId());
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventoryDet)){
-            throw new BizErrorException("库存匹配失败");
+            throw new BizErrorException("未查询到收货条码");
         }
         wmsInnerInventoryDet.setInTime(new Date());
         wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
@@ -602,8 +610,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
 
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInPutawayOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
+//        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())){
+//            wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getDistributionQty());
+//        }
         if(StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())){
-            wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getDistributionQty());
+            wmsInnerJobOrderDet.setActualQty(BigDecimal.ZERO);
         }
         if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==1){
             throw new BizErrorException("上架数量不能大于分配数量");
@@ -770,6 +781,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsInPutawayOrderDet.setModifiedTime(new Date());
             wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInPutawayOrderDet.setOrgId(sysUser.getOrganizationId());
+            if(record.getJobOrderType()==(byte)2){
+                wmsInPutawayOrderDet.setShiftStorageStatus((byte) 2);
+            }
             wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wmsInPutawayOrderDet);
             if(record.getJobOrderType()==(byte)3) {
                 WmsInAsnOrderDto wmsInAsnOrderDto = inFeignApi.findList(SearchWmsInAsnOrder.builder()

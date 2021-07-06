@@ -50,7 +50,7 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      */
     int singleReceiving(List<WmsInnerJobOrderDet> wmsInPutawayOrderDets);
 
-    BigDecimal checkBarcode(String barCode,Long jobOrderDetId);
+    Map<String,Object> checkBarcode(String barCode,Long jobOrderDetId);
 
     WmsInnerJobOrderDet scanStorageBackQty(String storageCode,Long jobOrderDetId,BigDecimal qty);
 
