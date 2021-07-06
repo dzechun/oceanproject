@@ -616,7 +616,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())){
             wmsInnerJobOrderDet.setActualQty(BigDecimal.ZERO);
         }
-        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==1){
+        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())>0){
             throw new BizErrorException("上架数量不能大于分配数量");
         }
         BaseStorage baseStorage = list.getData().get(0);
