@@ -20,4 +20,6 @@ public interface WmsInnerJobOrderDetMapper extends MyMapper<WmsInnerJobOrderDet>
      * @return
      */
     int batchUpdate(List<WmsInnerJobOrderDet> list);
+
+    String findPalletCode(@Param("jobOrderId")Long jobOrderId);
 }

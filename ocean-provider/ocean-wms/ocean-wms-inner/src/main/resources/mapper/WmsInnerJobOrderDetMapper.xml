@@ -142,4 +142,9 @@
             where job_order_det_id =#{item.jobOrderDetId}
         </foreach>
     </update>
+    <select id="findPalletCode" resultType="java.lang.String">
+        select ms.pallet_code FROM mes_sfc_product_pallet ms
+LEFT JOIN wms_inner_job_order_re_mspp wi ON  wi.product_pallet_id = ms.product_pallet_id
+where wi.job_order_id = #{jobOrderId}
+    </select>
 </mapper>

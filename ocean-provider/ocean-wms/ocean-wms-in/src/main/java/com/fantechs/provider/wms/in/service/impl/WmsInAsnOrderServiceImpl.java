@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
@@ -759,15 +760,20 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
      * @return
      */
     private String checkBarcode(Long productPalletId){
-        SearchMesSfcProductPalletDet searchMesSfcProductPalletDet = new SearchMesSfcProductPalletDet();
-        searchMesSfcProductPalletDet.setProductPalletId(productPalletId);
-        ResponseEntity<List<MesSfcProductPalletDetDto>> responseEntity = sfcFeignApi.findList(searchMesSfcProductPalletDet);
+//        SearchMesSfcProductPalletDet searchMesSfcProductPalletDet = new SearchMesSfcProductPalletDet();
+//        searchMesSfcProductPalletDet.setProductPalletId(productPalletId);
+        ResponseEntity<MesSfcProductPallet> responseEntity = sfcFeignApi.detail(productPalletId);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException("检验条码失败");
         }
-        List<MesSfcProductPalletDetDto> mesSfcProductPalletDetDtos = responseEntity.getData();
+        String barcode = responseEntity.getData().getPalletCode();
+//        ResponseEntity<List<MesSfcProductPalletDetDto>> responseEntity = sfcFeignApi.findList(searchMesSfcProductPalletDet);
+//        if(responseEntity.getCode()!=0){
+//            throw new BizErrorException("检验条码失败");
+//        }
+//        List<MesSfcProductPalletDetDto> mesSfcProductPalletDetDtos = responseEntity.getData();
         //获取工单条码
-        String barcode = wmsInAsnOrderMapper.findBarCode(mesSfcProductPalletDetDtos.get(0).getWorkOrderBarcodeId());
+        //String barcode = wmsInAsnOrderMapper.findBarCode(mesSfcProductPalletDetDtos.get(0).getWorkOrderBarcodeId());
         if(StringUtils.isEmpty(barcode)){
             throw new BizErrorException("获取工单条码失败");
         }
