@@ -82,7 +82,6 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
                 if (StringUtils.isNotEmpty(baseMaterialPackage.getProcessId())){
                     Example example1 = new Example(BaseMaterialPackage.class);
                     Example.Criteria criteria1 = example1.createCriteria();
-                    criteria1.andEqualTo("organizationId", user.getOrganizationId());
                     criteria1.andEqualTo("materialId", baseMaterialPackage.getMaterialId())
                             .andEqualTo("processId", baseMaterialPackage.getProcessId());
                     List<BaseMaterialPackage> baseMaterialPackages1 = baseMaterialPackageMapper.selectByExample(example1);
@@ -141,7 +140,6 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
             if (StringUtils.isNotEmpty(baseMaterialPackage.getProcessId())){
                 Example example2 = new Example(BaseMaterialPackage.class);
                 Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("organizationId", user.getOrganizationId());
                 criteria2.andEqualTo("materialId", baseMaterialPackage.getMaterialId())
                         .andEqualTo("processId", baseMaterialPackage.getProcessId())
                         .andNotEqualTo("packageSpecificationId", basePackageSpecification.getPackageSpecificationId());
