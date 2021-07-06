@@ -75,7 +75,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         }
 
         SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
-        if(StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId())){
+        if(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId() !=0 ){
             //特殊处理，默认一个集合只有一个规则
             SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
             searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId());
