@@ -60,7 +60,6 @@
         wipod.job_order_id,
         wipod.source_det_id,
         wipod.material_owner_id,
-        wipod.material_owner_id,
         wipod.warehouse_id,
         wipod.in_storage_id,
         wipod.out_storage_id,
@@ -88,7 +87,8 @@
         wipod.option1,
         wipod.option2,
         wipod.option3,
-        wipod.order_status
+        wipod.order_status,
+        wipod.shift_storage_status
     </sql>
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="BaseColumnList"/>,
