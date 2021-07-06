@@ -171,7 +171,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setMaterialOwnerId(innerInventoryDto.getMaterialOwnerId());
             wmsInnerJobOrderDet.setWarehouseId(dto.getWarehouseId());
             wmsInnerJobOrderDet.setOutStorageId(dto.getStorageId());
-            wmsInnerJobOrderDet.setMaterialId(dto.getMaterialId());
+            wmsInnerJobOrderDet.setMaterialId(innerInventoryDto.getMaterialId());
             wmsInnerJobOrderDet.setPackingUnitName(innerInventoryDto.getPackingUnitName());
             wmsInnerJobOrderDet.setPlanQty(new BigDecimal(dto.getMaterialQty()));
             wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getPlanQty());
@@ -278,16 +278,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if(baseStorage.getStorageType() != (byte)1){
             throw new BizErrorException(ErrorCodeEnum.PDA5001008);
         }
-        if (dto.getMaterialId() != null){
-            // 查询条码
-            MesPmWorkOrder pmWorkOrder = pmFeignApi.workOrderDetail(workOrderBarcode.getWorkOrderId()).getData();
-            if(pmWorkOrder == null){
-                throw new BizErrorException(ErrorCodeEnum.PDA5001010);
-            }
-            if(!dto.getMaterialId().equals(pmWorkOrder.getMaterialId())){
-                throw new BizErrorException(ErrorCodeEnum.PDA5001011);
-            }
-        }
         // 查询库存信息，同一库位跟同物料有且只有一条数据
         map.clear();
         map.put("materialId", dto.getMaterialId());
@@ -311,6 +301,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         recordDto.setWarehouseId(innerInventoryDto.getWarehouseId());
         recordDto.setStorageCode(innerInventoryDto.getStorageCode());
         recordDto.setStorageId(innerInventoryDto.getStorageId());
+        recordDto.setMaterialId(innerInventoryDto.getMaterialId());
         if(dto.getJobOrderDetId() != null){
             WmsInnerJobOrderDet jobOrderDet = wmsInnerJobOrderDetService.selectByKey(dto.getJobOrderDetId());
             recordDto.setPlanQty(jobOrderDet.getPlanQty());

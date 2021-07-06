@@ -34,6 +34,12 @@ public class CheckShiftWorkBarcodeRecordDto implements Serializable {
     private String storageCode;
 
     /**
+     * 物料ID
+     */
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    private Long materialId;
+
+    /**
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
