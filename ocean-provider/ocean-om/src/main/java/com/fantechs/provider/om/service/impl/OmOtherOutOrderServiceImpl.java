@@ -127,6 +127,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int writeQty(OmOtherOutOrderDet omOtherOutOrderDet) {
         Map<String,Object> map = new HashMap<>();
         int num = 0;
@@ -157,7 +158,6 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
         record.setOrderStatus((byte)1);
-        record = this.calculateWeight(record);
         int num = omOtherOutOrderMapper.insertUseGeneratedKeys(record);
         for (OmOtherOutOrderDet omOtherOutOrderDet : record.getOmOtherOutOrderDets()) {
             omOtherOutOrderDet.setOtherOutOrderId(record.getOtherOutOrderId());
@@ -171,30 +171,6 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         return num;
     }
 
-    /**
-     * 计算重量
-     * @param omOtherOutOrder
-     * @return
-     */
-    private OmOtherOutOrder calculateWeight(OmOtherOutOrder omOtherOutOrder){
-        BigDecimal totalVolume = BigDecimal.ZERO;
-        BigDecimal totalNetWeight = BigDecimal.ZERO;
-        BigDecimal totalGrossWeight = BigDecimal.ZERO;
-        for (OmOtherOutOrderDet omOtherOutOrderDet : omOtherOutOrder.getOmOtherOutOrderDets()) {
-            if(StringUtils.isEmpty(omOtherOutOrderDet.getMaterialId())){
-                throw new BizErrorException("物料错误");
-            }
-            OmOtherOutOrder om = omOtherOutOrderMapper.findMaterial(omOtherOutOrderDet.getMaterialId());
-            totalVolume.add(om.getTotalVolume());
-            totalNetWeight.add(om.getTotalNetWeight());
-            totalGrossWeight.add(om.getTotalGrossWeight());
-        }
-        omOtherOutOrder.setTotalVolume(totalVolume);
-        omOtherOutOrder.setTotalNetWeight(totalNetWeight);
-        omOtherOutOrder.setTotalGrossWeight(totalGrossWeight);
-        return omOtherOutOrder;
-    }
-
     @Override
     public int update(OmOtherOutOrder entity) {
         SysUser sysUser = currentUser();
@@ -203,7 +179,6 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
-        entity = this.calculateWeight(entity);
         int num = omOtherOutOrderMapper.updateByPrimaryKeySelective(entity);
         //删除原有明细
         Example example = new Example(OmOtherOutOrderDet.class);

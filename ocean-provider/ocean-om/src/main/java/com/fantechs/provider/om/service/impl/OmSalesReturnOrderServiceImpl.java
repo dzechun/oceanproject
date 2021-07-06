@@ -174,8 +174,6 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrderStatus((byte)1);
         record.setOrgId(sysUser.getOrganizationId());
-        //计算重量
-        record = this.calculateWeight(record);
         int num = omSalesReturnOrderMapper.insertUseGeneratedKeys(record);
         for (OmSalesReturnOrderDet omSalesReturnOrderDet : record.getOmSalesReturnOrderDets()) {
             omSalesReturnOrderDet.setSalesReturnOrderId(record.getSalesReturnOrderId());
@@ -190,30 +188,6 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         return num;
     }
 
-    /**
-     * 计算重量
-     * @param omSalesReturnOrder
-     * @return
-     */
-    private OmSalesReturnOrder calculateWeight(OmSalesReturnOrder omSalesReturnOrder){
-        BigDecimal totalVolume = BigDecimal.ZERO;
-        BigDecimal totalNetWeight = BigDecimal.ZERO;
-        BigDecimal totalGrossWeight = BigDecimal.ZERO;
-        for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrder.getOmSalesReturnOrderDets()) {
-            if(StringUtils.isEmpty(omSalesReturnOrderDet.getMaterialId())){
-                throw new BizErrorException("物料错误");
-            }
-            OmSalesReturnOrder om = omSalesReturnOrderMapper.findMaterial(omSalesReturnOrderDet.getMaterialId());
-            totalVolume.add(om.getTotalVolume());
-            totalNetWeight.add(om.getTotalNetWeight());
-            totalGrossWeight.add(om.getTotalGrossWeight());
-        }
-       omSalesReturnOrder.setTotalVolume(totalVolume);
-        omSalesReturnOrder.setTotalNetWeight(totalNetWeight);
-        omSalesReturnOrder.setTotalGrossWeight(totalGrossWeight);
-        return omSalesReturnOrder;
-    }
-
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(OmSalesReturnOrder entity) {
@@ -223,7 +197,6 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
-        entity = this.calculateWeight(entity);
         //删除原有明细
         Example example = new Example(OmSalesReturnOrderDet.class);
         example.createCriteria().andEqualTo("salesReturnOrderId",entity.getSalesReturnOrderId());

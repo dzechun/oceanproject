@@ -88,41 +88,41 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
     /**
      * 联系人名称
      */
+    @Transient
     @ApiModelProperty(name="linkManName",value = "联系人名称")
-    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="") 
-    @Column(name = "link_man_name")
+    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="")
     private String linkManName;
 
     /**
      * 联系人电话
      */
+    @Transient
     @ApiModelProperty(name="linkManPhone",value = "联系人电话")
     @Excel(name = "联系电话", height = 20, width = 30,orderNum="")
-    @Column(name = "link_man_phone")
     private String linkManPhone;
 
     /**
      * 传真
      */
+    @Transient
     @ApiModelProperty(name="faxNumber",value = "传真")
     @Excel(name = "传真", height = 20, width = 30,orderNum="")
-    @Column(name = "fax_number")
     private String faxNumber;
 
     /**
      * 邮件地址
      */
+    @Transient
     @ApiModelProperty(name="eMailAddress",value = "邮件地址")
     @Excel(name = "邮件地址", height = 20, width = 30,orderNum="")
-    @Column(name = "e_mail_address")
     private String eMailAddress;
 
     /**
      * 地址
      */
+    @Transient
     @ApiModelProperty(name="address",value = "地址")
     @Excel(name = "地址", height = 20, width = 30,orderNum="")
-    @Column(name = "address")
     private String address;
 
     /**
@@ -136,25 +136,25 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
     /**
      * 订单总体积
      */
+    @Transient
     @ApiModelProperty(name="totalVolume",value = "订单总体积")
-    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_volume")
+    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="")
     private BigDecimal totalVolume;
 
     /**
      * 订单总净重
      */
+    @Transient
     @ApiModelProperty(name="totalNetWeight",value = "订单总净重")
-    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_net_weight")
+    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="")
     private BigDecimal totalNetWeight;
 
     /**
      * 订单总毛重
      */
+    @Transient
     @ApiModelProperty(name="totalGrossWeight",value = "订单总毛重")
-    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_gross_weight")
+    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="")
     private BigDecimal totalGrossWeight;
 
     /**
@@ -183,10 +183,26 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
     /**
      * 要求完成日期
      */
-    @ApiModelProperty(name="completeDate",value = "要求完成日期")
+    @ApiModelProperty(name="reqArriveDate",value = "要求完成日期")
     @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="14")
-    @Column(name = "complete_date")
-    private Date completeDate;
+    @Column(name = "req_arrive_date")
+    private Date reqArriveDate;
+
+    /**
+     * 计划到达日期
+     */
+    @ApiModelProperty(name="planArriveDate",value = "计划到达日期")
+    @Excel(name = "计划到达日期", height = 20, width = 30,orderNum="14")
+    @Column(name = "plan_arrive_date")
+    private Date planArriveDate;
+
+    /**
+     * 实际发运日期
+     */
+    @ApiModelProperty(name="actualDespatchDate",value = "实际发运日期")
+    @Excel(name = "实际发运日期", height = 20, width = 30,orderNum="14")
+    @Column(name = "actual_despatch_date")
+    private Date actualDespatchDate;
 
     /**
      * 备注

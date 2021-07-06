@@ -232,7 +232,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 if(actualQty.compareTo(putawayQty)==0){
                     OmTransferOrder omTransferOrder = new OmTransferOrder();
                     omTransferOrder.setTransferOrderId(wmsInAsnOrder.getSourceOrderId());
-                    omTransferOrder.setOrderStatus((byte)3);
+                    omTransferOrder.setOrderStatus((byte)4);
                     ResponseEntity responseEntity = omFeignApi.updateStatus(omTransferOrder);
                     if(responseEntity.getCode()!=0){
                         throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());

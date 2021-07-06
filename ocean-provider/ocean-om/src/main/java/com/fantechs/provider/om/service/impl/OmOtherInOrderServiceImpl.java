@@ -177,7 +177,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
         record.setOrderStatus((byte)1);
-        record = this.calculateWeight(record);
         int num = omOtherInOrderMapper.insertUseGeneratedKeys(record);
         for (OmOtherInOrderDet omOtherInOrderDet : record.getOmOtherInOrderDets()) {
             omOtherInOrderDet.setOtherInOrderId(record.getOtherInOrderId());
@@ -192,30 +191,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         return num;
     }
 
-    /**
-     * 计算重量
-     * @param omOtherInOrder
-     * @return
-     */
-    private OmOtherInOrder calculateWeight(OmOtherInOrder omOtherInOrder){
-        BigDecimal totalVolume = BigDecimal.ZERO;
-        BigDecimal totalNetWeight = BigDecimal.ZERO;
-        BigDecimal totalGrossWeight = BigDecimal.ZERO;
-        for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrder.getOmOtherInOrderDets()) {
-            if(StringUtils.isEmpty(omOtherInOrderDet.getMaterialId())){
-                throw new BizErrorException("物料错误");
-            }
-            OmOtherInOrder om = omOtherInOrderMapper.findMaterial(omOtherInOrderDet.getMaterialId());
-            totalVolume.add(om.getTotalVolume());
-            totalNetWeight.add(om.getTotalNetWeight());
-            totalGrossWeight.add(om.getTotalGrossWeight());
-        }
-        omOtherInOrder.setTotalVolume(totalVolume);
-        omOtherInOrder.setTotalNetWeight(totalNetWeight);
-        omOtherInOrder.setTotalGrossWeight(totalGrossWeight);
-        return omOtherInOrder;
-    }
-
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(OmOtherInOrder entity) {
@@ -226,7 +201,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
         entity.setOrgId(sysUser.getOrganizationId());
-        entity = this.calculateWeight(entity);
         //删除原有明细
         Example example = new Example(OmOtherInOrderDet.class);
         example.createCriteria().andEqualTo("otherInOrderId",entity.getOtherInOrderId());

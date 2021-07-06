@@ -25,7 +25,9 @@
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
-    <result column="complete_date" jdbcType="TIMESTAMP" property="completeDate"/>
+    <result column="req_arrive_date" jdbcType="TIMESTAMP" property="reqArriveDate"/>
+    <result column="plan_arrive_date" jdbcType="TIMESTAMP" property="planArriveDate"/>
+    <result column="actual_despatch_date" jdbcType="TIMESTAMP" property="actualDespatchDate"/>
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -51,20 +53,13 @@ ouo.other_out_order_code,
 ouo.customer_order_code,
 ouo.material_owner_id,
 ouo.customer_id,
-ouo.total_volume,
-ouo.total_net_weight,
-ouo.total_gross_weight,
 ouo.consignee_id,
-ouo.link_man_name,
-ouo.link_man_phone,
-ouo.fax_number,
-ouo.e_mail_address,
-ouo.address,
 ouo.order_status,
 ouo.status,
 ouo.order_date,
-ouo.complete_date,
-ouo.complete_date,
+ouo.req_arrive_date,
+ouo.plan_arrive_date,
+ouo.actual_despatch_date,
 ouo.remark,
 ouo.org_id,
 ouo.create_user_id,
@@ -78,10 +73,13 @@ ouo.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,bc.consignee_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
-    bs.supplier_name,
+    bs.supplier_name,bc.link_man_name,bc.link_man_phone,bc.fax_number,bc.e_mail_address,bc.address,
     (SELECT SUM(ouod.order_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_qty,
     (SELECT SUM(ouod.issue_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_issue_qty,
-    (SELECT SUM(ouod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_dispatch_qty
+    (SELECT SUM(ouod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_dispatch_qty,
+    (SELECT IFNULL(SUM(bmb.volume),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_volume,
+    (SELECT IFNULL(SUM(bmb.net_weight),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_net_weight,
+    (SELECT IFNULL(SUM(bmb.gross_weight),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_gross_weight
     FROM om_other_out_order ouo
     LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = ouo.material_owner_id
     LEFT JOIN base_supplier bs ON  ouo.customer_id = bs.supplier_id
@@ -108,6 +106,15 @@ ouo.option3
 <if test="otherOutOrderId!=null and otherOutOrderId!=''">
   and ouo.other_out_order_id = #{otherOutOrderId}
 </if>
+    <if test="reqArriveDateT!=null and reqArriveDateT!='' and reqArriveDateF!=null and reqArriveDateF!=''">
+      and date_format(ouo.req_arrive_date,'%Y-%m-%d') BETWEEN #{reqArriveDateT} AND #{reqArriveDateF}
+    </if>
+  <if test="planArriveDateT!=null and planArriveDateT!='' and planArriveDateF!=null and planArriveDateF!=''">
+    and date_format(ouo.plan_arrive_date,'%Y-%m-%d') BETWEEN #{planArriveDateT} AND #{planArriveDateF}
+  </if>
+  <if test="actualDespatchDateT!=null and actualDespatchDateT!='' and actualDespatchDateF!=null and actualDespatchDateF!=''">
+    and date_format(ouo.actual_despatch_date,'%Y-%m-%d') BETWEEN #{actualDespatchDateT} AND #{actualDespatchDateF}
+  </if>
 </where>
 order by ouo.create_time desc
   </select>

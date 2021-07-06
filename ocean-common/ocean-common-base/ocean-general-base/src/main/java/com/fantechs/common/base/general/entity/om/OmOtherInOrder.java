@@ -80,25 +80,25 @@ public class OmOtherInOrder extends ValidGroup implements Serializable {
     /**
      * 订单总体积
      */
+    @Transient
     @ApiModelProperty(name="totalVolume",value = "订单总体积")
     @Excel(name = "订单总体积", height = 20, width = 30,orderNum="8")
-    @Column(name = "total_volume")
     private BigDecimal totalVolume;
 
     /**
      * 订单总净重
      */
+    @Transient
     @ApiModelProperty(name="totalNetWeight",value = "订单总净重")
     @Excel(name = "订单总净重", height = 20, width = 30,orderNum="9")
-    @Column(name = "total_net_weight")
     private BigDecimal totalNetWeight;
 
     /**
      * 订单总毛重
      */
+    @Transient
     @ApiModelProperty(name="totalGrossWeight",value = "订单总毛重")
     @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="10")
-    @Column(name = "total_gross_weight")
     private BigDecimal totalGrossWeight;
 
     /**

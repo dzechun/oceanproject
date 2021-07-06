@@ -534,7 +534,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             //反写完工入库单
             inFeignApi.writeQty(WmsInAsnOrderDet.builder()
-                    .putawayQty(wmsInnerJobOrderDetDto.getDistributionQty())
+                    .putawayQty(wmsInnerJobOrderDetDto.getActualQty())
                     .asnOrderDetId(wmsInnerJobOrderDetDto.getSourceDetId())
                     .build());
         }
@@ -749,7 +749,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             throw new BizErrorException("激活失败");
         }
         //更新待作业状态
-        wmsInnerJobOrder.setStatus((byte)3);
+        wmsInnerJobOrder.setOrderStatus((byte)3);
         int num = wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
         return num;
     }
