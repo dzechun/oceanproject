@@ -81,4 +81,8 @@ public interface InnerFeignApi {
     @ApiOperation("修改")
     @PostMapping("/wmsInnerInventoryDet/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= WmsInnerInventoryDet.update.class) WmsInnerInventoryDet wmsInnerInventoryDet);
+
+    @ApiOperation("来料打印列表")
+    @PostMapping("/wmsInnerMaterialBarcode/findList")
+    ResponseEntity<List<WmsInnerMaterialBarcodeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
 }

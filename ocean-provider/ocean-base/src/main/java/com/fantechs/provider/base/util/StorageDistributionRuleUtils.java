@@ -73,7 +73,7 @@ public class StorageDistributionRuleUtils {
             putawayMoveLineNo = storageDistributionRuleUtils.baseStorageService.findPutawayNo(warehouseId,materialId);
             Map<String,Object> map = getCanPutawayEmptyStorageList(warehouseId,putawayMoveLineNo);
             list = (List<StorageRuleDto>) map.get("list");
-            SART = map.get("SART").toString();
+            SART = map.get("SART")!=null?map.get("SART").toString():"ASC";
             if(list.size()>0){
                 map = EmptyStorageRule(list,SART,jobTotalPackageQty_BU);
                 list = (List<StorageRuleDto>) map.get("list");
@@ -86,7 +86,7 @@ public class StorageDistributionRuleUtils {
             putawayMoveLineNo = storageDistributionRuleUtils.baseStorageService.findPutawayNo(warehouseId,materialId);
             Map<String,Object> map = getCanPutawayEmptyStorageList(warehouseId,putawayMoveLineNo);
             list = (List<StorageRuleDto>) map.get("list");
-            SART = map.get("SART").toString();
+            SART = map.get("SART")!=null?map.get("SART").toString():"ASC";
             if(list.size()>0){
                 map = mixupsStorageRule(list,SART,jobTotalPackageQty_BU);
                 list = (List<StorageRuleDto>) map.get("list");
@@ -212,16 +212,19 @@ public class StorageDistributionRuleUtils {
                 if(StringUtils.isEmpty(storageRuleDto.getVolume(),storageRuleDto.getNetWeight())){
                     throw new BizErrorException("请维护物料体积重量");
                 }
-                //库位按体积可上架数 = 剩余体积/物料体积 向下去整数
-                storageRuleDto.setVolumeQty(storageRuleDto.getSurplusVolume().divide(storageRuleDto.getVolume(),0,BigDecimal.ROUND_DOWN));
-                storageRuleDto.setNetWeightQty(storageRuleDto.getSurplusLoad().divide(storageRuleDto.getNetWeight(),0,BigDecimal.ROUND_DOWN));
-                if(storageRuleDto.getVolumeQty().compareTo(storageRuleDto.getNetWeightQty())==1){
-                    storageRuleDto.setPutawayQty(storageRuleDto.getNetWeightQty());
-                }else{
-                    storageRuleDto.setPutawayQty(storageRuleDto.getVolumeQty());
-                }
-                if(storageRuleDto.getPutawayQty().compareTo(BigDecimal.ZERO)==1){
-                    list.add(storageRuleDto);
+                //物料体积必须大于0
+                if(storageRuleDto.getVolume().compareTo(BigDecimal.ZERO)==1 && storageRuleDto.getNetWeight().compareTo(BigDecimal.ZERO)==1){
+                    //库位按体积可上架数 = 剩余体积/物料体积 向下去整数
+                    storageRuleDto.setVolumeQty(storageRuleDto.getSurplusVolume().divide(storageRuleDto.getVolume(),0,BigDecimal.ROUND_DOWN));
+                    storageRuleDto.setNetWeightQty(storageRuleDto.getSurplusLoad().divide(storageRuleDto.getNetWeight(),0,BigDecimal.ROUND_DOWN));
+                    if(storageRuleDto.getVolumeQty().compareTo(storageRuleDto.getNetWeightQty())==1){
+                        storageRuleDto.setPutawayQty(storageRuleDto.getNetWeightQty());
+                    }else{
+                        storageRuleDto.setPutawayQty(storageRuleDto.getVolumeQty());
+                    }
+                    if(storageRuleDto.getPutawayQty().compareTo(BigDecimal.ZERO)==1){
+                        list.add(storageRuleDto);
+                    }
                 }
             }
         }

@@ -49,7 +49,11 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int packageAutoOutOrder(OmOtherOutOrder omOtherOutOrder) {
+        if(omOtherOutOrder.getOrderStatus()>2){
+            throw new BizErrorException("单据已下发完成");
+        }
         SysUser sysUser = currentUser();
         if(omOtherOutOrder.getOrderStatus()>=3){
             throw new BizErrorException("单据已完成");
@@ -134,16 +138,22 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         map.put("otherOutOrderId",omOtherOutOrderDet.getOtherOutOrderId());
         OmOtherOutOrder omOtherOutOrder = omOtherOutOrderMapper.findList(map).get(0);
         OmOtherOutOrderDet omOtherOutOrderDet1 = omOtherOutOrderDetMapper.selectByPrimaryKey(omOtherOutOrderDet.getOtherOutOrderDetId());
-        if(omOtherOutOrderDet1.getDispatchQty().equals(BigDecimal.ZERO)){
+        if(StringUtils.isEmpty(omOtherOutOrderDet1.getDispatchQty())){
             omOtherOutOrderDet1.setDispatchQty(BigDecimal.ZERO);
         }
         BigDecimal total = omOtherOutOrderDet1.getDispatchQty().add(omOtherOutOrderDet.getDispatchQty());
         omOtherOutOrderDet1.setDispatchQty(total);
         num+=omOtherOutOrderDetMapper.updateByPrimaryKeySelective(omOtherOutOrderDet1);
-        if(omOtherOutOrder.getTotalDispatchQty().add(total).compareTo(omOtherOutOrder.getTotalQty())==0){
-            omOtherOutOrder.setOrderStatus((byte)4);
-            num+=omOtherOutOrderMapper.updateByPrimaryKeySelective(omOtherOutOrder);
+        if(StringUtils.isEmpty(omOtherOutOrder.getTotalDispatchQty())){
+            omOtherOutOrder.setTotalDispatchQty(BigDecimal.ZERO);
         }
+        if(StringUtils.isEmpty(omOtherOutOrder.getActualDespatchDate())){
+            omOtherOutOrder.setActualDespatchDate(new Date());
+        }
+        if(total.compareTo(omOtherOutOrder.getTotalQty())==0){
+            omOtherOutOrder.setOrderStatus((byte)4);
+        }
+        num+=omOtherOutOrderMapper.updateByPrimaryKeySelective(omOtherOutOrder);
         return num;
     }
 

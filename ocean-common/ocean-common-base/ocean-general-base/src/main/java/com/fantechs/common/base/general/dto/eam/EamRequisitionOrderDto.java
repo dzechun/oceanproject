@@ -24,7 +24,7 @@ public class EamRequisitionOrderDto extends EamRequisitionOrder implements Seria
      * 修改用户名称
      */
     @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="6")
     private String modifiedUserName;
 

@@ -73,8 +73,9 @@ public class PDAWmsInnerJobOrderController {
     @PostMapping("/scanStorageBackQty")
     public ResponseEntity<WmsInnerJobOrderDet> scanStorageBackQty(@ApiParam(value = "库位编码")@RequestParam @NotBlank(message = "库位编码不能为空") String storageCode,
                                                                   @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId,
-                                                                  @ApiParam(value = "确认数量")@RequestParam BigDecimal qty){
-        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderService.scanStorageBackQty(storageCode,jobOrderDetId,qty);
+                                                                  @ApiParam(value = "确认数量")@RequestParam BigDecimal qty,
+                                                                  @ApiParam(value = "是否条码或物料")@RequestParam String isSN){
+        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderService.scanStorageBackQty(storageCode,jobOrderDetId,qty,isSN);
         return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?0:1);
     }
 

@@ -200,7 +200,7 @@
             IFNULL(bs.surplus_load,0) as surplusLoad,
             IFNULL(bs.surplus_volume,0) as surplusVolume,
             bs.surplus_can_put_salver as surplusCanPutSalver,
-            IFNULL(bmt.volume,0),
+            IFNULL(bmt.volume,0) as volume,
 			IFNULL(bmt.net_weight,0) as netWeight
         FROM base_storage bs
                  LEFT JOIN wms_inner_inventory wii ON bs.storage_id = wii.storage_id AND wii.packing_qty>0

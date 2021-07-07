@@ -71,7 +71,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
      * @return
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public int forwarding(String ids) {
         SysUser sysUser = currentUser();
         String[] arrIds = ids.split(",");

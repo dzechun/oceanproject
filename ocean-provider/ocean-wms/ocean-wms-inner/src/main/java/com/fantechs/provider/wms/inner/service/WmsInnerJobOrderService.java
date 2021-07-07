@@ -52,7 +52,7 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
 
     Map<String,Object> checkBarcode(String barCode,Long jobOrderDetId);
 
-    WmsInnerJobOrderDet scanStorageBackQty(String storageCode,Long jobOrderDetId,BigDecimal qty);
+    WmsInnerJobOrderDet scanStorageBackQty(String storageCode,Long jobOrderDetId,BigDecimal qty,String isSN);
 
     WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder);
 
