@@ -696,6 +696,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int scanInStorage(Long storageId, Long jobOrderDetId) {
         SysUser sysUser = currentUser();
 
