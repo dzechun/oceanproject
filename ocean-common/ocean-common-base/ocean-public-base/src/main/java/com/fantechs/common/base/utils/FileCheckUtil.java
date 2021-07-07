@@ -43,6 +43,7 @@ public class FileCheckUtil {
 		FILE_TYPE_MAP.put("rar", "52617221");
 		FILE_TYPE_MAP.put("wav", "57415645");
 		FILE_TYPE_MAP.put("avi", "41564920");
+		FILE_TYPE_MAP.put("apk", "61A6D9C0");
 
 	}
 

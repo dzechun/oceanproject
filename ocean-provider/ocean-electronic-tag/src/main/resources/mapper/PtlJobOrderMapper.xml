@@ -58,6 +58,7 @@
     LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
     LEFT JOIN base_warehouse bw ON bwa.warehouse_id = bw.warehouse_id
     <where>
+      pjo.status = 1
       <if test="jobOrderId != null">
         and pjo.job_order_id = #{jobOrderId}
       </if>
@@ -87,6 +88,9 @@
       </if>
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and pjo.create_time between #{startTime} and #{endTime}
+      </if>
+      <if test="(startTime != null or startTime != '') and (endTime != null or endTime != '')">
+        and TO_DAYS(pjo.create_time) = TO_DAYS(NOW())
       </if>
       <if test="warehouseId != null">
         and bw.warehouse_id = #{warehouseId}

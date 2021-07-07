@@ -72,7 +72,9 @@ public class PtlJobOrderServiceImpl extends BaseService<PtlJobOrder> implements 
         }
         Example example = new Example(PtlJobOrder.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("relatedOrderCode", ptlJobOrder.getRelatedOrderCode()).andEqualTo("orgId", user.getOrganizationId());
+        criteria.andEqualTo("relatedOrderCode", ptlJobOrder.getRelatedOrderCode())
+                .andEqualTo("orgId", user.getOrganizationId())
+                .andEqualTo("status", 1);
 
         return ptlJobOrderMapper.updateByExampleSelective(ptlJobOrder, example);
     }

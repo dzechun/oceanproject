@@ -14,4 +14,7 @@ public class TemVehicleDto extends TemVehicle implements Serializable {
 
     @ApiModelProperty(name = "modifiedUserCode",value = "修改账号")
     private String modifiedUserCode;
+
+    @ApiModelProperty(name = "count",value = "使用次数")
+    private Long count;
 }
