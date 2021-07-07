@@ -68,7 +68,9 @@
       <if test="materialBarcodeId!=null and materialBarcodeId!=''">
         and wimb.material_barcode_id = #{materialBarcodeId}
       </if>
-
+        <if test="barcode!=null and barcode!=''">
+            and wimb.barcode = #{barcode}
+        </if>
     </where>
     order by wimb.create_time desc
   </select>

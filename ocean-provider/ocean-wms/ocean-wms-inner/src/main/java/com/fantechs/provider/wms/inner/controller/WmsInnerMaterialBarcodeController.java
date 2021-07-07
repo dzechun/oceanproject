@@ -2,7 +2,9 @@ package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -51,5 +53,13 @@ public class WmsInnerMaterialBarcodeController {
     @PostMapping("/print")
     public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,@RequestParam int printNum){
         return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.print(ids,printNum));
+    }
+
+    @ApiOperation("列表")
+    @PostMapping("/findList")
+    public ResponseEntity<List<WmsInnerMaterialBarcodeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode) {
+        Page<Object> page = PageHelper.startPage(searchWmsInnerMaterialBarcode.getStartPage(),searchWmsInnerMaterialBarcode.getPageSize());
+        List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findList(searchWmsInnerMaterialBarcode);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }

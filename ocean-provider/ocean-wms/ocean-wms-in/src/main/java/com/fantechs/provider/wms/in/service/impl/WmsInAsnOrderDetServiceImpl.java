@@ -15,6 +15,7 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
@@ -26,6 +27,7 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -91,6 +93,13 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
 
         String barcode = wmsInAsnOrderDetDto.getBarcode();
         if (wmsInAsnOrderDetDto.getIsComingMaterial() != null && wmsInAsnOrderDetDto.getIsComingMaterial() == 1) {//是来料
+            SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode = new SearchWmsInnerMaterialBarcode();
+            searchWmsInnerMaterialBarcode.setBarcode(barcode);
+            List<WmsInnerMaterialBarcodeDto> wmsInnerMaterialBarcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
+            if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDtos)){
+                throw new BizErrorException("来料打印不存在该条码，不允许入库");
+            }
+
             return wmsInAsnOrderDetDto.getDefaultQty();
         }else if (barcode.equals(asnOrderDetDto.getMaterialCode())) {//非来料且是物料编码
             return new BigDecimal(0);

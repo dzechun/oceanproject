@@ -18,7 +18,11 @@ public class SearchWmsInnerMaterialBarcode extends BaseQuery implements Serializ
     @ApiModelProperty(name="materialBarcodeId",value = "来料条码ID")
     private Long materialBarcodeId;
 
-
+    /**
+     * 条码
+     */
+    @ApiModelProperty(name="barcode",value = "条码")
+    private String barcode;
 
     private static final long serialVersionUID = 1L;
 }
