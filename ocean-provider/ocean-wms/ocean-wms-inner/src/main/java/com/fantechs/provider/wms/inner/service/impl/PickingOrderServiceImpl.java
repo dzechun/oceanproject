@@ -962,7 +962,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         example.createCriteria().andEqualTo("sourceOrderId",outDeliveryOrderId).andEqualTo("jobOrderType",4).andEqualTo("orderStatus",5);
         List<WmsInnerJobOrder> list = wmsInnerJobOrderMapper.selectByExample(example);
         if(list.size()<1){
-            throw new BizErrorException("出库单未拣货");
+            throw new BizErrorException("出库单已完成或未拣货");
         }
         if(list.size()>list.stream().filter(li->li.getOrderStatus()==(byte)5).collect(Collectors.toList()).size()){
             throw new BizErrorException("拣货未完成,发运失败");
