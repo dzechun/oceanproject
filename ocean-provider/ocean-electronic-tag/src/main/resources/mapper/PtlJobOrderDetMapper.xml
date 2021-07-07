@@ -61,6 +61,7 @@
     LEFT JOIN ptl_client_manage pcm ON pe.client_id = pcm.client_id
     LEFT JOIN ptl_equipment pea ON pets.equipment_area_id = pea.equipment_id
     <where>
+      pjod.status = 1
       <if test="jobOrderDetId != null">
         and pjod.job_order_det_id = #{jobOrderDetId}
       </if>
