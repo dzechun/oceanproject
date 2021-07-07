@@ -54,8 +54,6 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
 
     WmsInnerJobOrderDet scanStorageBackQty(String storageCode,Long jobOrderDetId,BigDecimal qty);
 
-    int scanInStorage(Long storageId ,Long jobOrderDetId);
-
     WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder);
 
     /**
