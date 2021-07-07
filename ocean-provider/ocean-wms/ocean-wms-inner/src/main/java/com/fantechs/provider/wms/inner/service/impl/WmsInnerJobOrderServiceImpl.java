@@ -577,12 +577,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //获取完工入库单单号
         String asnOrderCode = wmsInPutawayOrderMapper.findAsnCode(asnOrderId);
         Example example = new Example(WmsInnerInventoryDet.class);
-        //获取绑定上架单的栈板码
-        String barCode = wmsInPutawayOrderDetMapper.findPalletCode(wmsInnerJobOrderDet.getJobOrderId());
-        if(StringUtils.isEmpty(barCode)){
-            throw new BizErrorException("获取栈板信息失败");
-        }
-        example.createCriteria().andEqualTo("relatedOrderCode",asnOrderCode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcode",barCode);
+        example.createCriteria().andEqualTo("relatedOrderCode",asnOrderCode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId());
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventoryDet)){
             throw new BizErrorException("未查询到收货条码");
@@ -621,7 +616,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())){
             wmsInnerJobOrderDet.setActualQty(BigDecimal.ZERO);
         }
-        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())>0){
+        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==1){
             throw new BizErrorException("上架数量不能大于分配数量");
         }
         BaseStorage baseStorage = list.getData().get(0);
