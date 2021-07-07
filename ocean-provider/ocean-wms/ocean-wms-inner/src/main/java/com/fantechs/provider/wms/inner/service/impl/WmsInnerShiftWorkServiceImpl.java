@@ -312,8 +312,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (baseStorage == null) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001007);
         }
-        WmsInnerJobOrder innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderDetId());
-        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderService.scanStorageBackQty(baseStorage.getStorageCode(), dto.getJobOrderDetId(), innerJobOrder.getActualQty());
+        WmsInnerJobOrderDet jobOrderDet = wmsInnerJobOrderDetService.selectByKey(dto.getJobOrderDetId());
+        wmsInnerJobOrderService.scanStorageBackQty(baseStorage.getStorageCode(), dto.getJobOrderDetId(), jobOrderDet.getActualQty());
         return 1;
     }
 
