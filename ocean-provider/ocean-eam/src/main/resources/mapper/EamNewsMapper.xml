@@ -7,6 +7,7 @@
     -->
     <id column="news_id" jdbcType="BIGINT" property="newsId" />
     <result column="news_code" jdbcType="VARCHAR" property="newsCode" />
+    <result column="news_name" jdbcType="VARCHAR" property="newsName" />
     <result column="news_title" jdbcType="VARCHAR" property="newsTitle" />
     <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
     <result column="work_shop_id" jdbcType="BIGINT" property="workShopId" />
@@ -42,6 +43,7 @@
   <sql id="Base_Column_List">
     en.news_id,
     en.news_code,
+    en.news_name,
     en.news_title,
     en.factory_id,
     en.work_shop_id,

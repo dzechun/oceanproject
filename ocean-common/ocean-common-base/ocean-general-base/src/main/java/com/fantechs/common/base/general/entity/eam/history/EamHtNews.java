@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -49,6 +50,15 @@ public class EamHtNews extends ValidGroup implements Serializable {
     @Excel(name = "新闻编码", height = 20, width = 30,orderNum="") 
     @Column(name = "news_code")
     private String newsCode;
+
+    /**
+     * 新闻名称
+     */
+    @ApiModelProperty(name="newsName",value = "新闻名称")
+    @Excel(name = "新闻名称", height = 20, width = 30,orderNum="2")
+    @Column(name = "news_name")
+    @NotBlank(message = "新闻名称不能为空")
+    private String newsName;
 
     /**
      * 新闻标题

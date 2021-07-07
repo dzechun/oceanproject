@@ -15,5 +15,28 @@ public class SearchEamIssue extends BaseQuery implements Serializable {
     @ApiModelProperty(name="materialCode",value = "产品编码")
     private String materialCode;
 
+    /**
+     * 产品名称
+     */
+    @ApiModelProperty(name="materialName",value = "产品名称")
+    private String materialName;
+
+    /**
+     * 产品型号
+     */
+    @ApiModelProperty(name="productModelName",value = "产品型号")
+    private String productModelName;
+
+    /**
+     * 问题编码
+     */
+    @ApiModelProperty(name="issueCode",value = "问题编码")
+    private String issueCode;
+
+    /**
+     * 问题名称
+     */
+    @ApiModelProperty(name="issueName",value = "问题名称")
+    private String issueName;
 
 }

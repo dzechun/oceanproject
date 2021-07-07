@@ -46,6 +46,15 @@ public class EamNews extends ValidGroup implements Serializable {
     private String newsCode;
 
     /**
+     * 新闻名称
+     */
+    @ApiModelProperty(name="newsName",value = "新闻名称")
+    @Excel(name = "新闻名称", height = 20, width = 30,orderNum="2")
+    @Column(name = "news_name")
+    @NotBlank(message = "新闻名称不能为空")
+    private String newsName;
+
+    /**
      * 新闻标题
      */
     @ApiModelProperty(name="newsTitle",value = "新闻标题")
@@ -94,7 +103,6 @@ public class EamNews extends ValidGroup implements Serializable {
      * 审核时间
      */
     @ApiModelProperty(name="auditDate",value = "审核时间")
-    @Excel(name = "审核时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "audit_date")
     private Date auditDate;

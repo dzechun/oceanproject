@@ -19,6 +19,9 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <collection property="list" ofType="com.fantechs.common.base.general.entity.eam.EamIssueAttachment"
+                column="{issueId=issue_id}" select="com.fantechs.provider.eam.mapper.EamIssueAttachmentMapper.findList">
+    </collection>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamIssueDto">
