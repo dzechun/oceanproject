@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -49,7 +50,7 @@ public class SaveShiftWorkDetDto implements Serializable {
      * 移位数量
      */
     @ApiModelProperty(name="materialQty",value = "移位数量")
-    private Integer materialQty;
+    private BigDecimal materialQty;
 
     /**
      * 条码集合

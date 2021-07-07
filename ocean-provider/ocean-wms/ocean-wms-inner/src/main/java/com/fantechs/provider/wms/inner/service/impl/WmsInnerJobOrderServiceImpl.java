@@ -696,6 +696,93 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     }
 
     @Override
+    public int scanInStorage(Long storageId, Long jobOrderDetId) {
+        SysUser sysUser = currentUser();
+
+        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInPutawayOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
+        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())){
+            throw new BizErrorException("上架数量不能小于1");
+        }
+        BaseStorage baseStorage = baseFeignApi.detail(storageId).getData();
+        if (baseStorage == null) {
+            throw new BizErrorException(ErrorCodeEnum.PDA5001007);
+        }
+
+        SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
+        searchWmsInnerJobOrderDet.setJobOrderDetId(jobOrderDetId);
+        WmsInnerJobOrderDetDto oldDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
+        if(wmsInnerJobOrderDet.getActualQty().compareTo(wmsInnerJobOrderDet.getDistributionQty())!=0){
+            throw new BizErrorException("上架数量不能大于分配数量");
+        }
+        WmsInnerJobOrderDet wms =WmsInnerJobOrderDet.builder()
+                .jobOrderDetId(jobOrderDetId)
+                .inStorageId(baseStorage.getStorageId())
+                .actualQty(wmsInnerJobOrderDet.getActualQty())
+                .orderStatus((byte)5)
+                .modifiedTime(new Date())
+                .shiftStorageStatus((byte) 4)
+                .modifiedUserId(sysUser.getUserId())
+                .build();
+        int num = wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wms);
+        if(num==0){
+            throw new BizErrorException("上架失败");
+        }
+
+
+        SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+        searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrderDet.getJobOrderId());
+        WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInPutawayOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+        List<WmsInnerJobOrderDetDto> wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet);
+
+        BigDecimal resQty = wmsInnerJobOrderDetDto.stream()
+                .map(WmsInnerJobOrderDetDto::getActualQty)
+                .reduce(BigDecimal.ZERO,BigDecimal::add);
+        //更改库存
+        num = this.Inventory(oldDto,wmsInnerJobOrderDetDto.get(0));
+
+        //更新库存明细
+        num+=this.addInventoryDet(wmsInnerJobOrderDto.getSourceOrderId(),wmsInnerJobOrderDet);
+
+
+        wms= new WmsInnerJobOrderDet();
+        wms.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
+        int count = wmsInPutawayOrderDetMapper.selectCount(wms);
+        wms.setOrderStatus((byte)5);
+        int oCount = wmsInPutawayOrderDetMapper.selectCount(wms);
+
+
+        if(oCount==count){
+            WmsInnerJobOrder ws = new WmsInnerJobOrder();
+            ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
+            ws.setOrderStatus((byte)5);
+            ws.setActualQty(resQty);
+            ws.setModifiedUserId(sysUser.getUserId());
+            ws.setModifiedTime(new Date());
+            ws.setWorkEndtTime(new Date());
+            ws.setWorkerId(sysUser.getUserId());
+            num +=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
+        }else{
+            WmsInnerJobOrder ws = new WmsInnerJobOrder();
+            ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
+            ws.setOrderStatus((byte)4);
+            ws.setActualQty(resQty);
+            ws.setModifiedUserId(sysUser.getUserId());
+            ws.setModifiedTime(new Date());
+            ws.setWorkerId(sysUser.getUserId());
+            if(StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())){
+                ws.setWorkStartTime(new Date());
+            }
+            num +=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
+        }
+        //反写完工入库单
+        inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                .putawayQty(wmsInnerJobOrderDet.getActualQty())
+                .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
+                .build());
+        return num;
+    }
+
+    @Override
     public WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder) {
         SysUser sysUser = currentUser();
         wmsInnerJobOrder.setJobOrderCode(CodeUtils.getId("WORK-"));
