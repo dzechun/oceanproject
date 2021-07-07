@@ -8,6 +8,7 @@
     <id column="ht_news_id" jdbcType="BIGINT" property="htNewsId" />
     <result column="news_id" jdbcType="BIGINT" property="newsId" />
     <result column="news_code" jdbcType="VARCHAR" property="newsCode" />
+    <result column="news_name" jdbcType="VARCHAR" property="newsName" />
     <result column="news_title" jdbcType="VARCHAR" property="newsTitle" />
     <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
     <result column="work_shop_id" jdbcType="BIGINT" property="workShopId" />
@@ -39,6 +40,7 @@
     ehn.ht_news_id,
     ehn.news_id,
     ehn.news_code,
+    ehn.news_name,
     ehn.news_title,
     ehn.factory_id,
     ehn.work_shop_id,
