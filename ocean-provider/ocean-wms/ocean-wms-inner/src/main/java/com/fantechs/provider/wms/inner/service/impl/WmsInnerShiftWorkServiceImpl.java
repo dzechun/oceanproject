@@ -250,10 +250,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (StringUtils.isEmpty(dto.getBarcode())) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001001);
         }
-        MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(dto.getBarcode()).getData();
-        if (workOrderBarcode == null) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012000);
-        }
         if (StringUtils.isEmpty(dto.getStorageId())) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001003);
         }
