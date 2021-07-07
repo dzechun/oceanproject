@@ -211,36 +211,36 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
         }
 
-        List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
-        List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
-        for (String barcode : dto.getBarcodes()) {
-            // 查询条码
-            MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(barcode).getData();
-            if (workOrderBarcode == null) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012000);
-            }
-            // 创建条码移位单明细关系
-            WmsInnerJobOrderDetBarcode wmsInnerJobOrderDetBarcode = new WmsInnerJobOrderDetBarcode();
-            wmsInnerJobOrderDetBarcode.setBarcode(barcode);
-            wmsInnerJobOrderDetBarcode.setJobOrderDetId(dto.getJobOrderDetId());
-            wmsInnerJobOrderDetBarcode.setWorkOrderBarcodeId(workOrderBarcode.getWorkOrderBarcodeId());
-            wmsInnerJobOrderDetBarcode.setStatus((byte) 1);
-            wmsInnerJobOrderDetBarcode.setOrgId(sysUser.getOrganizationId());
-            wmsInnerJobOrderDetBarcode.setCreateTime(new Date());
-            wmsInnerJobOrderDetBarcode.setCreateUserId(sysUser.getUserId());
-            wmsInnerJobOrderDetBarcode.setIsDelete((byte) 1);
-            jobOrderDetBarcodeList.add(wmsInnerJobOrderDetBarcode);
-            WmsInnerHtJobOrderDetBarcode innerHtJobOrderDetBarcode = new WmsInnerHtJobOrderDetBarcode();
-            BeanUtil.copyProperties(wmsInnerJobOrderDetBarcode, innerHtJobOrderDetBarcode);
-            htJobOrderDetBarcodes.add(innerHtJobOrderDetBarcode);
-        }
+//        List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
+//        List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
+//        for (String barcode : dto.getBarcodes()) {
+//            // 查询条码
+//            MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(barcode).getData();
+//            if (workOrderBarcode == null) {
+//                throw new BizErrorException(ErrorCodeEnum.PDA40012000);
+//            }
+//            // 创建条码移位单明细关系
+//            WmsInnerJobOrderDetBarcode wmsInnerJobOrderDetBarcode = new WmsInnerJobOrderDetBarcode();
+//            wmsInnerJobOrderDetBarcode.setBarcode(barcode);
+//            wmsInnerJobOrderDetBarcode.setJobOrderDetId(dto.getJobOrderDetId());
+//            wmsInnerJobOrderDetBarcode.setWorkOrderBarcodeId(workOrderBarcode.getWorkOrderBarcodeId());
+//            wmsInnerJobOrderDetBarcode.setStatus((byte) 1);
+//            wmsInnerJobOrderDetBarcode.setOrgId(sysUser.getOrganizationId());
+//            wmsInnerJobOrderDetBarcode.setCreateTime(new Date());
+//            wmsInnerJobOrderDetBarcode.setCreateUserId(sysUser.getUserId());
+//            wmsInnerJobOrderDetBarcode.setIsDelete((byte) 1);
+//            jobOrderDetBarcodeList.add(wmsInnerJobOrderDetBarcode);
+//            WmsInnerHtJobOrderDetBarcode innerHtJobOrderDetBarcode = new WmsInnerHtJobOrderDetBarcode();
+//            BeanUtil.copyProperties(wmsInnerJobOrderDetBarcode, innerHtJobOrderDetBarcode);
+//            htJobOrderDetBarcodes.add(innerHtJobOrderDetBarcode);
+//        }
 
-        if (jobOrderDetBarcodeList.size() > 0) {
-            wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
-        }
-        if (htJobOrderDetBarcodes.size() > 0) {
-            wmsInnerHtJobOrderDetBarcodeService.batchSave(htJobOrderDetBarcodes);
-        }
+//        if (jobOrderDetBarcodeList.size() > 0) {
+//            wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
+//        }
+//        if (htJobOrderDetBarcodes.size() > 0) {
+//            wmsInnerHtJobOrderDetBarcodeService.batchSave(htJobOrderDetBarcodes);
+//        }
 
         return dto.getJobOrderId().toString();
     }
