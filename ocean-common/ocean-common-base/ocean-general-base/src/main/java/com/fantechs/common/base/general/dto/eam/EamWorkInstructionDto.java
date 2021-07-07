@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
@@ -45,12 +46,15 @@ public class EamWorkInstructionDto extends EamWorkInstruction implements Seriali
     @Transient
     private String processName;
 
-
+    @Transient
     private List<EamWiBom> eamWiBoms;
 
-    private MultipartFile eamWiFile;
+    @Transient
+    private List<EamWiFTAndInspectionTool> eamWiFTAndInspectionTools;
 
-    private List<EamWiFTAndInspectionTool> eamWiFTAndInspectionTool;
+    @Transient
+    private List<EamWiQualityStandards> eamWiQualityStandardss;
 
-    private List<EamWiQualityStandards> eamWiQualityStandards;
+    @Transient
+    private EamWiFile eamWiFile;
 }

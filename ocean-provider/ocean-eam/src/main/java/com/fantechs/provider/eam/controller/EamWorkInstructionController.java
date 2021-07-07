@@ -4,6 +4,8 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.eam.EamWorkInstructionDto;
+import com.fantechs.common.base.general.entity.eam.EamWiBom;
+import com.fantechs.common.base.general.entity.eam.EamWiQualityStandards;
 import com.fantechs.common.base.general.entity.eam.EamWorkInstruction;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWorkInstruction;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -17,6 +19,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +35,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,8 +55,8 @@ public class EamWorkInstructionController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EamWorkInstruction eamWorkInstruction) {
-        return ControllerUtil.returnCRUD(eamWorkInstructionService.save(eamWorkInstruction));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EamWorkInstructionDto eamWorkInstructionDto) {
+        return ControllerUtil.returnCRUD(eamWorkInstructionService.save(eamWorkInstructionDto));
     }
 
     @ApiOperation("删除")
@@ -98,17 +110,18 @@ public class EamWorkInstructionController {
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<EamWorkInstructionDto> eamWorkInstructionDtos = EasyPoiUtils.importExcel(file, EamWorkInstructionDto.class);
-            Map<String, Object> resultMap = eamWorkInstructionService.importExcel(eamWorkInstructionDtos.get(0));
-            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+            EamWorkInstructionDto eamWorkInstructionDto = eamWorkInstructionService.importExcel(file);
+          //  return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+            return ControllerUtil.returnDataSuccess(eamWorkInstructionDto,(int)0);
         } catch (RuntimeException e) {
             e.printStackTrace();
-        //    log.error(e.getMessage());
-            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+            return ControllerUtil.returnFail("导入失败", ErrorCodeEnum.OPT20012002.getCode());
         }catch (Exception e) {
             e.printStackTrace();
-         //   log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+
+
 }
