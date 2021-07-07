@@ -118,16 +118,16 @@ wii.storage_id,
         and wii.make_code like CONCAT("%",#{makeCode},"%")
       </if>
       <if test="materialOwnerName!=null and materialOwnerName != ''">
-        and wii.material_owner_name like CONCAT("%",#{materialOwnerName},"%")
+        and bmo.material_owner_name like CONCAT("%",#{materialOwnerName},"%")
       </if>
       <if test="warehouseName!=null and warehouseName != ''">
-        and wii.warehouse_name like CONCAT("%",#{warehouseName},"%")
+        and bw.warehouse_name like CONCAT("%",#{warehouseName},"%")
       </if>
       <if test="storageId!=null and storageId != ''">
         and wii.storage_id = #{storageId}
       </if>
       <if test="storageName!=null and storageName != ''">
-        and wii.storage_name like CONCAT("%",#{storageName},"%")
+        and bs.storage_name like CONCAT("%",#{storageName},"%")
       </if>
       <if test="materialId!=null and materialId != ''">
         and wii.material_id = #{materialId}
