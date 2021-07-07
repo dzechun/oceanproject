@@ -577,7 +577,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //获取完工入库单单号
         String asnOrderCode = wmsInPutawayOrderMapper.findAsnCode(asnOrderId);
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("relatedOrderCode",asnOrderCode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId());
+        //获取绑定上架单的栈板码
+        String barCode = wmsInPutawayOrderDetMapper.findPalletCode(wmsInnerJobOrderDet.getJobOrderId());
+        if(StringUtils.isEmpty(barCode)){
+            throw new BizErrorException("获取栈板信息失败");
+        }
+        example.createCriteria().andEqualTo("relatedOrderCode",asnOrderCode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcode",barCode);
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventoryDet)){
             throw new BizErrorException("未查询到收货条码");
@@ -677,10 +682,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInPutawayOrderMapper.findList(searchWmsInnerJobOrder).get(0);
         searchWmsInnerJobOrderDet.setJobOrderDetId(jobOrderDetId);
         List<WmsInnerJobOrderDetDto> wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet);
-
-        BigDecimal resQty = wmsInnerJobOrderDetDto.stream()
-                .map(WmsInnerJobOrderDetDto::getActualQty)
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
         //更改库存
         num = this.Inventory(oldDto,wmsInnerJobOrderDetDto.get(0));
         //是否条码上架
@@ -694,12 +695,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         wms.setOrderStatus((byte)5);
         int oCount = wmsInPutawayOrderDetMapper.selectCount(wms);
 
-
+        if(StringUtils.isEmpty(wmsInnerJobOrderDto.getActualQty())){
+            wmsInnerJobOrderDto.setActualQty(BigDecimal.ZERO);
+        }
         if(oCount==count){
             WmsInnerJobOrder ws = new WmsInnerJobOrder();
             ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
             ws.setOrderStatus((byte)5);
-            ws.setActualQty(resQty);
+            ws.setActualQty(wmsInnerJobOrderDto.getActualQty().add(qty));
             ws.setModifiedUserId(sysUser.getUserId());
             ws.setModifiedTime(new Date());
             ws.setWorkEndtTime(new Date());
@@ -709,7 +712,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             WmsInnerJobOrder ws = new WmsInnerJobOrder();
             ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
             ws.setOrderStatus((byte)4);
-            ws.setActualQty(resQty);
+            ws.setActualQty(wmsInnerJobOrderDto.getActualQty().add(qty));
             ws.setModifiedUserId(sysUser.getUserId());
             ws.setModifiedTime(new Date());
             ws.setWorkerId(sysUser.getUserId());
