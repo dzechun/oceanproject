@@ -629,10 +629,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //            status = (byte)5;
 //        }
         int num = 0;
-        if(wmsInnerJobOrderDet.getActualQty().compareTo(wmsInnerJobOrderDet.getDistributionQty())==-1){
+        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==-1){
             WmsInnerJobOrderDet wmss = new WmsInnerJobOrderDet();
             BeanUtil.copyProperties(wmsInnerJobOrderDet,wmss);
             wmss.setJobOrderDetId(null);
+            wmss.setInStorageId(baseStorage.getStorageId());
             wmss.setActualQty(qty);
             wmss.setPlanQty(qty);
             wmss.setDistributionQty(qty);
@@ -651,6 +652,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }else if(wmsInnerJobOrderDet.getDistributionQty().compareTo(wmsInnerJobOrderDet.getPlanQty())==0){
             //确认完成
             wmsInnerJobOrderDet.setActualQty(qty);
+            wmsInnerJobOrderDet.setInStorageId(baseStorage.getStorageId());
             wmsInnerJobOrderDet.setOrderStatus((byte)5);
             wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setModifiedTime(new Date());
