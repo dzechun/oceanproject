@@ -234,7 +234,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
             //修改库存
             WmsInnerInventory wmsInnerInventory = new WmsInnerInventory();
             wmsInnerInventory.setInventoryId(wmsInnerInventoryDtos.get(0).getInventoryId());
-            wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty()==null ? wmsInAsnOrderDetDto.getActualQty() : wmsInnerInventory.getInventoryTotalQty().add(wmsInAsnOrderDetDto.getActualQty()));
+            wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getActualQty());
             ResponseEntity responseEntity = innerFeignApi.update(wmsInnerInventory);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("库存修改失败");
