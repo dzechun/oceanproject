@@ -66,7 +66,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
     @Override
     public List<WmsInnerMaterialBarcodeDto> add(WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto) {
-    //    SysUser sysUser = currentUser();
+        SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialId())){
             throw new BizErrorException("绑定物料编码不能为空");
         }
@@ -110,11 +110,11 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             String barCode = creatBarCode(list, wmsInnerMaterialBarcodeDto.getMaterialCode(), wmsInnerMaterialBarcodeDto.getMaterialId());
             wmsInnerMaterialBarCode.setBarcode(barCode);
             wmsInnerMaterialBarCode.setBarcodeRuleId(list.get(0).getBarcodeRuleId());
-    //        wmsInnerMaterialBarCode.setOrgId(sysUser.getOrganizationId());
+            wmsInnerMaterialBarCode.setOrgId(sysUser.getOrganizationId());
             wmsInnerMaterialBarCode.setCreateTime(new Date());
-    //        wmsInnerMaterialBarCode.setCreateUserId(sysUser.getUserId());
+            wmsInnerMaterialBarCode.setCreateUserId(sysUser.getUserId());
             wmsInnerMaterialBarCode.setModifiedTime(new Date());
-    //        wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
+            wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
             materialBarcodeList.add(wmsInnerMaterialBarCode);
         }
