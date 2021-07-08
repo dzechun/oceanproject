@@ -66,7 +66,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
     @Override
     public List<WmsInnerMaterialBarcodeDto> add(WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto) {
-    //    SysUser sysUser = currentUser();
+        SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialId())){
             throw new BizErrorException("绑定物料编码不能为空");
         }
@@ -110,11 +110,11 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             String barCode = creatBarCode(list, wmsInnerMaterialBarcodeDto.getMaterialCode(), wmsInnerMaterialBarcodeDto.getMaterialId());
             wmsInnerMaterialBarCode.setBarcode(barCode);
             wmsInnerMaterialBarCode.setBarcodeRuleId(list.get(0).getBarcodeRuleId());
-    //        wmsInnerMaterialBarCode.setOrgId(sysUser.getOrganizationId());
+            wmsInnerMaterialBarCode.setOrgId(sysUser.getOrganizationId());
             wmsInnerMaterialBarCode.setCreateTime(new Date());
-    //        wmsInnerMaterialBarCode.setCreateUserId(sysUser.getUserId());
+            wmsInnerMaterialBarCode.setCreateUserId(sysUser.getUserId());
             wmsInnerMaterialBarCode.setModifiedTime(new Date());
-    //        wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
+            wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
             materialBarcodeList.add(wmsInnerMaterialBarCode);
         }
@@ -180,7 +180,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int print(String ids, int printNum) {
+    public int print(String ids, int printQty) {
         String[] arrId = ids.split(",");
         for (String s : arrId) {
             //查询模版信息
@@ -191,7 +191,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             if (StringUtils.isEmpty(list.getData())) throw new BizErrorException("未匹配到对应物料");
             BaseMaterial material = list.getData().get(0);
             PrintModel printModel = wmsInnerMaterialBarcodeMapper.findPrintModel(wmsInnerMaterialBarcode.getMaterialBarcodeId());
-            printModel.setSize(printNum);
+            printModel.setSize(printQty);
             PrintDto printDto = new PrintDto();
             printDto.setLabelName(material.getMaterialName());
             printDto.setLabelVersion(material.getMaterialVersion());
