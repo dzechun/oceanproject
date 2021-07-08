@@ -234,7 +234,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
             //修改库存
             WmsInnerInventory wmsInnerInventory = new WmsInnerInventory();
             wmsInnerInventory.setInventoryId(wmsInnerInventoryDtos.get(0).getInventoryId());
-            wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getActualQty());
+            wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty()==null ? wmsInAsnOrderDetDto.getActualQty() : wmsInnerInventory.getPackingQty().add(wmsInAsnOrderDetDto.getActualQty()));
             ResponseEntity responseEntity = innerFeignApi.update(wmsInnerInventory);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("库存修改失败");
@@ -267,6 +267,8 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
             }
         }
 
+        WmsInAsnOrderDet oldWmsInAsnOrderDet = wmsInAsnOrderDetMapper.selectByPrimaryKey(wmsInAsnOrderDetDto.getAsnOrderDetId());
+        wmsInAsnOrderDetDto.setActualQty(oldWmsInAsnOrderDet.getActualQty()==null?wmsInAsnOrderDetDto.getActualQty():oldWmsInAsnOrderDet.getActualQty().add(wmsInAsnOrderDetDto.getActualQty()));
         wmsInAsnOrderDetDto.setModifiedUserId(sysUser.getUserId());
         wmsInAsnOrderDetDto.setModifiedTime(new Date());
         int i = wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wmsInAsnOrderDetDto);
