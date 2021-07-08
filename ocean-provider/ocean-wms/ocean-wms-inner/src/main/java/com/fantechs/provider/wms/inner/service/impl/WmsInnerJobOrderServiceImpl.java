@@ -78,11 +78,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     }
 
     @Override
-    public List<WmsInnerJobOrderDto> pdaFindShiftList(Map<String, Object> map) {
-        return wmsInPutawayOrderMapper.findShiftList(map);
-    }
-
-    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDeleteByShiftWork(String ids) {
         String[] arrId = ids.split(",");
