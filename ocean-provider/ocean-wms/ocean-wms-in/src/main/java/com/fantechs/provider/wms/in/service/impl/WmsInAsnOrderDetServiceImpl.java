@@ -242,6 +242,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
         }else {
             //添加库存
             WmsInnerInventory wmsInnerInventory = new WmsInnerInventory();
+            wmsInnerInventory.setMaterialOwnerId(wmsInAsnOrderDto.getMaterialOwnerId());
             wmsInnerInventory.setInventoryStatusId(wmsInAsnOrderDetDto.getInventoryStatusId());
             wmsInnerInventory.setReceivingDate(wmsInAsnOrderDto.getEndReceivingDate());
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
@@ -253,6 +254,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
             wmsInnerInventory.setWarehouseId(wmsInAsnOrderDetDto.getWarehouseId());
             wmsInnerInventory.setStorageId(wmsInAsnOrderDetDto.getStorageId());
             wmsInnerInventory.setBatchCode(wmsInAsnOrderDetDto.getBatchCode());
+            wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
             wmsInnerInventory.setJobStatus((byte)1);
             wmsInnerInventory.setCreateTime(new Date());
             wmsInnerInventory.setCreateUserId(sysUser.getUserId());
