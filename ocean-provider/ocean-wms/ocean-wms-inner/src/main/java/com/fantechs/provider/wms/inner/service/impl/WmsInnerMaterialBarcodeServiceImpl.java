@@ -180,7 +180,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int print(String ids, int printNum) {
+    public int print(String ids, int printQty) {
         String[] arrId = ids.split(",");
         for (String s : arrId) {
             //查询模版信息
@@ -191,7 +191,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             if (StringUtils.isEmpty(list.getData())) throw new BizErrorException("未匹配到对应物料");
             BaseMaterial material = list.getData().get(0);
             PrintModel printModel = wmsInnerMaterialBarcodeMapper.findPrintModel(wmsInnerMaterialBarcode.getMaterialBarcodeId());
-            printModel.setSize(printNum);
+            printModel.setSize(printQty);
             PrintDto printDto = new PrintDto();
             printDto.setLabelName(material.getMaterialName());
             printDto.setLabelVersion(material.getMaterialVersion());
