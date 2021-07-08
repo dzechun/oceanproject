@@ -38,12 +38,9 @@ public class SysMenuInfoController {
 
     @ApiOperation(value = "获取菜单列表",notes = "返回数据包含菜单对应的角色权限")
     @PostMapping("/findAllList")
-    public ResponseEntity<List<SysMenuInListDTO>> getListAll(
-            @ApiParam(value = "菜单所属平台类型（1、WEB 2、Windows 3、PDA）")@RequestParam(required = true) @NotNull(message="菜单所属平台类型不能为空") Integer menuType){
-        List<SysMenuInListDTO> menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
-                "parentId","0",
-                "menuType",menuType
-        ),null);
+    public ResponseEntity<List<SysMenuInListDTO>> getListAll(@RequestBody(required = false) SearchSysMenuInfo searchSysMenuInfo){
+        searchSysMenuInfo.setParentId(0);
+        List<SysMenuInListDTO> menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicConditionByEntity(searchSysMenuInfo),null);
         return ControllerUtil.returnDataSuccess(menuList, StringUtils.isEmpty(menuList)?0:1);
     }
 
