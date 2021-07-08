@@ -71,12 +71,12 @@ public class EamWorkInstructionController {
         return ControllerUtil.returnCRUD(eamWorkInstructionService.update(eamWorkInstruction));
     }
 
-    @ApiOperation("获取详情")
+   /* @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<EamWorkInstruction> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         EamWorkInstruction  eamWorkInstruction = eamWorkInstructionService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(eamWorkInstruction,StringUtils.isEmpty(eamWorkInstruction)?0:1);
-    }
+    }*/
 
     @ApiOperation("列表")
     @PostMapping("/findList")

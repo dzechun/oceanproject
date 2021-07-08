@@ -7,17 +7,13 @@ import com.fantechs.common.base.general.dto.eam.EamWorkInstructionDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.eam.*;
-import com.fantechs.common.base.general.entity.eam.history.EamHtWiBom;
-import com.fantechs.common.base.general.entity.eam.history.EamHtWiFTAndInspectionTool;
-import com.fantechs.common.base.general.entity.eam.history.EamHtWiQualityStandards;
-import com.fantechs.common.base.general.entity.eam.history.EamHtWorkInstruction;
+import com.fantechs.common.base.general.entity.eam.history.*;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWorkInstruction;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.fileserver.service.FileFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamWorkInstructionService;
 import org.apache.poi.ss.usermodel.CellType;
@@ -60,14 +56,14 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
     @Resource
     private EamHtWiBomMapper eamHtWiBomMapper;
     @Resource
+    private EamHtWiFileMapper eamHtWiFileMapper;
+    @Resource
     private EamHtWiFTAndInspectionToolMapper eamHtWiFTAndInspectionToolMapper;
     @Resource
     private EamHtWiQualityStandardsMapper eamHtWiQualityStandardsMapper;
 
     @Resource
     private BaseFeignApi baseFeignApi;
-
-
 
 
     @Override
@@ -105,13 +101,83 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         BeanUtils.copyProperties(eamWorkInstructionDto, eamHtWorkInstruction);
         int i = eamHtWorkInstructionMapper.insertUseGeneratedKeys(eamHtWorkInstruction);
 
+        saveBom(eamWorkInstructionDto,eamWorkInstructionDto.getWorkInstructionId(),user);
 
+        saveTool(eamWorkInstructionDto,eamWorkInstructionDto.getWorkInstructionId(),user);
+
+        saveStandards(eamWorkInstructionDto,eamWorkInstructionDto.getWorkInstructionId(),user);
+
+        saveFile(eamWorkInstructionDto,eamWorkInstructionDto.getWorkInstructionId(),user);
+
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int update(EamWorkInstructionDto eamWorkInstructionDto) {
+        SysUser user = currentUser();
+        if(StringUtils.isEmpty(eamWorkInstructionDto.getWorkInstructionId()))
+            throw new BizErrorException("id不能为空");
+        eamWorkInstructionMapper.updateByPrimaryKey(eamWorkInstructionDto);
+
+        Example example = new Example(EamWorkInstruction.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
+        EamWorkInstruction eamWorkInstruction = eamWorkInstructionMapper.selectOneByExample(example);
+
+        //保存履历表
+        EamHtWorkInstruction eamHtWorkInstruction = new EamHtWorkInstruction();
+        BeanUtils.copyProperties(eamWorkInstruction, eamHtWorkInstruction);
+        int i = eamHtWorkInstructionMapper.insertUseGeneratedKeys(eamHtWorkInstruction);
+        example.clear();
+
+
+        Example bomExample = new Example(EamWiBom.class);
+        Example.Criteria bomCriteria = bomExample.createCriteria();
+        bomCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
+        eamWiBomMapper.deleteByExample(bomExample);
+        saveBom(eamWorkInstructionDto,eamWorkInstruction.getWorkInstructionId(),user);
+        bomExample.clear();
+
+        Example toolExample = new Example(EamWiFTAndInspectionTool.class);
+        Example.Criteria toolCriteria = toolExample.createCriteria();
+        toolCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
+        eamWiFTAndInspectionToolMapper.deleteByExample(toolExample);
+        saveTool(eamWorkInstructionDto,eamWorkInstruction.getWorkInstructionId(),user);
+        toolExample.clear();
+
+        Example standardsExample = new Example(EamWiQualityStandards.class);
+        Example.Criteria standardsCriteria = standardsExample.createCriteria();
+        standardsCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
+        eamWiQualityStandardsMapper.deleteByExample(standardsExample);
+        saveStandards(eamWorkInstructionDto,eamWorkInstruction.getWorkInstructionId(),user);
+        standardsExample.clear();
+
+        Example fileExample = new Example(EamWiFile.class);
+        Example.Criteria fileCriteria = fileExample.createCriteria();
+        fileCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
+        eamWiFileMapper.deleteByExample(fileExample);
+        saveFile(eamWorkInstructionDto,eamWorkInstruction.getWorkInstructionId(),user);
+        fileExample.clear();
+
+        return i;
+    }
+
+
+    public void saveBom(EamWorkInstructionDto eamWorkInstructionDto,Long id,SysUser user){
         if (StringUtils.isNotEmpty(eamWorkInstructionDto.getEamWiBoms())){
             List<EamWiBom> wiBom = new ArrayList<>();
             List<EamHtWiBom> eamHtWiBoms = new ArrayList<>();
             for (EamWiBom eamWiBom : eamWorkInstructionDto.getEamWiBoms()) {
                 EamHtWiBom eamHtWiBom = new EamHtWiBom();
-                eamWiBom.setWorkInstructionId(eamWorkInstruction.getWorkInstructionId());
+                eamWiBom.setWorkInstructionId(id);
+                eamWiBom.setCreateUserId(user.getUserId());
+                eamWiBom.setCreateTime(new Date());
+                eamWiBom.setModifiedUserId(user.getUserId());
+                eamWiBom.setModifiedTime(new Date());
+                eamWiBom.setStatus(StringUtils.isEmpty(eamWiBom.getStatus())?1: eamWiBom.getStatus());
+                eamWiBom.setOrgId(user.getOrganizationId());
                 BeanUtils.copyProperties(eamWiBom,eamHtWiBom);
                 wiBom.add(eamWiBom);
                 eamHtWiBoms.add(eamHtWiBom);
@@ -121,13 +187,21 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
                 eamHtWiBomMapper.insertList(eamHtWiBoms);
             }
         }
+    }
 
+    public void saveTool(EamWorkInstructionDto eamWorkInstructionDto,Long id,SysUser user){
         if (StringUtils.isNotEmpty(eamWorkInstructionDto.getEamWiFTAndInspectionTools())){
             List<EamWiFTAndInspectionTool> wiFTAndInspectionTools = new ArrayList<>();
             List<EamHtWiFTAndInspectionTool> eamHtWiFTAndInspectionTools = new ArrayList<>();
             for (EamWiFTAndInspectionTool tool : eamWorkInstructionDto.getEamWiFTAndInspectionTools()) {
                 EamHtWiFTAndInspectionTool eamHtWiFTAndInspectionTool = new EamHtWiFTAndInspectionTool();
-                tool.setWorkInstructionId(eamWorkInstruction.getWorkInstructionId());
+                tool.setWorkInstructionId(id);
+                tool.setCreateUserId(user.getUserId());
+                tool.setCreateTime(new Date());
+                tool.setModifiedUserId(user.getUserId());
+                tool.setModifiedTime(new Date());
+                tool.setStatus(StringUtils.isEmpty(tool.getStatus())?1: tool.getStatus());
+                tool.setOrgId(user.getOrganizationId());
                 BeanUtils.copyProperties(tool,eamHtWiFTAndInspectionTool);
                 wiFTAndInspectionTools.add(tool);
                 eamHtWiFTAndInspectionTools.add(eamHtWiFTAndInspectionTool);
@@ -137,13 +211,21 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
                 eamHtWiFTAndInspectionToolMapper.insertList(eamHtWiFTAndInspectionTools);
             }
         }
+    }
 
+    public void saveStandards(EamWorkInstructionDto eamWorkInstructionDto,Long id,SysUser user){
         if (StringUtils.isNotEmpty(eamWorkInstructionDto.getEamWiQualityStandardss())){
             List<EamWiQualityStandards> wiQualityStandardss = new ArrayList<>();
             List<EamHtWiQualityStandards> eamHtWiQualityStandardss = new ArrayList<>();
             for (EamWiQualityStandards standards : eamWorkInstructionDto.getEamWiQualityStandardss()) {
                 EamHtWiQualityStandards eamHtWiQualityStandards = new EamHtWiQualityStandards();
-                standards.setWorkInstructionId(eamWorkInstruction.getWorkInstructionId());
+                standards.setWorkInstructionId(id);
+                standards.setCreateUserId(user.getUserId());
+                standards.setCreateTime(new Date());
+                standards.setModifiedUserId(user.getUserId());
+                standards.setModifiedTime(new Date());
+                standards.setStatus(StringUtils.isEmpty(standards.getStatus())?1: standards.getStatus());
+                standards.setOrgId(user.getOrganizationId());
                 BeanUtils.copyProperties(standards,eamHtWiQualityStandards);
                 wiQualityStandardss.add(standards);
                 eamHtWiQualityStandardss.add(eamHtWiQualityStandards);
@@ -153,15 +235,60 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
                 eamHtWiQualityStandardsMapper.insertList(eamHtWiQualityStandardss);
             }
         }
+    }
 
+    public void saveFile(EamWorkInstructionDto eamWorkInstructionDto,Long id,SysUser user){
         if (StringUtils.isNotEmpty(eamWorkInstructionDto.getEamWiFile())) {
             EamWiFile file = eamWorkInstructionDto.getEamWiFile();
-            file.setWorkInstructionId(eamWorkInstruction.getWorkInstructionId());
+            file.setWorkInstructionId(id);
+            file.setCreateUserId(user.getUserId());
+            file.setCreateTime(new Date());
+            file.setModifiedUserId(user.getUserId());
+            file.setModifiedTime(new Date());
+            file.setStatus(StringUtils.isEmpty(file.getStatus())?1: file.getStatus());
+            file.setOrgId(user.getOrganizationId());
             eamWiFileMapper.insertUseGeneratedKeys(file);
+            EamHtWiFile eamHtWiFile = new EamHtWiFile();
+            BeanUtils.copyProperties(file,eamHtWiFile);
+            eamHtWiFileMapper.insertUseGeneratedKeys(eamHtWiFile);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchDelete(String ids) {
+        SysUser user = currentUser();
+
+        String[] idsArr = ids.split(",");
+        for (String id : idsArr) {
+
+            Example bomExample = new Example(EamWiBom.class);
+            Example.Criteria bomCriteria = bomExample.createCriteria();
+            bomCriteria.andEqualTo("workInstructionId", id);
+            eamWiBomMapper.deleteByExample(bomExample);
+            bomExample.clear();
+
+            Example toolExample = new Example(EamWiFTAndInspectionTool.class);
+            Example.Criteria toolCriteria = toolExample.createCriteria();
+            toolCriteria.andEqualTo("workInstructionId",id);
+            eamWiFTAndInspectionToolMapper.deleteByExample(toolExample);
+            toolExample.clear();
+
+            Example standardsExample = new Example(EamWiQualityStandards.class);
+            Example.Criteria standardsCriteria = standardsExample.createCriteria();
+            standardsCriteria.andEqualTo("workInstructionId", id);
+            eamWiQualityStandardsMapper.deleteByExample(standardsExample);
+            standardsExample.clear();
+
+            Example fileExample = new Example(EamWiFile.class);
+            Example.Criteria fileCriteria = fileExample.createCriteria();
+            eamWiFileMapper.deleteByExample(fileExample);
+            fileExample.clear();
         }
 
-        return i;
+        return eamWorkInstructionMapper.deleteByIds(ids);
     }
+
 
 
     @Override
