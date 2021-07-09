@@ -60,7 +60,7 @@ public class BaseInspectionExemptedList extends ValidGroup implements Serializab
      * 类型(1-供应商 2-客户)
      */
     @ApiModelProperty(name="objType",value = "类型(1-供应商 2-客户)")
-    @Excel(name = "类型(1-供应商 2-客户)", height = 20, width = 30,orderNum="1")
+    @Excel(name = "类型(1-供应商 2-客户)", height = 20, width = 30,orderNum="1",replace = {"供应商_1", "客户_2"})
     @Column(name = "obj_type")
     private Byte objType;
 
@@ -68,7 +68,7 @@ public class BaseInspectionExemptedList extends ValidGroup implements Serializab
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="8")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="8",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

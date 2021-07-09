@@ -58,7 +58,7 @@ public class BaseSampleProcess extends ValidGroup implements Serializable {
      * 抽样类型(1-固定抽样 2-全检 3-百分比抽样 4-抽样方案)
      */
     @ApiModelProperty(name="sampleProcessType",value = "抽样类型(1-固定抽样 2-全检 3-百分比抽样 4-抽样方案)")
-    @Excel(name = "抽样类型(1-固定抽样 2-全检 3-百分比抽样 4-抽样方案)", height = 20, width = 30,orderNum="3")
+    @Excel(name = "抽样类型(1-固定抽样 2-全检 3-百分比抽样 4-抽样方案)", height = 20, width = 30,orderNum="3",replace = {"固定抽样_1", "全检_2", "百分比抽样_3", "抽样方案_4"})
     @Column(name = "sample_process_type")
     private Byte sampleProcessType;
 
@@ -119,7 +119,7 @@ public class BaseSampleProcess extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="12")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="12",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

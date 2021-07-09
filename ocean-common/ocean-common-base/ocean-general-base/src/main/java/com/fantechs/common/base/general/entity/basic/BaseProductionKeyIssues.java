@@ -41,7 +41,7 @@ public class BaseProductionKeyIssues extends ValidGroup implements Serializable 
      * 关键事项维度(1-物料 2-通用)
      */
     @ApiModelProperty(name="keyIssuesType",value = "关键事项维度(1-物料 2-通用)")
-    @Excel(name = "关键事项维度(1-物料 2-通用)", height = 20, width = 30,orderNum="1")
+    @Excel(name = "关键事项维度(1-物料 2-通用)", height = 20, width = 30,orderNum="1",replace = {"物料_1", "通用_2"})
     @Column(name = "key_issues_type")
     @NotNull(message = "关键事项维度不能为空")
     private Byte keyIssuesType;
@@ -57,7 +57,7 @@ public class BaseProductionKeyIssues extends ValidGroup implements Serializable 
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="7")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="7",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**
