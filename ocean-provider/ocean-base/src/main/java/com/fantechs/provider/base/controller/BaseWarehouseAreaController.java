@@ -1,6 +1,9 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseAreaImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouseArea;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouseArea;
@@ -16,14 +19,17 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +39,7 @@ import java.util.List;
 @Api(tags = "库区信息管理")
 @RequestMapping("/baseWarehouseArea")
 @Validated
+@Slf4j
 public class BaseWarehouseAreaController {
 
     @Resource
@@ -95,6 +102,27 @@ public class BaseWarehouseAreaController {
             EasyPoiUtils.exportExcel(list, "导出库区", "库区信息", BaseWarehouseAreaDto.class, "库区信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseWarehouseAreaImport> baseWarehouseAreaImports = EasyPoiUtils.importExcel(file, 2, 1, BaseWarehouseAreaImport.class);
+            Map<String, Object> resultMap = baseWarehouseAreaService.importExcel(baseWarehouseAreaImports);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }
