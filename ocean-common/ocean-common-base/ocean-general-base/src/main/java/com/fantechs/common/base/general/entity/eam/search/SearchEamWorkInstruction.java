@@ -29,4 +29,17 @@ public class SearchEamWorkInstruction extends BaseQuery implements Serializable 
     @ApiModelProperty(name="materialCode",value = "产品料号")
     @Transient
     private String materialCode;
+
+    /**
+     * 产品物料ID
+     */
+    @ApiModelProperty(name="materialId",value = "产品物料ID")
+    @Transient
+    private String materialId;
+
+    /**
+     * 所属工序ID
+     */
+    @ApiModelProperty(name="processId",value = "所属工序ID")
+    private Long processId;
 }
