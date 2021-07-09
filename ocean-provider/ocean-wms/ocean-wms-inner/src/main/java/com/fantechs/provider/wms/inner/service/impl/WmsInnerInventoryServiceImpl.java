@@ -134,6 +134,9 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         if(!StringUtils.isEmpty(map.get("jobOrderDetId")) && !StringUtils.isEmpty("jobStatus")){
             criteria.andEqualTo("jobOrderDetId",map.get("jobOrderDetId")).andEqualTo("jobStatus",map.get("jobStatus"));
         }
+        if(!StringUtils.isEmpty(map.get("inventoryStatusId"))){
+            criteria.andEqualTo("inventoryStatusId",map.get("inventoryStatusId"));
+        }
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         return wmsInnerInventorys;
     }

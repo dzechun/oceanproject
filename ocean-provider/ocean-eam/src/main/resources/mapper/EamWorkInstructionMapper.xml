@@ -33,6 +33,18 @@
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
     <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <collection property="eamWiBoms" ofType="com.fantechs.common.base.general.entity.eam.EamWiBom"
+            column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamWiBomMapper.findList">
+    </collection>
+    <collection property="eamWiFTAndInspectionTools" ofType="com.fantechs.common.base.general.entity.eam.EamWiFTAndInspectionTool"
+            column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamWiFTAndInspectionToolMapper.findList">
+    </collection>
+    <collection property="eamWiQualityStandardss" ofType="com.fantechs.common.base.general.entity.eam.EamWiQualityStandards"
+            column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamWiQualityStandardsMapper.findList">
+    </collection>
+    <collection property="eamWiFile" ofType="com.fantechs.common.base.general.entity.eam.EamWiFile"
+            column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamWiFileMapper.findList">
+    </collection>
   </resultMap>
   <sql id="BaseColumnList">
         ewi.work_instruction_id,

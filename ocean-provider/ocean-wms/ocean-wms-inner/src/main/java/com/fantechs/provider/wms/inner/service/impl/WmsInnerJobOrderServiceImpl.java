@@ -979,7 +979,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //旧
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("relevanceOrderCode",wmsInAsnOrderDto.getAsnCode()).andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId()).andEqualTo("warehouseId",wmsInAsnOrderDetDto.getWarehouseId()).andEqualTo("storageId",wmsInAsnOrderDetDto.getStorageId());
+        criteria.andEqualTo("relevanceOrderCode",wmsInAsnOrderDto.getAsnCode()).andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId())
+                .andEqualTo("warehouseId",wmsInAsnOrderDetDto.getWarehouseId()).andEqualTo("storageId",wmsInAsnOrderDetDto.getStorageId())
+                .andEqualTo("inventoryStatusId",wmsInAsnOrderDetDto.getInventoryStatusId());
         if(!StringUtils.isEmpty(wmsInAsnOrderDetDto.getBatchCode())){
             criteria.andEqualTo("batchCode",wmsInAsnOrderDetDto.getBatchCode());
         }
@@ -994,7 +996,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
         example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("relevanceOrderCode",wmsInnerJobOrderDto.getJobOrderCode()).andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId()).andEqualTo("warehouseId",wmsInnerJobOrderDto.getWarehouseId()).andEqualTo("storageId",wmsInnerJobOrderDetDto.getOutStorageId());
+        criteria1.andEqualTo("relevanceOrderCode",wmsInnerJobOrderDto.getJobOrderCode())
+                .andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId())
+                .andEqualTo("warehouseId",wmsInnerJobOrderDto.getWarehouseId())
+                .andEqualTo("storageId",wmsInnerJobOrderDetDto.getOutStorageId())
+                .andEqualTo("inventoryStatusId",wmsInnerJobOrderDetDto.getInventoryStatusId());
         if(!StringUtils.isEmpty(wmsInAsnOrderDetDto.getBatchCode())){
             criteria1.andEqualTo("batchCode",wmsInAsnOrderDetDto.getBatchCode());
         }
@@ -1042,6 +1048,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
         criteria.andEqualTo("jobOrderDetId",oldDto.getJobOrderDetId());
         criteria.andEqualTo("jobStatus",(byte)2);
+        criteria.andEqualTo("inventoryStatusId",oldDto.getInventoryStatusId());
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventory)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -1060,6 +1067,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
         criteria.andEqualTo("jobOrderDetId",newDto.getJobOrderDetId());
         criteria1.andEqualTo("jobStatus",(byte)1);
+        criteria.andEqualTo("inventoryStatusId",newDto.getInventoryStatusId());
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventorys)){
             //添加库存

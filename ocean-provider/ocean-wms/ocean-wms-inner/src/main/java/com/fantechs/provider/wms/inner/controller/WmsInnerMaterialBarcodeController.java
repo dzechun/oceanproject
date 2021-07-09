@@ -51,8 +51,8 @@ public class WmsInnerMaterialBarcodeController {
 
     @ApiOperation("打印/补打")
     @PostMapping("/print")
-    public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,@RequestParam int printNum){
-        return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.print(ids,printNum));
+    public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,@RequestParam int printQty){
+        return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.print(ids,printQty));
     }
 
     @ApiOperation("列表")

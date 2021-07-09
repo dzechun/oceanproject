@@ -115,7 +115,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     .materialOwnerId(omSalesReturnOrder.getMaterialOwnerId())
                     //销退入库单
                     .orderTypeId(Long.parseLong("5"))
-                    .relatedOrderCode1(omSalesReturnOrder.getRelatedOrderCode())
+                    .relatedOrderCode1(omSalesReturnOrder.getSalesReturnOrderCode())
                     .orderDate(new Date())
                     .wmsInAsnOrderDetList(wmsInAsnOrderDets)
                     .build();

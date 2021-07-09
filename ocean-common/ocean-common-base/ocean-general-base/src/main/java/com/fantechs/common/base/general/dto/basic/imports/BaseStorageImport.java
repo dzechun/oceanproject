@@ -58,10 +58,10 @@ public class BaseStorageImport implements Serializable {
     private Long warehouseAreaId;
 
     /**
-     * 仓库区域名编码(必填)
+     * 仓库区域编码(必填)
      */
-    @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域名编码")
-    @Excel(name = "仓库区域名编码(必填)", height = 20, width = 30)
+    @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域编码")
+    @Excel(name = "仓库区域编码(必填)", height = 20, width = 30)
     private String warehouseAreaCode;
 
     /**
@@ -93,9 +93,9 @@ public class BaseStorageImport implements Serializable {
     private Integer storageType;
 
     /**
-     * 工作区
+     * 工作区ID
      */
-    @ApiModelProperty(name="workingAreaId",value = "工作区")
+    @ApiModelProperty(name="workingAreaId",value = "工作区ID")
     private Long workingAreaId;
 
     /**

@@ -14,7 +14,7 @@ public class WmsInnerMaterialBarcodeDto extends WmsInnerMaterialBarcode implemen
     /**
      * 打印条码数量
      */
-    @ApiModelProperty(name="printQty",value = "打印条码数量")
+    @ApiModelProperty(name="barCodeQty",value = "打印条码数量")
     @Transient
     private int barCodeQty;
 

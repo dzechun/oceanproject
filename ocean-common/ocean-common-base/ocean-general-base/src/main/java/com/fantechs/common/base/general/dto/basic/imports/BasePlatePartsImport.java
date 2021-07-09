@@ -40,7 +40,7 @@ public class BasePlatePartsImport implements Serializable {
      * 部件规格
      */
     @ApiModelProperty(name="specification",value = "部件规格")
-    @Excel(name = "产品编码", height = 20, width = 30)
+    @Excel(name = "部件规格", height = 20, width = 30)
     private String specification;
 
     /**

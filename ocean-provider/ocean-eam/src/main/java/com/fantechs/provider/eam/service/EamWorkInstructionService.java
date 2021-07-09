@@ -21,4 +21,7 @@ public interface EamWorkInstructionService extends IService<EamWorkInstruction> 
     EamWorkInstructionDto importExcel(MultipartFile file) throws IOException;
 
     int save(EamWorkInstructionDto eamWorkInstructionDto);
+
+    int update(EamWorkInstructionDto eamWorkInstructionDto);
+
 }
