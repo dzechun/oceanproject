@@ -186,7 +186,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             WmsInnerJobOrder innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderId());
             innerJobOrder.setOrderStatus((byte) 4);
             innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
-            wmsInnerJobOrderService.update(innerJobOrder);
+            wmsInnerJobOrderMapper.updateByPrimaryKey(innerJobOrder);
         } else {
             // 查询库存信息，同一库位跟同物料有且只有一条数据
             Map<String, Object> map = new HashMap<>();
@@ -211,7 +211,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 innerJobOrder.setOrderStatus((byte) 4);
                 innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
                 innerJobOrder.setPlanQty(innerJobOrder.getActualQty());
-                wmsInnerJobOrderService.update(innerJobOrder);
+                wmsInnerJobOrderMapper.updateByPrimaryKey(innerJobOrder);
             }else {
                 // 创建移位单
                 WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();

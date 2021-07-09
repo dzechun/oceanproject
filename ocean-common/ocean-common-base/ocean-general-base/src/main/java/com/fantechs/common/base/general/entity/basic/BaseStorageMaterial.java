@@ -15,42 +15,42 @@ import javax.validation.constraints.NotNull;
 public class BaseStorageMaterial extends ValidGroup implements Serializable {
     private static final long serialVersionUID = -7270922822671637879L;
     /**
-     * 储位物料ID
+     * 库位物料ID
      */
     @Id
     @Column(name = "storage_material_id")
-    @ApiModelProperty(name = "storageMaterialId",value = "储位物料ID")
+    @ApiModelProperty(name = "storageMaterialId",value = "库位物料ID")
     private Long storageMaterialId;
 
     /**
-     * 储位ID
+     * 库位ID
      */
     @Column(name = "storage_id")
-    @ApiModelProperty(name = "storageId",value = "储位ID")
+    @ApiModelProperty(name = "storageId",value = "库位ID")
     private Long storageId;
 
     /**
-     * 储位编码
+     * 库位编码
      */
     @Transient
-    @ApiModelProperty(name = "storageCode",value = "储位编码")
-    @Excel(name = "储位编码", height = 20, width = 30)
+    @ApiModelProperty(name = "storageCode",value = "库位编码")
+    @Excel(name = "库位编码", height = 20, width = 30)
     private String storageCode;
 
     /**
-     * 储位名称
+     * 库位名称
      */
     @Transient
-    @ApiModelProperty(name = "storageName",value = "储位名称")
-    @Excel(name = "储位名称", height = 20, width = 30)
+    @ApiModelProperty(name = "storageName",value = "库位名称")
+    @Excel(name = "库位名称", height = 20, width = 30)
     private String storageName;
 
     /**
-     * 储位描述
+     * 库位描述
      */
     @Transient
-    @ApiModelProperty(name = "storageDesc",value = "储位描述")
-    @Excel(name = "储位描述", height = 20, width = 30)
+    @ApiModelProperty(name = "storageDesc",value = "库位描述")
+    @Excel(name = "库位描述", height = 20, width = 30)
     private String storageDesc;
 
     /**
@@ -72,7 +72,7 @@ public class BaseStorageMaterial extends ValidGroup implements Serializable {
      * 货主名称
      */
     @Transient
-    @ApiModelProperty(name = "materialOwnerName",value = "货主ID")
+    @ApiModelProperty(name = "materialOwnerName",value = "货主名称")
     private String materialOwnerName;
 
     /**

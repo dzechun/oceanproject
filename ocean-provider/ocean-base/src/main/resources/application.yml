@@ -4,7 +4,7 @@ server:
 
 spring:
   profiles:
-    active: bama
+    active: dev
   application:
     name: @pom.artifactId@
   servlet:

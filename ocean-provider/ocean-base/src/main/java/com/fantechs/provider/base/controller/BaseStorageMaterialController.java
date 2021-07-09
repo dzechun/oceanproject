@@ -1,6 +1,10 @@
 package com.fantechs.provider.base.controller;
 
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseFactoryImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseStorageMaterialImport;
 import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStorageMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageMaterial;
@@ -16,14 +20,17 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +40,7 @@ import java.util.List;
 @Api(tags = "物料专用库位管理")
 @RequestMapping("/baseStorageMaterial")
 @Validated
+@Slf4j
 public class BaseStorageMaterialController {
 
     @Resource
@@ -101,6 +109,31 @@ public class BaseStorageMaterialController {
             EasyPoiUtils.exportExcel(list, "物料专用库位信息", "物料专用库位信息", BaseStorageMaterial.class, "物料专用库位.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseStorageMaterialImport> baseStorageMaterialImports = EasyPoiUtils.importExcel(file, 2, 1, BaseStorageMaterialImport.class);
+            Map<String, Object> resultMap = baseStorageMaterialService.importExcel(baseStorageMaterialImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }
