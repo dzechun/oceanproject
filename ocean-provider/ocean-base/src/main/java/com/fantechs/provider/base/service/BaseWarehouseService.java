@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.service;
 
+import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
@@ -15,5 +16,7 @@ public interface BaseWarehouseService extends IService<BaseWarehouse>{
     int batchUpdateByCode(List<BaseWarehouse> baseWarehouses);
 
     int insertList(List<BaseWarehouse> baseWarehouses);
+
+    Map<String, Object> importExcel(List<BaseWarehouseImport> baseWarehouseImports);
 
 }
