@@ -89,7 +89,7 @@
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and pjo.create_time between #{startTime} and #{endTime}
       </if>
-      <if test="(startTime != null or startTime != '') and (endTime != null or endTime != '')">
+      <if test="(startTime == null or startTime == '') and (endTime == null or endTime == '')">
         and TO_DAYS(pjo.create_time) = TO_DAYS(NOW())
       </if>
       <if test="warehouseId != null">

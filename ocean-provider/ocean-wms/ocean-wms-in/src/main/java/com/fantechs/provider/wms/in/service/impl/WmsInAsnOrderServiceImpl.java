@@ -472,8 +472,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             return 1;
         }else{
             //原库存
-            BigDecimal qty = wmsInAsnOrderDetDto.getActualQty().subtract(wmsInnerInventory.getPackingQty());
-            wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(qty));
+            //BigDecimal qty = wmsInAsnOrderDetDto.getActualQty().subtract(wmsInnerInventory.getPackingQty());
+            wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(wmsInAsnOrderDetDto.getActualQty()));
             ResponseEntity responseEntity =  innerFeignApi.updateByPrimaryKeySelective(wmsInnerInventory);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("确认失败");

@@ -834,7 +834,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("materialId", wmsInPutawayOrderDet.getMaterialId())
                         .andEqualTo("batchCode", wmsInPutawayOrderDet.getBatchCode())
                         .andEqualTo("warehouseId", record.getWarehouseId())
-                        .andEqualTo("storageId", wmsInPutawayOrderDet.getOutStorageId());
+                        .andEqualTo("storageId", wmsInPutawayOrderDet.getOutStorageId())
+                        .andEqualTo("inventoryStatusId",wmsInPutawayOrderDet.getInventoryStatusId());
                 WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 if (StringUtils.isEmpty(wmsInnerInventory)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
