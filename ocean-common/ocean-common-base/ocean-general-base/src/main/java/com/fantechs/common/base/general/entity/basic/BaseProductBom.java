@@ -72,7 +72,7 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * BOM状态(1-未核准 2-已核准)
      */
     @ApiModelProperty(name="bomStatus",value = "BOM状态(1-未核准 2-已核准)")
-    @Excel(name = "BOM状态(1-未核准 2-已核准)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "BOM状态(1-未核准 2-已核准)", height = 20, width = 30,orderNum="",replace = {"未核准_1", "已核准_2"})
     @Column(name = "bom_status")
     private Byte bomStatus;
 
@@ -80,7 +80,7 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     private String remark;

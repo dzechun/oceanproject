@@ -53,14 +53,14 @@ public class BaseInAndOutRuleType extends ValidGroup implements Serializable {
      * 类型(1-入库 2-出库)
      */
     @ApiModelProperty(name="category",value = "类型(1-入库 2-出库)")
-    @Excel(name = "类型(1-入库 2-出库)", height = 20, width = 30,orderNum="3")
+    @Excel(name = "类型(1-入库 2-出库)", height = 20, width = 30,orderNum="3",replace = {"入库_1", "出库_2"})
     private Byte category;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="4")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="4",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

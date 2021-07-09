@@ -1,7 +1,7 @@
 package com.fantechs.provider.base.service;
 
 
-import com.fantechs.common.base.general.entity.basic.BaseHtBadnessCause;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCause;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;

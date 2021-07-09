@@ -74,7 +74,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="inspectionType",value = "检验类型(1- 来料检验 2- 驻厂检验 3-出货检验)")
     @Column(name = "inspection_type")
-    @Excel(name = "检验类型(1- 来料检验 2- 驻厂检验 3-出货检验)", height = 20, width = 30,orderNum="6")
+    @Excel(name = "检验类型(1- 来料检验 2- 驻厂检验 3-出货检验)", height = 20, width = 30,orderNum="6",replace = {"来料检验_1", "驻厂检验_2", "出货检验_3"})
     private Byte inspectionType;
 
     /**
@@ -88,7 +88,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="8")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="8",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

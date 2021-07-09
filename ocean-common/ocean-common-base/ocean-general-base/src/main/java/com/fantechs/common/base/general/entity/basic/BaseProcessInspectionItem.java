@@ -68,7 +68,7 @@ public class BaseProcessInspectionItem extends ValidGroup implements Serializabl
      * 过程检验项目类型(1-巡检 2-首检 3-首件确认)
      */
     @ApiModelProperty(name="processInspectionItemType",value = "过程检验项目类型(1-巡检 2-首检 3-首件确认)")
-    @Excel(name = "过程检验项目类型(1-巡检 2-首检 3-首件确认)", height = 20, width = 30,orderNum="7")
+    @Excel(name = "过程检验项目类型(1-巡检 2-首检 3-首件确认)", height = 20, width = 30,orderNum="7",replace = {"巡检_1", "首检_2", "首件确认_3"})
     @Column(name = "process_inspection_item_type")
     private Byte processInspectionItemType;
 
