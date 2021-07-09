@@ -157,8 +157,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         wmsInAsnOrderDet.setModifiedTime(new Date());
 
 
-        WmsInAsnOrderDet oldWms = wmsInAsnOrderDetMapper.selectByPrimaryKey(wmsInAsnOrderDet.getAsnOrderDetId());
-        BigDecimal countQty = wmsInAsnOrderDet.getActualQty().add(oldWms.getActualQty()!=null?oldWms.getActualQty():new BigDecimal("0"));
+        //WmsInAsnOrderDet oldWms = wmsInAsnOrderDetMapper.selectByPrimaryKey(wmsInAsnOrderDet.getAsnOrderDetId());
+        BigDecimal countQty = wmsInAsnOrderDet.getActualQty().add(wms.getActualQty()!=null?wms.getActualQty():new BigDecimal("0"));
         if(countQty.compareTo(wmsInAsnOrderDet.getPackingQty())==1){
             throw new BizErrorException("收货数量不能大于计划数量");
         }
@@ -173,8 +173,25 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     .build());
             wmsInAsnOrderDet.setReceivingDate(new Date());
         }
-        wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getActualQty().add(wms.getActualQty()!=null?wms.getActualQty():new BigDecimal("0")));
+       if(StringUtils.isNotEmpty(wms.getInventoryStatusId()) || StringUtils.isNotEmpty(wms.getStorageId())){
+           if(!wms.getInventoryStatusId().equals(wmsInAsnOrderDet.getInventoryStatusId()) || !wms.getStorageId().equals(wmsInAsnOrderDet.getStorageId())){
+               wms = new WmsInAsnOrderDet();
+               BeanUtil.copyProperties(wmsInAsnOrderDet,wms);
+               wms.setAsnOrderDetId(null);
+               wms.setPackingQty(wmsInAsnOrderDet.getActualQty());
+               wms.setLineNumber(wmsInAsnOrderDet.getLineNumber()+1);
+               int num = wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wms);
+
+               wmsInAsnOrderDet.setPackingQty(wmsInAsnOrderDet.getPackingQty().subtract(wmsInAsnOrderDet.getActualQty()));
+               wmsInAsnOrderDet.setActualQty(BigDecimal.ZERO);
+               wmsInAsnOrderDet.setStorageId(null);
+           }
+       }else{
+           wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getActualQty().add(wms.getActualQty()!=null?wms.getActualQty():new BigDecimal("0")));
+       }
+        //wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getActualQty().add(wms.getActualQty()!=null?wms.getActualQty():new BigDecimal("0")));
         wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wmsInAsnOrderDet);
+       wmsInAsnOrderDet = wms;
         //添加库存
         int num = this.addInventory(wmsInAsnOrderDet.getAsnOrderId(), wmsInAsnOrderDet.getAsnOrderDetId());
 
@@ -413,6 +430,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         map.put("actualQty",wmsInAsnOrderDetDto.getActualQty());
         map.put("warehouseId",wmsInAsnOrderDetDto.getWarehouseId());
         map.put("storageId",wmsInAsnOrderDetDto.getStorageId());
+        map.put("inventoryStatusId",wmsInAsnOrderDetDto.getInventoryStatusId());
         WmsInnerInventory wmsInnerInventory = innerFeignApi.selectOneByExample(map).getData();
         if(StringUtils.isEmpty(wmsInnerInventory)){
             //添加库存
