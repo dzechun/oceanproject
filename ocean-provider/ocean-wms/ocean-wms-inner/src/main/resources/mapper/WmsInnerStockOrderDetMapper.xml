@@ -90,5 +90,8 @@ wivd.inventory_status_id
           and bs.storage_code = #{storageCode}
         </if>
     </where>
+    <if test="isRecords!=null and isRecords!='' and isRecords=='true'">
+        Group BY wivd.storage_id
+    </if>
   </select>
 </mapper>
