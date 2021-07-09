@@ -259,6 +259,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setCreateTime(new Date());
             wmsInnerJobOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setIsDelete((byte) 1);
+            wmsInnerJobOrderDet.setOrderStatus((byte) 4);
             wmsInnerJobOrderDet.setShiftStorageStatus((byte) 3);
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
             WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
@@ -348,10 +349,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrderDet.getJobOrderId());
         WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
-        List<WmsInnerJobOrderDetDto> wmsInnerJobOrderDetDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet);
+        List<WmsInnerJobOrderDet> wmsInnerJobOrderDetDto = wmsInnerJobOrderDto.getWmsInPutawayOrderDets();
 
         BigDecimal resQty = wmsInnerJobOrderDetDto.stream()
-                .map(WmsInnerJobOrderDetDto::getActualQty)
+                .map(WmsInnerJobOrderDet::getActualQty)
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
 
         // 更改库存

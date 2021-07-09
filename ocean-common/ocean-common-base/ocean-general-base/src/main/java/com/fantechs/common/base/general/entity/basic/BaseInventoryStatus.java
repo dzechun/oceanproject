@@ -47,7 +47,7 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
      * 是否可发(0-否 1-是)
      */
     @ApiModelProperty(name="ifCanStoreIssue",value = "是否可发(0-否 1-是)")
-    @Excel(name = "是否可发(0-否 1-是)", height = 20, width = 30,orderNum="4")
+    @Excel(name = "是否可发(0-否 1-是)", height = 20, width = 30,orderNum="4",replace = {"否_0", "是_1"})
     @Column(name = "if_can_store_issue")
     private Byte ifCanStoreIssue;
 
@@ -69,7 +69,7 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="6")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="6",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

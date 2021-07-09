@@ -30,7 +30,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Column(name = "storage_code")
     @ApiModelProperty(name = "storageCode",value = "库位编码")
-    @Excel(name = "库位编码", height = 20, width = 30)
+    @Excel(name = "库位编码", height = 20, width = 30,orderNum="1")
     @NotBlank(message = "库位编码不能为空")
     private String storageCode;
 
@@ -39,7 +39,6 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Column(name = "storage_name")
     @ApiModelProperty(name = "storageName",value = "库位名称")
-    @Excel(name = "库位名称", height = 20, width = 30)
     private String storageName;
 
     /**
@@ -47,7 +46,6 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Column(name = "level")
     @ApiModelProperty(name = "level",value = "层级")
-    @Excel(name = "层级", height = 20, width = 30)
     private String level;
 
     /**
@@ -55,7 +53,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Column(name = "storage_desc")
     @ApiModelProperty(name = "storageDesc",value = "库位描述")
-    @Excel(name = "库位描述", height = 20, width = 30)
+    @Excel(name = "库位描述", height = 20, width = 30,orderNum="17")
     private String storageDesc;
 
     /**
@@ -70,7 +68,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30)
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="5")
     private String warehouseName;
 
     /**
@@ -78,7 +76,6 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
-    @Excel(name = "仓库编码", height = 20, width = 30)
     private String warehouseCode;
 
     /**
@@ -100,7 +97,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
-    @Excel(name = "仓库区域名称", height = 20, width = 30)
+    @Excel(name = "仓库区域名称", height = 20, width = 30,orderNum="3")
     private String warehouseAreaName;
 
     /**
@@ -108,7 +105,6 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域名编码")
-    @Excel(name = "仓库区域名编码", height = 20, width = 30)
     private String warehouseAreaCode;
 
     /**
@@ -138,6 +134,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="storageType",value = "库位类型（1-存货 2-收货 3-发货）")
     @Column(name = "storage_type")
     @NotNull(message = "库位类型不能为空")
+    @Excel(name = " 库位类型（1-存货 2-收货 3-发货）", height = 20, width = 30,orderNum="2",replace = {"存货_1","收货_2", "发货_3"})
     private Byte storageType;
 
     /**
@@ -153,7 +150,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="workingAreaCode" ,value="工作区编码")
-    @Excel(name = "工作区编码", height = 20, width = 30)
+    @Excel(name = "工作区编码", height = 20, width = 30,orderNum="4")
     private String workingAreaCode;
 
     /**
@@ -162,7 +159,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="roadway",value = "巷道")
     @Column(name = "roadway")
     @NotNull(message = "巷道不能为空")
-    @Excel(name = "巷道", height = 20, width = 30)
+    @Excel(name = "巷道", height = 20, width = 30,orderNum="6")
     private Integer roadway;
 
     /**
@@ -171,7 +168,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="rowNo",value = "排")
     @Column(name = "row_no")
     @NotNull(message = "排不能为空")
-    @Excel(name = "排", height = 20, width = 30)
+    @Excel(name = "排", height = 20, width = 30,orderNum="7")
     private Integer rowNo;
 
     /**
@@ -180,7 +177,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="columnNo",value = "列")
     @Column(name = "column_no")
     @NotNull(message = "列不能为空")
-    @Excel(name = "列", height = 20, width = 30)
+    @Excel(name = "列", height = 20, width = 30,orderNum="8")
     private Integer columnNo;
 
     /**
@@ -189,7 +186,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="levelNo",value = "层")
     @Column(name = "level_no")
     @NotNull(message = "层不能为空")
-    @Excel(name = "层", height = 20, width = 30)
+    @Excel(name = "层", height = 20, width = 30,orderNum="9")
     private Integer levelNo;
 
     /**
@@ -198,7 +195,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="putawayMoveLineNo",value = "上架动线号")
     @Column(name = "putaway_move_line_no")
     @NotNull(message = "上架动线号不能为空")
-    @Excel(name = "上架动线号", height = 20, width = 30)
+    @Excel(name = "上架动线号", height = 20, width = 30,orderNum="10")
     private Integer putawayMoveLineNo;
 
     /**
@@ -207,7 +204,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="pickingMoveLineNo",value = "拣货动线号")
     @Column(name = "picking_move_line_no")
     @NotNull(message = "拣货动线号不能为空")
-    @Excel(name = "拣货动线号", height = 20, width = 30)
+    @Excel(name = "拣货动线号", height = 20, width = 30,orderNum="11")
     private Integer pickingMoveLineNo;
 
     /**
@@ -216,7 +213,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @ApiModelProperty(name="stockMoveLineNo",value = "盘点动线号")
     @Column(name = "stock_move_line_no")
     @NotNull(message = "盘点动线号不能为空")
-    @Excel(name = "盘点动线号", height = 20, width = 30)
+    @Excel(name = "盘点动线号", height = 20, width = 30,orderNum="12")
     private Integer stockMoveLineNo;
 
     /**
@@ -224,7 +221,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="ifStockLock",value = "盘点锁(0-否 1-是)")
     @Column(name = "if_stock_lock")
-    @Excel(name = "盘点锁(0-否 1-是)", height = 20, width = 30)
+    @Excel(name = "盘点锁(0-否 1-是)", height = 20, width = 30,orderNum="13",replace = {"否_0", "是_1"})
     private Byte ifStockLock;
 
     /**
@@ -232,7 +229,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="surplusLoad",value = "剩余载重")
     @Column(name = "surplus_load")
-    @Excel(name = "剩余载重", height = 20, width = 30)
+    @Excel(name = "剩余载重", height = 20, width = 30,orderNum="14")
     private BigDecimal surplusLoad;
 
     /**
@@ -240,7 +237,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="surplusVolume",value = "剩余容积")
     @Column(name = "surplus_volume")
-    @Excel(name = "剩余容积", height = 20, width = 30)
+    @Excel(name = "剩余容积", height = 20, width = 30,orderNum="15")
     private BigDecimal surplusVolume;
 
     /**
@@ -248,7 +245,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="surplusCanPutSalver",value = "剩余可放托盘数")
     @Column(name = "surplus_can_put_salver")
-    @Excel(name = "剩余可放托盘数", height = 20, width = 30)
+    @Excel(name = "剩余可放托盘数", height = 20, width = 30,orderNum="16")
     private Integer surplusCanPutSalver;
 
     /**
@@ -270,14 +267,14 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="remark",value = "备注")
     @Column(name = "remark")
-    @Excel(name = "备注", height = 20, width = 30)
+    @Excel(name = "备注", height = 20, width = 30,orderNum="19")
     private String remark;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name = "status",value = "状态")
-    @Excel(name = "状态", height = 20, width = 30,replace = {"无效_0", "有效_1"})
+    @Excel(name = "状态", height = 20, width = 30,orderNum="18",replace = {"无效_0", "有效_1"})
     private Integer status;
 
     /**
@@ -292,7 +289,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="createUserName" ,value="创建账号名称")
-    @Excel(name = "创建账号", height = 20, width = 30)
+    @Excel(name = "创建账号", height = 20, width = 30,orderNum="20")
     private String createUserName;
 
     /**
@@ -300,7 +297,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Column(name = "create_time")
     @ApiModelProperty(name = "createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="21",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -315,7 +312,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
-    @Excel(name = "修改账号", height = 20, width = 30)
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum="22")
     private String modifiedUserName;
 
     /**
@@ -323,7 +320,7 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     @Column(name = "modified_time")
     @ApiModelProperty(name = "modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="23",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**
