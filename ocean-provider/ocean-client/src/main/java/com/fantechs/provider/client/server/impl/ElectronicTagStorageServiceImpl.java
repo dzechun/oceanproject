@@ -106,16 +106,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if (warehouseAreaId == 0) {
             warehouseAreaId = ptlJobOrderDetDtoList.get(0).getWarehouseAreaId();
         }
-        synchronized (ElectronicTagStorageServiceImpl.class) {
-            //是否有在做单据
-            SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
-            searchPtlJobOrder.setOrderStatusList((byte) 1);
-            searchPtlJobOrder.setWarehouseAreaId(warehouseAreaId);
-            List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
-            if (StringUtils.isNotEmpty(ptlJobOrderDtoList)) {
-                if (ptlJobOrderDtoList.size() != 1 || !ptlJobOrderDtoList.get(0).getJobOrderId().equals(jobOrderId)) {
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "正在处理其他任务单，请稍后再试");
-                }
+        //是否有在做单据
+        SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
+        searchPtlJobOrder.setOrderStatusList((byte) 1);
+        searchPtlJobOrder.setWarehouseAreaId(warehouseAreaId);
+        List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
+        if (StringUtils.isNotEmpty(ptlJobOrderDtoList)) {
+            if (ptlJobOrderDtoList.size() != 1 || !ptlJobOrderDtoList.get(0).getJobOrderId().equals(jobOrderId)) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "正在处理其他任务单，请稍后再试");
             }
         }
 
@@ -527,19 +525,19 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     temVehicle.setModifiedTime(new Date());
                     temVehicle.setModifiedUserId(currentUser.getUserId());
                     temVehicleFeignApi.update(temVehicle);
+
+                    PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
+                    ptlJobOrderUpdate.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
+                    ptlJobOrderUpdate.setVehicleId(temVehicleDto.getVehicleId());
+                    ptlJobOrderUpdate.setModifiedTime(new Date());
+                    ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
+                    electronicTagFeignApi.updateByRelatedOrderCode(ptlJobOrderUpdate);
                     break;
                 }
             }
             if (StringUtils.isEmpty(temVehicleDtoList, vehicleCode)) {
                 throw new Exception("目前没有空闲的集货位，请稍后再操作");
             }
-
-            PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
-            ptlJobOrderUpdate.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
-            ptlJobOrderUpdate.setVehicleId(temVehicleDtoList.get(0).getVehicleId());
-            ptlJobOrderUpdate.setModifiedTime(new Date());
-            ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
-            electronicTagFeignApi.updateByRelatedOrderCode(ptlJobOrderUpdate);
         }
         SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
         searchPtlJobOrderDet.setJobOrderId(jobOrderId);
