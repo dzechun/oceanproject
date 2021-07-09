@@ -173,8 +173,11 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     .build());
             wmsInAsnOrderDet.setReceivingDate(new Date());
         }
-       if(StringUtils.isNotEmpty(wms.getInventoryStatusId()) || StringUtils.isNotEmpty(wms.getStorageId())){
-           if(!wms.getInventoryStatusId().equals(wmsInAsnOrderDet.getInventoryStatusId()) || !wms.getStorageId().equals(wmsInAsnOrderDet.getStorageId())){
+        Long storageId = wms.getStorageId();
+        Long warehouseId = wms.getWarehouseId();
+        if(wmsInAsnOrderDet.getActualQty().compareTo(wmsInAsnOrderDet.getPackingQty())==-1){
+       //if((wms.getInventoryStatusId()!=null || wms.getStorageId()!=null) && wmsInAsnOrderDet.getActualQty().compareTo(wmsInAsnOrderDet.getPackingQty())==-1){
+           //if(!wmsInAsnOrderDet.getInventoryStatusId().equals(wms.getInventoryStatusId()) || !wmsInAsnOrderDet.getStorageId().equals(wms.getStorageId())){
                wms = new WmsInAsnOrderDet();
                BeanUtil.copyProperties(wmsInAsnOrderDet,wms);
                wms.setAsnOrderDetId(null);
@@ -184,17 +187,21 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
 
                wmsInAsnOrderDet.setPackingQty(wmsInAsnOrderDet.getPackingQty().subtract(wmsInAsnOrderDet.getActualQty()));
                wmsInAsnOrderDet.setActualQty(BigDecimal.ZERO);
-               wmsInAsnOrderDet.setStorageId(null);
-           }
+               wmsInAsnOrderDet.setWarehouseId(warehouseId);
+               wmsInAsnOrderDet.setStorageId(storageId);
+               wmsInAsnOrderDet.setInventoryStatusId(null);
+           //}
        }else{
            wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getActualQty().add(wms.getActualQty()!=null?wms.getActualQty():new BigDecimal("0")));
        }
         //wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getActualQty().add(wms.getActualQty()!=null?wms.getActualQty():new BigDecimal("0")));
-        wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wmsInAsnOrderDet);
+        wmsInAsnOrderDetMapper.updateByPrimaryKey(wmsInAsnOrderDet);
        wmsInAsnOrderDet = wms;
         //添加库存
         int num = this.addInventory(wmsInAsnOrderDet.getAsnOrderId(), wmsInAsnOrderDet.getAsnOrderDetId());
-
+        if(num<1){
+            throw new BizErrorException("收货失败");
+        }
         //判断明细是否全部收货完成
         Example example = new Example(WmsInAsnOrderDet.class);
         example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrderDet.getAsnOrderId());
@@ -341,6 +348,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int createInnerJobOrder(Long asnOrderId) {
         WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
         if(StringUtils.isEmpty(wmsInAsnOrder)){
@@ -435,6 +443,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         if(StringUtils.isEmpty(wmsInnerInventory)){
             //添加库存
             wmsInnerInventory = new WmsInnerInventory();
+            if(wmsInAsnOrderDto.getOrderTypeId()==(byte)4){
+                wmsInnerInventory.setWorkOrderCode(wmsInAsnOrderDetDto.getWorkOrderCode());
+            }
+            wmsInnerInventory.setWorkOrderCode(wmsInAsnOrderDetDto.getWorkOrderCode());
             wmsInnerInventory.setInventoryStatusId(wmsInAsnOrderDetDto.getInventoryStatusId());
             wmsInnerInventory.setMaterialOwnerId(wmsInAsnOrderDto.getMaterialOwnerId());
             wmsInnerInventory.setReceivingDate(wmsInAsnOrderDto.getEndReceivingDate());
