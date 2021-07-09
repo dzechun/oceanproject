@@ -1,7 +1,9 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseUnitPriceDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseUnitPriceImport;
 import com.fantechs.common.base.general.entity.basic.BaseUnitPrice;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtUnitPrice;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseUnitPrice;
@@ -16,14 +18,17 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +38,7 @@ import java.util.List;
 @Api(tags = "单价信息管理")
 @RequestMapping("/baseUnitPrice")
 @Validated
+@Slf4j
 public class BaseUnitPriceController {
 
     @Resource
@@ -93,4 +99,26 @@ public class BaseUnitPriceController {
         throw new BizErrorException(e);
         }
     }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入单价信息",notes = "从excel导入单价信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseUnitPriceImport> baseUnitPriceImports = EasyPoiUtils.importExcel(file, 2, 1, BaseUnitPriceImport.class);
+            Map<String, Object> resultMap = baseUnitPriceService.importExcel(baseUnitPriceImports);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+    }
+
 }

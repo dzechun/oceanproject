@@ -1,6 +1,6 @@
 package com.fantechs.provider.base.mapper;
 
-import com.fantechs.common.base.general.entity.basic.BaseHtBadnessCause;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCause;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 

@@ -51,7 +51,7 @@ public class BasePackingUnit extends ValidGroup implements Serializable {
      * 是否主要(0否，1是)
      */
     @ApiModelProperty(name="isChief",value = "是否主要(0否，1是)")
-    @Excel(name = "是否主要(0否，1是)", height = 20, width = 30,orderNum="3")
+    @Excel(name = "是否主要(0否，1是)", height = 20, width = 30,orderNum="3",replace = {"否_0", "是_1"})
     @Column(name = "is_chief")
     private Byte isChief;
 

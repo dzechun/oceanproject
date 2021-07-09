@@ -147,6 +147,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 example.createCriteria().andEqualTo("warehouseId",warehouseId).andEqualTo("storageId",storageId).andEqualTo("stockLock",0);
                 //获取库位库存
                 List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
+                if(wmsInnerInventories.size()>0){
+                    wmsInnerInventories = wmsInnerInventories.stream().filter(li->li.getPackingQty().compareTo(BigDecimal.ZERO)==1).collect(Collectors.toList());
+                }
                 for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
                     WmsInnerStockOrderDet wmsInventoryVerificationDet = new WmsInnerStockOrderDet();
                     wmsInventoryVerificationDet.setStockOrderId(id);
@@ -172,6 +175,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             example.createCriteria().andEqualTo("warehouseId",warehouseId).andEqualTo("stockLock",0);
             //获取库位库存
             List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
+            if(wmsInnerInventories.size()>0){
+                wmsInnerInventories = wmsInnerInventories.stream().filter(li->li.getPackingQty().compareTo(BigDecimal.ZERO)==1).collect(Collectors.toList());
+            }
             for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
                 WmsInnerStockOrderDet wmsInventoryVerificationDet = new WmsInnerStockOrderDet();
                 wmsInventoryVerificationDet.setStockOrderId(id);

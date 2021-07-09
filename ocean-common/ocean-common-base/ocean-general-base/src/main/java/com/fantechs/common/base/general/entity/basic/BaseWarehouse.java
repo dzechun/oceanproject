@@ -60,7 +60,7 @@ public class BaseWarehouse extends ValidGroup implements Serializable {
      * 仓库类型
      */
     @ApiModelProperty(name="warehouseCategory",value = "仓库类型")
-    @Excel(name = "仓库类型", height = 20, width = 30,replace = {"未知类型_1","普通仓_1", "辅料仓_2","暂存仓_3","成品仓_4","原材料仓_5","线边仓_6"})
+    @Excel(name = "仓库类型", height = 20, width = 30,replace = {"未知类型_0","普通仓_1", "辅料仓_2","暂存仓_3","成品仓_4","原材料仓_5","线边仓_6"})
     @Column(name = "warehouse_category")
     private Long warehouseCategory;
 
