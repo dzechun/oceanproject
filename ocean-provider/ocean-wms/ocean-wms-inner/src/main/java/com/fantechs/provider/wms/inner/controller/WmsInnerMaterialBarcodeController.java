@@ -44,9 +44,9 @@ public class WmsInnerMaterialBarcodeController {
 
     @ApiOperation("规则解析及标签模版")
     @PostMapping("/findRule")
-    public ResponseEntity<BaseBarcodeRuleDto> findRule(@ApiParam(value = "Id",required = true)@RequestParam Long barcodeRuleSetId){
-        BaseBarcodeRuleDto barcodeRuleDto = wmsInnerMaterialBarcodeService.findLabelRute(barcodeRuleSetId);
-        return ControllerUtil.returnDataSuccess(barcodeRuleDto,StringUtils.isEmpty(barcodeRuleDto)?0:1);
+    public ResponseEntity<LabelRuteDto> findRule(@ApiParam(value = "barcodeRuleSetId",required = true)@RequestParam Long barcodeRuleSetId,@ApiParam(value = "materialId",required = true)@RequestParam Long materialId){
+        LabelRuteDto labelRuteDto = wmsInnerMaterialBarcodeService.findLabelRute(barcodeRuleSetId,materialId);
+        return ControllerUtil.returnDataSuccess(labelRuteDto,StringUtils.isEmpty(labelRuteDto)?0:1);
     }
 
     @ApiOperation("打印/补打")

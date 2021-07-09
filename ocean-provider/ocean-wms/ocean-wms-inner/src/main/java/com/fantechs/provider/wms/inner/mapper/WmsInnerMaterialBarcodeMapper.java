@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.mapper;
 
+import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
@@ -17,4 +18,6 @@ public interface WmsInnerMaterialBarcodeMapper extends MyMapper<WmsInnerMaterial
     List<WmsInnerMaterialBarcodeDto> findList(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
 
     PrintModel findPrintModel(@Param("id")Long id);
+
+    LabelRuteDto findRule(@Param("code")String code, @Param("materialId")Long materialId);
 }
