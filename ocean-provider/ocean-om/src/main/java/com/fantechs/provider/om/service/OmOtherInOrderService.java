@@ -2,6 +2,7 @@ package com.fantechs.provider.om.service;
 
 import com.fantechs.common.base.general.dto.om.OmOtherInOrderDto;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
+import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public interface OmOtherInOrderService extends IService<OmOtherInOrder> {
 
     /**
      * 数量反写
-     * @param omOtherInOrder
+     * @param omOtherInOrderDet
      * @return
      */
-    int writeQty(OmOtherInOrder omOtherInOrder);
+    int writeQty(OmOtherInOrderDet omOtherInOrderDet);
 }

@@ -15,6 +15,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmOtherOutOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmOtherOutOrderMapper;
+import com.fantechs.provider.om.mapper.OmSalesReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
 import com.fantechs.provider.om.service.OmOtherOutOrderService;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,8 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     private OutFeignApi outFeignApi;
     @Resource
     private OmTransferOrderMapper omTransferOrderMapper;
+    @Resource
+    private OmSalesReturnOrderDetMapper omSalesReturnOrderDetMapper;
 
     @Override
     public List<OmOtherOutOrderDto> findList(Map<String, Object> map) {
@@ -71,6 +74,10 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             if(StringUtils.isEmpty(storageId)){
                 throw new BizErrorException("未获取到该仓库的发货库位");
             }
+
+            //获取物料单位名称
+            String unitName =omSalesReturnOrderDetMapper.findUnitName(omOtherOutOrderDet.getMaterialId());
+
             WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto = new WmsOutDeliveryOrderDetDto();
             wmsOutDeliveryOrderDetDto.setWarehouseId(omOtherOutOrderDet.getWarehouseId());
             wmsOutDeliveryOrderDetDto.setSourceOrderId(omOtherOutOrderDet.getOtherOutOrderId());
@@ -78,7 +85,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             wmsOutDeliveryOrderDetDto.setMaterialId(omOtherOutOrderDet.getMaterialId());
             wmsOutDeliveryOrderDetDto.setStorageId(storageId);
             wmsOutDeliveryOrderDetDto.setLineNumber(i);
-            wmsOutDeliveryOrderDetDto.setPackingUnitName(omOtherOutOrderDet.getUnitName());
+            wmsOutDeliveryOrderDetDto.setPackingUnitName(unitName);
             wmsOutDeliveryOrderDetDto.setPackingQty(omOtherOutOrderDet.getQty());
             wmsOutDeliveryOrderDetDto.setBatchCode(omOtherOutOrderDet.getBatchCode());
             wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);

@@ -226,7 +226,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             }
         }
         if(list.size()<1){
-            throw new BizErrorException("改条件暂无可盘点库存");
+            throw new BizErrorException("该条件暂无可盘点库存");
         }
         return list;
     }
@@ -332,12 +332,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     num+=wmsInventoryVerificationDetMapper.insertList(wmsInventoryVerificationDets);
                 }
             }
-
+            wmsInventoryVerificationDets.clear();
             for (WmsInnerStockOrderDet wmsInventoryVerificationDet : list) {
                 //盘点
                 if(wmsInventoryVerification.getProjectType()==(byte)1){
                     //是否存在差异量 不存在则解锁库存盘点锁 存在则进行复盘
-                    if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==1){
+                    if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==0){
                         wmsInventoryVerificationDets.add(wmsInventoryVerificationDet);
                     }
                 }
@@ -475,8 +475,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             example.createCriteria().andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
                     .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
                     .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
-                    .andEqualTo("stockLock",1)
-                    .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1);
+                    .andEqualTo("stockLock",lockType==(byte) 2?0:1)
+                    .andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
             List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
             for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
                 wmsInnerInventory.setStockLock(lockType==(byte) 2?(byte)1:0);

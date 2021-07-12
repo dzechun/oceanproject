@@ -79,6 +79,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
             List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
             int i = 0;
             for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrder.getOmSalesReturnOrderDets()) {
+                //获取物料单位名称
+                String unitName =omSalesReturnOrderDetMapper.findUnitName(omSalesReturnOrderDet.getMaterialId());
                 if(StringUtils.isEmpty(omSalesReturnOrderDet.getIssueQty())){
                     omSalesReturnOrderDet.setIssueQty(BigDecimal.ZERO);
                 }
@@ -101,7 +103,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                         .warehouseId(omSalesReturnOrderDet.getWarehouseId())
                         .storageId(storageId)
                         .materialId(omSalesReturnOrderDet.getMaterialId())
-                        .packingUnitName(omSalesReturnOrderDet.getUnitName())
+                        .packingUnitName(unitName)
                         .batchCode(omSalesReturnOrderDet.getBatchCode())
                         .packingQty(omSalesReturnOrderDet.getQty())
                         .productionDate(omSalesReturnOrderDet.getProductionDate())
@@ -258,7 +260,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int writeQty(OmSalesReturnOrderDet omSalesReturnOrderDet){
-        OmSalesReturnOrder omSalesReturnOrder = omSalesReturnOrderMapper.selectByPrimaryKey(omSalesReturnOrderDet.getSalesOrderId());
+        OmSalesReturnOrder omSalesReturnOrder = omSalesReturnOrderMapper.selectByPrimaryKey(omSalesReturnOrderDet.getSalesReturnOrderId());
         if(StringUtils.isEmpty(omSalesReturnOrder)){
             throw new BizErrorException("查询订单失败");
         }

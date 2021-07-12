@@ -409,10 +409,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     }
 
                     //反写完工入库单
-                    inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                    ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
                             .putawayQty(wmsInnerJobOrderDet.getDistributionQty())
                             .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
                             .build());
+                    if(responseEntity.getCode()!=0){
+                        throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                    }
                 }
             }
             BigDecimal resultQty = wmsInnerJobOrderDets.stream()
@@ -530,10 +533,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
 
             //反写完工入库单
-            inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+            ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
                     .putawayQty(wmsInnerJobOrderDetDto.getActualQty())
                     .asnOrderDetId(wmsInnerJobOrderDetDto.getSourceDetId())
                     .build());
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
         }
         return num;
     }
@@ -719,10 +725,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             num +=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
         }
         //反写完工入库单
-        inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+        ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
                 .putawayQty(qty)
-                .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
+                .asnOrderDetId(oldDto.getSourceDetId())
                 .build());
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+        }
         return wmsInnerJobOrderDet;
     }
 
@@ -1076,6 +1085,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         criteria.andEqualTo("jobOrderDetId",newDto.getJobOrderDetId());
         criteria1.andEqualTo("jobStatus",(byte)1);
         criteria.andEqualTo("inventoryStatusId",newDto.getInventoryStatusId());
+        criteria.andEqualTo("stockLock",0).andEqualTo("qcLock",0).andEqualTo("lockStatus",0);
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventorys)){
             //添加库存

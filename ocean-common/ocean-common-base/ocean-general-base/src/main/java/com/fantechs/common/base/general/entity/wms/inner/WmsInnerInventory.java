@@ -54,7 +54,6 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     /**
      * 货主id
      */
-    @Transient
     @ApiModelProperty(name="materialOwnerId",value = "货主id")
     @Excel(name = "货主id", height = 20, width = 30,orderNum="3")
     @Column(name = "material_owner_id")

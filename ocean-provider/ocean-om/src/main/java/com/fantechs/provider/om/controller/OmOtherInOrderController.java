@@ -3,6 +3,7 @@ package com.fantechs.provider.om.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmOtherInOrderDto;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
+import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmOtherInOrder;
 import com.fantechs.provider.om.service.OmOtherInOrderService;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -95,5 +96,11 @@ public class OmOtherInOrderController {
     @PostMapping("/packageAutoOutOrder")
     public ResponseEntity packageAutoOutOrder(@RequestBody(required = true) OmOtherInOrder omOtherInOrder){
         return ControllerUtil.returnCRUD(omOtherInOrderService.packageAutoOutOrder(omOtherInOrder));
+    }
+
+    @ApiOperation("数量反写")
+    @PostMapping("/writeQty")
+    public ResponseEntity writeQty(@RequestBody OmOtherInOrderDet omOtherInOrderDet){
+        return ControllerUtil.returnCRUD(omOtherInOrderService.writeQty(omOtherInOrderDet));
     }
 }
