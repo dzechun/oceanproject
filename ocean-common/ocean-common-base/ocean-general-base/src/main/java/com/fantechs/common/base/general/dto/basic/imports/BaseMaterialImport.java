@@ -32,6 +32,13 @@ public class BaseMaterialImport implements Serializable {
     private String materialDesc;
 
     /**
+     * 移转批量
+     */
+    @ApiModelProperty(name="transferQuantity",value = "移转批量")
+    @Excel(name = "移转批量", height = 20, width = 30)
+    private Integer transferQuantity;
+
+    /**
      * 版本
      */
     @ApiModelProperty(name="version" ,value="版本")
@@ -288,13 +295,6 @@ public class BaseMaterialImport implements Serializable {
     @ApiModelProperty(name="purchaseCycle",value = "采购周期")
     @Excel(name = "采购周期", height = 20, width = 30)
     private Long purchaseCycle;
-
-    /**
-     * 移转批量
-     */
-    @ApiModelProperty(name="transferQuantity",value = "移转批量")
-    @Excel(name = "移转批量", height = 20, width = 30)
-    private Integer transferQuantity;
 
     /**
      * 主单位
