@@ -16,11 +16,11 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.om.mapper.OmOtherInOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmOtherInOrderMapper;
+import com.fantechs.provider.om.mapper.OmSalesReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderMapper;
 import com.fantechs.provider.om.service.OmOtherInOrderService;
-import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -48,6 +48,8 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     private InFeignApi inFeignApi;
     @Resource
     private OmTransferOrderMapper omTransferOrderMapper;
+    @Resource
+    private OmSalesReturnOrderDetMapper omSalesReturnOrderDetMapper;
 
     @Override
     public List<OmOtherInOrderDto> findList(Map<String, Object> map) {
@@ -80,6 +82,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             if(total.compareTo(omOtherInOrderDet.getOrderQty())==1){
                 throw new BizErrorException("下发数量不能大于工单数量");
             }
+
+            //获取物料单位名称
+            String unitName =omSalesReturnOrderDetMapper.findUnitName(omOtherInOrderDet.getMaterialId());
+
             //获取发货库位
             Map<String,Object> map = new HashMap<>();
             map.put("orgId",sysUser.getOrganizationId());
@@ -95,7 +101,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     .warehouseId(omOtherInOrderDet.getWarehouseId())
                     .storageId(storageId)
                     .materialId(omOtherInOrderDet.getMaterialId())
-                    .packingUnitName(omOtherInOrderDet.getUnitName())
+                    .packingUnitName(unitName)
                     .batchCode(omOtherInOrderDet.getBatchCode())
                     .packingQty(omOtherInOrderDet.getQty())
                     .productionDate(omOtherInOrderDet.getProductionDate())
@@ -148,20 +154,28 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
     /**
      * 收货数量反写
-     * @param omOtherInOrder
+     * @param omOtherInOrderDet
      * @return
      */
     @Override
-    public int writeQty(OmOtherInOrder omOtherInOrder){
-        OmOtherInOrder om = omOtherInOrderMapper.selectByPrimaryKey(omOtherInOrder.getOtherInOrderId());
-        int num = 0;
-        for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrder.getOmOtherInOrderDets()) {
-            OmOtherInOrderDet oms = omOtherInOrderDetMapper.selectByPrimaryKey(omOtherInOrderDet.getOtherInOrderDetId());
-            omOtherInOrderDet.setReceivingQty(omOtherInOrderDet.getReceivingQty().add(oms.getReceivingQty()));
-            num+=omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
+    public int writeQty(OmOtherInOrderDet omOtherInOrderDet){
+        OmOtherInOrder omOtherInOrder = omOtherInOrderMapper.selectByPrimaryKey(omOtherInOrderDet.getOtherInOrderId());
+        if(StringUtils.isEmpty(omOtherInOrder)){
+            throw new BizErrorException("查询订单失败");
         }
-        om.setTotalReceivingQty(omOtherInOrder.getTotalReceivingQty().add(om.getTotalReceivingQty()));
-        num+=omOtherInOrderMapper.updateByPrimaryKeySelective(om);
+        OmOtherInOrderDet omOtherInOrderDet1 = omOtherInOrderDetMapper.selectByPrimaryKey(omOtherInOrderDet.getOtherInOrderDetId());
+        if(StringUtils.isEmpty(omOtherInOrderDet1)){
+            throw new BizErrorException("未获取到订单信息");
+        }
+        if(StringUtils.isEmpty(omOtherInOrderDet1.getReceivingQty())){
+            omOtherInOrderDet1.setReceivingQty(BigDecimal.ZERO);
+        }
+        omOtherInOrderDet.setReceivingQty(omOtherInOrderDet1.getReceivingQty().add(omOtherInOrderDet.getReceivingQty()));
+        if(omOtherInOrderDet.getReceivingQty().compareTo(omOtherInOrderDet1.getIssueQty())==0){
+            omOtherInOrder.setOrderStatus((byte)4);
+        }
+        int num = omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
+        num+=omOtherInOrderMapper.updateByPrimaryKeySelective(omOtherInOrder);
         return num;
     }
 

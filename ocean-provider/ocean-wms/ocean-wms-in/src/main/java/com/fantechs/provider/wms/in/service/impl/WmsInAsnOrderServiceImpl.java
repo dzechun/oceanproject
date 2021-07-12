@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
@@ -237,7 +238,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .asnOrderDetId(wmsInAsnOrderDet.getAsnOrderDetId())
                 .putawayQty(wms.getPutawayQty()!=null?wms.getPutawayQty().add(wmsInAsnOrderDet.getPutawayQty()):wmsInAsnOrderDet.getPutawayQty())
                 .build());
-        if(StringUtils.isEmpty(wms.getSourceOrderId(),wmsInAsnOrder.getSourceOrderId())){
+        if(StringUtils.isEmpty(wms.getSourceOrderId(),wms.getOrderDetId(),wmsInAsnOrder.getSourceOrderId())){
             return num;
         }
         //订单数量反写
@@ -275,7 +276,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 OmSalesReturnOrderDet omSalesReturnOrderDet = new OmSalesReturnOrderDet();
                 omSalesReturnOrderDet.setSalesReturnOrderId(wms.getSourceOrderId());
                 omSalesReturnOrderDet.setSalesReturnOrderDetId(wms.getOrderDetId());
-                omSalesReturnOrderDet.setReceivingQty(wmsInAsnOrderDet.getActualQty());
+                omSalesReturnOrderDet.setReceivingQty(wmsInAsnOrderDet.getPutawayQty());
                 ResponseEntity responseEntity = omFeignApi.writeQty(omSalesReturnOrderDet);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
@@ -283,6 +284,14 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 break;
                 //其他入库单
             case "6":
+                OmOtherInOrderDet omOtherInOrderDet = new OmOtherInOrderDet();
+                omOtherInOrderDet.setOtherInOrderId(wms.getSourceOrderId());
+                omOtherInOrderDet.setOtherInOrderDetId(wms.getOrderDetId());
+                omOtherInOrderDet.setReceivingQty(wmsInAsnOrderDet.getPutawayQty());
+                ResponseEntity responseEntity1 = omFeignApi.writeQtyToIn(omOtherInOrderDet);
+                if(responseEntity1.getCode()!=0){
+                    throw new BizErrorException(responseEntity1.getCode(),responseEntity1.getMessage());
+                }
                 break;
         }
         return num;
@@ -681,6 +690,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         }else{
             //生成完工入库单单号
             WmsInAsnOrder wmsInAsnOrder = WmsInAsnOrder.builder()
+                    .materialOwnerId(palletAutoAsnDto.getMaterialOwnerId())
                     .asnCode(CodeUtils.getId("ASN-"))
                     .orderDate(new Date())
                     .modifiedUserId(sysUser.getUserId())

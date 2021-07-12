@@ -78,4 +78,7 @@ osrod.modified_time
   </if>
 </where>
   </select>
+  <select id="findUnitName" resultType="java.lang.String">
+    select main_unit From base_material_tab where material_id=#{materialId}
+  </select>
 </mapper>

@@ -57,7 +57,7 @@ public class EamStandingBook extends ValidGroup implements Serializable {
      * 重要程度(1-固定资产 2-列管品)
      */
     @ApiModelProperty(name="degreeOfImportance",value = "重要程度(1-固定资产 2-列管品)")
-    @Excel(name = "重要程度(1-固定资产 2-列管品)", height = 20, width = 30,orderNum="7")
+    @Excel(name = "重要程度(1-固定资产 2-列管品)", height = 20, width = 30,orderNum="7",replace = {"固定资产_1", "列管品_2"})
     @Column(name = "degree_of_importance")
     private Byte degreeOfImportance;
 
@@ -80,7 +80,7 @@ public class EamStandingBook extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="13")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="13",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

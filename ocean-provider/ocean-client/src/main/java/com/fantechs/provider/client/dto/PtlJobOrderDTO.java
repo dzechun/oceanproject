@@ -30,7 +30,7 @@ public class PtlJobOrderDTO implements Serializable {
     @ApiModelProperty(name="reviewNumber",value = "复核台编号")
     private String reviewNumber;
 
-    @ApiModelProperty(name="lineno",value = "序号")
+    @ApiModelProperty(name="lineno",value = "区域序号")
     private String lineno;
 
     @ApiModelProperty(name="details",value = "任务明细")

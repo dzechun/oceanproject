@@ -44,6 +44,10 @@ public class FileCheckUtil {
 		FILE_TYPE_MAP.put("wav", "57415645");
 		FILE_TYPE_MAP.put("avi", "41564920");
 		FILE_TYPE_MAP.put("apk", "61A6D9C0");
+		FILE_TYPE_MAP.put("rmvb", "2e524d46");
+		FILE_TYPE_MAP.put("flv", "464c5601");
+		FILE_TYPE_MAP.put("mp4", "00000020");
+		FILE_TYPE_MAP.put("wmv", "3026b275");
 
 	}
 

@@ -71,7 +71,7 @@ public class EamReturnOrder extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

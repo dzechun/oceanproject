@@ -243,6 +243,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             ptlJobOrder.setIfAlreadyPrint((byte) 0);
             ptlJobOrder.setStatus((byte) 1);
             ptlJobOrder.setRemark(ptlJobOrderDTO.getLineno());
+            if (ptlJobOrderDTO.getLineno().length() == 1) {
+                SearchTemVehicle searchTemVehicle = new SearchTemVehicle();
+                searchTemVehicle.setVehicleCode("JH-FAST");
+                List<TemVehicleDto> temVehicleDtoList = temVehicleFeignApi.findList(searchTemVehicle).getData();
+                if (StringUtils.isNotEmpty(temVehicleDtoList)) {
+                    ptlJobOrder.setVehicleId(temVehicleDtoList.get(0).getVehicleId());
+                }
+            }
             ptlJobOrder.setOrgId(currentUser.getOrganizationId());
             ptlJobOrder.setCreateTime(new Date());
             ptlJobOrder.setCreateUserId(currentUser.getUserId());
@@ -258,14 +266,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 searchBaseMaterial.setCodeQueryMark(1);
                 List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
                 if (StringUtils.isEmpty(baseMaterials)) {
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息");
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息：" + ptlJobOrderDetDTO.getGoodsCode());
                 }
                 SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
                 searchBaseStorage.setStorageCode(ptlJobOrderDetDTO.getLocationCode());
                 searchBaseStorage.setCodeQueryMark((byte) 1);
                 List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
                 if (StringUtils.isEmpty(baseStorages)) {
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应库位信息");
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应库位信息：" + ptlJobOrderDetDTO.getLocationCode());
                 }
                 SearchPtlElectronicTagStorage searchPtlElectronicTagStorage = new SearchPtlElectronicTagStorage();
                 searchPtlElectronicTagStorage.setStorageId(baseStorages.get(0).getStorageId().toString());

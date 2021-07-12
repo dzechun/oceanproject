@@ -141,6 +141,7 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        entity.setNewStatus((byte)1);
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
         int i = eamNewsMapper.updateByPrimaryKeySelective(entity);
