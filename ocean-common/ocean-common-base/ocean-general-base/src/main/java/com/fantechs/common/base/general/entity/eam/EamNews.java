@@ -88,7 +88,7 @@ public class EamNews extends ValidGroup implements Serializable {
      * 新闻状态(1-待审核 2-已审核 3-已发布)
      */
     @ApiModelProperty(name="newStatus",value = "新闻状态(1-待审核 2-已审核 3-已发布)")
-    @Excel(name = "新闻状态(1-待审核 2-已审核 3-已发布)", height = 20, width = 30,orderNum="7")
+    @Excel(name = "新闻状态(1-待审核 2-已审核 3-已发布)", height = 20, width = 30,orderNum="7",replace = {"待审核_1", "已审核_2", "已发布_3"})
     @Column(name = "new_status")
     private Byte newStatus;
 
