@@ -49,6 +49,9 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
     public List<SysMenuInfoDto> findAll(Map<String, Object> map, List<String> rolesId) {
         map.put("orderNum","asc");
         List<SysMenuInfoDto> tSysMenuinfos = sysMenuInfoMapper.findList(map);
+        if (StringUtils.isEmpty(map.get("parentId"))){
+            return tSysMenuinfos;
+        }
         if (tSysMenuinfos != null) {
             List<SysMenuInfoDto> removeObject = new LinkedList<>();
             for (int i = 0; i < tSysMenuinfos.size(); i++) {
@@ -288,7 +291,9 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
                 tSysMenuinfoListDTO.setSysMenuInfoDto(menuinfo);
                 sysMenuInListDTO.add(tSysMenuinfoListDTO);
 //                traverseFolder(tSysMenuinfoListDTO,sysMenuInListDTO,roleIds);
-                buildMenu(tSysMenuinfoListDTO,list,roleMap);
+                if (StringUtils.isNotEmpty(map.get("parentId"))){
+                    buildMenu(tSysMenuinfoListDTO,list,roleMap);
+                }
             }
         }
         return sysMenuInListDTO;
