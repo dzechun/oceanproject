@@ -1,11 +1,15 @@
 package com.fantechs.provider.eam.controller;
 
+import com.fantechs.common.base.general.dto.eam.EamHtWiReleaseDto;
 import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
 import com.fantechs.common.base.general.entity.eam.EamWiRelease;
+import com.fantechs.common.base.general.entity.eam.history.EamHtReturnOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamReturnOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWiRelease;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.eam.service.EamHtWiReleaseService;
 import com.fantechs.provider.eam.service.EamWiReleaseService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -25,13 +29,15 @@ import java.util.List;
  * Created by leifengzhi on 2021/07/08.
  */
 @RestController
-@Api(tags = "WI发布详情管理")
+@Api(tags = "WI发布管理")
 @RequestMapping("/eamWiRelease")
 @Validated
 public class EamWiReleaseController {
 
     @Resource
     private EamWiReleaseService eamWiReleaseService;
+    @Resource
+    private EamHtWiReleaseService eamHtWiReleaseService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -66,4 +72,11 @@ public class EamWiReleaseController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<EamHtWiReleaseDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchEamWiRelease searchEamWiRelease) {
+        Page<Object> page = PageHelper.startPage(searchEamWiRelease.getStartPage(),searchEamWiRelease.getPageSize());
+        List<EamHtWiReleaseDto> list = eamHtWiReleaseService.findHtList(ControllerUtil.dynamicConditionByEntity(searchEamWiRelease));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 }

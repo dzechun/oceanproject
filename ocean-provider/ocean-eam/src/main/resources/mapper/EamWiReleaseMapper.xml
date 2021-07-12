@@ -72,7 +72,7 @@
     FROM eam_wi_release ewr
     LEFT JOIN mes_pm_work_order mpwo ON ewr.work_order_id = mpwo.work_order_id
     LEFT JOIN base_material bm ON ewr.material_id = bm.material_id
-    LEFT JOIN base_material_tab bmt ON qiio.material_id=bmt.material_id
+    LEFT JOIN base_material_tab bmt ON ewr.material_id=bmt.material_id
     LEFT JOIN base_product_model bpm ON bmt.product_model_id=bpm.product_model_id
     LEFT JOIN base_route br ON ewr.route_id = br.route_id
     LEFT JOIN base_factory bf ON ewr.factory_id = bf.factory_id

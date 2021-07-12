@@ -25,7 +25,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/07/08.
  */
 @RestController
-@Api(tags = "WI发布管理")
+@Api(tags = "WI发布详情管理")
 @RequestMapping("/eamWiReleaseDet")
 @Validated
 public class EamWiReleaseDetController {

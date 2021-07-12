@@ -24,6 +24,7 @@
   <sql id="BaseColumnList">
         ewft.wi_f_t_and_inspection_tool_id,
         ewft.work_instruction_id,
+        ewft.facility_tooling,
         ewft.qty,
         ewft.status,
         ewft.remark,

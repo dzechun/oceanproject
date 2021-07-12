@@ -1,5 +1,7 @@
 package com.fantechs.provider.eam.service.impl;
 
+import com.fantechs.common.base.general.dto.eam.EamHtWiReleaseDto;
+import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
 import com.fantechs.common.base.general.entity.eam.history.EamHtWiRelease;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.eam.mapper.EamHtWiReleaseMapper;
@@ -21,8 +23,7 @@ public class EamHtWiReleaseServiceImpl extends BaseService<EamHtWiRelease> imple
     private EamHtWiReleaseMapper eamHtWiReleaseMapper;
 
     @Override
-    public List<EamHtWiRelease> findList(Map<String, Object> map) {
-      //  return eamHtWiReleaseMapper.findList(map);
-        return null;
+    public List<EamHtWiReleaseDto> findHtList(Map<String, Object> map) {
+        return eamHtWiReleaseMapper.findHtList(map);
     }
 }

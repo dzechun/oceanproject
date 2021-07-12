@@ -27,7 +27,7 @@
     </resultMap>
 
     <sql id="BaseColumnList">
-        ehwrd.wi_release_det_id,
+        ehwrd.ht_wi_release_det_id,
         ehwrd.wi_release_id,
         ehwrd.work_instruction_id,
         ehwrd.status,

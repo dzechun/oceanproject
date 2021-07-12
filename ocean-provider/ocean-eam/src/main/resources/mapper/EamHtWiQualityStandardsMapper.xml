@@ -24,4 +24,42 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
+
+  <sql id="BaseColumnList">
+        ehwqs.ht_wi_quality_standards_id,
+        ehwqs.work_instruction_id,
+        ehwqs.wi_quality_standards_issues_name,
+        ehwqs.wi_quality_standards_content,
+        ehwqs.inspection_type,
+        ehwqs.inspection_frequency,
+        ehwqs.record,
+        ehwqs.status,
+        ehwqs.remark,
+        ehwqs.org_id,
+        ehwqs.create_user_id,
+        ehwqs.create_time,
+        ehwqs.modified_user_id,
+        ehwqs.modified_time,
+        ehwqs.option1,
+        ehwqs.option2,
+        ehwqs.option3
+    </sql>
+
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+    SELECT<include refid="BaseColumnList"/>
+    FROM eam_ht_wi_quality_standards ehwqs
+    LEFT JOIN eam_ht_work_instruction ehwi ON ehwqs.work_instruction_id = ehwi.work_instruction_id
+    LEFT JOIN ocean_v2.sys_user su ON ehwqs.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON ehwqs.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON ehwqs.org_id = bo.organization_id
+    <where>
+      <if test="orgId!=null and orgId!=''">
+        and ehwqs.org_id = #{orgId}
+      </if>
+      <if test="workInstructionId!=null and workInstructionId!=''">
+        and ehwqs.work_instruction_id = #{workInstructionId}
+      </if>
+    </where>
+  </select>
 </mapper>

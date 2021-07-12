@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.eam.EamWiReleaseDetDto;
 import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWorker;
+import com.fantechs.common.base.general.entity.eam.EamWiBom;
 import com.fantechs.common.base.general.entity.eam.EamWiRelease;
 import com.fantechs.common.base.general.entity.eam.EamWiReleaseDet;
 import com.fantechs.common.base.general.entity.eam.history.EamHtWiRelease;
@@ -67,7 +68,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         criteria1.andEqualTo("wiReleaseCode",eamWiReleaseDto.getWiReleaseCode());
         EamWiRelease wiRelease = eamWiReleaseMapper.selectOneByExample(example1);
         if(StringUtils.isNotEmpty(wiRelease)) throw new BizErrorException("添加失败，已存在发布编码");
-
+        example1.clear();
         EamWiRelease eamWiRelease = new EamWiRelease();
         BeanUtils.autoFillEqFields(eamWiReleaseDto, eamWiRelease);
         eamWiRelease.setCreateUserId(sysUser.getUserId());
@@ -77,22 +78,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         eamWiRelease.setStatus(StringUtils.isEmpty(eamWiReleaseDto.getStatus())?1: eamWiReleaseDto.getStatus());
         eamWiRelease.setOrgId(sysUser.getOrganizationId());
         int i = eamWiReleaseMapper.insertUseGeneratedKeys(eamWiRelease);
-        List<EamWiReleaseDet> dets = new ArrayList<>();
-        if(StringUtils.isNotEmpty(eamWiReleaseDto.getEamWiReleaseDetDtos())) {
-            for (EamWiReleaseDetDto eamWiReleaseDetDto :  eamWiReleaseDto.getEamWiReleaseDetDtos()) {
-                EamWiReleaseDet wiReleaseDet = new EamWiReleaseDet();
-                BeanUtils.autoFillEqFields(eamWiReleaseDetDto, wiReleaseDet);
-                wiReleaseDet.setCreateUserId(sysUser.getUserId());
-                wiReleaseDet.setCreateTime(new Date());
-                wiReleaseDet.setModifiedUserId(sysUser.getUserId());
-                wiReleaseDet.setModifiedTime(new Date());
-                wiReleaseDet.setStatus(StringUtils.isEmpty(eamWiReleaseDto.getStatus())?1: eamWiReleaseDto.getStatus());
-                wiReleaseDet.setOrgId(sysUser.getOrganizationId());
-                wiReleaseDet.setWorkInstructionId(eamWiRelease.getWiReleaseId());
-                dets.add(wiReleaseDet);
-            }
-        }
-        eamWiReleaseDetMapper.insertList(dets);
+        List<EamWiReleaseDet> dets = saveDet(eamWiReleaseDto,sysUser,eamWiRelease.getWiReleaseId());
 
         //添加履历表
         EamHtWiRelease eamHtWiRelease = new EamHtWiRelease();
@@ -109,6 +95,71 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         }
         eamHtWiReleaseDetMapper.insertList(htDets);
         return i;
+    }
+
+
+    @Override
+    public int update(EamWiReleaseDto eamWiReleaseDto) {
+        SysUser sysUser = currentUser();
+        if(StringUtils.isEmpty(eamWiReleaseDto.getWiReleaseId()))
+            throw new BizErrorException("id不能为空");
+        eamWiReleaseMapper.updateByPrimaryKey(eamWiReleaseDto);
+
+        Example example = new Example(EamWiRelease.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("wiReleaseId", eamWiReleaseDto.getWiReleaseId());
+        EamWiRelease eamWiRelease = eamWiReleaseMapper .selectOneByExample(example);
+        example.clear();
+
+        Example detExample = new Example(EamWiReleaseDet.class);
+        Example.Criteria detCriteria = detExample.createCriteria();
+        detCriteria.andEqualTo("wiReleaseId", eamWiReleaseDto.getWiReleaseId());
+        eamHtWiReleaseMapper.deleteByExample(detExample);
+        detExample.clear();
+
+
+        //保存履历表
+        EamHtWiRelease eamHtWiRelease = new EamHtWiRelease();
+        BeanUtils.autoFillEqFields(eamWiRelease,eamHtWiRelease);
+        int i = eamHtWiReleaseMapper.insertUseGeneratedKeys(eamHtWiRelease);
+
+        saveDet(eamWiReleaseDto,sysUser,eamWiRelease.getWiReleaseId());
+        return i;
+    }
+
+
+    public  List<EamWiReleaseDet> saveDet(EamWiReleaseDto eamWiReleaseDto ,SysUser sysUser,Long id){
+        List<EamWiReleaseDet> dets = new ArrayList<>();
+        if(StringUtils.isNotEmpty(eamWiReleaseDto.getEamWiReleaseDetDtos())) {
+            for (EamWiReleaseDetDto eamWiReleaseDetDto :  eamWiReleaseDto.getEamWiReleaseDetDtos()) {
+                EamWiReleaseDet wiReleaseDet = new EamWiReleaseDet();
+                BeanUtils.autoFillEqFields(eamWiReleaseDetDto, wiReleaseDet);
+                wiReleaseDet.setCreateUserId(sysUser.getUserId());
+                wiReleaseDet.setCreateTime(new Date());
+                wiReleaseDet.setModifiedUserId(sysUser.getUserId());
+                wiReleaseDet.setModifiedTime(new Date());
+                wiReleaseDet.setStatus(StringUtils.isEmpty(eamWiReleaseDto.getStatus())?1: eamWiReleaseDto.getStatus());
+                wiReleaseDet.setOrgId(sysUser.getOrganizationId());
+                wiReleaseDet.setWorkInstructionId(id);
+                dets.add(wiReleaseDet);
+            }
+        }
+        eamWiReleaseDetMapper.insertList(dets);
+        return  dets;
+    }
+
+
+    @Override
+    public int batchDelete(String ids) {
+        String[] idsArr = ids.split(",");
+        for (String id : idsArr) {
+            Example example = new Example(EamWiReleaseDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("wiReleaseId", id);
+            eamWiReleaseDetMapper.deleteByExample(example);
+            example.clear();
+        }
+        return eamWiReleaseMapper.deleteByIds(ids);
     }
 
 

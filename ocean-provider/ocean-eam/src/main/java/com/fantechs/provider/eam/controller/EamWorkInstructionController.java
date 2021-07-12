@@ -5,10 +5,13 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
+import com.fantechs.common.base.general.dto.eam.EamHtWiReleaseDto;
+import com.fantechs.common.base.general.dto.eam.EamHtWorkInstructionDto;
 import com.fantechs.common.base.general.dto.eam.EamWorkInstructionDto;
 import com.fantechs.common.base.general.entity.eam.EamWiBom;
 import com.fantechs.common.base.general.entity.eam.EamWiQualityStandards;
 import com.fantechs.common.base.general.entity.eam.EamWorkInstruction;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamWiRelease;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWorkInstruction;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -16,6 +19,7 @@ import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.fileserver.service.FileFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.eam.service.EamHtWorkInstructionService;
 import com.fantechs.provider.eam.service.EamWorkInstructionService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -60,9 +64,7 @@ public class EamWorkInstructionController {
     @Resource
     private EamWorkInstructionService eamWorkInstructionService;
     @Resource
-    private FileFeignApi fileFeignApi;
-    @Resource
-    private SecurityFeignApi securityFeignApi;
+    private EamHtWorkInstructionService eamHtWorkInstructionService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -82,18 +84,26 @@ public class EamWorkInstructionController {
         return ControllerUtil.returnCRUD(eamWorkInstructionService.update(eamWorkInstruction));
     }
 
-   /* @ApiOperation("获取详情")
+   @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<EamWorkInstruction> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         EamWorkInstruction  eamWorkInstruction = eamWorkInstructionService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(eamWorkInstruction,StringUtils.isEmpty(eamWorkInstruction)?0:1);
-    }*/
+    }
 
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<EamWorkInstructionDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEamWorkInstruction searchEamWorkInstruction) {
         Page<Object> page = PageHelper.startPage(searchEamWorkInstruction.getStartPage(),searchEamWorkInstruction.getPageSize());
         List<EamWorkInstructionDto> list = eamWorkInstructionService.findList(searchEamWorkInstruction);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<EamHtWorkInstructionDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchEamWorkInstruction searchEamWorkInstruction) {
+        Page<Object> page = PageHelper.startPage(searchEamWorkInstruction.getStartPage(),searchEamWorkInstruction.getPageSize());
+        List<EamHtWorkInstructionDto> list = eamHtWorkInstructionService.findHtList(ControllerUtil.dynamicConditionByEntity(searchEamWorkInstruction));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
