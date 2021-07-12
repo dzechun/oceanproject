@@ -33,6 +33,9 @@
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
     <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+
     <collection property="eamWiBoms" ofType="com.fantechs.common.base.general.entity.eam.EamWiBom"
             column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamWiBomMapper.findList">
     </collection>
@@ -42,7 +45,7 @@
     <collection property="eamWiQualityStandardss" ofType="com.fantechs.common.base.general.entity.eam.EamWiQualityStandards"
             column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamWiQualityStandardsMapper.findList">
     </collection>
-    <collection property="eamWiFile" ofType="com.fantechs.common.base.general.entity.eam.EamWiFile"
+    <collection property="eamWiFiles" ofType="com.fantechs.common.base.general.entity.eam.EamWiFile"
             column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamWiFileMapper.findList">
     </collection>
   </resultMap>
@@ -93,6 +96,12 @@
         </if>
         <if test="materialCode!=null and materialCode!=''">
             and bm.material_code = #{materialCode}
+        </if>
+        <if test="materialId!=null and materialId!=''">
+            and ewi.material_id = #{materialId}
+        </if>
+        <if test="processId!=null and processId!=''">
+            and bm.process_id = #{processId}
         </if>
     </where>
   </select>

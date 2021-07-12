@@ -6,7 +6,9 @@ import com.fantechs.common.base.general.entity.eam.search.SearchEamWorkInstructi
 import com.fantechs.common.base.support.IService;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -24,4 +26,5 @@ public interface EamWorkInstructionService extends IService<EamWorkInstruction> 
 
     int update(EamWorkInstructionDto eamWorkInstructionDto);
 
+    String download(HttpServletResponse response) throws IOException;
 }

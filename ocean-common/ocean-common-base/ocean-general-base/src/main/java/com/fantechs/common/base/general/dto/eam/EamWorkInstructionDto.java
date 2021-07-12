@@ -56,5 +56,19 @@ public class EamWorkInstructionDto extends EamWorkInstruction implements Seriali
     private List<EamWiQualityStandards> eamWiQualityStandardss;
 
     @Transient
-    private EamWiFile eamWiFile;
+    private List<EamWiFile> eamWiFiles;
+
+    /**
+     * 创建人名称
+     */
+    @ApiModelProperty(name="createUserName",value = "创建人名称")
+    @Transient
+    private String createUserName;
+
+    /**
+     * 修改人名称
+     */
+    @ApiModelProperty(name="modifiedUserName",value = "修改人名称")
+    @Transient
+    private String modifiedUserName;
 }

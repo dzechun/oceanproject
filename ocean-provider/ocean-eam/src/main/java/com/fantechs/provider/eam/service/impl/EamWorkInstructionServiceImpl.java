@@ -1,7 +1,9 @@
 package com.fantechs.provider.eam.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamWorkInstructionDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
@@ -14,6 +16,8 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.fileserver.service.FileFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamWorkInstructionService;
 import org.apache.poi.ss.usermodel.CellType;
@@ -28,6 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -64,7 +70,8 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
 
     @Resource
     private BaseFeignApi baseFeignApi;
-
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<EamWorkInstructionDto> findList(SearchEamWorkInstruction searchEamWorkInstruction) {
@@ -79,10 +86,11 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamWorkInstructionDto eamWorkInstructionDto) {
         SysUser user = currentUser();
-
+        if(StringUtils.isEmpty(eamWorkInstructionDto.getWorkInstructionCode())) throw new BizErrorException("Wi编码不能为空");
         Example example = new Example(EamWorkInstruction.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workInstructionCode", eamWorkInstructionDto.getWorkInstructionCode());
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         EamWorkInstruction eamWorkInstruction = eamWorkInstructionMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(eamWorkInstruction)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -238,19 +246,20 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
     }
 
     public void saveFile(EamWorkInstructionDto eamWorkInstructionDto,Long id,SysUser user){
-        if (StringUtils.isNotEmpty(eamWorkInstructionDto.getEamWiFile())) {
-            EamWiFile file = eamWorkInstructionDto.getEamWiFile();
-            file.setWorkInstructionId(id);
-            file.setCreateUserId(user.getUserId());
-            file.setCreateTime(new Date());
-            file.setModifiedUserId(user.getUserId());
-            file.setModifiedTime(new Date());
-            file.setStatus(StringUtils.isEmpty(file.getStatus())?1: file.getStatus());
-            file.setOrgId(user.getOrganizationId());
-            eamWiFileMapper.insertUseGeneratedKeys(file);
-            EamHtWiFile eamHtWiFile = new EamHtWiFile();
-            BeanUtils.copyProperties(file,eamHtWiFile);
-            eamHtWiFileMapper.insertUseGeneratedKeys(eamHtWiFile);
+        if (StringUtils.isNotEmpty(eamWorkInstructionDto.getEamWiFiles())) {
+            for(EamWiFile file : eamWorkInstructionDto.getEamWiFiles()) {
+                file.setWorkInstructionId(id);
+                file.setCreateUserId(user.getUserId());
+                file.setCreateTime(new Date());
+                file.setModifiedUserId(user.getUserId());
+                file.setModifiedTime(new Date());
+                file.setStatus(StringUtils.isEmpty(file.getStatus()) ? 1 : file.getStatus());
+                file.setOrgId(user.getOrganizationId());
+                eamWiFileMapper.insertUseGeneratedKeys(file);
+                EamHtWiFile eamHtWiFile = new EamHtWiFile();
+                BeanUtils.copyProperties(file, eamHtWiFile);
+                eamHtWiFileMapper.insertUseGeneratedKeys(eamHtWiFile);
+            }
         }
     }
 
@@ -566,6 +575,37 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         }
         return list;
     }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public String download(HttpServletResponse response) throws IOException {
+
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("WiExcelDowload");
+        ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
+        if(StringUtils.isEmpty(specItemList.getData())) throw new BizErrorException("未设置下载模板");
+        String fileUrl = specItemList.getData().get(0).getParaValue();
+        return fileUrl.substring(fileUrl.lastIndexOf("group"));
+    }
+
+
+    /**
+     * 从输入流中获取字节数组
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    public static byte[] readInputStream(InputStream inputStream) throws IOException {
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        while((len = inputStream.read(buffer)) != -1) {
+            bos.write(buffer, 0, len);
+        }
+        bos.close();
+        return bos.toByteArray();
+    }
+
 
     /**
      * 获取当前登录用户
