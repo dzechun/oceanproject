@@ -107,9 +107,9 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         WmsInAsnOrder wmsInAsnOrder = WmsInAsnOrder.builder()
                 .sourceOrderId(omOtherInOrder.getOtherInOrderId())
                 .materialOwnerId(omOtherInOrder.getMaterialOwnerId())
-                //销退入库单
+                //其他入库单
                 .orderTypeId(Long.parseLong("6"))
-                .relatedOrderCode1(omOtherInOrder.getRelatedOrderCode())
+                .relatedOrderCode1(omOtherInOrder.getOtherInOrderCode())
                 .orderDate(new Date())
                 .wmsInAsnOrderDetList(wmsInAsnOrderDets)
                 .build();

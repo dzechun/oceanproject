@@ -39,4 +39,10 @@ public class SearchWmsInnerStockOrderDet extends BaseQuery implements Serializab
      */
     @ApiModelProperty(name = "materialName",value = "物料名称")
     private String materialName;
+
+    /**
+     * 是否库位查询明细
+     */
+    @ApiModelProperty(name = "isRecords",value = "是否库位查询明细")
+    private String isRecords;
 }

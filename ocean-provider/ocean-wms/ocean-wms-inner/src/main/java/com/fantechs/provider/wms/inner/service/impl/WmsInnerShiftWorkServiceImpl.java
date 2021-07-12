@@ -73,29 +73,12 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     @Resource
     BaseFeignApi baseFeignApi;
 
-    @Resource
-    SFCFeignApi sfcFeignApi;
-
-    @Resource
-    PMFeignApi pmFeignApi;
-
     @Override
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
         SysUser sysUser = currentUser();
         map.put("orgId", sysUser.getOrganizationId());
         map.put("jobOrderType", (byte) 2);
         return wmsInnerJobOrderService.findShiftList(map);
-    }
-
-    @Override
-    public List<WmsInnerJobOrderDto> pdaFindShiftList(Map<String, Object> map) {
-        SysUser sysUser = currentUser();
-        map.put("orgId", sysUser.getOrganizationId());
-        map.put("jobOrderType", (byte) 2);
-        if (StringUtils.isNotEmpty(map.get("jobOrderCode"))) {
-            map.put("jobOrderCode", map.get("jobOrderCode"));
-        }
-        return wmsInnerJobOrderService.pdaFindShiftList(map);
     }
 
     @Override
@@ -203,7 +186,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             WmsInnerJobOrder innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderId());
             innerJobOrder.setOrderStatus((byte) 4);
             innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
-            wmsInnerJobOrderService.update(innerJobOrder);
+            wmsInnerJobOrderMapper.updateByPrimaryKey(innerJobOrder);
         } else {
             // 查询库存信息，同一库位跟同物料有且只有一条数据
             Map<String, Object> map = new HashMap<>();
@@ -228,7 +211,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 innerJobOrder.setOrderStatus((byte) 4);
                 innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
                 innerJobOrder.setPlanQty(innerJobOrder.getActualQty());
-                wmsInnerJobOrderService.update(innerJobOrder);
+                wmsInnerJobOrderMapper.updateByPrimaryKey(innerJobOrder);
             }else {
                 // 创建移位单
                 WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
@@ -276,6 +259,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setCreateTime(new Date());
             wmsInnerJobOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setIsDelete((byte) 1);
+            wmsInnerJobOrderDet.setOrderStatus((byte) 4);
             wmsInnerJobOrderDet.setShiftStorageStatus((byte) 3);
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
             WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
@@ -365,10 +349,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrderDet.getJobOrderId());
         WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
-        List<WmsInnerJobOrderDetDto> wmsInnerJobOrderDetDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet);
+        List<WmsInnerJobOrderDet> wmsInnerJobOrderDetDto = wmsInnerJobOrderDto.getWmsInPutawayOrderDets();
 
         BigDecimal resQty = wmsInnerJobOrderDetDto.stream()
-                .map(WmsInnerJobOrderDetDto::getActualQty)
+                .map(WmsInnerJobOrderDet::getActualQty)
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
 
         // 更改库存

@@ -2,12 +2,15 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerReWhDto;
-import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
-import com.fantechs.common.base.general.entity.basic.BaseWarehousePersonnel;
+import com.fantechs.common.base.general.dto.basic.imports.BasePackageSpecificationImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseUnitPriceImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtPackageSpecification;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehousePersonnel;
@@ -25,10 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -48,6 +49,9 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
 
     @Resource
     private BaseMaterialOwnerReWhMapper baseMaterialOwnerReWhMapper;
+
+    @Resource
+    private BaseMaterialOwnerMapper baseMaterialOwnerMapper;
 
 
     @Override
@@ -221,4 +225,98 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         return baseWarehouseMapper.insertList(baseWarehouses);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseWarehouseImport> baseWarehouseImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<BaseWarehouse> list = new LinkedList<>();
+        LinkedList<BaseHtWarehouse> htList = new LinkedList<>();
+        LinkedList<BaseWarehouseImport> warehouseImports = new LinkedList<>();
+        LinkedList<BaseMaterialOwnerReWh> baseMaterialOwnerReWhs = new LinkedList<>();
+        for (int i = 0; i < baseWarehouseImports.size(); i++) {
+            BaseWarehouseImport baseWarehouseImport = baseWarehouseImports.get(i);
+            String warehouseCode = baseWarehouseImport.getWarehouseCode();
+            String warehouseName = baseWarehouseImport.getWarehouseName();
+
+            if (StringUtils.isEmpty(
+                    warehouseCode,warehouseName
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(BaseWarehouse.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+            criteria.andEqualTo("warehouseCode",warehouseCode);
+            if (StringUtils.isNotEmpty(baseWarehouseMapper.selectOneByExample(example))){
+                fail.add(i+4);
+                continue;
+            }
+
+            //如果货主编码不为空，则判断货主信息是否存在
+            if (StringUtils.isNotEmpty(baseWarehouseImport.getMaterialOwnerCode())){
+                Example example1 = new Example(BaseMaterialOwner.class);
+                Example.Criteria criteria1 = example1.createCriteria();
+                criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria1.andEqualTo("materialOwnerCode",baseWarehouseImport.getMaterialOwnerCode());
+                BaseMaterialOwner baseMaterialOwner = baseMaterialOwnerMapper.selectOneByExample(example1);
+                if (StringUtils.isEmpty(baseMaterialOwner)){
+                    fail.add(i+4);
+                    continue;
+                }
+                baseWarehouseImport.setMaterialOwnerId(baseMaterialOwner.getMaterialOwnerId());
+            }
+
+            warehouseImports.add(baseWarehouseImport);
+        }
+
+        if (StringUtils.isNotEmpty(warehouseImports)){
+            //对合格数据进行分组
+            HashMap<String, List<BaseWarehouseImport>> map = warehouseImports.stream().collect(Collectors.groupingBy(BaseWarehouseImport::getWarehouseCode, HashMap::new, Collectors.toList()));
+            Set<String> codeList = map.keySet();
+            for (String code : codeList) {
+                List<BaseWarehouseImport> baseWarehouseImports1 = map.get(code);
+                //新增仓库父级数据
+                BaseWarehouse baseWarehouse = new BaseWarehouse();
+                BeanUtils.copyProperties(baseWarehouseImports1.get(0), baseWarehouse);
+                baseWarehouse.setCreateTime(new Date());
+                baseWarehouse.setCreateUserId(currentUser.getUserId());
+                baseWarehouse.setModifiedUserId(currentUser.getUserId());
+                baseWarehouse.setModifiedTime(new Date());
+                baseWarehouse.setOrganizationId(currentUser.getOrganizationId());
+                baseWarehouse.setStatus(1);
+                success += baseWarehouseMapper.insertUseGeneratedKeys(baseWarehouse);
+
+                BaseHtWarehouse baseHtWarehouse = new BaseHtWarehouse();
+                BeanUtils.copyProperties(baseWarehouse, baseHtWarehouse);
+                baseHtWarehouse.setModifiedTime(new Date());
+                baseHtWarehouse.setModifiedUserId(currentUser.getUserId());
+                htList.add(baseHtWarehouse);
+
+                //新增关联货主数据
+                for (BaseWarehouseImport baseWarehouseImport : baseWarehouseImports1) {
+                    BaseMaterialOwnerReWh baseMaterialOwnerReWh = new BaseMaterialOwnerReWh();
+                    BeanUtils.copyProperties(baseWarehouseImport, baseMaterialOwnerReWh);
+                    baseMaterialOwnerReWh.setWarehouseId(baseWarehouse.getWarehouseId());
+                    baseMaterialOwnerReWh.setStatus((byte) 1);
+                    baseMaterialOwnerReWhs.add(baseMaterialOwnerReWh);
+                }
+                baseMaterialOwnerReWhMapper.insertList(baseMaterialOwnerReWhs);
+            }
+            baseHtWarehouseMapper.insertList(htList);
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
+    }
 }

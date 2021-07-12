@@ -51,6 +51,19 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
         return eamNewsMapper.findList(map);
     }
 
+    @Override
+    public EamNews selectByKey(Object key) {
+        EamNews eamNews = eamNewsMapper.selectByPrimaryKey(key);
+
+        Example example = new Example(EamNewsAttachment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("newsId",eamNews.getNewsId());
+        List<EamNewsAttachment> eamNewsAttachments = eamNewsAttachmentMapper.selectByExample(example);
+        eamNews.setList(eamNewsAttachments);
+
+        return eamNews;
+    }
+
     /**
      * 审核并发布新闻
      * @param ids

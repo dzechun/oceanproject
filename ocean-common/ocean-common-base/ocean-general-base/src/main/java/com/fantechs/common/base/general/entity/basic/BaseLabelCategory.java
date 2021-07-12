@@ -54,7 +54,7 @@ public class BaseLabelCategory extends ValidGroup implements Serializable {
      * 类型(0.SN,2.CSN)
      */
     @ApiModelProperty(name="barcodeType",value = "类型(0.SN,2.CSN)")
-    @Excel(name = "类型(0.SN,2.CSN)", height = 20, width = 30,orderNum="3")
+    @Excel(name = "类型(0.SN,2.CSN)", height = 20, width = 30,orderNum="3",replace = {"SN_0", "CSN_2"})
     @Column(name = "barcode_type")
     private Byte barcodeType;
 
@@ -76,7 +76,7 @@ public class BaseLabelCategory extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="4")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="4",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**

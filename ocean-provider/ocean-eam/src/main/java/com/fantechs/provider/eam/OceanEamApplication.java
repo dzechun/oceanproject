@@ -11,7 +11,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @EnableDiscoveryClient
 @ComponentScan({"com.fantechs.provider.eam","com.fantechs.common"})
 @MapperScan({"com.fantechs.provider.eam.mapper"})
-//@EnableFeignClients(basePackages = "com.fantechs.provider.api")
+@EnableFeignClients(basePackages = "com.fantechs.provider")
 public class OceanEamApplication {
 
     public static void main(String[] args) {

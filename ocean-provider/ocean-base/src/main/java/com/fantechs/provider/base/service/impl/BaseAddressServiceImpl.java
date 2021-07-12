@@ -2,6 +2,7 @@ package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.BaseAddressDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseAddressImport;
 import com.fantechs.common.base.general.entity.basic.BaseAddress;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -10,13 +11,13 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseAddressMapper;
 import com.fantechs.provider.base.service.BaseAddressService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by leifengzhi on 2020/11/13.
@@ -99,4 +100,94 @@ public class BaseAddressServiceImpl extends BaseService<BaseAddress> implements 
         map.put("orgId",user.getOrganizationId());
         return baseAddressMapper.findList(map);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseAddressImport> baseAddressImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<BaseAddress> list = new LinkedList<>();
+        ArrayList<BaseAddressImport> addressImports = new ArrayList<>();
+
+        for (int i = 0; i < baseAddressImports.size(); i++) {
+            BaseAddressImport baseAddressImport = baseAddressImports.get(i);
+            String addressDetail = baseAddressImport.getAddressDetail();
+            if (StringUtils.isEmpty(
+                    addressDetail
+            )) {
+                fail.add(i + 4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(BaseAddress.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("addressDetail", addressDetail);
+            if (StringUtils.isNotEmpty(baseAddressMapper.selectOneByExample(example))) {
+                fail.add(i + 4);
+                continue;
+            }
+
+            //判断集合中是否存在重复数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(addressImports)){
+                for (BaseAddressImport addressImport : addressImports) {
+                    if (addressImport.getAddressDetail().equals(addressDetail)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
+            addressImports.add(baseAddressImport);
+        }
+
+        if (StringUtils.isNotEmpty(addressImports)) {
+            for (BaseAddressImport baseAddressImport : addressImports) {
+                BaseAddress baseAddress = new BaseAddress();
+                BeanUtils.copyProperties(baseAddressImport, baseAddress);
+                //处理省市区数据
+                String completeDetail = "";
+                if(StringUtils.isNotEmpty(baseAddressImport.getProvince())) {
+                    String[] province = baseAddressImport.getProvince().split("_");
+                    baseAddress.setProvinceCode(province[1]);
+                    completeDetail = completeDetail+province[0];
+                }
+                if(StringUtils.isNotEmpty(baseAddressImport.getCity())) {
+                    String[] city = baseAddressImport.getCity().split("_");
+                    baseAddress.setCityCode(city[1]);
+                    completeDetail = completeDetail+city[0];
+                }
+                if(StringUtils.isNotEmpty(baseAddressImport.getClassify())) {
+                    String[] classify = baseAddressImport.getClassify().split("_");
+                    baseAddress.setClassifyCode(classify[1]);
+                    completeDetail = completeDetail+classify[0];
+                }
+                baseAddress.setCompleteDetail(completeDetail + baseAddressImport.getAddressDetail());
+
+                baseAddress.setCreateTime(new Date());
+                baseAddress.setCreateUserId(currentUser.getUserId());
+                baseAddress.setModifiedTime(new Date());
+                baseAddress.setModifiedUserId(currentUser.getUserId());
+                baseAddress.setStatus((byte)1);
+                list.add(baseAddress);
+            }
+
+            success += baseAddressMapper.insertList(list);
+
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
+    }
+
 }

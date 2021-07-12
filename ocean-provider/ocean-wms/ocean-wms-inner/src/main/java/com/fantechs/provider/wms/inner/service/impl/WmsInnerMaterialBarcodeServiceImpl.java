@@ -7,6 +7,7 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto;
+import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
@@ -66,7 +67,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
     @Override
     public List<WmsInnerMaterialBarcodeDto> add(WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto) {
-    //    SysUser sysUser = currentUser();
+        SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialId())){
             throw new BizErrorException("绑定物料编码不能为空");
         }
@@ -106,15 +107,14 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         for(int i=0;i< wmsInnerMaterialBarcodeDto.getBarCodeQty();i++) {
             WmsInnerMaterialBarcodeDto  wmsInnerMaterialBarCode = new WmsInnerMaterialBarcodeDto();
             BeanUtils.autoFillEqFields(wmsInnerMaterialBarcodeDto,wmsInnerMaterialBarCode);
-
             String barCode = creatBarCode(list, wmsInnerMaterialBarcodeDto.getMaterialCode(), wmsInnerMaterialBarcodeDto.getMaterialId());
             wmsInnerMaterialBarCode.setBarcode(barCode);
             wmsInnerMaterialBarCode.setBarcodeRuleId(list.get(0).getBarcodeRuleId());
-    //        wmsInnerMaterialBarCode.setOrgId(sysUser.getOrganizationId());
+            wmsInnerMaterialBarCode.setOrgId(sysUser.getOrganizationId());
             wmsInnerMaterialBarCode.setCreateTime(new Date());
-    //        wmsInnerMaterialBarCode.setCreateUserId(sysUser.getUserId());
+            wmsInnerMaterialBarCode.setCreateUserId(sysUser.getUserId());
             wmsInnerMaterialBarCode.setModifiedTime(new Date());
-    //        wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
+            wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
             materialBarcodeList.add(wmsInnerMaterialBarCode);
         }
@@ -146,7 +146,15 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
 
     @Override
-    public BaseBarcodeRuleDto findLabelRute(Long barcodeRuleSetId) {
+    public LabelRuteDto findLabelRute(Long barcodeRuleSetId,Long materialId) {
+
+
+        LabelRuteDto labelRuteDto = wmsInnerMaterialBarcodeMapper.findRule("11",materialId);
+
+        if(StringUtils.isEmpty(labelRuteDto)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未匹配到绑定的条码模板");
+        }
+
         ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = null;
         if(barcodeRuleSetId != 0) {
             SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
@@ -159,6 +167,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             searchBaseBarcodeRule.setBarcodeRuleSetId(barcodeRuleSetId);
             barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
             if (StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未找到对应条码");
+            labelRuteDto.setBarcodeRuleId(barcodeRulList.getData().get(0).getBarcodeRuleId());
         }else{
             //无id值则取默认生成规则
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -168,9 +177,12 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
             searchBaseBarcodeRule.setBarcodeRuleCode(specItemList.getData().get(0).getParaValue());
             barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
-
+            labelRuteDto.setBarcodeRuleId(barcodeRulList.getData().get(0).getBarcodeRuleId());
+            labelRuteDto.setBarcodeRule(barcodeRulList.getData().get(0).getBarcodeRule());
         }
-        return barcodeRulList.getData().get(0);
+
+        return labelRuteDto;
+      //  return barcodeRulList.getData().get(0);
     }
 
     /**
@@ -180,21 +192,17 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int print(String ids, int printNum) {
+    public int print(String ids, int printQty) {
         String[] arrId = ids.split(",");
         for (String s : arrId) {
             //查询模版信息
             WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(s);
-            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-            searchBaseMaterial.setMaterialId(wmsInnerMaterialBarcode.getMaterialId());
-            ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
-            if (StringUtils.isEmpty(list.getData())) throw new BizErrorException("未匹配到对应物料");
-            BaseMaterial material = list.getData().get(0);
+           LabelRuteDto labelRuteDto = this.findLabelRute((long)11,wmsInnerMaterialBarcode.getMaterialId());
             PrintModel printModel = wmsInnerMaterialBarcodeMapper.findPrintModel(wmsInnerMaterialBarcode.getMaterialBarcodeId());
-            printModel.setSize(printNum);
+            printModel.setSize(printQty);
             PrintDto printDto = new PrintDto();
-            printDto.setLabelName(material.getMaterialName());
-            printDto.setLabelVersion(material.getMaterialVersion());
+            printDto.setLabelName(labelRuteDto.getLabelName());
+            printDto.setLabelVersion(labelRuteDto.getLabelVersion());
          //   printDto.setPrintName();
             List<PrintModel> printModelList = new ArrayList<>();
             printModelList.add(printModel);

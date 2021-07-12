@@ -1025,13 +1025,16 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         wmsInAsnOrder.setEMailAddress(res.getEmailAddress());
         SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
         searchWmsOutDeliveryOrderDet.setDeliveryOrderId(res.getDeliveryOrderId());
+        int i = 0;
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDets = outFeignApi.findList(searchWmsOutDeliveryOrderDet).getData();
         for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDet : wmsOutDeliveryOrderDets) {
+            i++;
             WmsInAsnOrderDet wmsInAsnOrderDet = new WmsInAsnOrderDet();
             wmsInAsnOrderDet.setSourceOrderId(wmsOutDeliveryOrderDet.getDeliveryOrderId());
             wmsInAsnOrderDet.setOrderDetId(wmsOutDeliveryOrderDet.getDeliveryOrderDetId());
             wmsInAsnOrderDet.setWarehouseId(warehouseId);
             wmsInAsnOrderDet.setStorageId(storageId);
+            wmsInAsnOrderDet.setLineNumber(i);
             wmsInAsnOrderDet.setInventoryStatusId(wmsOutDeliveryOrderDet.getInventoryStatusId());
             wmsInAsnOrderDet.setMaterialId(wmsOutDeliveryOrderDet.getMaterialId());
             wmsInAsnOrderDet.setPackingUnitName(wmsOutDeliveryOrderDet.getPackingUnitName());

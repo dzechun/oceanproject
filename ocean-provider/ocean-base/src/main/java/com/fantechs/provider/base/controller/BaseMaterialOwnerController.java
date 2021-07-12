@@ -108,12 +108,12 @@ public class BaseMaterialOwnerController {
      * @throws
      */
     @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BaseMaterialOwnerDto> baseMaterialOwnerDtos = EasyPoiUtils.importExcel(file, BaseMaterialOwnerDto.class);
+            List<BaseMaterialOwnerDto> baseMaterialOwnerDtos = EasyPoiUtils.importExcel(file,2, 1, BaseMaterialOwnerDto.class);
             Map<String, Object> resultMap = baseMaterialOwnerService.importExcel(baseMaterialOwnerDtos);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
         } catch (RuntimeException e) {
