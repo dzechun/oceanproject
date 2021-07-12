@@ -54,6 +54,19 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
     }
 
     @Override
+    public EamIssue selectByKey(Object key) {
+        EamIssue eamIssue = eamIssueMapper.selectByPrimaryKey(key);
+
+        Example example = new Example(EamIssueAttachment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("issueId",eamIssue.getIssueId());
+        List<EamIssueAttachment> eamIssueAttachments = eamIssueAttachmentMapper.selectByExample(example);
+        eamIssue.setList(eamIssueAttachments);
+
+        return eamIssue;
+    }
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamIssue record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();

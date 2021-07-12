@@ -152,7 +152,7 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 使用状态(1-使用中 2-空闲)
      */
     @ApiModelProperty(name="usageStatus",value = "使用状态(1-使用中 2-空闲)")
-    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="15")
+    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="15",replace = {"使用中_1", "空闲_2"})
     @Column(name = "usage_status")
     private Byte usageStatus;
 
