@@ -462,7 +462,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
             wmsInnerInventory.setPackingQty(wmsInAsnOrderDetDto.getActualQty());
             wmsInnerInventory.setPalletCode(wmsInAsnOrderDetDto.getPalletCode());
-            wmsInnerInventory.setMaterialOwnerId(wmsInAsnOrderDto.getMaterialOwnerId());
             wmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
             wmsInnerInventory.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
             wmsInnerInventory.setWarehouseId(wmsInAsnOrderDetDto.getWarehouseId());

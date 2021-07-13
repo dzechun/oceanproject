@@ -4,17 +4,20 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -215,6 +218,12 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             }else {
                 // 创建移位单
                 WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
+                SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
+                searchBaseMaterialOwner.setAsc((byte)1);
+                List<BaseMaterialOwnerDto> ownerDtos = baseFeignApi.findList(searchBaseMaterialOwner).getData();
+                if(!ownerDtos.isEmpty()){
+                    innerJobOrder.setMaterialOwnerId(ownerDtos.get(0).getMaterialOwnerId());
+                }
                 innerJobOrder.setWarehouseId(dto.getWarehouseId());
                 innerJobOrder.setWorkerId(sysUser.getUserId());
                 innerJobOrder.setJobOrderCode(CodeUtils.getId("SHIFT-"));
