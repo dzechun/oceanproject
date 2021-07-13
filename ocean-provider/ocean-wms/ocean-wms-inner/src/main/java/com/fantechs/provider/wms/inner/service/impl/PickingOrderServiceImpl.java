@@ -159,7 +159,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         if(StringUtils.isNotEmpty(barCode)){
             String[] code = barCode.split(",");
             for (String s : code) {
-                num +=this.addInventoryDet(s,wmsInnerJobOrderDto.getJobOrderCode(),wmsInnerJobOrderDet);
+                num +=this.addInventoryDet(s,wmsInnerJobOrderDto.getJobOrderCode(),wmsInnerJobOrderDetDto.get(0));
             }
         }
         WmsInnerJobOrderDet wms= new WmsInnerJobOrderDet();
@@ -194,6 +194,11 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
             num +=wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
         }
+
+        //反写出库单拣货数量
+        this.writeDeliveryOrderQty(wmsInnerJobOrderDetDto.get(0));
+
+
         return wmsInnerJobOrderDet;
     }
 
