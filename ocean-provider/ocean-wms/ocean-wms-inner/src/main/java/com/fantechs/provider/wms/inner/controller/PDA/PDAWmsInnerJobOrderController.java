@@ -107,7 +107,7 @@ public class PDAWmsInnerJobOrderController {
 
     @ApiOperation("PDA拣货确认/提交")
     @PostMapping("/pickingOrder")
-    public ResponseEntity<WmsInnerJobOrderDet> pickingOrder(@ApiParam("条码")@RequestParam String barCode,
+    public ResponseEntity<WmsInnerJobOrderDet> pickingOrder(@ApiParam("条码，多个条码用逗号隔开")@RequestParam String barCode,
                                                             @RequestParam @NotNull(message = "id不能为空") Long jobOrderDetId,
                                                             @RequestParam String storageCode,@RequestParam BigDecimal qty){
         WmsInnerJobOrderDet wmsInnerJobOrderDet = pickingOrderService.scanAffirmQty(barCode,storageCode,qty, jobOrderDetId);

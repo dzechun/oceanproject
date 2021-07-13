@@ -514,28 +514,28 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         map.put("list", palletIds);
         map.put("orgId", orgId);
         List<PalletAutoAsnDto> autoAsnDtos = mesSfcProductPalletDetService.findListGroupByWorkOrder(map);
-        if(mesSfcWorkOrderBarcodeList != null && mesSfcWorkOrderBarcodeList.size() > 0){
-            map.clear();
-            map.put("list", mesSfcWorkOrderBarcodeList.stream().map(MesSfcWorkOrderBarcode::getWorkOrderBarcodeId).collect(Collectors.toList()));
-            map.put("orgId", orgId);
-            List<PalletAutoAsnDto> list = new ArrayList<>();
-            list.addAll(autoAsnDtos);
-            List<PalletAutoAsnDto> listGroupByWorkOrder = mesSfcWorkOrderBarcodeService.findListGroupByWorkOrder(map);
-            for (PalletAutoAsnDto palletAutoAsnDto : listGroupByWorkOrder){
-                boolean flag = true;
-                for (PalletAutoAsnDto autoAsnDto : list){
-                    if(autoAsnDto.getSourceOrderId() != null && autoAsnDto.getSourceOrderId().equals(palletAutoAsnDto.getSourceOrderId())){
-                        autoAsnDto.setPackingQty(autoAsnDto.getPackingQty().add(palletAutoAsnDto.getPackingQty()));
-                        autoAsnDto.setActualQty(autoAsnDto.getActualQty().add(palletAutoAsnDto.getActualQty()));
-                        flag = false;
-                        break;
-                    }
-                }
-                if(flag){
-                    autoAsnDtos.add(palletAutoAsnDto);
-                }
-            }
-        }
+//        if(mesSfcWorkOrderBarcodeList != null && mesSfcWorkOrderBarcodeList.size() > 0){
+//            map.clear();
+//            map.put("list", mesSfcWorkOrderBarcodeList.stream().map(MesSfcWorkOrderBarcode::getWorkOrderBarcodeId).collect(Collectors.toList()));
+//            map.put("orgId", orgId);
+//            List<PalletAutoAsnDto> list = new ArrayList<>();
+//            list.addAll(autoAsnDtos);
+//            List<PalletAutoAsnDto> listGroupByWorkOrder = mesSfcWorkOrderBarcodeService.findListGroupByWorkOrder(map);
+//            for (PalletAutoAsnDto palletAutoAsnDto : listGroupByWorkOrder){
+//                boolean flag = true;
+//                for (PalletAutoAsnDto autoAsnDto : list){
+//                    if(autoAsnDto.getSourceOrderId() != null && autoAsnDto.getSourceOrderId().equals(palletAutoAsnDto.getSourceOrderId())){
+//                        autoAsnDto.setPackingQty(autoAsnDto.getPackingQty().add(palletAutoAsnDto.getPackingQty()));
+//                        autoAsnDto.setActualQty(autoAsnDto.getActualQty().add(palletAutoAsnDto.getActualQty()));
+//                        flag = false;
+//                        break;
+//                    }
+//                }
+//                if(flag){
+//                    autoAsnDtos.add(palletAutoAsnDto);
+//                }
+//            }
+//        }
         for (PalletAutoAsnDto palletAutoAsnDto : autoAsnDtos){
             //完工入库
             SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();

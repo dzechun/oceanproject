@@ -50,5 +50,5 @@ public class SearchWmsInnerStockOrderDet extends BaseQuery implements Serializab
      * 计划类型
      */
     @ApiModelProperty("计划类型")
-    private Byte projectType;
+    private Byte stockType;
 }
