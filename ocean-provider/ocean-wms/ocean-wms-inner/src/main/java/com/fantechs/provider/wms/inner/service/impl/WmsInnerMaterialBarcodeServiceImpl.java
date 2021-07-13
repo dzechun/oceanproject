@@ -150,11 +150,6 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
 
         LabelRuteDto labelRuteDto = wmsInnerMaterialBarcodeMapper.findRule("11",materialId);
-
-        if(StringUtils.isEmpty(labelRuteDto)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未匹配到绑定的条码模板");
-        }
-
         ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = null;
         if(barcodeRuleSetId != 0) {
             SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
@@ -197,7 +192,10 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         for (String s : arrId) {
             //查询模版信息
             WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(s);
-           LabelRuteDto labelRuteDto = this.findLabelRute((long)11,wmsInnerMaterialBarcode.getMaterialId());
+            LabelRuteDto labelRuteDto = this.findLabelRute((long)11,wmsInnerMaterialBarcode.getMaterialId());
+            if(StringUtils.isEmpty(labelRuteDto)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未匹配到绑定的条码模板");
+            }
             PrintModel printModel = wmsInnerMaterialBarcodeMapper.findPrintModel(wmsInnerMaterialBarcode.getMaterialBarcodeId());
             printModel.setSize(printQty);
             PrintDto printDto = new PrintDto();

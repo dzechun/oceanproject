@@ -26,4 +26,86 @@
     <result column="manufacture_procedure" jdbcType="LONGVARCHAR" property="manufactureProcedure" />
     <result column="process_req_and_announcements" jdbcType="LONGVARCHAR" property="processReqAndAnnouncements" />
   </resultMap>
+
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+             type="com.fantechs.common.base.general.dto.eam.EamHtWorkInstructionDto">
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+
+    <collection property="eamHtWiBoms" ofType="com.fantechs.common.base.general.entity.eam.history.EamHtWiBom"
+                column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamHtWiBomMapper.findHtList">
+    </collection>
+    <collection property="eamHtWiFTAndInspectionTools" ofType="com.fantechs.common.base.general.entity.eam.history.EamHtWiFTAndInspectionTool"
+                column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamHtWiFTAndInspectionToolMapper.findHtList">
+    </collection>
+    <collection property="eamHtWiQualityStandardss" ofType="com.fantechs.common.base.general.entity.eam.history.EamHtWiQualityStandards"
+                column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamHtWiQualityStandardsMapper.findHtList">
+    </collection>
+    <collection property="eamHtWiFiles" ofType="com.fantechs.common.base.general.entity.eam.history.EamHtWiFile"
+                column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamHtWiFileMapper.findHtList">
+    </collection>
+  </resultMap>
+  <sql id="BaseColumnList">
+        ehwi.ht_work_instruction_id,
+        ehwi.work_instruction_id,
+        ehwi.work_instruction_code,
+        ehwi.work_instruction_name,
+        ehwi.work_instruction_ver,
+        ehwi.process_id,
+        ehwi.material_id,
+        ehwi.secrecy_grade,
+        ehwi.wi_status,
+        ehwi.manufacture_procedure,
+        ehwi.process_req_and_announcements,
+        ehwi.status,
+        ehwi.remark,
+        ehwi.org_id,
+        ehwi.create_user_id,
+        ehwi.create_time,
+        ehwi.modified_user_id,
+        ehwi.modified_time,
+        ehwi.option1,
+        ehwi.option2,
+        ehwi.option3
+    </sql>
+  <select id="findHtList" resultMap="BaseResultMapDto">
+
+    SELECT<include refid="BaseColumnList"/>,
+    bm.material_code as material_code,spm.product_model_code as product_model_code,spm.product_model_name as product_model_name,
+    sp.process_name,su.user_name AS create_user_name,sus.user_name AS modified_user_name,bo.organization_name AS organization_name
+    FROM eam_ht_work_instruction ehwi
+    LEFT JOIN base_material bm ON ehwi.material_id = bm.material_id
+    LEFT JOIN base_material_tab bt ON bm.material_id = bt.material_id
+    LEFT JOIN base_product_model spm ON bt.product_model_id = spm.product_model_id
+    LEFT JOIN base_process sp ON ehwi.process_id = sp.process_id
+    LEFT JOIN ocean_v2.sys_user su ON ehwi.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON ehwi.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON ehwi.org_id = bo.organization_id
+    <where>
+      <if test="orgId!=null and orgId!=''">
+        and ehwi.org_id = #{orgId}
+      </if>
+      <if test="workInstructionName!=null and workInstructionName!=''">
+        and ehwi.work_instruction_name = #{workInstructionName}
+      </if>
+      <if test="workInstructionCode!=null and workInstructionCode!=''">
+        and ehwi.work_instruction_code = #{workInstructionCode}
+      </if>
+      <if test="materialCode!=null and materialCode!=''">
+        and bm.material_code = #{materialCode}
+      </if>
+      <if test="materialId!=null and materialId!=''">
+        and ehwi.material_id = #{materialId}
+      </if>
+      <if test="processId!=null and processId!=''">
+        and bm.process_id = #{processId}
+      </if>
+    </where>
+  </select>
+
 </mapper>

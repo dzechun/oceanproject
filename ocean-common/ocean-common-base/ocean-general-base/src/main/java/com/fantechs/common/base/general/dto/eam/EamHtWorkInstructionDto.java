@@ -1,18 +1,16 @@
 package com.fantechs.common.base.general.dto.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eam.*;
+import com.fantechs.common.base.general.entity.eam.history.*;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class EamWorkInstructionDto extends EamWorkInstruction implements Serializable {
+public class EamHtWorkInstructionDto extends EamHtWorkInstruction implements Serializable {
 
     /**
      * 产品料号
@@ -47,16 +45,16 @@ public class EamWorkInstructionDto extends EamWorkInstruction implements Seriali
     private String processName;
 
     @Transient
-    private List<EamWiBom> eamWiBoms;
+    private List<EamHtWiBom> eamHtWiBoms;
 
     @Transient
-    private List<EamWiFTAndInspectionTool> eamWiFTAndInspectionTools;
+    private List<EamHtWiFTAndInspectionTool> eamHtWiFTAndInspectionTools;
 
     @Transient
-    private List<EamWiQualityStandards> eamWiQualityStandardss;
+    private List<EamHtWiQualityStandards> eamHtWiQualityStandardss;
 
     @Transient
-    private List<EamWiFile> eamWiFiles;
+    private List<EamHtWiFile> eamHtWiFiles;
 
     /**
      * 创建人名称

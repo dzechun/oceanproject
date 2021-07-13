@@ -1,17 +1,25 @@
 package com.fantechs.provider.eam.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
+import com.fantechs.common.base.general.dto.eam.EamHtWiReleaseDto;
+import com.fantechs.common.base.general.dto.eam.EamHtWorkInstructionDto;
 import com.fantechs.common.base.general.dto.eam.EamWorkInstructionDto;
 import com.fantechs.common.base.general.entity.eam.EamWiBom;
 import com.fantechs.common.base.general.entity.eam.EamWiQualityStandards;
 import com.fantechs.common.base.general.entity.eam.EamWorkInstruction;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamWiRelease;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWorkInstruction;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.fileserver.service.FileFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.eam.service.EamHtWorkInstructionService;
 import com.fantechs.provider.eam.service.EamWorkInstructionService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -19,6 +27,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -32,10 +41,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +63,8 @@ public class EamWorkInstructionController {
 
     @Resource
     private EamWorkInstructionService eamWorkInstructionService;
+    @Resource
+    private EamHtWorkInstructionService eamHtWorkInstructionService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -71,18 +84,26 @@ public class EamWorkInstructionController {
         return ControllerUtil.returnCRUD(eamWorkInstructionService.update(eamWorkInstruction));
     }
 
-   /* @ApiOperation("获取详情")
+   @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<EamWorkInstruction> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         EamWorkInstruction  eamWorkInstruction = eamWorkInstructionService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(eamWorkInstruction,StringUtils.isEmpty(eamWorkInstruction)?0:1);
-    }*/
+    }
 
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<EamWorkInstructionDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEamWorkInstruction searchEamWorkInstruction) {
         Page<Object> page = PageHelper.startPage(searchEamWorkInstruction.getStartPage(),searchEamWorkInstruction.getPageSize());
         List<EamWorkInstructionDto> list = eamWorkInstructionService.findList(searchEamWorkInstruction);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<EamHtWorkInstructionDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchEamWorkInstruction searchEamWorkInstruction) {
+        Page<Object> page = PageHelper.startPage(searchEamWorkInstruction.getStartPage(),searchEamWorkInstruction.getPageSize());
+        List<EamHtWorkInstructionDto> list = eamHtWorkInstructionService.findHtList(ControllerUtil.dynamicConditionByEntity(searchEamWorkInstruction));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -123,5 +144,11 @@ public class EamWorkInstructionController {
     }
 
 
+    @ApiOperation("下载模板地址")
+    @PostMapping("/download")
+    public ResponseEntity downExcel(HttpServletResponse response)throws IOException {
+        String fileUrl = eamWorkInstructionService.download(response);
+        return ControllerUtil.returnDataSuccess(fileUrl,0);
+    }
 
 }

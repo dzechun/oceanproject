@@ -21,4 +21,45 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamHtWiBomDto">
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+    </resultMap>
+
+  <sql id="BaseColumnList">
+        ehwb.ht_wi_bom_id,
+        ehwb.work_instruction_id,
+        ehwb.material_id,
+        ehwb.usage_qty,
+        ehwb.status,
+        ehwb.remark,
+        ehwb.org_id,
+        ehwb.create_user_id,
+        ehwb.create_time,
+        ehwb.modified_user_id,
+        ehwb.modified_time,
+        ehwb.option1,
+        ehwb.option2,
+        ehwb.option3
+    </sql>
+
+  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
+    SELECT<include refid="BaseColumnList"/>,bm.material_name as material_name,
+      bm.material_code as material_code,bm.material_version as material_version
+    FROM eam_ht_wi_bom ehwb
+    LEFT JOIN eam_ht_work_instruction ehwi ON ehwb.work_instruction_id = ehwi.work_instruction_id
+    LEFT JOIN ocean_v2.sys_user su ON ehwb.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON ehwb.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON ehwb.org_id = bo.organization_id
+    <where>
+      <if test="orgId!=null and orgId!=''">
+        and ehwb.org_id = #{orgId}
+      </if>
+      <if test="workInstructionId!=null and workInstructionId!=''">
+        and ehwb.work_instruction_id = #{workInstructionId}
+      </if>
+    </where>
+  </select>
 </mapper>
