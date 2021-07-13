@@ -90,16 +90,16 @@
         SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',
         bl.label_code as 'labelCode', bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode',
         lm.once_print_count as 'oncePrintQty'
-        FROM wms_inner_material_barcode wimb
-                 LEFT JOIN base_barcode_rule br ON wimb.barcode_rule_id = br.barcode_rule_id
-                 left join base_barcode_rule_set_det brs on br.barcode_rule_id = brs.barcode_rule_id
-                 LEFT JOIN base_label_material lm ON wimb.material_id = lm.material_id
-                 LEFT JOIN base_label bl ON lm.label_id = bl.label_id
-                 LEFT JOIN base_label_category lc ON bl.label_category_id = lc.label_category_id AND
-                                                     bl.label_category_id = lc.label_category_id
-        where wimb.material_id = #{materialId}
-          and br.barcode_rule_category_id = lc.label_category_id
-          AND lc.label_category_code = #{code}
+        FROM base_label_category lc
+            LEFT JOIN base_barcode_rule br ON lc.label_category_id = br.barcode_rule_category_id
+	        LEFT JOIN base_label_material lm ON lm.material_id =#{materialId}
+		    LEFT JOIN base_label bl ON lc.label_category_id = bl.label_category_id
+        <where>
+            <if test="code!=null and code!=''">
+                and lc.label_category_code = #{code}
+            </if>
+        </where>
+
     </select>
 
 </mapper>
