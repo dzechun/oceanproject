@@ -91,7 +91,12 @@ wivd.inventory_status_id
         </if>
     </where>
     <if test="isRecords!=null and isRecords!='' and isRecords=='true'">
-        Group BY wivd.storage_id
+    <if test="projectType==1">
+      Group BY wivd.material_id
+    </if>
+    <if test="projectType==2">
+      Group BY wivd.storage_id
+    </if>
     </if>
   </select>
 </mapper>

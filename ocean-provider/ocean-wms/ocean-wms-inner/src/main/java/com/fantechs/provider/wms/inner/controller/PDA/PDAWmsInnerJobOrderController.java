@@ -94,17 +94,30 @@ public class PDAWmsInnerJobOrderController {
         return ControllerUtil.returnCRUD(wmsInnerJobOrderService.singleReceiving(wmsInPutawayOrderDets));
     }
 
-    @ApiOperation("PDA拣货确认")
-    @PostMapping("/pickingOrder")
-    public ResponseEntity<WmsInnerJobOrderDet> pickingOrder(@ApiParam("条码")@RequestParam String barCode,
-                                       @RequestParam @NotNull(message = "id不能为空") Long jobOrderDetId){
-        WmsInnerJobOrderDet wmsInnerJobOrderDet = pickingOrderService.scanAffirmQty(barCode, jobOrderDetId);
-        return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?1:0);
-    }
-
     @ApiOperation("PDA激活关闭栈板")
     @PostMapping("/activation")
     public ResponseEntity activation(@RequestParam Long jobOrderId){
         return ControllerUtil.returnCRUD(wmsInnerJobOrderService.activation(jobOrderId));
+    }
+
+
+    /**
+     * ========================================拣货========================================
+     */
+
+    @ApiOperation("PDA拣货确认/提交")
+    @PostMapping("/pickingOrder")
+    public ResponseEntity<WmsInnerJobOrderDet> pickingOrder(@ApiParam("条码")@RequestParam String barCode,
+                                                            @RequestParam @NotNull(message = "id不能为空") Long jobOrderDetId,
+                                                            @RequestParam String storageCode,@RequestParam BigDecimal qty){
+        WmsInnerJobOrderDet wmsInnerJobOrderDet = pickingOrderService.scanAffirmQty(barCode,storageCode,qty, jobOrderDetId);
+        return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?1:0);
+    }
+    @ApiOperation("/PDA拣货作业条码扫码校验")
+    @PostMapping("/pickCheckBarcode")
+    public ResponseEntity<Map<String,Object>> checkBarcodeToPick(@ApiParam(value = "条码")@RequestParam String barCode,
+                                                                 @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId){
+        Map<String,Object> qty = pickingOrderService.checkBarcode(barCode,jobOrderDetId);
+        return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
     }
 }

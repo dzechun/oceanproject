@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJo
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 拣货单
@@ -17,7 +18,7 @@ public interface PickingOrderService {
      * 拣货单PDA确认
      * @return
      */
-    WmsInnerJobOrderDet scanAffirmQty(String barCode, Long jobOrderDetId);
+    WmsInnerJobOrderDet scanAffirmQty(String barCode,String storageCode,BigDecimal qty, Long jobOrderDetId);
 
     /**
      * 拣货单自动分配
@@ -60,4 +61,6 @@ public interface PickingOrderService {
      * @return
      */
     int autoOutOrder(Long outDeliveryOrderId);
+
+    Map<String ,Object> checkBarcode(String barCode, Long jobOrderDetId);
 }

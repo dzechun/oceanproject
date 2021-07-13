@@ -133,7 +133,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 if(entity.getStockType()==(byte)1&&entity.getMaxStorageCount()<entity.getStorageList().size()){
                     throw new BizErrorException("所选库位数不能大于最大库位数");
                 }
-                //盘点类型：库位盘点
+                //盘点类型：库位盘
                 //查询库位下的所以库存货品
                 if(entity.getStockType()==(byte)1&&StringUtils.isEmpty(entity)){
                     throw new BizErrorException("库位不能未空");
@@ -549,7 +549,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
                     .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
                     .andEqualTo("stockLock",0)
-                    .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1);
+                    .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 //盘点数大于库存数 原有数量新增
             if(!StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) && wmsInnerStockOrderDet.getStockQty().compareTo(wmsInnerInventory.getPackingQty())==1){

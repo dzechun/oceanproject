@@ -73,49 +73,74 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public WmsInnerJobOrderDet scanAffirmQty(String barCode,Long jobOrderDetId) {
+    public WmsInnerJobOrderDet scanAffirmQty(String barCode,String storageCode,BigDecimal qty,Long jobOrderDetId) {
         SysUser sysUser = currentUser();
 
-        //标签校验
-        BigDecimal qty = this.checkBarcode(barCode,jobOrderDetId);
-
         if(StringUtils.isEmpty(qty)){
-            throw new BizErrorException("上架数量不能小于1");
+            throw new BizErrorException("拣货数量不能小于1");
         }
         //通过储位编码查询储位id
-//        ResponseEntity<List<BaseStorage>> list = baseFeignApi.findList(SearchBaseStorage.builder()
-//                .storageCode(storageCode)
-//                .codeQueryMark((byte)1)
-//                .build());
-//        if(StringUtils.isEmpty(list.getData())){
-//            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"库位查询失败");
-//        }
+        ResponseEntity<List<BaseStorage>> list = baseFeignApi.findList(SearchBaseStorage.builder()
+                .storageCode(storageCode)
+                .codeQueryMark((byte)1)
+                .build());
+        if(StringUtils.isEmpty(list.getData())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"库位查询失败");
+        }
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
         if(StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())){
             wmsInnerJobOrderDet.setActualQty(BigDecimal.ZERO);
         }
         if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==1){
-            throw new BizErrorException("上架数量不能大于分配数量");
+            throw new BizErrorException("拣货数量不能大于分配数量");
         }
         //BaseStorage baseStorage = list.getData().get(0);
 
         SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
         searchWmsInnerJobOrderDet.setJobOrderDetId(jobOrderDetId);
         WmsInnerJobOrderDetDto oldDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
-        Byte status = 4;
-        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==0){
-            status = (byte)5;
-        }
-        WmsInnerJobOrderDet wms =WmsInnerJobOrderDet.builder()
-                .jobOrderDetId(jobOrderDetId)
-                .actualQty(qty)
-                .orderStatus(status)
-                .modifiedTime(new Date())
-                .modifiedUserId(sysUser.getUserId())
-                .build();
-        int num = wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wms);
-        if(num==0){
-            throw new BizErrorException("上架失败");
+//        Byte status = 4;
+//        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==0){
+//            status = (byte)5;
+//        }
+//        WmsInnerJobOrderDet wms =WmsInnerJobOrderDet.builder()
+//                .jobOrderDetId(jobOrderDetId)
+//                .actualQty(qty)
+//                .orderStatus(status)
+//                .modifiedTime(new Date())
+//                .modifiedUserId(sysUser.getUserId())
+//                .build();
+//        int num = wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wms);
+//        if(num==0){
+//            throw new BizErrorException("拣货失败");
+//        }
+        int num = 0;
+        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==-1){
+            WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
+            BeanUtil.copyProperties(wmsInnerJobOrderDet,wms);
+            wms.setJobOrderDetId(null);
+            wms.setPlanQty(qty);
+            wms.setDistributionQty(qty);
+            wms.setActualQty(qty);
+            wms.setOrderStatus((byte)5);
+            num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wms);
+            searchWmsInnerJobOrderDet.setJobOrderDetId(wms.getJobOrderDetId());
+
+            wmsInnerJobOrderDet.setOrderStatus((byte)4);
+            wmsInnerJobOrderDet.setInStorageId(null);
+            wmsInnerJobOrderDet.setPlanQty(wmsInnerJobOrderDet.getPlanQty().subtract(wms.getPlanQty()));
+            wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getDistributionQty().subtract(wms.getDistributionQty()));
+            wmsInnerJobOrderDet.setActualQty(null);
+            wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
+            wmsInnerJobOrderDet.setModifiedTime(new Date());
+            num+=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
+        }else if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==0){
+            //确认完成
+            wmsInnerJobOrderDet.setOrderStatus((byte)5);
+            wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
+            wmsInnerJobOrderDet.setModifiedTime(new Date());
+            num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
+            searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
         }
 
 
@@ -130,9 +155,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         //更改库存
         num = this.Inventory(oldDto,wmsInnerJobOrderDetDto.get(0));
         //更改库存明细
-        num +=this.addInventoryDet(barCode,wmsInnerJobOrderDto.getJobOrderCode(),wmsInnerJobOrderDet);
-
-        wms= new WmsInnerJobOrderDet();
+        if(StringUtils.isNotEmpty(barCode)){
+            num +=this.addInventoryDet(barCode,wmsInnerJobOrderDto.getJobOrderCode(),wmsInnerJobOrderDet);
+        }
+        WmsInnerJobOrderDet wms= new WmsInnerJobOrderDet();
         wms.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
         int count = wmsInnerJobOrderDetMapper.selectCount(wms);
         wms.setOrderStatus((byte)5);
@@ -186,15 +212,25 @@ public class PickingOrderServiceImpl implements PickingOrderService {
      * @param barCode
      * @return 包装数量
      */
-    public BigDecimal checkBarcode(String barCode,Long jobOrderDetId) {
+    @Override
+    public Map<String ,Object> checkBarcode(String barCode,Long jobOrderDetId) {
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
         if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
-        //获取出库单对应的工单
-        WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = outFeignApi.detail(wmsInnerJobOrderDet.getSourceDetId()).getData();
-        BigDecimal qty = InBarcodeUtil.checkBarCode(wmsOutDeliveryOrderDet.getSourceOrderId(),barCode);
-        return qty;
+        Map<String ,Object> map  = new HashMap<>();
+        String materialCode = wmsInnerJobOrderMapper.findMaterialCode(wmsInnerJobOrderDet.getMaterialId());
+        if(StringUtils.isNotEmpty(materialCode) && materialCode.equals(barCode)){
+            map.put("SN","false");
+            return map;
+        }else{
+            //获取出库单对应的工单
+            WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = outFeignApi.detail(wmsInnerJobOrderDet.getSourceDetId()).getData();
+            BigDecimal qty = InBarcodeUtil.checkBarCode(wmsOutDeliveryOrderDet.getSourceOrderId(),barCode);
+            map.put("SN","true");
+            map.put("qty",qty);
+        }
+        return map;
     }
 
     /**
