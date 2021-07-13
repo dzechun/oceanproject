@@ -156,7 +156,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         num = this.Inventory(oldDto,wmsInnerJobOrderDetDto.get(0));
         //更改库存明细
         if(StringUtils.isNotEmpty(barCode)){
-            num +=this.addInventoryDet(barCode,wmsInnerJobOrderDto.getJobOrderCode(),wmsInnerJobOrderDet);
+            String[] code = barCode.split(",");
+            for (String s : code) {
+                num +=this.addInventoryDet(s,wmsInnerJobOrderDto.getJobOrderCode(),wmsInnerJobOrderDet);
+            }
         }
         WmsInnerJobOrderDet wms= new WmsInnerJobOrderDet();
         wms.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
