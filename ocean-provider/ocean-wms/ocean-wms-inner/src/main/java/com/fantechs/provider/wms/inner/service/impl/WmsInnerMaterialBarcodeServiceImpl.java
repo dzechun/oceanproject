@@ -86,15 +86,8 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleSetDetList.getData().get(0).getBarcodeRuleId());
         }else{
             //取系统配置默认编码
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("BaseBarCodeRule");
-            ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
-            if(StringUtils.isEmpty(specItemList.getData())) throw new BizErrorException("未设置默认编码规则，无法生成编码");
-            SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
-            searchBaseBarcodeRule.setBarcodeRuleCode(specItemList.getData().get(0).getParaValue());
-            ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
-            if(StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未找到对应条码规则");
-            searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRulList.getData().get(0).getBarcodeRuleId());
+            BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
+            searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
         }
 
         ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecList= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
@@ -148,9 +141,13 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
     @Override
     public LabelRuteDto findLabelRute(Long barcodeRuleSetId,Long materialId) {
 
+        SearchSysSpecItem lableItem = new SearchSysSpecItem();
+        lableItem.setSpecCode("BaseLabel");
+        ResponseEntity<List<SysSpecItem>> lableList = securityFeignApi.findSpecItemList(lableItem);
+        if(StringUtils.isEmpty(lableList.getData())) throw new BizErrorException("未设置默认标签");
+        LabelRuteDto labelRuteDto = wmsInnerMaterialBarcodeMapper.findRule(lableList.getData().get(0).getParaValue(),materialId);
+        if(StringUtils.isEmpty(labelRuteDto)) throw new BizErrorException("标签卡为空");
 
-        LabelRuteDto labelRuteDto = wmsInnerMaterialBarcodeMapper.findRule("11",materialId);
-        ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = null;
         if(barcodeRuleSetId != 0) {
             SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
             searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
@@ -160,20 +157,15 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
             SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
             searchBaseBarcodeRule.setBarcodeRuleSetId(barcodeRuleSetId);
-            barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
+            ResponseEntity<List<BaseBarcodeRuleDto>>  barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
             if (StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未找到对应条码");
             labelRuteDto.setBarcodeRuleId(barcodeRulList.getData().get(0).getBarcodeRuleId());
         }else{
             //无id值则取默认生成规则
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("BaseBarCodeRule");
-            ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
-            if(StringUtils.isEmpty(specItemList.getData())) throw new BizErrorException("未设置默认编码规则，无法生成编码");
-            SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
-            searchBaseBarcodeRule.setBarcodeRuleCode(specItemList.getData().get(0).getParaValue());
-            barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
-            labelRuteDto.setBarcodeRuleId(barcodeRulList.getData().get(0).getBarcodeRuleId());
-            labelRuteDto.setBarcodeRule(barcodeRulList.getData().get(0).getBarcodeRule());
+
+            BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
+            labelRuteDto.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+            labelRuteDto.setBarcodeRule(baseBarCode.getBarcodeRule());
         }
 
         return labelRuteDto;
@@ -231,4 +223,16 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         return sb.toString();
     }
 
+    //获取默认规则
+    public BaseBarcodeRuleDto getBaseBarCode(){
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("BaseBarCodeRule");
+        ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
+        if(StringUtils.isEmpty(specItemList.getData())) throw new BizErrorException("未设置默认编码规则，无法生成编码");
+        SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+        searchBaseBarcodeRule.setBarcodeRuleCode(specItemList.getData().get(0).getParaValue());
+        ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
+        if(StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未查询到配置项配置的默认编码规则");
+        return barcodeRulList.getData().get(0);
+    }
 }

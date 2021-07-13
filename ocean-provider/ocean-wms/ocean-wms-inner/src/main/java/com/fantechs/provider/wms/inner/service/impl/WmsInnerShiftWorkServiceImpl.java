@@ -208,16 +208,16 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 throw new BizErrorException(ErrorCodeEnum.PDA5001012);
             }
 
+            WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
             if(dto.getJobOrderId() != null){
                 // 更新移位单
-                WmsInnerJobOrder innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderId());
+                innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderId());
                 innerJobOrder.setOrderStatus((byte) 4);
                 innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
                 innerJobOrder.setPlanQty(innerJobOrder.getActualQty());
                 wmsInnerJobOrderMapper.updateByPrimaryKey(innerJobOrder);
             }else {
                 // 创建移位单
-                WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
                 SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
                 searchBaseMaterialOwner.setAsc((byte)1);
                 List<BaseMaterialOwnerDto> ownerDtos = baseFeignApi.findList(searchBaseMaterialOwner).getData();
@@ -279,6 +279,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             WmsInnerInventory newInnerInventory = new WmsInnerInventory();
             BeanUtil.copyProperties(innerInventoryDto, newInnerInventory);
             newInnerInventory.setParentInventoryId(innerInventoryDto.getInventoryId());
+            newInnerInventory.setRelevanceOrderCode(innerJobOrder.getJobOrderCode());
             newInnerInventory.setJobStatus((byte) 3);
             newInnerInventory.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
             newInnerInventory.setOrgId(sysUser.getOrganizationId());
@@ -394,6 +395,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 }
                 WmsInnerInventoryDetDto inventoryDetDto = inventoryDetDtos.get(0);
                 inventoryDetDto.setStorageId(dto.getStorageId());
+                wmsInnerInventoryDetService.update(inventoryDetDto);
             }
         }
 
