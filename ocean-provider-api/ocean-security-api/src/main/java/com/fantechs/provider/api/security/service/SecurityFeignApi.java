@@ -1,6 +1,7 @@
 package com.fantechs.provider.api.security.service;
 
 
+import com.fantechs.common.base.entity.security.SysApiLog;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
@@ -12,6 +13,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,5 +47,9 @@ public interface SecurityFeignApi {
     @ApiOperation(value = "查询用户列表",notes = "根据条件查询用户信息")
     ResponseEntity<List<SysUser>> selectUsers(
             @ApiParam(value ="输入查询条件",required = false)@RequestBody(required = false) SearchSysUser searchSysUser );
+
+    @ApiOperation(value = "新增接口日志",notes = "新增接口日志(组织、创建人、创建时间已有)")
+    @PostMapping("/sysApiLog/add")
+    ResponseEntity add(@ApiParam(value = "必传",required = true) @RequestBody @Validated SysApiLog sysApiLog);
 
 }
