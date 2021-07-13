@@ -229,17 +229,19 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             searchWmsInnerJobOrderDet.setJobOrderDetId(id);
             WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
             //分配库存
-            num+=this.updateInventory(wmsInnerJobOrderDto,wmsInnerJobOrderDetDto);
-
+            if(wmsInnerJobOrderDto.getJobOrderType() != (byte) 2){
+                num+=this.updateInventory(wmsInnerJobOrderDto,wmsInnerJobOrderDetDto);
+            }
             if(StringUtils.isEmpty(dto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
             //如果货品全部分配完成更改表头状态为待作业状态
             if(dto.stream().filter(li->li.getOrderStatus()==(byte)3).collect(Collectors.toList()).size()==dto.size()){
                 //更新表头状态
                 //完工入库单需要激活状态 其他则不需要
                 Byte status = 3;
-                if(wmsInnerJobOrder.getOrderTypeId()==4){
+                if(wmsInnerJobOrder.getOrderTypeId() !=null && wmsInnerJobOrder.getOrderTypeId()==4){
                     status=6;
                 }
                 wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
@@ -411,13 +413,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         num = this.Inventory(oldDto,wmsInnerJobOrderDetDto);
                     }
 
-                    //反写完工入库单
-                    ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
-                            .putawayQty(wmsInnerJobOrderDet.getDistributionQty())
-                            .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
-                            .build());
-                    if(responseEntity.getCode()!=0){
-                        throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                    if (wmsInnerJobOrder.getJobOrderType() != (byte)2){
+                        //反写完工入库单
+                        ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                                .putawayQty(wmsInnerJobOrderDet.getDistributionQty())
+                                .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
+                                .build());
+                        if(responseEntity.getCode()!=0){
+                            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                        }
                     }
                 }
             }
