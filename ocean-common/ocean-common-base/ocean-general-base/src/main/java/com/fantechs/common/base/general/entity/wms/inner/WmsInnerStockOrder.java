@@ -163,5 +163,9 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "type",value = "类型：(1-修改 2-盘点登记)")
     private byte type;
 
+    @Transient
+    @ApiModelProperty(name = "materialList",value = "货品id")
+    private List<Long> materialList;
+
     private static final long serialVersionUID = 1L;
 }
