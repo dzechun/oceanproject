@@ -136,6 +136,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             num+=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
         }else if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==0){
             //确认完成
+            wmsInnerJobOrderDet.setActualQty(qty);
             wmsInnerJobOrderDet.setOrderStatus((byte)5);
             wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setModifiedTime(new Date());
