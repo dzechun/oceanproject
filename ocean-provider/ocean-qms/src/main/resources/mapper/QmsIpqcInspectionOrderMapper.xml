@@ -10,6 +10,7 @@
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="qty" jdbcType="DECIMAL" property="qty" />
     <result column="inspection_way_id" jdbcType="BIGINT" property="inspectionWayId" />
     <result column="inspection_standard_id" jdbcType="BIGINT" property="inspectionStandardId" />
@@ -40,6 +41,7 @@
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
     <result column="inspection_way_desc" jdbcType="VARCHAR" property="inspectionWayDesc"/>
     <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName"/>
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
@@ -55,6 +57,7 @@
     qiio.work_order_id,
     qiio.material_id,
     qiio.supplier_id,
+    qiio.process_id,
     qiio.qty,
     qiio.inspection_way_id,
     qiio.inspection_standard_id,
@@ -79,7 +82,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    mpwo.work_order_code,bm.material_code,bm.material_desc,bm.material_version,
+    mpwo.work_order_code,bm.material_code,bm.material_desc,bm.material_version,bp.process_name,
     bpm.product_model_name,bs.supplier_name,biw.inspection_way_desc,bis.inspection_standard_name,
     bd.dept_name,su.user_name as audit_user_name,
     u.user_name as create_user_name,
@@ -87,6 +90,7 @@
     bo.organization_name
     from fantech_imes_v2.qms_ipqc_inspection_order qiio
     left join fantech_imes_v2.mes_pm_work_order mpwo on qiio.work_order_id=mpwo.work_order_id
+    left join fantech_imes_v2.base_process bp on qiio.process_id=bp.process_id
     left join fantech_imes_v2.base_material bm on qiio.material_id=bm.material_id
     left join fantech_imes_v2.base_material_tab bmt on qiio.material_id=bmt.material_id
     left join fantech_imes_v2.base_product_model bpm on bmt.product_model_id=bpm.product_model_id
