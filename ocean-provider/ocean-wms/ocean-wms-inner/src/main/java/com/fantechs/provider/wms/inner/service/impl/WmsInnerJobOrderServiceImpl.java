@@ -1177,7 +1177,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         criteria.andEqualTo("jobOrderDetId",newDto.getJobOrderDetId());
         criteria1.andEqualTo("jobStatus",(byte)1);
         criteria.andEqualTo("inventoryStatusId",newDto.getInventoryStatusId());
-        criteria.andEqualTo("stockLock",0).andEqualTo("qcLock",0).andEqualTo("lockStatus",0);
+        criteria.andGreaterThan("stockLock",0).andGreaterThan("qcLock",0).andGreaterThan("lockStatus",0);
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventorys)){
             //添加库存
