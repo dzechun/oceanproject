@@ -104,7 +104,7 @@ public class WmsInAsnOrderController {
     List<WmsInAsnOrderDto> list = wmsInAsnOrderService.findList(searchWmsInAsnOrder);
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsInAsnOrder信息", WmsInAsnOrderDto.class, "WmsInAsnOrder.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "完工入库单信息", WmsInAsnOrderDto.class, "WmsInAsnOrder.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

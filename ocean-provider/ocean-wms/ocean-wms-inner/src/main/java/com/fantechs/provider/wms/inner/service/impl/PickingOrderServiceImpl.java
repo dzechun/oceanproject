@@ -215,7 +215,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             throw new BizErrorException("库存匹配失败");
         }
         wmsInnerInventoryDet.setInTime(new Date());
-        wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
+        wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
         wmsInnerInventoryDet.setRelatedOrderCode(jobOrderCode);
         return wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
     }
@@ -238,8 +238,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             return map;
         }else{
             //获取出库单对应的工单
-            WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = outFeignApi.detail(wmsInnerJobOrderDet.getSourceDetId()).getData();
-            BigDecimal qty = InBarcodeUtil.checkBarCode(wmsOutDeliveryOrderDet.getSourceOrderId(),barCode);
+//            WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = outFeignApi.detail(wmsInnerJobOrderDet.getSourceDetId()).getData();
+            BigDecimal qty = InBarcodeUtil.pickCheckBarCode(wmsInnerJobOrderDet.getMaterialId(),barCode);
             map.put("SN","true");
             map.put("qty",qty);
         }
@@ -285,8 +285,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         .build());
                 //库位容量减1
                 //baseFeignApi.minusSurplusCanPutSalver(wms.getInStorageId(),1);
-
-                //num+= this.DistributionInventory(wmsInnerJobOrder,wms);
                 WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(wms.getJobOrderDetId());
                 //分配库存
                 num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet);

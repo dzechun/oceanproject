@@ -30,7 +30,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * ASN单ID
      */
     @ApiModelProperty(name="asnOrderId",value = "ASN单ID")
-    @Excel(name = "ASN单ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "asn_order_id")
     private Long asnOrderId;
@@ -39,7 +38,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 来源单据ID
      */
     @ApiModelProperty(name="orderId",value = "来源单据ID")
-    @Excel(name = "来源单据ID", height = 20, width = 30,orderNum="") 
     @Column(name = "source_order_id")
     private Long sourceOrderId;
 
@@ -47,7 +45,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 货主信息
      */
     @ApiModelProperty(name="materialOwnerId",value = "货主信息")
-    @Excel(name = "货主信息", height = 20, width = 30,orderNum="") 
     @Column(name = "material_owner_id")
     private Long materialOwnerId;
 
@@ -56,7 +53,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 供应商ID
      */
     @ApiModelProperty(name="supplierId",value = "供应商ID")
-    @Excel(name = "供应商ID", height = 20, width = 30,orderNum="") 
     @Column(name = "supplier_id")
     private Long supplierId;
 
@@ -88,7 +84,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * ASN单号
      */
     @ApiModelProperty(name="asnCode",value = "ASN单号")
-    @Excel(name = "ASN单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "ASN单号", height = 20, width = 30,orderNum="1")
     @Column(name = "asn_code")
     private String asnCode;
 
@@ -96,7 +92,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 客户单号
      */
     @ApiModelProperty(name="customerOrderCode",value = "客户单号")
-    @Excel(name = "客户单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "客户单号", height = 20, width = 30,orderNum="9")
     @Column(name = "customer_order_code")
     private String customerOrderCode;
 
@@ -104,7 +100,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 相关单号1
      */
     @ApiModelProperty(name="relatedOrderCode1",value = "相关单号1")
-    @Excel(name = "相关单号1", height = 20, width = 30,orderNum="") 
+    @Excel(name = "相关单号1", height = 20, width = 30,orderNum="10")
     @Column(name = "related_order_code_1")
     private String relatedOrderCode1;
 
@@ -112,7 +108,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 相关单号2
      */
     @ApiModelProperty(name="relatedOrderCode2",value = "相关单号2")
-    @Excel(name = "相关单号2", height = 20, width = 30,orderNum="") 
     @Column(name = "related_order_code_2")
     private String relatedOrderCode2;
 
@@ -120,7 +115,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 相关单号3
      */
     @ApiModelProperty(name="relatedOrderCode3",value = "相关单号3")
-    @Excel(name = "相关单号3", height = 20, width = 30,orderNum="") 
     @Column(name = "related_order_code_3")
     private String relatedOrderCode3;
 
@@ -128,7 +122,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "订单日期", height = 20, width = 30,orderNum="11")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -136,7 +130,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 预计到货(arrival of good)日期
      */
     @ApiModelProperty(name="planAgoDate",value = "预计到货(arrival of good)日期")
-    @Excel(name = "预计到货(arrival of good)日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "预计到货(arrival of good)日期", height = 20, width = 30,orderNum="12")
     @Column(name = "plan_ago_date")
     private Date planAgoDate;
 
@@ -144,7 +138,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 开始收货日期
      */
     @ApiModelProperty(name="startReceivingDate",value = "开始收货日期")
-    @Excel(name = "开始收货日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "开始收货日期", height = 20, width = 30,orderNum="13")
     @Column(name = "start_receiving_date")
     private Date startReceivingDate;
 
@@ -152,7 +146,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 结束收货日期
      */
     @ApiModelProperty(name="endReceivingDate",value = "结束收货日期")
-    @Excel(name = "结束收货日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "结束收货日期", height = 20, width = 30,orderNum="14")
     @Column(name = "end_receiving_date")
     private Date endReceivingDate;
 
@@ -160,7 +154,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 发货人名称
      */
     @ApiModelProperty(name="shipperName",value = "发货人名称")
-    @Excel(name = "发货人名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "发货人名称", height = 20, width = 30,orderNum="15")
     @Column(name = "shipper_name")
     private String shipperName;
 
@@ -168,7 +162,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 联系人名称
      */
     @ApiModelProperty(name="linkManName",value = "联系人名称")
-    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="") 
     @Column(name = "link_man_name")
     private String linkManName;
 
@@ -176,7 +169,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 联系人电话
      */
     @ApiModelProperty(name="linkManPhone",value = "联系人电话")
-    @Excel(name = "联系人电话", height = 20, width = 30,orderNum="") 
     @Column(name = "link_man_phone")
     private String linkManPhone;
 
@@ -184,7 +176,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 传真号码
      */
     @ApiModelProperty(name="faxNumber",value = "传真号码")
-    @Excel(name = "传真号码", height = 20, width = 30,orderNum="") 
     @Column(name = "fax_number")
     private String faxNumber;
 
@@ -192,7 +183,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 邮箱地址
      */
     @ApiModelProperty(name="eMailAddress",value = "邮箱地址")
-    @Excel(name = "邮箱地址", height = 20, width = 30,orderNum="") 
     @Column(name = "e_mail_address")
     private String eMailAddress;
 
@@ -200,7 +190,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 详细地址
      */
     @ApiModelProperty(name="detailedAddress",value = "详细地址")
-    @Excel(name = "详细地址", height = 20, width = 30,orderNum="") 
     @Column(name = "detailed_address")
     private String detailedAddress;
 
@@ -208,7 +197,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 描述
      */
     @ApiModelProperty(name="descr",value = "描述")
-    @Excel(name = "描述", height = 20, width = 30,orderNum="") 
+    @Excel(name = "描述", height = 20, width = 30,orderNum="16")
     private String descr;
 
     /**
@@ -216,27 +205,25 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name = "orderStatus",value = "单据状态(1-待收货 2-收货中 3-收货完成)")
     @Column(name = "order_status")
+    @Excel(name = "描述", height = 20, width = 30,orderNum="17")
     private Byte orderStatus;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -244,7 +231,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -252,7 +238,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="18",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -261,7 +247,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -269,7 +254,7 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="21",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -278,7 +263,6 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 

@@ -94,6 +94,29 @@ public class InBarcodeUtil {
     }
 
     /**
+     * 拣货作业匹配条码
+     * @param materialId
+     * @param barCode
+     * @return
+     */
+    public static BigDecimal pickCheckBarCode(Long materialId,String barCode){
+        //查询库存明细是否存在改条码
+        Example example = new Example(WmsInnerInventoryDet.class);
+        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode);
+        List<WmsInnerInventoryDet> list = inBarcodeUtil.wmsInnerInventoryDetMapper.selectByExample(example);
+        if(list.size()<1){
+            throw new BizErrorException("条码不存在");
+        }
+        BigDecimal totalQty =list.stream()
+                .map(WmsInnerInventoryDet::getMaterialQty)
+                .reduce(BigDecimal.ZERO,BigDecimal::add);
+        if(totalQty.compareTo(BigDecimal.ZERO)==0){
+            throw new BizErrorException("暂无入库数量");
+        }
+        return totalQty;
+    }
+
+    /**
      * 上架获取扫码条码的数量
      * @param materialId 物料ID
      * @param barCode 条码
