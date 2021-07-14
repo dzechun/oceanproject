@@ -197,6 +197,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
            //}
        }else{
            wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getActualQty().add(wms.getActualQty()!=null?wms.getActualQty():new BigDecimal("0")));
+           wms.setActualQty(wmsInAsnOrderDet.getActualQty());
        }
         //wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getActualQty().add(wms.getActualQty()!=null?wms.getActualQty():new BigDecimal("0")));
         wmsInAsnOrderDetMapper.updateByPrimaryKey(wmsInAsnOrderDet);
