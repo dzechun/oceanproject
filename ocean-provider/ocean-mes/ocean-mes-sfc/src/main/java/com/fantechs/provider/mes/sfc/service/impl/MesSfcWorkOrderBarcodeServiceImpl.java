@@ -337,6 +337,11 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         return mesSfcWorkOrderBarcodeMapper.findListGroupByWorkOrder(map);
     }
 
+    @Override
+    public List<MesSfcWorkOrderBarcodeDto> findListByPalletDet(Map<String, Object> map) {
+        return mesSfcWorkOrderBarcodeMapper.findListByPalletDet(map);
+    }
+
     /**
      * 获取当前登录用户
      * @return

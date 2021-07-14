@@ -194,4 +194,19 @@ order by mswob.create_time desc
         GROUP BY
         mswob.work_order_id
     </select>
+
+    <select id="findListByPalletDet" resultMap="BaseResultDtoMap" parameterType="map">
+        SELECT <include refid="BaseColumnList"/>
+        FROM mes_sfc_work_order_barcode mswob
+        LEFT JOIN mes_sfc_product_pallet_det msppd ON msppd.work_order_barcode_id = mswob.work_order_barcode_id
+        <where>
+            <if test="orgId != null">
+                and mswob.org_id = #{orgId}
+            </if>
+            <if test="productPalletId != null">
+                and mswob.product_pallet_id = #{productPalletId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

@@ -46,4 +46,6 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
     List<MesSfcWorkOrderBarcodeDto> findByWorkOrderGroup(Map<String, Object> map);
 
     List<PalletAutoAsnDto> findListGroupByWorkOrder(Map<String, Object> map);
+
+    List<MesSfcWorkOrderBarcodeDto> findListByPalletDet(Map<String, Object> map);
 }
