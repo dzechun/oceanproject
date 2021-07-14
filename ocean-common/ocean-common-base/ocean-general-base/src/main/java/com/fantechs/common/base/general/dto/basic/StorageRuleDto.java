@@ -1,4 +1,4 @@
-package com.fantechs.provider.base.util;
+package com.fantechs.common.base.general.dto.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;

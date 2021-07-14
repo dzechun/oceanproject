@@ -186,7 +186,7 @@
         </foreach>
     </update>
 <!--    库粗分配规则-->
-    <resultMap id="StorageRuleMap" type="com.fantechs.provider.base.util.StorageRuleDto">
+    <resultMap id="StorageRuleMap" type="com.fantechs.common.base.general.dto.basic.StorageRuleDto">
 
     </resultMap>
     <select id="findPutawayRule" resultMap="StorageRuleMap">

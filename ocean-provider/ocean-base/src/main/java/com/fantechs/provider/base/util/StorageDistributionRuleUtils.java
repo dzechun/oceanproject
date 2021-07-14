@@ -1,6 +1,7 @@
 package com.fantechs.provider.base.util;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,8 @@ public class StorageDistributionRuleUtils {
      * @param packageQty
      * @return
      */
-    public static List<StorageRuleDto> JobMainRule(BigDecimal packageQty,Long warehouseId,Long materialId,
-                                                   String batchCode,String proDate){
+    public static List<StorageRuleDto> JobMainRule(BigDecimal packageQty, Long warehouseId, Long materialId,
+                                                   String batchCode, String proDate){
         //可用库位列表
         List<StorageRuleDto> list = new ArrayList<>();
         //待上架总数包装数量

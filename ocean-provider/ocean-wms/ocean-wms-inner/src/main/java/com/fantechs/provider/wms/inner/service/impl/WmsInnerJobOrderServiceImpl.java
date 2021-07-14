@@ -661,16 +661,16 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      * PDA扫码上架新增库存明细
      * @return
      */
-    private int addInventoryDet(Long asnOrderId,WmsInnerJobOrderDet wmsInnerJobOrderDet){
+    private int addInventoryDet(Long asnOrderId,WmsInnerJobOrderDet wmsInnerJobOrderDet,String barcode){
         //获取完工入库单单号
         String asnOrderCode = wmsInPutawayOrderMapper.findAsnCode(asnOrderId);
         Example example = new Example(WmsInnerInventoryDet.class);
-        //获取绑定上架单的栈板码
-        String barCode = wmsInPutawayOrderDetMapper.findPalletCode(wmsInnerJobOrderDet.getJobOrderId());
-        if(StringUtils.isEmpty(barCode)){
-            throw new BizErrorException("获取栈板信息失败");
-        }
-        example.createCriteria().andEqualTo("relatedOrderCode",asnOrderCode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcode",barCode);
+//        //获取绑定上架单的栈板码
+//        String barCode = wmsInPutawayOrderDetMapper.findPalletCode(wmsInnerJobOrderDet.getJobOrderId());
+//        if(StringUtils.isEmpty(barCode)){
+//            throw new BizErrorException("获取栈板信息失败");
+//        }
+        example.createCriteria().andEqualTo("relatedOrderCode",asnOrderCode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcode",barcode);
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventoryDet)){
             throw new BizErrorException("未查询到收货条码");
@@ -688,7 +688,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public WmsInnerJobOrderDet scanStorageBackQty(String storageCode, Long jobOrderDetId,BigDecimal qty,String isSN) {
+    public WmsInnerJobOrderDet scanStorageBackQty(String storageCode, Long jobOrderDetId,BigDecimal qty,String barcode) {
         SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(qty)){
             throw new BizErrorException("上架数量不能小于1");
@@ -703,9 +703,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
 
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInPutawayOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
-//        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())){
-//            wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getDistributionQty());
-//        }
         if(StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())){
             wmsInnerJobOrderDet.setActualQty(BigDecimal.ZERO);
         }
@@ -717,10 +714,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
         searchWmsInnerJobOrderDet.setJobOrderDetId(jobOrderDetId);
         WmsInnerJobOrderDetDto oldDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
-//        Byte status = 4;
-//        if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==0){
-//            status = (byte)5;
-//        }
         int num = 0;
         if(wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty())==-1){
             WmsInnerJobOrderDet wmss = new WmsInnerJobOrderDet();
@@ -751,15 +744,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsInnerJobOrderDet.setModifiedTime(new Date());
             num+=wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
         }
-//        WmsInnerJobOrderDet wms =WmsInnerJobOrderDet.builder()
-//                .jobOrderDetId(jobOrderDetId)
-//                .inStorageId(baseStorage.getStorageId())
-//                .actualQty(qty)
-//                .orderStatus(status)
-//                .modifiedTime(new Date())
-//                .modifiedUserId(sysUser.getUserId())
-//                .build();
-//        int num = wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wms);
         if(num==0){
             throw new BizErrorException("上架失败");
         }
@@ -773,9 +757,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //更改库存
         num = this.Inventory(oldDto,wmsInnerJobOrderDetDto.get(0));
         //是否条码上架
-        if(isSN.equals("true")){
-            //更新库存明细
-            num+=this.addInventoryDet(wmsInnerJobOrderDto.getSourceOrderId(),wmsInnerJobOrderDet);
+        if(StringUtils.isNotEmpty(barcode)){
+            String[] code = barcode.split(",");
+            for (String s : code) {
+                //更新库存明细
+                num+=this.addInventoryDet(wmsInnerJobOrderDto.getSourceOrderId(),wmsInnerJobOrderDet,s);
+            }
         }
         WmsInnerJobOrderDet wms= new WmsInnerJobOrderDet();
         wms.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
