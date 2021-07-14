@@ -5,6 +5,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
+import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.*;
@@ -172,6 +174,13 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (dto.getBarcodes() == null && dto.getBarcodes().size() <= 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001006);
         }
+        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+        searchBaseWorker.setWarehouseId(dto.getWarehouseId());
+        searchBaseWorker.setUserId(sysUser.getUserId());
+        List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+        if(workerDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.PDA5001014);
+        }
         // 判断是否有作业单
         if (!dto.getIsPda()) {
             // 移位作业明细单 变更移位状态
@@ -189,6 +198,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             WmsInnerJobOrder innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderId());
             innerJobOrder.setOrderStatus((byte) 4);
             innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
+            innerJobOrder.setWorkerId(workerDtos.get(0).getWorkerId());
             wmsInnerJobOrderMapper.updateByPrimaryKey(innerJobOrder);
         } else {
             // 查询库存信息，同一库位跟同物料有且只有一条数据
@@ -215,6 +225,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 innerJobOrder.setOrderStatus((byte) 4);
                 innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
                 innerJobOrder.setPlanQty(innerJobOrder.getActualQty());
+                innerJobOrder.setWorkerId(workerDtos.get(0).getWorkerId());
                 wmsInnerJobOrderMapper.updateByPrimaryKey(innerJobOrder);
             }else {
                 // 创建移位单
@@ -225,7 +236,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                     innerJobOrder.setMaterialOwnerId(ownerDtos.get(0).getMaterialOwnerId());
                 }
                 innerJobOrder.setWarehouseId(dto.getWarehouseId());
-                innerJobOrder.setWorkerId(sysUser.getUserId());
+                innerJobOrder.setWorkerId(workerDtos.get(0).getWorkerId());
                 innerJobOrder.setJobOrderCode(CodeUtils.getId("SHIFT-"));
                 innerJobOrder.setJobOrderType((byte) 2);
                 innerJobOrder.setPlanQty(dto.getMaterialQty());
@@ -406,6 +417,13 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         wms.setOrderStatus((byte)5);
         int oCount = wmsInnerJobOrderDetService.selectCount(wms);
 
+        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+        searchBaseWorker.setWarehouseId(wmsInnerJobOrderDto.getWarehouseId());
+        searchBaseWorker.setUserId(sysUser.getUserId());
+        List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+        if(workerDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.PDA5001014);
+        }
 
         if(oCount==count){
             WmsInnerJobOrder ws = new WmsInnerJobOrder();
@@ -415,7 +433,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             ws.setModifiedUserId(sysUser.getUserId());
             ws.setModifiedTime(new Date());
             ws.setWorkEndtTime(new Date());
-            ws.setWorkerId(sysUser.getUserId());
+            ws.setWorkerId(workerDtos.get(0).getWorkerId());
             num +=wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
         }else{
             WmsInnerJobOrder ws = new WmsInnerJobOrder();
@@ -424,7 +442,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             ws.setActualQty(resQty);
             ws.setModifiedUserId(sysUser.getUserId());
             ws.setModifiedTime(new Date());
-            ws.setWorkerId(sysUser.getUserId());
+            ws.setWorkerId(workerDtos.get(0).getWorkerId());
             if(StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())){
                 ws.setWorkStartTime(new Date());
             }
