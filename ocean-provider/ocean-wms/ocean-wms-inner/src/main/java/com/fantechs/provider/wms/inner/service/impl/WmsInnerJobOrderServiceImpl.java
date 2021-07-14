@@ -934,6 +934,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
                 WmsInnerInventory newInnerInventory = new WmsInnerInventory();
                 BeanUtil.copyProperties(innerInventory, newInnerInventory);
+                newInnerInventory.setPackingQty(wmsInPutawayOrderDet.getPlanQty());
                 newInnerInventory.setJobStatus((byte) 3);
                 newInnerInventory.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
                 newInnerInventory.setOrgId(sysUser.getOrganizationId());
