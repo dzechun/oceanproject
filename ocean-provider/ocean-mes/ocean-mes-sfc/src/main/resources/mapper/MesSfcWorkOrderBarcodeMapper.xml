@@ -204,7 +204,7 @@ order by mswob.create_time desc
                 and mswob.org_id = #{orgId}
             </if>
             <if test="productPalletId != null">
-                and mswob.product_pallet_id = #{productPalletId}
+                and msppd.product_pallet_id = #{productPalletId}
             </if>
         </where>
     </select>
