@@ -10,11 +10,13 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderReMspp;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderReMsppMapper;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,8 @@ public class InBarcodeUtil {
     private SFCFeignApi sfcFeignApi;
     @Resource
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
+    @Resource
+    private WmsInnerJobOrderMapper wmsInnerJobOrderMapper;
 
     private static InBarcodeUtil inBarcodeUtil;
 
@@ -48,6 +52,7 @@ public class InBarcodeUtil {
         inBarcodeUtil = this;
         inBarcodeUtil.sfcFeignApi = sfcFeignApi;
         inBarcodeUtil.wmsInnerInventoryDetMapper = wmsInnerInventoryDetMapper;
+        inBarcodeUtil.wmsInnerJobOrderMapper = wmsInnerJobOrderMapper;
     }
 
     /**
@@ -94,10 +99,11 @@ public class InBarcodeUtil {
      * @param barCode 条码
      * @return
      */
-    public static BigDecimal getInventoryDetQty(Long materialId,String barCode){
+    public static BigDecimal getInventoryDetQty(Long asnOrderId,Long materialId,String barCode){
+        String asnOrderCode = inBarcodeUtil.wmsInnerJobOrderMapper.findAsnCode(asnOrderId);
         //查询库存明细是否存在改条码
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode);
+        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode).andEqualTo("relatedOrderCode",asnOrderCode);
         List<WmsInnerInventoryDet> list = inBarcodeUtil.wmsInnerInventoryDetMapper.selectByExample(example);
         if(list.size()<1){
             throw new BizErrorException("条码不存在");

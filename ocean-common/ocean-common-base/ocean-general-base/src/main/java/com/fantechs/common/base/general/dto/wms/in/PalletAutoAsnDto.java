@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author mr.lei
@@ -102,4 +103,10 @@ public class PalletAutoAsnDto extends WmsInAsnOrderDet implements Serializable {
      */
     @ApiModelProperty(name = "workOrderId",value = "工单ID")
     private Long workOrderId;
+
+    /**
+     * 条码集合
+     */
+    @ApiModelProperty(name = "barCodeList",value = "条码集合")
+    List<String> barCodeList;
 }

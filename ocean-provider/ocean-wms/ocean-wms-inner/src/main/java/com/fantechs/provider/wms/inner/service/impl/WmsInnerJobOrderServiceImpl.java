@@ -650,7 +650,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             map.put("SN","false");
             return map;
         }else{
-            BigDecimal qty = InBarcodeUtil.getInventoryDetQty(wmsInnerJobOrderDet.getMaterialId(),barCode);
+            BigDecimal qty = InBarcodeUtil.getInventoryDetQty(wms.getAsnOrderId(),wmsInnerJobOrderDet.getMaterialId(),barCode);
             map.put("SN","true");
             map.put("qty",qty);
         }
@@ -661,7 +661,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      * PDA扫码上架新增库存明细
      * @return
      */
-    private int addInventoryDet(Long asnOrderId,WmsInnerJobOrderDet wmsInnerJobOrderDet,String barcode){
+    private int addInventoryDet(Long asnOrderId,String jobOrderCode,WmsInnerJobOrderDet wmsInnerJobOrderDet,String barcode){
         //获取完工入库单单号
         String asnOrderCode = wmsInPutawayOrderMapper.findAsnCode(asnOrderId);
         Example example = new Example(WmsInnerInventoryDet.class);
@@ -675,6 +675,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(StringUtils.isEmpty(wmsInnerInventoryDet)){
             throw new BizErrorException("未查询到收货条码");
         }
+        wmsInnerInventoryDet.setRelatedOrderCode(jobOrderCode);
         wmsInnerInventoryDet.setInTime(new Date());
         wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
         return wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
@@ -761,7 +762,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             String[] code = barcode.split(",");
             for (String s : code) {
                 //更新库存明细
-                num+=this.addInventoryDet(wmsInnerJobOrderDto.getSourceOrderId(),wmsInnerJobOrderDet,s);
+                num+=this.addInventoryDet(wmsInnerJobOrderDto.getSourceOrderId(),wmsInnerJobOrderDto.getJobOrderCode(),wmsInnerJobOrderDet,s);
             }
         }
         WmsInnerJobOrderDet wms= new WmsInnerJobOrderDet();

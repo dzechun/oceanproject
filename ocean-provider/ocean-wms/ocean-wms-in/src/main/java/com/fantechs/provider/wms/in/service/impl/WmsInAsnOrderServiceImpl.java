@@ -675,6 +675,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wms);
                 }else{
                     wms = palletAutoAsnDto;
+                    wms.setInventoryStatusId(Long.parseLong("107"));
                     wms.setAsnOrderId(asnOrderId);
                     wms.setCreateTime(new Date());
                     wms.setCreateUserId(sysUser.getUserId());
@@ -687,7 +688,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wms.getAsnOrderDetId(),palletAutoAsnDto.getPackingQty());
                 wms.setActualQty(palletAutoAsnDto.getActualQty());
                 //新增库存明细
-                res = this.addInventoryDet(wmsInAsnOrder.getProductPalletId(),wmsInAsnOrder.getAsnCode(),wms);
+                res = this.addInventoryDet(palletAutoAsnDto.getBarCodeList(),wmsInAsnOrder.getAsnCode(),wms);
                 //新增上架作业单
                 res = this.createJobOrder(wmsInAsnOrder,wms);
                 return 1;
@@ -714,6 +715,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 }
                 WmsInAsnOrderDet wmsInAsnOrderDet = new WmsInAsnOrderDet();
                 BeanUtil.copyProperties(palletAutoAsnDto,wmsInAsnOrderDet);
+                wmsInAsnOrderDet.setInventoryStatusId(Long.parseLong("107"));
                 wmsInAsnOrderDet.setAsnOrderId(wmsInAsnOrder.getAsnOrderId());
                 wmsInAsnOrderDet.setCreateTime(new Date());
                 wmsInAsnOrderDet.setCreateUserId(sysUser.getUserId());
@@ -728,7 +730,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     throw new BizErrorException("库存添加失败");
                 }
                 //新增库存明细
-                res = this.addInventoryDet(wmsInAsnOrder.getProductPalletId(),wmsInAsnOrder.getAsnCode(),wmsInAsnOrderDet);
+                res = this.addInventoryDet(palletAutoAsnDto.getBarCodeList(),wmsInAsnOrder.getAsnCode(),wmsInAsnOrderDet);
                 //新增上级作业单
                 res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
                 //设置新redis 时效为24小时
@@ -837,17 +839,16 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
 
     /**
      * 收货确认新增库存明细
-     * @param productPalletId
      * @param orderCode
      * @param wmsInAsnOrderDet
      * @return
      */
-    private int addInventoryDet(Long productPalletId,String orderCode,WmsInAsnOrderDet wmsInAsnOrderDet){
+    private int addInventoryDet(List<String> barCodeList,String orderCode,WmsInAsnOrderDet wmsInAsnOrderDet){
         //获取工单条码
-        List<String> barcodes = this.checkBarcode(productPalletId);
+        //List<String> barcodes = this.checkBarcode(productPalletId);
         //String barCode = this.checkBarcode(productPalletId);
         int num = 0;
-        for (String barcode : barcodes) {
+        for (String barcode : barCodeList) {
             //按条码查询是否存在库存
             WmsInnerInventoryDet wmsInnerInventoryDet = innerFeignApi.findByDet(barcode).getData();
             if(StringUtils.isNotEmpty(wmsInnerInventoryDet)){
