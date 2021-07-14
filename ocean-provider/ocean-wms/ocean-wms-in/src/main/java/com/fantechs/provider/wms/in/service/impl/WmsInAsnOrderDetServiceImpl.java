@@ -148,6 +148,13 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 }
             }
 
+            if(asnOrderDto.getOrderTypeId()!=3) {
+                WmsInnerInventoryDet wmsInnerInventoryDet = innerFeignApi.findByDet(barcode).getData();
+                if (StringUtils.isNotEmpty(wmsInnerInventoryDet)) {
+                    throw new BizErrorException("该条码已入库，不可重复入库");
+                }
+            }
+
             //通过条码带出数量
             //1、是否栈板条码
             SearchMesSfcProductPallet searchMesSfcProductPallet = new SearchMesSfcProductPallet();
@@ -192,15 +199,15 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
         WmsInAsnOrderDto wmsInAsnOrderDto = wmsInAsnOrderMapper.findList(searchWmsInAsnOrder).get(0);
 
         //非物料编码，新增（修改）库存明细
-        List<WmsInnerInventoryDet> wmsInnerInventoryDets = new ArrayList<>();
         List<String> barcodes = wmsInAsnOrderDetDto.getBarcodes();
         for(String barcode:barcodes){
             if(!barcode.equals(wmsInAsnOrderDetDto.getMaterialCode())&&wmsInAsnOrderDto.getOrderTypeId()!=3){
+                List<WmsInnerInventoryDet> wmsInnerInventoryDets = new ArrayList<>();
                 WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
                 wmsInnerInventoryDet.setStorageId(wmsInAsnOrderDetDto.getStorageId());
                 wmsInnerInventoryDet.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
                 wmsInnerInventoryDet.setBarcode(barcode);
-                wmsInnerInventoryDet.setMaterialQty(wmsInAsnOrderDetDto.getActualQty());
+                wmsInnerInventoryDet.setMaterialQty(new BigDecimal(1));
                 wmsInnerInventoryDet.setExpirationDate(this.daysBetween(wmsInAsnOrderDetDto.getProductionDate(),wmsInAsnOrderDetDto.getExpiredDate()));
                 wmsInnerInventoryDet.setProductionDate(wmsInAsnOrderDetDto.getProductionDate());
                 wmsInnerInventoryDet.setProductionBatchCode(wmsInAsnOrderDetDto.getBatchCode());
@@ -214,7 +221,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 WmsInnerInventoryDet inventoryDet = innerFeignApi.findByDet(barcode).getData();
                 inventoryDet.setInTime(null);
                 inventoryDet.setStorageId(wmsInAsnOrderDetDto.getStorageId());
-                inventoryDet.setMaterialQty(inventoryDet.getMaterialQty().add(wmsInAsnOrderDetDto.getActualQty()));
+                inventoryDet.setMaterialQty(new BigDecimal(1));
                 ResponseEntity responseEntity = innerFeignApi.update(inventoryDet);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException("修改库存明细失败");
