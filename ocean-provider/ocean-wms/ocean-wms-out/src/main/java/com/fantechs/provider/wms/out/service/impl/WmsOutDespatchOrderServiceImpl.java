@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -314,7 +315,10 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
         if(StringUtils.isEmpty(wmsOutDeliveryOrderDet)){
             throw new BizErrorException("未匹配到关联的出库单");
         }
-        wmsOutDeliveryOrderDet.setDispatchQty(wmsInnerJobOrderDetDto.getActualQty());
+        if(StringUtils.isEmpty(wmsOutDeliveryOrderDet.getDispatchQty())){
+            wmsOutDeliveryOrderDet.setDispatchQty(BigDecimal.ZERO);
+        }
+        wmsOutDeliveryOrderDet.setDispatchQty(wmsOutDeliveryOrderDet.getDispatchQty().add(wmsInnerJobOrderDetDto.getActualQty()));
         //查询出库单下所有拣货作业
 //        Example example = new Example(WmsInnerJobOrder.class);
 //        example.createCriteria().andEqualTo("sourceOrderId",wmsOutDeliveryOrderDet.getDeliveryOrderId());
