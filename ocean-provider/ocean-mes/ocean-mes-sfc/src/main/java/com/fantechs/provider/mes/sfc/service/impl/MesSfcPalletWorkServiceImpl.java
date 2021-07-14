@@ -537,6 +537,18 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 //            }
 //        }
         for (PalletAutoAsnDto palletAutoAsnDto : autoAsnDtos){
+            map.clear();
+            map.put("productPalletId", palletAutoAsnDto.getProductPalletId());
+            List<MesSfcWorkOrderBarcodeDto> barcodeDtos = mesSfcWorkOrderBarcodeService.findListByPalletDet(map);
+            palletAutoAsnDto.setBarCodeList(barcodeDtos.stream().map(MesSfcWorkOrderBarcode::getBarcode).collect(Collectors.toList()));
+            if(mesSfcWorkOrderBarcodeList != null && mesSfcWorkOrderBarcodeList.size() > 0) {
+                palletAutoAsnDto.getBarCodeList()
+                        .addAll(mesSfcWorkOrderBarcodeList.stream()
+                                .map(MesSfcWorkOrderBarcode::getBarcode)
+                                .collect(Collectors.toList()));
+                palletAutoAsnDto.setActualQty(palletAutoAsnDto.getActualQty().add(new BigDecimal(mesSfcWorkOrderBarcodeList.size())));
+                palletAutoAsnDto.setPackingQty(palletAutoAsnDto.getActualQty());
+            }
             //完工入库
             SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
             searchBaseMaterialOwner.setAsc((byte)1);
