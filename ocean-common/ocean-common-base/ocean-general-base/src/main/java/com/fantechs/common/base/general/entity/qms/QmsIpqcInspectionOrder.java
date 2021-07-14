@@ -68,6 +68,13 @@ public class QmsIpqcInspectionOrder extends ValidGroup implements Serializable {
     private Long supplierId;
 
     /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId",value = "工序ID")
+    @Column(name = "process_id")
+    private Long processId;
+
+    /**
      * 数量
      */
     @ApiModelProperty(name="qty",value = "数量")
@@ -262,6 +269,13 @@ public class QmsIpqcInspectionOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "supplierName",value = "客户")
     @Excel(name = "客户", height = 20, width = 30,orderNum="7")
     private String supplierName;
+
+    /**
+     * 工序名称
+     */
+    @Transient
+    @ApiModelProperty(name = "processName",value = "工序名称")
+    private String processName;
 
     /**
      * 检验方式

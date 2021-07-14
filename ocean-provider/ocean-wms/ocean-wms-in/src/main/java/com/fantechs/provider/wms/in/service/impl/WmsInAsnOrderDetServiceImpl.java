@@ -109,7 +109,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
 
                 SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
                 searchWmsInnerJobOrder.setSourceOrderId(wmsOutDeliveryOrderDetDtos.get(0).getDeliveryOrderId());
-                List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findPickingOrderList(searchWmsInnerJobOrder).getData();
+                List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
 
                 SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
                 searchWmsInnerInventoryDet.setRelevanceOrderCode(wmsInnerJobOrderDtos.get(0).getJobOrderCode());
