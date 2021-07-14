@@ -22,6 +22,11 @@
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap"
              type="com.fantechs.common.base.general.dto.eam.EamWiReleaseDetDto">
+      <result column="work_instruction_code" jdbcType="VARCHAR" property="workInstructionCode"/>
+      <result column="work_instruction_name" jdbcType="VARCHAR" property="workInstructionName"/>
+      <result column="work_instruction_ver" jdbcType="VARCHAR" property="workInstructionVer"/>
+      <result column="process_id" jdbcType="VARCHAR" property="processId"/>
+      <result column="process_name" jdbcType="VARCHAR" property="processName"/>
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -41,8 +46,12 @@
     </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
-    SELECT<include refid="BaseColumnList"/>
+    SELECT<include refid="BaseColumnList"/>,ewi.work_instruction_code as work_instruction_code,
+    ewi.work_instruction_name as work_instruction_name,ewi.work_instruction_ver as work_instruction_ver,
+      sp.process_id as process_id,sp.process_name as process_name
     FROM eam_wi_release_det ewrd
+    LEFT JOIN eam_work_instruction ewi ON ewrd.work_instruction_id = ewi.work_instruction_id
+    LEFT JOIN base_process sp ON ewi.process_id = sp.process_id
     LEFT JOIN ocean_v2.sys_user su ON ewrd.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON ewrd.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON ewrd.org_id = bo.organization_id

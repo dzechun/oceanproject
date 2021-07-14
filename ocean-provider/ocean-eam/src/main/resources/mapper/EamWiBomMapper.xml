@@ -45,7 +45,7 @@
         ewb.option3
     </sql>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+  <select id="findList" resultMap="BaseResultMapDto">
     SELECT<include refid="BaseColumnList"/>,bm.material_name as material_name,
     bm.material_code as material_code,bm.material_version as material_version
     FROM eam_wi_bom ewb
