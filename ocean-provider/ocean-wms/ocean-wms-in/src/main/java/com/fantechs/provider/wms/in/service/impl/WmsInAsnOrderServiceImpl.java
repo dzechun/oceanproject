@@ -643,16 +643,12 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         return wmsInAsnOrderMapper.deleteByIds(ids);
     }
 
-    @Autowired
-    private PlatformTransactionManager platformTransactionManager;
-
     /**
      * 栈板作业生成完工入库单
      * @param palletAutoAsnDto
      * @return
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
     public int palletAutoAsnOrder(PalletAutoAsnDto palletAutoAsnDto) {
         SysUser sysUser = currentUser();
         try {
@@ -691,8 +687,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 wms.setActualQty(palletAutoAsnDto.getActualQty());
                 //新增库存明细
                 res = this.addInventoryDet(wmsInAsnOrder.getProductPalletId(),wmsInAsnOrder.getAsnCode(),wms);
-                //手动提交事物
-                platformTransactionManager.commit(TransactionAspectSupport.currentTransactionStatus());
                 //新增上架作业单
                 res = this.createJobOrder(wmsInAsnOrder,wms);
                 return 1;
@@ -734,10 +728,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 }
                 //新增库存明细
                 res = this.addInventoryDet(wmsInAsnOrder.getProductPalletId(),wmsInAsnOrder.getAsnCode(),wmsInAsnOrderDet);
-
-                //手动提交事物
-                platformTransactionManager.commit(TransactionAspectSupport.currentTransactionStatus());
-
                 //新增上级作业单
                 res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
                 //设置新redis 时效为24小时
@@ -747,8 +737,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 return 1;
             }
         }catch (Exception e){
-            //手动回滚事物
-            platformTransactionManager.rollback(TransactionAspectSupport.currentTransactionStatus());
             throw new BizErrorException(e.getMessage());
         }
     }
