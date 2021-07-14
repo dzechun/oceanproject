@@ -76,6 +76,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         }
 
         SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+
         if(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId() !=0 ){
             //特殊处理，默认一个集合只有一个规则
             SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
@@ -184,7 +185,14 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         for (String s : arrId) {
             //查询模版信息
             WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(s);
-            LabelRuteDto labelRuteDto = this.findLabelRute((long)11,wmsInnerMaterialBarcode.getMaterialId());
+            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+            searchBaseMaterial.setMaterialId(wmsInnerMaterialBarcode.getMaterialId());
+            ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
+            Long setId = (long)0;
+            if(StringUtils.isNotEmpty(list.getData()) && StringUtils.isNotEmpty(list.getData().get(0).getBarcodeRuleSetId()))
+                setId = list.getData().get(0).getBarcodeRuleSetId();
+
+            LabelRuteDto labelRuteDto = this.findLabelRute(setId,wmsInnerMaterialBarcode.getMaterialId());
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未匹配到绑定的条码模板");
             }

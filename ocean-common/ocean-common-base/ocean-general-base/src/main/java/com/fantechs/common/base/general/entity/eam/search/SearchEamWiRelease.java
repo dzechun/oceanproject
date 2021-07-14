@@ -21,11 +21,11 @@ public class SearchEamWiRelease extends BaseQuery implements Serializable {
      * 工单号
      */
     @ApiModelProperty(name="workOrderCode",value = "工单号")
-    private Long workOrderCode;
+    private String workOrderCode;
 
     /**
      * 产品料号
      */
     @ApiModelProperty(name="materialCode",value = "产品料号")
-    private Long materialCode;
+    private String materialCode;
 }

@@ -89,9 +89,9 @@
         bl.label_code as 'labelCode', bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode',
         lm.once_print_count as 'oncePrintQty'
         FROM base_label_category lc
-            LEFT JOIN base_barcode_rule br ON lc.label_category_id = br.barcode_rule_category_id
-	        LEFT JOIN base_label_material lm ON lm.material_id =#{materialId}
-		    LEFT JOIN base_label bl ON lc.label_category_id = bl.label_category_id
+        LEFT JOIN base_barcode_rule br ON lc.label_category_id = br.barcode_rule_category_id
+        LEFT JOIN base_label bl ON lc.label_category_id = bl.label_category_id
+        LEFT JOIN base_label_material lm ON lm.label_id = bl.label_id  AND lm.material_id =#{materialId}
         <where>
             <if test="code!=null and code!=''">
                 and lc.label_category_code = #{code}
