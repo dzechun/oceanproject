@@ -249,6 +249,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 List<TemVehicleDto> temVehicleDtoList = temVehicleFeignApi.findList(searchTemVehicle).getData();
                 if (StringUtils.isNotEmpty(temVehicleDtoList)) {
                     ptlJobOrder.setVehicleId(temVehicleDtoList.get(0).getVehicleId());
+                    redisUtil.set(temVehicleDtoList.get(0).getVehicleCode(), 1);
                 }
             }
             ptlJobOrder.setOrgId(currentUser.getOrganizationId());
@@ -522,7 +523,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             }
             temVehicleDtoList.sort(Comparator.comparing(TemVehicleDto::getCount));
             for (TemVehicleDto temVehicleDto : temVehicleDtoList) {
-                if (StringUtils.isEmpty(redisUtil.get(temVehicleDto.getVehicleCode()))) {
+                if (!"JH-FAST".equals(temVehicleDto.getVehicleCode()) && StringUtils.isEmpty(redisUtil.get(temVehicleDto.getVehicleCode()))) {
                     vehicleCode = temVehicleDto.getVehicleCode();
                     redisUtil.set(temVehicleDto.getVehicleCode(), 1, 3);
                     log.info("开始打印，redis锁定集货位：" + vehicleCode);
