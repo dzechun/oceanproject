@@ -426,12 +426,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                                 .andEqualTo("warehouseId",oldDto.getWarehouseId())
                                 .andEqualTo("storageId",oldDto.getOutStorageId())
                                 .andEqualTo("jobOrderDetId",oldDto.getJobOrderDetId())
-                                .andEqualTo("jobStatus",(byte) 3);
+                                .andEqualTo("jobStatus",(byte) 2);
                         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example1);
                         if(StringUtils.isEmpty(wmsInnerInventory)){
                             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                         }
-                        wmsInnerInventory.setJobStatus((byte) 2);
+                        wmsInnerInventory.setJobStatus((byte) 1);
                         wmsInnerInventory.setStorageId(oldDto.getOutStorageId());
                         wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
                         //更新库存明细
@@ -547,12 +547,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("warehouseId",oldDto.getWarehouseId())
                         .andEqualTo("storageId",oldDto.getOutStorageId())
                         .andEqualTo("jobOrderDetId",oldDto.getJobOrderDetId())
-                        .andEqualTo("jobStatus",(byte) 3);
+                        .andEqualTo("jobStatus",(byte) 2);
                 WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 if(StringUtils.isEmpty(wmsInnerInventory)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }
-                wmsInnerInventory.setJobStatus((byte) 2);
+                wmsInnerInventory.setJobStatus((byte) 1);
                 wmsInnerInventory.setStorageId(oldDto.getOutStorageId());
                 wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
                 //更新库存明细
@@ -935,7 +935,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 WmsInnerInventory newInnerInventory = new WmsInnerInventory();
                 BeanUtil.copyProperties(innerInventory, newInnerInventory);
                 newInnerInventory.setPackingQty(wmsInPutawayOrderDet.getPlanQty());
-                newInnerInventory.setJobStatus((byte) 3);
+                newInnerInventory.setJobStatus((byte) 2);
                 newInnerInventory.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
                 newInnerInventory.setOrgId(sysUser.getOrganizationId());
                 newInnerInventory.setCreateTime(new Date());
@@ -1030,7 +1030,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
                 WmsInnerInventory newInnerInventory = new WmsInnerInventory();
                 BeanUtil.copyProperties(innerInventory, newInnerInventory);
-                newInnerInventory.setJobStatus((byte) 3);
+                newInnerInventory.setJobStatus((byte) 2);
                 newInnerInventory.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
                 newInnerInventory.setOrgId(sysUser.getOrganizationId());
                 newInnerInventory.setRelevanceOrderCode(record.getJobOrderCode());

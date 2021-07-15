@@ -138,7 +138,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         map.clear();
         map.put("materialId", materialId);
         map.put("storageId", dto.getStorageId());
-        map.put("jobStatus", (byte) 2);
+        map.put("jobStatus", (byte) 1);
         map.put("lockStatus", (byte) 0);
         map.put("stockLock", (byte) 0);
         map.put("qcLock", (byte) 0);
@@ -205,7 +205,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             Map<String, Object> map = new HashMap<>();
             map.put("materialId", dto.getMaterialId());
             map.put("storageId", dto.getStorageId());
-            map.put("jobStatus", (byte) 2);
+            map.put("jobStatus", (byte) 1);
             map.put("lockStatus", (byte) 0);
             map.put("stockLock", (byte) 0);
             map.put("qcLock", (byte) 0);
@@ -291,7 +291,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             BeanUtil.copyProperties(innerInventoryDto, newInnerInventory);
             newInnerInventory.setParentInventoryId(innerInventoryDto.getInventoryId());
             newInnerInventory.setRelevanceOrderCode(innerJobOrder.getJobOrderCode());
-            newInnerInventory.setJobStatus((byte) 3);
+            newInnerInventory.setJobStatus((byte) 2);
             newInnerInventory.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
             newInnerInventory.setOrgId(sysUser.getOrganizationId());
             newInnerInventory.setCreateTime(new Date());
@@ -383,12 +383,12 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 .andEqualTo("warehouseId",oldDto.getWarehouseId())
                 .andEqualTo("storageId",oldDto.getOutStorageId())
                 .andEqualTo("jobOrderDetId",oldDto.getJobOrderDetId())
-                .andEqualTo("jobStatus",(byte) 3);
+                .andEqualTo("jobStatus",(byte) 2);
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventory)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
-        wmsInnerInventory.setJobStatus((byte) 2);
+        wmsInnerInventory.setJobStatus((byte) 1);
         wmsInnerInventory.setStorageId(baseStorage.getStorageId());
         wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
         //更新库存明细
