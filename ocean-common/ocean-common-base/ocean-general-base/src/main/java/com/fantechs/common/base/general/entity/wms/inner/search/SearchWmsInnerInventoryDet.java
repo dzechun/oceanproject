@@ -23,4 +23,6 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     private String relevanceOrderCode;
     @ApiModelProperty("物料数量")
     private BigDecimal materialQty;
+    @ApiModelProperty("是否是不相等 -- 0、相等 1、不相等")
+    private Integer notEqualMark;
 }

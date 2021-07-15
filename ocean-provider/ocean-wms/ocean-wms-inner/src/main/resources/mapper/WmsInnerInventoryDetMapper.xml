@@ -68,8 +68,11 @@
         LEFT JOIN ocean_v2.sys_user sus ON wiid.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wiid.org_id = bo.organization_id
         <where>
-            <if test="storageId!=null and storageId!=''">
+            <if test="storageId!=null and storageId!='' and notEqualMark!=1">
                 and wiid.storage_id = #{storageId}
+            </if>
+            <if test="storageId!=null and storageId!='' and notEqualMark==1">
+                and wiid.storage_id != #{storageId}
             </if>
             <if test="materialId!=null and materialId!=''">
                 and wiid.material_id = #{materialId}

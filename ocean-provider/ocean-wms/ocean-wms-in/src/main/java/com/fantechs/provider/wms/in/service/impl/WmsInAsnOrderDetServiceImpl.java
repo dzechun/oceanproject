@@ -124,6 +124,17 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 if(!tag){
                     throw new BizErrorException("调拨入库单：库存明细不存在该条码，不允许入库");
                 }
+
+                //判断条码是否重复
+                searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+                searchWmsInnerInventoryDet.setNotEqualMark(1);
+                searchWmsInnerInventoryDet.setStorageId(wmsOutDeliveryOrderDetDtos.get(0).getStorageId());
+                searchWmsInnerInventoryDet.setBarcode(barcode);
+                List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+                if (StringUtils.isNotEmpty(inventoryDetDtos)) {
+                    throw new BizErrorException("该条码已入库，不可重复入库");
+                }
+
             }else if(asnOrderDto.getOrderTypeId()==4){
                 //完工入库
                 //判断在库存明细中是否存在（除调拨入库单外）
@@ -148,12 +159,13 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 }
             }
 
-            SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
-            searchWmsInnerInventoryDet.setBarcode(barcode);
-            searchWmsInnerInventoryDet.setMaterialQty(asnOrderDto.getOrderTypeId() != 3 ? null : BigDecimal.ONE);
-            List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
-            if (StringUtils.isNotEmpty(wmsInnerInventoryDetDtos)) {
-                throw new BizErrorException("该条码已入库，不可重复入库");
+            if(asnOrderDto.getOrderTypeId()!=3) {
+                SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+                searchWmsInnerInventoryDet.setBarcode(barcode);
+                List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+                if (StringUtils.isNotEmpty(wmsInnerInventoryDetDtos)) {
+                    throw new BizErrorException("该条码已入库，不可重复入库");
+                }
             }
 
 
