@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -50,4 +51,52 @@ public class EamEquipmentDto extends EamEquipment implements Serializable {
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum="8")
     private String warehouseName;
 
+    /**
+     * 车间名称
+     */
+    @Transient
+    @ApiModelProperty(name = "workShopName",value = "车间名称")
+    private String workShopName;
+
+
+    /**
+     * 产线名称
+     */
+    @Transient
+    @ApiModelProperty(name = "proLineName",value = "产线名称")
+    private String proLineName;
+
+    /**
+     * 工段名称
+     */
+    @Transient
+    @ApiModelProperty(name = "sectionName",value = "产线名称")
+    private String sectionName;
+
+    /**
+     * 工序名称
+     */
+    @Transient
+    @ApiModelProperty(name = "processName",value = "工序名称")
+    private String processName;
+
+    /**
+     * 工位名称
+     */
+    @Transient
+    @ApiModelProperty(name = "stationName",value = "工位名称")
+    private String stationName;
+
+    /**
+     * 工厂名称
+     */
+    @Transient
+    @ApiModelProperty(name = "factoryName",value = "工厂名称")
+    private String factoryName;
+
+    /**
+     * 保养编码
+     */
+    @ApiModelProperty(name="maintainProjectCode",value = "保养编码")
+    private Long maintainProjectCode;
 }
