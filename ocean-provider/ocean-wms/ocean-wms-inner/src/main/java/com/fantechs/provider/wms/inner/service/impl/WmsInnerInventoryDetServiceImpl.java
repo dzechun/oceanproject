@@ -88,7 +88,8 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
             }
                 if(qty.compareTo(wmsInnerInventoryDet.getMaterialQty())==1){
                     if(qty.compareTo(wmsInnerInventoryDet.getMaterialQty())==1){
-                        wmsInnerInventoryDet.setMaterialQty(BigDecimal.ZERO);
+                        //删除记录
+                        wmsInnerInventoryDetMapper.deleteByPrimaryKey(wmsInnerInventoryDet.getInventoryDetId());
                     }else{
                         wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().subtract(qty));
                     }

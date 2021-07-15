@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrderReJoReDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
