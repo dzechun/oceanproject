@@ -929,7 +929,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }else if(record.getJobOrderType()==(byte)2){
                 // 生成库存，扣减原库存
                 WmsInnerInventory innerInventory = wmsInnerInventoryService.selectByKey(wmsInPutawayOrderDet.getSourceDetId());
-                if (innerInventory.getPackingQty().compareTo(wmsInPutawayOrderDet.getPlanQty()) < -1){
+                if (innerInventory.getPackingQty().compareTo(wmsInPutawayOrderDet.getPlanQty()) < 0){
                     throw new BizErrorException(ErrorCodeEnum.PDA5001012);
                 }
                 WmsInnerInventory newInnerInventory = new WmsInnerInventory();
