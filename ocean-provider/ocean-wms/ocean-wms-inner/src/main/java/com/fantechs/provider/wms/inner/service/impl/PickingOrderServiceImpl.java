@@ -474,9 +474,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                             .build());
 
                     //更改库存为正常状态
-                    SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
-                    searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrderDet.getJobOrderId());
-                    WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
                     searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
                     WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
 
@@ -624,7 +621,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         if(list.size()<1){
             throw new BizErrorException("未查询到库存");
         }
-        //WmsInnerInventory oldInventory = list.get(0);
 
         WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDet.getJobOrderId());
         if(StringUtils.isEmpty(wmsInnerJobOrder)){

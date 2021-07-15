@@ -131,7 +131,6 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                         throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                     }
 
-                    //扣除库存明细
                     WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
                     wmsInnerInventoryDet.setRelatedOrderCode(wmsInnerJobOrder.getJobOrderCode());
                     wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDetDto.getOutStorageId());
