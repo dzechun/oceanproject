@@ -98,51 +98,34 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
         if (wmsInAsnOrderDetDto.getIsComingMaterial() != null && wmsInAsnOrderDetDto.getIsComingMaterial() == 1) {//是来料
             return wmsInAsnOrderDetDto.getDefaultQty();
         }else if (barcode.equals(asnOrderDetDto.getMaterialCode())) {//非来料且是物料编码
-            return new BigDecimal(0);
+            return BigDecimal.ZERO;
         }else {//非来料且非物料编码
-            //判断是否能入库
             if(asnOrderDto.getOrderTypeId()==3) {
-                //调拨入库 : 调拨入库单--调拨出库单--拣货作业单--库存明细--是否有该条码
+                //调拨入库
+
                 SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
                 searchWmsOutDeliveryOrderDet.setDeliveryOrderId(asnOrderDetDto.getSourceOrderId());
                 List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = outFeignApi.findList(searchWmsOutDeliveryOrderDet).getData();
 
-                SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
-                searchWmsInnerJobOrder.setSourceOrderId(wmsOutDeliveryOrderDetDtos.get(0).getDeliveryOrderId());
-                List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
-
+                //判断是否能入库
                 SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
-                searchWmsInnerInventoryDet.setRelevanceOrderCode(wmsInnerJobOrderDtos.get(0).getJobOrderCode());
-                List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
-
-                boolean tag = false;
-                for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto:wmsInnerInventoryDetDtos){
-                    if(barcode.equals(wmsInnerInventoryDetDto.getBarcode())){
-                        tag = true;
-                    }
-                }
-                if(!tag){
+                searchWmsInnerInventoryDet.setNotEqualMark(0);
+                searchWmsInnerInventoryDet.setStorageId(wmsOutDeliveryOrderDetDtos.get(0).getStorageId());
+                searchWmsInnerInventoryDet.setBarcode(barcode);
+                List<WmsInnerInventoryDetDto> inventoryDetDtos1 = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+                if (StringUtils.isEmpty(inventoryDetDtos1)) {
                     throw new BizErrorException("调拨入库单：库存明细不存在该条码，不允许入库");
                 }
 
                 //判断条码是否重复
-                searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
                 searchWmsInnerInventoryDet.setNotEqualMark(1);
-                searchWmsInnerInventoryDet.setStorageId(wmsOutDeliveryOrderDetDtos.get(0).getStorageId());
-                searchWmsInnerInventoryDet.setBarcode(barcode);
-                List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
-                if (StringUtils.isNotEmpty(inventoryDetDtos)) {
+                List<WmsInnerInventoryDetDto> inventoryDetDtos2 = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+                if (StringUtils.isNotEmpty(inventoryDetDtos2)) {
                     throw new BizErrorException("该条码已入库，不可重复入库");
                 }
 
             }else if(asnOrderDto.getOrderTypeId()==4){
                 //完工入库
-                //判断在库存明细中是否存在（除调拨入库单外）
-                WmsInnerInventoryDet inventoryDet = innerFeignApi.findByDet(barcode).getData();
-                if (StringUtils.isNotEmpty(inventoryDet)) {
-                    throw new BizErrorException("库存明细中已存在该条码");
-                }
-
                 SearchMesSfcBarcodeProcessRecord searchMesSfcBarcodeProcessRecord = new SearchMesSfcBarcodeProcessRecord();
                 searchMesSfcBarcodeProcessRecord.setBarcode(barcode);
                 List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtos = sfcFeignApi.findList(searchMesSfcBarcodeProcessRecord).getData();
@@ -150,7 +133,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                     throw new BizErrorException("完工入库：过站记录不存在该条码，不允许入库");
                 }
             }else {
-                //4、是否来料打印条码
+                //剩余类型入库单
                 SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode = new SearchWmsInnerMaterialBarcode();
                 searchWmsInnerMaterialBarcode.setBarcode(barcode);
                 List<WmsInnerMaterialBarcodeDto> wmsInnerMaterialBarcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
@@ -159,6 +142,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 }
             }
 
+            //判断在库存明细中是否存在（除调拨入库单外）
             if(asnOrderDto.getOrderTypeId()!=3) {
                 SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
                 searchWmsInnerInventoryDet.setBarcode(barcode);
@@ -167,7 +151,6 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                     throw new BizErrorException("该条码已入库，不可重复入库");
                 }
             }
-
 
             //通过条码带出数量
             //1、是否栈板条码
@@ -191,10 +174,10 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
             searchMesSfcWorkOrderBarcode.setBarcode(barcode);
             List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = sfcFeignApi.findList(searchMesSfcWorkOrderBarcode).getData();
             if(StringUtils.isNotEmpty(mesSfcWorkOrderBarcodeDtos)){
-                return new BigDecimal(1);
+                return BigDecimal.ONE;
             }
 
-            return new BigDecimal(1);
+            return BigDecimal.ONE;
         }
 
     }
@@ -233,9 +216,10 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 }
             }else if(!barcode.equals(wmsInAsnOrderDetDto.getMaterialCode())&&wmsInAsnOrderDto.getOrderTypeId()==3){
                 WmsInnerInventoryDet inventoryDet = innerFeignApi.findByDet(barcode).getData();
-                inventoryDet.setInTime(null);
+                inventoryDet.setInTime(new Date());
                 inventoryDet.setStorageId(wmsInAsnOrderDetDto.getStorageId());
                 inventoryDet.setMaterialQty(BigDecimal.ONE);
+                inventoryDet.setRelatedOrderCode(wmsInAsnOrderDto.getAsnCode());
                 ResponseEntity responseEntity = innerFeignApi.update(inventoryDet);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException("修改库存明细失败");
