@@ -80,6 +80,9 @@
             <if test="storageCode!=null and storageCode!=''">
                 and bs.storage_code = #{storageCode}
             </if>
+            <if test="materialQty!=null and materialQty!=''">
+                and wiid.material_qty = #{materialQty}
+            </if>
         </where>
         order by wiid.create_time desc
     </select>

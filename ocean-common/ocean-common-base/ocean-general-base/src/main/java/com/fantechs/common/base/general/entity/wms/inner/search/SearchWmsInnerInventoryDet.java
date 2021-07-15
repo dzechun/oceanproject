@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Author mr.lei
@@ -20,4 +21,6 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     private String barcode;
     @ApiModelProperty("相关单号")
     private String relevanceOrderCode;
+    @ApiModelProperty("物料数量")
+    private BigDecimal materialQty;
 }
