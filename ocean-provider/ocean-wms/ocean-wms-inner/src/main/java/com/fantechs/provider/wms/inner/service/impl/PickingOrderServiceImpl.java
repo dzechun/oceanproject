@@ -203,7 +203,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     }
 
     /**
-     * PDA扫码拣货确认新增库存明细
+     * PDA扫码拣货确认修改库存明细
      * @return
      */
     private int addInventoryDet(String barcode,String jobOrderCode,WmsInnerJobOrderDet wmsInnerJobOrderDet){
