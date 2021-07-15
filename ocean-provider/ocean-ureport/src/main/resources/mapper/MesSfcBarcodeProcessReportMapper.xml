@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.ureport.mapper.MesSfcBarcodeProcessReportMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.ureport.MesSfcBarcodeProcessReport">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+    <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus" />
+    <result column="pro_line_name" jdbcType="VARCHAR" property="proLineName" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+  </resultMap>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+      mswob.barcode,
+      mpwo.work_order_code,
+      mpwo.work_order_status,
+      bpl.pro_name,
+      bm.material_name,
+      bm.material_code,
+      bpm.product_model_name
+    FROM
+      mes_sfc_work_order_barcode mswob
+      LEFT JOIN mes_pm_work_order mpwo ON mpwo.work_order_id = mswob.work_order_id
+      LEFT JOIN base_pro_line bpl ON bpl.pro_line_id = mpwo.pro_line_id
+      LEFT JOIN base_material bm ON bm.material_id = mpwo.material_id
+      LEFT JOIN base_material_tab bmt ON bmt.material_id = bm.material_id
+      LEFT JOIN base_product_model bpm ON bpm.product_model_id = bmt.product_model_id
+      <where>
+        <if test="barcode != null and barcode != ''" >
+          and mswob.barcode = #{barcode}
+        </if>
+        <if test="orgId != null">
+          and mswob.org_id = #{orgId}
+        </if>
+      </where>
+  </select>
+
+  <select id="findProductBarcodeList" resultType="object">
+    select mswob.barcode from  mes_sfc_key_part_relevance mskpr
+    LEFT JOIN mes_sfc_work_order_barcode mswob ON mswob.work_order_barcode_id = mskpr.work_order_barcode_id
+    <where>
+      and mskpr.org_id = #{orgId}
+      <if test="type == 1">
+        and mskpr.material_code = #{barcode}
+      </if>
+      <if test="type == 2">
+        and mskpr.part_barcode = #{barcode}
+      </if>
+    </where>
+  </select>
+
+  <select id="findInspectionList" resultType="com.fantechs.common.base.general.entity.ureport.InspectionRecordUreport" parameterType="map">
+    SELECT
+      qiio.ipqc_inspection_order_code 'ipqcInspectionOrderCode',
+      bp.process_name 'processName',
+      qiio.qty,
+      biw.inspection_way_desc 'inspectionWayDesc',
+      bis.inspection_standard_name 'inspectionStandardName',
+      qiio.inspection_status 'inspectionStatus',
+      qiio.inspection_result 'inspectionResult',
+      qiio.audit_status 'auditStatus',
+      (
+        select group_concat(CONCAT(bd.dept_name,'：',su.user_name)) from qms_ipqc_inspection_order_audit_user qiioau
+        left join ocean_v2.sys_user su ON su.user_id = qiioau.audit_user_id
+        LEFT JOIN base_dept bd ON bd.dept_id = su.dept_id
+        where qiioau.ipqc_inspection_order_id = qiio.ipqc_inspection_order_id
+      ) AS 'auditName',
+      qiio.create_time 'createTime'
+    FROM
+      mes_sfc_work_order_barcode mswob
+      LEFT JOIN mes_pm_work_order mpwo ON mpwo.work_order_id = mswob.work_order_id
+      LEFT JOIN qms_ipqc_inspection_order qiio ON qiio.work_order_id = mpwo.work_order_id
+      LEFT JOIN base_process bp ON bp.process_id = qiio.process_id
+      LEFT JOIN base_inspection_way biw ON biw.inspection_way_id = qiio.inspection_way_id
+      LEFT JOIN base_inspection_standard bis ON bis.inspection_standard_id = qiio.inspection_standard_id
+      <where>
+        <if test="barcode != null and barcode != ''" >
+          and mswob.barcode = #{barcode}
+        </if>
+        <if test="orgId != null">
+          and mswob.org_id = #{orgId}
+        </if>
+      </where>
+  </select>
+
+  <select id="findBoxList" resultType="com.fantechs.common.base.general.entity.ureport.BoxRecordUreport" parameterType="map">
+    SELECT
+      mspc.carton_code 'cartonCode',
+      mspc.now_package_spec_qty 'nowPackageSpecQty',
+      mspc.close_status 'closeStatus',
+      mspc.close_carton_time 'closeCartonTime',
+      su.user_name 'userName',
+      msbpr.devote_time 'devoteTime',
+      msbpr.production_time 'productionTime',
+      msbpr.in_process_time 'in_processTime',
+      msbpr.out_process_time 'outProcessTime',
+      msbpr.pass_station_count 'passStationCount'
+    FROM
+      mes_sfc_product_carton_det mspcd
+      LEFT JOIN mes_sfc_product_carton mspc ON mspcd.product_carton_id = mspc.product_carton_id
+      LEFT JOIN mes_sfc_barcode_process_record msbpr ON mspcd.work_order_barcode_id = msbpr.work_order_barcode_id
+      LEFT JOIN base_process bp ON msbpr.process_id = bp.process_id
+      LEFT JOIN base_process_category bpc ON bp.process_category_id = bpc.process_category_id
+      LEFT JOIN ocean_v2.sys_user su ON mspc.close_carton_user_id = su.user_id
+      <where>
+        AND bpc.process_category_code = 'PACKING'
+        <if test="barcode != null and barcode != ''" >
+          and mspcd.work_order_barcode_code = #{barcode}
+        </if>
+        <if test="orgId != null">
+          and mspcd.org_id = #{orgId}
+        </if>
+      </where>
+  </select>
+
+  <select id="findPalletList" resultType="com.fantechs.common.base.general.entity.ureport.PalletRecordUreport" parameterType="map">
+    SELECT
+      mspp.pallet_code 'palletCode',
+      mspp.now_package_spec_qty 'nowPackageSpecQty',
+      mspp.close_status 'closeStatus',
+      mspp.close_pallet_time 'closeCartonTime',
+      su.user_name 'userName',
+      msbpr.devote_time 'devoteTime',
+      msbpr.production_time 'productionTime',
+      msbpr.in_process_time 'in_processTime',
+      msbpr.out_process_time 'outProcessTime',
+      msbpr.pass_station_count 'passStationCount'
+    FROM
+      mes_sfc_product_pallet_det msppd
+      LEFT JOIN mes_sfc_product_pallet mspp ON msppd.product_pallet_id = mspp.product_pallet_id
+      LEFT JOIN mes_sfc_barcode_process_record msbpr ON msppd.work_order_barcode_id = msbpr.work_order_barcode_id
+      LEFT JOIN base_process bp ON msbpr.process_id = bp.process_id
+      LEFT JOIN base_process_category bpc ON bp.process_category_id = bpc.process_category_id
+      LEFT JOIN ocean_v2.sys_user su ON mspp.close_pallet_user_id = su.user_id
+      <where>
+        AND bpc.process_category_code = 'PALLET'
+        <if test="barcode != null and barcode != ''" >
+          and msppd.work_order_barcode_code = #{barcode}
+        </if>
+        <if test="orgId != null">
+          and msppd.org_id = #{orgId}
+        </if>
+      </where>
+  </select>
+
+  <select id="findReworkList" resultType="com.fantechs.common.base.general.entity.ureport.ReworkRecordUreport" parameterType="map">
+    SELECT
+      msro.rework_order_code 'reworkOrderCode',
+      br.route_name 'routeName',
+      bp.process_name 'processName',
+      msro.rework_status 'reworkStatus'
+    FROM
+      mes_sfc_rework_order_barcode msrob
+      LEFT JOIN mes_sfc_rework_order msro ON msrob.rework_order_id = msro.rework_order_id
+      LEFT JOIN mes_sfc_barcode_process_record msbpr ON msrob.work_order_barcode_id = msbpr.work_order_barcode_id AND msrob.rework_order_id IS NOT NULL
+      LEFT JOIN base_process bp ON msro.rework_start_process_id = bp.process_id
+      LEFT JOIN base_route br ON msro.rework_route_id = br.route_id
+      <where>
+        <if test="barcode != null and barcode != ''" >
+          and msrob.work_order_barcode_code = #{barcode}
+        </if>
+        <if test="orgId != null">
+          and msrob.org_id = #{orgId}
+        </if>
+      </where>
+  </select>
+
+  <select id="findAssemblyList" resultType="com.fantechs.common.base.general.entity.ureport.AssemblyRecordUreport" parameterType="map">
+    SELECT
+      mskpr.barcode_code 'barcodeCode',
+      mskpr.material_code 'materialCode',
+      mskpr.material_name 'materialMame',
+      mskpr.process_code 'processCode',
+      mskpr.process_name 'processName',
+      mskpr.material_ver 'materialVer',
+      mskpr.part_barcode 'partBarcode',
+      blc.label_category_name 'labelCategoryName',
+      mpwomrp.usage_qty 'usageQty',
+      count( 1 ) as 'dosage',
+      mpwomrp.scan_type 'scanType'
+    FROM
+      mes_sfc_key_part_relevance mskpr
+      LEFT JOIN mes_pm_work_order_process_re_wo mpwoprw ON mpwoprw.work_order_id = mskpr.work_order_id
+      AND mpwoprw.process_id = mskpr.process_id
+      LEFT JOIN mes_pm_work_order_material_re_p mpwomrp ON mpwomrp.work_order_process_re_wo_id = mpwoprw.work_order_process_re_wo_id and (mskpr.material_id = mpwomrp.material_id or mpwomrp.sub_material_id = mskpr.material_id)
+      LEFT JOIN base_label_category blc ON blc.label_category_id = mpwomrp.label_category_id
+      <where>
+        <if test="barcode != null and barcode != ''" >
+          and mskpr.barcode_code = #{barcode}
+        </if>
+        <if test="partBarcode != null and partBarcode != ''" >
+          and mskpr.part_barcode = #{partBarcode}
+        </if>
+        <if test="customerBarcode != null and customerBarcode != ''" >
+          and mskpr.material_code = #{customerBarcode}
+        </if>
+        <if test="orgId != null">
+          and mskpr.org_id = #{orgId}
+        </if>
+      </where>
+      GROUP BY
+      barcode_code,
+      material_id,
+      blc.label_category_id
+  </select>
+
+</mapper>
