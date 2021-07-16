@@ -12,7 +12,7 @@ import java.util.Map;
 public interface MesSfcBarcodeProcessReportMapper extends MyMapper<MesSfcBarcodeProcessReport> {
     List<MesSfcBarcodeProcessReport> findList(Map<String, Object> map);
 
-    Object findProductBarcodeList(@Param("barcode") String barcode,@Param("type") Integer type,@Param("orgId") Long orgId);
+    String findProductBarcodeList(Map<String, Object> map);
 
 //    List<BarcodeRecordUreport> findBarcodeList(Map<String, Object> map);
 

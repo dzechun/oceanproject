@@ -24,20 +24,24 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
     @Override
     public List<MesSfcBarcodeProcessReport> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        Object barCode = map.get("barCode");
+        map.put("orgId",user.getOrganizationId());
+
+        String barCode = StringUtils.isNotEmpty(map.get("barCode"))?map.get("barCode").toString():"";
 
         //判断客户条码
-        Object customerBarcode = map.get("customerBarcode");
+        String customerBarcode = StringUtils.isNotEmpty(map.get("customerBarcode"))?map.get("customerBarcode").toString():"";
         if (StringUtils.isNotEmpty(customerBarcode)){
-            customerBarcode = mesSfcBarcodeProcessReportMapper.findProductBarcodeList(customerBarcode.toString(),1,user.getOrganizationId());
+            map.put("type",1);
+            customerBarcode = mesSfcBarcodeProcessReportMapper.findProductBarcodeList(map);
             if (StringUtils.isEmpty(customerBarcode)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003, "客户条码不存在");
             }
         }
         //判断部件条码
-        Object partBarcode = map.get("partBarcode");
+        String partBarcode = StringUtils.isNotEmpty(map.get("partBarcode"))?map.get("partBarcode").toString():"";
         if (StringUtils.isNotEmpty(partBarcode)){
-            partBarcode = mesSfcBarcodeProcessReportMapper.findProductBarcodeList(partBarcode.toString(),2,user.getOrganizationId());
+            map.put("type",2);
+            partBarcode = mesSfcBarcodeProcessReportMapper.findProductBarcodeList(map);
             if (StringUtils.isEmpty(partBarcode)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003, "部件条码不存在");
             }
@@ -48,7 +52,7 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
         if (StringUtils.isNotEmpty(barCode) && (!barCode.equals(partBarcode) || !barCode.equals(customerBarcode))){
             throw new BizErrorException("客户条码或部件条码与成品条码不一致");
         }
-        map.put("orgId",user.getOrganizationId());
+
         return mesSfcBarcodeProcessReportMapper.findList(map);
     }
 
