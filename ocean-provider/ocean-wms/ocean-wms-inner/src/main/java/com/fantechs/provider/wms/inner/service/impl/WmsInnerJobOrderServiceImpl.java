@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
@@ -11,6 +12,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
@@ -167,7 +169,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num+=this.updateInventory(wmsInnerJobOrderDto,wmsInnerJobOrderDetDto);
             }
             //待激活
-            wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
+            SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+            searchBaseWorker.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+            searchBaseWorker.setUserId(sysUser.getUserId());
+            List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+            if (workerDtos.isEmpty()) {
+                throw new BizErrorException(ErrorCodeEnum.PDA5001014);
+            }
+            wmsInnerJobOrder.setWorkerId(workerDtos.get(0).getWorkerId());
             if(wmsInnerJobOrder.getOrderTypeId()==4){
                 wmsInnerJobOrder.setOrderStatus((byte)6);
             }else{
@@ -610,6 +619,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsInnerJobOrderDet.setOrderStatus((byte)5);
             int oCount = wmsInPutawayOrderDetMapper.selectCount(wmsInnerJobOrderDet);
 
+            SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+            searchBaseWorker.setWarehouseId(wmsInnerJobOrderDto.getWarehouseId());
+            searchBaseWorker.setUserId(sysUser.getUserId());
+            List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+            if (workerDtos.isEmpty()) {
+                throw new BizErrorException(ErrorCodeEnum.PDA5001014);
+            }
 
             if(oCount==count){
                 WmsInnerJobOrder ws = wmsInPutawayOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDto.getJobOrderId());
@@ -617,7 +633,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 if(StringUtils.isEmpty(ws.getActualQty())){
                     ws.setActualQty(new BigDecimal("0.00"));
                 }
-                ws.setWorkerId(sysUser.getUserId());
+                ws.setWorkerId(workerDtos.get(0).getWorkerId());
                 ws.setActualQty(ws.getActualQty().add(aqty));
                 ws.setModifiedUserId(sysUser.getUserId());
                 ws.setModifiedTime(new Date());
@@ -629,7 +645,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 if(StringUtils.isEmpty(ws.getActualQty())){
                     ws.setActualQty(new BigDecimal("0.00"));
                 }
-                ws.setWorkerId(sysUser.getUserId());
+                ws.setWorkerId(workerDtos.get(0).getWorkerId());
                 ws.setActualQty(ws.getActualQty().add(aqty));
                 ws.setOrderStatus((byte)4);
                 ws.setModifiedUserId(sysUser.getUserId());
@@ -801,6 +817,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(StringUtils.isEmpty(wmsInnerJobOrderDto.getActualQty())){
             wmsInnerJobOrderDto.setActualQty(BigDecimal.ZERO);
         }
+        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+        searchBaseWorker.setWarehouseId(wmsInnerJobOrderDto.getWarehouseId());
+        searchBaseWorker.setUserId(sysUser.getUserId());
+        List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+        if (workerDtos.isEmpty()) {
+            throw new BizErrorException(ErrorCodeEnum.PDA5001014);
+        }
         if(oCount==count){
             WmsInnerJobOrder ws = new WmsInnerJobOrder();
             ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
@@ -809,7 +832,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             ws.setModifiedUserId(sysUser.getUserId());
             ws.setModifiedTime(new Date());
             ws.setWorkEndtTime(new Date());
-            ws.setWorkerId(sysUser.getUserId());
+            ws.setWorkerId(workerDtos.get(0).getWorkerId());
             num +=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
         }else{
             WmsInnerJobOrder ws = new WmsInnerJobOrder();
@@ -818,7 +841,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             ws.setActualQty(wmsInnerJobOrderDto.getActualQty().add(qty));
             ws.setModifiedUserId(sysUser.getUserId());
             ws.setModifiedTime(new Date());
-            ws.setWorkerId(sysUser.getUserId());
+            ws.setWorkerId(workerDtos.get(0).getWorkerId());
             if(StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())){
                 ws.setWorkStartTime(new Date());
             }
@@ -913,6 +936,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //移位单
             record.setJobOrderCode(CodeUtils.getId("SHIFT-"));
         }
+        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+        searchBaseWorker.setWarehouseId(record.getWarehouseId());
+        searchBaseWorker.setUserId(sysUser.getUserId());
+        List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+        if (workerDtos.isEmpty()) {
+            throw new BizErrorException(ErrorCodeEnum.PDA5001014);
+        }
+        record.setWorkerId(workerDtos.get(0).getWorkerId());
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
