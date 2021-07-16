@@ -157,19 +157,19 @@ public class BaseAddressServiceImpl extends BaseService<BaseAddress> implements 
                 //处理省市区数据
                 String completeDetail = "";
                 if(StringUtils.isNotEmpty(baseAddressImport.getProvince())) {
-                    String[] province = baseAddressImport.getProvince().split("_");
-                    baseAddress.setProvinceCode(province[1]);
-                    completeDetail = completeDetail+province[0];
+                    String[] province = baseAddressImport.getProvince().split("-");
+                    baseAddress.setProvinceCode(province[0]);
+                    completeDetail = completeDetail+province[1];
                 }
                 if(StringUtils.isNotEmpty(baseAddressImport.getCity())) {
-                    String[] city = baseAddressImport.getCity().split("_");
-                    baseAddress.setCityCode(city[1]);
-                    completeDetail = completeDetail+city[0];
+                    String[] city = baseAddressImport.getCity().split("-");
+                    baseAddress.setCityCode(city[0]);
+                    completeDetail = completeDetail+city[1];
                 }
                 if(StringUtils.isNotEmpty(baseAddressImport.getClassify())) {
-                    String[] classify = baseAddressImport.getClassify().split("_");
-                    baseAddress.setClassifyCode(classify[1]);
-                    completeDetail = completeDetail+classify[0];
+                    String[] classify = baseAddressImport.getClassify().split("-");
+                    baseAddress.setClassifyCode(classify[0]);
+                    completeDetail = completeDetail+classify[1];
                 }
                 baseAddress.setCompleteDetail(completeDetail + baseAddressImport.getAddressDetail());
 
@@ -178,6 +178,7 @@ public class BaseAddressServiceImpl extends BaseService<BaseAddress> implements 
                 baseAddress.setModifiedTime(new Date());
                 baseAddress.setModifiedUserId(currentUser.getUserId());
                 baseAddress.setStatus((byte)1);
+                baseAddress.setOrganizationId(currentUser.getOrganizationId());
                 list.add(baseAddress);
             }
 

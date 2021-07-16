@@ -10,6 +10,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderAuditUserMapper;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderAuditUserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -38,6 +39,7 @@ public class QmsIpqcInspectionOrderAuditUserServiceImpl extends BaseService<QmsI
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(QmsIpqcInspectionOrderAuditUser record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -49,6 +51,6 @@ public class QmsIpqcInspectionOrderAuditUserServiceImpl extends BaseService<QmsI
         record.setModifiedTime(new Date());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1:record.getStatus());
         record.setOrgId(user.getOrganizationId());
-        return qmsIpqcInspectionOrderAuditUserMapper.insertUseGeneratedKeys(record);
+        return qmsIpqcInspectionOrderAuditUserMapper.insertSelective(record);
     }
 }

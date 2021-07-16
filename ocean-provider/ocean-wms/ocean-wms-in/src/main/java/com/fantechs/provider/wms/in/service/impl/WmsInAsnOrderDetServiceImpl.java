@@ -95,6 +95,17 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
         WmsInAsnOrderDto asnOrderDto = wmsInAsnOrderMapper.findList(searchWmsInAsnOrder).get(0);
 
         String barcode = wmsInAsnOrderDetDto.getBarcode();
+
+        //判断在库存明细中是否存在（除调拨入库单外）
+        if(!barcode.equals(asnOrderDetDto.getMaterialCode())&&asnOrderDto.getOrderTypeId()!=3) {
+            SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+            searchWmsInnerInventoryDet.setBarcode(barcode);
+            List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+            if (StringUtils.isNotEmpty(wmsInnerInventoryDetDtos)) {
+                throw new BizErrorException("该条码已入库，不可重复入库");
+            }
+        }
+
         if (wmsInAsnOrderDetDto.getIsComingMaterial() != null && wmsInAsnOrderDetDto.getIsComingMaterial() == 1) {//是来料
             return wmsInAsnOrderDetDto.getDefaultQty();
         }else if (barcode.equals(asnOrderDetDto.getMaterialCode())) {//非来料且是物料编码
@@ -142,15 +153,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 }
             }
 
-            //判断在库存明细中是否存在（除调拨入库单外）
-            if(asnOrderDto.getOrderTypeId()!=3) {
-                SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
-                searchWmsInnerInventoryDet.setBarcode(barcode);
-                List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
-                if (StringUtils.isNotEmpty(wmsInnerInventoryDetDtos)) {
-                    throw new BizErrorException("该条码已入库，不可重复入库");
-                }
-            }
+
 
             //通过条码带出数量
             //1、是否栈板条码
