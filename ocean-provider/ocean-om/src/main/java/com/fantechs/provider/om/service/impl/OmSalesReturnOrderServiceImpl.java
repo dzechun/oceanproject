@@ -1,6 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -73,6 +74,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int packageAutoOutOrder(OmSalesReturnOrder omSalesReturnOrder) {
         SysUser sysUser = currentUser();
         int num = 0;

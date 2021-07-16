@@ -1,5 +1,6 @@
 package com.fantechs.provider.om.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -82,6 +83,8 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int packageAutoOutOrder(String ids) {
         SysUser sysUser = currentUser();
         String[] arrId = ids.split(",");
@@ -160,6 +163,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
         return num;
     }
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int save(OmTransferOrder record) {
         SysUser sysUser = currentUser();
         record.setTransferOrderCode(CodeUtils.getId("DBOD-"));
@@ -184,6 +188,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int update(OmTransferOrder entity) {
         SysUser sysUser = currentUser();
         if(entity.getOrderStatus()>1){
@@ -211,6 +216,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser sysUser = currentUser();
         String[] arrId = ids.split(",");

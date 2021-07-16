@@ -1,5 +1,6 @@
 package com.fantechs.provider.om.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -53,6 +54,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int packageAutoOutOrder(OmOtherOutOrder omOtherOutOrder) {
         if(omOtherOutOrder.getOrderStatus()>2){
             throw new BizErrorException("单据已下发完成");
