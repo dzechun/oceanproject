@@ -1,4 +1,4 @@
-package com.fantechs.provider.ureport.mapper;
+package com.fantechs.mapper;
 
 import com.fantechs.common.base.general.entity.ureport.*;
 import com.fantechs.common.base.mybatis.MyMapper;

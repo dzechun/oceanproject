@@ -37,17 +37,13 @@ public class MesSfcBarcodeOperationController {
 
     @Resource
     MesSfcBarcodeOperationService mesSfcBarcodeOperationService;
-    @Resource
-    MesSfcProductCartonService mesSfcProductCartonService;
-    @Resource
-    MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
 
     @ApiOperation("PDA包箱作业-查询上次作业数据")
         @PostMapping("/findLastCarton")
     public ResponseEntity<PdaCartonRecordDto> findLastCarton(@ApiParam(value = "工序ID", required = true) @RequestParam @NotNull(message = "processId不能为空") Long processId,
                                                              @ApiParam(value = "工位ID", required = true) @RequestParam @NotNull(message = "stationId不能为空") Long stationId,
                                                              @ApiParam(value = "包箱类型(1：工单包箱，2：料号包箱)", required = true) @RequestParam @NotNull(message = "packType不能为空") String packType) {
-        return ControllerUtil.returnSuccess("成功", mesSfcBarcodeOperationService.findLastCarton(processId, stationId, packType));
+        return ControllerUtil.returnSuccess("", mesSfcBarcodeOperationService.findLastCarton(processId, stationId, packType));
     }
 
     @ApiOperation("PDA包箱作业")

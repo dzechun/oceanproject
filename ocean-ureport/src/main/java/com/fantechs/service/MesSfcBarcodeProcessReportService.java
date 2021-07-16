@@ -1,12 +1,7 @@
-package com.fantechs.provider.ureport.service;
+package com.fantechs.service;
 
-import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.general.entity.ureport.MesSfcBarcodeProcessReport;
 import com.fantechs.common.base.support.IService;
-import io.swagger.annotations.Api;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
