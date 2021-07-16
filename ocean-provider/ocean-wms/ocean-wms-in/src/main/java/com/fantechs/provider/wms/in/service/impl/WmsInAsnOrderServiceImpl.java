@@ -107,23 +107,19 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             List<WmsInAsnOrderDet> list = wmsInAsnOrderDetMapper.select(WmsInAsnOrderDet.builder()
                     .asnOrderId(Long.parseLong(s))
                     .build());
-            WmsInAsnOrderDto wmsInAsnOrderDto = wmsInAsnOrderMapper.findList(SearchWmsInAsnOrder.builder()
-                    .asnOrderId(wmsInAsnOrder.getAsnOrderId())
-                    .build()).get(0);
             for (WmsInAsnOrderDet wmsInAsnOrderDet : list) {
                 try {
-                    wmsInAsnOrderDet.setStorageId(wmsInAsnOrderDet.getStorageId());
-                    wmsInAsnOrderDet.setInventoryStatusId(inventoryStatusId);
-                    wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getPackingQty());
-                    wmsInAsnOrderDet.setModifiedTime(new Date());
-                    wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
+                    if(StringUtils.isEmpty(wmsInAsnOrderDet.getActualQty()) || wmsInAsnOrderDet.getActualQty().compareTo(BigDecimal.ZERO)==0) {
+                        wmsInAsnOrderDet.setStorageId(wmsInAsnOrderDet.getStorageId());
+                        wmsInAsnOrderDet.setInventoryStatusId(inventoryStatusId);
+                        wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getPackingQty());
+                        wmsInAsnOrderDet.setModifiedTime(new Date());
+                        wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
 
-                    WmsInAsnOrderDetDto wmsInAsnOrderDetDto = wmsInAsnOrderDetMapper.findList(SearchWmsInAsnOrderDet.builder()
-                            .asnOrderDetId(wmsInAsnOrderDet.getAsnOrderDetId())
-                            .build()).get(0);
-                    //添加库存
-                    wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wmsInAsnOrderDet);
-                    num+=addInventory(wmsInAsnOrder.getAsnOrderId(), wmsInAsnOrderDet.getAsnOrderDetId(),wmsInAsnOrderDet.getActualQty());
+                        //添加库存
+                        wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wmsInAsnOrderDet);
+                        num += addInventory(wmsInAsnOrder.getAsnOrderId(), wmsInAsnOrderDet.getAsnOrderDetId(), wmsInAsnOrderDet.getActualQty());
+                    }
                 }catch (Exception e){
                     throw new BizErrorException("收货失败");
                 }

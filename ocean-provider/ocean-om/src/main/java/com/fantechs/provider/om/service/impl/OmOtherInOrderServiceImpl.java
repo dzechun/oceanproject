@@ -71,9 +71,13 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         if(omOtherInOrder.getOrderStatus()>=3){
             throw new BizErrorException("订单已下发完成");
         }
+        if(omOtherInOrder.getOmOtherInOrderDets().size()<1){
+            throw new BizErrorException("请输入下发数量");
+        }
         int num = 0;
         List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
         int i = 0;
+
         for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrder.getOmOtherInOrderDets()) {
             if(StringUtils.isEmpty(omOtherInOrderDet.getIssueQty())){
                 omOtherInOrderDet.setIssueQty(BigDecimal.ZERO);
@@ -200,7 +204,9 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             omOtherInOrderDet.setModifiedUserId(sysUser.getUserId());
             omOtherInOrderDet.setOrgId(sysUser.getOrganizationId());
         }
-        num+=omOtherInOrderDetMapper.insertList(record.getOmOtherInOrderDets());
+        if(record.getOmOtherInOrderDets().size()>0){
+            num+=omOtherInOrderDetMapper.insertList(record.getOmOtherInOrderDets());
+        }
         num+=this.addHt(record, record.getOmOtherInOrderDets());
         return num;
     }

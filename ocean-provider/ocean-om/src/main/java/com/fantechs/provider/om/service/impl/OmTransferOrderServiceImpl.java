@@ -145,6 +145,9 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
                 wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);
                 i++;
             }
+            if(wmsOutDeliveryOrderDetDtos.size()<1){
+                throw new BizErrorException("暂无可下发的调拨货品");
+            }
             wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetDtos);
             ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryOrder);
             if(responseEntity.getCode()!=0){
