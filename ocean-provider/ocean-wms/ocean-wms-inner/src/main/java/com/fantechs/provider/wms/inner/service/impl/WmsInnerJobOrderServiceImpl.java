@@ -1176,7 +1176,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(!StringUtils.isEmpty(newDto.getBatchCode())){
             criteria1.andEqualTo("batchCode",newDto.getBatchCode());
         }
-        criteria.andEqualTo("jobOrderDetId",newDto.getJobOrderDetId());
         criteria1.andEqualTo("jobStatus",(byte)1);
         criteria.andEqualTo("inventoryStatusId",newDto.getInventoryStatusId());
         criteria.andGreaterThan("stockLock",0).andGreaterThan("qcLock",0).andGreaterThan("lockStatus",0);
