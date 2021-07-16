@@ -1,5 +1,6 @@
 package com.fantechs.mapper;
 
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
 import com.fantechs.common.base.general.entity.ureport.*;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +15,7 @@ public interface MesSfcBarcodeProcessReportMapper extends MyMapper<MesSfcBarcode
 
     String findProductBarcodeList(Map<String, Object> map);
 
-//    List<BarcodeRecordUreport> findBarcodeList(Map<String, Object> map);
+    List<MesSfcBarcodeProcessRecordDto> findBarcodeList(Map<String, Object> map);
 
     List<InspectionRecordUreport> findInspectionList(Map<String, Object> map);
 

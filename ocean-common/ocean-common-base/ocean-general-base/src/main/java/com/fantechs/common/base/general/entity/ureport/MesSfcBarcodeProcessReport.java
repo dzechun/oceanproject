@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.entity.ureport;
 
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -68,8 +69,8 @@ public class MesSfcBarcodeProcessReport extends ValidGroup implements Serializab
     /**
      * 条码过站记录
      */
-//    @ApiModelProperty(name="barCodeList",value = "条码过站记录")
-//    private List<BarcodeRecordUreport> barcodeList;
+    @ApiModelProperty(name="barCodeList",value = "条码过站记录")
+    private List<MesSfcBarcodeProcessRecordDto> barcodeList;
 
     /**
      * 包箱记录
