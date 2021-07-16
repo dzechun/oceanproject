@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.in.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
@@ -358,6 +359,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int createInnerJobOrder(Long asnOrderId) {
         WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
         if(StringUtils.isEmpty(wmsInAsnOrder)){
@@ -646,6 +648,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int palletAutoAsnOrder(PalletAutoAsnDto palletAutoAsnDto) {
         SysUser sysUser = currentUser();
         try {
