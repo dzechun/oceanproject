@@ -1,15 +1,14 @@
-package com.fantechs.provider.ureport.service.impl;
+package com.fantechs.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.general.entity.ureport.MesSfcBarcodeProcessReport;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.ureport.mapper.MesSfcBarcodeProcessReportMapper;
-import com.fantechs.provider.ureport.service.MesSfcBarcodeProcessReportService;
+import com.fantechs.mapper.MesSfcBarcodeProcessReportMapper;
+import com.fantechs.service.MesSfcBarcodeProcessReportService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

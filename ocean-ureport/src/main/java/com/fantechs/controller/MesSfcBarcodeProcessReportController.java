@@ -1,12 +1,10 @@
-package com.fantechs.provider.ureport.controller;
+package com.fantechs.controller;
 
-import com.fantechs.common.base.general.dto.tem.TemVehicleDto;
-import com.fantechs.common.base.general.entity.tem.search.SearchTemVehicle;
 import com.fantechs.common.base.general.entity.ureport.MesSfcBarcodeProcessReport;
 import com.fantechs.common.base.general.entity.ureport.search.SearchMesSfcBarcodeProcessReport;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.provider.ureport.service.MesSfcBarcodeProcessReportService;
+import com.fantechs.service.MesSfcBarcodeProcessReportService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
