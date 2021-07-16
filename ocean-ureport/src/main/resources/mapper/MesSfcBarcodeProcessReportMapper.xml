@@ -41,7 +41,7 @@
       </where>
   </select>
 
-  <select id="findProductBarcodeList" resultType="object">
+  <select id="findProductBarcodeList" resultType="string" parameterType="map">
     select mswob.barcode from  mes_sfc_key_part_relevance mskpr
     LEFT JOIN mes_sfc_work_order_barcode mswob ON mswob.work_order_barcode_id = mskpr.work_order_barcode_id
     <where>
