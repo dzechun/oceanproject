@@ -76,6 +76,9 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     public int packageAutoOutOrder(OmSalesReturnOrder omSalesReturnOrder) {
         SysUser sysUser = currentUser();
         int num = 0;
+        if(omSalesReturnOrder.getOmSalesReturnOrderDets().size()<1){
+            throw new BizErrorException("请输入下发数量");
+        }
             List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
             int i = 0;
             for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrder.getOmSalesReturnOrderDets()) {

@@ -61,6 +61,10 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         if(omOtherOutOrder.getOrderStatus()>=3){
             throw new BizErrorException("单据已完成");
         }
+
+        if(omOtherOutOrder.getOmOtherOutOrderDets().size()<1){
+            throw new BizErrorException("请输入下发数量");
+        }
         int num = 0;
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = new ArrayList<>();
         int i=1;
