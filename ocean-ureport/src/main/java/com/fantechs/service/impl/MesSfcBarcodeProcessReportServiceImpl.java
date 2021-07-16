@@ -3,11 +3,13 @@ package com.fantechs.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcessRecord;
 import com.fantechs.common.base.general.entity.ureport.MesSfcBarcodeProcessReport;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.mapper.MesSfcBarcodeProcessReportMapper;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.service.MesSfcBarcodeProcessReportService;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,9 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
 
     @Resource
     private MesSfcBarcodeProcessReportMapper mesSfcBarcodeProcessReportMapper;
+
+    @Resource
+    SFCFeignApi sfcFeignApi;
 
     @Override
     public List<MesSfcBarcodeProcessReport> findList(Map<String, Object> map) {
@@ -61,9 +66,14 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         MesSfcBarcodeProcessReport mesSfcBarcodeProcessReport = new MesSfcBarcodeProcessReport();
         Object tabId = map.get("tabId");
+        if(map.get("barcode") == null){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码不能为空");
+        }
         map.put("orgId",user.getOrganizationId());
         if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 1) {
-//            mesSfcBarcodeProcessReport.setBarcodeList(mesSfcBarcodeProcessReportMapper.findBarcodeList(map));
+            SearchMesSfcBarcodeProcessRecord record = new SearchMesSfcBarcodeProcessRecord();
+            record.setBarcode(map.get("barcode").toString());
+            mesSfcBarcodeProcessReport.setBarcodeList(sfcFeignApi.findList(record).getData());
         } else if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 2) {
             mesSfcBarcodeProcessReport.setInspectionList(mesSfcBarcodeProcessReportMapper.findInspectionList(map));
         } else if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 3) {
