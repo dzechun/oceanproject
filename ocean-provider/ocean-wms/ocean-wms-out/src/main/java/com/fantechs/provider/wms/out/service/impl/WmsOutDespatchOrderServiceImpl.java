@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.out.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -74,6 +75,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int forwarding(String ids) {
         SysUser sysUser = currentUser();
         String[] arrIds = ids.split(",");
@@ -309,7 +311,6 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
      * @param wmsInnerJobOrderDetDto
      * @return
      */
-    @Transactional(rollbackFor = RuntimeException.class)
     private int writeDeliveryOrderQty(WmsInnerJobOrderDto wmsInnerJobOrderDto,WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto){
         WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectByPrimaryKey(wmsInnerJobOrderDetDto.getSourceDetId());
         if(StringUtils.isEmpty(wmsOutDeliveryOrderDet)){

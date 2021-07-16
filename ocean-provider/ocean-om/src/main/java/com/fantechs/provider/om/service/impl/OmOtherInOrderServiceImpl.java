@@ -1,6 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -66,6 +67,8 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int packageAutoOutOrder(OmOtherInOrder omOtherInOrder) {
         SysUser sysUser = currentUser();
         if(omOtherInOrder.getOrderStatus()>=3){
@@ -162,6 +165,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int writeQty(OmOtherInOrderDet omOtherInOrderDet){
         OmOtherInOrder omOtherInOrder = omOtherInOrderMapper.selectByPrimaryKey(omOtherInOrderDet.getOtherInOrderId());
         if(StringUtils.isEmpty(omOtherInOrder)){

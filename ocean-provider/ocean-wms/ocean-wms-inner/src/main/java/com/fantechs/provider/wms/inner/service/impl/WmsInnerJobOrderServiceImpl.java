@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -715,6 +716,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public WmsInnerJobOrderDet scanStorageBackQty(String storageCode, Long jobOrderDetId,BigDecimal qty,String barcode) {
         SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(qty)){
@@ -836,6 +838,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder) {
         SysUser sysUser = currentUser();
         wmsInnerJobOrder.setJobOrderCode(CodeUtils.getId("WORK-"));
@@ -877,6 +881,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int activation(Long jobOrderId) {
         WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(jobOrderId);
         if(StringUtils.isEmpty(wmsInnerJobOrder)){
