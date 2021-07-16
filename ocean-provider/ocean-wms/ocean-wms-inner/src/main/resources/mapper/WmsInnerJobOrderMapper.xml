@@ -127,8 +127,8 @@
             <if test="orderTypeId!=null and orderTypeId!=''">
                 and wipo.order_type_id =#{orderTypeId}
             </if>
-            <if test="workerName!=null and workerName!=''">
-                and bwr.worker_name =#{workerName}
+            <if test="workName!=null and workName!=''">
+                and bwr.worker_name =#{workName}
             </if>
             <if test="jobOrderType !=null and jobOrderType!= ''">
                 and wipo.job_order_type =#{jobOrderType}
