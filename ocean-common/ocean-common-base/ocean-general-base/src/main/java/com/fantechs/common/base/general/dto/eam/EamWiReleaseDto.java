@@ -19,7 +19,7 @@ public class EamWiReleaseDto extends EamWiRelease implements Serializable {
     @ApiModelProperty(name="workOrderCode",value = "工单号")
     @Excel(name = "工单号", height = 20, width = 30,orderNum="2")
     @Transient
-    private Long workOrderCode;
+    private String workOrderCode;
 
     /**
      * 产品料号
@@ -27,7 +27,7 @@ public class EamWiReleaseDto extends EamWiRelease implements Serializable {
     @ApiModelProperty(name="materialCode",value = "产品料号")
     @Excel(name = "产品料号", height = 20, width = 30,orderNum="3")
     @Transient
-    private Long materialCode;
+    private String materialCode;
 
     /**
      * 产品描述
@@ -59,7 +59,7 @@ public class EamWiReleaseDto extends EamWiRelease implements Serializable {
     @ApiModelProperty(name="factoryName",value = "工厂名称")
     @Excel(name = "工厂", height = 20, width = 30,orderNum="7")
     @Transient
-    private Long factoryName;
+    private String factoryName;
 
     /**
      * 车间名称
@@ -67,7 +67,7 @@ public class EamWiReleaseDto extends EamWiRelease implements Serializable {
     @ApiModelProperty(name="workShopName",value = "车间名称")
     @Excel(name = "车间", height = 20, width = 30,orderNum="8")
     @Transient
-    private Long workShopName;
+    private String workShopName;
 
     /**
      * 产线名称
@@ -75,7 +75,7 @@ public class EamWiReleaseDto extends EamWiRelease implements Serializable {
     @ApiModelProperty(name="proLineName",value = "产线名称")
     @Excel(name = "产线", height = 20, width = 30,orderNum="9")
     @Transient
-    private Long proLineName;
+    private String proLineName;
 
     /**
      * 工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)
