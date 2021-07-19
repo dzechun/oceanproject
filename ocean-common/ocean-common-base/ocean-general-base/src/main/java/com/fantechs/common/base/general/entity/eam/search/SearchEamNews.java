@@ -45,5 +45,9 @@ public class SearchEamNews extends BaseQuery implements Serializable {
     @ApiModelProperty(name="newStatus",value = "新闻状态")
     private Byte newStatus;
 
-
+    /**
+     * 设备IP
+     */
+    @ApiModelProperty(name="equipmentIp",value = "设备IP")
+    private String equipmentIp;
 }
