@@ -387,6 +387,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             palletWorkScanDto.setClosePalletNum(BigDecimal.valueOf(mesSfcProductPalletDtos.size()));
             int palletCartons = findPalletCarton(mesSfcProductPalletDto.getProductPalletId()).size();
             palletWorkScanDto.setScanCartonNum(palletCartons);
+            // 栈板下的箱码
+            List<String> cartonCodeList = this.findPalletCarton(mesSfcProductPalletDto.getProductPalletId());
             palletWorkScanDtoList.add(palletWorkScanDto);
         }
 
