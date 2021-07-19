@@ -98,6 +98,102 @@ public class EamEquipment extends ValidGroup implements Serializable {
     private Long warehouseId;
 
     /**
+     * 产线ID
+     */
+    @ApiModelProperty(name="proLineId",value = "产线ID")
+    @Excel(name = "产线ID", height = 20, width = 30,orderNum="")
+    @Column(name = "pro_line_id")
+    private Long proLineId;
+
+
+    /**
+     * 工位ID
+     */
+    @ApiModelProperty(name="stationId",value = "工位ID")
+    @Excel(name = "工位ID", height = 20, width = 30,orderNum="")
+    @Column(name = "station_id")
+    private Long stationId;
+
+    /**
+     * 工段ID
+     */
+    @ApiModelProperty(name="sectionId",value = "工段ID")
+    @Excel(name = "工段ID", height = 20, width = 30,orderNum="")
+    @Column(name = "section_id")
+    private Long sectionId;
+
+    /**
+     * 工厂ID
+     */
+    @ApiModelProperty(name="factoryId",value = "工厂ID")
+    @Excel(name = "工厂ID", height = 20, width = 30,orderNum="")
+    @Column(name = "factory_id")
+    private Long factoryId;
+
+    /**
+     * 车间ID
+     */
+    @ApiModelProperty(name="workShopId",value = "车间ID")
+    @Excel(name = "车间ID", height = 20, width = 30,orderNum="")
+    @Column(name = "work_shop_id")
+    private Long workShopId;
+
+    /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId",value = "工序ID")
+    @Column(name = "process_id")
+    private Long processId;
+
+    /**
+     * 长（cm）
+     */
+    @ApiModelProperty(name="length",value = "长（cm）")
+    @Column(name = "length")
+    private BigDecimal length;
+
+    /**
+     * 宽(cm)
+     */
+    @ApiModelProperty(name="width",value = "宽(cm)")
+    @Column(name = "width")
+    private BigDecimal width;
+
+    /**
+     * 高(cm)
+     */
+    @ApiModelProperty(name="height",value = "高(cm)")
+    @Column(name = "height")
+    private BigDecimal height;
+
+    /**
+     * 体积(cm3)
+     */
+    @ApiModelProperty(name="volume",value = "体积(cm3)")
+    @Column(name = "volume")
+    private BigDecimal volume;
+
+    /**
+     * 保养项目ID
+     */
+    @ApiModelProperty(name="maintainProjectId",value = "保养项目ID")
+    @Column(name = "maintain_project_id")
+    private Long maintainProjectId;
+
+    /**
+     * 设备IP
+     */
+    @ApiModelProperty(name="equipmentIp",value = "设备IP")
+    @Column(name = "equipment_ip")
+    private String equipmentIp;
+
+    /**
+     * MAC地址
+     */
+    @ApiModelProperty(name="equipmentMacAddress",value = "MAC地址")
+    @Column(name = "equipment_mac_address")
+    private String equipmentMacAddress;
+    /**
      * 出厂日期
      */
     @ApiModelProperty(name="releaseDate",value = "出厂日期")
@@ -155,6 +251,15 @@ public class EamEquipment extends ValidGroup implements Serializable {
     @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="15",replace = {"使用中_1", "空闲_2"})
     @Column(name = "usage_status")
     private Byte usageStatus;
+
+    /**
+     * 线上状态(0-离线 1-在线)
+     */
+    @ApiModelProperty(name="onlineStatus",value = "线上状态(0-离线 1-在线 2-已登录 3-中心异常)")
+    @Excel(name = "线上状态(0-离线 1-在线 2-已登录 3-中心异常)", height = 20, width = 30,orderNum="",replace = {"离线_0", "在线_1" , "已登录_2", "中心异常_3"})
+    @Column(name = "online_status")
+    private Byte onlineStatus;
+
 
     /**
      * 状态(0无效，1有效)

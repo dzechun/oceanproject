@@ -378,7 +378,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         searchWmsInnerJobOrder.setSourceOrderId(asnOrderId);
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
         if(wmsInnerJobOrderDtos.size()>0){
-            throw new BizErrorException("已有上架作业单");
+            throw new BizErrorException("上架作业单已存在");
         }
         int num = 0;
         Map<Long, List<WmsInAsnOrderDet>> listMap = new HashMap<>();
@@ -425,7 +425,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
             ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
             if (responseEntity.getCode() != 0) {
-                throw new BizErrorException("创建作业单失败");
+                throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
             }
             num++;
         }

@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -39,31 +41,32 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 设备信息ID
      */
     @ApiModelProperty(name="equipmentId",value = "设备信息ID")
-    @Excel(name = "设备信息ID", height = 20, width = 30,orderNum="") 
     @Column(name = "equipment_id")
+    @NotNull(groups = update.class,message = "设备信息ID不能为空")
     private Long equipmentId;
 
     /**
      * 设备编码
      */
     @ApiModelProperty(name="equipmentCode",value = "设备编码")
-    @Excel(name = "设备编码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "设备编码", height = 20, width = 30,orderNum="1")
     @Column(name = "equipment_code")
+    @NotBlank(message = "设备编码不能为空")
     private String equipmentCode;
 
     /**
      * 设备名称
      */
     @ApiModelProperty(name="equipmentName",value = "设备名称")
-    @Excel(name = "设备名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "设备名称", height = 20, width = 30,orderNum="2")
     @Column(name = "equipment_name")
     private String equipmentName;
 
     /**
      * 设备描述
      */
-    @ApiModelProperty(name="equipmentDesc",value = "设备描述")
-    @Excel(name = "设备描述", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="equipmentDesc",value = "设备描述" )
+    @Excel(name = "设备描述", height = 20, width = 30,orderNum="3")
     @Column(name = "equipment_desc")
     private String equipmentDesc;
 
@@ -71,7 +74,7 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 设备型号
      */
     @ApiModelProperty(name="equipmentModel",value = "设备型号")
-    @Excel(name = "设备型号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "设备型号", height = 20, width = 30,orderNum="4")
     @Column(name = "equipment_model")
     private String equipmentModel;
 
@@ -79,7 +82,6 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 设备类别ID
      */
     @ApiModelProperty(name="equipmentCategoryId",value = "设备类别ID")
-    @Excel(name = "设备类别ID", height = 20, width = 30,orderNum="") 
     @Column(name = "equipment_category_id")
     private Long equipmentCategoryId;
 
@@ -87,29 +89,86 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 功率(kw)
      */
     @ApiModelProperty(name="power",value = "功率(kw)")
-    @Excel(name = "功率(kw)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "功率(kw)", height = 20, width = 30,orderNum="6")
     private BigDecimal power;
 
     /**
      * 重量(kg)
      */
     @ApiModelProperty(name="weight",value = "重量(kg)")
-    @Excel(name = "重量(kg)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "重量(kg)", height = 20, width = 30,orderNum="7")
     private BigDecimal weight;
 
     /**
      * 仓库ID
      */
     @ApiModelProperty(name="warehouseId",value = "仓库ID")
-    @Excel(name = "仓库ID", height = 20, width = 30,orderNum="") 
     @Column(name = "warehouse_id")
     private Long warehouseId;
 
+
+    /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="proLineId",value = "工序ID")
+    @Column(name = "pro_line_id")
+    private Long proLineId;
+
+
+    /**
+     * 长（cm）
+     */
+    @ApiModelProperty(name="length",value = "长（cm）")
+    @Column(name = "length")
+    private BigDecimal length;
+
+    /**
+     * 宽(cm)
+     */
+    @ApiModelProperty(name="width",value = "宽(cm)")
+    @Column(name = "width")
+    private BigDecimal width;
+
+    /**
+     * 高(cm)
+     */
+    @ApiModelProperty(name="height",value = "高(cm)")
+    @Column(name = "height")
+    private BigDecimal height;
+
+    /**
+     * 体积(cm3)
+     */
+    @ApiModelProperty(name="volume",value = "体积(cm3)")
+    @Column(name = "volume")
+    private BigDecimal volume;
+
+    /**
+     * 保养项目ID
+     */
+    @ApiModelProperty(name="maintainProjectId",value = "保养项目ID")
+    @Column(name = "maintain_project_id")
+    private Long maintainProjectId;
+
+    /**
+     * 设备IP
+     */
+    @ApiModelProperty(name="equipmentIp",value = "设备IP")
+    @Column(name = "equipment_ip")
+    private Date equipmentIp;
+
+    /**
+     * MAC地址
+     */
+    @ApiModelProperty(name="equipmentMacAddress",value = "MAC地址")
+    @Column(name = "equipment_mac_address")
+    private Date equipmentMacAddress;
     /**
      * 出厂日期
      */
     @ApiModelProperty(name="releaseDate",value = "出厂日期")
-    @Excel(name = "出厂日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "出厂日期", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd")
     @Column(name = "release_date")
     private Date releaseDate;
 
@@ -117,7 +176,7 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 上次保养时间
      */
     @ApiModelProperty(name="lastTimeMaintainTime",value = "上次保养时间")
-    @Excel(name = "上次保养时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "上次保养时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "last_time_maintain_time")
     private Date lastTimeMaintainTime;
@@ -126,7 +185,7 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 下次保养时间
      */
     @ApiModelProperty(name="nextTimeMaintainTime",value = "下次保养时间")
-    @Excel(name = "下次保养时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "下次保养时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "next_time_maintain_time")
     private Date nextTimeMaintainTime;
@@ -135,14 +194,15 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 生命周期(天)
      */
     @ApiModelProperty(name="lifecycle",value = "生命周期(天)")
-    @Excel(name = "生命周期(天)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "生命周期(天)", height = 20, width = 30,orderNum="12")
+    @NotNull(message = "生命周期不能为空")
     private BigDecimal lifecycle;
 
     /**
      * 当前使用次数
      */
     @ApiModelProperty(name="currentUsageTimes",value = "当前使用次数")
-    @Excel(name = "当前使用次数", height = 20, width = 30,orderNum="") 
+    @Excel(name = "当前使用次数", height = 20, width = 30,orderNum="13")
     @Column(name = "current_usage_times")
     private Integer currentUsageTimes;
 
@@ -150,7 +210,7 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 最大使用次数
      */
     @ApiModelProperty(name="maxUsageTimes",value = "最大使用次数")
-    @Excel(name = "最大使用次数", height = 20, width = 30,orderNum="") 
+    @Excel(name = "最大使用次数", height = 20, width = 30,orderNum="14")
     @Column(name = "max_usage_times")
     private Integer maxUsageTimes;
 
@@ -158,7 +218,7 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 使用状态(1-使用中 2-空闲)
      */
     @ApiModelProperty(name="usageStatus",value = "使用状态(1-使用中 2-空闲)")
-    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="15",replace = {"使用中_1", "空闲_2"})
     @Column(name = "usage_status")
     private Byte usageStatus;
 
@@ -166,21 +226,18 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -188,7 +245,6 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -196,7 +252,7 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="17",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -205,7 +261,6 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -213,50 +268,10 @@ public class EamHtEquipment extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="19",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
-
-    /**
-     * 创建用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="6")
-    private String createUserName;
-
-    /**
-     * 修改用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="7")
-    private String modifiedUserName;
-
-    /**
-     * 组织名称
-     */
-    @Transient
-    @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30,orderNum="8")
-    private String organizationName;
-
-    /**
-     * 设备类别
-     */
-    @Transient
-    @ApiModelProperty(name = "equipmentCategoryDesc",value = "设备类别")
-    @Excel(name = "设备类别", height = 20, width = 30,orderNum="8")
-    private String equipmentCategoryDesc;
-
-    /**
-     * 仓库名称
-     */
-    @Transient
-    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="8")
-    private String warehouseName;
 
     private String option1;
 

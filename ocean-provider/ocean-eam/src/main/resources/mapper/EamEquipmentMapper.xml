@@ -14,6 +14,19 @@
     <result column="power" jdbcType="DECIMAL" property="power" />
     <result column="weight" jdbcType="DECIMAL" property="weight" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="section_id" jdbcType="BIGINT" property="sectionId" />
+    <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
+    <result column="work_shop_id" jdbcType="BIGINT" property="workShopId" />
+    <result column="process_id" jdbcType="BIGINT" property="processId" />
+    <result column="length" jdbcType="DECIMAL" property="length" />
+    <result column="width" jdbcType="DECIMAL" property="width" />
+    <result column="height" jdbcType="DECIMAL" property="height" />
+    <result column="volume" jdbcType="DECIMAL" property="volume" />
+    <result column="maintain_project_id" jdbcType="BIGINT" property="maintainProjectId" />
+    <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp" />
+    <result column="equipment_mac_address" jdbcType="VARCHAR" property="equipmentMacAddress" />
     <result column="release_date" jdbcType="TIMESTAMP" property="releaseDate" />
     <result column="last_time_maintain_time" jdbcType="TIMESTAMP" property="lastTimeMaintainTime" />
     <result column="next_time_maintain_time" jdbcType="TIMESTAMP" property="nextTimeMaintainTime" />
@@ -21,6 +34,7 @@
     <result column="current_usage_times" jdbcType="INTEGER" property="currentUsageTimes" />
     <result column="max_usage_times" jdbcType="INTEGER" property="maxUsageTimes" />
     <result column="usage_status" jdbcType="TINYINT" property="usageStatus" />
+    <result column="online_status" jdbcType="TINYINT" property="onlineStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -39,6 +53,13 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="equipment_category_desc" jdbcType="VARCHAR" property="equipmentCategoryDesc"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
+    <result column="pro_line_name" jdbcType="VARCHAR" property="proLineName"/>
+    <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
+    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="station_name" jdbcType="VARCHAR" property="stationName"/>
+    <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+    <result column="maintain_project_code" jdbcType="VARCHAR" property="maintainProjectCode"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -51,6 +72,19 @@
     ee.power,
     ee.weight,
     ee.warehouse_id,
+    ee.pro_line_id,
+    ee.station_id,
+    ee.section_id,
+    ee.factory_id,
+    ee.work_shop_id,
+    ee.process_id,
+    ee.length,
+    ee.width,
+    ee.height,
+    ee.volume,
+    ee.maintain_project_id,
+    ee.equipment_ip,
+    ee.equipment_mac_address,
     ee.release_date,
     ee.last_time_maintain_time,
     ee.next_time_maintain_time,
@@ -58,6 +92,7 @@
     ee.current_usage_times,
     ee.max_usage_times,
     ee.usage_status,
+    ee.online_status,
     ee.`status`,
     ee.remark,
     ee.org_id,
@@ -72,13 +107,22 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    eec.equipment_category_desc,bw.warehouse_name,
+    eec.equipment_category_desc as equipment_category_desc ,bw.warehouse_name as warehouse_name, bws.work_shop_name as work_shop_name,
+    bst.station_name as station_name ,bpl.pro_name as pro_name, bse.section_name as section_name,
+    bp.process_name as process_name ,bf.factory_name as factory_name, emp.maintain_project_code as maintain_project_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_equipment ee
-    left join fantech_imes_v2.eam_equipment_category eec on ee.equipment_category_id=eec.equipment_category_id
-    left join fantech_imes_v2.base_warehouse bw on ee.warehouse_id=bw.warehouse_id
+    from eam_equipment ee
+    left join eam_equipment_category eec on ee.equipment_category_id=eec.equipment_category_id
+    left join base_warehouse bw on ee.warehouse_id=bw.warehouse_id
+    left join base_work_shop bws on ee.work_shop_id=bws.work_shop_id
+    left join base_station bst on ee.station_id=bst.station_id
+    left join base_pro_line bpl on ee.pro_line_id=bpl.pro_line_id
+    left join base_workshop_section bse on ee.section_id=bse.section_id
+    left join base_factory bf on ee.factory_id=bf.factory_id
+    left join base_process bp on ee.process_id=bp.process_id
+    left join eam_maintain_project emp on ee.maintain_project_id=emp.maintain_project_id
     left join ocean_v2.sys_user u on ee.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ee.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ee.org_id = bo.organization_id
@@ -94,6 +138,9 @@
       </if>
       <if test="equipmentDesc != null and equipmentDesc!=''">
         and ee.equipment_desc like CONCAT('%', #{equipmentDesc}, '%')
+      </if>
+      <if test="equipmentIp != null and equipmentIp!=''">
+        and ee.equipment_ip like CONCAT('%', #{equipmentIp}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ee.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
