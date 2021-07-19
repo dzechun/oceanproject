@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -69,6 +70,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -408,6 +410,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int submitNoFullPallet(List<Long> palletIdList, byte printBarcode, String printName) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -456,6 +459,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int updateNowPackageSpecQty(Long productPalletId, Double nowPackageSpecQty, Boolean print, String printName) throws Exception {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();

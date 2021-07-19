@@ -45,6 +45,7 @@
     <result column="merge_pallet_code" jdbcType="VARCHAR" property="mergePalletCode" />
     <result column="e_c_n_code" jdbcType="VARCHAR" property="eCNCode" />
     <result column="rework_code" jdbcType="VARCHAR" property="reworkCode" />
+    <result column="rework_order_id" jdbcType="BIGINT" property="reworkOrderId" />
     <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode" />
     <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
     <result column="pass_station_count" jdbcType="INTEGER" property="passStationCount" />
@@ -66,7 +67,10 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto">
+  </resultMap>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultDtoMap">
     select * from mes_sfc_barcode_process_record msbpr
     <where>
       <if test="workOrderBarcodeId != null">

@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -114,7 +115,8 @@ public class MesSfcReworkOrderServiceImpl extends BaseService<MesSfcReworkOrder>
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int save(DoReworkOrderDto doReworkOrderDto) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();

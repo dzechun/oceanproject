@@ -58,6 +58,7 @@ public class QmsIpqcInspectionOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
     @Column(name = "material_id")
+    @NotNull(message = "物料ID不能为空")
     private Long materialId;
 
     /**

@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -58,6 +59,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();

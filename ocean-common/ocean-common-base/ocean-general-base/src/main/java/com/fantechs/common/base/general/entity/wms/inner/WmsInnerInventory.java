@@ -79,8 +79,8 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     /**
      * 作业状态(1-待入 2-正常 3-待出)
      */
-    @ApiModelProperty(name="jobStatus",value = "作业状态(1-待入 2-正常 3-待出)")
-    @Excel(name = "作业状态", height = 20, width = 30,orderNum="6",replace = {"待入_1","正常_2","待出_3"})
+    @ApiModelProperty(name="jobStatus",value = "作业状态(1正常 2待出)")
+    @Excel(name = "作业状态", height = 20, width = 30,orderNum="6",replace = {"1正常 2待出"})
     @Column(name = "job_status")
     private Byte jobStatus;
 

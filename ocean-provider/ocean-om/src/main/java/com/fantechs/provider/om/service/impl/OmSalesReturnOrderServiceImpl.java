@@ -1,6 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -73,9 +74,13 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int packageAutoOutOrder(OmSalesReturnOrder omSalesReturnOrder) {
         SysUser sysUser = currentUser();
         int num = 0;
+        if(omSalesReturnOrder.getOmSalesReturnOrderDets().size()<1){
+            throw new BizErrorException("请输入下发数量");
+        }
             List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
             int i = 0;
             for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrder.getOmSalesReturnOrderDets()) {
@@ -185,7 +190,9 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
             omSalesReturnOrderDet.setModifiedUserId(sysUser.getUserId());
             omSalesReturnOrderDet.setOrgId(sysUser.getOrganizationId());
         }
-        num+=omSalesReturnOrderDetMapper.insertList(record.getOmSalesReturnOrderDets());
+        if(record.getOmSalesReturnOrderDets().size()>0){
+            num+=omSalesReturnOrderDetMapper.insertList(record.getOmSalesReturnOrderDets());
+        }
         num+=this.addHt(record, record.getOmSalesReturnOrderDets());
         return num;
     }

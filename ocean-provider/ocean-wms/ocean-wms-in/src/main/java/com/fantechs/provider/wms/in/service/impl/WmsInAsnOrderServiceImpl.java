@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.in.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
@@ -107,23 +108,19 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             List<WmsInAsnOrderDet> list = wmsInAsnOrderDetMapper.select(WmsInAsnOrderDet.builder()
                     .asnOrderId(Long.parseLong(s))
                     .build());
-            WmsInAsnOrderDto wmsInAsnOrderDto = wmsInAsnOrderMapper.findList(SearchWmsInAsnOrder.builder()
-                    .asnOrderId(wmsInAsnOrder.getAsnOrderId())
-                    .build()).get(0);
             for (WmsInAsnOrderDet wmsInAsnOrderDet : list) {
                 try {
-                    wmsInAsnOrderDet.setStorageId(wmsInAsnOrderDet.getStorageId());
-                    wmsInAsnOrderDet.setInventoryStatusId(inventoryStatusId);
-                    wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getPackingQty());
-                    wmsInAsnOrderDet.setModifiedTime(new Date());
-                    wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
+                    if(StringUtils.isEmpty(wmsInAsnOrderDet.getActualQty()) || wmsInAsnOrderDet.getActualQty().compareTo(BigDecimal.ZERO)==0) {
+                        wmsInAsnOrderDet.setStorageId(wmsInAsnOrderDet.getStorageId());
+                        wmsInAsnOrderDet.setInventoryStatusId(inventoryStatusId);
+                        wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getPackingQty());
+                        wmsInAsnOrderDet.setModifiedTime(new Date());
+                        wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
 
-                    WmsInAsnOrderDetDto wmsInAsnOrderDetDto = wmsInAsnOrderDetMapper.findList(SearchWmsInAsnOrderDet.builder()
-                            .asnOrderDetId(wmsInAsnOrderDet.getAsnOrderDetId())
-                            .build()).get(0);
-                    //添加库存
-                    wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wmsInAsnOrderDet);
-                    num+=addInventory(wmsInAsnOrder.getAsnOrderId(), wmsInAsnOrderDet.getAsnOrderDetId(),wmsInAsnOrderDet.getActualQty());
+                        //添加库存
+                        wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wmsInAsnOrderDet);
+                        num += addInventory(wmsInAsnOrder.getAsnOrderId(), wmsInAsnOrderDet.getAsnOrderDetId(), wmsInAsnOrderDet.getActualQty());
+                    }
                 }catch (Exception e){
                     throw new BizErrorException("收货失败");
                 }
@@ -362,6 +359,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int createInnerJobOrder(Long asnOrderId) {
         WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
         if(StringUtils.isEmpty(wmsInAsnOrder)){
@@ -380,7 +378,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         searchWmsInnerJobOrder.setSourceOrderId(asnOrderId);
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
         if(wmsInnerJobOrderDtos.size()>0){
-            throw new BizErrorException("已有上架作业单");
+            throw new BizErrorException("上架作业单已存在");
         }
         int num = 0;
         Map<Long, List<WmsInAsnOrderDet>> listMap = new HashMap<>();
@@ -427,7 +425,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
             ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
             if (responseEntity.getCode() != 0) {
-                throw new BizErrorException("创建作业单失败");
+                throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
             }
             num++;
         }
@@ -650,6 +648,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int palletAutoAsnOrder(PalletAutoAsnDto palletAutoAsnDto) {
         SysUser sysUser = currentUser();
         try {

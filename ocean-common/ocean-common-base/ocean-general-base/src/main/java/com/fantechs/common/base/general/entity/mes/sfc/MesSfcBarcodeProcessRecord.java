@@ -346,6 +346,14 @@ public class MesSfcBarcodeProcessRecord extends ValidGroup implements Serializab
     private String reworkCode;
 
     /**
+     * 返工单ID
+     */
+    @ApiModelProperty(name="reworkOrderId",value = "返工单ID")
+    @Excel(name = "返工单ID", height = 20, width = 30,orderNum="")
+    @Column(name = "rework_order_id")
+    private Long reworkOrderId;
+
+    /**
      * 彩盒号
      */
     @ApiModelProperty(name="colorBoxCode",value = "彩盒号")
