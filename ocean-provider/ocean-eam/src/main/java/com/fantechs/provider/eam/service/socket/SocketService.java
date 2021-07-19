@@ -9,7 +9,8 @@ import java.util.Map;
  */
 public interface SocketService {
 
-    int instructions(String ip,String code);
+    int instructions(String ip,String code,Object url);
 
-    void manyServer() throws IOException;
+    void openService() throws IOException;
+
 }

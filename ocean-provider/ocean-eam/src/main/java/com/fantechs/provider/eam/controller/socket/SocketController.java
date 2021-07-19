@@ -15,23 +15,25 @@ import java.io.IOException;
  * @create 2021/1/20
  */
 @RestController
-@Api(tags = "新宝ESOP设备管理")
-@RequestMapping("/print")
+@Api(tags = "设备状态监控")
+@RequestMapping("/equipmentStatus")
 public class SocketController {
     @Resource
     private SocketService socketService;
 
     @ApiOperation("发送指令")
-    @GetMapping("/instructions")
+    @PostMapping("/instructions")
     public ResponseEntity instructions(@RequestParam(required = true)String ip,
                                        @RequestParam(value = "控制设备命令，1203为关机，1204为重启",required = true) String code){
-        int i = socketService.instructions(ip,code);
+        int i = socketService.instructions(ip,code,null);
         return ControllerUtil.returnCRUD(i);
     }
 
     @GetMapping("/manyOpen")
-    public ResponseEntity manyOpen() throws IOException {
-        socketService.manyServer();
+    public ResponseEntity openService() throws IOException {
+        socketService.openService();
         return ControllerUtil.returnCRUD(1);
     }
+
+
 }

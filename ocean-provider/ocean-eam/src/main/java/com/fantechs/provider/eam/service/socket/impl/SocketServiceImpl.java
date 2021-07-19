@@ -26,12 +26,12 @@ public class SocketServiceImpl implements SocketService {
     @Resource
     private EamEquipmentMapper eamEquipmentMapper;
 
-    private Hashtable hashtable;
+    private Hashtable hashtable = new Hashtable();
 
 
 
     @Override
-    public int instructions(String ip,String code) {
+    public int instructions(String ip,String code,Object url) {
         try {
             Socket socket = (Socket)hashtable.get(ip);
             if(socket == null) throw new BizErrorException("未查询到ip对应的设备信息,请检查设备是否开启");
@@ -42,6 +42,7 @@ public class SocketServiceImpl implements SocketService {
             Map<String, Object> data = new HashMap();
             List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
             map.put("code", code);
+            if(url != null)  map.put("url", url);
             list.add(map);
             data.put("data",list);
             String outMsg = JSON.toJSONString(data);
@@ -56,96 +57,138 @@ public class SocketServiceImpl implements SocketService {
     }
 
     @Override
-    public  void manyServer() throws IOException{
-        //1.创建一个服务端socket
+    public  void openService() throws IOException{
+        //创建一个服务端socket
         ServerSocket serverSocket=new ServerSocket(9302);
-        //2调用accept方法等待连接,线程会阻塞状态
+
+        //调用accept方法等待连接,线程会阻塞状态
         System.out.println("Socket服务已启动,等待连接");
         System.out.println("接收到客户端连接请求");
-        int count=0;
         Socket socket=null;
-
         while(true){
-            count++;
             socket =serverSocket.accept();
             new SockerServerThread(socket).start();
-            System.out.println("客户端数量"+count);
+            System.out.println("客户端数量"+hashtable.size()+1);
         }
     }
 
     public class SockerServerThread  extends Thread{
         Socket socket=null;
 
-
         public SockerServerThread (Socket socket){
             this.socket=socket;
         }
-        //获取输入流
-        InputStream inputStream= null;
-      //  InputStreamReader isr=null;
-        //BufferedReader br=null;
+        // 获取输入流
+        // InputStream inputStream= null;
         OutputStream os=null;
         PrintWriter out=null;
-
 
         //线程操作响应客户端请求
         public void run(){
             InetAddress addr = socket.getInetAddress();
             try {
-
-               /* Socket socketed = hashtable.get(addr.getHostAddress());
-                if(socketed != null && socketed != null){
-                inputStream = socket.getInputStream();
-                InputStreamReader isr=new InputStreamReader(inputStream);
-                BufferedReader br=new BufferedReader(isr);
-                String  info=null;
-                while((info=br.readLine())!=null){//循环读取信息
-                    System.out.println("收到客户端的请求:"+info);
-
-                }
-                socket.shutdownInput();
-                }else{
-
-                }*/
-
-                hashtable = new Hashtable();
-                hashtable.put(addr.getHostAddress(),socket);
                 os=socket.getOutputStream();
                 out =new PrintWriter(os);
-
+                //开机连接发送新闻命令
+                hashtable.put(addr.getHostAddress(),socket);
                 Map<String, Object> map = new HashMap();
-                Map<String, Object> data = new HashMap();
-                List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+                Map<String, Object> newMap = new HashMap();
+                Map<String, Object> newData = new HashMap();
+                List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
                 map.put("code", 1201);
-               // map.put("url", "http://192.168.204.163/#/YunZhiESOP");
-                map.put("url", "https://www.baidu.com/");
-                list.add(map);
-                Map<String, Object> map2 = new HashMap();
-                map2.put("code", 1202);
-                map2.put("url", "http://192.168.204.163/#/ESOPDataShow");
-                list.add(map2);
-                data.put("data",list);
-                String outMsg = JSON.toJSONString(data);
+                map.put("url", "http://192.168.204.163/#/ESOPDataShow");
+                newList.add(map);
+                newMap.put("code", 1202);
+                newMap.put("url", "http://192.168.204.163/#/YunZhiESOP");
+                newList.add(newMap);
+                newData.put("data",newList);
+                String outMsg = JSON.toJSONString(newData);
                 out.write(outMsg);
                 out.flush();
+                updateStatus(addr.getHostAddress(),(byte)1);
 
-                EamEquipment eamEquipment = getEquipment(addr.getHostAddress());
-                eamEquipment.setOnlineStatus((byte)1);
-                eamEquipmentMapper.updateByPrimaryKey(eamEquipment);
+                //读取输入字段，判断是否断开
+                inputStreamToString(socket,addr.getHostAddress());
 
+/*
+                if(socket.getInputStream() != null){
+                    System.out.println("---接受信息------");
+                    InputStream is = socket.getInputStream();
+                    System.out.println("---socket------"+socket.getPort());
+                    String jsonStr = inputStreamToString(is);
+                    System.out.println("----json---"+jsonStr);
+
+                    Map<String, Object> data = new HashMap();
+                    List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+                    Map<String, Object> map = new HashMap();
+
+                    if(jsonStr!= null && "1206".equals(jsonStr)){
+                        *//*OutputStream os = socket.getOutputStream();
+                        PrintWriter out =new PrintWriter(os);
+
+                        map.put("code", 1202);
+                        map.put("url", "http://192.168.204.163/#/YunZhiESOP");
+                        list.add(map);
+                        data.put("data",list);
+                        outMsg = JSON.toJSONString(data);
+                        out.write(outMsg);
+                        out.flush();*//*
+                        instructions(addr.getHostAddress(),"1202","http://192.168.204.163/#/YunZhiESOP");
+                        updateStatus(addr.getHostAddress(),(byte)2);
+
+                    }else if(jsonStr!= null && "1205".equals(jsonStr)){
+
+                        //设备改为离线，关闭socket
+                        updateStatus(addr.getHostAddress(),(byte)0);
+                    //    hashtable.remove(addr.getHostAddress());
+                    //    out.close();
+                   //     is.close();
+                   //     os.close();
+                   //     socket.shutdownInput();
+                  //      socket.close();
+                    }
+                }*/
 
             } catch (Exception e) {
-                System.out.println("---CLOSE------" + addr.getHostAddress());
-               // hashtable.remove(addr.getHostAddress());
-               /* EamEquipment eamEquipment = getEquipment(addr.getHostAddress());
-                eamEquipment.setOnlineStatus((byte)0);
-                eamEquipmentMapper.insertUseGeneratedKeys(eamEquipment);*/
-
+             //   hashtable.remove(addr.getHostAddress());
+                updateStatus(addr.getHostAddress(),(byte)3);
                 e.printStackTrace();
             }
 
         }
     }
+
+    private  String inputStreamToString(Socket socket ,String ip) throws IOException {
+        InputStream inputStream = socket.getInputStream();
+        StringBuffer buffer = new StringBuffer();
+        InputStreamReader inputStreamReader;
+        String str = null;
+        try {
+            inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            byte [] b = new byte[1024];
+            int x = inputStream.read(b, 0, b.length);
+            str = new String(b,0,x);
+
+            // 释放资源
+            bufferedReader.close();
+            inputStreamReader.close();
+            inputStream.close();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("---断开连接----");
+            updateStatus(ip, (byte) 0);
+            socket.shutdownInput();
+            socket.shutdownOutput();
+            socket.close();
+            e.printStackTrace();
+        }
+        return str;
+    }
+
+
+
 
     public EamEquipment getEquipment(String ip){
         Example example = new Example(EamEquipment.class);
@@ -160,7 +203,11 @@ public class SocketServiceImpl implements SocketService {
     }
 
 
-
-
+    public int updateStatus(String ip, Byte bytes) {
+        EamEquipment eamEquipment = getEquipment(ip);
+        eamEquipment.setOnlineStatus(bytes);
+        eamEquipmentMapper.updateByPrimaryKeySelective(eamEquipment);
+        return 1;
+    }
 
 }

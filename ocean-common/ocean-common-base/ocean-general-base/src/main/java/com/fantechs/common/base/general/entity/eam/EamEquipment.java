@@ -255,8 +255,8 @@ public class EamEquipment extends ValidGroup implements Serializable {
     /**
      * 线上状态(0-离线 1-在线)
      */
-    @ApiModelProperty(name="onlineStatus",value = "线上状态(0-离线 1-在线)")
-    @Excel(name = "线上状态(0-离线 1-在线)", height = 20, width = 30,orderNum="",replace = {"离线_0", "在线_1"})
+    @ApiModelProperty(name="onlineStatus",value = "线上状态(0-离线 1-在线 2-已登录 3-中心异常)")
+    @Excel(name = "线上状态(0-离线 1-在线 2-已登录 3-中心异常)", height = 20, width = 30,orderNum="",replace = {"离线_0", "在线_1" , "已登录_2", "中心异常_3"})
     @Column(name = "online_status")
     private Byte onlineStatus;
 
