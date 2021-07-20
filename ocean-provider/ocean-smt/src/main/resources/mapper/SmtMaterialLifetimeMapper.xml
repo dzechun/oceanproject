@@ -72,10 +72,10 @@
         and sml.the_humidity_level like CONCAT('%', #{theHumidityLevel}, '%')
       </if>
       <if test="sealHoldingTime != null">
-        and sml.seal_holding_time like CONCAT('%', #{sealHoldingTime}, '%')
+        and sml.seal_holding_time = #{sealHoldingTime}
       </if>
       <if test="openHoldTime != null">
-        and sml.open_hold_time like CONCAT('%', #{openHoldTime}, '%')
+        and sml.open_hold_time = #{openHoldTime}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sml.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
