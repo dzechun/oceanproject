@@ -306,8 +306,8 @@ public class BarcodeUtils {
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId()) && mesSfcBarcodeProcessRecordDtoList.isEmpty()) {
             mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE));
             // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
-            if (mesPmWorkOrder.getWorkOrderStatus().equals("2")) {
-                mesPmWorkOrder.setWorkOrderStatus(Byte.valueOf("3"));
+            if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
+                mesPmWorkOrder.setWorkOrderStatus((byte) 3);
             }
             barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
         }

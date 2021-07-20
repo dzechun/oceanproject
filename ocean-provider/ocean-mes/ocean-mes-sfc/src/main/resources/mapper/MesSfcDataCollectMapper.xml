@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcDataCollectMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcDataCollect">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="data_collect_id" jdbcType="BIGINT" property="dataCollectId" />
+    <result column="co2" jdbcType="VARCHAR" property="co2" />
+    <result column="tvoc" jdbcType="VARCHAR" property="tvoc" />
+    <result column="ch20" jdbcType="VARCHAR" property="ch20" />
+    <result column="pntwo" jdbcType="VARCHAR" property="pntwo" />
+    <result column="rh" jdbcType="VARCHAR" property="rh" />
+    <result column="temp" jdbcType="VARCHAR" property="temp" />
+    <result column="pmten" jdbcType="VARCHAR" property="pmten" />
+    <result column="pmone" jdbcType="VARCHAR" property="pmone" />
+    <result column="lux" jdbcType="VARCHAR" property="lux" />
+    <result column="mcu" jdbcType="VARCHAR" property="mcu" />
+    <result column="weigh" jdbcType="VARCHAR" property="weigh" />
+    <result column="switch1" jdbcType="VARCHAR" property="switch1" />
+    <result column="switch2" jdbcType="VARCHAR" property="switch2" />
+    <result column="db" jdbcType="VARCHAR" property="db" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+</mapper>

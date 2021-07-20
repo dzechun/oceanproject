@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class PalletWorkScanDto {
@@ -37,4 +38,7 @@ public class PalletWorkScanDto {
 
     @ApiModelProperty(name="scanCartonNum",value = "扫描包箱数")
     private int scanCartonNum;
+
+    @ApiModelProperty(name="cartonCodeList",value = "包箱编码数数组")
+    private List<String> cartonCodeList;
 }

@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamNewsDto;
 import com.fantechs.common.base.general.entity.eam.*;
+import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentParam;
 import com.fantechs.common.base.general.entity.eam.history.EamHtMaintainProject;
 import com.fantechs.common.base.general.entity.eam.history.EamHtNews;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.eam.mapper.EamEquipmentMapper;
 import com.fantechs.provider.eam.mapper.EamHtNewsMapper;
 import com.fantechs.provider.eam.mapper.EamNewsAttachmentMapper;
 import com.fantechs.provider.eam.mapper.EamNewsMapper;
@@ -40,14 +42,25 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
     private EamHtNewsMapper eamHtNewsMapper;
     @Resource
     private EamNewsAttachmentMapper eamNewsAttachmentMapper;
+    @Resource
+    private EamEquipmentMapper eamEquipmentMapper;
 
     @Override
     public List<EamNewsDto> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("equipmentIp"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
+        }else {
+            Example example = new Example(EamEquipment.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("equipmentIp",map.get("equipmentIp"));
+            List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
+            map.put("orgId", eamEquipments.get(0).getOrgId());
         }
-        map.put("orgId", user.getOrganizationId());
+
         return eamNewsMapper.findList(map);
     }
 

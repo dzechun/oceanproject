@@ -110,6 +110,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
         searchPtlJobOrder.setOrderStatusList((byte) 1);
         searchPtlJobOrder.setWarehouseAreaId(warehouseAreaId);
+        searchPtlJobOrder.setType(1);
         List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
         if (StringUtils.isNotEmpty(ptlJobOrderDtoList)) {
             if (ptlJobOrderDtoList.size() != 1 || !ptlJobOrderDtoList.get(0).getJobOrderId().equals(jobOrderId)) {
@@ -219,6 +220,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         for (PtlJobOrderDTO ptlJobOrderDTO : ptlJobOrderDTOList) {
             SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
             searchPtlJobOrder.setJobOrderCode(ptlJobOrderDTO.getTaskNo());
+            searchPtlJobOrder.setType(1);
             List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
             if (StringUtils.isNotEmpty(ptlJobOrderDtoList)) {
                 continue;
@@ -380,6 +382,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
         SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
         searchPtlJobOrder.setJobOrderId(jobOrderId);
+        searchPtlJobOrder.setType(1);
         List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
         PtlJobOrderDto ptlJobOrderDto = ptlJobOrderDtoList.get(0);
         if (ptlJobOrderDto.getOrderStatus() != 2) {
@@ -454,6 +457,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             SearchPtlJobOrder searchPtlJobOrderWB = new SearchPtlJobOrder();
             searchPtlJobOrderWB.setRelatedOrderCode(ptlJobOrderDto.getRelatedOrderCode());
             searchPtlJobOrderWB.setNotOrderStatus((byte) 3);
+            searchPtlJobOrderWB.setType(1);
             List<PtlJobOrderDto> ptlJobOrderWBDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrderWB).getData();
             if (ptlJobOrderWBDtoList.size() == 1) {
                 PtlJobOrderDTO ptlJobOrderDTO = new PtlJobOrderDTO();
@@ -679,6 +683,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if ("C".equals(ptlJobOrderDTO.getStatus())) {
             SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
             searchPtlJobOrder.setRelatedOrderCode(ptlJobOrderDTO.getCustomerNo());
+            searchPtlJobOrder.setType(1);
             List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
             List<RabbitMQDTO> list = new LinkedList<>();
             for (PtlJobOrderDto ptlJobOrderDto : ptlJobOrderDtoList) {
@@ -731,6 +736,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
             SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
             searchPtlJobOrder.setRelatedOrderCode(ptlJobOrderDTO.getCustomerNo());
+            searchPtlJobOrder.setType(1);
             List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
             if (StringUtils.isNotEmpty(ptlJobOrderDtoList)) {
                 if (ptlJobOrderDtoList.get(0).getOrderStatus() != 6) {

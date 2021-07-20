@@ -59,7 +59,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             }
         }
 
-
+        mesPmWorkOrder.setWorkOrderStatus((byte) 1);
         mesPmWorkOrder.setCreateUserId(currentUser.getUserId());
         mesPmWorkOrder.setCreateTime(new Date());
         if(mesPmWorkOrderMapper.insertSelective(mesPmWorkOrder)<=0){

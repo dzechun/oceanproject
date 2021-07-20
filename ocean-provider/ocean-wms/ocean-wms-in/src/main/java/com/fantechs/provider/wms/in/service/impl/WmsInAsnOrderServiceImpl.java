@@ -183,7 +183,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                BeanUtil.copyProperties(wmsInAsnOrderDet,wms);
                wms.setAsnOrderDetId(null);
                wms.setPackingQty(wmsInAsnOrderDet.getActualQty());
-               wms.setLineNumber(wmsInAsnOrderDet.getLineNumber()+1);
+               wms.setLineNumber(wmsInAsnOrderDetMapper.findLineNumber(wmsInAsnOrder.getAsnOrderId())+1);
                int num = wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wms);
 
                wmsInAsnOrderDet.setPackingQty(wmsInAsnOrderDet.getPackingQty().subtract(wmsInAsnOrderDet.getActualQty()));
