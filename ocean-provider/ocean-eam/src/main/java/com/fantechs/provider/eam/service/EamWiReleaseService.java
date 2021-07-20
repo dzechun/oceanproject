@@ -19,4 +19,7 @@ public interface EamWiReleaseService extends IService<EamWiRelease> {
     int save(EamWiReleaseDto eamWiReleaseDto);
 
     int update(EamWiReleaseDto eamWiReleaseDto);
+
+    int censor(EamWiReleaseDto eamWiReleaseDto);
+
 }

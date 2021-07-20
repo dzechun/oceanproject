@@ -79,4 +79,13 @@ public class EamWiReleaseController {
         List<EamHtWiReleaseDto> list = eamHtWiReleaseService.findHtList(ControllerUtil.dynamicConditionByEntity(searchEamWiRelease));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
+
+
+
+    @ApiOperation("审核")
+    @PostMapping("/censor")
+    public ResponseEntity censor(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamWiRelease.update.class) EamWiRelease eamWiRelease) {
+        return ControllerUtil.returnCRUD(eamWiReleaseService.update(eamWiRelease));
+    }
+
 }

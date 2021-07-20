@@ -20,6 +20,8 @@ import java.util.Map;
 public interface EamWorkInstructionService extends IService<EamWorkInstruction> {
     List<EamWorkInstructionDto> findList(SearchEamWorkInstruction searchEamWorkInstruction);
 
+    EamWorkInstructionDto findByEquipmentIp(SearchEamWorkInstruction searchEamWorkInstruction);
+
     EamWorkInstructionDto importExcel(MultipartFile file) throws IOException;
 
     int save(EamWorkInstructionDto eamWorkInstructionDto);

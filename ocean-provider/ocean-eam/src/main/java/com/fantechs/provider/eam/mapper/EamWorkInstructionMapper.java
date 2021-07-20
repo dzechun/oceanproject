@@ -11,4 +11,5 @@ import java.util.List;
 @Mapper
 public interface EamWorkInstructionMapper extends MyMapper<EamWorkInstruction> {
     List<EamWorkInstructionDto> findList(SearchEamWorkInstruction searchEamWorkInstruction);
+
 }

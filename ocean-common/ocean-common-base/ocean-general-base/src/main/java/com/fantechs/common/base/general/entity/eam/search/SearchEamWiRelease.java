@@ -28,4 +28,16 @@ public class SearchEamWiRelease extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="materialCode",value = "产品料号")
     private String materialCode;
+
+    /**
+     * 设备ip
+     */
+    @ApiModelProperty(name="equipmentIp",value = "设备ip")
+    private String equipmentIp;
+
+    /**
+     * 发布状态(1-待发布 2-已发布)
+     */
+    @ApiModelProperty(name="release_status",value = "发布状态(1-待发布 2-已发布)")
+    private Byte releaseStatus;
 }

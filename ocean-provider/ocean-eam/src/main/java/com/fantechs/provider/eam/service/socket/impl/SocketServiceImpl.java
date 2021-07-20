@@ -9,6 +9,7 @@ import com.fantechs.provider.eam.service.socket.SocketService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.*;
 import java.net.InetAddress;
@@ -57,6 +58,7 @@ public class SocketServiceImpl implements SocketService {
     }
 
     @Override
+   // @PostConstruct
     public  void openService() throws IOException{
         //创建一个服务端socket
         ServerSocket serverSocket=new ServerSocket(9302);
@@ -87,29 +89,36 @@ public class SocketServiceImpl implements SocketService {
         public void run(){
             InetAddress addr = socket.getInetAddress();
             try {
-                os=socket.getOutputStream();
-                out =new PrintWriter(os);
+             //   os=socket.getOutputStream();
+             //   out =new PrintWriter(os);
                 //开机连接发送新闻命令
                 hashtable.put(addr.getHostAddress(),socket);
-                Map<String, Object> map = new HashMap();
-                Map<String, Object> newMap = new HashMap();
-                Map<String, Object> newData = new HashMap();
-                List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
-                map.put("code", 1201);
-                map.put("url", "http://192.168.204.163/#/ESOPDataShow");
-                newList.add(map);
-                newMap.put("code", 1202);
-                newMap.put("url", "http://192.168.204.163/#/YunZhiESOP");
-                newList.add(newMap);
-                newData.put("data",newList);
-                String outMsg = JSON.toJSONString(newData);
-                out.write(outMsg);
-                out.flush();
-                updateStatus(addr.getHostAddress(),(byte)1);
+
+
+                    Map<String, Object> map = new HashMap();
+                    Map<String, Object> newMap = new HashMap();
+                    Map<String, Object> newData = new HashMap();
+                    List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
+                    map.put("code", 1201);
+                    map.put("url", "http://192.168.204.163/#/ESOPDataShow?ip=" + addr.getHostAddress());
+                    newList.add(map);
+                    newMap.put("code", 1202);
+                    newMap.put("url", "http://192.168.204.163/#/YunZhiESOP?ip=" + addr.getHostAddress());
+                    newList.add(newMap);
+                    newData.put("data", newList);
+                    String outMsg = JSON.toJSONString(newData);
+                //平板发送数据测试,循环一周时间
+                for(int i=0;i<1000000;i++) {
+                    sleep(2000);
+                    os=socket.getOutputStream();
+                    out =new PrintWriter(os);
+                    out.write(outMsg);
+                    out.flush();
+                    updateStatus(addr.getHostAddress(), (byte) 1);
+                }
 
                 //读取输入字段，判断是否断开
-                inputStreamToString(socket,addr.getHostAddress());
-
+                inputStreamToString(socket, addr.getHostAddress());
 /*
                 if(socket.getInputStream() != null){
                     System.out.println("---接受信息------");
