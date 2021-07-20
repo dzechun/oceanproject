@@ -77,8 +77,10 @@
     LEFT JOIN base_route br ON ewr.route_id = br.route_id
     LEFT JOIN base_factory bf ON ewr.factory_id = bf.factory_id
     LEFT JOIN base_work_shop bws ON ewr.work_shop_id = bws.work_shop_id
-    LEFT JOIN eam_equipment ee ON ewr.pro_line_id = ee.pro_line_id
-    LEFT JOIN base_pro_line bpl ON ee.pro_line_id = bpl.pro_line_id
+    <if test="equipmentIp!=null and equipmentIp!=''">
+        LEFT JOIN eam_equipment ee ON ewr.pro_line_id = ee.pro_line_id
+    </if>
+    LEFT JOIN base_pro_line bpl ON ewr.pro_line_id = bpl.pro_line_id
     LEFT JOIN ocean_v2.sys_user su ON ewr.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON ewr.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON ewr.org_id = bo.organization_id

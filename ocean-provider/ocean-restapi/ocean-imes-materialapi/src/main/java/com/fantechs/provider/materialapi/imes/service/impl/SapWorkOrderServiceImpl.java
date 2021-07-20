@@ -1,6 +1,7 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
@@ -39,6 +40,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
     private BaseFeignApi baseFeignApi;
 
     @Override
+    @LcnTransaction
     public String saveWorkOrder(List<RestapiWorkOrderApiDto> restapiWorkOrderApiDtos) throws ParseException {
         if(StringUtils.isEmpty(restapiWorkOrderApiDtos)) return "工单参数为空";
         Map<String,Long> orderMap = new HashMap<String,Long>();

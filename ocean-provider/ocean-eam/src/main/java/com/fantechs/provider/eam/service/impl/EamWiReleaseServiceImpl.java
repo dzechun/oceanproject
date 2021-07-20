@@ -102,10 +102,12 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
 
     @Override
     public int update(EamWiReleaseDto eamWiReleaseDto) {
+        System.out.println("-----0------");
         SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(eamWiReleaseDto.getWiReleaseId()))
             throw new BizErrorException("id不能为空");
         eamWiReleaseMapper.updateByPrimaryKey(eamWiReleaseDto);
+        System.out.println("-----1------");
 
         Example example = new Example(EamWiRelease.class);
         Example.Criteria criteria = example.createCriteria();
@@ -116,7 +118,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         Example detExample = new Example(EamWiReleaseDet.class);
         Example.Criteria detCriteria = detExample.createCriteria();
         detCriteria.andEqualTo("wiReleaseId", eamWiReleaseDto.getWiReleaseId());
-        eamHtWiReleaseMapper.deleteByExample(detExample);
+        eamWiReleaseDetMapper.deleteByExample(detExample);
         detExample.clear();
 
 
@@ -130,28 +132,25 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
     }
 
     @Override
-    public int censor(EamWiReleaseDto eamWiReleaseDto) {
+    public int censor(EamWiRelease eamWiRelease) {
         SysUser sysUser = currentUser();
-        if(StringUtils.isEmpty(eamWiReleaseDto.getWiReleaseId()))
+        if(StringUtils.isEmpty(eamWiRelease.getWiReleaseId()))
             throw new BizErrorException("发布id不能为空");
-        if(StringUtils.isEmpty(eamWiReleaseDto.getProLineId()))
+        if(StringUtils.isEmpty(eamWiRelease.getProLineId()))
             throw new BizErrorException("产线id不能为空");
 
         Example example = new Example(EamWiRelease.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", sysUser.getOrganizationId()).andEqualTo("proLineId", eamWiReleaseDto.getProLineId());
-        EamWiRelease eamWiRelease = eamWiReleaseMapper .selectOneByExample(example);
-        if(StringUtils.isNotEmpty(eamWiRelease)) {
-            eamWiRelease.setStatus((byte)0);
-            eamWiReleaseMapper.updateByPrimaryKey(eamWiRelease);
+        criteria.andEqualTo("orgId", sysUser.getOrganizationId()).andEqualTo("proLineId", eamWiRelease.getProLineId());
+        EamWiRelease oldWiRelease = eamWiReleaseMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(oldWiRelease)) {
+            oldWiRelease.setStatus((byte)0);
+            eamWiReleaseMapper.updateByPrimaryKey(oldWiRelease);
         }
         example.clear();
 
-        EamWiRelease release = new EamWiRelease();
-        release.setWiReleaseId(eamWiReleaseDto.getWiReleaseId());
-         release.setStatus((byte)1);
-     //   release.setReleaseStatus((byte)2);
-        int i = eamWiReleaseMapper.updateByPrimaryKey(eamWiReleaseDto);
+        eamWiRelease.setStatus((byte)1);
+        int i = eamWiReleaseMapper.updateByPrimaryKey(eamWiRelease);
         return i;
     }
 
