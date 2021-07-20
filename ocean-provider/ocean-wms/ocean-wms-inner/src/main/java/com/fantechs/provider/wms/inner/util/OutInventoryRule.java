@@ -8,6 +8,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -44,7 +45,8 @@ public class OutInventoryRule {
         example.createCriteria().andEqualTo("warehouseId",warehouseId)
                 .andEqualTo("materialId",materialId)
                 .andEqualTo("batchCode",batchCode)
-                .andEqualTo("productionDate",productionDate);
+                .andEqualTo("productionDate",productionDate)
+                .andGreaterThan("packingQty", BigDecimal.ZERO);
         example.orderBy("production_date,packing_qty desc");
         List<WmsInnerInventory> list  = outInventoryRule.wmsInnerInventoryMapper.selectByExample(example);
         if(list.size()<1){
