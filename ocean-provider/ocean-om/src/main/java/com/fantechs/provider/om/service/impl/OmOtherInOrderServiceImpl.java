@@ -82,6 +82,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         int i = 0;
 
         for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrder.getOmOtherInOrderDets()) {
+            i++;
             if(StringUtils.isEmpty(omOtherInOrderDet.getIssueQty())){
                 omOtherInOrderDet.setIssueQty(BigDecimal.ZERO);
             }
@@ -113,7 +114,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     .packingQty(omOtherInOrderDet.getQty())
                     .productionDate(omOtherInOrderDet.getProductionDate())
                     .expiredDate(omOtherInOrderDet.getExpiredDate())
-                    .lineNumber(i++)
+                    .lineNumber(i)
                     .build();
             wmsInAsnOrderDets.add(wmsInAsnOrderDet);
         }
