@@ -26,4 +26,10 @@ public class MesPmWorkOrderBomServiceImpl extends BaseService<MesPmWorkOrderBom>
         return mesPmWorkOrderBomMapper.findList(map);
     }
 
+    @Override
+    public int batchAdd(List<MesPmWorkOrderBom> mesPmWorkOrderBoms) {
+        int i = mesPmWorkOrderBomMapper.insertList(mesPmWorkOrderBoms);
+        return i;
+    }
+
 }

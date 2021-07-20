@@ -3,8 +3,6 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
@@ -13,8 +11,6 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganizati
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -26,8 +22,10 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebService(serviceName = "WorkOrderService", // 与接口中指定的name一致
         targetNamespace = "http://workOrder.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
@@ -43,56 +41,49 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
     @Override
     public String saveWorkOrder(List<RestapiWorkOrderApiDto> restapiWorkOrderApiDtos) throws ParseException {
         if(StringUtils.isEmpty(restapiWorkOrderApiDtos)) return "工单参数为空";
+        Map<String,Long> orderMap = new HashMap<String,Long>();
+        Map<String,String> bomMap = new HashMap<String,String>();
+        List<MesPmWorkOrderBom> mesPmWorkOrderBomList = new ArrayList<MesPmWorkOrderBom>();
 
+        Long orgId = getOrId();
         for(RestapiWorkOrderApiDto restapiWorkOrderApiDto : restapiWorkOrderApiDtos) {
             String check = check(restapiWorkOrderApiDto);
             if (!check.equals("1")) {
                 return check;
             }
-            Long orgId = getOrId();
-            //保存或更新工单
-            MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
-            mesPmWorkOrder.setWorkOrderCode(restapiWorkOrderApiDto.getAUFNR());
-            if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGSTRP()))
-                mesPmWorkOrder.setPlanStartTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGSTRP()));
-            if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGLTRP()))
-                mesPmWorkOrder.setPlanEndTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGLTRP()));
-            mesPmWorkOrder.setMaterialId(getBaseMaterial(restapiWorkOrderApiDto.getMATNR()).getMaterialId());
-            if(StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGAMNG()))
-                mesPmWorkOrder.setWorkOrderQty(new BigDecimal(restapiWorkOrderApiDto.getGAMNG().trim()));
-            //暂时注释、目前还未同步产线
-            //mesPmWorkOrder.setProLineId(getProLine(restapiWorkOrderApiDto.getFEVOR()));
-            mesPmWorkOrder.setOrgId(orgId);
-            //保存工序号，因为可能不使用雷赛的工序、工艺路线，因此直接使用该字段保存
-            mesPmWorkOrder.setOption1(restapiWorkOrderApiDto.getVORNR());
-            pmFeignApi.updateById(mesPmWorkOrder);
-
-            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-            searchMesPmWorkOrder.setWorkOrderCode(restapiWorkOrderApiDto.getAUFNR());
-            ResponseEntity<List<MesPmWorkOrderDto>> mesPmWorkOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder);
-            if (StringUtils.isEmpty(mesPmWorkOrderList.getData())) return "添加订单失败";
-            MesPmWorkOrderDto mesPmWorkOrderDto = mesPmWorkOrderList.getData().get(0);
-
-            SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
-            searchMesPmWorkOrderBom.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
-            searchMesPmWorkOrderBom.setOption1(restapiWorkOrderApiDto.getRSPOS());
-            ResponseEntity<List<MesPmWorkOrderBomDto>> mesPmWorkOrderBomList = pmFeignApi.findList(searchMesPmWorkOrderBom);
-            MesPmWorkOrderBom bom = new MesPmWorkOrderBom();
-            if(StringUtils.isNotEmpty(restapiWorkOrderApiDto.getMENGE()))
-                bom.setUsageQty(new BigDecimal(restapiWorkOrderApiDto.getMENGE().trim()));
-            bom.setOption1(restapiWorkOrderApiDto.getRSPOS());
-            bom.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
-            bom.setPartMaterialId(getBaseMaterial(restapiWorkOrderApiDto.getZJMATNR()).getMaterialId());
-            bom.setOrgId(orgId);
-
-
-            if (StringUtils.isEmpty(mesPmWorkOrderBomList.getData())) {
-                if (StringUtils.isEmpty(bom.getCreateTime())) bom.setCreateTime(new Date());
-                pmFeignApi.addMesPmWorkOrderBom(bom);
-            } else {
-                bom.setWorkOrderBomId(mesPmWorkOrderBomList.getData().get(0).getWorkOrderBomId());
-                pmFeignApi.updateMesPmWorkOrderBom(bom);
+            //保存工单，如已经保存则后续循环不再保存
+            if(StringUtils.isEmpty(orderMap.get(restapiWorkOrderApiDto.getAUFNR()))){
+                MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
+                mesPmWorkOrder.setWorkOrderCode(restapiWorkOrderApiDto.getAUFNR());
+                if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGSTRP()))
+                    mesPmWorkOrder.setPlanStartTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGSTRP()));
+                if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGLTRP()))
+                    mesPmWorkOrder.setPlanEndTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGLTRP()));
+                mesPmWorkOrder.setMaterialId(getBaseMaterial(restapiWorkOrderApiDto.getMATNR()).getMaterialId());
+                if(StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGAMNG()))
+                 mesPmWorkOrder.setWorkOrderQty(new BigDecimal(restapiWorkOrderApiDto.getGAMNG().trim()));
+                //目前还未同步产线
+                //mesPmWorkOrder.setProLineId(getProLine(restapiWorkOrderApiDto.getFEVOR()));
+                mesPmWorkOrder.setOrgId(orgId);
+                ResponseEntity<MesPmWorkOrder> mesPmWorkOrderResponseEntity = pmFeignApi.saveByApi(mesPmWorkOrder);
+                System.out.println("---mesPmWorkOrder.getWorkOrderId()----"+mesPmWorkOrderResponseEntity.getData().getWorkOrderId());
+                orderMap.put(restapiWorkOrderApiDto.getAUFNR(),mesPmWorkOrderResponseEntity.getData().getWorkOrderId());
             }
+
+            if(StringUtils.isEmpty(bomMap.get(restapiWorkOrderApiDto.getRSPOS()))){
+
+
+                MesPmWorkOrderBom bom = new MesPmWorkOrderBom();
+                if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getMENGE()))
+                bom.setUsageQty(new BigDecimal(restapiWorkOrderApiDto.getMENGE().trim()));
+                bom.setOption1(restapiWorkOrderApiDto.getRSPOS());
+                bom.setWorkOrderId(orderMap.get(restapiWorkOrderApiDto.getAUFNR()));
+                bom.setPartMaterialId(getBaseMaterial(restapiWorkOrderApiDto.getZJMATNR()).getMaterialId());
+                bom.setOrgId(orgId);
+                mesPmWorkOrderBomList.add(bom);
+                bomMap.put(restapiWorkOrderApiDto.getRSPOS(),restapiWorkOrderApiDto.getZJMATNR());
+            }
+            pmFeignApi.addMesPmWorkOrderBom(mesPmWorkOrderBomList);
         }
         return "success";
     }

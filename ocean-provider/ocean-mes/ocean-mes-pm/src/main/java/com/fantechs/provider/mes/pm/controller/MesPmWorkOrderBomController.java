@@ -69,4 +69,10 @@ public class MesPmWorkOrderBomController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation(value = "新增",notes = "新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<MesPmWorkOrderBom> mesPmWorkOrderBoms) {
+        return ControllerUtil.returnCRUD(mesPmWorkOrderBomService.batchAdd(mesPmWorkOrderBoms));
+    }
+
 }
