@@ -260,6 +260,14 @@ public class EamEquipment extends ValidGroup implements Serializable {
     @Column(name = "online_status")
     private Byte onlineStatus;
 
+    @ApiModelProperty(name="xAxis",value = "X坐标")
+    @Column(name = "x_axis")
+    private BigDecimal xAxis;
+
+    @ApiModelProperty(name="yAxis",value = "Y坐标")
+    @Column(name = "y_axis")
+    private BigDecimal yAxis;
+
 
     /**
      * 状态(0无效，1有效)

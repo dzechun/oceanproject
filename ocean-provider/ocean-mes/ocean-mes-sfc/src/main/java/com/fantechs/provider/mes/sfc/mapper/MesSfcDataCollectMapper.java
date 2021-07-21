@@ -11,4 +11,6 @@ import java.util.Map;
 @Mapper
 public interface MesSfcDataCollectMapper extends MyMapper<MesSfcDataCollect> {
     List<MesSfcDataCollectDto> findList(Map<String, Object> map);
+
+    List<MesSfcDataCollectDto> findByGroup();
 }

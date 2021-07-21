@@ -1,19 +1,21 @@
 package com.fantechs.provider.mes.sfc.service.socket.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcDataCollect;
+import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.mes.sfc.service.MesSfcDataCollectService;
 import com.fantechs.provider.mes.sfc.service.socket.SocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -23,6 +25,8 @@ public class SocketServiceImpl implements SocketService {
 
     @Resource
     private MesSfcDataCollectService mesSfcDataCollectService;
+    @Resource
+    private EamFeignApi eamFeignApi;
 
     private int port = 8103;
 
@@ -31,7 +35,7 @@ public class SocketServiceImpl implements SocketService {
     //定义Lock锁对象
     Lock lock = new ReentrantLock();
 
-    @PostConstruct
+//    @PostConstruct
     @Override
     public void openService() throws IOException {
         //创建一个服务端socket
@@ -57,13 +61,20 @@ public class SocketServiceImpl implements SocketService {
                                 String jsonStr = inputStreamToString(socket);
                                 log.info("=============> json" + jsonStr);
                                 if (jsonStr != null) {
-                                    JSONObject jsonObject = JSONObject.parseObject(jsonStr);
-                                    MesSfcDataCollect dataCollect = JSON.toJavaObject(jsonObject, MesSfcDataCollect.class);
-                                    if (dataCollect != null) {
-                                        mesSfcDataCollectService.save(dataCollect);
-                                    } else {
-                                        log.info("=============> 采集参数为空");
+                                    SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
+                                    searchEamEquipment.setEquipmentIp(ip);
+                                    List<EamEquipmentDto> equipmentDtos = eamFeignApi.findList(searchEamEquipment).getData();
+                                    MesSfcDataCollect dataCollect = MesSfcDataCollect.builder()
+                                            .status((byte) 1)
+                                            .collectData(jsonStr)
+                                            .collectTime(new Date())
+                                            .createTime(new Date())
+                                            .isDelete((byte) 1)
+                                            .build();
+                                    if(!equipmentDtos.isEmpty()){
+                                        dataCollect.setEquipmentId(equipmentDtos.get(0).getEquipmentId());
                                     }
+                                    mesSfcDataCollectService.save(dataCollect);
                                 }
                             }
                         } catch (IOException e1) {

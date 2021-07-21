@@ -111,6 +111,12 @@ wii.storage_id,
     LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wii.inventory_status_id
     <where>
       and wii.packing_qty > 0
+      <if test="lockStatus!=null and lockStatus != ''">
+        and wii.lock_status = #{lockStatus}
+      </if>
+      <if test="jobStatus!=null and jobStatus != ''">
+        and wii.job_status = #{jobStatus}
+      </if>
       <if test="salesCode!=null and salesCode != ''">
         and wii.sales_code like CONCAT("%",#{salesCode},"%")
       </if>
