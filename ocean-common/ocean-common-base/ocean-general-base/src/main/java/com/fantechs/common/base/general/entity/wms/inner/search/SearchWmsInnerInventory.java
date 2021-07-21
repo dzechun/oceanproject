@@ -164,8 +164,5 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     @ApiModelProperty(name="jobStatus",value = "作业状态(1正常 2待出)")
     private Byte jobStatus;
 
-    @ApiModelProperty(name="jobStatus",value = "作业状态(1正常 2待出)")
-    private Byte jobStatus;
-
     private static final long serialVersionUID = 1L;
 }
