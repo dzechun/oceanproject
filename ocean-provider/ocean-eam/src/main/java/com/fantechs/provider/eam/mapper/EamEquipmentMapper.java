@@ -11,4 +11,6 @@ import java.util.Map;
 @Mapper
 public interface EamEquipmentMapper extends MyMapper<EamEquipment> {
     List<EamEquipmentDto> findList(Map<String,Object> map);
+
+    int batchUpdate(List<EamEquipment> list);
 }
