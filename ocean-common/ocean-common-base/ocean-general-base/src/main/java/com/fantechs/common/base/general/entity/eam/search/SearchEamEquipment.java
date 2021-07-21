@@ -28,6 +28,12 @@ public class SearchEamEquipment extends BaseQuery implements Serializable {
     private String equipmentDesc;
 
     /**
+     * 设备IP
+     */
+    @ApiModelProperty(name="equipmentIp",value = "设备IP")
+    private String equipmentIp;
+
+    /**
      * 编码查询标记(设为1做等值查询)
      */
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
