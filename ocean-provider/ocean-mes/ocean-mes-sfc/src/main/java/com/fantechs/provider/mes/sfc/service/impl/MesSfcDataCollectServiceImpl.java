@@ -25,4 +25,9 @@ public class MesSfcDataCollectServiceImpl extends BaseService<MesSfcDataCollect>
     public List<MesSfcDataCollectDto> findList(Map<String, Object> map) {
         return mesSfcDataCollectMapper.findList(map);
     }
+
+    @Override
+    public List<MesSfcDataCollectDto> findByGroup() {
+        return mesSfcDataCollectMapper.findByGroup();
+    }
 }

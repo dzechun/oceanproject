@@ -6,20 +6,9 @@
       WARNING - @mbg.generated
     -->
     <id column="data_collect_id" jdbcType="BIGINT" property="dataCollectId" />
-    <result column="co2" jdbcType="VARCHAR" property="co2" />
-    <result column="tvoc" jdbcType="VARCHAR" property="tvoc" />
-    <result column="ch20" jdbcType="VARCHAR" property="ch20" />
-    <result column="pntwo" jdbcType="VARCHAR" property="pntwo" />
-    <result column="rh" jdbcType="VARCHAR" property="rh" />
-    <result column="temp" jdbcType="VARCHAR" property="temp" />
-    <result column="pmten" jdbcType="VARCHAR" property="pmten" />
-    <result column="pmone" jdbcType="VARCHAR" property="pmone" />
-    <result column="lux" jdbcType="VARCHAR" property="lux" />
-    <result column="mcu" jdbcType="VARCHAR" property="mcu" />
-    <result column="weigh" jdbcType="VARCHAR" property="weigh" />
-    <result column="switch1" jdbcType="VARCHAR" property="switch1" />
-    <result column="switch2" jdbcType="VARCHAR" property="switch2" />
-    <result column="db" jdbcType="VARCHAR" property="db" />
+    <result column="equipment_id" jdbcType="BIGINT" property="equipmentId" />
+    <result column="collect_data" jdbcType="VARCHAR" property="collectData" />
+    <result column="collect_time" jdbcType="TIMESTAMP" property="collectTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -32,4 +21,58 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcDataCollectDto">
+    <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode" />
+    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName" />
+    <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp" />
+    <result column="x_axis" jdbcType="DECIMAL" property="xAxis" />
+    <result column="y_axis" jdbcType="DECIMAL" property="yAxis" />
+  </resultMap>
+
+  <sql id="BaseColumnList">
+    msdc.data_collect_id,
+    msdc.equipment_id,
+    msdc.collect_data,
+    msdc.collect_time,
+    msdc.status,
+    msdc.remark,
+    msdc.org_id,
+    msdc.create_user_id,
+    msdc.create_time,
+    msdc.modified_user_id,
+    msdc.modified_time,
+    msdc.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">
+    select
+        <include refid="BaseColumnList"/>,
+        ee.equipment_code,
+        ee.equipment_name,
+        ee.equipment_ip
+    FROM mes_sfc_data_collect msdc
+    LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id
+  </select>
+
+  <select id="findByGroup" resultMap="BaseResultDtoMap" parameterType="map">
+    SELECT
+    <include refid="BaseColumnList"/>,
+      ee.equipment_code,
+      ee.equipment_name,
+      ee.equipment_ip,
+      ee.x_axis,
+      ee.y_axis
+    FROM
+      mes_sfc_data_collect msdc
+        LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id
+        LEFT JOIN (
+        SELECT SUBSTRING_INDEX( GROUP_CONCAT( data_collect_id ORDER BY data_collect_id DESC ), ',', 1 ) AS data_collect_id
+        FROM mes_sfc_data_collect
+        GROUP BY equipment_id ) AS dci
+                  ON dci.data_collect_id = msdc.data_collect_id
+    GROUP BY
+      msdc.equipment_id
+  </select>
+
 </mapper>
