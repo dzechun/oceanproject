@@ -58,7 +58,7 @@ public class SocketServiceImpl implements SocketService {
     }
 
     @Override
-   // @PostConstruct
+    //@PostConstruct
     public  void openService() throws IOException{
         //创建一个服务端socket
         ServerSocket serverSocket=new ServerSocket(9302);
@@ -71,6 +71,7 @@ public class SocketServiceImpl implements SocketService {
             socket =serverSocket.accept();
             new SockerServerThread(socket).start();
             System.out.println("客户端数量"+hashtable.size()+1);
+
         }
     }
 
@@ -88,12 +89,14 @@ public class SocketServiceImpl implements SocketService {
         //线程操作响应客户端请求
         public void run(){
             InetAddress addr = socket.getInetAddress();
+            String ip = addr.getHostAddress();
             try {
              //   os=socket.getOutputStream();
              //   out =new PrintWriter(os);
                 //开机连接发送新闻命令
                 hashtable.put(addr.getHostAddress(),socket);
 
+                System.out.println("-----ip----"+ip);
 
                     Map<String, Object> map = new HashMap();
                     Map<String, Object> newMap = new HashMap();
@@ -108,59 +111,20 @@ public class SocketServiceImpl implements SocketService {
                     newData.put("data", newList);
                     String outMsg = JSON.toJSONString(newData);
                 //平板发送数据测试,循环一周时间
-                for(int i=0;i<1000000;i++) {
-                    sleep(2000);
+           //     for(int i=0;i<1000000;i++) {
+           //         sleep(2000);
                     os=socket.getOutputStream();
                     out =new PrintWriter(os);
                     out.write(outMsg);
                     out.flush();
-                    updateStatus(addr.getHostAddress(), (byte) 1);
-                }
+                    updateStatus(ip, (byte) 1);
+           //     }
 
                 //读取输入字段，判断是否断开
                 inputStreamToString(socket, addr.getHostAddress());
-/*
-                if(socket.getInputStream() != null){
-                    System.out.println("---接受信息------");
-                    InputStream is = socket.getInputStream();
-                    System.out.println("---socket------"+socket.getPort());
-                    String jsonStr = inputStreamToString(is);
-                    System.out.println("----json---"+jsonStr);
-
-                    Map<String, Object> data = new HashMap();
-                    List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-                    Map<String, Object> map = new HashMap();
-
-                    if(jsonStr!= null && "1206".equals(jsonStr)){
-                        *//*OutputStream os = socket.getOutputStream();
-                        PrintWriter out =new PrintWriter(os);
-
-                        map.put("code", 1202);
-                        map.put("url", "http://192.168.204.163/#/YunZhiESOP");
-                        list.add(map);
-                        data.put("data",list);
-                        outMsg = JSON.toJSONString(data);
-                        out.write(outMsg);
-                        out.flush();*//*
-                        instructions(addr.getHostAddress(),"1202","http://192.168.204.163/#/YunZhiESOP");
-                        updateStatus(addr.getHostAddress(),(byte)2);
-
-                    }else if(jsonStr!= null && "1205".equals(jsonStr)){
-
-                        //设备改为离线，关闭socket
-                        updateStatus(addr.getHostAddress(),(byte)0);
-                    //    hashtable.remove(addr.getHostAddress());
-                    //    out.close();
-                   //     is.close();
-                   //     os.close();
-                   //     socket.shutdownInput();
-                  //      socket.close();
-                    }
-                }*/
 
             } catch (Exception e) {
-             //   hashtable.remove(addr.getHostAddress());
-                updateStatus(addr.getHostAddress(),(byte)3);
+                updateStatus(ip,(byte)3);
                 e.printStackTrace();
             }
 
@@ -191,6 +155,7 @@ public class SocketServiceImpl implements SocketService {
             socket.shutdownInput();
             socket.shutdownOutput();
             socket.close();
+            hashtable.remove(ip);
             e.printStackTrace();
         }
         return str;
