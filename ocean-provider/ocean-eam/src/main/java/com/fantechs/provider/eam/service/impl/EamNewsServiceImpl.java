@@ -58,6 +58,9 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("equipmentIp",map.get("equipmentIp"));
             List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
+            if(StringUtils.isEmpty(eamEquipments)){
+                throw new BizErrorException("查无绑定此IP的设备");
+            }
             map.put("orgId", eamEquipments.get(0).getOrgId());
         }
 
