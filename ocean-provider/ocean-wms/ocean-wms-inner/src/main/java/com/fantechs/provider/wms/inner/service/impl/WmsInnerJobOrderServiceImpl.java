@@ -490,10 +490,19 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             BigDecimal resultQty = wmsInnerJobOrderDets.stream()
                     .map(WmsInnerJobOrderDet::getDistributionQty)
                     .reduce(BigDecimal.ZERO,BigDecimal::add);
+
+
+            SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+            searchBaseWorker.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+            searchBaseWorker.setUserId(sysUser.getUserId());
+            List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+            if (workerDtos.isEmpty()) {
+                throw new BizErrorException(ErrorCodeEnum.PDA5001014);
+            }
             //更改表头为作业完成状态
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                     .orderStatus((byte)5)
-                    .workerId(sysUser.getUserId())
+                    .workerId(workerDtos.get(0).getWorkerId())
                     .jobOrderId(wmsInnerJobOrder.getJobOrderId())
                     .actualQty(resultQty)
                     .workStartTime(new Date())
@@ -941,14 +950,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //移位单
             record.setJobOrderCode(CodeUtils.getId("SHIFT-"));
         }
-        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
-        searchBaseWorker.setWarehouseId(record.getWarehouseId());
-        searchBaseWorker.setUserId(sysUser.getUserId());
-        List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
-        if (workerDtos.isEmpty()) {
-            throw new BizErrorException(ErrorCodeEnum.PDA5001014);
-        }
-        record.setWorkerId(workerDtos.get(0).getWorkerId());
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
