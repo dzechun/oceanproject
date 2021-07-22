@@ -21,7 +21,7 @@ public class MyAuthenticationFailHandler implements AuthenticationFailureHandler
         httpServletResponse.setContentType("application/json;charset=utf-8");
         PrintWriter writer = httpServletResponse.getWriter();
         String message = e.getMessage();
-        ResponseEntity<Object> responseEntity = ControllerUtil.returnFail(CustomWebAuthenticationDetails.pass? ErrorCodeEnum.UAC10011016.getMsg(): message,
+        ResponseEntity<Object> responseEntity = ControllerUtil.returnFail(CustomWebAuthenticationDetails.pass? ErrorCodeEnum.GL99990401.getMsg(): message,
                 message.contains("权限")? ErrorCodeEnum.GL99990401.getCode(): ErrorCodeEnum.UAC10011016.getCode());
         writer.write(JSONObject.toJSONString(responseEntity));
         CustomWebAuthenticationDetails.pass = true;
