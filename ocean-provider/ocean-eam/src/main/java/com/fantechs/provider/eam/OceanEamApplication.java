@@ -17,5 +17,4 @@ public class OceanEamApplication {
     public static void main(String[] args) {
         SpringApplication.run(OceanEamApplication.class, args);
     }
-
 }

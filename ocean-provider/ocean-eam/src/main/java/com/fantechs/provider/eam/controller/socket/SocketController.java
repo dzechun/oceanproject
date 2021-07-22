@@ -24,8 +24,9 @@ public class SocketController {
     @ApiOperation("发送指令")
     @PostMapping("/instructions")
     public ResponseEntity instructions(@RequestParam(required = true)String ip,
-                                       @RequestParam(value = "控制设备命令，1203为关机，1204为重启",required = true) String code){
-        int i = socketService.instructions(ip,code,null);
+                                       @RequestParam(value = "控制设备命令，1203为关机，1204为重启",required = true) String code,
+                                       @RequestParam(required = true) String url){
+        int i = socketService.instructions(ip,code,url);
         return ControllerUtil.returnCRUD(i);
     }
 

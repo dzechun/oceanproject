@@ -106,16 +106,17 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         searchEamWiRelease.setOrgId(eamEquipment.getOrgId());
         searchEamWiRelease.setReleaseStatus((byte)2);
         List<EamWiReleaseDto> list = eamWiReleaseMapper.findList(searchEamWiRelease);
-        if(StringUtils.isEmpty(list)) throw new BizErrorException("未查询到该设备对应产线发布的WI");
-        if(StringUtils.isNotEmpty(list) && list.size()>1) throw new BizErrorException("查询到多条该设备对应产线发布的WI");
+     //   if(StringUtils.isEmpty(list)) throw new BizErrorException("未查询到该设备对应产线发布的WI");
+        if(StringUtils.isNotEmpty(list) ) {
+            if (list.size()>1)  throw new BizErrorException("查询到多条该设备对应产线发布的WI");
+            for(EamWiReleaseDetDto dto : list.get(0).getEamWiReleaseDetDtos()){
+                if(dto.getProcessId() == eamEquipment.getProcessId()){
+                    searchEamWorkInstruction.setWorkInstructionId(dto.getWorkInstructionId());
+                }
 
-        for(EamWiReleaseDetDto dto : list.get(0).getEamWiReleaseDetDtos()){
-            if(dto.getProcessId() == eamEquipment.getProcessId()){
-                searchEamWorkInstruction.setWorkInstructionId(dto.getWorkInstructionId());
             }
-
+            searchEamWorkInstruction.setProLineId(list.get(0).getProLineId());
         }
-        searchEamWorkInstruction.setProLineId(list.get(0).getProLineId());
         searchEamWorkInstruction.setProcessId(eamEquipment.getProcessId());
         searchEamWorkInstruction.setOrgId(eamEquipment.getOrgId());
         return eamWorkInstructionMapper.findList(searchEamWorkInstruction).get(0);
