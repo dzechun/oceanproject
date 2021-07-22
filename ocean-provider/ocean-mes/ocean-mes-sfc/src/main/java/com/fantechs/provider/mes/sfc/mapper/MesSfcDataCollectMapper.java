@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.MesSfcDataCollectDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcDataCollect;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -12,5 +13,5 @@ import java.util.Map;
 public interface MesSfcDataCollectMapper extends MyMapper<MesSfcDataCollect> {
     List<MesSfcDataCollectDto> findList(Map<String, Object> map);
 
-    List<MesSfcDataCollectDto> findByGroup(Long equipmentId);
+    List<MesSfcDataCollectDto> findByGroup(@Param(value="equipmentId") Long equipmentId);
 }
