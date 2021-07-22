@@ -61,6 +61,23 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     }
 
     @Override
+    public int batchUpdate(List<EamEquipment> list) {
+        return eamEquipmentMapper.batchUpdate(list);
+    }
+
+    @Override
+    public EamEquipment detailByIp(String ip) {
+        Example example = new Example(EamEquipment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("equipmentIp",ip);
+        EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
+        if (StringUtils.isEmpty(eamEquipment)){
+            throw new BizErrorException("未查询到ip对应的设备信息");
+        }
+        return eamEquipment;
+    }
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipment record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();

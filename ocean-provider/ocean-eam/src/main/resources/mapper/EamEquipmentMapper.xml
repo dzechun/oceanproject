@@ -158,4 +158,13 @@
     </where>
     order by ee.create_time desc
   </select>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="item" separator=";">
+      update eam_equipment ee set
+      ee.x_axis = #{item.xAxis},
+      ee.y_axis = #{item.yAxis}
+      where ee.equipment_id = #{item.equipmentId}
+    </foreach>
+  </update>
 </mapper>

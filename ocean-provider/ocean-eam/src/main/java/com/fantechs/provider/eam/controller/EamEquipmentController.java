@@ -55,10 +55,23 @@ public class EamEquipmentController {
         return ControllerUtil.returnCRUD(eamEquipmentService.update(eamEquipment));
     }
 
+    @ApiOperation("批量修改")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<EamEquipment> list) {
+        return ControllerUtil.returnCRUD(eamEquipmentService.batchUpdate(list));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<EamEquipment> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         EamEquipment  eamEquipment = eamEquipmentService.selectByKey(id);
+        return  ControllerUtil.returnDataSuccess(eamEquipment,StringUtils.isEmpty(eamEquipment)?0:1);
+    }
+
+    @ApiOperation("通过IP获取详情")
+    @GetMapping("/detailByIp")
+    public ResponseEntity<EamEquipment> detailByIp(@ApiParam(value = "ip",required = true) @RequestParam  @NotNull(message="id不能为空") String ip) {
+        EamEquipment  eamEquipment = eamEquipmentService.detailByIp(ip);
         return  ControllerUtil.returnDataSuccess(eamEquipment,StringUtils.isEmpty(eamEquipment)?0:1);
     }
 

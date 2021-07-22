@@ -1,17 +1,22 @@
 package com.fantechs.provider.mes.sfc.service.socket.impl;
 
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
+import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcDataCollect;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.mes.sfc.service.MesSfcDataCollectService;
 import com.fantechs.provider.mes.sfc.service.socket.SocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
@@ -35,7 +40,7 @@ public class SocketServiceImpl implements SocketService {
     //定义Lock锁对象
     Lock lock = new ReentrantLock();
 
-//    @PostConstruct
+    //    @PostConstruct
     @Override
     public void openService() throws IOException {
         //创建一个服务端socket
@@ -49,7 +54,7 @@ public class SocketServiceImpl implements SocketService {
                 while (true) {
                     //添加同步锁
                     lock.lock();
-                    if(ticket > 0){
+                    if (ticket > 0) {
                         try {
                             //等待服务器链接 accept是阻塞的，作为服务器，需要一直等待客户端链接
                             socket = serverSocket.accept();
@@ -61,23 +66,22 @@ public class SocketServiceImpl implements SocketService {
                                 String jsonStr = inputStreamToString(socket);
                                 log.info("=============> json" + jsonStr);
                                 if (jsonStr != null) {
-                                    SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
-                                    searchEamEquipment.setEquipmentIp(ip);
-                                    List<EamEquipmentDto> equipmentDtos = eamFeignApi.findList(searchEamEquipment).getData();
+                                    EamEquipment equipment = getEquipment(ip);
                                     MesSfcDataCollect dataCollect = MesSfcDataCollect.builder()
                                             .status((byte) 1)
                                             .collectData(jsonStr)
                                             .collectTime(new Date())
                                             .createTime(new Date())
                                             .isDelete((byte) 1)
+                                            .equipmentId(equipment.getEquipmentId())
                                             .build();
-                                    if(!equipmentDtos.isEmpty()){
-                                        dataCollect.setEquipmentId(equipmentDtos.get(0).getEquipmentId());
-                                    }
                                     mesSfcDataCollectService.save(dataCollect);
+                                    updateStatus(ip, (byte) 1);
                                 }
                             }
                         } catch (IOException e1) {
+                            String ip = socket.getInetAddress().getHostAddress();
+                            updateStatus(ip, (byte) 3);
                             e1.printStackTrace();
                         }
                     }
@@ -107,12 +111,28 @@ public class SocketServiceImpl implements SocketService {
             e.printStackTrace();
         } catch (IOException e) {
             log.info("=============> 断开连接");
+            String ip = socket.getInetAddress().getHostAddress();
+            updateStatus(ip, (byte) 0);
             socket.shutdownInput();
             socket.shutdownOutput();
             socket.close();
             e.printStackTrace();
         }
         return str;
+    }
+
+    public EamEquipment getEquipment(String ip){
+        SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
+        searchEamEquipment.setEquipmentIp(ip);
+        List<EamEquipmentDto> equipmentDtos = eamFeignApi.findList(searchEamEquipment).getData();
+        return equipmentDtos.get(0);
+    }
+
+    public int updateStatus(String ip, Byte bytes) {
+        EamEquipment eamEquipment = getEquipment(ip);
+        eamEquipment.setOnlineStatus(bytes);
+        eamFeignApi.update(eamEquipment);
+        return 1;
     }
 
 }
