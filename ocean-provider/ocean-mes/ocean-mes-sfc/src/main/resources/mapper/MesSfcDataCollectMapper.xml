@@ -55,7 +55,7 @@
     LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id
   </select>
 
-  <select id="findByGroup" resultMap="BaseResultDtoMap" parameterType="map">
+  <select id="findByGroup" resultMap="BaseResultDtoMap" parameterType="java.lang.Long">
     SELECT
     <include refid="BaseColumnList"/>,
       ee.equipment_code,
@@ -71,6 +71,11 @@
         FROM mes_sfc_data_collect
         GROUP BY equipment_id ) AS dci
                   ON dci.data_collect_id = msdc.data_collect_id
+    <where>
+      <if test="equipmentId != null">
+        and msdc.equipment_id = #{equipmentId}
+      </if>
+    </where>
     GROUP BY
       msdc.equipment_id
   </select>

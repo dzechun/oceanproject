@@ -27,7 +27,7 @@ public class MesSfcDataCollectServiceImpl extends BaseService<MesSfcDataCollect>
     }
 
     @Override
-    public List<MesSfcDataCollectDto> findByGroup() {
-        return mesSfcDataCollectMapper.findByGroup();
+    public List<MesSfcDataCollectDto> findByGroup(Long equipmentId) {
+        return mesSfcDataCollectMapper.findByGroup(equipmentId);
     }
 }
