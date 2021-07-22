@@ -511,6 +511,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         if (StringUtils.isNotEmpty(ptlJobOrder.getVehicleId())) {
             TemVehicle temVehicle = temVehicleFeignApi.detail(ptlJobOrder.getVehicleId()).getData();
             vehicleCode = temVehicle.getVehicleCode();
+        } else if (StringUtils.isNotEmpty(redisUtil.get(ptlJobOrder.getRelatedOrderCode()))) {
+            vehicleCode = redisUtil.get(ptlJobOrder.getRelatedOrderCode()).toString();
         }
         if (StringUtils.isEmpty(vehicleCode)) {
             SearchTemVehicle searchTemVehicle = new SearchTemVehicle();
@@ -531,6 +533,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     vehicleCode = temVehicleDto.getVehicleCode();
                     redisUtil.set(temVehicleDto.getVehicleCode(), 1, 3);
                     log.info("开始打印，redis锁定集货位：" + vehicleCode);
+                    redisUtil.set(ptlJobOrder.getRelatedOrderCode(), temVehicleDto.getVehicleCode(), 3);
+                    log.info("开始打印，redis锁定拣货单：" + ptlJobOrder.getRelatedOrderCode());
 
                     TemVehicle temVehicle = new TemVehicle();
                     temVehicle.setVehicleId(temVehicleDto.getVehicleId());
@@ -845,9 +849,14 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             sendElectronicTagStorage(jobOrderId, Long.valueOf(0), 1);
 
             String vehicleCode = ptlJobOrderDetPrintDTOList.get(0).getVehicleCode().split("\\(")[0];
+            String relatedOrderCode = ptlJobOrderDetPrintDTOList.get(0).getRelatedOrderCode();
             if (StringUtils.isNotEmpty(redisUtil.get(vehicleCode))) {
                 redisUtil.del(vehicleCode);
                 log.info("打印完成，redis释放集货位：" + vehicleCode);
+            }
+            if (StringUtils.isNotEmpty(redisUtil.get(relatedOrderCode))) {
+                redisUtil.del(relatedOrderCode);
+                log.info("打印完成，redis释放拣货单：" + relatedOrderCode);
             }
             redisUtil.incr(vehicleCode + "_count", 1);
             log.info("打印完成，集货位：" + vehicleCode + "使用次数加1：" + redisUtil.get(vehicleCode + "_count"));
