@@ -88,7 +88,7 @@ public class BaseMaterialCategoryController {
     List<BaseMaterialCategoryDto> list = baseMaterialCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialCategory));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SmtMaterialCategory信息", BaseMaterialCategory.class, "SmtMaterialCategory.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "物料类别", BaseMaterialCategory.class, "物料类别.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

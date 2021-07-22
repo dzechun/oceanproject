@@ -19,6 +19,10 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -39,8 +43,12 @@
     </sql>
 
     <select id="findHtList" resultMap="BaseResultMap">
-        select<include refid="Base_Column_List"/>, bo.organization_name
+        select<include refid="Base_Column_List"/>,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        bo.organization_name
         from fantech_imes_v2.base_ht_material_category shmc
+        LEFT JOIN ocean_v2.sys_user su ON shmc.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON shmc.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON shmc.org_id = bo.organization_id
         <where>
             <if test="materialCategoryCode != null and materialCategoryCode != ''">
@@ -49,7 +57,6 @@
             <if test="materialCategoryName != null and materialCategoryName != ''">
                 and shmc.material_category_name like CONCAT('%', #{materialCategoryName}, '%')
             </if>
-
             <if test="materialCategoryDesc != null and materialCategoryDesc != ''">
                 and shmc.material_category_desc like CONCAT('%', #{materialCategoryDesc}, '%')
             </if>
@@ -58,6 +65,9 @@
             </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(shmc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="status!=null">
+                and shmc.status=#{status}
             </if>
             <if test="orgId!=null">
                 and shmc.org_id=#{orgId}
