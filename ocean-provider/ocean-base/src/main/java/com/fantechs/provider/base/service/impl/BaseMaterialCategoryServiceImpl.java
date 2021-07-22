@@ -14,6 +14,7 @@ import com.fantechs.provider.base.mapper.BaseMaterialCategoryMapper;
 import com.fantechs.provider.base.service.BaseMaterialCategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -45,6 +46,7 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseMaterialCategory baseMaterialCategory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -58,16 +60,17 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
         baseMaterialCategory.setOrganizationId(user.getOrganizationId());
         baseMaterialCategory.setStatus(StringUtils.isEmpty(baseMaterialCategory.getStatus())?1: baseMaterialCategory.getStatus());
 
-        int i = baseMaterialCategoryMapper.insertUseGeneratedKeys(baseMaterialCategory);
+        baseMaterialCategoryMapper.insertUseGeneratedKeys(baseMaterialCategory);
 
         BaseHtMaterialCategory baseHtMaterialCategory = new BaseHtMaterialCategory();
         BeanUtils.copyProperties(baseMaterialCategory, baseHtMaterialCategory);
-        baseHtMaterialCategoryMapper.insert(baseHtMaterialCategory);
+        int i = baseHtMaterialCategoryMapper.insert(baseHtMaterialCategory);
 
         return i;
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseMaterialCategory baseMaterialCategory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -75,7 +78,6 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
         }
         baseMaterialCategory.setModifiedTime(new Date());
         baseMaterialCategory.setModifiedUserId(user.getUserId());
-        baseMaterialCategory.setOrganizationId(user.getOrganizationId());
 
         BaseHtMaterialCategory baseHtMaterialCategory = new BaseHtMaterialCategory();
         BeanUtils.copyProperties(baseMaterialCategory, baseHtMaterialCategory);
@@ -85,6 +87,7 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){

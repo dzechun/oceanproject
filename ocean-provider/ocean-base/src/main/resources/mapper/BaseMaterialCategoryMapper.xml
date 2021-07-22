@@ -13,8 +13,6 @@
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
-        <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
@@ -45,9 +43,7 @@
         smc.create_time,
         smc.modified_user_id,
         smc.modified_time,
-        smc.is_delete,
-        smc.org_id,
-        smc.remark
+        smc.is_delete
     </sql>
 
     <select id="findList" resultMap="BaseResultMapDto">
@@ -65,7 +61,6 @@
             <if test="materialCategoryName != null and materialCategoryName != ''">
                 and smc.material_category_name like CONCAT('%', #{materialCategoryName}, '%')
             </if>
-
             <if test="materialCategoryDesc != null and materialCategoryDesc != ''">
                 and smc.material_category_desc like CONCAT('%', #{materialCategoryDesc}, '%')
             </if>
@@ -77,6 +72,9 @@
             </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(smc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="status!=null">
+                and smc.status=#{status}
             </if>
             <if test="orgId!=null">
                 and smc.org_id=#{orgId}
