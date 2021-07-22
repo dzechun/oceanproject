@@ -38,6 +38,14 @@ public class BaseTab extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     * 物料类别ID
+     */
+    @ApiModelProperty(name="materialCategoryId",value = "物料类别ID")
+    @Excel(name = "物料类别ID", height = 20, width = 30)
+    @Column(name = "material_category_id")
+    private Long materialCategoryId;
+
+    /**
      * 检验项目ID
      */
     @ApiModelProperty(name="inspectionItemId",value = "检验项目ID")

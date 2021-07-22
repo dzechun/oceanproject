@@ -117,4 +117,11 @@ public class BaseTabDto extends BaseTab implements Serializable {
     @ApiModelProperty("供应商(客户)名称")
     @Transient
     private String supplierName;
+
+    /**
+     * 物料类别
+     */
+    @ApiModelProperty(name="materialCategoryName",value = "物料类别")
+    @Transient
+    private String materialCategoryName;
 }
