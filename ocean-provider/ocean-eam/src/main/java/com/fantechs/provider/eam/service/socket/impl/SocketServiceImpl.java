@@ -111,14 +111,14 @@ public class SocketServiceImpl implements SocketService {
                     newData.put("data", newList);
                     String outMsg = JSON.toJSONString(newData);
                 //平板发送数据测试,循环一周时间
-           //     for(int i=0;i<1000000;i++) {
-           //         sleep(2000);
+                for(int i=0;i<1000000;i++) {
+                    sleep(5000);
                     os=socket.getOutputStream();
                     out =new PrintWriter(os);
                     out.write(outMsg);
                     out.flush();
                     updateStatus(ip, (byte) 1);
-           //     }
+               }
 
                 //读取输入字段，判断是否断开
                 inputStreamToString(socket, addr.getHostAddress());
@@ -157,6 +157,7 @@ public class SocketServiceImpl implements SocketService {
             socket.close();
             hashtable.remove(ip);
             e.printStackTrace();
+            return null;
         }
         return str;
     }
