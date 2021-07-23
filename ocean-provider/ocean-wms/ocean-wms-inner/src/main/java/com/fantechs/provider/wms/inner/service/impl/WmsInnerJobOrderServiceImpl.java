@@ -1160,9 +1160,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId",wmsInAsnOrderDetDto.getMaterialId()).andEqualTo("warehouseId",wmsInAsnOrderDetDto.getWarehouseId())
-                .andEqualTo("storageId",wmsInAsnOrderDetDto.getStorageId()).andEqualTo("inventoryStatusId",wmsInAsnOrderDetDto.getInventoryStatusId());
+                .andEqualTo("storageId",wmsInAsnOrderDetDto.getStorageId());
         if(wmsInnerJobOrderDto.getJobOrderType() != (byte) 2){
-            criteria.andEqualTo("relevanceOrderCode",wmsInAsnOrderDto.getAsnCode());
+            criteria.andEqualTo("relevanceOrderCode",wmsInAsnOrderDto.getAsnCode())
+                    .andEqualTo("inventoryStatusId",wmsInAsnOrderDetDto.getInventoryStatusId());
+        }else {
+            criteria.andEqualTo("jobStatus", (byte) 2);
         }
         if(!StringUtils.isEmpty(wmsInAsnOrderDetDto.getBatchCode())){
             criteria.andEqualTo("batchCode",wmsInAsnOrderDetDto.getBatchCode());
