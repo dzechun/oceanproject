@@ -144,7 +144,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }
                 //推荐库位
-                Long storageId = wmsInPutawayOrderMapper.findStorage(wms.getMaterialId(),wmsInnerJobOrder.getWarehouseId());
+                Long storageId = wmsInPutawayOrderMapper.findStorage(wms.getMaterialId(),wmsInnerJobOrder.getWarehouseId(),sysUser.getOrganizationId());
                 storageId = storageId==null?wmsInPutawayOrderMapper.SelectStorage():storageId;
                 if(StringUtils.isEmpty(storageId)){
                     throw new BizErrorException("未查询到推荐库位");
@@ -647,6 +647,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 ws.setActualQty(ws.getActualQty().add(aqty));
                 ws.setModifiedUserId(sysUser.getUserId());
                 ws.setModifiedTime(new Date());
+                if(StringUtils.isEmpty(ws.getWorkStartTime())){
+                    ws.setWorkStartTime(new Date());
+                }
                 ws.setWorkEndtTime(new Date());
                 num +=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
             }else{
@@ -1048,38 +1051,40 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
             searchWmsInnerJobOrderDet.setJobOrderId(record.getJobOrderId());
             List<WmsInnerJobOrderDetDto> orderDetMapperList = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet);
-            // 查询明细对应的库存
-            Example example = new Example(WmsInnerInventory.class);
-            example.createCriteria().andIn("jobOrderDetId", orderDetMapperList.stream().map(WmsInnerJobOrderDet::getJobOrderDetId).collect(Collectors.toList()));
-            List<WmsInnerInventory> innerInventories = wmsInnerInventoryMapper.selectByExample(example);
-            // 查询明细库存对应的原库存
-            example.clear();
-            example.createCriteria().andIn("inventoryId", innerInventories.stream().map(WmsInnerInventory::getParentInventoryId).collect(Collectors.toList()));
-            List<WmsInnerInventory> sourceInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
-            for (WmsInnerInventory source : sourceInnerInventories){
-                for (WmsInnerInventory innerInventory : innerInventories){
-                    if(innerInventory.getParentInventoryId().equals(source.getInventoryId())){
-                        source.setPackingQty(source.getPackingQty().add(innerInventory.getPackingQty()));
+            if(!orderDetMapperList.isEmpty()){
+                // 查询明细对应的库存
+                Example example = new Example(WmsInnerInventory.class);
+                example.createCriteria().andIn("jobOrderDetId", orderDetMapperList.stream().map(WmsInnerJobOrderDet::getJobOrderDetId).collect(Collectors.toList()));
+                List<WmsInnerInventory> innerInventories = wmsInnerInventoryMapper.selectByExample(example);
+                // 查询明细库存对应的原库存
+                example.clear();
+                example.createCriteria().andIn("inventoryId", innerInventories.stream().map(WmsInnerInventory::getParentInventoryId).collect(Collectors.toList()));
+                List<WmsInnerInventory> sourceInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
+                for (WmsInnerInventory source : sourceInnerInventories){
+                    for (WmsInnerInventory innerInventory : innerInventories){
+                        if(innerInventory.getParentInventoryId().equals(source.getInventoryId())){
+                            source.setPackingQty(source.getPackingQty().add(innerInventory.getPackingQty()));
+                        }
                     }
                 }
-            }
 
-            if (!sourceInnerInventories.isEmpty()){
-                // 批量修改原库存
-                wmsInnerInventoryService.batchUpdate(sourceInnerInventories);
-            }
-            if (!innerInventories.isEmpty()){
-                // 删除明细库存
-                wmsInnerInventoryService.batchDelete(innerInventories);
-            }
-            if (!innerInventories.isEmpty()){
-                // 删除明细
-                List<WmsInnerJobOrderDet> detList = new ArrayList<>();
-                for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : orderDetMapperList){
-                    WmsInnerJobOrderDet det = wmsInnerJobOrderDetDto;
-                    detList.add(det);
+                if (!sourceInnerInventories.isEmpty()){
+                    // 批量修改原库存
+                    wmsInnerInventoryService.batchUpdate(sourceInnerInventories);
                 }
-                wmsInnerJobOrderDetService.batchDelete(detList);
+                if (!innerInventories.isEmpty()){
+                    // 删除明细库存
+                    wmsInnerInventoryService.batchDelete(innerInventories);
+                }
+                if (!innerInventories.isEmpty()){
+                    // 删除明细
+                    List<WmsInnerJobOrderDet> detList = new ArrayList<>();
+                    for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : orderDetMapperList){
+                        WmsInnerJobOrderDet det = wmsInnerJobOrderDetDto;
+                        detList.add(det);
+                    }
+                    wmsInnerJobOrderDetService.batchDelete(detList);
+                }
             }
 
             for (WmsInnerJobOrderDet wmsInPutawayOrderDet : record.getWmsInPutawayOrderDets()) {

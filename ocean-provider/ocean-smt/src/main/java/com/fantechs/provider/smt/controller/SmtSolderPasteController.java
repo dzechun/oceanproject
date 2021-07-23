@@ -29,7 +29,7 @@ import java.util.List;
  * Created by Mr.Lei on 2021/07/22.
  */
 @RestController
-@Api(tags = "smtSolderPaste控制器")
+@Api(tags = "锡膏管理")
 @RequestMapping("/smtSolderPaste")
 @Validated
 public class SmtSolderPasteController {

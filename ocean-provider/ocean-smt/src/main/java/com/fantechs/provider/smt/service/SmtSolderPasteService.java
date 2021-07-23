@@ -13,4 +13,8 @@ import java.util.Map;
 
 public interface SmtSolderPasteService extends IService<SmtSolderPaste> {
     List<SmtSolderPasteDto> findList(Map<String, Object> map);
+
+    SmtSolderPasteDto scanSolder(String barCode,Byte solderPasteStatus,Integer PASS);
+
+    List<SmtSolderPasteDto> findHtList(Map<String ,Object> map);
 }

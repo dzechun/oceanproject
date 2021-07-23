@@ -1,8 +1,7 @@
-package com.fantechs.common.base.general.entity.smt;
+package com.fantechs.common.base.general.entity.smt.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.general.dto.smt.SmtSolderPasterConfig;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -12,20 +11,28 @@ import javax.persistence.*;
 import lombok.Data;
 
 /**
- * 锡膏管理
- * smt_solder_paste
+ * 锡膏管理履历表
+ * smt_ht_solder_paste
  * @author mr.lei
- * @date 2021-07-22 10:57:06
+ * @date 2021-07-23 15:17:20
  */
 @Data
-@Table(name = "smt_solder_paste")
-public class SmtSolderPaste extends ValidGroup implements Serializable {
+@Table(name = "smt_ht_solder_paste")
+public class SmtHtSolderPaste extends ValidGroup implements Serializable {
+    /**
+     * 锡膏管理履历ID
+     */
+    @ApiModelProperty(name="htSolderPasteId",value = "锡膏管理履历ID")
+    @Excel(name = "锡膏管理履历ID", height = 20, width = 30,orderNum="") 
+    @Id
+    @Column(name = "ht_solder_paste_id")
+    private Long htSolderPasteId;
+
     /**
      * 锡膏管理ID
      */
     @ApiModelProperty(name="solderPasteId",value = "锡膏管理ID")
     @Excel(name = "锡膏管理ID", height = 20, width = 30,orderNum="") 
-    @Id
     @Column(name = "solder_paste_id")
     private Long solderPasteId;
 
@@ -116,7 +123,7 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
      * 当前回冰次数
      */
     @ApiModelProperty(name="currentReturnIceTime",value = "当前回冰次数")
-    @Excel(name = "当前回冰次数", height = 20, width = 30,orderNum="")
+    @Excel(name = "当前回冰次数", height = 20, width = 30,orderNum="") 
     @Column(name = "current_return_ice_time")
     private Integer currentReturnIceTime;
 
@@ -197,21 +204,6 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
     private String option2;
 
     private String option3;
-
-    @ApiModelProperty(name = "smtSolderPasterConfig",value = "执行状态")
-    private SmtSolderPasterConfig smtSolderPasterConfig;
-
-    @Transient
-    @ApiModelProperty(name = "message",value ="返回的信息")
-    private String message;
-
-    @Transient
-    @ApiModelProperty(name = "executeStatus",value = "执行状态（0-通过 1-强制停止 2-警告）")
-    private Integer executeStatus;
-
-    @Transient
-    @ApiModelProperty(name = "isDate",value = "是否过期日期（0-否 1-是）")
-    private Integer isDate;
 
     private static final long serialVersionUID = 1L;
 }

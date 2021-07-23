@@ -628,6 +628,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 ws.setActualQty(ws.getActualQty().add(aqty));
                 ws.setModifiedUserId(sysUser.getUserId());
                 ws.setModifiedTime(new Date());
+                if(StringUtils.isEmpty(ws.getWorkStartTime())){
+                    ws.setWorkStartTime(new Date());
+                }
                 ws.setWorkEndtTime(new Date());
                 num +=wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
             }else{
