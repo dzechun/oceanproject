@@ -435,7 +435,7 @@ public class BarcodeUtils {
                 .build());
         if (mesSfcBarcodeProcess != null) {
             if (!processId.equals(mesSfcBarcodeProcess.getNextProcessId())) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012003, mesSfcBarcodeProcess.getBarcode(), mesSfcBarcodeProcess.getNextProcessCode());
+                throw new BizErrorException(ErrorCodeEnum.PDA40012003, processId, mesSfcBarcodeProcess.getNextProcessId());
             }
         }else {
             throw new BizErrorException(ErrorCodeEnum.PDA40012002, mesSfcWorkOrderBarcodeDto.getBarcode());
