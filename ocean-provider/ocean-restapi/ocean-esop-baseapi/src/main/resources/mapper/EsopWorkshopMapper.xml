@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.workshop.TestWorkshopMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.restapi.esop.EsopWorkshop">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="code" jdbcType="VARCHAR" property="code" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="long_name" jdbcType="VARCHAR" property="longName" />
+    <result column="dept_code" jdbcType="VARCHAR" property="deptCode" />
+    <result column="created_user" jdbcType="INTEGER" property="createdUser" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="modify_user" jdbcType="INTEGER" property="modifyUser" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
+  </resultMap>
+</mapper>

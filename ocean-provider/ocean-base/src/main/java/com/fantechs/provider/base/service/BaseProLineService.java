@@ -16,4 +16,6 @@ public interface BaseProLineService extends IService<BaseProLine> {
     Map<String, Object> importExcel(List<BaseProLineImport> baseProLineImports);
 
     BaseProLine addOrUpdate (BaseProLine baseProLine);
+
+    List<BaseProLine> batchAdd(List<BaseProLine> baseProLines);
 }

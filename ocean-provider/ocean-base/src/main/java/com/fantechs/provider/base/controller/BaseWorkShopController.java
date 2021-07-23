@@ -134,4 +134,11 @@ public class BaseWorkShopController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+    @ApiOperation("批量添加")
+    @PostMapping("/batchAdd")
+    public ResponseEntity<List<BaseWorkShop>> batchAdd(@ApiParam(value = "",required = true)@RequestBody @Validated List<BaseWorkShop> baseWorkShops){
+        List<BaseWorkShop> list = baseWorkShopService.batchAdd(baseWorkShops);
+        return  ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
+    }
 }

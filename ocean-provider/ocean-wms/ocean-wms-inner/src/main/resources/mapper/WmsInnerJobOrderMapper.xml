@@ -182,7 +182,7 @@
     <select id="findStorage" resultType="java.lang.Long">
         SELECT storage_id
         FROM base_storage_material
-        WHERE material_id = #{materialId}
+        WHERE material_id = #{materialId} and org_id=#{orgId}
     </select>
     <select id="SelectStorage" resultType="java.lang.Long">
         SELECT storage_id

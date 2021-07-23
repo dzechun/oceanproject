@@ -1,8 +1,8 @@
 package com.fantechs.common.base.entity.security;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -110,8 +110,7 @@ public class SysApiLog extends ValidGroup implements Serializable {
      * 调用时间
      */
     @ApiModelProperty(name="requestTime",value = "调用时间")
-    @Excel(name = "调用时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "request_time")
     private Date requestTime;
 
@@ -119,8 +118,7 @@ public class SysApiLog extends ValidGroup implements Serializable {
      * 响应时间
      */
     @ApiModelProperty(name="responseTime",value = "响应时间")
-    @Excel(name = "响应时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "response_time")
     private Date responseTime;
 

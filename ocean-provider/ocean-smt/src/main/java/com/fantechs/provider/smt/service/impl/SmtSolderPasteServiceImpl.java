@@ -1,15 +1,19 @@
 package com.fantechs.provider.smt.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.smt.SmtSolderPasteDto;
 import com.fantechs.common.base.general.dto.smt.SmtSolderPasterConfig;
 import com.fantechs.common.base.general.entity.smt.SmtSolderPaste;
+import com.fantechs.common.base.general.entity.smt.history.SmtHtSolderPaste;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.smt.mapper.SmtHtSolderPasteMapper;
 import com.fantechs.provider.smt.mapper.SmtSolderPasteMapper;
 import com.fantechs.provider.smt.service.SmtSolderPasteService;
 import org.springframework.stereotype.Service;
@@ -35,12 +39,25 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
     private SmtSolderPasteMapper smtSolderPasteMapper;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private SmtHtSolderPasteMapper smtHtSolderPasteMapper;
+
+    //存入redis前缀
+    private static String DEFAULT_NAME="SOLDER:";
 
     @Override
     public List<SmtSolderPasteDto> findList(Map<String, Object> map) {
         SysUser sysUser = currentUser();
         map.put("orgId",sysUser.getOrganizationId());
-        return smtSolderPasteMapper.findList(map);
+        List<SmtSolderPasteDto> list = smtSolderPasteMapper.findList(map);
+        for (SmtSolderPasteDto smtSolderPasteDto : list) {
+            if (redisUtil.hasKey(DEFAULT_NAME+smtSolderPasteDto.getSolderPasteId())){
+                SmtSolderPasterConfig smtSolderPasterConfig = new SmtSolderPasterConfig();
+                BeanUtils.mapToObject((Map<String, Object>) redisUtil.get(DEFAULT_NAME+smtSolderPasteDto.getSolderPasteId()),smtSolderPasterConfig);
+                smtSolderPasteDto.setSmtSolderPasterConfig(smtSolderPasterConfig);
+            }
+        }
+        return list;
     }
 
     @Override
@@ -61,18 +78,39 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
             throw new BizErrorException("批次错误！请检查批次");
         }
         SmtSolderPaste smtSolderPaste = smtSolderPastes.get(0);
-        smtSolderPaste.setSmtSolderPasterConfig((SmtSolderPasterConfig) redisUtil.get(smtSolderPaste.getSolderPasteId().toString()));
+        if (redisUtil.hasKey(DEFAULT_NAME+smtSolderPaste.getSolderPasteId())){
+            SmtSolderPasterConfig smtSolderPasterConfig = new SmtSolderPasterConfig();
+            BeanUtils.mapToObject((Map<String, Object>) redisUtil.get(DEFAULT_NAME+smtSolderPaste.getSolderPasteId()),smtSolderPasterConfig);
+            smtSolderPaste.setSmtSolderPasterConfig(smtSolderPasterConfig);
+        }else {
+            throw new BizErrorException("锡膏配置获取失败");
+        }
+//        smtSolderPaste.setSmtSolderPasterConfig((SmtSolderPasterConfig) redisUtil.get(DEFAULT_NAME+smtSolderPaste.getSolderPasteId().toString()));
         if(smtSolderPaste.getSolderPasteStatus()==7){
             throw new BizErrorException("锡膏已报废,无法执行");
         }
         smtSolderPaste = this.checkStatus(smtSolderPaste,solderPasteStatus,PASS);
+        if(StringUtils.isEmpty(smtSolderPaste.getMessage())){
+            smtSolderPasteMapper.updateByPrimaryKeySelective(smtSolderPaste);
+        }
         Map<String,Object> map = new HashMap<>();
         map.put("solderPasteId",smtSolderPaste.getSolderPasteId());
         SmtSolderPasteDto smtSolderPasteDto = smtSolderPasteMapper.findList(map).get(0);
         smtSolderPasteDto.setMessage(smtSolderPasteDto.getMessage());
         smtSolderPasteDto.setExecuteStatus(smtSolderPaste.getExecuteStatus());
         smtSolderPasteDto.setIsDate(smtSolderPaste.getIsDate());
+
+        SmtHtSolderPaste smtHtSolderPaste = new SmtHtSolderPaste();
+        BeanUtil.copyProperties(smtSolderPaste,smtHtSolderPaste);
+        smtHtSolderPasteMapper.insertSelective(smtHtSolderPaste);
         return smtSolderPasteDto;
+    }
+
+    @Override
+    public List<SmtSolderPasteDto> findHtList(Map<String, Object> map) {
+        SysUser sysUser  = currentUser();
+        map.put("orgId",sysUser.getOrganizationId());
+        return smtHtSolderPasteMapper.findHtList(map);
     }
 
     private SmtSolderPaste checkStatus(SmtSolderPaste smtSolderPaste,Byte solderPasteStatus,Integer PASS){
@@ -154,23 +192,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                                 smtSolderPaste.setIsDate(0);
                             }
                         }
-//                        else if(smtSolderPaste.getNotOpenTimeLimit().compareTo((BigDecimal) map.get("hour"))==-1){
-//                            if(smtSolderPaste.getSmtSolderPasterConfig().getStirTimeStatus()==1){
-//                                throw new BizErrorException(ErrorCodeEnum.PDA5001015,"该锡膏超出搅拌时间，已强制停止执行");
-//                            }else{
-//                                throw new BizErrorException(ErrorCodeEnum.PDA5001016,"该锡膏超出搅拌时间，是否继续执行");
-//                            }
-//                        }
                     }else if(smtSolderPaste.getStirTime().compareTo((BigDecimal) map.get("min"))==-1){
-//                        if(smtSolderPaste.getNotOpenTimeLimit().compareTo((BigDecimal) map.get("hour"))==1){
-//                            if(smtSolderPaste.getSmtSolderPasterConfig().getStirTimeStatus()==0 ||smtSolderPaste.getSmtSolderPasterConfig().getNotOpenTimeLimitStatus()==0){
-//                                throw new BizErrorException(ErrorCodeEnum.PDA5001016,"该锡膏超过未开封时间，是否继续执行");
-//                            }else{
-//                                throw new BizErrorException(ErrorCodeEnum.PDA5001015,"该锡膏超过未开封时间，已强制停止执行");
-//                            }
-//                        }else if(smtSolderPaste.getNotOpenTimeLimit().compareTo((BigDecimal) map.get("hour"))==-1){
-//
-//                        }
                         if(smtSolderPaste.getSmtSolderPasterConfig().getStirTimeStatus()==1){
                             smtSolderPaste.setMessage("该锡膏未到达设定的搅拌时间，已强制停止执行");
                             smtSolderPaste.setExecuteStatus(1);
@@ -265,11 +287,12 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
-        int num = smtSolderPasteMapper.insertUseGeneratedKeys(record);
-        SmtSolderPasterConfig smtSolderPasterConfig = record.getSmtSolderPasterConfig();
-        smtSolderPasterConfig.setSolderPasteId(record.getSolderPasteId());
-        //将锡膏执行状态存入redis
-        redisUtil.set(record.getSolderPasteId().toString(),smtSolderPasterConfig);
+        int num = smtSolderPasteMapper.insertSelective(record);
+
+        //SmtSolderPasterConfig smtSolderPasterConfig = record.getSmtSolderPasterConfig();
+//        smtSolderPasterConfig.setSolderPasteId(record.getSolderPasteId());
+//        //将锡膏执行状态存入redis
+//        redisUtil.set(record.getSolderPasteId().toString(),smtSolderPasterConfig);
         return num;
     }
 
@@ -280,10 +303,16 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
         entity.setModifiedTime(new Date());
 
         int num = smtSolderPasteMapper.updateByPrimaryKeySelective(entity);
+        if(StringUtils.isEmpty(entity.getSmtSolderPasterConfig())){
+            throw new BizErrorException("配置不能为空");
+        }
         SmtSolderPasterConfig smtSolderPasterConfig = entity.getSmtSolderPasterConfig();
         smtSolderPasterConfig.setSolderPasteId(entity.getSolderPasteId());
         //将锡膏执行状态存入redis
-        redisUtil.set(entity.getSolderPasteId().toString(),smtSolderPasterConfig);
+        redisUtil.set(DEFAULT_NAME+entity.getSolderPasteId().toString(),smtSolderPasterConfig);
+        SmtHtSolderPaste smtHtSolderPaste = new SmtHtSolderPaste();
+        BeanUtil.copyProperties(entity,smtHtSolderPaste);
+        smtHtSolderPasteMapper.insertSelective(smtHtSolderPaste);
         return num;
     }
 
@@ -298,7 +327,11 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                 throw new BizErrorException(ErrorCodeEnum.OPT20012000,id);
             }
             //删除锡膏执行状态
-            redisUtil.del(id);
+            redisUtil.del(DEFAULT_NAME+id);
+
+            SmtHtSolderPaste smtHtSolderPaste = new SmtHtSolderPaste();
+            BeanUtil.copyProperties(smtSolderPaste,smtHtSolderPaste);
+            smtHtSolderPasteMapper.insertSelective(smtHtSolderPaste);
         }
         return super.batchDelete(ids);
     }

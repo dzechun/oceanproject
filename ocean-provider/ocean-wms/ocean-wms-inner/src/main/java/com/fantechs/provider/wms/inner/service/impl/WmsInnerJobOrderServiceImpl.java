@@ -144,7 +144,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }
                 //推荐库位
-                Long storageId = wmsInPutawayOrderMapper.findStorage(wms.getMaterialId(),wmsInnerJobOrder.getWarehouseId());
+                Long storageId = wmsInPutawayOrderMapper.findStorage(wms.getMaterialId(),wmsInnerJobOrder.getWarehouseId(),sysUser.getOrganizationId());
                 storageId = storageId==null?wmsInPutawayOrderMapper.SelectStorage():storageId;
                 if(StringUtils.isEmpty(storageId)){
                     throw new BizErrorException("未查询到推荐库位");
