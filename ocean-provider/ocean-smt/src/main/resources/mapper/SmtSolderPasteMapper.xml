@@ -16,6 +16,7 @@
     <result column="open_time_limit" jdbcType="DECIMAL" property="openTimeLimit" />
     <result column="not_open_time_limit" jdbcType="DECIMAL" property="notOpenTimeLimit" />
     <result column="return_ice_time" jdbcType="INTEGER" property="returnIceTime" />
+    <result column="current_return_ice_time" jdbcType="INTEGER" property="currentReturnIceTime"/>
     <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -31,7 +32,7 @@
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.smt.SmtSolderPasteDto">
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_name" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -49,6 +50,7 @@ ssp.stir_time,
 ssp.open_time_limit,
 ssp.not_open_time_limit,
 ssp.return_ice_time,
+ssp.current_return_ice_time,
 ssp.production_date,
 ssp.status,
 ssp.remark,
@@ -63,7 +65,7 @@ ssp.option2,
 ssp.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"/>,bm.material_code,bm.material_code,bpl.pro_name,
+    select <include refid="Base_Column_List"/>,bm.material_code,bm.material_name,bpl.pro_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -78,11 +80,17 @@ ssp.option3
     and bm.material_code like CONCAT('%',#{materialCode},'%')
   </if>
 <if test="materialName!='' and materialName!=''">
-  and bm.materialName like CONCAT('%',#{materialName},'%')
+  and bm.material_name like CONCAT('%',#{materialName},'%')
 </if>
 <if test="solderPasteStatus!=null and solderPasteStatus!=''">
   and ssp.solder_paste_status = #{solderPasteStatus}
 </if>
+<if test="solderPasteId!=null and solderPasteId!=''">
+  and ssp.solder_paste_id = #{solderPasteId}
+</if>
 </where>
+  </select>
+  <select id="findInvDet" resultType="java.lang.String">
+    select production_batch_code From wms_inner_inventory_det where barcode=#{barcode}
   </select>
 </mapper>

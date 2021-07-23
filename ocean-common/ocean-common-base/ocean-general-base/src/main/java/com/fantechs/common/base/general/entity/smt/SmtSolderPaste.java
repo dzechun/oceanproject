@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.smt;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.general.dto.smt.SmtSolderPasterConfig;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -112,6 +113,14 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
     private Integer returnIceTime;
 
     /**
+     * 当前回冰次数
+     */
+    @ApiModelProperty(name="currentReturnIceTime",value = "当前回冰次数")
+    @Excel(name = "当前回冰次数", height = 20, width = 30,orderNum="")
+    @Column(name = "current_return_ice_time")
+    private Integer currentReturnIceTime;
+
+    /**
      * 生产日期
      */
     @ApiModelProperty(name="productionDate",value = "生产日期")
@@ -188,6 +197,21 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
     private String option2;
 
     private String option3;
+
+    @ApiModelProperty(name = "smtSolderPasterConfig",value = "执行状态")
+    private SmtSolderPasterConfig smtSolderPasterConfig;
+
+    @Transient
+    @ApiModelProperty(name = "message",value ="返回的信息")
+    private String message;
+
+    @Transient
+    @ApiModelProperty(name = "executeStatus",value = "执行状态（0-通过 1-强制停止 2-警告）")
+    private Integer executeStatus;
+
+    @Transient
+    @ApiModelProperty(name = "isDate",value = "是否过期日期（0-否 1-是）")
+    private Integer isDate;
 
     private static final long serialVersionUID = 1L;
 }
