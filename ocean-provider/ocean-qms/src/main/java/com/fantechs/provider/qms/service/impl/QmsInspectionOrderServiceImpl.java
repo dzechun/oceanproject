@@ -343,6 +343,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                             QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
                             qmsInspectionOrder.setMaterialCode(baseMaterial.getData().get(0).getMaterialCode());
                             qmsInspectionOrder.setMaterialDesc(baseMaterial.getData().get(0).getMaterialName());
+                            qmsInspectionOrder.setMaterialId(baseMaterial.getData().get(0).getMaterialId());
+                            qmsInspectionOrder.setMaterialVersion(baseMaterial.getData().get(0).getMaterialVersion());
                             qmsInspectionOrder.setOrderQty(wmsInAsnOrderDet.getActualQty());
                             qmsInspectionOrder.setInspectionWayId((long) 42);
                             qmsInspectionOrder.setInspectionStatus((byte) 1);
