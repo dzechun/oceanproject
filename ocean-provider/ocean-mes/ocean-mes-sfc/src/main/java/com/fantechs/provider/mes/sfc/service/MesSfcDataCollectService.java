@@ -15,5 +15,5 @@ import java.util.Map;
 public interface MesSfcDataCollectService extends IService<MesSfcDataCollect> {
     List<MesSfcDataCollectDto> findList(Map<String, Object> map);
 
-    List<MesSfcDataCollectDto> findByGroup();
+    List<MesSfcDataCollectDto> findByGroup(Long equipmentId);
 }

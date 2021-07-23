@@ -77,9 +77,9 @@ public class MesSfcDataCollectController {
     }
 
     @ApiOperation("分组查询最后一条")
-    @GetMapping("/findByGroup")
-    public ResponseEntity<List<MesSfcDataCollectDto>> findByGroup(){
-        List<MesSfcDataCollectDto> sfcDataCollectDtos = mesSfcDataCollectService.findByGroup();
+    @PostMapping("/findByGroup")
+    public ResponseEntity<List<MesSfcDataCollectDto>> findByGroup(@ApiParam(value = "equipmentId") @RequestParam(required = false) Long equipmentId){
+        List<MesSfcDataCollectDto> sfcDataCollectDtos = mesSfcDataCollectService.findByGroup(equipmentId);
         return ControllerUtil.returnDataSuccess(sfcDataCollectDtos, sfcDataCollectDtos.size());
     }
 
