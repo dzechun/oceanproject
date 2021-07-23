@@ -1,12 +1,13 @@
 package com.fantechs.provider.baseapi.esop.controller;
 
 import com.fantechs.common.base.general.entity.basic.BaseDept;
-import com.fantechs.common.base.general.entity.restapi.esop.EsopDept;
+import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.restapi.esop.search.SearchEsop;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.baseapi.esop.service.EsopDeptService;
+import com.fantechs.provider.baseapi.esop.service.EsopLineService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,19 +26,19 @@ import java.util.List;
  * Created by leifengzhi on 2021/07/21.
  */
 @RestController
-@Api(tags = "Esop同步部门信息")
-@RequestMapping("/esopDept")
+@Api(tags = "Esop同步产线信息")
+@RequestMapping("/esopLine")
 @Validated
-public class EsopDeptController {
+public class EsopLineController {
 
     @Resource
-    private EsopDeptService esopDeptService;
+    private EsopLineService esopLineService;
 
-    @ApiOperation("同步部门")
-    @PostMapping("/addDept")
-    public ResponseEntity<List<BaseDept>> addDept(@ApiParam(value = "查询对象")@RequestBody SearchEsop searchEsop) throws ParseException {
-        List<BaseDept> baseDepts = esopDeptService.addDept(ControllerUtil.dynamicConditionByEntity(searchEsop));
-        return ControllerUtil.returnDataSuccess(baseDepts, StringUtils.isEmpty(baseDepts) ? 0 : 1);
+    @ApiOperation("同步产线")
+    @PostMapping("/addLine")
+    public ResponseEntity<List<BaseProLine>> addLine(@ApiParam(value = "查询对象")@RequestBody SearchEsop searchEsop) throws ParseException {
+        List<BaseProLine> baseProLines = esopLineService.addLine(ControllerUtil.dynamicConditionByEntity(searchEsop));
+        return ControllerUtil.returnDataSuccess(baseProLines, StringUtils.isEmpty(baseProLines) ? 0 : 1);
     }
 
 }

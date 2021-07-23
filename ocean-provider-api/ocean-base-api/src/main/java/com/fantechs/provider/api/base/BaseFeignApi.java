@@ -424,5 +424,13 @@ public interface BaseFeignApi {
 
     @ApiOperation("批量添加部门信息")
     @PostMapping("/baseDept/batchAdd")
-    ResponseEntity batchAddDept(@ApiParam(value = "保存对象")@RequestBody List<BaseDept> baseDepts);
+    ResponseEntity<List<BaseDept>> batchAddDept(@ApiParam(value = "保存对象")@RequestBody List<BaseDept> baseDepts);
+
+    @ApiOperation("批量添加产线信息")
+    @PostMapping("/baseProLine/batchAdd")
+    ResponseEntity<List<BaseProLine>> batchAddLine(@ApiParam(value = "保存对象")@RequestBody List<BaseProLine> baseProLines);
+
+    @ApiOperation("批量添加产线信息")
+    @PostMapping("/baseWorkShop/batchAdd")
+    ResponseEntity<List<BaseWorkShop>>  batchAddWorkshop(@ApiParam(value = "保存对象")@RequestBody List<BaseWorkShop> baseWorkShops);
 }

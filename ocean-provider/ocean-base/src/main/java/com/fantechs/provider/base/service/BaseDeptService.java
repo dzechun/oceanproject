@@ -19,6 +19,6 @@ public interface BaseDeptService extends IService<BaseDept> {
 
     Map<String, Object> importExcel(List<BaseDeptImport> baseDeptImports);
 
-    int batchAdd(List<BaseDept> baseDepts);
+    List<BaseDept> batchAdd(List<BaseDept> baseDepts);
 
 }

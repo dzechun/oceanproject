@@ -309,7 +309,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
     }
 
     @Override
-    public int batchAdd(List<BaseDept> baseDepts ) {
+    public List<BaseDept> batchAdd(List<BaseDept> baseDepts ) {
         List<BaseDept> ins = new ArrayList<BaseDept>();
         List<BaseHtDept> baseHtDepts = new ArrayList<BaseHtDept>();
 
@@ -334,7 +334,8 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
         int i = baseDeptMapper.insertList(ins);
 
         //新增部门历史信息
-        baseHtDeptMapper.insertList(baseHtDepts);
-        return i;
+        if(StringUtils.isNotEmpty(baseHtDepts))
+            baseHtDeptMapper.insertList(baseHtDepts);
+        return ins;
     }
 }

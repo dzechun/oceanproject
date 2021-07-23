@@ -36,11 +36,12 @@ public class SysApiLogServiceImpl extends BaseService<SysApiLog> implements SysA
 
     @Override
     public int save(SysApiLog sysApiLog){
-        SysUser sysUser = currentUser();
-        sysApiLog.setOrgId(sysUser.getOrganizationId());
+        //接口无登录用户
+     //  SysUser sysUser = currentUser();
+     //   sysApiLog.setOrgId(sysUser.getOrganizationId());
         sysApiLog.setCreateTime(new Date());
-        sysApiLog.setCreateUserId(sysUser.getUserId());
-        return sysApiLogMapper.insert(sysApiLog);
+     //   sysApiLog.setCreateUserId(sysUser.getUserId());
+        return sysApiLogMapper.insertSelective(sysApiLog);
     }
 
     /**
