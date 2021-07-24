@@ -9,8 +9,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ocean-imes-baseapi</artifactId>
-    <groupId>com.fantechs.provider.baseapi</groupId>
+    <artifactId>ocean-esop-baseapi</artifactId>
+    <groupId>com.fantechs.provider.baseapi.esop</groupId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-esop-baseapi</name>
     <description>Demo project for Spring Boot</description>

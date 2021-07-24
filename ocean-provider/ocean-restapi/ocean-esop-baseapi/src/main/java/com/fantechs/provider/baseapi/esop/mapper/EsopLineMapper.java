@@ -9,5 +9,5 @@ import java.util.Map;
 
 @Mapper
 public interface EsopLineMapper extends MyMapper<EsopLine> {
-    List<EsopLine> findList(Map<String,Object> map);
+    List<EsopLine> findList(Map<String, Object> map);
 }

@@ -1,13 +1,10 @@
 package com.fantechs.provider.baseapi.esop.controller;
 
-import com.fantechs.common.base.general.entity.basic.BaseDept;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShop;
-import com.fantechs.common.base.general.entity.restapi.esop.EsopWorkshop;
 import com.fantechs.common.base.general.entity.restapi.esop.search.SearchEsop;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.baseapi.esop.service.EsopDeptService;
 import com.fantechs.provider.baseapi.esop.service.EsopWorkshopService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

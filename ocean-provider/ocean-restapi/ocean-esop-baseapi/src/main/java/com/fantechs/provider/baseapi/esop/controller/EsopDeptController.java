@@ -1,7 +1,6 @@
 package com.fantechs.provider.baseapi.esop.controller;
 
 import com.fantechs.common.base.general.entity.basic.BaseDept;
-import com.fantechs.common.base.general.entity.restapi.esop.EsopDept;
 import com.fantechs.common.base.general.entity.restapi.esop.search.SearchEsop;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

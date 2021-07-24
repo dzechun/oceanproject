@@ -1,22 +1,15 @@
 package com.fantechs.provider.baseapi.esop.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.entity.security.SysApiLog;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
-import com.fantechs.common.base.general.entity.basic.BaseDept;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShop;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShop;
-import com.fantechs.common.base.general.entity.restapi.esop.EsopDept;
 import com.fantechs.common.base.general.entity.restapi.esop.EsopLine;
-import com.fantechs.common.base.general.entity.restapi.esop.EsopWorkshop;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.baseapi.esop.mapper.EsopLineMapper;
 import com.fantechs.provider.baseapi.esop.service.EsopLineService;
 import com.fantechs.provider.baseapi.esop.service.EsopWorkshopService;
@@ -25,7 +18,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *

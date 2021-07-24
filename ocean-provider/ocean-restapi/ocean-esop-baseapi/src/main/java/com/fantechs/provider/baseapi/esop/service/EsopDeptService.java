@@ -14,5 +14,5 @@ import java.util.Map;
  */
 
 public interface EsopDeptService extends IService<EsopDept> {
-    List<BaseDept> addDept (Map<String, Object> map) throws ParseException;
+    List<BaseDept> addDept(Map<String, Object> map) throws ParseException;
 }
