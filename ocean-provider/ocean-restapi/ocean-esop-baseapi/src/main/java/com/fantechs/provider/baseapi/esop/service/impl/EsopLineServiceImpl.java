@@ -42,8 +42,6 @@ public class EsopLineServiceImpl extends BaseService<EsopLine> implements EsopLi
     private LogsUtils logsUtils;
     @Resource
     private EsopWorkshopService esopWorkshopService;
-    @Resource
-    private SecurityFeignApi securityFeignApi;
 
 
     @Override
