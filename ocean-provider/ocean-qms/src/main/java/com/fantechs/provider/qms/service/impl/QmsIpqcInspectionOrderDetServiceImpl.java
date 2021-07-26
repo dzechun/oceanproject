@@ -64,7 +64,8 @@ public class QmsIpqcInspectionOrderDetServiceImpl extends BaseService<QmsIpqcIns
                 if(qmsIpqcInspectionOrderDet.getSampleProcessType()!=null&&qmsIpqcInspectionOrderDet.getSampleProcessType()==(byte)4){
                     BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsIpqcInspectionOrderDet.getSampleProcessId(), qmsIpqcInspectionOrder.getQty()).getData();
                     if(StringUtils.isNotEmpty(baseSampleProcess)) {
-                        qmsIpqcInspectionOrderDet.setSampleQty(baseSampleProcess.getSampleQty());
+                        //总数量<样本数时,样本数=总数量
+                        qmsIpqcInspectionOrderDet.setSampleQty(qmsIpqcInspectionOrder.getQty().compareTo(baseSampleProcess.getSampleQty())==-1 ? qmsIpqcInspectionOrder.getQty() : baseSampleProcess.getSampleQty());
                         qmsIpqcInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
                         qmsIpqcInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
                     }
