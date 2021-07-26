@@ -101,11 +101,11 @@ public class BadRequestExceptionHandler {
         return ControllerUtil.returnFail(e.getMessage(), e.getCode());
     }
 
-    @ExceptionHandler(value = Exception.class)
-    public ResponseEntity exception(Exception e){
-        log.error(getExceptionInfo(e));
-        return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
-    }
+//    @ExceptionHandler(value = Exception.class)
+//    public ResponseEntity exception(Exception e){
+//        log.error(getExceptionInfo(e));
+//        return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+//    }
 
 
     private static String getExceptionInfo(Exception ex) {
