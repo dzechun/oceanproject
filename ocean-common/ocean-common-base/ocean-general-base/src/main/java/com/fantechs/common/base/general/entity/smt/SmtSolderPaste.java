@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.general.dto.smt.SmtSolderPasterConfig;
 import com.fantechs.common.base.support.ValidGroup;;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -74,8 +75,7 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
      * 回温时间(分)
      */
     @ApiModelProperty(name="tBackTime",value = "回温时间(分)")
-    @Excel(name = "回温时间(分)", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "回温时间(分)", height = 20, width = 30,orderNum="")
     @Column(name = "t_back_time")
     private BigDecimal tBackTime;
 
@@ -83,8 +83,7 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
      * 搅拌时间(分)
      */
     @ApiModelProperty(name="stirTime",value = "搅拌时间(分)")
-    @Excel(name = "搅拌时间(分)", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "搅拌时间(分)", height = 20, width = 30,orderNum="")
     @Column(name = "stir_time")
     private BigDecimal stirTime;
 
@@ -124,8 +123,9 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
      * 生产日期
      */
     @ApiModelProperty(name="productionDate",value = "生产日期")
-    @Excel(name = "生产日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "生产日期", height = 20, width = 30,orderNum="",exportFormat = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "production_date")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date productionDate;
 
     /**
