@@ -73,7 +73,7 @@ public class BadRequestExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity constraintViolationException(ConstraintViolationException exception){
         log.error(exception.getMessage());
-        return ControllerUtil.returnFail(exception.getMessage(),ErrorCodeEnum.GL99990100.getCode());
+        return ControllerUtil.returnFail("类型转换错误:"+exception.getMessage(),ErrorCodeEnum.GL99990100.getCode());
 
     }
 
@@ -86,26 +86,26 @@ public class BadRequestExceptionHandler {
     @ExceptionHandler(value = SQLExecuteException.class)
     public ResponseEntity sqlExecuteException(SQLExecuteException e){
         log.error(getExceptionInfo(e));
-        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
+        return ControllerUtil.returnFail("SQL执行错误:"+e.getMsg(), e.getCode());
     }
 
     @ExceptionHandler(value = DataErrorException.class)
     public ResponseEntity dataErrorException(DataErrorException e){
         log.error(getExceptionInfo(e));
-        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
+        return ControllerUtil.returnFail("类型转换错误:"+e.getMessage(), e.getCode());
     }
 
     @ExceptionHandler(value = TokenValidationFailedException.class)
     public ResponseEntity dataErrorException(TokenValidationFailedException e){
         log.error(getExceptionInfo(e));
-        return ControllerUtil.returnFail(e.getMessage(), e.getCode());
+        return ControllerUtil.returnFail("Token错误:"+e.getMessage(), e.getCode());
     }
 
-    @ExceptionHandler(value = Exception.class)
-    public ResponseEntity exception(Exception e){
-        log.error(getExceptionInfo(e));
-        return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
-    }
+//    @ExceptionHandler(value = Exception.class)
+//    public ResponseEntity exception(Exception e){
+//        log.error(getExceptionInfo(e));
+//        return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
+//    }
 
 
     private static String getExceptionInfo(Exception ex) {

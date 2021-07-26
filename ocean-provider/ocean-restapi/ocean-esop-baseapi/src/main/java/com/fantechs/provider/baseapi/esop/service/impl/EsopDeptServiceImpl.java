@@ -1,17 +1,14 @@
 package com.fantechs.provider.baseapi.esop.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.entity.security.SysApiLog;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.entity.basic.BaseDept;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtDept;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
 import com.fantechs.common.base.general.entity.restapi.esop.EsopDept;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.baseapi.esop.mapper.EsopDeptMapper;
 import com.fantechs.provider.baseapi.esop.service.EsopDeptService;
 import com.fantechs.provider.baseapi.esop.util.LogsUtils;
@@ -20,7 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

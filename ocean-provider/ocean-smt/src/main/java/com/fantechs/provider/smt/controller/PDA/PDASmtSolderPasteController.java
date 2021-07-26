@@ -31,7 +31,7 @@ public class PDASmtSolderPasteController {
     @ApiOperation("PDA扫码")
     public ResponseEntity<SmtSolderPasteDto> scanSolder(@ApiParam("锡膏条码") @RequestParam String barCode,
                                                         @ApiParam("锡膏状态") @RequestParam Byte solderPasteStatus,
-                                                        @ApiParam("0-第一次扫码 1-强制执行 2-生产日期过期执行")@RequestParam Integer PASS){
+                                                        @ApiParam("0-第一次扫码 1-警告 2-生产日期过期执行")@RequestParam Integer PASS){
 
         SmtSolderPasteDto smtSolderPasteDto = smtSolderPasteService.scanSolder(barCode, solderPasteStatus, PASS);
         return ControllerUtil.returnDataSuccess(smtSolderPasteDto,1);

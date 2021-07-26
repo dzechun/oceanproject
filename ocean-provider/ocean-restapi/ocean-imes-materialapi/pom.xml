@@ -8,11 +8,6 @@
         <groupId>com.fantechs.provider</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-   <!-- <parent>
-        <groupId>com.fantechs.provider.restapi</groupId>
-        <artifactId>ocean-restapi</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>-->
 
     <artifactId>ocean-imes-materialapi</artifactId>
     <groupId>com.fantechs.provider.materialapi.imes</groupId>
@@ -117,7 +112,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>D:/IMES/lib/materialapi</outputDirectory>
+            <outputDirectory>C:/work/workSpace/d/materialapi</outputDirectory>
             </configuration>
             </execution>
             </executions>

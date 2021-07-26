@@ -4,12 +4,10 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.restapi.*;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.materialapi.imes.service.SapReportWorkApiService;
-import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
-import com.fantechs.provider.materialapi.imes.utils.materialApi.SIMESMATERIALQUERYOut;
-import com.fantechs.provider.materialapi.imes.utils.materialApi.SIMESMATERIALQUERYOutService;
 import com.fantechs.provider.materialapi.imes.utils.reportWorkApi.SIMESWORKORDERREPORTSAVEOut;
 import com.fantechs.provider.materialapi.imes.utils.reportWorkApi.SIMESWORKORDERREPORTSAVEOutService;
+import com.fantechs.provider.materialapi.imes.service.SapReportWorkApiService;
+import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 
 import javax.annotation.Resource;
 import java.net.Authenticator;
