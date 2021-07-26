@@ -46,6 +46,13 @@ public class EamWorkInstructionDto extends EamWorkInstruction implements Seriali
     @Transient
     private String processName;
 
+    /**
+     * 工序名称
+     */
+    @ApiModelProperty(name="processCode",value = "工序编号")
+    @Transient
+    private String processCode;
+
     @Transient
     private List<EamWiBom> eamWiBoms;
 
@@ -71,4 +78,18 @@ public class EamWorkInstructionDto extends EamWorkInstruction implements Seriali
     @ApiModelProperty(name="modifiedUserName",value = "修改人名称")
     @Transient
     private String modifiedUserName;
+
+    /**
+     * 产品规格
+     */
+    @ApiModelProperty(name="specifications",value = "产品规格")
+    @Transient
+    private String specifications;
+
+    /**
+     * 产品规格
+     */
+    @ApiModelProperty(name="proName",value = "产品规格")
+    @Transient
+    private String proName;
 }

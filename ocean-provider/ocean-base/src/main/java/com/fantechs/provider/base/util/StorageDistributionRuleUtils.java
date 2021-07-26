@@ -128,7 +128,7 @@ public class StorageDistributionRuleUtils {
 //                }
 //            }
 //        }
-        return list;
+        return storageRuleDtos;
     }
 
     /**

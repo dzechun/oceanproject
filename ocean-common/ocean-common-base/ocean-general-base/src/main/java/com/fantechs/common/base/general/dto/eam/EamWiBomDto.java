@@ -33,4 +33,10 @@ public class EamWiBomDto extends EamWiBom implements Serializable {
     @Transient
     private String materialVersion;
 
+    /**
+     * 规格
+     */
+    @ApiModelProperty(name="specifications" ,value="规格")
+    @Transient
+    private String specifications;
 }

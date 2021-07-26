@@ -14,4 +14,5 @@ import java.util.Map;
 
 public interface MesPmWorkOrderBomService extends IService<MesPmWorkOrderBom> {
     List<MesPmWorkOrderBomDto> findList(Map<String, Object> map);
+    int  batchAdd(List<MesPmWorkOrderBom> mesPmWorkOrderBoms);
 }

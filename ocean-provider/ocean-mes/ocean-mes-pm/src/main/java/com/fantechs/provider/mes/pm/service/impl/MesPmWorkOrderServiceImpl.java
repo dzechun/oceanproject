@@ -6,6 +6,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.support.BaseService;
@@ -14,6 +15,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderMapper;
+import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderBomMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +36,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
     private MesPmHtWorkOrderMapper smtHtWorkOrderMapper;
+    @Resource
+    private MesPmWorkOrderBomMapper mesPmWorkOrderBomMapper;
 
 
     @Override
@@ -190,32 +194,25 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     }
 
     @Override
-    public MesPmWorkOrder updateById(MesPmWorkOrder mesPmWorkOrder){
+    public MesPmWorkOrder saveByApi(MesPmWorkOrder mesPmWorkOrder){
         Example example = new Example(MesPmWorkOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workOrderCode", mesPmWorkOrder.getWorkOrderCode());
-        MesPmWorkOrder mesPmWorkOrderOld = mesPmWorkOrderMapper.selectOneByExample(example);
-        mesPmWorkOrder.setModifiedTime(new Date());
-        if(StringUtils.isEmpty(mesPmWorkOrderOld)){
-            try {
-                if(StringUtils.isEmpty(mesPmWorkOrder.getCreateTime())) mesPmWorkOrder.setCreateTime(new Date());
-                if(mesPmWorkOrderMapper.insertSelective(mesPmWorkOrder)<=0)
-                    throw new BizErrorException("保存失败");
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new BizErrorException("保存失败");
-            }
-        }else{
-            int n = 0;
-            //新增工单历史信息
-            MesPmHtWorkOrder mesPmHtWorkOrder = new MesPmHtWorkOrder();
-            BeanUtils.copyProperties(mesPmWorkOrderOld, mesPmHtWorkOrder);
-            mesPmHtWorkOrder.setModifiedTime(new Date());
-            smtHtWorkOrderMapper.insertSelective(mesPmHtWorkOrder);
-            mesPmWorkOrder.setWorkOrderId(mesPmWorkOrderOld.getWorkOrderId());
-            if( mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder)<=0)
-                throw new BizErrorException("更新失败");
+        List<MesPmWorkOrder> mesPmWorkOrders = mesPmWorkOrderMapper.selectByExample(example);
+        mesPmWorkOrderMapper.deleteByExample(example);
+        example.clear();
+
+        //删除该工单下的所有bom表单
+        if(StringUtils.isNotEmpty(mesPmWorkOrders)) {
+            Example bomExample = new Example(MesPmWorkOrderBom.class);
+            Example.Criteria bomCriteria = bomExample.createCriteria();
+            bomCriteria.andEqualTo("workOrderId", mesPmWorkOrders.get(0).getWorkOrderId());
+            mesPmWorkOrderBomMapper.deleteByExample(bomCriteria);
+            bomExample.clear();
         }
+        mesPmWorkOrder.setModifiedTime(new Date());
+        mesPmWorkOrder.setCreateTime(new Date());
+        mesPmWorkOrderMapper.insertUseGeneratedKeys(mesPmWorkOrder);
         return mesPmWorkOrder;
     }
 

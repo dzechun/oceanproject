@@ -12,10 +12,10 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganizati
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.materialapi.imes.service.SapMaterialApiService;
-import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 import com.fantechs.provider.materialapi.imes.utils.materialApi.SIMESMATERIALQUERYOut;
 import com.fantechs.provider.materialapi.imes.utils.materialApi.SIMESMATERIALQUERYOutService;
+import com.fantechs.provider.materialapi.imes.service.SapMaterialApiService;
+import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 
 import javax.annotation.Resource;
 import java.net.Authenticator;

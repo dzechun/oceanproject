@@ -27,6 +27,7 @@
         <module>ocean-qms-api</module>
         <module>ocean-bcm-api</module>
         <module>ocean-tem-api</module>
+        <module>ocean-eam-api</module>
     </modules>
 
 </project>

@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.eam.EamWiReleaseDetDto;
 import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWorker;
+import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamWiBom;
 import com.fantechs.common.base.general.entity.eam.EamWiRelease;
 import com.fantechs.common.base.general.entity.eam.EamWiReleaseDet;
@@ -18,10 +19,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.eam.mapper.EamHtWiReleaseDetMapper;
-import com.fantechs.provider.eam.mapper.EamHtWiReleaseMapper;
-import com.fantechs.provider.eam.mapper.EamWiReleaseDetMapper;
-import com.fantechs.provider.eam.mapper.EamWiReleaseMapper;
+import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamWiReleaseService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -49,6 +47,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
     private EamHtWiReleaseDetMapper eamHtWiReleaseDetMapper ;
 
 
+
     @Override
     public List<EamWiReleaseDto> findList(SearchEamWiRelease searchEamWiRelease) {
         if(StringUtils.isEmpty(searchEamWiRelease.getOrgId())){
@@ -62,6 +61,8 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
     @Override
     public int save(EamWiReleaseDto eamWiReleaseDto) {
         SysUser sysUser = currentUser();
+        if(StringUtils.isEmpty(eamWiReleaseDto.getWiReleaseCode())) throw new BizErrorException("添加失败，发布编码不能为空");
+        if(StringUtils.isEmpty(eamWiReleaseDto.getProLineId())) throw new BizErrorException("添加失败，产线id不能为空");
         Example example1 = new Example(EamWiRelease.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("orgId", sysUser.getOrganizationId());
@@ -75,7 +76,8 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         eamWiRelease.setCreateTime(new Date());
         eamWiRelease.setModifiedUserId(sysUser.getUserId());
         eamWiRelease.setModifiedTime(new Date());
-        eamWiRelease.setStatus(StringUtils.isEmpty(eamWiReleaseDto.getStatus())?1: eamWiReleaseDto.getStatus());
+        eamWiRelease.setStatus((byte)1);
+        eamWiRelease.setReleaseStatus((byte)1);
         eamWiRelease.setOrgId(sysUser.getOrganizationId());
         int i = eamWiReleaseMapper.insertUseGeneratedKeys(eamWiRelease);
         List<EamWiReleaseDet> dets = saveDet(eamWiReleaseDto,sysUser,eamWiRelease.getWiReleaseId());
@@ -100,10 +102,12 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
 
     @Override
     public int update(EamWiReleaseDto eamWiReleaseDto) {
+        System.out.println("-----0------");
         SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(eamWiReleaseDto.getWiReleaseId()))
             throw new BizErrorException("id不能为空");
         eamWiReleaseMapper.updateByPrimaryKey(eamWiReleaseDto);
+        System.out.println("-----1------");
 
         Example example = new Example(EamWiRelease.class);
         Example.Criteria criteria = example.createCriteria();
@@ -114,7 +118,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         Example detExample = new Example(EamWiReleaseDet.class);
         Example.Criteria detCriteria = detExample.createCriteria();
         detCriteria.andEqualTo("wiReleaseId", eamWiReleaseDto.getWiReleaseId());
-        eamHtWiReleaseMapper.deleteByExample(detExample);
+        eamWiReleaseDetMapper.deleteByExample(detExample);
         detExample.clear();
 
 
@@ -124,6 +128,29 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         int i = eamHtWiReleaseMapper.insertUseGeneratedKeys(eamHtWiRelease);
 
         saveDet(eamWiReleaseDto,sysUser,eamWiRelease.getWiReleaseId());
+        return i;
+    }
+
+    @Override
+    public int censor(EamWiRelease eamWiRelease) {
+        SysUser sysUser = currentUser();
+        if(StringUtils.isEmpty(eamWiRelease.getWiReleaseId()))
+            throw new BizErrorException("发布id不能为空");
+        if(StringUtils.isEmpty(eamWiRelease.getProLineId()))
+            throw new BizErrorException("产线id不能为空");
+
+        Example example = new Example(EamWiRelease.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", sysUser.getOrganizationId()).andEqualTo("proLineId", eamWiRelease.getProLineId());
+        EamWiRelease oldWiRelease = eamWiReleaseMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(oldWiRelease)) {
+            oldWiRelease.setStatus((byte)0);
+            eamWiReleaseMapper.updateByPrimaryKey(oldWiRelease);
+        }
+        example.clear();
+
+        eamWiRelease.setStatus((byte)1);
+        int i = eamWiReleaseMapper.updateByPrimaryKey(eamWiRelease);
         return i;
     }
 
@@ -140,7 +167,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
                 wiReleaseDet.setModifiedTime(new Date());
                 wiReleaseDet.setStatus(StringUtils.isEmpty(eamWiReleaseDto.getStatus())?1: eamWiReleaseDto.getStatus());
                 wiReleaseDet.setOrgId(sysUser.getOrganizationId());
-                wiReleaseDet.setWorkInstructionId(id);
+                wiReleaseDet.setWiReleaseId(id);
                 dets.add(wiReleaseDet);
             }
         }

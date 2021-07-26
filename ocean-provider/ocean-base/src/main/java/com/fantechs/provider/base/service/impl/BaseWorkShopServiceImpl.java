@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.basic.imports.BaseWorkShopImport;
 import com.fantechs.common.base.general.entity.basic.BaseFactory;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShop;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtProLine;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkShop;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -246,5 +247,36 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
+    }
+
+    @Override
+    public List<BaseWorkShop> batchAdd(List<BaseWorkShop> baseWorkShops ) {
+        List<BaseWorkShop> ins = new ArrayList<BaseWorkShop>();
+        List<BaseHtWorkShop> baseHtWorkShops = new ArrayList<BaseHtWorkShop>();
+
+        for(BaseWorkShop baseWorkShop : baseWorkShops) {
+            Example example = new Example(BaseWorkShop.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", baseWorkShop.getOrganizationId());
+            criteria.andEqualTo("workShopCode", baseWorkShop.getWorkShopCode());
+            BaseWorkShop oldWorkShop = baseWorkShopMapper.selectOneByExample(example);
+
+            if (StringUtils.isNotEmpty(oldWorkShop)) {
+                baseWorkShop.setWorkShopId(oldWorkShop.getWorkShopId());
+                baseWorkShopMapper.updateByPrimaryKey(baseWorkShop);
+            }else{
+                ins.add(baseWorkShop);
+                BaseHtWorkShop baseHtWorkShop =new BaseHtWorkShop();
+                BeanUtils.copyProperties(baseWorkShop, baseHtWorkShop);
+                baseHtWorkShops.add(baseHtWorkShop);
+            }
+
+        }
+        int i = baseWorkShopMapper.insertList(ins);
+
+        //新增车间历史信息
+        if(StringUtils.isNotEmpty(baseHtWorkShops))
+            baseHtWorkShopMapper.insertList(baseHtWorkShops);
+        return ins;
     }
 }

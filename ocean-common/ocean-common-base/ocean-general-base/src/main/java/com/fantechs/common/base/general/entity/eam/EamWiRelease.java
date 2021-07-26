@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -34,6 +35,7 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 发布编码
      */
     @ApiModelProperty(name="wiReleaseCode",value = "发布编码")
+    @NotNull(message = "发布编码不能为空")
     @Excel(name = "发布编码", height = 20, width = 30,orderNum="1")
     @Column(name = "wi_release_code")
     private String wiReleaseCode;
@@ -42,6 +44,7 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
+    @NotNull(message = "工单ID不能为空")
     @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
     @Column(name = "work_order_id")
     private Long workOrderId;
@@ -50,7 +53,7 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
     @Column(name = "material_id")
     private Long materialId;
 
@@ -66,6 +69,7 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 产线ID
      */
     @ApiModelProperty(name="proLineId",value = "产线ID")
+    @NotNull(message = "产线ID不能为空")
     @Excel(name = "产线ID", height = 20, width = 30,orderNum="") 
     @Column(name = "pro_line_id")
     private Long proLineId;
@@ -90,7 +94,7 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 发布状态(1-待发布 2-已发布)
      */
     @ApiModelProperty(name="release_status",value = "发布状态(1-待发布 2-已发布)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="11")
+    @Excel(name = "状态(1-待发布 2-已发布)", height = 20, width = 30,orderNum="11")
     private Byte releaseStatus;
 
     /**

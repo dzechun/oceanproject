@@ -25,6 +25,7 @@
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="specifications" jdbcType="VARCHAR" property="specifications"/>
     </resultMap>
 
 
@@ -47,10 +48,12 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT<include refid="BaseColumnList"/>,bm.material_name as material_name,
-    bm.material_code as material_code,bm.material_version as material_version
+    bm.material_code as material_code,bm.material_version as material_version,
+    CONCAT(bt.length,',',bt.width,',',bt.height) as specifications
     FROM eam_wi_bom ewb
     LEFT JOIN eam_work_instruction ewi ON ewb.work_instruction_id = ewi.work_instruction_id
     LEFT JOIN base_material bm ON ewb.material_id = bm.material_id
+    LEFT JOIN base_material_tab bt ON bm.material_id = bt.material_id
     LEFT JOIN ocean_v2.sys_user su ON ewb.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON ewb.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON ewb.org_id = bo.organization_id

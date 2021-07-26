@@ -67,9 +67,9 @@ public interface PMFeignApi {
     @PostMapping("/mesPmWorkOrder/updateInventory")
     ResponseEntity updateInventory(@RequestBody MesPmWorkOrder mesPmWorkOrder);
 
-    @ApiOperation("接口修改或更新工单")
-    @PostMapping("/mesPmWorkOrder/updateById")
-    ResponseEntity<MesPmWorkOrder> updateById(@RequestBody MesPmWorkOrder mesPmWorkOrder);
+    @ApiOperation("接口修改或保存工单")
+    @PostMapping("/mesPmWorkOrder/saveByApi")
+    ResponseEntity<MesPmWorkOrder> saveByApi(@RequestBody MesPmWorkOrder mesPmWorkOrder);
 
     @ApiOperation("修改工单Bom")
     @PostMapping("/mesPmWorkOrderBom/update")
@@ -78,6 +78,10 @@ public interface PMFeignApi {
     @ApiOperation("添加工单Bom")
     @PostMapping("/mesPmWorkOrderBom/add")
     ResponseEntity addMesPmWorkOrderBom(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrderBom mesPmWorkOrderBom);
+
+    @ApiOperation("接口批量添加工单Bom")
+    @PostMapping("/mesPmWorkOrderBom/batchAdd")
+    ResponseEntity addMesPmWorkOrderBom(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<MesPmWorkOrderBom> mesPmWorkOrderBoms);
 
     @ApiOperation("工单bom列表")
     @PostMapping("/mesPmWorkOrderBom/findList")

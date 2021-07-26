@@ -5,11 +5,14 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamWiReleaseDetDto;
+import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
 import com.fantechs.common.base.general.dto.eam.EamWorkInstructionDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.*;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamWiRelease;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWorkInstruction;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -72,6 +75,11 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
     private BaseFeignApi baseFeignApi;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private EamWiReleaseMapper eamWiReleaseMapper ;
+    @Resource
+    private EamEquipmentMapper eamEquipmentMapper ;
+
 
     @Override
     public List<EamWorkInstructionDto> findList(SearchEamWorkInstruction searchEamWorkInstruction) {
@@ -80,6 +88,38 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
             searchEamWorkInstruction.setOrgId(sysUser.getOrganizationId());
         }
         return eamWorkInstructionMapper.findList(searchEamWorkInstruction);
+    }
+
+    @Override
+    public EamWorkInstructionDto findByEquipmentIp(SearchEamWorkInstruction searchEamWorkInstruction) {
+        if(StringUtils.isEmpty(searchEamWorkInstruction.getEquipmentIp()))
+            throw new BizErrorException("设备ip不能为空");
+
+        Example example = new Example(EamEquipment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("equipmentIp", searchEamWorkInstruction.getEquipmentIp());
+        EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
+        example.clear();
+
+        SearchEamWiRelease searchEamWiRelease = new SearchEamWiRelease();
+        searchEamWiRelease.setEquipmentIp(searchEamWorkInstruction.getEquipmentIp());
+        searchEamWiRelease.setOrgId(eamEquipment.getOrgId());
+        searchEamWiRelease.setReleaseStatus((byte)2);
+        List<EamWiReleaseDto> list = eamWiReleaseMapper.findList(searchEamWiRelease);
+     //   if(StringUtils.isEmpty(list)) throw new BizErrorException("未查询到该设备对应产线发布的WI");
+        if(StringUtils.isNotEmpty(list) ) {
+            if (list.size()>1)  throw new BizErrorException("查询到多条该设备对应产线发布的WI");
+            for(EamWiReleaseDetDto dto : list.get(0).getEamWiReleaseDetDtos()){
+                if(dto.getProcessId() == eamEquipment.getProcessId()){
+                    searchEamWorkInstruction.setWorkInstructionId(dto.getWorkInstructionId());
+                }
+
+            }
+            searchEamWorkInstruction.setProLineId(list.get(0).getProLineId());
+        }
+        searchEamWorkInstruction.setProcessId(eamEquipment.getProcessId());
+        searchEamWorkInstruction.setOrgId(eamEquipment.getOrgId());
+        return eamWorkInstructionMapper.findList(searchEamWorkInstruction).get(0);
     }
 
     @Override
@@ -92,6 +132,7 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         criteria.andEqualTo("workInstructionCode", eamWorkInstructionDto.getWorkInstructionCode());
         criteria.andEqualTo("orgId", user.getOrganizationId());
         EamWorkInstruction eamWorkInstruction = eamWorkInstructionMapper.selectOneByExample(example);
+        example.clear();
         if (StringUtils.isNotEmpty(eamWorkInstruction)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
@@ -101,7 +142,8 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         eamWorkInstructionDto.setCreateTime(new Date());
         eamWorkInstructionDto.setModifiedUserId(user.getUserId());
         eamWorkInstructionDto.setModifiedTime(new Date());
-        eamWorkInstructionDto.setStatus(StringUtils.isEmpty(eamWorkInstructionDto.getStatus())?1: eamWorkInstructionDto.getStatus());
+        eamWorkInstructionDto.setStatus((byte)1);
+        eamWorkInstructionDto.setWiStatus((byte)1);
         eamWorkInstructionDto.setOrgId(user.getOrganizationId());
         eamWorkInstructionMapper.insertUseGeneratedKeys(eamWorkInstructionDto);
 

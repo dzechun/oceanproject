@@ -80,8 +80,8 @@ public class EamWorkInstructionController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamWorkInstruction.update.class) EamWorkInstruction eamWorkInstruction) {
-        return ControllerUtil.returnCRUD(eamWorkInstructionService.update(eamWorkInstruction));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamWorkInstruction.update.class) EamWorkInstructionDto eamWorkInstructionDto) {
+        return ControllerUtil.returnCRUD(eamWorkInstructionService.update(eamWorkInstructionDto));
     }
 
    @ApiOperation("获取详情")
@@ -89,6 +89,13 @@ public class EamWorkInstructionController {
     public ResponseEntity<EamWorkInstruction> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         EamWorkInstruction  eamWorkInstruction = eamWorkInstructionService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(eamWorkInstruction,StringUtils.isEmpty(eamWorkInstruction)?0:1);
+    }
+
+    @ApiOperation("设备ip获取详情")
+    @PostMapping("/detailByEquipmentIp")
+    public ResponseEntity<EamWorkInstructionDto> detailByEquipmentIp(@ApiParam(value = "查询对象")@RequestBody SearchEamWorkInstruction searchEamWorkInstruction) {
+        EamWorkInstructionDto  eamWorkInstructionDto = eamWorkInstructionService.findByEquipmentIp(searchEamWorkInstruction);
+        return  ControllerUtil.returnDataSuccess(eamWorkInstructionDto,StringUtils.isEmpty(eamWorkInstructionDto)?0:1);
     }
 
     @ApiOperation("列表")

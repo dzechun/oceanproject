@@ -41,9 +41,12 @@ import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderMapper;
 import com.fantechs.provider.wms.in.service.WmsInAsnOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 import com.fantechs.common.base.support.BaseService;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import tk.mybatis.mapper.entity.Example;
@@ -77,6 +80,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     private SFCFeignApi sfcFeignApi;
     @Resource
     private OMFeignApi omFeignApi;
+    @Autowired
+    DataSourceTransactionManager dataSourceTransactionManager;
+    @Autowired
+    TransactionDefinition transactionDefinition;
 
     @Override
     public List<WmsInAsnOrderDto> findList(SearchWmsInAsnOrder searchWmsInAsnOrder) {
@@ -648,10 +655,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
      * @return
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
     public int palletAutoAsnOrder(PalletAutoAsnDto palletAutoAsnDto) {
         SysUser sysUser = currentUser();
+        //手动开启事务！
+        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
         try {
             //查询redis是否存储今日入库单号
             Boolean hasKey = redisUtil.hasKey("pallet_id");
@@ -689,6 +696,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 wms.setActualQty(palletAutoAsnDto.getActualQty());
                 //新增库存明细
                 res = this.addInventoryDet(palletAutoAsnDto.getBarCodeList(),wmsInAsnOrder.getAsnCode(),wms);
+
+                //手动提交事务
+                dataSourceTransactionManager.commit(transactionStatus);
+
                 //新增上架作业单
                 res = this.createJobOrder(wmsInAsnOrder,wms);
                 return 1;
@@ -731,6 +742,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 }
                 //新增库存明细
                 res = this.addInventoryDet(palletAutoAsnDto.getBarCodeList(),wmsInAsnOrder.getAsnCode(),wmsInAsnOrderDet);
+
+                //手动提交事务
+                dataSourceTransactionManager.commit(transactionStatus);
+
                 //新增上级作业单
                 res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
                 //设置新redis 时效为24小时
@@ -740,6 +755,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 return 1;
             }
         }catch (Exception e){
+            //手动回滚事务
+            dataSourceTransactionManager.rollback(transactionStatus);
             throw new BizErrorException(e.getMessage());
         }
     }

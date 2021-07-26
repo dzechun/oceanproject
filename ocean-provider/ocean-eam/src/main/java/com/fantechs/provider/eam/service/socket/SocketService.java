@@ -1,7 +1,6 @@
 package com.fantechs.provider.eam.service.socket;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author Mr.Lei

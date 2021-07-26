@@ -53,8 +53,8 @@ public class EamWiReleaseController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamWiRelease.update.class) EamWiRelease eamWiRelease) {
-        return ControllerUtil.returnCRUD(eamWiReleaseService.update(eamWiRelease));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamWiRelease.update.class) EamWiReleaseDto eamWiReleaseDto) {
+        return ControllerUtil.returnCRUD(eamWiReleaseService.update(eamWiReleaseDto));
     }
 
     @ApiOperation("获取详情")
@@ -79,4 +79,13 @@ public class EamWiReleaseController {
         List<EamHtWiReleaseDto> list = eamHtWiReleaseService.findHtList(ControllerUtil.dynamicConditionByEntity(searchEamWiRelease));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
+
+
+
+    @ApiOperation("审核")
+    @PostMapping("/censor")
+    public ResponseEntity censor(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamWiRelease.update.class) EamWiRelease eamWiRelease) {
+        return ControllerUtil.returnCRUD(eamWiReleaseService.censor(eamWiRelease));
+    }
+
 }

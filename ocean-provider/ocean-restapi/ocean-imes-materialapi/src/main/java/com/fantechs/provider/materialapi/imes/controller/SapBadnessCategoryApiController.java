@@ -21,7 +21,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @Api(tags = "雷赛不良代码信息接口")
-@RequestMapping("/routeApi")
+@RequestMapping("/badnessCategoryApi")
 @Validated
 public class SapBadnessCategoryApiController {
 

@@ -30,6 +30,7 @@
         <module>ocean-qms</module>    <!-- 质量管理 -->
         <module>ocean-srm</module>    <!-- 供应商管理 -->
         <module>ocean-eam</module>    <!-- 设备管理 -->
+        <module>ocean-smt</module>    <!-- MSD管理 -->
         <module>ocean-tem</module>
         <module>ocean-agv</module>
     </modules>

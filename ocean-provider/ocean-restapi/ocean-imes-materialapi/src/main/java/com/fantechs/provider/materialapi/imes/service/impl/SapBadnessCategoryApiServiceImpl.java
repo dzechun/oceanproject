@@ -9,21 +9,13 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganizati
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.materialapi.imes.service.SapBadnessCategoryApiService;
-import com.fantechs.provider.materialapi.imes.service.SapMaterialApiService;
-import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
-import com.fantechs.provider.materialapi.imes.utils.ProLineApi.SIMESPROCESSQUERYOut;
-import com.fantechs.provider.materialapi.imes.utils.ProLineApi.SIMESPROCESSQUERYOutService;
 import com.fantechs.provider.materialapi.imes.utils.badnessCategoryApi.SIMESBADCODEQUERYOut;
 import com.fantechs.provider.materialapi.imes.utils.badnessCategoryApi.SIMESBADCODEQUERYOutService;
-import com.fantechs.provider.materialapi.imes.utils.materialApi.SIMESMATERIALQUERYOut;
-import com.fantechs.provider.materialapi.imes.utils.materialApi.SIMESMATERIALQUERYOutService;
+import com.fantechs.provider.materialapi.imes.service.SapBadnessCategoryApiService;
+import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.net.Authenticator;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 

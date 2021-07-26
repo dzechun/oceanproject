@@ -1,17 +1,21 @@
 package com.fantechs.provider.base.service.impl;
 
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProLineImport;
+import com.fantechs.common.base.general.entity.basic.BaseDept;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShop;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtDept;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.restapi.esop.EsopDept;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -40,8 +44,6 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
 
     @Resource
     private BaseWorkShopMapper baseWorkShopMapper;
-    @Resource
-    private BaseOrganizationMapper baseOrganizationMapper;
 
 
     @Override
@@ -268,4 +270,34 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
         return baseProLine;
     }
 
+    @Override
+    public List<BaseProLine> batchAdd(List<BaseProLine> baseProLines ) {
+        List<BaseProLine> ins = new ArrayList<BaseProLine>();
+        List<BaseHtProLine> baseHtProLines = new ArrayList<BaseHtProLine>();
+
+        for(BaseProLine baseProLine : baseProLines) {
+            Example example = new Example(BaseProLine.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", baseProLine.getOrganizationId());
+            criteria.andEqualTo("proCode", baseProLine.getProCode());
+            BaseProLine oldProLine = baseProLineMapper.selectOneByExample(example);
+
+            if (StringUtils.isNotEmpty(oldProLine)) {
+                baseProLine.setProLineId(oldProLine.getProLineId());
+                baseProLineMapper.updateByPrimaryKey(baseProLine);
+            }else{
+                ins.add(baseProLine);
+                BaseHtProLine baseHtProLine =new BaseHtProLine();
+                BeanUtils.copyProperties(baseProLine, baseHtProLine);
+                baseHtProLines.add(baseHtProLine);
+            }
+
+        }
+        int i = baseProLineMapper.insertList(ins);
+
+        //新增产线历史信息
+        if(StringUtils.isNotEmpty(baseHtProLines))
+            baseHtProLineMapper.insertList(baseHtProLines);
+        return ins;
+    }
 }

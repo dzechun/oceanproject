@@ -124,9 +124,9 @@ public class MesPmWorkOrderController {
     /*原内容*/
 
     @ApiOperation(value = "接口更新",notes = "接口更新")
-    @PostMapping("/updateById")
-    public ResponseEntity<MesPmWorkOrder> updateById(@RequestBody MesPmWorkOrder mesPmWorkOrder) {
-        mesPmWorkOrder = mesPmWorkOrderService.updateById(mesPmWorkOrder);
+    @PostMapping("/saveByApi")
+    public ResponseEntity<MesPmWorkOrder> saveByApi(@RequestBody MesPmWorkOrder mesPmWorkOrder) {
+        mesPmWorkOrder = mesPmWorkOrderService.saveByApi(mesPmWorkOrder);
         return ControllerUtil.returnDataSuccess(mesPmWorkOrder,StringUtils.isEmpty(mesPmWorkOrder)?0:1);
     }
 }

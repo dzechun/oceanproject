@@ -21,7 +21,7 @@ public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
 
     int updateInventoryQty(MesPmWorkOrder mesPmWorkOrder);
 
-    MesPmWorkOrder updateById(MesPmWorkOrder mesPmWorkOrder);
+    MesPmWorkOrder saveByApi(MesPmWorkOrder mesPmWorkOrder);
 
     List<MesPmWorkOrder> getWorkOrderList(List<String> workOrderIds);
 

@@ -16,4 +16,8 @@ import java.util.Map;
 public interface EamEquipmentService extends IService<EamEquipment> {
     List<EamEquipmentDto> findList(Map<String, Object> map);
     List<EamHtEquipment> findHtList(Map<String, Object> map);
+
+    int batchUpdate(List<EamEquipment> list);
+
+    EamEquipment detailByIp(String ip);
 }

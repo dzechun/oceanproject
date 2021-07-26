@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -150,6 +151,18 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "storageCode",value = "库位编码")
     private String storageCode;
+
+    /**
+     * 锁定状态(0-否 1-是)
+     */
+    @ApiModelProperty(name="lockStatus",value = "锁定状态(0-否 1-是)")
+    private Byte lockStatus;
+
+    /**
+     * 作业状态(1-待入 2-正常 3-待出)
+     */
+    @ApiModelProperty(name="jobStatus",value = "作业状态(1正常 2待出)")
+    private Byte jobStatus;
 
     private static final long serialVersionUID = 1L;
 }

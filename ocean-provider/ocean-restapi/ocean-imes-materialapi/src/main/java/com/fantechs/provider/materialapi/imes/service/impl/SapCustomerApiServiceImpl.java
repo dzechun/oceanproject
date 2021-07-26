@@ -5,9 +5,9 @@ import com.fantechs.common.base.general.dto.restapi.*;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.materialapi.imes.utils.customerApi.SIMESCUSTOMERQUERYOut;
 import com.fantechs.provider.materialapi.imes.service.SapCustomerApiService;
 import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
-import com.fantechs.provider.materialapi.imes.utils.customerApi.SIMESCUSTOMERQUERYOut;
 import com.fantechs.provider.materialapi.imes.utils.customerApi.SIMESCUSTOMERQUERYOutService;
 
 

@@ -89,7 +89,7 @@ public class BarcodeUtils {
     public static Boolean checkSN(CheckProductionDto record) throws Exception {
 
         // 1、判断条码是否正确（是否存在）
-        MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = checkBarcodeStatus(record.getBarCode());
+        MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = checkBarcodeStatus(record.getBarCode(), record.getWorkOrderId());
 
         // 2、判断条码流程是否正确（流程表）
         if (record.getProcessId() != null) {
@@ -404,10 +404,11 @@ public class BarcodeUtils {
      * @param barCode 条码
      * @return MesSfcWorkOrderBarcodeDto 条码DTO
      */
-    private static MesSfcWorkOrderBarcodeDto checkBarcodeStatus(String barCode) {
+    private static MesSfcWorkOrderBarcodeDto checkBarcodeStatus(String barCode, Long workOrderId) {
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = barcodeUtils.mesSfcWorkOrderBarcodeService
                 .findList(SearchMesSfcWorkOrderBarcode.builder()
                         .barcode(barCode)
+                        .workOrderId(workOrderId)
                         .build());
         if (mesSfcWorkOrderBarcodeDtos.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012000);
@@ -435,7 +436,7 @@ public class BarcodeUtils {
                 .build());
         if (mesSfcBarcodeProcess != null) {
             if (!processId.equals(mesSfcBarcodeProcess.getNextProcessId())) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012003, mesSfcBarcodeProcess.getBarcode(), mesSfcBarcodeProcess.getNextProcessCode());
+                throw new BizErrorException(ErrorCodeEnum.PDA40012003, processId, mesSfcBarcodeProcess.getNextProcessId());
             }
         }else {
             throw new BizErrorException(ErrorCodeEnum.PDA40012002, mesSfcWorkOrderBarcodeDto.getBarcode());

@@ -307,4 +307,35 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
     }
+
+    @Override
+    public List<BaseDept> batchAdd(List<BaseDept> baseDepts ) {
+        List<BaseDept> ins = new ArrayList<BaseDept>();
+        List<BaseHtDept> baseHtDepts = new ArrayList<BaseHtDept>();
+
+        for(BaseDept baseDept : baseDepts) {
+            Example example = new Example(BaseDept.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", baseDept.getOrganizationId());
+            criteria.andEqualTo("deptCode", baseDept.getDeptCode());
+            BaseDept oldBaseDept = baseDeptMapper.selectOneByExample(example);
+
+            if (StringUtils.isNotEmpty(oldBaseDept)) {
+                baseDept.setDeptId(oldBaseDept.getDeptId());
+                baseDeptMapper.updateByPrimaryKey(baseDept);
+            }else{
+                ins.add(baseDept);
+                BaseHtDept baseHtDept =new BaseHtDept();
+                BeanUtils.copyProperties(baseDept, baseHtDept);
+                baseHtDepts.add(baseHtDept);
+            }
+
+        }
+        int i = baseDeptMapper.insertList(ins);
+
+        //新增部门历史信息
+        if(StringUtils.isNotEmpty(baseHtDepts))
+            baseHtDeptMapper.insertList(baseHtDepts);
+        return ins;
+    }
 }

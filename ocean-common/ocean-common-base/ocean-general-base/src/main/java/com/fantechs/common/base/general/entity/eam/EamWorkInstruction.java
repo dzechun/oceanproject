@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -36,6 +37,7 @@ public class EamWorkInstruction extends ValidGroup implements Serializable {
      * WI编码
      */
     @ApiModelProperty(name="workInstructionCode",value = "WI编码")
+    @NotNull(message = "WI编码不能为空")
     @Excel(name = "WI编码", height = 20, width = 30,orderNum="1")
     @Column(name = "work_instruction_code")
     private String workInstructionCode;
@@ -61,6 +63,7 @@ public class EamWorkInstruction extends ValidGroup implements Serializable {
      * 所属工序ID
      */
     @ApiModelProperty(name="processId",value = "所属工序ID")
+    @NotNull(message = "所属工序ID不能为空")
     @Column(name = "process_id")
     private Long processId;
 

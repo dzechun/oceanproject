@@ -1,11 +1,9 @@
 package com.fantechs.provider.materialapi.imes.controller;
 
 import com.fantechs.common.base.general.dto.restapi.SearchSapReportWorkApi;
-import com.fantechs.common.base.general.dto.restapi.SearchSapSupplierApi;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.materialapi.imes.service.SapReportWorkApiService;
-import com.fantechs.provider.materialapi.imes.service.SapSupplierApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
