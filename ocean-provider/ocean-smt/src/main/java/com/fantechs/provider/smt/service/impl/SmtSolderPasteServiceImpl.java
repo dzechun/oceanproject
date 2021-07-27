@@ -390,7 +390,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
         // 计算差多少分钟
         long min = diff % nd % nh / nm;
         // 计算差多少秒//输出结果
-        // long sec = diff % nd % nh % nm / ns;
+         //long sec = diff % nd % nh % nm / ns;
         map.put("day",day);
         map.put("hour",hour);
         map.put("min",min);
