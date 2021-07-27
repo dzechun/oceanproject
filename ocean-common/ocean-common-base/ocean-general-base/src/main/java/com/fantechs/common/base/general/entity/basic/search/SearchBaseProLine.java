@@ -50,7 +50,7 @@ public class SearchBaseProLine extends BaseQuery implements Serializable {
 
     /**
      * 组织id
-     */
+     *//*
     @ApiModelProperty(name="organizationId",value = "组织id")
-    private Long organizationId;
+    private Long organizationId;*/
 }
