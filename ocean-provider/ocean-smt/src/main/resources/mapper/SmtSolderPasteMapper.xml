@@ -92,8 +92,12 @@ ssp.option3
   and ssp.org_id = #{orgId}
 </if>
 </where>
+order by ssp.create_time
   </select>
-  <select id="findInvDet" resultType="java.lang.String">
-    select production_batch_code From wms_inner_inventory_det where barcode=#{barcode}
+  <select id="findInvDet" resultType="java.lang.Long">
+    select material_barcode_id From wms_inner_material_barcode where barcode=#{barcode}
+  </select>
+  <select id="findBatchCode" resultType="java.lang.String">
+    select batch_code FROM wms_inner_material_barcode where material_barcode_id=#{id}
   </select>
 </mapper>
