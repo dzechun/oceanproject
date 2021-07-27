@@ -87,13 +87,12 @@ public class SocketServiceImpl implements SocketService {
         ServerSocket serverSocket=new ServerSocket(port);
 
         //调用accept方法等待连接,线程会阻塞状态
-        System.out.println("Socket服务已启动,等待连接");
-        System.out.println("接收到客户端连接请求");
+        log.info("Socket服务已启动,等待连接");
         Socket socket=null;
         while(true){
             socket =serverSocket.accept();
             new SockerServerThread(socket).start();
-            System.out.println("客户端数量"+hashtable.size()+1);
+            log.info("客户端数量"+hashtable.size()+1);
 
         }
     }
