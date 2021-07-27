@@ -18,7 +18,7 @@ public class LogsUtils {
     @Resource
     private SecurityFeignApi securityFeignApi;
     /**
-     * 第一位1表示打印标签 发送打印字节
+     * 日志
      * @param result
      * @param type
      * @param orgId

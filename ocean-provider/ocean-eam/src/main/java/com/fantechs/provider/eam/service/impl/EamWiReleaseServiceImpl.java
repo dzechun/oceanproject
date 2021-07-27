@@ -102,12 +102,10 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
 
     @Override
     public int update(EamWiReleaseDto eamWiReleaseDto) {
-        System.out.println("-----0------");
         SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(eamWiReleaseDto.getWiReleaseId()))
             throw new BizErrorException("id不能为空");
         eamWiReleaseMapper.updateByPrimaryKey(eamWiReleaseDto);
-        System.out.println("-----1------");
 
         Example example = new Example(EamWiRelease.class);
         Example.Criteria criteria = example.createCriteria();

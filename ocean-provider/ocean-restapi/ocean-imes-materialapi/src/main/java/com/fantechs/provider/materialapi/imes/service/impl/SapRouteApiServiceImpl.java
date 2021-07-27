@@ -83,7 +83,6 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             baseProcessCategory.setOrganizationId(orgId);
             ResponseEntity<BaseProcessCategory> baseProcessCategoryResponseEntity = baseFeignApi.addOrUpdate(baseProcessCategory);
 
-            System.out.println("----baseWorkshopSection----"+baseWorkshopSection);
             //保存工序
             for(DTMESPROCESS process: res.getPROCESS()){
                 BaseProcess  baseProcess = new BaseProcess();
