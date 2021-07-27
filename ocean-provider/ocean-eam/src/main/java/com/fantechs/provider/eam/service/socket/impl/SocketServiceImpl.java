@@ -33,7 +33,7 @@ public class SocketServiceImpl implements SocketService {
     private Hashtable hashtable = new Hashtable();
     private int port = 9302;   //端口
     private int ticket = 30;
-    private int timeOut = 1000 * 30;   //超时时间
+    private int timeOut = 1000 * 60;   //超时时间
     private Map<String, Long> ipMap = new HashMap<>();
 
     @Scheduled(cron = "0 */1 * * * ?")
@@ -115,7 +115,7 @@ public class SocketServiceImpl implements SocketService {
 
                 //开机连接发送新闻命令
                 hashtable.put(addr.getHostAddress(),socket);
-             //   updateStatus(ip,(byte)1);
+
                 Map<String, Object> map = new HashMap();
                 Map<String, Object> newMap = new HashMap();
                 Map<String, Object> newData = new HashMap();
@@ -132,6 +132,8 @@ public class SocketServiceImpl implements SocketService {
                 out =new PrintWriter(os);
                 out.write(outMsg);
                 out.flush();
+
+                updateStatus(ip,(byte)1);
                 //读取输入字段，判断是否断开
                 while(true) {
                     String str = inputStreamToString(socket, addr.getHostAddress());
@@ -159,6 +161,7 @@ public class SocketServiceImpl implements SocketService {
             byte [] b = new byte[1024];
             int x = inputStream.read(b, 0, b.length);
             str = new String(b,0,x);
+        //    log.info("==============心跳包"+str);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
