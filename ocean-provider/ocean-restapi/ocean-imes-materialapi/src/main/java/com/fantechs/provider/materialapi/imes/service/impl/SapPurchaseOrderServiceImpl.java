@@ -1,6 +1,7 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
@@ -9,6 +10,7 @@ import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -22,7 +24,10 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebService(serviceName = "PurchaseOrderService", // 与接口中指定的name一致
         targetNamespace = "http://purchaseOrderService.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
@@ -36,9 +41,14 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
     private BaseFeignApi baseFeignApi;
 
     @Override
+    @LcnTransaction
     public String purchaseOrder(List<RestapiPurchaseOrderApiDto> purchaseOrderApiDtos) throws ParseException {
 
         if(StringUtils.isEmpty(purchaseOrderApiDtos)) return "采购订单参数为空";
+        Map<String,Long> purchaseMap = new HashMap<String,Long>();
+        Map<String,String> detMap = new HashMap<String,String>();
+        List<OmPurchaseOrderDet> omPurchaseOrderDetList = new ArrayList<OmPurchaseOrderDet>();
+
         for(RestapiPurchaseOrderApiDto purchaseOrderApiDto : purchaseOrderApiDtos) {
             String check = check(purchaseOrderApiDto);
             if (!check.equals("1")) {
@@ -46,26 +56,30 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             }
             Long orgId = getOrId();
             //保存或更新采购订单
-            OmPurchaseOrder omPurchaseOrder = new OmPurchaseOrder();
-            omPurchaseOrder.setPurchaseOrderCode(purchaseOrderApiDto.getEBELN());
-            omPurchaseOrder.setOrderType(purchaseOrderApiDto.getBSART());
-            if(StringUtils.isNotEmpty(purchaseOrderApiDto.getAEDAT()))
-                omPurchaseOrder.setOrderDate(DateUtils.getStrToDate("yyyyMMdd", purchaseOrderApiDto.getAEDAT()));
-            omPurchaseOrder.setSupplierId(getSupplier(purchaseOrderApiDto.getLIFNR(),orgId));
-            omPurchaseOrder.setOrgId(orgId);
-            ResponseEntity<OmPurchaseOrder> omPurchaseOrderResponseEntity = oMFeignApi.addOrUpdate(omPurchaseOrder);
-
+            if(StringUtils.isEmpty(purchaseMap.get(purchaseOrderApiDto.getEBELN()))) {
+                OmPurchaseOrder omPurchaseOrder = new OmPurchaseOrder();
+                omPurchaseOrder.setPurchaseOrderCode(purchaseOrderApiDto.getEBELN());
+                omPurchaseOrder.setOrderType(purchaseOrderApiDto.getBSART());
+                if (StringUtils.isNotEmpty(purchaseOrderApiDto.getAEDAT()))
+                    omPurchaseOrder.setOrderDate(DateUtils.getStrToDate("yyyyMMdd", purchaseOrderApiDto.getAEDAT()));
+                omPurchaseOrder.setSupplierId(getSupplier(purchaseOrderApiDto.getLIFNR(), orgId));
+                omPurchaseOrder.setOrgId(orgId);
+                ResponseEntity<OmPurchaseOrder> omPurchaseOrderResponseEntity = oMFeignApi.saveByApi(omPurchaseOrder);
+                purchaseMap.put(purchaseOrderApiDto.getEBELN(),omPurchaseOrderResponseEntity.getData().getPurchaseOrderId());
+            }
             //保存或更新采购订单详情表
             OmPurchaseOrderDet purchaseOrderDet = new OmPurchaseOrderDet();
-            purchaseOrderDet.setPurchaseOrderId(omPurchaseOrderResponseEntity.getData().getPurchaseOrderId());
+            purchaseOrderDet.setPurchaseOrderId(purchaseMap.get(purchaseOrderApiDto.getEBELN()));
             purchaseOrderDet.setProjectCode(purchaseOrderApiDto.getEBELP());
             purchaseOrderDet.setMaterialId(getBaseMaterial(purchaseOrderApiDto.getMATNR()).getMaterialId());
             purchaseOrderDet.setOrderQty(new BigDecimal(purchaseOrderApiDto.getMENGE().trim()));
             purchaseOrderDet.setStatus((byte)1);
             purchaseOrderDet.setWarehouseId(getWarehouse(purchaseOrderApiDto.getLGORT(),orgId));
             purchaseOrderDet.setFactoryId(getFactory(purchaseOrderApiDto.getWERKS(),orgId));
-            oMFeignApi.addOrUpdate(purchaseOrderDet);
+            omPurchaseOrderDetList.add(purchaseOrderDet);
         }
+
+        oMFeignApi.saveByApi(omPurchaseOrderDetList);
         return "success";
     }
 

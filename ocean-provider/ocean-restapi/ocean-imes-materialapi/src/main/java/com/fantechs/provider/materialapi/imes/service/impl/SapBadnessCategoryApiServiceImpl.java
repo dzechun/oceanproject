@@ -1,5 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.*;
@@ -29,6 +30,7 @@ public class SapBadnessCategoryApiServiceImpl implements SapBadnessCategoryApiSe
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
+    @LcnTransaction
     public int getbadnessCategory(SearchSapBadnessCategoryApi searchSapBadnessCategoryApi) {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESBADCODEQUERYOutService service = new SIMESBADCODEQUERYOutService();

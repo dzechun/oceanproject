@@ -1,5 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.restapi.*;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
@@ -24,6 +25,7 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
+    @LcnTransaction
     public int getSupplier(SearchSapSupplierApi searchSapSupplierApi) {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESSUPPLIERQUERYOutService service = new SIMESSUPPLIERQUERYOutService();

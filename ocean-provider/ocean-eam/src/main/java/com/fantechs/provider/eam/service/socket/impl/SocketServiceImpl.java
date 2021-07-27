@@ -67,7 +67,8 @@ public class SocketServiceImpl implements SocketService {
             Map<String, Object> data = new HashMap();
             List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
             map.put("code", code);
-            if(url != null)  map.put("url", url);
+            if(StringUtils.isNotEmpty(url))
+                map.put("url", url);
             list.add(map);
             data.put("data",list);
             String outMsg = JSON.toJSONString(data);

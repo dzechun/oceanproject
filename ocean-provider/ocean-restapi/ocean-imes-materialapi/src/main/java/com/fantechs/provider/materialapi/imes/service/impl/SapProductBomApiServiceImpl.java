@@ -1,5 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.dto.restapi.*;
@@ -34,6 +35,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
+    @LcnTransaction
     public int getProductBom(SearchSapProductBomApi searchSapProductBomApi) {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESBOMQUERYOutService service = new SIMESBOMQUERYOutService();

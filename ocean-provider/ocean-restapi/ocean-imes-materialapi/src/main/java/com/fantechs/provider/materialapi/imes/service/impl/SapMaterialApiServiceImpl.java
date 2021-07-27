@@ -1,5 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.DTMESMATERIAL;
@@ -34,6 +35,7 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
+    @LcnTransaction
     public int getMaterial(SearchSapMaterialApi searchSapMaterialApi) {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESMATERIALQUERYOutService service = new SIMESMATERIALQUERYOutService();

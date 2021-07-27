@@ -105,7 +105,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
     public Long getProLine(String proLineCode,Long orgId){
         SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
         searchBaseProLine.setProCode(proLineCode);
-        searchBaseProLine.setOrganizationId(orgId);
+        searchBaseProLine.setOrgId(orgId);
         ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);
         if(StringUtils.isEmpty(list.getData()))
             throw new BizErrorException("未查询到对应的产线："+proLineCode);
