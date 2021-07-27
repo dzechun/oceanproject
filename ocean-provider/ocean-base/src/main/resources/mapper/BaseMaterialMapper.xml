@@ -102,6 +102,9 @@
             <if test="organizationId!=null">
                 and sm.org_id=#{organizationId}
             </if>
+            <if test="materialCategoryId!=null and materialCategoryId!=''">
+            and bt.material_category_id = #{materialCategoryId}
+            </if>
         </where>
         order by sm.create_time desc
     </select>
