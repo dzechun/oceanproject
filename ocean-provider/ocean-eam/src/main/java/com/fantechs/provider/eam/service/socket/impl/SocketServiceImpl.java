@@ -145,7 +145,8 @@ public class SocketServiceImpl implements SocketService {
                 }
 
             } catch (Exception e) {
-                updateStatus(ip,(byte)3);
+                log.info("--------------???并没有中心异常-----------");
+                updateStatus(ip,(byte)0);
                 e.printStackTrace();
             }
 
@@ -153,11 +154,9 @@ public class SocketServiceImpl implements SocketService {
     }
 
     private  String inputStreamToString(Socket socket ,String ip) throws IOException {
-        InputStream inputStream = socket.getInputStream();
-        StringBuffer buffer = new StringBuffer();
-        InputStreamReader inputStreamReader;
         String str = null;
         try {
+            InputStream inputStream = socket.getInputStream();
             byte [] b = new byte[1024];
             int x = inputStream.read(b, 0, b.length);
             str = new String(b,0,x);
@@ -171,6 +170,7 @@ public class SocketServiceImpl implements SocketService {
             socket.shutdownOutput();
             socket.close();
             hashtable.remove(ip);
+            ipMap.remove(ip);
             e.printStackTrace();
         }
         return str;
@@ -195,6 +195,7 @@ public class SocketServiceImpl implements SocketService {
         EamEquipment eamEquipment = getEquipment(ip);
         eamEquipment.setOnlineStatus(bytes);
         eamEquipmentMapper.updateByPrimaryKeySelective(eamEquipment);
+
         return 1;
     }
 
