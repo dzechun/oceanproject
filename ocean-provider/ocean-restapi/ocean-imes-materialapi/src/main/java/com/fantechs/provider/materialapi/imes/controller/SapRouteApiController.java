@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 
 /**
  *
@@ -30,7 +31,7 @@ public class SapRouteApiController {
 
     @ApiOperation(value = "请求雷赛工艺路线信息",notes = "请求雷赛工艺路线信息")
     @PostMapping("/getRoute")
-    public ResponseEntity getProLine(@ApiParam(value = "查询对象")@RequestBody SearchSapRouteApi searchSapRouteApi) {
+    public ResponseEntity getProLine(@ApiParam(value = "查询对象")@RequestBody SearchSapRouteApi searchSapRouteApi) throws ParseException {
         return ControllerUtil.returnCRUD(sapRouteApiService.getRoute(searchSapRouteApi));
     }
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 
 /**
  *
@@ -30,7 +31,7 @@ public class SapReportWorkApiController {
 
     @ApiOperation(value = "返写报工数据",notes = "返写报工数据")
     @PostMapping("/sendReportWork")
-    public ResponseEntity sendReportWork(@ApiParam(value = "查询对象")@RequestBody SearchSapReportWorkApi searchSapReportWorkApi) {
+    public ResponseEntity sendReportWork(@ApiParam(value = "查询对象")@RequestBody SearchSapReportWorkApi searchSapReportWorkApi) throws ParseException {
         return ControllerUtil.returnCRUD(sapReportWorkApiService.sendReportWork(searchSapReportWorkApi));
     }
 }

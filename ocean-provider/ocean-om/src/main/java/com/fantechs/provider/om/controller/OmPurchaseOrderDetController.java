@@ -67,9 +67,9 @@ public class OmPurchaseOrderDetController {
     }
 
     @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
-    @PostMapping("/addOrUpdate")
-    public ResponseEntity<OmPurchaseOrderDet> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated OmPurchaseOrderDet omPurchaseOrderDet) {
-        OmPurchaseOrderDet omPurchaseOrderDets = omPurchaseOrderDetService.addOrUpdate(omPurchaseOrderDet);
-        return ControllerUtil.returnDataSuccess(omPurchaseOrderDets, StringUtils.isEmpty(omPurchaseOrderDets) ? 0 : 1);
+    @PostMapping("/saveByApi")
+    public ResponseEntity saveByApi(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<OmPurchaseOrderDet> omPurchaseOrderDets) {
+        int i = omPurchaseOrderDetService.batchAdd(omPurchaseOrderDets);
+        return ControllerUtil.returnCRUD(i);
     }
 }

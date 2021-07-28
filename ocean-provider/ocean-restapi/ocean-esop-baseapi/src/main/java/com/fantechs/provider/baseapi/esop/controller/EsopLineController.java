@@ -35,8 +35,8 @@ public class EsopLineController {
     @ApiOperation("同步产线")
     @PostMapping("/addLine")
     public ResponseEntity<List<BaseProLine>> addLine(@ApiParam(value = "查询对象")@RequestBody SearchEsop searchEsop) throws ParseException {
-        List<BaseProLine> baseProLines = esopLineService.addLine(ControllerUtil.dynamicConditionByEntity(searchEsop));
-        return ControllerUtil.returnDataSuccess(baseProLines, StringUtils.isEmpty(baseProLines) ? 0 : 1);
+        esopLineService.addLine(ControllerUtil.dynamicConditionByEntity(searchEsop));
+        return ControllerUtil.returnCRUD(1);
     }
 
 }

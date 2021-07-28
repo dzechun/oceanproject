@@ -40,13 +40,13 @@ public interface OMFeignApi {
     @PostMapping("/omSalesOrderDet/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= OmSalesOrderDet.update.class) OmSalesOrderDet omSalesOrderDet);
 
-    @ApiOperation(value = "新增或更新采购订单表信息",notes = "新增或更新采购订单表信息")
-    @PostMapping("/omPurchaseOrder/addOrUpdate")
-    ResponseEntity<OmPurchaseOrder> addOrUpdate(@ApiParam(value = "必传:",required = true)@RequestBody OmPurchaseOrder omPurchaseOrder);
+    @ApiOperation("新增或更新采购订单表信息")
+    @PostMapping("/omPurchaseOrder/saveByApi")
+    ResponseEntity<OmPurchaseOrder> saveByApi(@ApiParam(value = "必传:",required = true)@RequestBody OmPurchaseOrder omPurchaseOrder);
 
-    @ApiOperation(value = "新增或更新采购订单详情表信息",notes = "新增或更新采购订单详情表信息")
-    @PostMapping("/omPurchaseOrderDet/addOrUpdate")
-    ResponseEntity<OmPurchaseOrderDet> addOrUpdate(@ApiParam(value = "必传:",required = true)@RequestBody OmPurchaseOrderDet omPurchaseOrderDet);
+    @ApiOperation("新增或更新采购订单详情表信息")
+    @PostMapping("/omPurchaseOrderDet/saveByApi")
+    ResponseEntity saveByApi(@ApiParam(value = "必传:",required = true)@RequestBody List<OmPurchaseOrderDet> omPurchaseOrderDets);
 
     @ApiOperation("修改单据状态")
     @PostMapping("/omTransferOrder/updateStatus")

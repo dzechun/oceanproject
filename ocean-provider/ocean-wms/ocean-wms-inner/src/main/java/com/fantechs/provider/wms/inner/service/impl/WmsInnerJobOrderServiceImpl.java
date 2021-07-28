@@ -256,7 +256,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("storageId", wmsInnerJobOrderDetDto.getOutStorageId())
                         .andEqualTo("jobOrderDetId", wmsInPutawayOrderDet.getJobOrderDetId())
                         .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
-                        .andEqualTo("jobStatus", (byte) 2);
+                        .andEqualTo("jobStatus", (byte) 2)
+                        .andGreaterThan("stockLock", 0)
+                        .andGreaterThan("qcLock", 0)
+                        .andGreaterThan("lockStatus", 0);
                 WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 if (StringUtils.isEmpty(wmsInnerInventory)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -276,7 +279,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("storageId", wmsInnerJobOrderDetDto.getOutStorageId())
                         .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
                         .andEqualTo("jobOrderDetId", id)
-                        .andEqualTo("jobStatus", (byte) 2);
+                        .andEqualTo("jobStatus", (byte) 2)
+                        .andGreaterThan("stockLock", 0)
+                        .andGreaterThan("qcLock", 0)
+                        .andGreaterThan("lockStatus", 0);
                 WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
                 if (StringUtils.isEmpty(wmsInnerInventorys)) {
                     //添加库存
@@ -640,14 +646,20 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("storageId", oldDto.getOutStorageId())
                         .andEqualTo("jobOrderDetId", oldDto.getJobOrderDetId())
                         .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
-                        .andEqualTo("jobStatus", (byte) 2);
+                        .andEqualTo("jobStatus", (byte) 2)
+                        .andGreaterThan("stockLock", 0)
+                        .andGreaterThan("qcLock", 0)
+                        .andGreaterThan("lockStatus", 0);
                 WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 example.clear();
                 example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
                         .andEqualTo("warehouseId", oldDto.getWarehouseId())
                         .andEqualTo("storageId", oldDto.getInStorageId())
 //                        .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
-                        .andEqualTo("jobStatus", (byte) 1);
+                        .andEqualTo("jobStatus", (byte) 1)
+                        .andGreaterThan("stockLock", 0)
+                        .andGreaterThan("qcLock", 0)
+                        .andGreaterThan("lockStatus", 0);
                 WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
                 if (StringUtils.isEmpty(wmsInnerInventory_old)) {
                     //添加库存

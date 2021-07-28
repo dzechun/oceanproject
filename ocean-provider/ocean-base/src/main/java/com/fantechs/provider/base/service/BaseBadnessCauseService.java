@@ -16,5 +16,5 @@ import java.util.Map;
 public interface BaseBadnessCauseService extends IService<BaseBadnessCause> {
     List<BaseBadnessCauseDto> findList(Map<String, Object> map);
 
-    BaseBadnessCause addOrUpdate (BaseBadnessCause baseBadnessCause);
+    int saveByApi (BaseBadnessCause baseBadnessCauses);
 }

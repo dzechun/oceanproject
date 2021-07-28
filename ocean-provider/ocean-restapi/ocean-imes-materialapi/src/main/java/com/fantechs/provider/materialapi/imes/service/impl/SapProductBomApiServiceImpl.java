@@ -1,5 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.dto.restapi.*;
@@ -11,6 +12,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
+import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.productBomApi.SIMESBOMQUERYOut;
 import com.fantechs.provider.materialapi.imes.utils.productBomApi.SIMESBOMQUERYOutService;
 import com.fantechs.provider.materialapi.imes.service.SapProductBomApiService;
@@ -19,6 +22,7 @@ import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.net.Authenticator;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,12 +33,17 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
 
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private BaseUtils baseUtils;
+    @Resource
+    private LogsUtils logsUtils;
 
     private String userName = "MESPIALEUSER"; //雷赛wsdl用户名
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
-    public int getProductBom(SearchSapProductBomApi searchSapProductBomApi) {
+    @LcnTransaction
+    public int getProductBom(SearchSapProductBomApi searchSapProductBomApi) throws ParseException {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESBOMQUERYOutService service = new SIMESBOMQUERYOutService();
         SIMESBOMQUERYOut out = service.getHTTPPort();
@@ -59,17 +68,17 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
             }
 
             //保存bom表以及det表
-            BaseProductBom parentBomData =  saveBaseProductBom(searchSapProductBomApi.getMaterialCode(),parentList.get(0).getAENNR());
+            BaseProductBom parentBomData =  saveBaseProductBom(baseUtils.getBaseMaterial(searchSapProductBomApi.getMaterialCode()),parentList.get(0).getAENNR());
             BaseProductBom bomData =  null;
             for(String code : materialCodes){
+                BaseMaterial baseMaterial = baseUtils.getBaseMaterial(code);
                  if(searchSapProductBomApi.getMaterialCode().equals(code)){
                      bomData = parentBomData;
                  }else{
-                     bomData = saveBaseProductBom(code,"0");
-
+                     bomData = saveBaseProductBom(baseMaterial,"0");
                      BaseProductBomDet subBomDet = new BaseProductBomDet();
                      subBomDet.setProductBomId(parentBomData.getProductBomId());
-                     subBomDet.setMaterialId(getMaterialId(code));
+                     subBomDet.setMaterialId(baseMaterial.getMaterialId());
                      subBomDet.setIfHaveLowerLevel((byte)1);
                      baseFeignApi.addOrUpdate(subBomDet);
                  }
@@ -79,9 +88,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                     if(bom.getMATNR().equals(code)) {
                         BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
                         baseProductBomDet.setProductBomId(bomData.getProductBomId());
-                        baseProductBomDet.setMaterialId(getMaterialId(bom.getIDNRK()));
-                        BigDecimal b1 = new BigDecimal(bom.getMENGE().trim());
-                        BigDecimal b2 = new BigDecimal(bom.getBMENG().trim());
+                        baseProductBomDet.setMaterialId(baseUtils.getBaseMaterial(bom.getIDNRK()).getMaterialId());
                         baseProductBomDet.setUsageQty(new BigDecimal(bom.getMENGE().trim()));
                         baseProductBomDet.setBaseQty(new BigDecimal(bom.getBMENG().trim()));
                         baseProductBomDet.setRemark(bom.getMAKTXZ());
@@ -90,25 +97,28 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                     }
                 }
             }
+            logsUtils.addlog((byte)1,(byte)1,(long)1002,null,req.toString());
             return 1;
         }else{
+            logsUtils.addlog((byte)0,(byte)1,(long)1002,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }
 
-    public Long getMaterialId(String materialCode){
+/*    public Long getMaterialId(String materialCode){
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
         searchBaseMaterial.setMaterialCode(materialCode);
         ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findSmtMaterialList(searchBaseMaterial);
         if(StringUtils.isEmpty(parentMaterialList.getData()))
             throw new BizErrorException("未查询到对应的物料"+materialCode);
         return parentMaterialList.getData().get(0).getMaterialId();
-    }
+    }*/
 
     //保存或更新bom表、如果原bom表已经有数据则删除det表
-    public BaseProductBom saveBaseProductBom(String materialCode,String productBomVersion){
+    public BaseProductBom saveBaseProductBom( BaseMaterial baseMaterial,String productBomVersion){
+
         SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
-        searchBaseProductBom.setMaterialId(getMaterialId(materialCode));
+        searchBaseProductBom.setMaterialId(baseMaterial.getMaterialId());
         searchBaseProductBom.setProductBomVersion(productBomVersion);
         ResponseEntity<List<BaseProductBomDto>> productBomList = baseFeignApi.findProductBomList(searchBaseProductBom);
         BaseProductBom productBom = new BaseProductBom();
@@ -120,7 +130,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
         }
         productBom.setProductBomId(productBomList.getData().get(0).getProductBomId());
         productBom.setProductBomVersion(productBomVersion);
-        productBom.setMaterialId(getMaterialId(materialCode));
+        productBom.setMaterialId(baseMaterial.getMaterialId());
         pproductBom = baseFeignApi.addOrUpdate(productBom);
         return pproductBom.getData();
     }
