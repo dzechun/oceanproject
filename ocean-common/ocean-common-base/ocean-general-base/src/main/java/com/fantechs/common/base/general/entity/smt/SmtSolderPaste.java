@@ -198,8 +198,13 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
 
     private String option3;
 
+    @Transient
     @ApiModelProperty(name = "smtSolderPasterConfig",value = "执行状态")
     private SmtSolderPasterConfig smtSolderPasterConfig;
+
+    @Transient
+    @ApiModelProperty(name = "smtSolderPasteJob",value = "更新记录（PDA显示）")
+    private SmtSolderPasteJob smtSolderPasteJob;
 
     @Transient
     @ApiModelProperty(name = "message",value ="返回的信息")

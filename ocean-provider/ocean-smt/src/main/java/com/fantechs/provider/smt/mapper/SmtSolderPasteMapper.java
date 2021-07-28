@@ -13,5 +13,7 @@ import java.util.Map;
 public interface SmtSolderPasteMapper extends MyMapper<SmtSolderPaste> {
     List<SmtSolderPasteDto> findList(Map<String ,Object> map);
 
-    String findInvDet(@Param("barcode")String barcode);
+    Long findInvDet(@Param("barcode")String barcode);
+
+    String findBatchCode(@Param("id")Long id);
 }
