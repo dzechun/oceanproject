@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -142,6 +143,36 @@ public class EamHtJigStandingBook extends ValidGroup implements Serializable {
     private String option2;
 
     private String option3;
+
+    /**
+     * 创建用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="4")
+    private String createUserName;
+
+    /**
+     * 修改用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="6")
+    private String modifiedUserName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
+
+    /**
+     * 部门名称
+     */
+    @Transient
+    @ApiModelProperty(name = "deptName",value = "部门名称")
+    private String deptName;
 
     /**
      * 附件(url集合，用逗号隔开)

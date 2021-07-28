@@ -26,12 +26,12 @@ public class EamHtJigStandingBookServiceImpl extends BaseService<EamHtJigStandin
     private EamHtJigStandingBookMapper eamHtJigStandingBookMapper;
 
     @Override
-    public List<EamHtJigStandingBook> findList(Map<String, Object> map) {
+    public List<EamHtJigStandingBook> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         map.put("orgId", user.getOrganizationId());
-        return eamHtJigStandingBookMapper.findList(map);
+        return eamHtJigStandingBookMapper.findHtList(map);
     }
 }

@@ -78,7 +78,7 @@ public class EamJigStandingBookController {
     @PostMapping("/findHtList")
     public ResponseEntity<List<EamHtJigStandingBook>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchEamJigStandingBook searchEamJigStandingBook) {
         Page<Object> page = PageHelper.startPage(searchEamJigStandingBook.getStartPage(),searchEamJigStandingBook.getPageSize());
-        List<EamHtJigStandingBook> list = eamHtJigStandingBookService.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigStandingBook));
+        List<EamHtJigStandingBook> list = eamHtJigStandingBookService.findHtList(ControllerUtil.dynamicConditionByEntity(searchEamJigStandingBook));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

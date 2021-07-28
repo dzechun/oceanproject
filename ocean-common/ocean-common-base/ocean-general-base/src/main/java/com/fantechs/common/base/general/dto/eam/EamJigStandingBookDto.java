@@ -29,6 +29,13 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
     private String modifiedUserName;
 
     /**
+     * 部门名称
+     */
+    @Transient
+    @ApiModelProperty(name = "deptName",value = "部门名称")
+    private String deptName;
+
+    /**
      * 组织名称
      */
     @Transient
