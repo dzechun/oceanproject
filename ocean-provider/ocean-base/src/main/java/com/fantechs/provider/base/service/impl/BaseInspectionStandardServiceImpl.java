@@ -96,7 +96,7 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         List<BaseInspectionStandardDet> baseInspectionStandardDets = baseInspectionStandard.getBaseInspectionStandardDets();
         if(StringUtils.isNotEmpty(baseInspectionStandardDets)){
             for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets) {
-                if(baseInspectionStandardDet.getInspectionTag()==(byte)2) {
+                if(baseInspectionStandardDet.getInspectionTag()!=null && baseInspectionStandardDet.getInspectionTag()==(byte)2) {
                     if(StringUtils.isNotEmpty(baseInspectionStandardDet.getSpecificationUpperLimit(),baseInspectionStandardDet.getSpecificationFloor())) {
                         if (baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor()) == -1
                                 || baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor()) == 0) {
