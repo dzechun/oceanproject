@@ -578,6 +578,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
             searchBaseStorage.setMinSurplusCanPutSalver(0);
+            searchBaseStorage.setStorageType((byte) 2);
             ResponseEntity<List<BaseStorage>> baseStorages = baseFeignApi.findList(searchBaseStorage);
             if(StringUtils.isNotEmpty(baseStorages.getData())){
                 palletAutoAsnDto.setStorageId(baseStorages.getData().get(0).getStorageId());
