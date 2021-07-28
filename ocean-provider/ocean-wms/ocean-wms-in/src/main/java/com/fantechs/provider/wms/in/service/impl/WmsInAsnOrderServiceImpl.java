@@ -689,6 +689,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     wms.setModifiedTime(new Date());
                     wms.setModifiedUserId(sysUser.getUserId());
                     wms.setReceivingDate(new Date());
+                    wms.setLineNumber(wmsInAsnOrderMapper.findLineNumber(wmsInAsnOrder.getAsnOrderId())+1);
                     wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wms);
                 }
                 //更新库存
@@ -734,6 +735,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
                 wmsInAsnOrderDet.setReceivingDate(new Date());
                 wmsInAsnOrderDet.setOrgId(sysUser.getOrganizationId());
+                wmsInAsnOrderDet.setLineNumber(1);
                 wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wmsInAsnOrderDet);
                 //新增库存
                 int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wmsInAsnOrderDet.getAsnOrderDetId(),palletAutoAsnDto.getPackingQty());
@@ -877,10 +879,12 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventoryDet.setMaterialId(wmsInAsnOrderDet.getMaterialId());
             wmsInnerInventoryDet.setBarcode(barcode);
             wmsInnerInventoryDet.setMaterialQty(BigDecimal.ONE);
-            wmsInnerInventoryDet.setInTime(new Date());
             wmsInnerInventoryDet.setProductionDate(wmsInAsnOrderDet.getProductionDate());
             wmsInnerInventoryDet.setProductionBatchCode(wmsInnerInventoryDet.getProductionBatchCode());
-            wmsInnerInventoryDet.setRelatedOrderCode(orderCode);
+            wmsInnerInventoryDet.setAsnCode(orderCode);
+            wmsInnerInventoryDet.setReceivingDate(new Date());
+            wmsInnerInventoryDet.setJobStatus((byte)1);
+            wmsInnerInventoryDet.setStatus((byte)2);
             wmsInnerInventoryDets.add(wmsInnerInventoryDet);
             ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
             if(responseEntity.getCode()!=0){

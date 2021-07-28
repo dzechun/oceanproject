@@ -208,10 +208,10 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 wmsInnerInventoryDet.setMaterialId(wmsInAsnOrderDetDto.getMaterialId());
                 wmsInnerInventoryDet.setBarcode(barcode);
                 wmsInnerInventoryDet.setMaterialQty(BigDecimal.ONE);
-                wmsInnerInventoryDet.setExpirationDate(this.daysBetween(wmsInAsnOrderDetDto.getProductionDate(),wmsInAsnOrderDetDto.getExpiredDate()));
                 wmsInnerInventoryDet.setProductionDate(wmsInAsnOrderDetDto.getProductionDate());
                 wmsInnerInventoryDet.setProductionBatchCode(wmsInAsnOrderDetDto.getBatchCode());
-                wmsInnerInventoryDet.setRelatedOrderCode(wmsInAsnOrderDto.getAsnCode());
+                wmsInnerInventoryDet.setAsnCode(wmsInAsnOrderDto.getAsnCode());
+                wmsInnerInventoryDet.setReceivingDate(new Date());
                 wmsInnerInventoryDets.add(wmsInnerInventoryDet);
                 ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
                 if(responseEntity.getCode()!=0){
@@ -219,10 +219,12 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 }
             }else if(!barcode.equals(wmsInAsnOrderDetDto.getMaterialCode())&&wmsInAsnOrderDto.getOrderTypeId()==3){
                 WmsInnerInventoryDet inventoryDet = innerFeignApi.findByDet(barcode).getData();
-                inventoryDet.setInTime(new Date());
                 inventoryDet.setStorageId(wmsInAsnOrderDetDto.getStorageId());
                 inventoryDet.setMaterialQty(BigDecimal.ONE);
-                inventoryDet.setRelatedOrderCode(wmsInAsnOrderDto.getAsnCode());
+                inventoryDet.setAsnCode(wmsInAsnOrderDto.getAsnCode());
+                inventoryDet.setReceivingDate(new Date());
+                inventoryDet.setJobStatus((byte)1);
+                inventoryDet.setStatus((byte)2);
                 ResponseEntity responseEntity = innerFeignApi.update(inventoryDet);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException("修改库存明细失败");

@@ -15,5 +15,5 @@ public interface SmtSolderPasteMapper extends MyMapper<SmtSolderPaste> {
 
     Long findInvDet(@Param("barcode")String barcode);
 
-    String findBatchCode(@Param("id")Long id);
+    Map<String,Object> findBatchCode(@Param("id")Long id);
 }

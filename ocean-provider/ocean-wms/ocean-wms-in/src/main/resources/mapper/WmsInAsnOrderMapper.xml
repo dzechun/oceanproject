@@ -179,4 +179,7 @@ order by wiao.create_time desc
   <select id="findBarCode" resultType="java.lang.String" parameterType="java.lang.Long">
     select barcode FROM mes_sfc_work_order_barcode WHERE work_order_barcode_id=#{id}
   </select>
+  <select id="findLineNumber" resultType="java.lang.Integer">
+    select count(*) From wms_in_asn_order_det where asn_order_id = #{asnOrderId}
+  </select>
 </mapper>

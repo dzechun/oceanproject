@@ -187,6 +187,9 @@ wii.storage_id,
         and wii.inventory_status_id = #{inventoryStatusId}
       </if>
     </where>
+    <if test="collect!=null and collect==1">
+      group by wii.warehouse_id,wii.storage_id,wii.material_id,wii.packing_unit_name,wii.inventory_status_id,wii.lock_status,wii.stock_lock,wii.qc_lock
+    </if>
     order by wii.create_time desc
   </select>
 
