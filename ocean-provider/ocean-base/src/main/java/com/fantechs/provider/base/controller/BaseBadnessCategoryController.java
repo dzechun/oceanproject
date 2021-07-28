@@ -97,9 +97,9 @@ public class BaseBadnessCategoryController {
     }
 
     @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
-    @PostMapping("/addOrUpdate")
-    public ResponseEntity<BaseBadnessCategory> addOrUpdate(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated BaseBadnessCategory baseBadnessCategory) {
-        BaseBadnessCategory baseBadnessCategorys = baseBadnessCategoryService.addOrUpdate(baseBadnessCategory);
+    @PostMapping("/saveByApi")
+    public ResponseEntity<BaseBadnessCategory> saveByApi(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated BaseBadnessCategory baseBadnessCategory) {
+        BaseBadnessCategory baseBadnessCategorys = baseBadnessCategoryService.saveByApi(baseBadnessCategory);
         return ControllerUtil.returnDataSuccess(baseBadnessCategorys, StringUtils.isEmpty(baseBadnessCategorys) ? 0 : 1);
     }
 }

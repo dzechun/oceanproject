@@ -95,9 +95,9 @@ public class BaseBadnessCauseController {
     }
 
     @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
-    @PostMapping("/addOrUpdate")
-    public ResponseEntity<BaseBadnessCause> addOrUpdate(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated BaseBadnessCause baseBadnessCause) {
-        BaseBadnessCause baseBadnessCauses = baseBadnessCauseService.addOrUpdate(baseBadnessCause);
-        return ControllerUtil.returnDataSuccess(baseBadnessCauses, StringUtils.isEmpty(baseBadnessCauses) ? 0 : 1);
+    @PostMapping("/saveByApi")
+    public ResponseEntity<BaseBadnessCause> saveByApi(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated BaseBadnessCause baseBadnessCause) {
+        int i = baseBadnessCauseService.saveByApi(baseBadnessCause);
+        return ControllerUtil.returnCRUD(i);
     }
 }

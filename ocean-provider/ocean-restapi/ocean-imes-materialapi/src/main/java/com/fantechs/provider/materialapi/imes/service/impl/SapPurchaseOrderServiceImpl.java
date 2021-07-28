@@ -10,7 +10,6 @@ import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -19,6 +18,10 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapPurchaseOrderService;
+import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
+import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
@@ -34,11 +37,17 @@ import java.util.Map;
         endpointInterface = "com.fantechs.provider.materialapi.imes.service.SapPurchaseOrderService"// 接口地址
 )
 public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
+    private static final Logger logger = LoggerFactory.getLogger(SapPurchaseOrderServiceImpl.class);
 
     @Resource
     private OMFeignApi oMFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private BaseUtils baseUtils;
+    @Resource
+    private LogsUtils logsUtils;
+
 
     @Override
     @LcnTransaction
@@ -46,15 +55,15 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
 
         if(StringUtils.isEmpty(purchaseOrderApiDtos)) return "采购订单参数为空";
         Map<String,Long> purchaseMap = new HashMap<String,Long>();
-        Map<String,String> detMap = new HashMap<String,String>();
         List<OmPurchaseOrderDet> omPurchaseOrderDetList = new ArrayList<OmPurchaseOrderDet>();
 
         for(RestapiPurchaseOrderApiDto purchaseOrderApiDto : purchaseOrderApiDtos) {
             String check = check(purchaseOrderApiDto);
             if (!check.equals("1")) {
+                logsUtils.addlog((byte)0,(byte)2,(long)1002,check,purchaseOrderApiDto.toString());
                 return check;
             }
-            Long orgId = getOrId();
+            Long orgId = baseUtils.getOrId();
             //保存或更新采购订单
             if(StringUtils.isEmpty(purchaseMap.get(purchaseOrderApiDto.getEBELN()))) {
                 OmPurchaseOrder omPurchaseOrder = new OmPurchaseOrder();
@@ -78,25 +87,25 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             purchaseOrderDet.setFactoryId(getFactory(purchaseOrderApiDto.getWERKS(),orgId));
             omPurchaseOrderDetList.add(purchaseOrderDet);
         }
-
         oMFeignApi.saveByApi(omPurchaseOrderDetList);
+        logsUtils.addlog((byte)0,(byte)2,(long)1002,null,null);
         return "success";
     }
 
 
     public String check(RestapiPurchaseOrderApiDto purchaseOrderApiDto) {
-
+        String check = "1";
         if(StringUtils.isEmpty(purchaseOrderApiDto))
-            return "请求失败,参数为空";
+            check = "请求失败,参数为空";
         if(StringUtils.isEmpty(purchaseOrderApiDto.getEBELN()))
-            return "请求失败,采购凭证不能为空";
+            check = "请求失败,采购凭证不能为空";
         if(StringUtils.isEmpty(purchaseOrderApiDto.getMATNR()))
-            return "请求失败,物料号不能为空";
+            check = "请求失败,物料号不能为空";
         if(StringUtils.isEmpty(purchaseOrderApiDto.getEBELP()))
-            return "请求失败,采购凭证项目号不能为空";
+            check = "请求失败,采购凭证项目号不能为空";
         if(StringUtils.isEmpty(purchaseOrderApiDto.getMENGE()))
-            return "请求失败,采购数量不能为空";
-        return "1";
+            check = "请求失败,采购数量不能为空";
+        return check;
     }
 
     public Long getSupplier(String supplierCode,Long orgId){
@@ -124,23 +133,11 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
         return baseWarehouseList.getData().get(0).getWarehouseId();
     }
 
-    /**
-     * 获取组织id方法
-     *
-     * @return
-     */
-    public Long getOrId() {
-        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-        searchBaseOrganization.setOrganizationName("雷赛");
-        ResponseEntity<List<BaseOrganizationDto>> organizationList = baseFeignApi.findOrganizationList(searchBaseOrganization);
-        if (StringUtils.isEmpty(organizationList.getData())) throw new BizErrorException("未查询到对应组织");
-        return organizationList.getData().get(0).getOrganizationId();
-    }
 
     public BaseMaterial getBaseMaterial(String materialCode){
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
         searchBaseMaterial.setMaterialCode(materialCode);
-        searchBaseMaterial.setOrganizationId(getOrId());
+        searchBaseMaterial.setOrganizationId(baseUtils.getOrId());
         ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findSmtMaterialList(searchBaseMaterial);
         if(StringUtils.isEmpty(parentMaterialList.getData()))
             throw new BizErrorException("未查询到对应的物料："+materialCode);

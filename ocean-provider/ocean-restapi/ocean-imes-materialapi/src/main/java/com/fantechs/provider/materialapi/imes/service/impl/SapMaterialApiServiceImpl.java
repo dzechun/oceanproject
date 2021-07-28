@@ -13,6 +13,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganizati
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
+import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.materialApi.SIMESMATERIALQUERYOut;
 import com.fantechs.provider.materialapi.imes.utils.materialApi.SIMESMATERIALQUERYOutService;
 import com.fantechs.provider.materialapi.imes.service.SapMaterialApiService;
@@ -20,6 +22,7 @@ import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 
 import javax.annotation.Resource;
 import java.net.Authenticator;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,13 +33,18 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
 
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private BaseUtils baseUtils;
+    @Resource
+    private LogsUtils logsUtils;
+
 
     private String userName = "MESPIALEUSER"; //雷赛wsdl用户名
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
     @LcnTransaction
-    public int getMaterial(SearchSapMaterialApi searchSapMaterialApi) {
+    public int getMaterial(SearchSapMaterialApi searchSapMaterialApi) throws ParseException {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESMATERIALQUERYOutService service = new SIMESMATERIALQUERYOutService();
         SIMESMATERIALQUERYOut out = service.getHTTPPort();
@@ -57,8 +65,10 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
             }
             baseFeignApi.addList(addList);
             baseFeignApi.batchUpdateByCode(updateList);
+            logsUtils.addlog((byte)1,(byte)1,(long)1002,null,req.toString());
             return 1;
         }else{
+            logsUtils.addlog((byte)0,(byte)1,(long)1002,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }
@@ -68,12 +78,9 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
         searchBaseMaterial.setMaterialCode(material.getMATNR());
         ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
         BaseMaterial baseMaterial = new BaseMaterial();
+        Long orgId = baseUtils.getOrId();
 
-        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-        searchBaseOrganization.setOrganizationName("雷赛");
-        ResponseEntity<List<BaseOrganizationDto>> organizationList = baseFeignApi.findOrganizationList(searchBaseOrganization);
-        if(StringUtils.isEmpty(organizationList.getData()))  throw new BizErrorException("未查询到对应组织");
-        baseMaterial.setOrganizationId((organizationList.getData().get(0).getOrganizationId()));
+        baseMaterial.setOrganizationId(orgId);
 
         if(StringUtils.isEmpty(list.getData())){
             baseMaterial.setMaterialName(material.getMAKTX());

@@ -51,8 +51,6 @@ public class EsopLineServiceImpl extends BaseService<EsopLine> implements EsopLi
                 baseLines.add(getEsopLine(esopLine));
             }
         }
-        log.info("----------baseLines---------"+baseLines.size());
-        log.info("----------baseLines---------"+baseLines.get(0));
         ResponseEntity<List<BaseProLine>> baseProLineList = baseFeignApi.batchAddLine(baseLines);
         logsUtils.addlog((byte)1,(byte)1,(long)1002,null,null);
         return baseProLineList.getData();

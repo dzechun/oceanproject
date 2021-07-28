@@ -8,11 +8,13 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapSupplierApiService;
 import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
+import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.supplierApi.SIMESSUPPLIERQUERYOut;
 import com.fantechs.provider.materialapi.imes.utils.supplierApi.SIMESSUPPLIERQUERYOutService;
 
 import javax.annotation.Resource;
 import java.net.Authenticator;
+import java.text.ParseException;
 
 
 @org.springframework.stereotype.Service
@@ -20,13 +22,15 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
 
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private LogsUtils logsUtils;
 
     private String userName = "MESPIALEUSER"; //雷赛wsdl用户名
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
     @LcnTransaction
-    public int getSupplier(SearchSapSupplierApi searchSapSupplierApi) {
+    public int getSupplier(SearchSapSupplierApi searchSapSupplierApi) throws ParseException {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESSUPPLIERQUERYOutService service = new SIMESSUPPLIERQUERYOutService();
         SIMESSUPPLIERQUERYOut out = service.getHTTPPort();
@@ -48,8 +52,10 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
                 baseSupplier.setSupplierType((byte)1);
                 baseFeignApi.addOrUpdate(baseSupplier);
             }
+            logsUtils.addlog((byte)1,(byte)1,(long)1002,null,req.toString());
             return 1;
         }else{
+            logsUtils.addlog((byte)0,(byte)1,(long)1002,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }
