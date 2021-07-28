@@ -5,6 +5,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.eam.service.socket.SocketService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +26,9 @@ public class SocketController {
 
     @ApiOperation("发送指令")
     @PostMapping("/instructions")
-    public ResponseEntity instructions(@RequestParam(required = true)String ip,
-                                       @RequestParam(value = "控制设备命令，1203为关机，1204为重启",required = true) String code,
-                                       @RequestParam(required = false) String url){
+    public ResponseEntity instructions(@ApiParam(value = "ip",required = true)@RequestParam String ip,
+                                       @ApiParam(value = "code命令 1203为重启 1204为关机",required = true)@RequestParam String code,
+                                       @ApiParam(value = "url")@RequestParam String url){
         int i = socketService.instructions(ip,code,url);
         return ControllerUtil.returnCRUD(i);
     }

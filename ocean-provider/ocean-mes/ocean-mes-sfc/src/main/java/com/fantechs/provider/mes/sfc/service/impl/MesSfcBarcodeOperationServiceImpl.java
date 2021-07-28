@@ -395,7 +395,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         map.put("closeStatus", 0);
         List<MesSfcProductCartonDto> sfcProductCartonList = mesSfcProductCartonService.findList(map);
         if (sfcProductCartonList.isEmpty()) {
-            return null;
+            return new PdaCartonRecordDto();
         }
         // 组装
         return buildCartonData(sfcProductCartonList.get(0), packType);

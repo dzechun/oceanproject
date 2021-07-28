@@ -42,24 +42,10 @@ public class OmPurchaseOrderDetServiceImpl extends BaseService<OmPurchaseOrderDe
     }
 
     @Override
-    public OmPurchaseOrderDet addOrUpdate(OmPurchaseOrderDet omPurchaseOrderDet) {
+    public int batchAdd(List<OmPurchaseOrderDet> omPurchaseOrderDets) {
 
-        Example example = new Example(OmPurchaseOrderDet.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("purchaseOrderId", omPurchaseOrderDet.getPurchaseOrderId());
-        criteria.andEqualTo("projectCode", omPurchaseOrderDet.getProjectCode());
-        criteria.andEqualTo("orgId", omPurchaseOrderDet.getOrgId());
-        List<OmPurchaseOrderDet> omPurchaseOrderDets = omPurchaseOrderDetMapper.selectByExample(example);
-
-        omPurchaseOrderDet.setModifiedTime(new Date());
-        if (StringUtils.isNotEmpty(omPurchaseOrderDets)){
-            omPurchaseOrderDet.setPurchaseOrderId(omPurchaseOrderDets.get(0).getPurchaseOrderDetId());
-            omPurchaseOrderDetMapper.updateByPrimaryKey(omPurchaseOrderDet);
-        }else{
-            omPurchaseOrderDet.setCreateTime(new Date());
-            omPurchaseOrderDetMapper.insertUseGeneratedKeys(omPurchaseOrderDet);
-        }
-        return omPurchaseOrderDet;
+        int i = omPurchaseOrderDetMapper.insertList(omPurchaseOrderDets);
+        return i;
     }
 
 }

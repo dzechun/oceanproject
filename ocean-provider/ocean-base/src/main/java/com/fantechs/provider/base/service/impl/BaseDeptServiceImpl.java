@@ -331,8 +331,9 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
             }
 
         }
-        int i = baseDeptMapper.insertList(ins);
-
+        if(StringUtils.isNotEmpty(ins)) {
+            int i = baseDeptMapper.insertList(ins);
+        }
         //新增部门历史信息
         if(StringUtils.isNotEmpty(baseHtDepts))
             baseHtDeptMapper.insertList(baseHtDepts);

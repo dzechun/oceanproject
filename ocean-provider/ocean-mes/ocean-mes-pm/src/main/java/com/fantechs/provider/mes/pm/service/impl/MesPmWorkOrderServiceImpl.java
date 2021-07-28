@@ -207,7 +207,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             Example bomExample = new Example(MesPmWorkOrderBom.class);
             Example.Criteria bomCriteria = bomExample.createCriteria();
             bomCriteria.andEqualTo("workOrderId", mesPmWorkOrders.get(0).getWorkOrderId());
-            mesPmWorkOrderBomMapper.deleteByExample(bomCriteria);
+            mesPmWorkOrderBomMapper.deleteByExample(bomExample);
             bomExample.clear();
         }
         mesPmWorkOrder.setModifiedTime(new Date());

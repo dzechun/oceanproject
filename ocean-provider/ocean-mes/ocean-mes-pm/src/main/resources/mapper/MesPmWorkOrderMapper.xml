@@ -38,6 +38,7 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -112,6 +113,7 @@
         swo.inventory_qty,
         swo.remark,
         swo.contract_no,
+        swo.batch_code,
         sm.material_code AS 'materialCode',
         sm.material_name AS 'materialName',
         sm.material_version AS 'materialVersion',
@@ -213,6 +215,7 @@
                swo.scrap_qty,
                swo.work_order_status,
                swo.pro_line_id,
+               swo.batch_code,
                sm.material_code     AS 'materialCode',
                sm.material_name     AS 'materialName',
                sm.material_version  AS 'materialVersion',

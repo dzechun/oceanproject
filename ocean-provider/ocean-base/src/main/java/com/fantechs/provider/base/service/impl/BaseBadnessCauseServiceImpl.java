@@ -131,21 +131,13 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     }
 
     @Override
-    public BaseBadnessCause addOrUpdate(BaseBadnessCause baseBadnessCause) {
+    public int saveByApi(BaseBadnessCause baseBadnessCause) {
         Example example = new Example(BaseBadnessCause.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("badnessCauseCode", baseBadnessCause.getBadnessCauseCode());
         criteria.andEqualTo("orgId", baseBadnessCause.getOrgId());
-        List<BaseBadnessCause> baseBadnessCauseOld = baseBadnessCauseMapper.selectByExample(example);
-
-        baseBadnessCause.setModifiedTime(new Date());
-        if (StringUtils.isNotEmpty(baseBadnessCauseOld)){
-            baseBadnessCause.setBadnessCauseId(baseBadnessCauseOld.get(0).getBadnessCauseId());
-            baseBadnessCauseMapper.updateByPrimaryKey(baseBadnessCause);
-        }else{
-            baseBadnessCause.setCreateTime(new Date());
-            baseBadnessCauseMapper.insertUseGeneratedKeys(baseBadnessCause);
-        }
-        return baseBadnessCause;
+        baseBadnessCauseMapper.deleteByExample(example);
+        baseBadnessCause.setCreateTime(new Date());
+        return  baseBadnessCauseMapper.insertSelective(baseBadnessCause);
     }
 }

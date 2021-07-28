@@ -348,8 +348,8 @@ public interface BaseFeignApi {
     ResponseEntity<List<BaseSignature>> findSignatureList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSignature searchBaseSignature);
 
     @ApiOperation("接口新增或修改供应商（客户）信息")
-    @PostMapping("/baseSupplier/addOrUpdate")
-    ResponseEntity addOrUpdate(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody @Validated BaseSupplier baseSupplier);
+    @PostMapping("/baseSupplier/saveByApi")
+    ResponseEntity saveByApi(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody @Validated BaseSupplier baseSupplier);
 
     @ApiOperation("根据条件查询产品关键事项列表")
     @PostMapping("/baseProductionKeyIssues/findList")
@@ -404,12 +404,12 @@ public interface BaseFeignApi {
     ResponseEntity<BaseProcessCategory> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseProcessCategory baseProcessCategory);
 
     @ApiOperation(value = "新增或修改不良代码类别表信息",notes = "新增或修改不良代码类别表信息")
-    @PostMapping("/baseBadnessCategory/addOrUpdate")
-    ResponseEntity<BaseBadnessCategory> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseBadnessCategory baseBadnessCategory);
+    @PostMapping("/baseBadnessCategory/saveByApi")
+    ResponseEntity<BaseBadnessCategory> saveByApi(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseBadnessCategory baseBadnessCategory);
 
     @ApiOperation(value = "新增或修改不良代码原因表信息",notes = "新增或修改不良代码原因表信息")
-    @PostMapping("/baseBadnessCause/addOrUpdate")
-    ResponseEntity<BaseBadnessCause> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseBadnessCause bseBadnessCause);
+    @PostMapping("/baseBadnessCause/saveByApi")
+    ResponseEntity<BaseBadnessCause> saveByApi(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseBadnessCause bseBadnessCause);
 
     @ApiOperation("检验标准列表")
     @PostMapping("/baseInspectionStandard/findList")

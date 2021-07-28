@@ -6,8 +6,10 @@ import com.fantechs.common.base.general.dto.restapi.DTMESBOMQUERYRES;
 import com.fantechs.common.base.general.dto.restapi.SearchSapProductBomApi;
 import com.fantechs.common.base.general.dto.restapi.SearchSapSupplierApi;
 
+import java.text.ParseException;
+
 
 public interface SapProductBomApiService {
 
-    int getProductBom(SearchSapProductBomApi searchSapProductBomApi);
+    int getProductBom(SearchSapProductBomApi searchSapProductBomApi) throws ParseException;
 }

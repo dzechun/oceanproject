@@ -5,10 +5,14 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseWorkshopSection;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.om.mapper.OmPurchaseOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmPurchaseOrderMapper;
 import com.fantechs.provider.om.service.OmPurchaseOrderService;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,8 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
     @Resource
     private OmPurchaseOrderMapper omPurchaseOrderMapper;
+    @Resource
+    private OmPurchaseOrderDetMapper omPurchaseOrderDetMapper;
 
     @Override
     public List<OmPurchaseOrderDto> findList(Map<String, Object> map) {
@@ -42,22 +48,27 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
     }
 
     @Override
-    public OmPurchaseOrder addOrUpdate(OmPurchaseOrder omPurchaseOrder) {
+    public OmPurchaseOrder saveByApi(OmPurchaseOrder omPurchaseOrder) {
 
         Example example = new Example(OmPurchaseOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("purchaseOrderCode", omPurchaseOrder.getPurchaseOrderCode());
         criteria.andEqualTo("orgId", omPurchaseOrder.getOrgId());
         List<OmPurchaseOrder> omPurchaseOrders = omPurchaseOrderMapper.selectByExample(example);
+        omPurchaseOrderMapper.deleteByExample(example);
+        example.clear();
 
-        omPurchaseOrder.setModifiedTime(new Date());
-        if (StringUtils.isNotEmpty(omPurchaseOrders)){
-            omPurchaseOrder.setPurchaseOrderId(omPurchaseOrders.get(0).getPurchaseOrderId());
-            omPurchaseOrderMapper.updateByPrimaryKey(omPurchaseOrder);
-        }else{
-            omPurchaseOrder.setCreateTime(new Date());
-            omPurchaseOrderMapper.insertUseGeneratedKeys(omPurchaseOrder);
+        //删除该采购订单下的所有详情表
+        if(StringUtils.isNotEmpty(omPurchaseOrders)) {
+            Example detExample = new Example(OmPurchaseOrderDet.class);
+            Example.Criteria detCriteria = detExample.createCriteria();
+            detCriteria.andEqualTo("purchaseOrderId", omPurchaseOrders.get(0).getPurchaseOrderId());
+            omPurchaseOrderDetMapper.deleteByExample(detExample);
+            detExample.clear();
         }
+
+        omPurchaseOrder.setCreateTime(new Date());
+        omPurchaseOrderMapper.insertUseGeneratedKeys(omPurchaseOrder);
         return omPurchaseOrder;
     }
 

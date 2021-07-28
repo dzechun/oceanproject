@@ -15,5 +15,5 @@ import java.util.Map;
 public interface OmPurchaseOrderService extends IService<OmPurchaseOrder> {
     List<OmPurchaseOrderDto> findList(Map<String, Object> map);
 
-    OmPurchaseOrder addOrUpdate (OmPurchaseOrder omPurchaseOrder);
+    OmPurchaseOrder saveByApi (OmPurchaseOrder omPurchaseOrder);
 }

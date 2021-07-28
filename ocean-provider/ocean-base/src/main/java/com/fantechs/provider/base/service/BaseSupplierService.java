@@ -18,5 +18,5 @@ public interface BaseSupplierService extends IService<BaseSupplier> {
     List<BaseSupplier> findList(Map<String, Object> map);
     Map<String, Object> importExcel(List<BaseSupplierImport> baseSupplierImports, Byte supplierType);
 
-    int addOrUpdate (BaseSupplier baseSupplier);
+    int saveByApi (BaseSupplier baseSupplier);
 }

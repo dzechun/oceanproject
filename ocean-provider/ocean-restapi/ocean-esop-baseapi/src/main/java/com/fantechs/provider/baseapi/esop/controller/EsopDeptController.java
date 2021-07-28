@@ -35,8 +35,8 @@ public class EsopDeptController {
     @ApiOperation("同步部门")
     @PostMapping("/addDept")
     public ResponseEntity<List<BaseDept>> addDept(@ApiParam(value = "查询对象")@RequestBody SearchEsop searchEsop) throws ParseException {
-        List<BaseDept> baseDepts = esopDeptService.addDept(ControllerUtil.dynamicConditionByEntity(searchEsop));
-        return ControllerUtil.returnDataSuccess(baseDepts, StringUtils.isEmpty(baseDepts) ? 0 : 1);
+        esopDeptService.addDept(ControllerUtil.dynamicConditionByEntity(searchEsop));
+        return ControllerUtil.returnCRUD(1);
     }
 
 }

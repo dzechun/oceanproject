@@ -283,32 +283,18 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     }
 
     @Override
-    public int addOrUpdate(BaseSupplier baseSupplier) {
+    public int saveByApi(BaseSupplier baseSupplier) {
         Example example = new Example(BaseSupplier.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("supplierCode",baseSupplier.getSupplierCode()); // 前面的字段等于后面的参数
-        List<BaseSupplier> baseSuppliers = this.selectByExample(example);
+        criteria.andEqualTo("supplierCode",baseSupplier.getSupplierCode());
+        criteria.andEqualTo("organizationId",baseSupplier.getOrganizationId());
+        baseSupplierMapper.deleteByExample(example);
 
-        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-        searchBaseOrganization.setOrganizationName("雷赛");
-        List<BaseOrganizationDto> organizationList = baseOrganizationMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
-        if(StringUtils.isEmpty(organizationList))  throw new BizErrorException("未查询到对应组织");
-        baseSupplier.setOrganizationId((organizationList.get(0).getOrganizationId()));
-        if (StringUtils.isEmpty(baseSuppliers)){
-            baseSupplier.setCreateTime(new Date());
-            baseSupplier.setCreateUserId((long)1);
-            baseSupplier.setModifiedUserId((long)1);
-            baseSupplier.setModifiedTime(new Date());
-            baseSupplier.setIsDelete((byte) 1);
-
-            int i = baseSupplierMapper.insertUseGeneratedKeys(baseSupplier);
-            return i;
-        }else{
-            baseSupplier.setSupplierId(baseSuppliers.get(0).getSupplierId());
-            baseSupplier.setModifiedTime(new Date());
-            baseSupplier.setModifiedUserId((long)1);
-            int i = baseSupplierMapper.updateByPrimaryKeySelective(baseSupplier);
-            return i;
-        }
+        baseSupplier.setCreateTime(new Date());
+        baseSupplier.setCreateUserId((long)1);
+        baseSupplier.setModifiedUserId((long)1);
+        baseSupplier.setModifiedTime(new Date());
+        baseSupplier.setIsDelete((byte) 1);
+        return baseSupplierMapper.insertSelective(baseSupplier);
     }
 }
