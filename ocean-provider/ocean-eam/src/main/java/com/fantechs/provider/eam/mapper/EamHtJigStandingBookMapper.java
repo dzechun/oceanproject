@@ -1,7 +1,6 @@
 package com.fantechs.provider.eam.mapper;
 
-import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessDuty;
-import com.fantechs.common.base.general.entity.eam.EamHtJigStandingBook;
+import com.fantechs.common.base.general.entity.eam.history.EamHtJigStandingBook;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 

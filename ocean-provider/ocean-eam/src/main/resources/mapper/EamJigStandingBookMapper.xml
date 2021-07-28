@@ -24,7 +24,7 @@
     <result column="attachment_path" jdbcType="LONGVARCHAR" property="attachmentPath" />
   </resultMap>
 
-  <resultMap id="EamJigStandingBookDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamJigStandingBookDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamJigStandingBookDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>

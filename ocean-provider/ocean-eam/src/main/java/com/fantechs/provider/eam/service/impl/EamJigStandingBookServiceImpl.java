@@ -4,8 +4,8 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigStandingBookDto;
-import com.fantechs.common.base.general.entity.eam.EamHtJigStandingBook;
 import com.fantechs.common.base.general.entity.eam.EamJigStandingBook;
+import com.fantechs.common.base.general.entity.eam.history.EamHtJigStandingBook;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -14,6 +14,7 @@ import com.fantechs.provider.eam.mapper.EamJigStandingBookMapper;
 import com.fantechs.provider.eam.service.EamJigStandingBookService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -46,6 +47,7 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigStandingBook record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -70,6 +72,7 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigStandingBook entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -89,6 +92,7 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){

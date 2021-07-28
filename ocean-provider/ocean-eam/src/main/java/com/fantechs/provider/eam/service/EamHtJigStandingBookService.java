@@ -1,6 +1,6 @@
 package com.fantechs.provider.eam.service;
 
-import com.fantechs.common.base.general.entity.eam.EamHtJigStandingBook;
+import com.fantechs.common.base.general.entity.eam.history.EamHtJigStandingBook;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
