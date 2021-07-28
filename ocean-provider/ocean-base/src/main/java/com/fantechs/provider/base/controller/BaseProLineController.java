@@ -141,4 +141,11 @@ public class BaseProLineController {
         BaseProLine baseProLines = baseProLineService.addOrUpdate(baseProLine);
         return ControllerUtil.returnDataSuccess(baseProLines, StringUtils.isEmpty(baseProLines) ? 0 : 1);
     }
+
+    @ApiOperation("批量添加")
+    @PostMapping("/batchAdd")
+    public ResponseEntity<List<BaseProLine>> batchAdd(@ApiParam(value = "",required = true)@RequestBody @Validated List<BaseProLine> baseProLines){
+        List<BaseProLine> list = baseProLineService.batchAdd(baseProLines);
+        return  ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
+    }
 }

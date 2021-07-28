@@ -68,7 +68,6 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 //mesPmWorkOrder.setProLineId(getProLine(restapiWorkOrderApiDto.getFEVOR()));
                 mesPmWorkOrder.setOrgId(orgId);
                 ResponseEntity<MesPmWorkOrder> mesPmWorkOrderResponseEntity = pmFeignApi.saveByApi(mesPmWorkOrder);
-                System.out.println("---mesPmWorkOrder.getWorkOrderId()----"+mesPmWorkOrderResponseEntity.getData().getWorkOrderId());
                 orderMap.put(restapiWorkOrderApiDto.getAUFNR(),mesPmWorkOrderResponseEntity.getData().getWorkOrderId());
             }
 

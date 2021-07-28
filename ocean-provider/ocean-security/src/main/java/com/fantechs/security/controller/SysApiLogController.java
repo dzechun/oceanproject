@@ -40,7 +40,7 @@ public class SysApiLogController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SysApiLog sysApiLog) {
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SysApiLog sysApiLog) {
         return ControllerUtil.returnCRUD(sysApiLogService.save(sysApiLog));
     }
 

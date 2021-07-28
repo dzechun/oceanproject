@@ -290,6 +290,10 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        List<Long> organizationList = sysUserMapper.findOrganizationList(currentUser.getUserId());
+        if (!organizationList.contains(organizationId)) {
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"该组织未找到当前用户");
+        }
         SysUser sysUser = JSON.parseObject(JSON.toJSONString(redisUtil.get(CurrentUserInfoUtils.getToken())), SysUser.class);
         sysUser.setOrganizationId(organizationId);
         redisUtil.set(CurrentUserInfoUtils.getToken(),sysUser);

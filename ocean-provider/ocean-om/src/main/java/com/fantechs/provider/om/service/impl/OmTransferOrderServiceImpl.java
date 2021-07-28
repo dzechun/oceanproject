@@ -57,18 +57,29 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             Map<String,Object> map1 = new HashMap<>();
             map1.put("transferOrderId",omTransferOrderDto.getTransferOrderId());
             List<OmTransferOrderDetDto> omTransferOrderDetDtos = omTransferOrderDetMapper.findList(map1);
-            BigDecimal countQty = omTransferOrderDetDtos.stream()
-                    .map(OmTransferOrderDet::getOrderQty)
-                    .reduce(BigDecimal.ZERO,BigDecimal::add);
-            BigDecimal countVolume = omTransferOrderDetDtos.stream()
-                    .map(OmTransferOrderDetDto::getVolume)
-                    .reduce(BigDecimal.ZERO,BigDecimal::add);
-            BigDecimal countNetWeight = omTransferOrderDetDtos.stream()
-                    .map(OmTransferOrderDetDto::getNetWeight)
-                    .reduce(BigDecimal.ZERO,BigDecimal::add);
-            BigDecimal countGrossWeight = omTransferOrderDetDtos.stream()
-                    .map(OmTransferOrderDetDto::getGrossWeight)
-                    .reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal countQty = BigDecimal.ZERO;
+            BigDecimal countVolume = BigDecimal.ZERO;
+            BigDecimal countNetWeight = BigDecimal.ZERO;
+            BigDecimal countGrossWeight = BigDecimal.ZERO;
+
+            for (OmTransferOrderDetDto omTransferOrderDetDto : omTransferOrderDetDtos) {
+                countQty.add(omTransferOrderDetDto.getOrderQty());
+                countVolume.add(omTransferOrderDetDto.getVolume());
+                countNetWeight.add(omTransferOrderDetDto.getNetWeight());
+                countGrossWeight.add(omTransferOrderDetDto.getGrossWeight());
+            }
+//            BigDecimal countQty = omTransferOrderDetDtos.stream()
+//                    .map(OmTransferOrderDet::getOrderQty)
+//                    .reduce(BigDecimal.ZERO,BigDecimal::add);
+//            BigDecimal countVolume = omTransferOrderDetDtos.stream()
+//                    .map(OmTransferOrderDetDto::getVolume)
+//                    .reduce(BigDecimal.ZERO,BigDecimal::add);
+//            BigDecimal countNetWeight = omTransferOrderDetDtos.stream()
+//                    .map(OmTransferOrderDetDto::getNetWeight)
+//                    .reduce(BigDecimal.ZERO,BigDecimal::add);
+//            BigDecimal countGrossWeight = omTransferOrderDetDtos.stream()
+//                    .map(OmTransferOrderDetDto::getGrossWeight)
+//                    .reduce(BigDecimal.ZERO,BigDecimal::add);
             omTransferOrderDto.setCountOrderQty(countQty);
             omTransferOrderDto.setCountVolume(countVolume);
             omTransferOrderDto.setCountNetWeight(countNetWeight);

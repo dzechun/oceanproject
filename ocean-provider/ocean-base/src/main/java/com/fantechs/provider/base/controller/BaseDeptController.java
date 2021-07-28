@@ -139,4 +139,10 @@ public class BaseDeptController {
         }
     }
 
+    @ApiOperation("批量添加")
+    @PostMapping("/batchAdd")
+    public ResponseEntity <List<BaseDept>> batchAdd(@ApiParam(value = "",required = true)@RequestBody @Validated List<BaseDept> baseDepts){
+        List<BaseDept> list = baseDeptService.batchAdd(baseDepts);
+        return  ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
+    }
 }

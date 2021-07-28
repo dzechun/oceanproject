@@ -7,6 +7,7 @@
     -->
       <id column="tab_id" jdbcType="BIGINT" property="tabId" />
       <result column="material_id" jdbcType="BIGINT" property="materialId" />
+      <result column="material_category_id" jdbcType="BIGINT" property="materialCategoryId" />
       <result column="inspection_item_id" jdbcType="BIGINT" property="inspectionItemId" />
       <result column="package_specification_id" jdbcType="BIGINT" property="packageSpecificationId" />
       <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
@@ -80,11 +81,13 @@
         <result column="label_name" jdbcType="VARCHAR" property="labelName"/>
         <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode" />
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+        <result column="material_category_name" jdbcType="VARCHAR" property="materialCategoryName" />
     </resultMap>
 
   <sql id="Base_Column_List">
       bmt.tab_id,
 	bmt.material_id,
+    bmt.material_category_id,
 	bmt.inspection_item_id,
 	bmt.package_specification_id,
 	bmt.product_model_id,
@@ -146,13 +149,14 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>,
-      qit.inspection_type_code,qit.inspection_type_name,
+      qit.inspection_type_code,qit.inspection_type_name,bmc.material_category_name,
       sps.package_specification_code,sps.package_specification_name,sps.package_specification_quantity,
       spm.product_model_code,spm.product_model_name,
       blc.label_category_code,blc.label_category_name,
       bl.label_code,bl.label_name,
       ss.supplier_name,ss.supplier_code
     FROM fantech_imes_v2.base_material_tab bmt
+    LEFT JOIN fantech_imes_v2.base_material_category bmc ON bmt.material_category_id = bmc.material_category_id
     LEFT JOIN fantech_imes_v2.base_inspection_type qit ON bmt.inspection_type_id = qit.inspection_type_id
     LEFT JOIN fantech_imes_v2.base_package_specification sps ON bmt.package_specification_id = sps.package_specification_id
     LEFT JOIN fantech_imes_v2.base_product_model spm ON bmt.product_model_id = spm.product_model_id

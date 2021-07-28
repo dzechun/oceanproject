@@ -55,24 +55,25 @@
     LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id
   </select>
 
-  <select id="findByGroup" resultMap="BaseResultDtoMap" parameterType="map">
+  <select id="findByGroup" resultMap="BaseResultDtoMap" parameterType="java.lang.Long">
     SELECT
     <include refid="BaseColumnList"/>,
-      ee.equipment_code,
-      ee.equipment_name,
-      ee.equipment_ip,
-      ee.x_axis,
-      ee.y_axis
+    ee.equipment_code,
+    ee.equipment_name,
+    ee.equipment_ip,
+    ee.x_axis,
+    ee.y_axis
     FROM
-      mes_sfc_data_collect msdc
-        LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id
-        LEFT JOIN (
-        SELECT SUBSTRING_INDEX( GROUP_CONCAT( data_collect_id ORDER BY data_collect_id DESC ), ',', 1 ) AS data_collect_id
-        FROM mes_sfc_data_collect
-        GROUP BY equipment_id ) AS dci
-                  ON dci.data_collect_id = msdc.data_collect_id
-    GROUP BY
-      msdc.equipment_id
+    (SELECT SUBSTRING_INDEX( GROUP_CONCAT( data_collect_id ORDER BY data_collect_id DESC ), ',', 1 ) AS data_collect_id
+    FROM mes_sfc_data_collect
+    GROUP BY equipment_id ) AS dci
+    LEFT JOIN mes_sfc_data_collect msdc ON dci.data_collect_id = msdc.data_collect_id
+    LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id
+    <where>
+      <if test="equipmentId != null">
+        and msdc.equipment_id = #{equipmentId}
+      </if>
+    </where>
   </select>
 
 </mapper>

@@ -1,18 +1,12 @@
 package com.fantechs.provider.api.base;
 
-import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
-import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
-import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
 import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtConsignee;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.StringUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -22,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
@@ -93,6 +86,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("根据条件查询物料对应储位信息列表")
     @PostMapping("/baseStorageMaterial/findList")
+
     ResponseEntity<List<BaseStorageMaterial>> findStorageMaterialList(@ApiParam(value = "查询对象") @RequestBody SearchBaseStorageMaterial searchBaseStorageMaterial);
 
     @ApiOperation("批量新增物料信息")
@@ -428,4 +422,15 @@ public interface BaseFeignApi {
     @PostMapping("/baseWorker/findList")
     ResponseEntity<List<BaseWorkerDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWorker searchBaseWorker);
 
+    @ApiOperation("批量添加部门信息")
+    @PostMapping("/baseDept/batchAdd")
+    ResponseEntity<List<BaseDept>> batchAddDept(@ApiParam(value = "保存对象")@RequestBody List<BaseDept> baseDepts);
+
+    @ApiOperation("批量添加产线信息")
+    @PostMapping("/baseProLine/batchAdd")
+    ResponseEntity<List<BaseProLine>> batchAddLine(@ApiParam(value = "保存对象")@RequestBody List<BaseProLine> baseProLines);
+
+    @ApiOperation("批量添加产线信息")
+    @PostMapping("/baseWorkShop/batchAdd")
+    ResponseEntity<List<BaseWorkShop>>  batchAddWorkshop(@ApiParam(value = "保存对象")@RequestBody List<BaseWorkShop> baseWorkShops);
 }

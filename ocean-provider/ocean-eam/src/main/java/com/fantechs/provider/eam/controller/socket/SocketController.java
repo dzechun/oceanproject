@@ -5,6 +5,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.eam.service.socket.SocketService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -17,6 +18,7 @@ import java.io.IOException;
 @RestController
 @Api(tags = "设备状态监控")
 @RequestMapping("/equipmentStatus")
+@Validated
 public class SocketController {
     @Resource
     private SocketService socketService;
@@ -25,7 +27,7 @@ public class SocketController {
     @PostMapping("/instructions")
     public ResponseEntity instructions(@RequestParam(required = true)String ip,
                                        @RequestParam(value = "控制设备命令，1203为关机，1204为重启",required = true) String code,
-                                       @RequestParam(required = true) String url){
+                                       @RequestParam(required = false) String url){
         int i = socketService.instructions(ip,code,url);
         return ControllerUtil.returnCRUD(i);
     }

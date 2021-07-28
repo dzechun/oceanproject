@@ -160,7 +160,7 @@ public class BarcodeRuleUtils {
                     //执行函数获取解析码
                     String param = barcodeRuleUtils.baseBarcodeRuleSpecService.executeFunction(functionName,params);
                     if(StringUtils.isEmpty(param)){
-                        throw new BizErrorException("条码规则生成错误");
+                        throw new BizErrorException("条码规则执行函数失败，请检查执行函数");
                     }
                     if(param.length()<barcodeLength){
                         while (param.length()<barcodeLength){
@@ -168,6 +168,9 @@ public class BarcodeRuleUtils {
                             s.append(param).append("0");
                             param = s.toString();
                         }
+                    }
+                    if(param.length()>barcodeLength){
+                        throw new BizErrorException("执行函数返回值超出设定长度");
                     }
                     sb.append(param);
                 }else {  //月、周、日、周的日、年的日、自定义年、月、日、周

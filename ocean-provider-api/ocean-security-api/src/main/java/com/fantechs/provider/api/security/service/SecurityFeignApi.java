@@ -50,6 +50,6 @@ public interface SecurityFeignApi {
 
     @ApiOperation(value = "新增接口日志",notes = "新增接口日志(组织、创建人、创建时间已有)")
     @PostMapping("/sysApiLog/add")
-    ResponseEntity add(@ApiParam(value = "必传",required = true) @RequestBody @Validated SysApiLog sysApiLog);
+    ResponseEntity add(@ApiParam(value = "必传",required = true) @RequestBody  SysApiLog sysApiLog);
 
 }
