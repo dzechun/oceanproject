@@ -50,7 +50,7 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
                 baseSupplier.setSupplierDesc(supplier.getNAME1());
                 baseSupplier.setStatus((byte)1);
                 baseSupplier.setSupplierType((byte)1);
-                baseFeignApi.addOrUpdate(baseSupplier);
+                baseFeignApi.saveByApi(baseSupplier);
             }
             logsUtils.addlog((byte)1,(byte)1,(long)1002,null,req.toString());
             return 1;
