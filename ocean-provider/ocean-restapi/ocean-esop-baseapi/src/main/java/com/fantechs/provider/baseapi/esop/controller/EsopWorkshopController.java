@@ -35,8 +35,8 @@ public class EsopWorkshopController {
     @ApiOperation("同步车间")
     @PostMapping("/addWorkshop")
     public ResponseEntity<List<BaseWorkShop>> addWorkshop(@ApiParam(value = "查询对象")@RequestBody SearchEsop searchEsop) throws ParseException {
-        List<BaseWorkShop> baseWorkShops = esopWorkshopService.addWorkshop(ControllerUtil.dynamicConditionByEntity(searchEsop));
-        return ControllerUtil.returnDataSuccess(baseWorkShops, StringUtils.isEmpty(baseWorkShops) ? 0 : 1);
+        esopWorkshopService.addWorkshop(ControllerUtil.dynamicConditionByEntity(searchEsop));
+        return ControllerUtil.returnCRUD(1);
     }
 
 }

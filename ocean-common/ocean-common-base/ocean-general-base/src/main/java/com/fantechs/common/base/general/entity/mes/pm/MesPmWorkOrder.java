@@ -267,4 +267,13 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+
+    /**
+     *  批次号
+     */
+    @ApiModelProperty(name="batchCode",value = "入库数量")
+    @Column(name = "batch_code")
+    private String batchCode;
+
+
 }

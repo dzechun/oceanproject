@@ -48,11 +48,13 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
 
     @Override
     public List<BaseProLine> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
         return baseProLineMapper.findList(map);
     }
 
@@ -281,7 +283,7 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
             criteria.andEqualTo("organizationId", baseProLine.getOrganizationId());
             criteria.andEqualTo("proCode", baseProLine.getProCode());
             BaseProLine oldProLine = baseProLineMapper.selectOneByExample(example);
-
+            logger.info("------------oldProLine--------------"+oldProLine);
             if (StringUtils.isNotEmpty(oldProLine)) {
                 baseProLine.setProLineId(oldProLine.getProLineId());
                 baseProLineMapper.updateByPrimaryKey(baseProLine);
@@ -293,8 +295,10 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
             }
 
         }
-        int i = baseProLineMapper.insertList(ins);
-
+        logger.info("------------ins--------------"+ins.size());
+        if(StringUtils.isNotEmpty(ins)) {
+            int i = baseProLineMapper.insertList(ins);
+        }
         //新增产线历史信息
         if(StringUtils.isNotEmpty(baseHtProLines))
             baseHtProLineMapper.insertList(baseHtProLines);

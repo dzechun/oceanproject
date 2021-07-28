@@ -68,9 +68,9 @@ public class OmPurchaseOrderController {
 
 
     @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
-    @PostMapping("/addOrUpdate")
+    @PostMapping("/saveByApi")
     public ResponseEntity<OmPurchaseOrder> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated OmPurchaseOrder omPurchaseOrder) {
-        OmPurchaseOrder omPurchaseOrders = omPurchaseOrderService.addOrUpdate(omPurchaseOrder);
+        OmPurchaseOrder omPurchaseOrders = omPurchaseOrderService.saveByApi(omPurchaseOrder);
         return ControllerUtil.returnDataSuccess(omPurchaseOrders, StringUtils.isEmpty(omPurchaseOrders) ? 0 : 1);
     }
 }

@@ -69,20 +69,4 @@ public class EsopDeptServiceImpl extends BaseService<EsopDept> implements EsopDe
         baseDept.setOrganizationId((long)1002);
         return baseDept;
     }
-
-   /* public void  logs(Byte result,Byte type,Long orgId,String responseData,String requestParameter){
-        SysApiLog sysApiLog = new SysApiLog();
-        sysApiLog.setThirdpartySysName("新宝ESOP");
-        sysApiLog.setCallResult(result);
-        sysApiLog.setCallType(type);
-        sysApiLog.setApiModule("ocean-restapi");
-        sysApiLog.setOrgId(orgId);
-        sysApiLog.setRequestTime(new Date());
-        sysApiLog.setResponseTime(new Date());
-        sysApiLog.setCreateTime(new Date());
-        sysApiLog.setModifiedTime(new Date());
-        sysApiLog.setResponseData(responseData);
-        sysApiLog.setRequestParameter(requestParameter);
-        securityFeignApi.add(sysApiLog);
-    }*/
 }

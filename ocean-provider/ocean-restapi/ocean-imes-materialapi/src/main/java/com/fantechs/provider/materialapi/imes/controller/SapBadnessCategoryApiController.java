@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 
 /**
  *
@@ -30,7 +31,7 @@ public class SapBadnessCategoryApiController {
 
     @ApiOperation(value = "请求雷赛不良代码信息",notes = "请求雷赛不良代码信息")
     @PostMapping("/getbadnessCategory")
-    public ResponseEntity getProLine(@ApiParam(value = "查询对象")@RequestBody SearchSapBadnessCategoryApi searchSapBadnessCategoryApi) {
+    public ResponseEntity getProLine(@ApiParam(value = "查询对象")@RequestBody SearchSapBadnessCategoryApi searchSapBadnessCategoryApi) throws ParseException {
         return ControllerUtil.returnCRUD(sapBadnessCategoryApiService.getbadnessCategory(searchSapBadnessCategoryApi));
     }
 

@@ -47,11 +47,13 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
 
     @Override
     public List<BaseWorkShopDto> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
         return baseWorkShopMapper.findList(map);
     }
 
@@ -272,8 +274,9 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
             }
 
         }
-        int i = baseWorkShopMapper.insertList(ins);
-
+        if(StringUtils.isNotEmpty(ins)) {
+            int i = baseWorkShopMapper.insertList(ins);
+        }
         //新增车间历史信息
         if(StringUtils.isNotEmpty(baseHtWorkShops))
             baseHtWorkShopMapper.insertList(baseHtWorkShops);

@@ -18,6 +18,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapWorkOrderService;
+import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
@@ -38,6 +39,8 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
     private PMFeignApi pmFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private LogsUtils logsUtils;
 
     @Override
     @LcnTransaction
@@ -51,6 +54,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         for(RestapiWorkOrderApiDto restapiWorkOrderApiDto : restapiWorkOrderApiDtos) {
             String check = check(restapiWorkOrderApiDto);
             if (!check.equals("1")) {
+                logsUtils.addlog((byte)0,(byte)2,(long)1002,check,restapiWorkOrderApiDto.toString());
                 return check;
             }
             //保存工单，如已经保存则后续循环不再保存
@@ -71,8 +75,8 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 orderMap.put(restapiWorkOrderApiDto.getAUFNR(),mesPmWorkOrderResponseEntity.getData().getWorkOrderId());
             }
 
-            if(StringUtils.isEmpty(bomMap.get(restapiWorkOrderApiDto.getRSPOS()))){
 
+            if(StringUtils.isEmpty(bomMap.get(restapiWorkOrderApiDto.getRSPOS()))){
 
                 MesPmWorkOrderBom bom = new MesPmWorkOrderBom();
                 if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getMENGE()))
@@ -86,26 +90,26 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
             }
             pmFeignApi.addMesPmWorkOrderBom(mesPmWorkOrderBomList);
         }
+        logsUtils.addlog((byte)1,(byte)2,(long)1002,null,null);
         return "success";
     }
 
 
     public String check(RestapiWorkOrderApiDto restapiWorkOrderApiDto) {
-
+        String check = "1";
         if(StringUtils.isEmpty(restapiWorkOrderApiDto))
-            return "请求失败,参数为空";
+            check = "请求失败,参数为空";
         if(StringUtils.isEmpty(restapiWorkOrderApiDto.getAUFNR()))
-            return "请求失败,工单号不能为空";
+            check = "请求失败,工单号不能为空";
         if(StringUtils.isEmpty(restapiWorkOrderApiDto.getMATNR()))
-            return "请求失败,物料号不能为空";
-
-        return "1";
+            check = "请求失败,物料号不能为空";
+        return check;
     }
 
     public Long getProLine(String proLineCode,Long orgId){
         SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
         searchBaseProLine.setProCode(proLineCode);
-        searchBaseProLine.setOrganizationId(orgId);
+        searchBaseProLine.setOrgId(orgId);
         ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);
         if(StringUtils.isEmpty(list.getData()))
             throw new BizErrorException("未查询到对应的产线："+proLineCode);
