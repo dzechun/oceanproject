@@ -586,6 +586,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }else{
                 throw new BizErrorException(ErrorCodeEnum.STO30012000);
             }
+            palletAutoAsnDto.setProductionDate(new Date());
             inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
     }
