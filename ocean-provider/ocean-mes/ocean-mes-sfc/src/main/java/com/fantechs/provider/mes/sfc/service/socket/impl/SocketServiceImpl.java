@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -65,56 +66,68 @@ public class SocketServiceImpl implements SocketService {
 
         //调用accept方法等待连接,线程会阻塞状态
         log.info("=============> Socket服务已启动,等待连接");
-        new Thread(new Runnable() {
-            public void run() {
-                //调用服务器套接字对象中的方法accept()获取客户端套接字对象
+        Socket socket=null;
+        while(true){
+            socket =serverSocket.accept();
+            new SockerServerThread(socket).start();
+        }
+    }
 
-                while (true) {
-                    //添加同步锁
-                    lock.lock();
-                    if (ticket > 0) {
-                        try {
-                            //等待服务器链接 accept是阻塞的，作为服务器，需要一直等待客户端链接
-                            socket = serverSocket.accept();
-                            String ip = socket.getInetAddress().getHostAddress();
-                            int prot = socket.getPort();
-                            log.info("有客户端连接，ip" + ip + ",prot" + prot);
-                            if (socket.getInputStream() != null) {
-                                log.info("=============> socket.getPort" + socket.getPort());
-                                String jsonStr = inputStreamToString(socket);
-                                log.info("=============> json" + jsonStr);
-                                if (jsonStr != null) {
-                                    boolean isJson = isJSON2(jsonStr);
-                                    if (!isJson){
-                                        continue;
-                                    }
-                                    EamEquipment equipment = getEquipment(ip);
-                                    MesSfcDataCollect dataCollect = MesSfcDataCollect.builder()
-                                            .status((byte) 1)
-                                            .collectData(jsonStr)
-                                            .collectTime(new Date())
-                                            .createTime(new Date())
-                                            .isDelete((byte) 1)
-                                            .equipmentId(equipment.getEquipmentId())
-                                            .build();
-                                    mesSfcDataCollectService.save(dataCollect);
-                                    if(equipment.getOnlineStatus() != (byte) 1){
-                                        updateStatus(ip, (byte) 1);
-                                    }
-                                    ipMap.put(ip, System.currentTimeMillis());
-                                }
-                            }
-                        } catch (IOException e1) {
-                            String ip = socket.getInetAddress().getHostAddress();
-                            updateStatus(ip, (byte) 3);
-                            e1.printStackTrace();
+    public class SockerServerThread  extends Thread{
+        Socket socket=null;
+
+        public SockerServerThread (Socket socket){
+            this.socket=socket;
+        }
+        OutputStream os=null;
+        PrintWriter out=null;
+
+        //线程操作响应客户端请求
+        public void run(){
+            String ip = socket.getInetAddress().getHostAddress();
+            try {
+                int prot = socket.getPort();
+                log.info("有客户端连接，ip" + ip + ",prot" + prot);
+                if (socket.getInputStream() != null) {
+                    log.info("=============> socket.getPort" + socket.getPort());
+                    String jsonStr = inputStreamToString(socket);
+                    log.info("=============> json" + jsonStr);
+                    if (jsonStr != null) {
+                        boolean isJson = isJSON2(jsonStr);
+                        if (!isJson){
+                            return;
                         }
+                        EamEquipment equipment = getEquipment(ip);
+                        MesSfcDataCollect dataCollect = MesSfcDataCollect.builder()
+                                .status((byte) 1)
+                                .collectData(jsonStr)
+                                .collectTime(new Date())
+                                .createTime(new Date())
+                                .isDelete((byte) 1)
+                                .equipmentId(equipment.getEquipmentId())
+                                .build();
+                        mesSfcDataCollectService.save(dataCollect);
+                        if(equipment.getOnlineStatus() != (byte) 1){
+                            updateStatus(ip, (byte) 1);
+                        }
+                        ipMap.put(ip, System.currentTimeMillis());
                     }
-                    //释放同步锁
-                    lock.unlock();
                 }
+                //读取输入字段，判断是否断开
+                while(true) {
+                    String jsonStr = inputStreamToString(socket);
+                    if( jsonStr!= null ){
+                        ipMap.put(ip, System.currentTimeMillis());
+                    }
+                }
+
+            } catch (Exception e) {
+                log.info("--------------???并没有中心异常-----------");
+                updateStatus(ip,(byte)0);
+                e.printStackTrace();
             }
-        }).start();
+
+        }
     }
 
     private boolean isJSON2(String str) {
@@ -139,10 +152,10 @@ public class SocketServiceImpl implements SocketService {
             int x = inputStream.read(b, 0, b.length);
             str = new String(b, 0, x);
 
-            // 释放资源
+           /* 释放资源
             bufferedReader.close();
             inputStreamReader.close();
-            inputStream.close();
+            inputStream.close();*/
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
