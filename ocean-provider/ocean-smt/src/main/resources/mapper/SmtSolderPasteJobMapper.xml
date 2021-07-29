@@ -10,6 +10,7 @@
     <result column="solder_paste_id" jdbcType="BIGINT" property="solderPasteId" />
     <result column="last_solder_paste_status" jdbcType="TINYINT" property="lastSolderPasteStatus" />
     <result column="current_solder_paste_status" jdbcType="TINYINT" property="currentSolderPasteStatus" />
+    <result column="current_return_ice_time" jdbcType="INTEGER" property="currentReturnIceTime"/>
     <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId" />
     <result column="operator_time" jdbcType="TIMESTAMP" property="operatorTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -38,6 +39,7 @@ spj.material_barcode_id,
     spj.solder_paste_id,
     spj.last_solder_paste_status,
 spj.current_solder_paste_status,
+spj.current_return_ice_time,
 spj.operator_user_id,
 spj.operator_time,
 spj.status,

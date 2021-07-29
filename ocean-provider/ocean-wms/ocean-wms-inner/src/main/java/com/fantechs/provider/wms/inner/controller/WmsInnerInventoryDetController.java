@@ -1,13 +1,17 @@
 package com.fantechs.provider.wms.inner.controller;
 
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryLog;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
 import com.github.pagehelper.Page;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -66,5 +71,18 @@ public class WmsInnerInventoryDetController {
     public ResponseEntity<WmsInnerInventoryDet> findByDet(@RequestParam String barCode){
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetService.findByOne(barCode);
         return ControllerUtil.returnDataSuccess(wmsInnerInventoryDet, StringUtils.isEmpty(wmsInnerInventoryDet)?0:1);
+    }
+
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchWmsInnerInventoryDet searchWmsInnerInventoryDet){
+        List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventoryDet));
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "库存明细", "库存明细", WmsInnerInventoryDetDto.class, "库存明细.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
     }
 }

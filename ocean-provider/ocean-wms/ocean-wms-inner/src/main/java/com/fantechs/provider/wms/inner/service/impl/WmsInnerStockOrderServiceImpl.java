@@ -529,7 +529,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             }
 
             //库存明细
-            example = new Example(WmsInnerJobOrderDet.class);
+            example = new Example(WmsInnerInventoryDet.class);
             example.createCriteria().andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
                     .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
                     .andEqualTo("jobStatus",(byte)2)

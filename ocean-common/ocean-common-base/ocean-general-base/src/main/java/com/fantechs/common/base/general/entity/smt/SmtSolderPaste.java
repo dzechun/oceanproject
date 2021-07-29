@@ -39,37 +39,16 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
-     * 批号
-     */
-    @ApiModelProperty(name="batchCode",value = "批号")
-    @Excel(name = "批号", height = 20, width = 30,orderNum="") 
-    @Column(name = "batch_code")
-    private String batchCode;
-
-    /**
      * 锡膏状态(1-入冰库 2-回温 3-搅拌 4-开封 5-上料 6-用完 7-回冰 8-报废)
      */
     @ApiModelProperty(name="solderPasteStatus",value = "锡膏状态(1-入冰库 2-回温 3-搅拌 4-开封 5-上料 6-用完 7-回冰 8-报废)")
-    @Excel(name = "锡膏状态(1-入冰库 2-回温 3-搅拌 4-开封 5-上料 6-用完 7-回冰 8-报废)", height = 20, width = 30,orderNum="") 
-    @Column(name = "solder_paste_status")
     private Byte solderPasteStatus;
 
     /**
      * 锡膏状态更新时间
      */
     @ApiModelProperty(name="spStatusUpdateTime",value = "锡膏状态更新时间")
-    @Excel(name = "锡膏状态更新时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "sp_status_update_time")
     private Date spStatusUpdateTime;
-
-    /**
-     * 产线ID
-     */
-    @ApiModelProperty(name="proLineId",value = "产线ID")
-    @Excel(name = "产线ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "pro_line_id")
-    private Long proLineId;
 
     /**
      * 回温时间(分)
@@ -107,26 +86,22 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
      * 回冰次数
      */
     @ApiModelProperty(name="returnIceTime",value = "回冰次数")
-    @Excel(name = "回冰次数", height = 20, width = 30,orderNum="") 
-    @Column(name = "return_ice_time")
     private Integer returnIceTime;
 
     /**
      * 当前回冰次数
      */
     @ApiModelProperty(name="currentReturnIceTime",value = "当前回冰次数")
-    @Excel(name = "当前回冰次数", height = 20, width = 30,orderNum="")
-    @Column(name = "current_return_ice_time")
     private Integer currentReturnIceTime;
 
     /**
-     * 生产日期
+     * 过期日期
      */
-    @ApiModelProperty(name="productionDate",value = "生产日期")
-    @Excel(name = "生产日期", height = 20, width = 30,orderNum="",exportFormat = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "production_date")
+    @ApiModelProperty(name="expirationDate",value = "过期日期")
+    @Excel(name = "过期日期", height = 20, width = 30,orderNum="",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "expiration_date")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    private Date productionDate;
+    private Date expirationDate;
 
     /**
      * 状态(0无效，1有效)

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.WmsInnerInventoryMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.entity.WmsInnerInventoryModel">
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+        <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+        <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName" />
+        <result column="lock_status" jdbcType="TINYINT" property="lockStatus" />
+        <result column="stock_lock" jdbcType="TINYINT" property="stockLock" />
+        <result column="qc_lock" jdbcType="TINYINT" property="qcLock" />
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
+        <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
+        <result column="package_specification_quantity" jdbcType="DECIMAL" property="packageSpecificationQuantity" />
+    </resultMap>
+    <select id="findList" resultMap="BaseResultMap">
+        select wii.lock_status,
+               wii.stock_lock,
+               wii.qc_lock,wii.packing_unit_name,
+               wii.packing_qty,wii.package_specification_quantity,bw.warehouse_name,bs.storage_code,bm.material_code,bm.material_name
+        ,bis.inventory_status_name
+        from wms_inner_inventory wii
+        LEFT JOIN base_warehouse bw ON wii.warehouse_id = bw.warehouse_id
+        LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
+        LEFT JOIN base_material bm ON wii.material_id = bm.material_id
+        LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wii.inventory_status_id
+<where>
+<if test="warehouseName!=null and warehouseName!=''">
+    and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+</if>
+        <if test="storageCode!=null and storageCode!=''">
+            and bs.storage_code like CONCAT('%',#{storageCode},'%')
+        </if>
+        <if test="materialCode!=null and materialCode!=''">
+            and bm.material_code like CONCAT('%',#{materialCode},'%')
+        </if>
+        <if test="materialName!=null and materialName!=''">
+            and bm.material_name like CONCAT('%',#{materialName},'%')
+        </if>
+        <if test="packingUnitName!=null and packingUnitName!=''">
+            and wii.packing_unit_name like CONCAT('%',#{packingUnitName},'#')
+        </if>
+        <if test="inventoryStatusName!=null and inventoryStatusName!=''">
+            and bis.inventory_status_name like CONCAT('%',#{inventoryStatusName},'%')
+        </if>
+        <if test="lockStatus!=null and lockStatus!=''">
+            and wii.lock_status = #{lockStatus}
+        </if>
+        <if test="stockLock!=null and stockLock!=''">
+            and wii.stock_lock = #{stockLock}
+        </if>
+        <if test="qcLock!=null and qcLock!=''">
+            and wii.qc_lock = #{qcLock}
+        </if>
+</where>
+        group by wii.warehouse_id,wii.storage_id,wii.material_id,wii.packing_unit_name,wii.inventory_status_id,wii.lock_status,wii.stock_lock,wii.qc_lock
+    </select>
+</mapper>

@@ -25,4 +25,13 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     private BigDecimal materialQty;
     @ApiModelProperty("是否是不相等 -- 0、相等 1、不相等")
     private Integer notEqualMark;
+
+    @ApiModelProperty("作业状态")
+    private Byte jobStatus;
+
+    @ApiModelProperty("物料名称")
+    private String materialName;
+
+    @ApiModelProperty("库位")
+    private String storageCode;
 }

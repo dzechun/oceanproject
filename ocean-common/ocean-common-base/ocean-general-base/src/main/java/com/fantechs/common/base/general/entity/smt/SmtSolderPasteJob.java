@@ -57,6 +57,13 @@ public class SmtSolderPasteJob extends ValidGroup implements Serializable {
     private Byte currentSolderPasteStatus;
 
     /**
+     * 当前回冰次数
+     */
+    @ApiModelProperty(name="currentReturnIceTime",value = "当前回冰次数")
+    @Column(name = "current_return_ice_time")
+    private Integer currentReturnIceTime;
+
+    /**
      * 操作用户ID
      */
     @ApiModelProperty(name="operatorUserId",value = "操作用户ID")
