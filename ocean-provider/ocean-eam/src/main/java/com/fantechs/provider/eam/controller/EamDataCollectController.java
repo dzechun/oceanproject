@@ -1,7 +1,7 @@
 package com.fantechs.provider.eam.controller;
 
 import com.fantechs.common.base.general.dto.eam.EamDataCollectDto;
-import com.fantechs.common.base.general.dto.eam.Search.SearchEamDataCollect;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamDataCollect;
 import com.fantechs.common.base.general.entity.eam.EamDataCollect;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

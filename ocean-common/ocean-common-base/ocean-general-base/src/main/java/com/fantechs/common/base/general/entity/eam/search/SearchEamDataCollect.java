@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.dto.eam.Search;
+package com.fantechs.common.base.general.entity.eam.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
 import lombok.Data;
