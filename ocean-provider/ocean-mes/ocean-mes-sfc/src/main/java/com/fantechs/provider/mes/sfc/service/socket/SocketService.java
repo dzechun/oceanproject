@@ -4,5 +4,5 @@ import java.io.IOException;
 
 public interface SocketService {
 
-    void openService() throws IOException;
+    //void openService() throws IOException;
 }

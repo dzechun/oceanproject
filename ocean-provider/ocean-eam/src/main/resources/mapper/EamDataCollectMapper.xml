@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcDataCollectMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcDataCollect">
+<mapper namespace="com.fantechs.provider.eam.mapper.EamDataCollectMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eam.EamDataCollect">
     <!--
       WARNING - @mbg.generated
     -->
@@ -22,7 +22,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcDataCollectDto">
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamDataCollectDto">
     <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode" />
     <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName" />
     <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp" />
@@ -65,7 +65,7 @@
     ee.y_axis
     FROM
     (SELECT SUBSTRING_INDEX( GROUP_CONCAT( data_collect_id ORDER BY data_collect_id DESC ), ',', 1 ) AS data_collect_id
-    FROM mes_sfc_data_collect
+    FROM eam_data_collect
     GROUP BY equipment_id ) AS dci
     LEFT JOIN mes_sfc_data_collect msdc ON dci.data_collect_id = msdc.data_collect_id
     LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id

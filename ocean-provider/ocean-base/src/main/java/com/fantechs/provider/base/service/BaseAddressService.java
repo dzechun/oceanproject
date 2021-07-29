@@ -15,7 +15,7 @@ import java.util.Map;
 
 public interface BaseAddressService extends IService<BaseAddress> {
 
-    List<BaseAddressDto> findList(Map<String, Object> map);
+        List<BaseAddressDto> findList(Map<String, Object> map);
 
-    Map<String, Object> importExcel(List<BaseAddressImport> baseAddressImports);
-}
+        Map<String, Object> importExcel(List<BaseAddressImport> baseAddressImports);
+        }

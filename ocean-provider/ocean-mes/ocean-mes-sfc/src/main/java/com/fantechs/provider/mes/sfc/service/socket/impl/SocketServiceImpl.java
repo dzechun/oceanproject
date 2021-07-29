@@ -1,12 +1,9 @@
 package com.fantechs.provider.mes.sfc.service.socket.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcDataCollect;
+import com.fantechs.common.base.general.entity.eam.EamDataCollect;
 import com.fantechs.provider.api.eam.EamFeignApi;
-import com.fantechs.provider.mes.sfc.service.MesSfcDataCollectService;
 import com.fantechs.provider.mes.sfc.service.socket.SocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +22,10 @@ import java.util.concurrent.locks.ReentrantLock;
 @Service
 @Component
 public class SocketServiceImpl implements SocketService {
-    private static final Logger log = LoggerFactory.getLogger(SocketServiceImpl.class);
+    /*private static final Logger log = LoggerFactory.getLogger(SocketServiceImpl.class);
 
     @Resource
-    private MesSfcDataCollectService mesSfcDataCollectService;
+    private EamDataCollectService eamDataCollectService;
     @Resource
     private EamFeignApi eamFeignApi;
 
@@ -40,8 +37,11 @@ public class SocketServiceImpl implements SocketService {
     //定义Lock锁对象
     Lock lock = new ReentrantLock();
 
-    @Scheduled(cron = "0 */1 * * * ?")
-    public void checkIpTask() {
+
+     */
+
+    //@Scheduled(cron = "0 */1 * * * ?")
+    /*public void checkIpTask() {
         log.info("======== 定时器执行");
         if (!ipMap.isEmpty()) {
             Set<Map.Entry<String, Long>> entrySet = ipMap.entrySet();
@@ -89,7 +89,7 @@ public class SocketServiceImpl implements SocketService {
                                         continue;
                                     }
                                     EamEquipment equipment = getEquipment(ip);
-                                    MesSfcDataCollect dataCollect = MesSfcDataCollect.builder()
+                                    EamDataCollect dataCollect = EamDataCollect.builder()
                                             .status((byte) 1)
                                             .collectData(jsonStr)
                                             .collectTime(new Date())
@@ -97,7 +97,7 @@ public class SocketServiceImpl implements SocketService {
                                             .isDelete((byte) 1)
                                             .equipmentId(equipment.getEquipmentId())
                                             .build();
-                                    mesSfcDataCollectService.save(dataCollect);
+                                    eamDataCollectService.save(dataCollect);
                                     if(equipment.getOnlineStatus() != (byte) 1){
                                         updateStatus(ip, (byte) 1);
                                     }
@@ -167,6 +167,6 @@ public class SocketServiceImpl implements SocketService {
         eamEquipment.setOnlineStatus(bytes);
         eamFeignApi.update(eamEquipment);
         return 1;
-    }
+    }*/
 
 }
