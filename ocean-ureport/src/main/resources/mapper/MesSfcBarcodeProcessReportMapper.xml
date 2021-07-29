@@ -111,7 +111,7 @@
       <where>
         AND bpc.process_category_code = 'PACKING'
         <if test="barcode != null and barcode != ''" >
-          and mspcd.work_order_barcode_code = #{barcode}
+          and msbpr.barcode = #{barcode}
         </if>
         <if test="orgId != null">
           and mspcd.org_id = #{orgId}
@@ -141,7 +141,7 @@
       <where>
         AND bpc.process_category_code = 'PALLET'
         <if test="barcode != null and barcode != ''" >
-          and msppd.work_order_barcode_code = #{barcode}
+          and msbpr.barcode = #{barcode}
         </if>
         <if test="orgId != null">
           and msppd.org_id = #{orgId}
@@ -163,7 +163,7 @@
       LEFT JOIN base_route br ON msro.rework_route_id = br.route_id
       <where>
         <if test="barcode != null and barcode != ''" >
-          and msrob.work_order_barcode_code = #{barcode}
+          and msbpr.barcode = #{barcode}
         </if>
         <if test="orgId != null">
           and msrob.org_id = #{orgId}
@@ -206,7 +206,7 @@
       </where>
       GROUP BY
       barcode_code,
-      material_id,
+      mskpr.material_id,
       blc.label_category_id
   </select>
 

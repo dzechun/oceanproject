@@ -2,6 +2,7 @@ package com.fantechs.security.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.security.SysMenuInListDTO;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtSpecItem;
@@ -9,11 +10,13 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.mapper.SysHtSpecItemMapper;
 import com.fantechs.security.mapper.SysSpecItemMapper;
 import com.fantechs.security.service.SysSpecItemService;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements SysSpecItemService {
@@ -36,10 +40,73 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
     @Override
     public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
-        if (StringUtils.isNotEmpty(searchSysSpecItem.getMenuId())){
-            return sysSpecItemMapper.findByMenuIdList(searchSysSpecItem);
+        Object specItemList =redisUtil.get("specItemList");
+        Object menu = redisUtil.get("menuList");
+        if (StringUtils.isNotEmpty(specItemList,menu) && (StringUtils.isEmpty(searchSysSpecItem.getIfHotData()) || searchSysSpecItem.getIfHotData() == 1)) {
+            List<SysSpecItem>  specItemList1 = JsonUtils.jsonToList(specItemList.toString(),SysSpecItem.class);
+            List<Long> menuIds = new ArrayList<>();
+            if (StringUtils.isNotEmpty(searchSysSpecItem.getMenuId())) {
+                List<SysMenuInListDTO> menuList = JsonUtils.jsonToList(menu.toString(),SysMenuInListDTO.class);
+                SysMenuInListDTO dg = this.findNodes(menuList, searchSysSpecItem.getMenuId());
+                menuIds.add(dg.getSysMenuInfoDto().getMenuId());
+                this.disassemblyTree(dg,menuIds);
+            }
+
+            for (int i = 0; i < specItemList1.size(); i++) {
+                if (StringUtils.isNotEmpty(menuIds) && menuIds.size()>0 && !menuIds.contains(specItemList1.get(i).getMenuId())){
+                    specItemList1.remove(i);
+                    i--;
+                }
+
+                if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecCode()) && !specItemList1.get(i).getSpecCode().contains(searchSysSpecItem.getSpecCode())) {
+                    specItemList1.remove(i);
+                    i--;
+                }
+
+                if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecName()) && !specItemList1.get(i).getSpecName().contains(searchSysSpecItem.getSpecName())) {
+                    specItemList1.remove(i);
+                    i--;
+                }
+
+                if (StringUtils.isNotEmpty(searchSysSpecItem.getPara()) && !specItemList1.get(i).getPara().contains(searchSysSpecItem.getPara())) {
+                    specItemList1.remove(i);
+                    i--;
+                }
+            }
+            PageHelper.getLocalPage().setTotal(specItemList1.size());
+            List<SysSpecItem> collect = specItemList1.stream().skip(searchSysSpecItem.getPageSize() * (searchSysSpecItem.getStartPage()-1)).limit(searchSysSpecItem.getPageSize()).collect(Collectors.toList());
+            return collect;
         }
-        return sysSpecItemMapper.findList(searchSysSpecItem);
+        return sysSpecItemMapper.findByMenuIdList(searchSysSpecItem);
+    }
+
+    public SysMenuInListDTO findNodes(List<SysMenuInListDTO> menuList, Long menuId){
+        if (StringUtils.isEmpty(menuList)) {
+            return null;
+        }
+        for (SysMenuInListDTO sysMenuInListDTO : menuList) {
+            if (sysMenuInListDTO.getSysMenuInfoDto().getMenuId().equals(menuId)) {
+                return sysMenuInListDTO;
+            }else {
+                SysMenuInListDTO nodes = this.findNodes(sysMenuInListDTO.getSysMenuinList(), menuId);
+                if (StringUtils.isNotEmpty(nodes)) {
+                    return nodes;
+                }else {
+                    this.findNodes(sysMenuInListDTO.getSysMenuinList(), menuId);
+                }
+            }
+        }
+        return null;
+    }
+
+    public void disassemblyTree(SysMenuInListDTO sysMenuInListDTO,List<Long> sysMenuinList){
+        List<SysMenuInListDTO> sysMenuinList1 = sysMenuInListDTO.getSysMenuinList();
+        if (StringUtils.isNotEmpty(sysMenuinList1)) {
+            for (SysMenuInListDTO menuInListDTO : sysMenuinList1) {
+                disassemblyTree(menuInListDTO,sysMenuinList);
+                sysMenuinList.add(menuInListDTO.getSysMenuInfoDto().getMenuId());
+            }
+        }
     }
 
     @Override
@@ -69,6 +136,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
         SysHtSpecItem sysHtSpecItem=new SysHtSpecItem();
         BeanUtils.copyProperties(sysSpecItem,sysHtSpecItem);
         int i = sysHtSpecItemMapper.insertSelective(sysHtSpecItem);
+        this.updateHotData();
         return i;
     }
 
@@ -98,7 +166,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
         if (sysSpecItem.getSpecCode().equals("specialWord")){
             redisUtil.set("specialWord",sysSpecItem);
         }
-
+        this.updateHotData();
         return i;
     }
 
@@ -126,7 +194,9 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 
         }
         sysHtSpecItemMapper.insertList(list);
-        return sysSpecItemMapper.deleteByIds(specIds);
+        int i = sysSpecItemMapper.deleteByIds(specIds);
+        this.updateHotData();
+        return i;
     }
 
     @Override
@@ -145,7 +215,17 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
             htList.add(sysHtSpecItem);
         }
         sysSpecItemMapper.insertList(list);
+        this.updateHotData();
         return sysHtSpecItemMapper.insertList(htList);
+    }
+
+    private void updateHotData(){
+        //更新热点数据
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        List<SysSpecItem> byMenuIdList = sysSpecItemMapper.findByMenuIdList(searchSysSpecItem);
+        if (StringUtils.isNotEmpty(byMenuIdList)) {
+            redisUtil.set("specItemList", JsonUtils.objectToJson(byMenuIdList));
+        }
     }
 
 }
