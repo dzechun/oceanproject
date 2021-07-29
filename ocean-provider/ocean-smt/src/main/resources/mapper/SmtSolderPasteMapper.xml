@@ -7,17 +7,12 @@
     -->
     <id column="solder_paste_id" jdbcType="BIGINT" property="solderPasteId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
-    <result column="solder_paste_status" jdbcType="TINYINT" property="solderPasteStatus" />
-    <result column="sp_status_update_time" jdbcType="TIMESTAMP" property="spStatusUpdateTime" />
-    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
     <result column="t_back_time" jdbcType="DECIMAL" property="tBackTime" />
     <result column="stir_time" jdbcType="DECIMAL" property="stirTime" />
     <result column="open_time_limit" jdbcType="DECIMAL" property="openTimeLimit" />
     <result column="not_open_time_limit" jdbcType="DECIMAL" property="notOpenTimeLimit" />
     <result column="return_ice_time" jdbcType="INTEGER" property="returnIceTime" />
-    <result column="current_return_ice_time" jdbcType="INTEGER" property="currentReturnIceTime"/>
-    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+    <result column="expiration_date" jdbcType="TIMESTAMP" property="expirationDate" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -33,7 +28,6 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.smt.SmtSolderPasteDto">
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-    <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
@@ -41,17 +35,12 @@
   <sql id="Base_Column_List">
 ssp.solder_paste_id,
 ssp.material_id,
-ssp.batch_code,
-ssp.solder_paste_status,
-ssp.sp_status_update_time,
-ssp.pro_line_id,
 ssp.t_back_time,
 ssp.stir_time,
 ssp.open_time_limit,
 ssp.not_open_time_limit,
 ssp.return_ice_time,
-ssp.current_return_ice_time,
-ssp.production_date,
+ssp.expiration_date,
 ssp.status,
 ssp.remark,
 ssp.org_id,
@@ -65,13 +54,12 @@ ssp.option2,
 ssp.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"/>,bm.material_code,bm.material_name,bpl.pro_name,
+    select <include refid="Base_Column_List"/>,bm.material_code,bm.material_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     FROM smt_solder_paste ssp
     LEFT join base_material bm ON ssp.material_id = bm.material_id
-    LEFT JOIn base_pro_line bpl ON ssp.pro_line_id = bpl.pro_line_id
     left join ocean_v2.sys_user u on ssp.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ssp.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ssp.org_id = bo.organization_id
@@ -82,9 +70,6 @@ ssp.option3
 <if test="materialName!=null and materialName!=''">
   and bm.material_name like CONCAT('%',#{materialName},'%')
 </if>
-<if test="solderPasteStatus!=null and solderPasteStatus!=''">
-  and ssp.solder_paste_status = #{solderPasteStatus}
-</if>
 <if test="solderPasteId!=null and solderPasteId!=''">
   and ssp.solder_paste_id = #{solderPasteId}
 </if>
@@ -94,10 +79,7 @@ ssp.option3
 </where>
 order by ssp.create_time
   </select>
-  <select id="findInvDet" resultType="java.lang.Long">
-    select material_barcode_id From wms_inner_material_barcode where barcode=#{barcode}
-  </select>
-  <select id="findBatchCode" resultType="java.util.Map">
-    select material_id,batch_code FROM wms_inner_material_barcode where material_barcode_id=#{id}
+  <select id="findInvDet" resultType="java.util.Map">
+    select material_barcode_id,material_id From wms_inner_material_barcode where barcode=#{barcode}
   </select>
 </mapper>

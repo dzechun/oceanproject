@@ -5,6 +5,7 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
@@ -15,8 +16,7 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
@@ -34,8 +34,6 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderMapper;
@@ -486,7 +484,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("库存添加失败");
             }
-            return 1;
         }else{
             //原库存
             //BigDecimal qty = wmsInAsnOrderDetDto.getActualQty().subtract(wmsInnerInventory.getPackingQty());
@@ -495,7 +492,33 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("确认失败");
             }
-            return 1;
+        }
+        //添加库存日志
+        this.addLog(wmsInAsnOrderDto,wmsInAsnOrderDetDto);
+        return 1;
+    }
+
+    private void addLog(WmsInAsnOrder wmsInAsnOrder,WmsInAsnOrderDet wmsInAsnOrderDet){
+        WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
+        wmsInnerInventoryLog.setAsnCode(wmsInAsnOrder.getAsnCode());
+        //收货
+        wmsInnerInventoryLog.setJobOrderType((byte)1);
+        wmsInnerInventoryLog.setAddOrSubtract((byte)1);
+        wmsInnerInventoryLog.setSupplierId(wmsInAsnOrder.getSupplierId());
+        wmsInnerInventoryLog.setWarehouseId(wmsInAsnOrderDet.getWarehouseId());
+        wmsInnerInventoryLog.setStorageId(wmsInAsnOrderDet.getStorageId());
+        wmsInnerInventoryLog.setMaterialId(wmsInAsnOrderDet.getMaterialId());
+        wmsInnerInventoryLog.setProductionDate(wmsInAsnOrderDet.getProductionDate());
+        wmsInnerInventoryLog.setExpiredDate(wmsInAsnOrderDet.getExpiredDate());
+        wmsInnerInventoryLog.setBatchCode(wmsInAsnOrderDet.getBatchCode());
+        wmsInnerInventoryLog.setPalletCode(wmsInAsnOrderDet.getPalletCode());
+        wmsInnerInventoryLog.setInventoryStatusId(wmsInAsnOrderDet.getInventoryStatusId());
+        wmsInnerInventoryLog.setChangeQty(wmsInAsnOrderDet.getActualQty());
+        wmsInnerInventoryLog.setSupplierId(wmsInAsnOrder.getSupplierId());
+        wmsInnerInventoryLog.setMaterialOwnerId(wmsInAsnOrder.getMaterialOwnerId());
+        ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryLog);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
         }
     }
 

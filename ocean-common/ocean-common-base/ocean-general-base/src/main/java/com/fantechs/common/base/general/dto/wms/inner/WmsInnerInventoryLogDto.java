@@ -1,7 +1,7 @@
 package com.fantechs.common.base.general.dto.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryLog;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -10,30 +10,39 @@ import java.io.Serializable;
 
 /**
  * @Author mr.lei
- * @Date 2021/6/2
+ * @Date 2021/7/29
  */
 @Data
-public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Serializable {
+public class WmsInnerInventoryLogDto extends WmsInnerInventoryLog implements Serializable {
     /**
-     * 库位名称
+     * 货主名称
      */
-    @ApiModelProperty(name="storageCode",value = "库位名称")
-    @Excel(name = "库位名称", height = 20, width = 30,orderNum="1")
     @Transient
-    private String storageCode;
+    @ApiModelProperty(name="materialOwnerName",value = "货主名称")
+    @Excel(name = "货主名称", height = 20, width = 30,orderNum="1")
+    private String materialOwnerName;
 
     /**
-     * 仓库
+     * 仓库名称
      */
-    @ApiModelProperty(name="warehouseId",value = "仓库")
+    @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="2")
     @Transient
-    private Long warehouseId;
+    private String warehouseName;
+
+    /**
+     * 库位编码
+     */
+    @ApiModelProperty(name="storageCode",value = "库位编码")
+    @Excel(name = "库位编码", height = 20, width = 30,orderNum="3")
+    @Transient
+    private String storageCode;
 
     /**
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="2")
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="4")
     @Transient
     private String materialCode;
 
@@ -41,7 +50,7 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
      * 物料名称
      */
     @ApiModelProperty(name="materialName",value = "物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="3")
+    @Excel(name = "物料名称", height = 20, width = 30,orderNum="5")
     @Transient
     private String materialName;
 
@@ -49,7 +58,7 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
      * 供应商名称
      */
     @ApiModelProperty(name="supplierName",value = "供应商名称")
-    @Excel(name = "供应商名称", height = 20, width = 30,orderNum="4")
+    @Excel(name = "供应商名称", height = 20, width = 30,orderNum="6")
     @Transient
     private String supplierName;
 
@@ -57,7 +66,6 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
      * 组织名称
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30,orderNum = "16")
     @Transient
     private String organizationName;
 
@@ -65,7 +73,6 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
      * 创建人名称
      */
     @ApiModelProperty(name="createUserName",value = "创建人名称")
-    @Excel(name = "创建人名称", height = 20, width = 30,orderNum = "17")
     @Transient
     private String createUserName;
 
@@ -73,7 +80,6 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
      * 修改人名称
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人名称")
-    @Excel(name = "盘存转报废单号", height = 20, width = 30,orderNum = "19")
     @Transient
     private String modifiedUserName;
 }

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryLogMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="inventory_log_id" jdbcType="BIGINT" property="inventoryLogId" />
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName" />
+    <result column="job_order_type" jdbcType="TINYINT" property="jobOrderType" />
+    <result column="add_or_subtract" jdbcType="TINYINT" property="addOrSubtract" />
+    <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
+    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+    <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate" />
+    <result column="qc_date" jdbcType="TIMESTAMP" property="qcDate" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="asn_code" jdbcType="VARCHAR" property="asnCode" />
+    <result column="despatch_order_code" jdbcType="VARCHAR" property="despatchOrderCode" />
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="initial_qty" jdbcType="DECIMAL" property="initialQty" />
+    <result column="change_qty" jdbcType="DECIMAL" property="changeQty"/>
+    <result column="final_qty" jdbcType="DECIMAL" property="finalQty" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto">
+    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+wiil.inventory_log_id,
+    wiil.material_owner_id,
+wiil.warehouse_id,
+wiil.storage_id,
+wiil.material_id,
+wiil.supplier_id,
+wiil.inventory_status_name,
+wiil.job_order_type,
+wiil.add_or_subtract,
+wiil.related_order_code,
+wiil.production_date,
+wiil.expired_date,
+wiil.qc_date,
+wiil.batch_code,
+wiil.asn_code,
+wiil.despatch_order_code,
+wiil.pallet_code,
+wiil.initial_qty,
+wiil.change_qty,
+wiil.final_qty,
+wiil.status,
+wiil.remark,
+	wiil.org_id,
+	wiil.create_user_id,
+	wiil.create_time,
+	wiil.modified_user_id,
+	wiil.modified_time,
+	wiil.is_delete
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"/>,bmo.material_owner_name,bw.warehouse_name,bs.storage_code,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from wms_inner_inventory_log wiil
+    LEFT JOIN base_material_owner bmo ON wiil.material_owner_id = bmo.material_owner_id
+    LEFT JOIN base_warehouse bw ON wiil.warehouse_id = bw.warehouse_id
+    LEFT JOIN base_storage bs ON wiil.storage_id = bs.storage_id
+    LEFT JOIN base_material bm ON wiil.material_id = bm.material_id
+    LEFT JOIN base_supplier bss ON wiil.supplier_id = bss.supplier_id
+    LEFT JOIN ocean_v2.sys_user su  ON wiil.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON wiil.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wiil.org_id = bo.organization_id
+<where>
+  <if test="warehouseName!=null and warehouseName != ''">
+    and bw.warehouse_name like CONCAT("%",#{warehouseName},"%")
+  </if>
+  <if test="storageId!=null and storageId != ''">
+    and wiil.storage_id = #{storageId}
+  </if>
+  <if test="storageCode!=null and storageCode != ''">
+    and bs.storage_code like CONCAT("%",#{storageCode},"%")
+  </if>
+  <if test="materialId!=null and materialId != ''">
+    and wiil.material_id = #{materialId}
+  </if>
+  <if test="materialCode!=null and materialCode != ''">
+    and bm.material_code like CONCAT("%",#{materialCode},"%")
+  </if>
+  <if test="materialName!=null and materialName != ''">
+    and bm.material_name like CONCAT("%",#{materialName},"%")
+  </if>
+  <if test="relevanceOrderCode!=null and relevanceOrderCode != ''">
+    and wiil.relevance_order_code like CONCAT("%",#{relevanceOrderCode},"%")
+  </if>
+  <if test="palletCode!=null and palletCode != ''">
+    and wiil.pallet_code like CONCAT("%",#{palletCode},"%")
+  </if>
+  <if test="batchCode!=null and batchCode != ''">
+    and wiil.batch_code like CONCAT("%",#{batchCode},"%")
+  </if>
+  <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+    and date_format(wiil.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+  </if>
+<if test="jobOrderType!=null and jobOrderType!=''">
+  and wiil.job_order_type = #{jobOrderType}
+</if>
+<if test="inventoryStatusName!=null and inventoryStatusName!=''">
+  and wiil.inventory_status_name like CONCAT('%',#{inventoryStatusName},'%')
+</if>
+<if test="addOrSubtract!=null and addOrSubtract!=''">
+  and wiil.add_or_subtract = #{addOrSubtract}
+</if>
+<if test="productionDateT!=null and productionDateT!='' and productionDateF!=null and productionDateF!=''">
+ and date_format(wiil.production_date,'%Y-%m-%d') BETWEEN #{productionDateT} and #{productionDateF}
+</if>
+  <if test="expiredDateT!=null and expiredDateT!='' and expiredDateF!=null and expiredDateF!=''">
+    and date_format(wiil.expired_date,'%Y-%m-%d') BETWEEN #{expiredDateT} and #{expiredDateF}
+  </if>
+  <if test="qcDateT!=null and qcDateT!='' and qcDateF!=null and qcDateF!=''">
+    and date_format(wiil.qc_date,'%Y-%m-%d') BETWEEN #{productionDateT} and #{productionDateF}
+  </if>
+<if test="asnCode!=null and asnCode!=''">
+  and wiil.asn_code like CONCAT('%',#{asnCode},'%')
+</if>
+<if test="despatchOrderCode!=null and despatchOrderCode!=''">
+  and wiil.despatch_order_code like CONCAT('%',#{despatchOrderCode},'%')
+</if>
+<if test="createUserName!=null and createUserName!=''">
+  and su.user_name like CONCAT('%',#{createUserName},'%')
+</if>
+  <if test="modifiedUserName!=null and modifiedUserName!=''">
+    and sus.user_name like CONCAT('%',#{modifiedUserName},'%')
+  </if>
+</where>
+  </select>
+  <select id="findInv" resultType="java.math.BigDecimal">
+    SELECT sum(packing_qty) FROM wms_inner_inventory
+    WHERE warehouse_id=#{warehouseId} and storage_id=#{storageId}
+    AND material_id=#{materialId} AND batch_code=#{batchCode}
+      AND lock_status=0 AND stock_lock=0 AND qc_lock=0
+      AND inventory_status_id=#{inventoryStatusId} AND job_status=1
+  </select>
+  <select id="findInvName" resultType="java.lang.String">
+    SELECT inventory_status_name FROM base_inventory_status WHERE inventory_status_id=#{inventoryStatusId}
+  </select>
+</mapper>
