@@ -814,15 +814,17 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //        if(StringUtils.isEmpty(barCode)){
 //            throw new BizErrorException("获取栈板信息失败");
 //        }
-        example.createCriteria().andEqualTo("relatedOrderCode", asnOrderCode).andEqualTo("storageId", wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId", wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcode", barcode);
+        example.createCriteria().andEqualTo("asnCode", asnOrderCode).andEqualTo("storageId", wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId", wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcode", barcode).andEqualTo("jobStatus",1);
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
         if (StringUtils.isEmpty(wmsInnerInventoryDet)) {
             throw new BizErrorException("未查询到收货条码");
         }
 
-        wmsInnerInventoryDet.setRelatedOrderCode(jobOrderCode);
-        wmsInnerInventoryDet.setInTime(new Date());
+        wmsInnerInventoryDet.setAsnCode(jobOrderCode);
         wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
+        wmsInnerInventoryDet.setReceivingDate(new Date());
+        wmsInnerInventoryDet.setJobStatus((byte)2);
+        wmsInnerInventoryDet.setStatus((byte)3);
         return wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
     }
 

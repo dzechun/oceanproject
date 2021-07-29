@@ -69,13 +69,13 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
         if(StringUtils.isEmpty(id)){
             throw new BizErrorException("条码错误");
         }
-        String batchCode = smtSolderPasteMapper.findBatchCode(id);
-        if(StringUtils.isEmpty(batchCode)){
+        Map<String,Object> map = smtSolderPasteMapper.findBatchCode(id);
+        if(StringUtils.isEmpty(map)){
             throw new BizErrorException("请检查批次号");
         }
         //用批号匹配是否存在
         Example example = new Example(SmtSolderPaste.class);
-        example.createCriteria().andEqualTo("batchCode",batchCode);
+        example.createCriteria().andEqualTo("batchCode",map.get("batch_code")).andEqualTo("materialId",map.get("material_id"));
         List<SmtSolderPaste> smtSolderPastes = smtSolderPasteMapper.selectByExample(example);
         if(smtSolderPastes.size()<1){
             throw new BizErrorException("暂无该条码信息");
@@ -124,7 +124,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
             smtSolderPasteJobMapper.insertSelective(smtSolderPasteJob);
             smtSolderPaste.setSmtSolderPasteJob(smtSolderPasteJob);
         }
-        Map<String,Object> map = new HashMap<>();
+        map = new HashMap<>();
         map.put("solderPasteId",smtSolderPaste.getSolderPasteId());
         SmtSolderPasteDto smtSolderPasteDto = smtSolderPasteMapper.findList(map).get(0);
         smtSolderPasteDto.setMessage(smtSolderPaste.getMessage());
@@ -187,7 +187,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                     if(smtSolderPaste.getSolderPasteStatus()!=2){
                         throw new BizErrorException("锡膏未回温，无法执行");
                     }
-                    if(smtSolderPaste.getTBackTime().compareTo(new BigDecimal(map.get("min").toString()))==1){
+                    if(smtSolderPaste.getTBackTime().compareTo(new BigDecimal(map.get("min").toString()))==-1){
                         if(smtSolderPaste.getSmtSolderPasterConfig().getTBackTimeStatus()==1){
                             //强制执行
                             smtSolderPaste.setMessage("该锡膏超出设定时间，已强制停止执行");
@@ -201,7 +201,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                             return smtSolderPaste;
                         }
 
-                    }else  if(smtSolderPaste.getTBackTime().compareTo(new BigDecimal(map.get("min").toString()))==-1){
+                    }else  if(smtSolderPaste.getTBackTime().compareTo(new BigDecimal(map.get("min").toString()))==1){
                         if(smtSolderPaste.getSmtSolderPasterConfig().getTBackTimeStatus()==1){
                             smtSolderPaste.setMessage("该锡膏未到达设定时间,已强制停止执行");
                             smtSolderPaste.setExecuteStatus(1);
@@ -221,9 +221,9 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                     }
                     //开封
                     //ps:判断搅拌时间是否达到设定时间
-                    if(smtSolderPaste.getStirTime().compareTo(new BigDecimal(map.get("min").toString()))==1){
+                    if(smtSolderPaste.getStirTime().compareTo(new BigDecimal(map.get("min").toString()))==-1){
                         //判断是否超过未开封日期
-                        if(smtSolderPaste.getNotOpenTimeLimit().compareTo(new BigDecimal(map.get("hour").toString()))==1){
+                        if(smtSolderPaste.getNotOpenTimeLimit().compareTo(new BigDecimal(map.get("hour").toString()))==-1){
                             if(smtSolderPaste.getSmtSolderPasterConfig().getStirTimeStatus()==0 ||smtSolderPaste.getSmtSolderPasterConfig().getNotOpenTimeLimitStatus()==0){
                                 smtSolderPaste.setMessage("该锡膏超过搅拌时间及未开封时间，是否继续执行");
                                 smtSolderPaste.setExecuteStatus(2);
@@ -236,7 +236,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                                 return smtSolderPaste;
                             }
                         }
-                    }else if(smtSolderPaste.getStirTime().compareTo(new BigDecimal(map.get("min").toString()))==-1){
+                    }else if(smtSolderPaste.getStirTime().compareTo(new BigDecimal(map.get("min").toString()))==1){
                         if(smtSolderPaste.getSmtSolderPasterConfig().getStirTimeStatus()==1){
                             smtSolderPaste.setMessage("该锡膏未到达设定的搅拌时间，已强制停止执行");
                             smtSolderPaste.setExecuteStatus(1);
@@ -347,6 +347,13 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
         if(StringUtils.isNotEmpty(record.getSolderPasteStatus())){
             record.setSpStatusUpdateTime(new Date());
         }
+        //查询是否存在相同批次记录
+        Example example = new Example(SmtSolderPaste.class);
+        example.createCriteria().andEqualTo("batchCode",record.getBatchCode()).andEqualTo("materialId",record.getMaterialId());
+        SmtSolderPaste smtSolderPaste = smtSolderPasteMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(smtSolderPaste)){
+            throw new BizErrorException("批次重复，请检查批次");
+        }
         int num = smtSolderPasteMapper.insertSelective(record);
 
         //SmtSolderPasterConfig smtSolderPasterConfig = record.getSmtSolderPasterConfig();
@@ -367,6 +374,15 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
         if(StringUtils.isNotEmpty(entity.getSolderPasteStatus())){
             entity.setSpStatusUpdateTime(new Date());
         }
+
+        //查询是否存在相同批次记录
+        Example example = new Example(SmtSolderPaste.class);
+        example.createCriteria().andEqualTo("batchCode",entity.getBatchCode()).andEqualTo("materialId",entity.getMaterialId()).andNotEqualTo("solderPasteId",entity.getSolderPasteId());
+        SmtSolderPaste smtSolderPaste = smtSolderPasteMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(smtSolderPaste)){
+            throw new BizErrorException("批次重复，请检查批次");
+        }
+
         if(StringUtils.isNotEmpty(entity.getSmtSolderPasterConfig())){
             SmtSolderPasterConfig smtSolderPasterConfig = entity.getSmtSolderPasterConfig();
             smtSolderPasterConfig.setSolderPasteId(entity.getSolderPasteId());

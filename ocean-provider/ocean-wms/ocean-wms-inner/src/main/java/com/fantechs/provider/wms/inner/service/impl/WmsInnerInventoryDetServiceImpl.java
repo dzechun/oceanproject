@@ -76,8 +76,11 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getMaterialId())){
             criteria.andEqualTo("materialId",wmsInnerInventoryDet.getMaterialId());
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getRelatedOrderCode())){
-            criteria.andEqualTo("relatedOrderCode",wmsInnerInventoryDet.getRelatedOrderCode());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getAsnCode())){
+            criteria.andEqualTo("asnCode",wmsInnerInventoryDet.getAsnCode());
+        }
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getDeliveryOrderCode())){
+            criteria.andEqualTo("deliveryOrderCode",wmsInnerInventoryDet.getDeliveryOrderCode());
         }
         List<WmsInnerInventoryDet> wms = wmsInnerInventoryDetMapper.selectByExample(example);
         BigDecimal qty = wmsInnerInventoryDet.getMaterialQty();

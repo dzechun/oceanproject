@@ -9,5 +9,5 @@ import java.util.Map;
 
 @Mapper
 public interface EamHtJigStandingBookMapper extends MyMapper<EamHtJigStandingBook> {
-    List<EamHtJigStandingBook> findList(Map<String, Object> map);
+    List<EamHtJigStandingBook> findHtList(Map<String, Object> map);
 }

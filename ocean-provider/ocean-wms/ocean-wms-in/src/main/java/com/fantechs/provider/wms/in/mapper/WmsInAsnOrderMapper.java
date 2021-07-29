@@ -14,4 +14,6 @@ public interface WmsInAsnOrderMapper extends MyMapper<WmsInAsnOrder> {
     List<WmsInAsnOrderDto> findList(SearchWmsInAsnOrder searchWmsInAsnOrder);
 
     String findBarCode(@Param("id")Long id);
+
+    Integer findLineNumber(@Param("asnOrderId")Long asnOrderId);
 }

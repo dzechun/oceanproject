@@ -97,7 +97,7 @@ order by ssp.create_time
   <select id="findInvDet" resultType="java.lang.Long">
     select material_barcode_id From wms_inner_material_barcode where barcode=#{barcode}
   </select>
-  <select id="findBatchCode" resultType="java.lang.String">
-    select batch_code FROM wms_inner_material_barcode where material_barcode_id=#{id}
+  <select id="findBatchCode" resultType="java.util.Map">
+    select material_id,batch_code FROM wms_inner_material_barcode where material_barcode_id=#{id}
   </select>
 </mapper>

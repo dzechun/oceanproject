@@ -17,30 +17,22 @@ import java.util.Date;
 ;
 
 /**
- * 治具台账管理履历表
- * eam_ht_jig_standing_book
- * @author Dylan
- * @date 2021-07-28 13:51:00
+ * 治具信息条码履历表
+ * eam_ht_jig_barcode
+ * @author admin
+ * @date 2021-07-28 11:44:15
  */
 @Data
-@Table(name = "eam_ht_jig_standing_book")
-public class EamHtJigStandingBook extends ValidGroup implements Serializable {
+@Table(name = "eam_ht_jig_barcode")
+public class EamHtJigBarcode extends ValidGroup implements Serializable {
     /**
-     * 治具台账管理履历ID
+     * 治具条码履历ID
      */
-    @ApiModelProperty(name="htJigStandingBookId",value = "治具台账管理履历ID")
-    @Excel(name = "治具台账管理履历ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="htJigBarcodeId",value = "治具条码履历ID")
+    @Excel(name = "治具条码履历ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "ht_jig_standing_book_id")
-    private Long htJigStandingBookId;
-
-    /**
-     * 治具台账管理ID
-     */
-    @ApiModelProperty(name="jigStandingBookId",value = "治具台账管理ID")
-    @Excel(name = "治具台账管理ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "jig_standing_book_id")
-    private Long jigStandingBookId;
+    @Column(name = "ht_jig_barcode_id")
+    private Long htJigBarcodeId;
 
     /**
      * 治具条码ID
@@ -51,36 +43,61 @@ public class EamHtJigStandingBook extends ValidGroup implements Serializable {
     private Long jigBarcodeId;
 
     /**
-     * 财产编码类别(1-固定资产  2-列管品)
+     * 治具ID
      */
-    @ApiModelProperty(name="propertyCodeCategory",value = "财产编码类别(1-固定资产  2-列管品)")
-    @Excel(name = "财产编码类别(1-固定资产  2-列管品)", height = 20, width = 30,orderNum="") 
-    @Column(name = "property_code_category")
-    private Byte propertyCodeCategory;
+    @ApiModelProperty(name="jigId",value = "治具ID")
+    @Excel(name = "治具ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "jig_id")
+    private Long jigId;
 
     /**
-     * 出厂日期
+     * 治具条码
      */
-    @ApiModelProperty(name="releaseDate",value = "出厂日期")
-    @Excel(name = "出厂日期", height = 20, width = 30,orderNum="") 
-    @Column(name = "release_date")
-    private Date releaseDate;
+    @ApiModelProperty(name="jigBarcode",value = "治具条码")
+    @Excel(name = "治具条码", height = 20, width = 30,orderNum="") 
+    @Column(name = "jig_barcode")
+    private String jigBarcode;
 
     /**
-     * 部门
+     * 资产编码
      */
-    @ApiModelProperty(name="deptId",value = "部门")
-    @Excel(name = "部门", height = 20, width = 30,orderNum="") 
-    @Column(name = "dept_id")
-    private Long deptId;
+    @ApiModelProperty(name="assetCode",value = "资产编码")
+    @Excel(name = "资产编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "asset_code")
+    private String assetCode;
 
     /**
-     * 折旧年限
+     * 当前使用次数
      */
-    @ApiModelProperty(name="depreciableLife",value = "折旧年限")
-    @Excel(name = "折旧年限", height = 20, width = 30,orderNum="") 
-    @Column(name = "depreciable_life")
-    private Integer depreciableLife;
+    @ApiModelProperty(name="currentUsageTime",value = "当前使用次数")
+    @Excel(name = "当前使用次数", height = 20, width = 30,orderNum="") 
+    @Column(name = "current_usage_time")
+    private Integer currentUsageTime;
+
+    /**
+     * 上次保养时间
+     */
+    @ApiModelProperty(name="lastTimeMaintainTime",value = "上次保养时间")
+    @Excel(name = "上次保养时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "last_time_maintain_time")
+    private Date lastTimeMaintainTime;
+
+    /**
+     * 当前保养次数
+     */
+    @ApiModelProperty(name="currentMaintainTime",value = "当前保养次数")
+    @Excel(name = "当前保养次数", height = 20, width = 30,orderNum="") 
+    @Column(name = "current_maintain_time")
+    private Integer currentMaintainTime;
+
+    /**
+     * 使用状态(1-使用中 2-空闲)
+     */
+    @ApiModelProperty(name="usageStatus",value = "使用状态(1-使用中 2-空闲)")
+    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="") 
+    @Column(name = "usage_status")
+    private Byte usageStatus;
 
     /**
      * 状态(0无效，1有效)
@@ -138,26 +155,20 @@ public class EamHtJigStandingBook extends ValidGroup implements Serializable {
     @Column(name = "modified_time")
     private Date modifiedTime;
 
-    private String option1;
-
-    private String option2;
-
-    private String option3;
-
     /**
      * 创建用户名称
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="4")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="6")
     private String createUserName;
 
     /**
      * 修改用户名称
      */
     @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="6")
+    @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
     private String modifiedUserName;
 
     /**
@@ -167,20 +178,11 @@ public class EamHtJigStandingBook extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
 
-    /**
-     * 部门名称
-     */
-    @Transient
-    @ApiModelProperty(name = "deptName",value = "部门名称")
-    private String deptName;
+    private String option1;
 
-    /**
-     * 附件(url集合，用逗号隔开)
-     */
-    @ApiModelProperty(name="attachmentPath",value = "附件(url集合，用逗号隔开)")
-    @Excel(name = "附件(url集合，用逗号隔开)", height = 20, width = 30,orderNum="") 
-    @Column(name = "attachment_path")
-    private String attachmentPath;
+    private String option2;
+
+    private String option3;
 
     private static final long serialVersionUID = 1L;
 }

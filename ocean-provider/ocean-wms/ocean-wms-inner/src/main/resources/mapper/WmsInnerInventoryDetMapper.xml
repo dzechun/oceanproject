@@ -10,12 +10,15 @@
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
         <result column="material_qty" jdbcType="DECIMAL" property="materialQty"/>
-        <result column="in_time" jdbcType="TIMESTAMP" property="inTime"/>
-        <result column="expiration_date" jdbcType="INTEGER" property="expirationDate"/>
         <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
         <result column="production_batch_code" jdbcType="VARCHAR" property="productionBatchCode"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
-        <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
+        <result column="job_status" jdbcType="TINYINT" property="jobStatus"/>
+        <result column="if_stock_lock" jdbcType="TINYINT" property="ifStockLock"/>
+        <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate"/>
+        <result column="asn_code" jdbcType="VARCHAR" property="asnCode"/>
+        <result column="deliver_date" jdbcType="TIMESTAMP" property="deliverDate"/>
+        <result column="delivery_order_code" jdbcType="VARCHAR" property="deliveryOrderCode"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId"/>
@@ -41,12 +44,15 @@
         wiid.material_id,
         wiid.barcode,
         wiid.material_qty,
-        wiid.in_time,
-        wiid.expiration_date,
         wiid.production_date,
         wiid.production_batch_code,
         wiid.supplier_id,
-        wiid.related_order_code,
+wiid.job_status,
+wiid.if_stock_lock,
+        wiid.receiving_date,
+wiid.asn_code,
+wiid.deliver_date,
+wiid.delivery_order_code,
         wiid.status,
         wiid.remark,
         wiid.org_id,

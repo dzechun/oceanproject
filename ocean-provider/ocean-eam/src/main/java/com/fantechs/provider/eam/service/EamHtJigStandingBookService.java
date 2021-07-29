@@ -11,5 +11,5 @@ import java.util.Map;
  */
 
 public interface EamHtJigStandingBookService extends IService<EamHtJigStandingBook> {
-    List<EamHtJigStandingBook> findList(Map<String, Object> map);
+    List<EamHtJigStandingBook> findHtList(Map<String, Object> map);
 }

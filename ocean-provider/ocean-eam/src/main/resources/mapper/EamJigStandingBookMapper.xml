@@ -27,6 +27,7 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamJigStandingBookDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
 
@@ -54,10 +55,12 @@
     select <include refid="Base_Column_List"></include>,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
+    bd.dept_name,
     bo.organization_name
     from fantech_imes_v2.eam_jig_standing_book ei
     left join ocean_v2.sys_user u on ei.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ei.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_dept bd on ei.dept_id=bd.dept_id
     left join fantech_imes_v2.base_organization bo ON ei.org_id = bo.organization_id
     <where>
       <if test="jig_barcode_id != null and jig_barcode_id!=''">

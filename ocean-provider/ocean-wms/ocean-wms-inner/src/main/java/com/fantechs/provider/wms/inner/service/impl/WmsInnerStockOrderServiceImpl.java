@@ -527,6 +527,19 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInnerInventory.setStockLock(lockType==(byte) 2?(byte)1:0);
                 num+=wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
             }
+
+            //库存明细
+            example = new Example(WmsInnerJobOrderDet.class);
+            example.createCriteria().andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
+                    .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
+                    .andEqualTo("jobStatus",(byte)2)
+                    .andEqualTo("ifStockLock",lockType==(byte) 2?0:1)
+                    .andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
+            List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example);
+            for (WmsInnerInventoryDet wmsInnerInventoryDet : wmsInnerInventoryDets) {
+                wmsInnerInventoryDet.setIfStockLock(lockType==(byte) 2?(byte)1:0);
+                num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+            }
             //复盘
             if(lockType==(byte) 3){
                 num+=this.analyse((byte) 1,null,wmsInnerStockOrderDet,wmsInventoryVerification);

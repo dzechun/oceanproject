@@ -59,22 +59,6 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
     @Column(name = "material_qty")
     private BigDecimal materialQty;
 
-    /**
-     * 入库时间
-     */
-    @ApiModelProperty(name="inTime",value = "入库时间")
-    @Excel(name = "入库时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "in_time")
-    private Date inTime;
-
-    /**
-     * 保质期(天)
-     */
-    @ApiModelProperty(name="expirationDate",value = "保质期(天)")
-    @Excel(name = "保质期(天)", height = 20, width = 30,orderNum="") 
-    @Column(name = "expiration_date")
-    private Integer expirationDate;
 
     /**
      * 生产日期
@@ -101,18 +85,60 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
     private Long supplierId;
 
     /**
-     * 相关单号
+     * 作业状态(1-已收货、2-在库、3-已拣货、4-已出库 5-已取消)
      */
-    @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
-    @Excel(name = "相关单号", height = 20, width = 30,orderNum="") 
-    @Column(name = "related_order_code")
-    private String relatedOrderCode;
+    @ApiModelProperty(name = "jobStatus",value = "作业状态(1-已收货、2-在库、3-已拣货、4-已出库 5-已取消)")
+    @Excel(name = "作业状态(1-已收货、2-在库、3-已拣货、4-已出库 5-已取消)",height = 20,width = 30,orderNum = "")
+    @Column(name = "job_status")
+    private Byte jobStatus;
 
     /**
-     * 状态(0无效，1有效)
+     * 盘点锁(0-否 1-是)
+     */
+    @ApiModelProperty(name = "ifStockLock",value = "盘点锁(0-否 1-是)")
+    @Excel(name = "盘点锁(0-否 1-是)",height = 20,width = 30,orderNum = "")
+    @Column(name = "if_stock_lock")
+    private Byte ifStockLock;
+
+    /**
+     * 收货日期
+     */
+    @ApiModelProperty(name = "receivingDate",value = "收货日期")
+    @Excel(name = "收货日期", height = 20, width = 30,orderNum="")
+    @Column(name = "receiving_date")
+    @JSONField(name = "yyyy-MM-dd HH:mm:ss")
+    private Date receivingDate;
+
+    /**
+     * 收货单号
+     */
+    @ApiModelProperty(name="asnCode",value = "收货单号")
+    @Excel(name = "收货单号", height = 20, width = 30,orderNum="")
+    @Column(name = "asn_code")
+    private String asnCode;
+
+    /**
+     * 发货日期
+     */
+    @ApiModelProperty(name = "deliverDate",value = "发货日期")
+    @Excel(name = "发货日期", height = 20, width = 30,orderNum="")
+    @Column(name = "deliver_date")
+    @JSONField(name = "yyyy-MM-dd HH:mm:ss")
+    private Date deliverDate;
+
+    /**
+     * 出货单号
+     */
+    @ApiModelProperty(name="deliveryOrderCode",value = "出货单号")
+    @Excel(name = "出货单号", height = 20, width = 30,orderNum="")
+    @Column(name = "delivery_order_code")
+    private String deliveryOrderCode;
+
+    /**
+     * 条码状态(1-待收货、2-已收货、3-在库、4-已拣选、5-已复核、6-已出库、7-已取消)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "条码状态(1-待收货、2-已收货、3-在库、4-已拣选、5-已复核、6-已出库、7-已取消)", height = 20, width = 30,orderNum="")
     private Byte status;
 
     /**
