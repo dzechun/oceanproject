@@ -43,6 +43,12 @@ public class MesSfcBarcodeProcessReport extends ValidGroup implements Serializab
     private String proLineName;
 
     /**
+     * 工艺路线名称
+     */
+    @ApiModelProperty(name="routeName",value = "工艺路线名称")
+    private String routeName;
+
+    /**
      * 产品名称
      */
     @ApiModelProperty(name="materialName",value = "产品名称")
@@ -55,10 +61,10 @@ public class MesSfcBarcodeProcessReport extends ValidGroup implements Serializab
     private String materialCode;
 
     /**
-     * 产品型号
+     * 产品型号名称
      */
-    @ApiModelProperty(name="productModelCode",value = "产品型号")
-    private String productModelCode;
+    @ApiModelProperty(name="productModelName",value = "产品型号")
+    private String productModelName;
 
     /**
      * 装配记录

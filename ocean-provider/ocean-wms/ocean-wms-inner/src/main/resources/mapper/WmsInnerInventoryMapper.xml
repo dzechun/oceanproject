@@ -98,7 +98,7 @@ wii.storage_id,
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"/>,bmo.material_owner_name,bw.warehouse_name,bs.storage_code,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
-    ,bis.inventory_status_name
+    ,bis.inventory_status_name,wii.packing_qty * wii.package_specification_quantity
     from wms_inner_inventory wii
     LEFT JOIN base_material_owner bmo ON wii.material_owner_id = bmo.material_owner_id
     LEFT JOIN base_warehouse bw ON wii.warehouse_id = bw.warehouse_id

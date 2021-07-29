@@ -2,9 +2,12 @@ package com.fantechs.provider.eam.service.socket.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.eam.EamDataCollect;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.eam.mapper.EamEquipmentMapper;
+import com.fantechs.provider.eam.service.EamDataCollectService;
 import com.fantechs.provider.eam.service.socket.SocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Mr.Lei
@@ -29,6 +34,20 @@ public class SocketServiceImpl implements SocketService {
 
     @Resource
     private EamEquipmentMapper eamEquipmentMapper;
+
+    //新加*************
+    @Resource
+    private EamDataCollectService eamDataCollectService;
+    @Resource
+    private EamFeignApi eamFeignApi;
+    private Socket socket;
+    //定义Lock锁对象
+    Lock lock = new ReentrantLock();
+    private int portEam = 8103;
+    private int ticketEam = 30;
+    private int timeOutEam = 1000 * 30;
+    private Map<String, Long> ipMapEam = new HashMap<>();
+    //新加*************
 
     private Hashtable hashtable = new Hashtable();
     private int port = 9302;   //端口
@@ -48,6 +67,24 @@ public class SocketServiceImpl implements SocketService {
                 Long value = entry.getValue();
                 if (System.currentTimeMillis() - value > timeOut) {
                     log.info("==============检测到设备断开，设备ip："+key);
+                    updateStatus(key, (byte) 3);
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    @Scheduled(cron = "0 */1 * * * ?")
+    public void checkIpTaskEam() {
+        log.info("======== 定时器执行");
+        if (!ipMapEam.isEmpty()) {
+            Set<Map.Entry<String, Long>> entrySet = ipMapEam.entrySet();
+            Iterator<Map.Entry<String, Long>> iterator = entrySet.iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, Long> entry = iterator.next();
+                String key = entry.getKey();
+                Long value = entry.getValue();
+                if (System.currentTimeMillis() - value > timeOutEam) {
                     updateStatus(key, (byte) 3);
                     iterator.remove();
                 }
@@ -96,6 +133,76 @@ public class SocketServiceImpl implements SocketService {
             log.info("客户端数量"+hashtable.size()+1);
 
         }
+    }
+
+    @Override
+    public void openServiceEam() throws IOException {
+        //创建一个服务端socket
+        ServerSocket serverSocket = new ServerSocket(portEam);
+
+        //调用accept方法等待连接,线程会阻塞状态
+        log.info("=============> Socket服务已启动,等待连接");
+        new Thread(new Runnable() {
+            public void run() {
+                //调用服务器套接字对象中的方法accept()获取客户端套接字对象
+
+                while (true) {
+                    //添加同步锁
+                    lock.lock();
+                    if (ticketEam > 0) {
+                        try {
+                            //等待服务器链接 accept是阻塞的，作为服务器，需要一直等待客户端链接
+                            socket = serverSocket.accept();
+                            String ip = socket.getInetAddress().getHostAddress();
+                            int prot = socket.getPort();
+                            log.info("有客户端连接，ip" + ip + ",prot" + prot);
+                            if (socket.getInputStream() != null) {
+                                log.info("=============> socket.getPort" + socket.getPort());
+                                String jsonStr = inputStreamToString(socket);
+                                log.info("=============> json" + jsonStr);
+                                if (jsonStr != null) {
+                                    boolean isJson = isJSON2(jsonStr);
+                                    if (!isJson){
+                                        continue;
+                                    }
+                                    EamEquipment equipment = getEquipment(ip);
+                                    EamDataCollect dataCollect = EamDataCollect.builder()
+                                            .status((byte) 1)
+                                            .collectData(jsonStr)
+                                            .collectTime(new Date())
+                                            .createTime(new Date())
+                                            .isDelete((byte) 1)
+                                            .equipmentId(equipment.getEquipmentId())
+                                            .build();
+                                    eamDataCollectService.save(dataCollect);
+                                    if(equipment.getOnlineStatus() != (byte) 1){
+                                        updateStatus(ip, (byte) 1);
+                                    }
+                                    ipMapEam.put(ip, System.currentTimeMillis());
+                                }
+                            }
+                        } catch (IOException e1) {
+                            String ip = socket.getInetAddress().getHostAddress();
+                            updateStatus(ip, (byte) 3);
+                            e1.printStackTrace();
+                        }
+                    }
+                    //释放同步锁
+                    lock.unlock();
+                }
+            }
+        }).start();
+    }
+
+    private boolean isJSON2(String str) {
+        boolean result = false;
+        try {
+            Object obj= JSON.parse(str);
+            result = true;
+        } catch (Exception e) {
+            result=false;
+        }
+        return result;
     }
 
     public class SockerServerThread  extends Thread{
@@ -177,7 +284,34 @@ public class SocketServiceImpl implements SocketService {
         return str;
     }
 
+    private String inputStreamToString(Socket socket) throws IOException {
+        InputStream inputStream = socket.getInputStream();
+        InputStreamReader inputStreamReader;
+        String str = null;
+        try {
+            inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            byte[] b = new byte[1024];
+            int x = inputStream.read(b, 0, b.length);
+            str = new String(b, 0, x);
 
+            // 释放资源
+            bufferedReader.close();
+            inputStreamReader.close();
+            inputStream.close();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            log.info("=============> 断开连接");
+            String ip = socket.getInetAddress().getHostAddress();
+            updateStatus(ip, (byte) 0);
+            socket.shutdownInput();
+            socket.shutdownOutput();
+            socket.close();
+            e.printStackTrace();
+        }
+        return str;
+    }
 
     public EamEquipment getEquipment(String ip){
         Example example = new Example(EamEquipment.class);
@@ -197,6 +331,18 @@ public class SocketServiceImpl implements SocketService {
         eamEquipment.setOnlineStatus(bytes);
         eamEquipmentMapper.updateByPrimaryKeySelective(eamEquipment);
 
+        return 1;
+    }
+
+    public EamEquipment getEquipmentEam(String ip){
+        EamEquipment eamEquipment = eamFeignApi.detailByIp(ip).getData();
+        return eamEquipment;
+    }
+
+    public int updateStatusEam(String ip, Byte bytes) {
+        EamEquipment eamEquipment = getEquipment(ip);
+        eamEquipment.setOnlineStatus(bytes);
+        eamFeignApi.update(eamEquipment);
         return 1;
     }
 

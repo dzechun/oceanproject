@@ -12,7 +12,8 @@
     <result column="pro_line_name" jdbcType="VARCHAR" property="proLineName" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
-    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+    <result column="route_name" jdbcType="VARCHAR" property="routeName" />
   </resultMap>
 
   <select id="findList" resultMap="BaseResultMap" parameterType="map">
@@ -20,13 +21,15 @@
       mswob.barcode,
       mpwo.work_order_code,
       mpwo.work_order_status,
-      bpl.pro_name,
+      bpl.pro_name as 'pro_line_name',
       bm.material_name,
       bm.material_code,
-      bpm.product_model_name
+      bpm.product_model_name,
+      br.route_name
     FROM
       mes_sfc_work_order_barcode mswob
       LEFT JOIN mes_pm_work_order mpwo ON mpwo.work_order_id = mswob.work_order_id
+      LEFT JOIN base_route br ON br.route_id = mpwo.route_id
       LEFT JOIN base_pro_line bpl ON bpl.pro_line_id = mpwo.pro_line_id
       LEFT JOIN base_material bm ON bm.material_id = mpwo.material_id
       LEFT JOIN base_material_tab bmt ON bmt.material_id = bm.material_id

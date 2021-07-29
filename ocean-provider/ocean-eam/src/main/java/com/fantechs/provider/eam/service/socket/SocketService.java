@@ -12,4 +12,10 @@ public interface SocketService {
 
     void openService() throws IOException;
 
+    /**
+     * @create 2021/07/29
+     * @throws IOException
+     */
+    void openServiceEam() throws IOException;
+
 }

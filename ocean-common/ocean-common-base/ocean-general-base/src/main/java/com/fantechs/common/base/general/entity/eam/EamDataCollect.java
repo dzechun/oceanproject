@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.mes.sfc;
+package com.fantechs.common.base.general.entity.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
@@ -23,8 +23,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "mes_sfc_data_collect")
-public class MesSfcDataCollect extends ValidGroup implements Serializable {
+@Table(name = "eam_data_collect")
+public class EamDataCollect extends ValidGroup implements Serializable {
     /**
      * 数据采集ID
      */
