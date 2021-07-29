@@ -45,13 +45,13 @@ public class BoxRecordUreport extends ValidGroup implements Serializable {
      * 入站时间
      */
     @ApiModelProperty(name="inProcessTime",value = "入站时间")
-    private String inProcessTime;
+    private Date inProcessTime;
 
     /**
      * 出站时间
      */
     @ApiModelProperty(name="outProcessTime",value = "出站时间")
-    private BigDecimal outProcessTime;
+    private Date outProcessTime;
 
     /**
      * 关箱状态(0-未关闭 1-已关闭)
@@ -63,7 +63,7 @@ public class BoxRecordUreport extends ValidGroup implements Serializable {
      * 关箱时间
      */
     @ApiModelProperty(name="closeCartonTime",value = "关箱时间")
-    private BigDecimal closeCartonTime;
+    private Date closeCartonTime;
 
     /**
      * 关箱人

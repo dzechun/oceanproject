@@ -64,6 +64,12 @@ public class SearchSysSpecItem  extends BaseQuery implements Serializable {
      * 菜单ID
      */
     @ApiModelProperty(name="menuId" ,value="菜单ID")
-    private String menuId;
+    private Long menuId;
+
+    /**
+     * 是否使用缓存数据(0不使用、1使用)
+     */
+    @ApiModelProperty(name="ifHotData" ,value="是否使用缓存数据(0不使用、1使用)")
+    private Byte ifHotData;
 
 }
