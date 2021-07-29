@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/07/28.
  */
 @RestController
-@Api(tags = "eamJigStandingBook控制器")
+@Api(tags = "治具台账管理")
 @RequestMapping("/eamJigStandingBook")
 @Validated
 public class EamJigStandingBookController {
@@ -89,7 +89,7 @@ public class EamJigStandingBookController {
     List<EamJigStandingBookDto> list = eamJigStandingBookService.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigStandingBook));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "EamJigStandingBook信息", EamJigStandingBookDto.class, "EamJigStandingBook.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "治具台账管理", EamJigStandingBookDto.class, "治具台账管理.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
