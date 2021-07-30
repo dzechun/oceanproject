@@ -77,7 +77,7 @@ ssp.option3
   and ssp.org_id = #{orgId}
 </if>
 </where>
-order by ssp.create_time
+order by ssp.create_time desc
   </select>
   <select id="findInvDet" resultType="java.util.Map">
     select material_barcode_id,material_id From wms_inner_material_barcode where barcode=#{barcode}

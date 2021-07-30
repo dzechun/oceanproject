@@ -84,15 +84,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
-        Example example = new Example(EamEquipment.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentCode", record.getEquipmentCode());
-        EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamEquipment)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
-
+        check(record);
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
@@ -103,7 +95,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
 
         EamHtEquipment eamHtEquipment = new EamHtEquipment();
         BeanUtils.copyProperties(record, eamHtEquipment);
-        int i = eamHtEquipmentMapper.insert(eamHtEquipment);
+        int i = eamHtEquipmentMapper.insertSelective(eamHtEquipment);
 
         return i;
     }
@@ -116,21 +108,21 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(EamEquipment.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentCode", entity.getEquipmentCode())
-                .andNotEqualTo("equipmentId",entity.getEquipmentId());
-        EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamEquipment)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        if(StringUtils.isNotEmpty(entity.getEquipmentIp())) {
+            Example examples = new Example(EamEquipment.class);
+            Example.Criteria criterias = examples.createCriteria();
+            criterias.andEqualTo("equipmentIp", entity.getEquipmentIp());
+            EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(examples);
+            if (StringUtils.isNotEmpty(eamEquipment)) {
+                throw new BizErrorException("设备ip不能重复");
+            }
         }
-
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
 
         EamHtEquipment eamHtEquipment = new EamHtEquipment();
         BeanUtils.copyProperties(entity, eamHtEquipment);
-        eamHtEquipmentMapper.insert(eamHtEquipment);
+        eamHtEquipmentMapper.insertSelective(eamHtEquipment);
 
         return eamEquipmentMapper.updateByPrimaryKeySelective(entity);
     }
@@ -161,4 +153,29 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         return eamEquipmentMapper.deleteByIds(ids);
     }
 
+    public void check(EamEquipment entity){
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        if(StringUtils.isEmpty(entity.getProcessId())) throw new BizErrorException("工序不能为空");
+        if(StringUtils.isEmpty(entity.getProLineId())) throw new BizErrorException("产线不能为空");
+
+        Example example = new Example(EamEquipment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("equipmentCode", entity.getEquipmentCode());
+        EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(eamEquipment)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        Example examples = new Example(EamEquipment.class);
+        Example.Criteria criterias = examples.createCriteria();
+        criterias.andEqualTo("equipmentIp", entity.getEquipmentIp());
+        eamEquipment = eamEquipmentMapper.selectOneByExample(examples);
+        if (StringUtils.isNotEmpty(eamEquipment)) {
+            throw new BizErrorException("设备ip不能重复");
+        }
+    }
 }

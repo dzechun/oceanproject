@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 
 /**
@@ -22,16 +24,15 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 治具台账管理ID
      */
     @ApiModelProperty(name="jigStandingBookId",value = "治具台账管理ID")
-    @Excel(name = "治具台账管理ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "jig_standing_book_id")
+    @NotNull(groups = update.class,message = "治具台账管理ID不能为空")
     private Long jigStandingBookId;
 
     /**
      * 治具条码ID
      */
     @ApiModelProperty(name="jigBarcodeId",value = "治具条码ID")
-    @Excel(name = "治具条码ID", height = 20, width = 30,orderNum="") 
     @Column(name = "jig_barcode_id")
     private Long jigBarcodeId;
 
@@ -39,7 +40,7 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 财产编码类别(1-固定资产  2-列管品)
      */
     @ApiModelProperty(name="propertyCodeCategory",value = "财产编码类别(1-固定资产  2-列管品)")
-    @Excel(name = "财产编码类别(1-固定资产  2-列管品)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "财产编码类别(1-固定资产  2-列管品)", height = 20, width = 30,orderNum="7")
     @Column(name = "property_code_category")
     private Byte propertyCodeCategory;
 
@@ -47,7 +48,7 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 出厂日期
      */
     @ApiModelProperty(name="releaseDate",value = "出厂日期")
-    @Excel(name = "出厂日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "出厂日期", height = 20, width = 30,orderNum="8")
     @Column(name = "release_date")
     private Date releaseDate;
 
@@ -55,7 +56,6 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 部门
      */
     @ApiModelProperty(name="deptId",value = "部门")
-    @Excel(name = "部门", height = 20, width = 30,orderNum="") 
     @Column(name = "dept_id")
     private Long deptId;
 
@@ -63,7 +63,7 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 折旧年限
      */
     @ApiModelProperty(name="depreciableLife",value = "折旧年限")
-    @Excel(name = "折旧年限", height = 20, width = 30,orderNum="") 
+    @Excel(name = "折旧年限", height = 20, width = 30,orderNum="10")
     @Column(name = "depreciable_life")
     private Integer depreciableLife;
 
@@ -71,21 +71,18 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -93,7 +90,6 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -101,7 +97,7 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -110,7 +106,6 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -118,7 +113,7 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="16",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -133,7 +128,7 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 附件(url集合，用逗号隔开)
      */
     @ApiModelProperty(name="attachmentPath",value = "附件(url集合，用逗号隔开)")
-    @Excel(name = "附件(url集合，用逗号隔开)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "附件(url集合，用逗号隔开)", height = 20, width = 30,orderNum="12")
     @Column(name = "attachment_path")
     private String attachmentPath;
 

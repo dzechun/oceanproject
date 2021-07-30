@@ -225,7 +225,6 @@ public class EamEquipment extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="lifecycle",value = "生命周期(天)")
     @Excel(name = "生命周期(天)", height = 20, width = 30,orderNum="12")
-    @NotNull(message = "生命周期不能为空")
     private BigDecimal lifecycle;
 
     /**

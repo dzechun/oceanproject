@@ -18,4 +18,5 @@ public interface SocketService {
      */
     void openServiceEam() throws IOException;
 
+    int BatchInstructions(Long proLine,String code,Object url);
 }

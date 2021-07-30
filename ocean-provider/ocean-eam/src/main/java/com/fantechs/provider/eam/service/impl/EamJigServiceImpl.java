@@ -5,19 +5,19 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigDto;
 import com.fantechs.common.base.general.entity.eam.EamJig;
-import com.fantechs.common.base.general.entity.eam.EamJigCategory;
+import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJig;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJigCategory;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.fileserver.service.FileFeignApi;
 import com.fantechs.provider.eam.mapper.EamHtJigMapper;
+import com.fantechs.provider.eam.mapper.EamJigBarcodeMapper;
 import com.fantechs.provider.eam.mapper.EamJigMapper;
 import com.fantechs.provider.eam.service.EamJigService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -37,6 +37,10 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     private EamJigMapper eamJigMapper;
     @Resource
     private EamHtJigMapper eamHtJigMapper;
+    @Resource
+    private EamJigBarcodeMapper eamJigBarcodeMapper;
+    @Resource
+    private FileFeignApi fileFeignApi;
 
     @Override
     public List<EamJigDto> findList(Map<String, Object> map) {
@@ -48,6 +52,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
 
         return eamJigMapper.findList(map);
     }
+
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
@@ -74,11 +79,57 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         record.setOrgId(user.getOrganizationId());
         eamJigMapper.insertUseGeneratedKeys(record);
 
+        //条码列表
+        List<EamJigBarcode> eamJigBarcodeList = record.getEamJigBarcodeList();
+        if(StringUtils.isNotEmpty(eamJigBarcodeList)){
+            this.barcodeIfRepeat(eamJigBarcodeList);
+
+            for (EamJigBarcode eamJigBarcode : eamJigBarcodeList){
+                eamJigBarcode.setJigId(record.getJigId());
+                eamJigBarcode.setCreateUserId(user.getUserId());
+                eamJigBarcode.setCreateTime(new Date());
+                eamJigBarcode.setModifiedUserId(user.getUserId());
+                eamJigBarcode.setModifiedTime(new Date());
+                eamJigBarcode.setStatus(StringUtils.isEmpty(eamJigBarcode.getStatus())?1: eamJigBarcode.getStatus());
+                eamJigBarcode.setOrgId(user.getOrganizationId());
+                eamJigBarcode.setUsageStatus((byte)2);
+            }
+            eamJigBarcodeMapper.insertList(eamJigBarcodeList);
+        }
+
+        //履历
         EamHtJig eamHtJig = new EamHtJig();
         BeanUtils.copyProperties(record, eamHtJig);
         int i = eamHtJigMapper.insert(eamHtJig);
 
         return i;
+    }
+
+    /**
+     * 判断条码是否重复
+     * @param eamJigBarcodeList
+     */
+    public void barcodeIfRepeat(List<EamJigBarcode> eamJigBarcodeList){
+        List<String> jigBarcodes = new ArrayList<>();
+        List<String> assetCodes = new ArrayList<>();
+
+        for (EamJigBarcode eamJigBarcode : eamJigBarcodeList) {
+            if(jigBarcodes.contains(eamJigBarcode.getJigBarcode())||assetCodes.contains(eamJigBarcode.getAssetCode())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "条码重复");
+            }
+
+            Example example = new Example(EamJigBarcode.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("jigBarcode", eamJigBarcode.getJigBarcode())
+                    .orEqualTo("assetCode", eamJigBarcode.getAssetCode());
+            EamJigBarcode jigBarcode = eamJigBarcodeMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(jigBarcode)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "条码重复");
+            }
+
+            jigBarcodes.add(eamJigBarcode.getJigBarcode());
+            assetCodes.add(eamJigBarcode.getAssetCode());
+        }
     }
 
     @Override
@@ -100,12 +151,37 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
 
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
+        int i = eamJigMapper.updateByPrimaryKeySelective(entity);
+
+        //删除原条码
+        Example example1 = new Example(EamJigBarcode.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("jigId", entity.getJigId());
+        eamJigBarcodeMapper.deleteByExample(example1);
+
+        //条码列表
+        List<EamJigBarcode> eamJigBarcodeList = entity.getEamJigBarcodeList();
+        if(StringUtils.isNotEmpty(eamJigBarcodeList)){
+            this.barcodeIfRepeat(eamJigBarcodeList);
+
+            for (EamJigBarcode eamJigBarcode : eamJigBarcodeList){
+                eamJigBarcode.setJigId(entity.getJigId());
+                eamJigBarcode.setCreateUserId(user.getUserId());
+                eamJigBarcode.setCreateTime(new Date());
+                eamJigBarcode.setModifiedUserId(user.getUserId());
+                eamJigBarcode.setModifiedTime(new Date());
+                eamJigBarcode.setStatus(StringUtils.isEmpty(eamJigBarcode.getStatus())?1: eamJigBarcode.getStatus());
+                eamJigBarcode.setOrgId(user.getOrganizationId());
+                eamJigBarcode.setUsageStatus((byte)2);
+            }
+            eamJigBarcodeMapper.insertList(eamJigBarcodeList);
+        }
 
         EamHtJig eamHtJig = new EamHtJig();
         BeanUtils.copyProperties(entity, eamHtJig);
         eamHtJigMapper.insert(eamHtJig);
 
-        return eamJigMapper.updateByPrimaryKeySelective(entity);
+        return i;
     }
 
     @Override
@@ -127,6 +203,12 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
             EamHtJig eamHtJig = new EamHtJig();
             BeanUtils.copyProperties(eamJig, eamHtJig);
             list.add(eamHtJig);
+
+            //删除条码
+            Example example1 = new Example(EamJigBarcode.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("jigId", id);
+            eamJigBarcodeMapper.deleteByExample(example1);
         }
 
         eamHtJigMapper.insertList(list);

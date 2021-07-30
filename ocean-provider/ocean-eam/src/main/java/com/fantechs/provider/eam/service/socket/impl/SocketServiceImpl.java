@@ -1,9 +1,11 @@
 package com.fantechs.provider.eam.service.socket.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.eam.EamDataCollect;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.eam.mapper.EamEquipmentMapper;
@@ -334,7 +336,7 @@ public class SocketServiceImpl implements SocketService {
         return 1;
     }
 
-    public EamEquipment getEquipmentEam(String ip){
+/*    public EamEquipment getEquipmentEam(String ip){
         EamEquipment eamEquipment = eamFeignApi.detailByIp(ip).getData();
         return eamEquipment;
     }
@@ -343,6 +345,46 @@ public class SocketServiceImpl implements SocketService {
         EamEquipment eamEquipment = getEquipment(ip);
         eamEquipment.setOnlineStatus(bytes);
         eamFeignApi.update(eamEquipment);
+        return 1;
+    }*/
+
+    @Override
+    public int BatchInstructions(Long proLineId,String code,Object url) {
+        if(StringUtils.isEmpty(url) || StringUtils.isEmpty(code))  throw new BizErrorException("code或url不能为空");
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        Example example = new Example(EamEquipment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
+       // criteria.andEqualTo("usageStatus", (byte) 1);
+        criteria.andEqualTo("status", (byte) 1);
+        if(StringUtils.isNotEmpty(proLineId ))
+            criteria.andEqualTo("proLineId", proLineId);
+        List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
+
+        for (EamEquipment eamEquipment : eamEquipments) {
+            try {
+                Socket socket = (Socket)hashtable.get(eamEquipment.getEquipmentIp());
+                if(socket == null)  continue;
+                    //throw new BizErrorException("未查询到ip对应的设备信息,请检查设备是否开启");
+                OutputStream os = socket.getOutputStream();
+                PrintWriter out =new PrintWriter(os);
+
+                Map<String, Object> map = new HashMap();
+                Map<String, Object> data = new HashMap();
+                List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+                map.put("code", code);
+                map.put("url", url+eamEquipment.getEquipmentIp());
+                list.add(map);
+                data.put("data",list);
+                String outMsg = JSON.toJSONString(data);
+                out.write(outMsg);
+                out.flush();
+                return 1;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
         return 1;
     }
 
