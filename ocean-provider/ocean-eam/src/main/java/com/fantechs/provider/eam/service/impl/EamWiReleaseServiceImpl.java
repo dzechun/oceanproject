@@ -139,7 +139,8 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         if(StringUtils.isEmpty(eamWiRelease.getProLineId()))
             throw new BizErrorException("产线id不能为空");
 
-       /* Example example = new Example(EamWiRelease.class);
+        //关闭该产线原有的wi原有的wi
+        Example example = new Example(EamWiRelease.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", sysUser.getOrganizationId())
                 .andEqualTo("proLineId", eamWiRelease.getProLineId());
@@ -148,9 +149,10 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
             oldWiRelease.setStatus((byte)0);
             eamWiReleaseMapper.updateByPrimaryKeySelective(oldWiRelease);
         }
-        example.clear();*/
+        example.clear();
 
         eamWiRelease.setStatus((byte)1);
+        eamWiRelease.setReleaseStatus((byte)2);
         int i = eamWiReleaseMapper.updateByPrimaryKeySelective(eamWiRelease);
         socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://192.168.204.163/#/YunZhiESOP?ip=");
         return i;

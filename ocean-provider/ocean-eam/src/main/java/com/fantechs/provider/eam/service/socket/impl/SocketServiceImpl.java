@@ -336,7 +336,7 @@ public class SocketServiceImpl implements SocketService {
         return 1;
     }
 
-    public EamEquipment getEquipmentEam(String ip){
+/*    public EamEquipment getEquipmentEam(String ip){
         EamEquipment eamEquipment = eamFeignApi.detailByIp(ip).getData();
         return eamEquipment;
     }
@@ -346,7 +346,7 @@ public class SocketServiceImpl implements SocketService {
         eamEquipment.setOnlineStatus(bytes);
         eamFeignApi.update(eamEquipment);
         return 1;
-    }
+    }*/
 
     @Override
     public int BatchInstructions(Long proLineId,String code,Object url) {
@@ -355,7 +355,7 @@ public class SocketServiceImpl implements SocketService {
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", user.getOrganizationId());
-        criteria.andEqualTo("usageStatus", (byte) 1);
+       // criteria.andEqualTo("usageStatus", (byte) 1);
         criteria.andEqualTo("status", (byte) 1);
         if(StringUtils.isNotEmpty(proLineId ))
             criteria.andEqualTo("proLineId", proLineId);
