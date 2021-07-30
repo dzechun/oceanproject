@@ -21,6 +21,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamWiReleaseService;
+import com.fantechs.provider.eam.service.socket.SocketService;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -45,7 +46,8 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
     private EamWiReleaseDetMapper eamWiReleaseDetMapper;
     @Resource
     private EamHtWiReleaseDetMapper eamHtWiReleaseDetMapper ;
-
+    @Resource
+    private SocketService socketService;
 
 
     @Override
@@ -137,18 +139,20 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         if(StringUtils.isEmpty(eamWiRelease.getProLineId()))
             throw new BizErrorException("产线id不能为空");
 
-        Example example = new Example(EamWiRelease.class);
+       /* Example example = new Example(EamWiRelease.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", sysUser.getOrganizationId()).andEqualTo("proLineId", eamWiRelease.getProLineId());
+        criteria.andEqualTo("orgId", sysUser.getOrganizationId())
+                .andEqualTo("proLineId", eamWiRelease.getProLineId());
         EamWiRelease oldWiRelease = eamWiReleaseMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(oldWiRelease)) {
             oldWiRelease.setStatus((byte)0);
-            eamWiReleaseMapper.updateByPrimaryKey(oldWiRelease);
+            eamWiReleaseMapper.updateByPrimaryKeySelective(oldWiRelease);
         }
-        example.clear();
+        example.clear();*/
 
         eamWiRelease.setStatus((byte)1);
-        int i = eamWiReleaseMapper.updateByPrimaryKey(eamWiRelease);
+        int i = eamWiReleaseMapper.updateByPrimaryKeySelective(eamWiRelease);
+        socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://192.168.204.163/#/YunZhiESOP?ip=");
         return i;
     }
 
