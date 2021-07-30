@@ -5,6 +5,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialSupplierDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
@@ -522,6 +523,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         map.put("list", palletIds);
         map.put("orgId", orgId);
         List<PalletAutoAsnDto> autoAsnDtos = mesSfcProductPalletDetService.findListGroupByWorkOrder(map);
+
 //        if(mesSfcWorkOrderBarcodeList != null && mesSfcWorkOrderBarcodeList.size() > 0){
 //            map.clear();
 //            map.put("list", mesSfcWorkOrderBarcodeList.stream().map(MesSfcWorkOrderBarcode::getWorkOrderBarcodeId).collect(Collectors.toList()));
@@ -587,6 +589,21 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 throw new BizErrorException(ErrorCodeEnum.STO30012000);
             }
             palletAutoAsnDto.setProductionDate(new Date());
+
+            //2021-07-30 增加包装单位 by Dylan
+            SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
+            searchBasePackageSpecification.setMaterialId(palletAutoAsnDto.getMaterialId());
+            searchBasePackageSpecification.setOrgId(orgId);
+            ResponseEntity<List<BasePackageSpecificationDto>> basePackgeSpecifications = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification);
+            if(StringUtils.isNotEmpty(basePackgeSpecifications.getData())){
+                List<BaseMaterialPackageDto> baseMaterialPackageDtos = basePackgeSpecifications.getData().get(0).getBaseMaterialPackages();
+                if(StringUtils.isNotEmpty(baseMaterialPackageDtos)){
+                    BaseMaterialPackageDto baseMaterialPackageDto = baseMaterialPackageDtos.get(0);
+                    palletAutoAsnDto.setPackingUnitName(baseMaterialPackageDto.getPackingUnitName());
+                }
+
+            }
+
             inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
     }
