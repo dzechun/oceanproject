@@ -346,4 +346,20 @@ public class SocketServiceImpl implements SocketService {
         return 1;
     }
 
+    @Override
+    public int BatchInstructions(Long orgId,Long proLine,String code,Object url) {
+
+        Example example = new Example(EamEquipment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", orgId);
+        criteria.andEqualTo("usageStatus", (byte) 1);
+        criteria.andEqualTo("status", (byte) 1);
+        List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
+
+        for (EamEquipment eamEquipment : eamEquipments) {
+            this.instructions(eamEquipment.getEquipmentIp(),code,url);
+        }
+        return 1;
+    }
+
 }
