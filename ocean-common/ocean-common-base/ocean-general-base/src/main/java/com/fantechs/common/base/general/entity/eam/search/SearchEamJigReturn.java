@@ -7,19 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SearchEamJigReMaterial extends BaseQuery implements Serializable {
-
-    /**
-     * 物料ID
-     */
-    @ApiModelProperty(name="materialId",value = "物料ID")
-    private Long materialId;
-
-    /**
-     * 治具ID
-     */
-    @ApiModelProperty(name="jigId",value = "治具ID")
-    private Long jigId;
+public class SearchEamJigReturn extends BaseQuery implements Serializable {
 
     /**
      * 治具编码
@@ -34,14 +22,14 @@ public class SearchEamJigReMaterial extends BaseQuery implements Serializable {
     private String jigName;
 
     /**
-     * 治具描述
-     */
-    @ApiModelProperty(name="jigDesc",value = "治具描述")
-    private String jigDesc;
-
-    /**
      * 治具型号
      */
     @ApiModelProperty(name="jigModel",value = "治具型号")
     private String jigModel;
+
+    /**
+     * 治具类别
+     */
+    @ApiModelProperty(name="jigCategoryName",value = "治具类别")
+    private String jigCategoryName;
 }

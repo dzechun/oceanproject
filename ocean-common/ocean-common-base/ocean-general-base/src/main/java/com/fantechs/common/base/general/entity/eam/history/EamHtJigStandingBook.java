@@ -175,14 +175,6 @@ public class EamHtJigStandingBook extends ValidGroup implements Serializable {
     private String deptName;
 
     /**
-     * 附件(url集合，用逗号隔开)
-     */
-    @ApiModelProperty(name="attachmentPath",value = "附件(url集合，用逗号隔开)")
-    @Excel(name = "附件(url集合，用逗号隔开)", height = 20, width = 30,orderNum="") 
-    @Column(name = "attachment_path")
-    private String attachmentPath;
-
-    /**
      * 资产条码
      */
     @Transient

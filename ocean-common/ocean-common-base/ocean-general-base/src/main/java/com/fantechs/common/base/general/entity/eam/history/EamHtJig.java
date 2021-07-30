@@ -358,13 +358,5 @@ public class EamHtJig extends ValidGroup implements Serializable {
 
     private String option3;
 
-    /**
-     * 附件URL集合(路径集合，用逗号隔开)
-     */
-    @ApiModelProperty(name="attachmentAddress",value = "附件URL集合(路径集合，用逗号隔开)")
-    @Excel(name = "附件URL集合(路径集合，用逗号隔开)", height = 20, width = 30,orderNum="") 
-    @Column(name = "attachment_address")
-    private String attachmentAddress;
-
     private static final long serialVersionUID = 1L;
 }
