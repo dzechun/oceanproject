@@ -1,9 +1,11 @@
 package com.fantechs.provider.eam.service.socket.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.eam.EamDataCollect;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.eam.mapper.EamEquipmentMapper;
@@ -347,11 +349,12 @@ public class SocketServiceImpl implements SocketService {
     }
 
     @Override
-    public int BatchInstructions(Long orgId,Long proLine,String code,Object url) {
+    public int BatchInstructions(Long proLine,String code,Object url) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", orgId);
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("usageStatus", (byte) 1);
         criteria.andEqualTo("status", (byte) 1);
         List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
