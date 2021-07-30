@@ -42,12 +42,14 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
      * 锡膏状态(1-入冰库 2-回温 3-搅拌 4-开封 5-上料 6-用完 7-回冰 8-报废)
      */
     @ApiModelProperty(name="solderPasteStatus",value = "锡膏状态(1-入冰库 2-回温 3-搅拌 4-开封 5-上料 6-用完 7-回冰 8-报废)")
+    @Transient
     private Byte solderPasteStatus;
 
     /**
      * 锡膏状态更新时间
      */
     @ApiModelProperty(name="spStatusUpdateTime",value = "锡膏状态更新时间")
+    @Transient
     private Date spStatusUpdateTime;
 
     /**
@@ -86,12 +88,15 @@ public class SmtSolderPaste extends ValidGroup implements Serializable {
      * 回冰次数
      */
     @ApiModelProperty(name="returnIceTime",value = "回冰次数")
+    @Excel(name = "回冰次数", height = 20, width = 30,orderNum="")
+    @Column(name = "return_ice_time")
     private Integer returnIceTime;
 
     /**
      * 当前回冰次数
      */
     @ApiModelProperty(name="currentReturnIceTime",value = "当前回冰次数")
+    @Transient
     private Integer currentReturnIceTime;
 
     /**

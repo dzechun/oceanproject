@@ -63,6 +63,6 @@ spj.modified_time
     left join ocean_v2.sys_user s on spj.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON spj.org_id = bo.organization_id
     where spj.org_id =#{orgId}
-order BY spj.create_time
+order BY spj.create_time desc
   </select>
 </mapper>

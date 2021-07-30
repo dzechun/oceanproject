@@ -151,6 +151,7 @@ wiil.remark,
     and sus.user_name like CONCAT('%',#{modifiedUserName},'%')
   </if>
 </where>
+order by wiil.create_time desc
   </select>
   <select id="findInv" resultType="java.math.BigDecimal">
     SELECT sum(packing_qty) FROM wms_inner_inventory

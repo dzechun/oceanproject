@@ -97,8 +97,9 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
             //回冰次数
             smtSolderPaste.setCurrentReturnIceTime(smtSolderPasteJob.getCurrentReturnIceTime());
         }
-
-
+        if(StringUtils.isEmpty(smtSolderPaste)){
+            throw new BizErrorException("相关信息获取失败");
+        }
         if (redisUtil.hasKey(DEFAULT_NAME+smtSolderPaste.getSolderPasteId())){
             SmtSolderPasterConfig smtSolderPasterConfig = new SmtSolderPasterConfig();
             BeanUtils.mapToObject((Map<String, Object>) redisUtil.get(DEFAULT_NAME+smtSolderPaste.getSolderPasteId()),smtSolderPasterConfig);
@@ -106,15 +107,20 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
         }else {
             throw new BizErrorException("锡膏配置获取失败");
         }
-//        smtSolderPaste.setSmtSolderPasterConfig((SmtSolderPasterConfig) redisUtil.get(DEFAULT_NAME+smtSolderPaste.getSolderPasteId().toString()));
-        if(smtSolderPasteJob.getCurrentSolderPasteStatus()==8){
-            throw new BizErrorException("锡膏已报废,无法执行");
-        }
-        if(smtSolderPasteJob.getCurrentSolderPasteStatus()==6){
-            throw new BizErrorException("锡膏已经用完");
-        }
         //上一个状态
-        Byte lastSolderPasteStatus = smtSolderPasteJob.getCurrentSolderPasteStatus();
+        Byte lastSolderPasteStatus = null;
+
+        if(StringUtils.isNotEmpty(smtSolderPaste.getSolderPasteStatus())){
+            if(smtSolderPaste.getSolderPasteStatus()==8){
+                throw new BizErrorException("锡膏已报废,无法执行");
+            }
+            if(smtSolderPaste.getSolderPasteStatus()==6){
+                throw new BizErrorException("锡膏已经用完");
+            }
+            lastSolderPasteStatus = smtSolderPaste.getSolderPasteStatus();
+        }else {
+            smtSolderPaste.setSolderPasteStatus((byte)0);
+        }
         smtSolderPaste = this.checkStatus(smtSolderPaste,solderPasteStatus,PASS);
         if(StringUtils.isEmpty(smtSolderPaste.getMessage())){
             smtSolderPasteMapper.updateByPrimaryKeySelective(smtSolderPaste);
@@ -126,7 +132,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
             smtSolderPasteJob.setLastSolderPasteStatus(lastSolderPasteStatus);
             smtSolderPasteJob.setCurrentSolderPasteStatus(solderPasteStatus);
             smtSolderPasteJob.setMaterialBarcodeId(Long.parseLong(map.get("material_barcode_id").toString()));
-            smtSolderPasteJob.setSolderPasteId(smtSolderPasteJob.getSolderPasteId());
+            smtSolderPasteJob.setSolderPasteId(smtSolderPaste.getSolderPasteId());
             smtSolderPasteJob.setOperatorUserId(sysUser.getUserId());
             smtSolderPasteJob.setOperatorTime(new Date());
             smtSolderPasteJob.setCreateTime(new Date());
@@ -167,17 +173,19 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
             }
             if(PASS==0){
                 //判断锡膏是否过期
-                if(smtSolderPaste.getExpirationDate().before(new Date())){
-                    if(smtSolderPaste.getSmtSolderPasterConfig().getProductionDateStatus()==1){
-                        smtSolderPaste.setMessage("锡膏已过期，已强制停止执行");
-                        smtSolderPaste.setExecuteStatus(1);
-                        smtSolderPaste.setIsDate(1);
-                        return smtSolderPaste;
-                    }else{
-                        smtSolderPaste.setMessage("锡膏已过期，是否继续执行");
-                        smtSolderPaste.setExecuteStatus(2);
-                        smtSolderPaste.setIsDate(1);
-                        return smtSolderPaste;
+                if(StringUtils.isNotEmpty(smtSolderPaste.getExpirationDate())){
+                    if(smtSolderPaste.getExpirationDate().before(new Date())){
+                        if(smtSolderPaste.getSmtSolderPasterConfig().getProductionDateStatus()==1){
+                            smtSolderPaste.setMessage("锡膏已过期，已强制停止执行");
+                            smtSolderPaste.setExecuteStatus(1);
+                            smtSolderPaste.setIsDate(1);
+                            return smtSolderPaste;
+                        }else{
+                            smtSolderPaste.setMessage("锡膏已过期，是否继续执行");
+                            smtSolderPaste.setExecuteStatus(2);
+                            smtSolderPaste.setIsDate(1);
+                            return smtSolderPaste;
+                        }
                     }
                 }
             }
@@ -191,7 +199,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                 case 2:
                     //回温
                     //ps：回冰后可以再次回温
-                    if(smtSolderPaste.getSolderPasteStatus()!=6 && smtSolderPaste.getSolderPasteStatus()>solderPasteStatus){
+                    if(smtSolderPaste.getSolderPasteStatus()!=7 && smtSolderPaste.getSolderPasteStatus()>solderPasteStatus){
                         throw new BizErrorException("锡膏已经"+this.StatusToName(solderPasteStatus));
                     }
                     break;
@@ -270,14 +278,14 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                         throw new BizErrorException("锡膏未开封,执行失败");
                     }
                     //判断是否超过开封日期
-                    if(smtSolderPaste.getOpenTimeLimit().compareTo(new BigDecimal(map.get("min").toString()))==1){
+                    if(smtSolderPaste.getOpenTimeLimit().compareTo(new BigDecimal(map.get("hour").toString()))==-1){
                         if(smtSolderPaste.getSmtSolderPasterConfig().getOpenTimeLimitStatus()==1){
-                            smtSolderPaste.setMessage("该锡膏超过未开封时间，已强制停止执行");
+                            smtSolderPaste.setMessage("该锡膏超过开封时间，已强制停止执行");
                             smtSolderPaste.setExecuteStatus(1);
                             smtSolderPaste.setIsDate(0);
                             return smtSolderPaste;
                         }else{
-                            smtSolderPaste.setMessage("该锡膏超过未开封时间，是否继续执行");
+                            smtSolderPaste.setMessage("该锡膏超过开封时间，是否继续执行");
                             smtSolderPaste.setExecuteStatus(2);
                             smtSolderPaste.setIsDate(0);
                             return smtSolderPaste;
@@ -288,6 +296,9 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                     break;
                 case 7:
                     //回冰
+                    if(smtSolderPaste.getSolderPasteStatus()==1){
+                        throw new BizErrorException("当前状态为入冰库，无需回冰");
+                    }
                     //ps：判断回冰次数
                     if(smtSolderPaste.getReturnIceTime()==smtSolderPaste.getCurrentReturnIceTime()){
                         if(smtSolderPaste.getSmtSolderPasterConfig().getReturnIceTimeStatus()==1){
@@ -302,7 +313,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                             return smtSolderPaste;
                         }
                     }
-                    smtSolderPaste.setReturnIceTime(smtSolderPaste.getReturnIceTime()+1);
+                    smtSolderPaste.setCurrentReturnIceTime(StringUtils.isEmpty(smtSolderPaste.getCurrentReturnIceTime())?1:smtSolderPaste.getCurrentReturnIceTime()+1);
                     break;
 
                 case 8:
@@ -366,7 +377,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
         example.createCriteria().andEqualTo("materialId",record.getMaterialId());
         SmtSolderPaste smtSolderPaste = smtSolderPasteMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(smtSolderPaste)){
-            throw new BizErrorException("批次重复，请检查批次");
+            throw new BizErrorException("锡膏已存在");
         }
         int num = smtSolderPasteMapper.insertSelective(record);
 
@@ -378,6 +389,7 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int update(SmtSolderPaste entity) {
         SysUser sysUser = currentUser();
         entity.setModifiedUserId(sysUser.getUserId());
@@ -385,16 +397,12 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
 
         int num = smtSolderPasteMapper.updateByPrimaryKeySelective(entity);
 
-        if(StringUtils.isNotEmpty(entity.getSolderPasteStatus())){
-            entity.setSpStatusUpdateTime(new Date());
-        }
-
         //查询是否存在相同批次记录
         Example example = new Example(SmtSolderPaste.class);
         example.createCriteria().andEqualTo("materialId",entity.getMaterialId()).andNotEqualTo("solderPasteId",entity.getSolderPasteId());
         SmtSolderPaste smtSolderPaste = smtSolderPasteMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(smtSolderPaste)){
-            throw new BizErrorException("批次重复，请检查批次");
+            throw new BizErrorException("锡膏已存在");
         }
 
         if(StringUtils.isNotEmpty(entity.getSmtSolderPasterConfig())){

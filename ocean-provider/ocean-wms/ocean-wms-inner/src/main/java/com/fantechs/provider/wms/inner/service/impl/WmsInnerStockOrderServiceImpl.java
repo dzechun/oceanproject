@@ -529,17 +529,17 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             }
 
             //库存明细
-            example = new Example(WmsInnerInventoryDet.class);
-            example.createCriteria().andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
-                    .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
-                    .andEqualTo("jobStatus",(byte)2)
-                    .andEqualTo("ifStockLock",lockType==(byte) 2?0:1)
-                    .andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
-            List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example);
-            for (WmsInnerInventoryDet wmsInnerInventoryDet : wmsInnerInventoryDets) {
-                wmsInnerInventoryDet.setIfStockLock(lockType==(byte) 2?(byte)1:0);
-                num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
-            }
+//            example = new Example(WmsInnerInventoryDet.class);
+//            example.createCriteria().andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
+//                    .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
+//                    .andEqualTo("jobStatus",(byte)2)
+//                    .andEqualTo("ifStockLock",lockType==(byte) 2?0:1)
+//                    .andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
+//            List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example);
+//            for (WmsInnerInventoryDet wmsInnerInventoryDet : wmsInnerInventoryDets) {
+//                wmsInnerInventoryDet.setIfStockLock(lockType==(byte) 2?(byte)1:0);
+//                num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+//            }
             //复盘
             if(lockType==(byte) 3){
                 num+=this.analyse((byte) 1,null,wmsInnerStockOrderDet,wmsInventoryVerification);
@@ -566,17 +566,36 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 //盘点数大于库存数 原有数量新增
-            if(!StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) && wmsInnerStockOrderDet.getStockQty().compareTo(wmsInnerInventory.getPackingQty())==1){
+        if(StringUtils.isEmpty(wmsInnerInventory)){
+            wmsInnerInventory = new WmsInnerInventory();
+            wmsInnerInventory.setWarehouseId(wmsInnerStockOrder.getWarehouseId());
+            wmsInnerInventory.setStorageId(wmsInnerStockOrderDet.getStorageId());
+            wmsInnerInventory.setPackingUnitName(wmsInnerStockOrderDet.getPackingUnitName());
+            wmsInnerInventory.setPackingQty(wmsInnerStockOrderDet.getStockQty());
+            wmsInnerInventory.setRelevanceOrderCode(wmsInnerStockOrder.getStockOrderCode());
+            wmsInnerInventory.setStockLock((byte)0);
+            wmsInnerInventory.setInventoryStatusId(wmsInnerStockOrderDet.getInventoryStatusId());
+            wmsInnerInventory.setMaterialId(wmsInnerStockOrderDet.getMaterialId());
+            wmsInnerInventory.setJobStatus((byte)1);
+            wmsInnerInventory.setLockStatus((byte)0);
+            wmsInnerInventory.setQcLock((byte)0);
+            wmsInnerInventory.setCreateTime(new Date());
+            wmsInnerInventory.setCreateUserId(wmsInnerStockOrderDet.getModifiedUserId());
+            wmsInnerInventory.setModifiedTime(new Date());
+            wmsInnerInventory.setModifiedUserId(wmsInnerStockOrderDet.getModifiedUserId());
+            wmsInnerInventory.setOrgId(wmsInnerStockOrderDet.getOrganizationId());
+            num+=wmsInnerInventoryMapper.insertSelective(wmsInnerInventory);
+        }else if(!StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) && wmsInnerStockOrderDet.getStockQty().compareTo(wmsInnerInventory.getPackingQty())==1){
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(wmsInnerStockOrderDet.getVarianceQty()));
                 num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
-            }else{
-                if(wmsInnerInventory.getPackingQty().compareTo(wmsInnerStockOrderDet.getVarianceQty())==-1){
-                    throw new BizErrorException("库存波动，请重新盘点");
-                }
-                //盘点数小于库存
-                wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerStockOrderDet.getVarianceQty()));
-                num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+        }else{
+            if(wmsInnerInventory.getPackingQty().compareTo(wmsInnerStockOrderDet.getVarianceQty())==-1){
+                throw new BizErrorException("库存波动，请重新盘点");
             }
+            //盘点数小于库存
+            wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerStockOrderDet.getVarianceQty()));
+            num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+        }
 
             //PDA扫码盘点
             if(type==3){
