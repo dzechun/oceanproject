@@ -349,18 +349,41 @@ public class SocketServiceImpl implements SocketService {
     }
 
     @Override
-    public int BatchInstructions(Long proLine,String code,Object url) {
+    public int BatchInstructions(Long proLineId,String code,Object url) {
+        if(StringUtils.isEmpty(url) || StringUtils.isEmpty(code))  throw new BizErrorException("code或url不能为空");
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", user.getOrganizationId());
         criteria.andEqualTo("usageStatus", (byte) 1);
         criteria.andEqualTo("status", (byte) 1);
+        if(StringUtils.isNotEmpty(proLineId ))
+            criteria.andEqualTo("proLineId", proLineId);
         List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
 
         for (EamEquipment eamEquipment : eamEquipments) {
-            this.instructions(eamEquipment.getEquipmentIp(),code,url);
+            try {
+                Socket socket = (Socket)hashtable.get(eamEquipment.getEquipmentIp());
+                if(socket == null)  continue;
+                    //throw new BizErrorException("未查询到ip对应的设备信息,请检查设备是否开启");
+                OutputStream os = socket.getOutputStream();
+                PrintWriter out =new PrintWriter(os);
+
+                Map<String, Object> map = new HashMap();
+                Map<String, Object> data = new HashMap();
+                List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+                map.put("code", code);
+                map.put("url", url+eamEquipment.getEquipmentIp());
+                list.add(map);
+                data.put("data",list);
+                String outMsg = JSON.toJSONString(data);
+                out.write(outMsg);
+                out.flush();
+                return 1;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 0;
+            }
         }
         return 1;
     }
