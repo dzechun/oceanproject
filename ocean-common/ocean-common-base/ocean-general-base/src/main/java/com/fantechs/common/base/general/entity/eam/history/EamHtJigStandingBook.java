@@ -182,5 +182,61 @@ public class EamHtJigStandingBook extends ValidGroup implements Serializable {
     @Column(name = "attachment_path")
     private String attachmentPath;
 
+    /**
+     * 资产条码
+     */
+    @Transient
+    @ApiModelProperty(name = "assetCode",value = "资产条码")
+    @Excel(name = "资产条码", height = 20, width = 30,orderNum="7")
+    private String assetCode;
+
+    /**
+     * 治具编码
+     */
+    @Transient
+    @ApiModelProperty(name = "jigCode",value = "治具编码")
+    @Excel(name = "治具编码", height = 20, width = 30,orderNum="7")
+    private String jigCode;
+
+    /**
+     * 治具名称
+     */
+    @Transient
+    @ApiModelProperty(name = "jigName",value = "治具名称")
+    @Excel(name = "治具名称", height = 20, width = 30,orderNum="7")
+    private String jigName;
+
+    /**
+     * 治具描述
+     */
+    @Transient
+    @ApiModelProperty(name = "jigDesc",value = "治具描述")
+    @Excel(name = "治具描述", height = 20, width = 30,orderNum="7")
+    private String jigDesc;
+
+    /**
+     * 治具型号
+     */
+    @Transient
+    @ApiModelProperty(name = "jigModel",value = "治具型号")
+    @Excel(name = "治具型号", height = 20, width = 30,orderNum="7")
+    private String jigModel;
+
+    /**
+     * 治具类别
+     */
+    @Transient
+    @ApiModelProperty(name = "jigCategoryName",value = "治具类别")
+    @Excel(name = "治具类别", height = 20, width = 30,orderNum="7")
+    private String jigCategoryName;
+
+    /**
+     * 使用状态(1-使用中 2-空闲)
+     */
+    @Transient
+    @ApiModelProperty(name = "usageStatus",value = "使用状态(1-使用中 2-空闲)")
+    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="6")
+    private Byte usageStatus;
+
     private static final long serialVersionUID = 1L;
 }

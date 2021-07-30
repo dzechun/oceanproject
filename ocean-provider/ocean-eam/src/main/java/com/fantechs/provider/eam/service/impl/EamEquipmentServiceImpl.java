@@ -84,6 +84,8 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        if(StringUtils.isEmpty(record.getProcessId())) throw new BizErrorException("工序不能为空");
+        if(StringUtils.isEmpty(record.getProLineId())) throw new BizErrorException("产线不能为空");
 
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();

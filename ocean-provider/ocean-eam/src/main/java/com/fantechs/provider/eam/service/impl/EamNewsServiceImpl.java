@@ -61,6 +61,7 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
             if(StringUtils.isEmpty(eamEquipments)){
                 throw new BizErrorException("查无绑定此IP的设备");
             }
+            map.put("newStatus",3);
             map.put("orgId", eamEquipments.get(0).getOrgId());
         }
 

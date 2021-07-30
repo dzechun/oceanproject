@@ -29,7 +29,7 @@
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto">
-        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
         <result column="warehouse_id" jdbcType="VARCHAR" property="warehouseId"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
@@ -64,7 +64,7 @@ wiid.delivery_order_code,
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select<include refid="Base_Column_List"/>
-        ,bs.storage_name,bs.warehouse_id,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS
+        ,bs.storage_code,bs.warehouse_id,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS
         create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
         LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
@@ -92,6 +92,12 @@ wiid.delivery_order_code,
             <if test="materialQty!=null and materialQty!=''">
                 and wiid.material_qty = #{materialQty}
             </if>
+            <if test="materialName!=null and materialName!=''">
+                and bm.material_name like CONCAT('%',#{materialName},'%')
+            </if>
+        <if test="jobStatus!=null and jobStatus!=''">
+            and wiid.job_status = #{jobStatus}
+        </if>
         </where>
         order by wiid.create_time desc
     </select>

@@ -169,7 +169,7 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         SysUser user = currentUser();
         if(StringUtils.isEmpty(eamWorkInstructionDto.getWorkInstructionId()))
             throw new BizErrorException("id不能为空");
-        eamWorkInstructionMapper.updateByPrimaryKey(eamWorkInstructionDto);
+        eamWorkInstructionMapper.updateByPrimaryKeySelective(eamWorkInstructionDto);
 
         Example example = new Example(EamWorkInstruction.class);
         Example.Criteria criteria = example.createCriteria();
