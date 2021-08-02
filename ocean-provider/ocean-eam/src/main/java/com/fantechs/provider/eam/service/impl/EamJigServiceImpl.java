@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigDto;
 import com.fantechs.common.base.general.entity.eam.EamJig;
+import com.fantechs.common.base.general.entity.eam.EamJigAttachment;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJig;
 import com.fantechs.common.base.support.BaseService;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.fileserver.service.FileFeignApi;
 import com.fantechs.provider.eam.mapper.EamHtJigMapper;
+import com.fantechs.provider.eam.mapper.EamJigAttachmentMapper;
 import com.fantechs.provider.eam.mapper.EamJigBarcodeMapper;
 import com.fantechs.provider.eam.mapper.EamJigMapper;
 import com.fantechs.provider.eam.service.EamJigService;
@@ -39,6 +41,8 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     private EamHtJigMapper eamHtJigMapper;
     @Resource
     private EamJigBarcodeMapper eamJigBarcodeMapper;
+    @Resource
+    private EamJigAttachmentMapper eamJigAttachmentMapper;
     @Resource
     private FileFeignApi fileFeignApi;
 
@@ -95,6 +99,21 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
                 eamJigBarcode.setUsageStatus((byte)2);
             }
             eamJigBarcodeMapper.insertList(eamJigBarcodeList);
+        }
+
+        //附件列表
+        List<EamJigAttachment> eamJigAttachmentList = record.getEamJigAttachmentList();
+        if(StringUtils.isNotEmpty(eamJigAttachmentList)){
+            for (EamJigAttachment eamJigAttachment : eamJigAttachmentList){
+                eamJigAttachment.setJigId(record.getJigId());
+                eamJigAttachment.setCreateUserId(user.getUserId());
+                eamJigAttachment.setCreateTime(new Date());
+                eamJigAttachment.setModifiedUserId(user.getUserId());
+                eamJigAttachment.setModifiedTime(new Date());
+                eamJigAttachment.setStatus(StringUtils.isEmpty(eamJigAttachment.getStatus())?1: eamJigAttachment.getStatus());
+                eamJigAttachment.setOrgId(user.getOrganizationId());
+            }
+            eamJigAttachmentMapper.insertList(eamJigAttachmentList);
         }
 
         //履历
@@ -177,6 +196,27 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
             eamJigBarcodeMapper.insertList(eamJigBarcodeList);
         }
 
+        //删除原附件
+        Example example2 = new Example(EamJigAttachment.class);
+        Example.Criteria criteria2 = example2.createCriteria();
+        criteria2.andEqualTo("jigId", entity.getJigId());
+        eamJigAttachmentMapper.deleteByExample(example2);
+
+        //附件列表
+        List<EamJigAttachment> eamJigAttachmentList = entity.getEamJigAttachmentList();
+        if(StringUtils.isNotEmpty(eamJigAttachmentList)){
+            for (EamJigAttachment eamJigAttachment : eamJigAttachmentList){
+                eamJigAttachment.setJigId(entity.getJigId());
+                eamJigAttachment.setCreateUserId(user.getUserId());
+                eamJigAttachment.setCreateTime(new Date());
+                eamJigAttachment.setModifiedUserId(user.getUserId());
+                eamJigAttachment.setModifiedTime(new Date());
+                eamJigAttachment.setStatus(StringUtils.isEmpty(eamJigAttachment.getStatus())?1: eamJigAttachment.getStatus());
+                eamJigAttachment.setOrgId(user.getOrganizationId());
+            }
+            eamJigAttachmentMapper.insertList(eamJigAttachmentList);
+        }
+
         EamHtJig eamHtJig = new EamHtJig();
         BeanUtils.copyProperties(entity, eamHtJig);
         eamHtJigMapper.insert(eamHtJig);
@@ -209,6 +249,12 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
             Example.Criteria criteria1 = example1.createCriteria();
             criteria1.andEqualTo("jigId", id);
             eamJigBarcodeMapper.deleteByExample(example1);
+
+            //删除附件信息
+            Example example2 = new Example(EamJigAttachment.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("jigId", id);
+            eamJigAttachmentMapper.deleteByExample(example2);
         }
 
         eamHtJigMapper.insertList(list);

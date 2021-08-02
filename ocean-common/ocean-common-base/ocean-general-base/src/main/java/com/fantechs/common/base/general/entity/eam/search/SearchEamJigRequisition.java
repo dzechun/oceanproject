@@ -10,10 +10,22 @@ import java.io.Serializable;
 public class SearchEamJigRequisition extends BaseQuery implements Serializable {
 
     /**
+     * 工单ID
+     */
+    @ApiModelProperty(name="workOrderId",value = "工单ID")
+    private Long workOrderId;
+
+    /**
      * 工单号
      */
     @ApiModelProperty(name="workOrderCode",value = "工单号")
     private String workOrderCode;
+
+    /**
+     * 治具ID
+     */
+    @ApiModelProperty(name="jigId",value = "治具ID")
+    private Long jigId;
 
     /**
      * 治具编码

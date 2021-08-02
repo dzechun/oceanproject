@@ -37,6 +37,7 @@
     ehja.file_name,
     ehja.store_path,
     ehja.access_url,
+    ehja.file_size,
     ehja.`status`,
     ehja.remark,
     ehja.org_id,

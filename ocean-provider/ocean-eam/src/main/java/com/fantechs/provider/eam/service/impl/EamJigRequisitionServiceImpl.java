@@ -1,10 +1,13 @@
 package com.fantechs.provider.eam.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionDto;
+import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtIssue;
@@ -14,10 +17,12 @@ import com.fantechs.common.base.general.entity.eam.search.SearchEamJigReMaterial
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRequisition;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.EamHtJigRequisitionMapper;
 import com.fantechs.provider.eam.mapper.EamJigBarcodeMapper;
 import com.fantechs.provider.eam.mapper.EamJigReMaterialMapper;
@@ -51,6 +56,8 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
     private PMFeignApi pmFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<EamJigRequisitionDto> findList(Map<String, Object> map) {
@@ -63,8 +70,67 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         return eamJigRequisitionMapper.findList(map);
     }
 
+    /**
+     *  PDA转换工单--查询工单信息
+     * @param newWorkOrderCode
+     * @param oldWorkOrderCode
+     * @return
+     */
     @Override
-    public EamJigRequisitionDto checkJigBarcode(String jigBarcode,Long jigId){
+    public EamJigRequisitionWorkOrderDto findWorkOrderToTransform(String newWorkOrderCode,String oldWorkOrderCode){
+        EamJigRequisitionWorkOrderDto eamJigRequisitionWorkOrderDto = new EamJigRequisitionWorkOrderDto();
+        //查询工单
+        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+        //新工单
+        searchMesPmWorkOrder.setWorkOrderCode(newWorkOrderCode);
+        List<MesPmWorkOrderDto> newMesPmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+        //旧工单
+        searchMesPmWorkOrder.setWorkOrderCode(oldWorkOrderCode);
+        List<MesPmWorkOrderDto> oldMesPmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+        if(StringUtils.isEmpty(newMesPmWorkOrderDtos,oldMesPmWorkOrderDtos)){
+            throw new BizErrorException("查无此工单");
+        }
+
+        if(newMesPmWorkOrderDtos.get(0).getMaterialId().longValue() != oldMesPmWorkOrderDtos.get(0).getMaterialId().longValue()){
+            throw new BizErrorException("新旧工单的物料不一致");
+        }
+        BeanUtils.copyProperties(newMesPmWorkOrderDtos.get(0),eamJigRequisitionWorkOrderDto);
+
+        //按治具id分组查询领用记录
+        SearchEamJigRequisition searchEamJigRequisition = new SearchEamJigRequisition();
+        searchEamJigRequisition.setWorkOrderId(oldMesPmWorkOrderDtos.get(0).getWorkOrderId());
+        List<Long> jigIdList = eamJigRequisitionMapper.findJigId(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
+
+        List<EamJigReMaterialDto> list = new ArrayList<>();
+        for (Long jigId : jigIdList) {
+            SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
+            searchEamJigReMaterial.setJigId(jigId);
+            searchEamJigReMaterial.setMaterialId(oldMesPmWorkOrderDtos.get(0).getMaterialId());
+            EamJigReMaterialDto eamJigReMaterialDto = eamJigReMaterialMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigReMaterial)).get(0);
+
+            //获取记录数量
+            searchEamJigRequisition.setJigId(jigId);
+            Integer recordQty = eamJigRequisitionMapper.getRecordQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
+            eamJigReMaterialDto.setRecordQty(recordQty);
+
+            list.add(eamJigReMaterialDto);
+        }
+        eamJigRequisitionWorkOrderDto.setList(list);
+
+        return eamJigRequisitionWorkOrderDto;
+    }
+
+
+    /**
+     * PDA治具领用--检查治具条码
+     * @param jigBarcode
+     * @param jigId
+     * @return
+     */
+    @Override
+    public EamJigBarcode checkJigBarcode(String jigBarcode,Long jigId,Integer usageQty,Integer count){
+        this.checkUsageQty(usageQty,count);
+
         Example example = new Example(EamJigBarcode.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("jigBarcode",jigBarcode);
@@ -82,15 +148,17 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             throw new BizErrorException("该治具正在使用中");
         }
 
-        EamJigRequisitionDto eamJigRequisitionDto = new EamJigRequisitionDto();
-        eamJigRequisitionDto.setJigId(eamJigBarcode.getJigId());
-        eamJigRequisitionDto.setJigBarcodeId(eamJigBarcode.getJigBarcodeId());
-
-        return eamJigRequisitionDto;
+        return eamJigBarcode;
     }
 
+    /**
+     *  PDA治具领用--根据工单号查询工单信息
+     * @param workOrderCode
+     * @return
+     */
     @Override
-    public EamJigRequisitionDto findWorkOrder(String workOrderCode){
+    public EamJigRequisitionWorkOrderDto findWorkOrder(String workOrderCode){
+        EamJigRequisitionWorkOrderDto eamJigRequisitionWorkOrderDto = new EamJigRequisitionWorkOrderDto();
         //查询工单
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
@@ -98,23 +166,22 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         if(StringUtils.isEmpty(mesPmWorkOrderDtos)){
             throw new BizErrorException("查无此工单");
         }
-        MesPmWorkOrderDto mesPmWorkOrderDto = mesPmWorkOrderDtos.get(0);
+        BeanUtils.copyProperties(mesPmWorkOrderDtos.get(0),eamJigRequisitionWorkOrderDto);
 
         //查询治具与产品绑定关系
         SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
-        searchEamJigReMaterial.setMaterialId(mesPmWorkOrderDto.getMaterialId());
+        searchEamJigReMaterial.setMaterialId(eamJigRequisitionWorkOrderDto.getMaterialId());
         List<EamJigReMaterialDto> eamJigReMaterialDtos = eamJigReMaterialMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigReMaterial));
+        eamJigRequisitionWorkOrderDto.setList(eamJigReMaterialDtos);
 
-        EamJigRequisitionDto eamJigRequisitionDto = new EamJigRequisitionDto();
-        eamJigRequisitionDto.setWorkOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
-        eamJigRequisitionDto.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
-        eamJigRequisitionDto.setMaterialDesc(mesPmWorkOrderDto.getMaterialDesc());
-        eamJigRequisitionDto.setProName(mesPmWorkOrderDto.getProName());
-        eamJigRequisitionDto.setList(eamJigReMaterialDtos);
-
-        return eamJigRequisitionDto;
+        return eamJigRequisitionWorkOrderDto;
     }
 
+    /**
+     *  PDA治具领用--保存领用记录
+     * @param list
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchSave(List<EamJigRequisition> list) {
@@ -148,5 +215,25 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         return eamHtJigRequisitionMapper.insertList(htList);
     }
 
+    /**
+     *  PDA治具领用--配置项判断
+     * @param
+     * @return
+     */
+    public boolean checkUsageQty(int usageQty,int count) {
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("UsageQtyEqual");
+        List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(Integer.parseInt(sysSpecItemList.get(0).getParaValue()) == 1){
+            if(usageQty != count){
+                throw new BizErrorException("治具已扫描数量必须与所需数量一致");
+            }
+        }else {
+            if(usageQty < count){
+                throw new BizErrorException("治具已扫描数量不能大于所需数量");
+            }
+        }
 
+        return true;
+    }
 }
