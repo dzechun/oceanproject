@@ -7,7 +7,6 @@ import com.fantechs.common.base.general.entity.eam.EamDataCollect;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.eam.mapper.EamEquipmentMapper;
 import com.fantechs.provider.eam.service.EamDataCollectService;
 import com.fantechs.provider.eam.service.socket.SocketService;
@@ -40,8 +39,8 @@ public class SocketServiceImpl implements SocketService {
     //新加*************
     @Resource
     private EamDataCollectService eamDataCollectService;
-    @Resource
-    private EamFeignApi eamFeignApi;
+
+
     private Socket socket;
     //定义Lock锁对象
     Lock lock = new ReentrantLock();
@@ -335,18 +334,6 @@ public class SocketServiceImpl implements SocketService {
 
         return 1;
     }
-
-/*    public EamEquipment getEquipmentEam(String ip){
-        EamEquipment eamEquipment = eamFeignApi.detailByIp(ip).getData();
-        return eamEquipment;
-    }
-
-    public int updateStatusEam(String ip, Byte bytes) {
-        EamEquipment eamEquipment = getEquipment(ip);
-        eamEquipment.setOnlineStatus(bytes);
-        eamFeignApi.update(eamEquipment);
-        return 1;
-    }*/
 
     @Override
     public int BatchInstructions(Long proLineId,String code,Object url) {

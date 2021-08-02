@@ -50,12 +50,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.eam</groupId>
-            <artifactId>ocean-eam-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.fantechs.provider.api.mes.pm</groupId>
             <artifactId>ocean-mes-pm-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
