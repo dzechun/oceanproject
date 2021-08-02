@@ -264,18 +264,17 @@ public class EamJig extends ValidGroup implements Serializable {
     @ApiModelProperty(name="eamJigBarcodeList",value = "条码信息")
     private List<EamJigBarcode> eamJigBarcodeList = new ArrayList<>();
 
+    /**
+     * 附件信息
+     */
+    @ApiModelProperty(name="eamJigAttachmentList",value = "附件信息")
+    private List<EamJigAttachment> eamJigAttachmentList = new ArrayList<>();
+
     private String option1;
 
     private String option2;
 
     private String option3;
-
-    /**
-     * 附件URL集合(路径集合，用逗号隔开)
-     */
-    @ApiModelProperty(name="attachmentAddress",value = "附件URL集合(路径集合，用逗号隔开)")
-    @Column(name = "attachment_address")
-    private String attachmentAddress;
 
     private static final long serialVersionUID = 1L;
 }

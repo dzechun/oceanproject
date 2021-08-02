@@ -5,6 +5,7 @@ import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,8 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class EasyPoiUtils {
 
@@ -105,6 +105,42 @@ public final class EasyPoiUtils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 导出多个Sheet
+     * @param map：多个Sheet数据集合
+     * @param clzList：每个Sheet对应的实体类
+     * @param fileName：导出的文件名称
+     * @param response：响应对象
+     */
+    public static<T> void exportExcelSheets(Map<String,String> map,List<Class<?>> clzList, String fileName, HttpServletResponse response) throws IOException {
+        Set<String> sheetNames = map.keySet();
+        List<Map<String, Object>> sheetsList = new ArrayList<>();
+
+        int i = 0;
+        for (String sheetName : sheetNames) {
+            ExportParams reportWorkExportParams = new ExportParams();
+            reportWorkExportParams.setSheetName(sheetName);
+            reportWorkExportParams.setTitle(sheetName);
+            // 创建sheet1使用得map
+            Map<String, Object> exportMap = new HashMap<>();
+            // title的参数为ExportParams类型，目前仅仅在ExportParams中设置了sheetName
+            exportMap.put("title", reportWorkExportParams);
+            // 模版导出对应得实体类型
+            exportMap.put("entity", clzList.get(i));
+            // sheet中要填充得数据
+            exportMap.put("data", JsonUtils.jsonToList(map.get(sheetName),clzList.get(i)));
+            sheetsList.add(exportMap);
+            i++;
+        }
+
+        // 执行方法
+        Workbook workbook = ExcelExportUtil.exportExcel(sheetsList, ExcelType.HSSF);
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("content-Type", "application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+        workbook.write(response.getOutputStream());
     }
 
 }

@@ -119,12 +119,14 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
+        int i = eamEquipmentMapper.updateByPrimaryKeySelective(entity);
 
+        //添加履历表
         EamHtEquipment eamHtEquipment = new EamHtEquipment();
         BeanUtils.copyProperties(entity, eamHtEquipment);
         eamHtEquipmentMapper.insertSelective(eamHtEquipment);
 
-        return eamEquipmentMapper.updateByPrimaryKeySelective(entity);
+        return i;
     }
 
     @Override
@@ -135,7 +137,6 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        List<EamHtEquipment> list = new ArrayList<>();
         String[] idArry = ids.split(",");
         for (String id : idArry) {
             EamEquipment eamEquipment = eamEquipmentMapper.selectByPrimaryKey(id);
@@ -145,10 +146,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
 
             EamHtEquipment eamHtEquipment = new EamHtEquipment();
             BeanUtils.copyProperties(eamEquipment, eamHtEquipment);
-            list.add(eamHtEquipment);
         }
-
-        eamHtEquipmentMapper.insertList(list);
 
         return eamEquipmentMapper.deleteByIds(ids);
     }

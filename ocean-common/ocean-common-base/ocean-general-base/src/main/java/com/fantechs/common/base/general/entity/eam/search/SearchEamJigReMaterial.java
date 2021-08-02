@@ -10,6 +10,12 @@ import java.io.Serializable;
 public class SearchEamJigReMaterial extends BaseQuery implements Serializable {
 
     /**
+     * 物料ID
+     */
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    private Long materialId;
+
+    /**
      * 治具ID
      */
     @ApiModelProperty(name="jigId",value = "治具ID")

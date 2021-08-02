@@ -1,5 +1,7 @@
 package com.fantechs.common.base.general.entity.ureport;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -22,48 +24,56 @@ public class MesSfcBarcodeProcessReport extends ValidGroup implements Serializab
      * 成品条码
      */
     @ApiModelProperty(name="barcode",value = "成品条码")
+    @Excel(name = "成品条码", height = 20, width = 30,orderNum = "1")
     private String barcode;
 
     /**
      * 工单编码
      */
     @ApiModelProperty(name="workOrderCode",value = "工单编码")
+    @Excel(name = "工单编码", height = 20, width = 30,orderNum = "2")
     private String workOrderCode;
 
     /**
      *工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)
      */
     @ApiModelProperty(name="workOrderStatus",value = "工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)")
+    @Excel(name = "工单状态", height = 20, width = 30,orderNum = "3",replace = {"1_待生成","2_条码打印完成","3_生产中","4_异常挂起","5_取消","6_完工","7_删除"})
     private Byte workOrderStatus;
 
     /**
      * 生产线
      */
     @ApiModelProperty(name="proLineName",value = "生产线")
+    @Excel(name = "生产线", height = 20, width = 30,orderNum = "4")
     private String proLineName;
 
     /**
      * 工艺路线名称
      */
     @ApiModelProperty(name="routeName",value = "工艺路线名称")
+    @Excel(name = "工艺路线名称", height = 20, width = 30,orderNum = "5")
     private String routeName;
 
     /**
      * 产品名称
      */
     @ApiModelProperty(name="materialName",value = "产品名称")
+    @Excel(name = "产品名称", height = 20, width = 30,orderNum = "6")
     private String materialName;
 
     /**
      * 产品编码
      */
     @ApiModelProperty(name="materialCode",value = "产品编码")
+    @Excel(name = "产品编码", height = 20, width = 30,orderNum = "7")
     private String materialCode;
 
     /**
      * 产品型号名称
      */
     @ApiModelProperty(name="productModelName",value = "产品型号")
+    @Excel(name = "产品型号名称", height = 20, width = 30,orderNum = "8")
     private String productModelName;
 
     /**
@@ -82,6 +92,7 @@ public class MesSfcBarcodeProcessReport extends ValidGroup implements Serializab
      * 包箱记录
      */
     @ApiModelProperty(name="boxList",value = "包箱记录")
+    @ExcelCollection(name = "包箱记录")
     private List<BoxRecordUreport> boxList;
 
     /**
@@ -100,6 +111,7 @@ public class MesSfcBarcodeProcessReport extends ValidGroup implements Serializab
      * 栈板记录
      */
     @ApiModelProperty(name="palletList",value = "栈板记录")
+    @ExcelCollection(name = "栈板记录")
     private List<PalletRecordUreport> palletList;
 
     /**

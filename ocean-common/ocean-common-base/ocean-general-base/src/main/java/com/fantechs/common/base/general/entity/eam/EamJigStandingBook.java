@@ -124,13 +124,5 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
 
     private String option3;
 
-    /**
-     * 附件(url集合，用逗号隔开)
-     */
-    @ApiModelProperty(name="attachmentPath",value = "附件(url集合，用逗号隔开)")
-    @Excel(name = "附件(url集合，用逗号隔开)", height = 20, width = 30,orderNum="12")
-    @Column(name = "attachment_path")
-    private String attachmentPath;
-
     private static final long serialVersionUID = 1L;
 }

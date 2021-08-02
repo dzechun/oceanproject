@@ -84,7 +84,7 @@
       LEFT JOIN base_inspection_standard bis ON bis.inspection_standard_id = qiio.inspection_standard_id
       <where>
         <if test="barcode != null and barcode != ''" >
-          and mswob.barcode = #{barcode}
+          and mswob.barcode = #{barcode} and qiio.ipqc_inspection_order_code is not null
         </if>
         <if test="orgId != null">
           and mswob.org_id = #{orgId}

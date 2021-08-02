@@ -18,12 +18,14 @@ import com.fantechs.provider.eam.mapper.EamHtNewsMapper;
 import com.fantechs.provider.eam.mapper.EamNewsAttachmentMapper;
 import com.fantechs.provider.eam.mapper.EamNewsMapper;
 import com.fantechs.provider.eam.service.EamNewsService;
+import com.fantechs.provider.eam.service.socket.impl.SocketServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +46,8 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
     private EamNewsAttachmentMapper eamNewsAttachmentMapper;
     @Resource
     private EamEquipmentMapper eamEquipmentMapper;
+    @Resource
+    private SocketServiceImpl socketService;
 
     @Override
     public List<EamNewsDto> findList(Map<String, Object> map) {
@@ -107,6 +111,9 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
             eamNews.setAuditUserId(user.getUserId());
             num += eamNewsMapper.updateByPrimaryKeySelective(eamNews);
         }
+
+        //发送消息
+        socketService.BatchInstructions(null,"1201","http://192.168.204.163/#/ESOPDataShow?ip=");
 
         return num;
     }
