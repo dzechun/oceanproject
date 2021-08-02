@@ -70,6 +70,9 @@
       <if test="issueName != null and issueName!=''">
         and ei.issue_name like CONCAT('%', #{issueName}, '%')
       </if>
+      <if test="materialId!=null">
+        and ei.material_id=#{materialId}
+      </if>
       <if test="materialCode != null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>

@@ -103,6 +103,12 @@
       <if test="releaseStatus!=null and releaseStatus!=''">
         and ewr.release_status = #{releaseStatus}
       </if>
+        <if test="workOrderStatus!=null and workOrderStatus!=''">
+            and mpwo.work_order_status = #{workOrderStatus}
+        </if>
+        <if test="proLineId!=null and proLineId!=''">
+            and ewr.pro_line_id = #{proLineId}
+        </if>
     </where>
   </select>
 

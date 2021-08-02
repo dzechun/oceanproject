@@ -10,6 +10,12 @@ import java.io.Serializable;
 public class SearchEamIssue extends BaseQuery implements Serializable {
 
     /**
+     * 产品id
+     */
+    @ApiModelProperty(name="materialId",value = "产品id")
+    private Long materialId;
+
+    /**
      * 产品编码
      */
     @ApiModelProperty(name="materialCode",value = "产品编码")
