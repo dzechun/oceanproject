@@ -77,7 +77,7 @@
     LEFT JOIN base_route br ON ewr.route_id = br.route_id
     LEFT JOIN base_factory bf ON ewr.factory_id = bf.factory_id
     LEFT JOIN base_work_shop bws ON ewr.work_shop_id = bws.work_shop_id
-    <if test="equipmentMacAddress!=null and equipmentMacAddress!=''">
+    <if test="equipmentIp!=null and equipmentIp!=''">
         LEFT JOIN eam_equipment ee ON ewr.pro_line_id = ee.pro_line_id
     </if>
     LEFT JOIN base_pro_line bpl ON ewr.pro_line_id = bpl.pro_line_id
@@ -97,8 +97,8 @@
       <if test="materialCode!=null and materialCode!=''">
          and bm.material_code = #{materialCode}
        </if>
-      <if test="equipmentMacAddress!=null and equipmentMacAddress!=''">
-        and ee.equipment_mac_address = #{equipmentMacAddress}
+      <if test="equipmentIp!=null and equipmentIp!=''">
+            and ee.equipment_ip = #{equipmentIp}
       </if>
       <if test="releaseStatus!=null and releaseStatus!=''">
         and ewr.release_status = #{releaseStatus}
