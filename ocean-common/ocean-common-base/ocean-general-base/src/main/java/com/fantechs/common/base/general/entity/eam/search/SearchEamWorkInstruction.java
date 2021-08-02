@@ -1,14 +1,10 @@
 package com.fantechs.common.base.general.entity.eam.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
-import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -64,4 +60,10 @@ public class SearchEamWorkInstruction extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name="proLineId",value = "线别ID")
     private Long proLineId;
+
+    /**
+     * MAC地址
+     */
+    @ApiModelProperty(name="equipmentMacAddress",value = "MAC地址")
+    private String equipmentMacAddress;
 }

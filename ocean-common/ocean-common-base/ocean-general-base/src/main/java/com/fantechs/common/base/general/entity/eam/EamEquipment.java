@@ -192,6 +192,7 @@ public class EamEquipment extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="equipmentMacAddress",value = "MAC地址")
     @Column(name = "equipment_mac_address")
+    @NotNull(message = "MAC地址为空")
     private String equipmentMacAddress;
     /**
      * 出厂日期
