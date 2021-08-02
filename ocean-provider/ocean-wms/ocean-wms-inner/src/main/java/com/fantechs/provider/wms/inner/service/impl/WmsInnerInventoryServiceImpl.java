@@ -61,14 +61,14 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
                 WmsInnerInventory innerInventory = new WmsInnerInventory();
                 BeanUtils.copyProperties(wmsInnerInventory, innerInventory);
                 innerInventory.setPackingQty(quantity);
-                innerInventory.setInventoryTotalQty(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity()));
+                //innerInventory.setInventoryTotalQty(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity()));
                 innerInventory.setParentInventoryId(id);
                 innerInventory.setInventoryId(null);
                 innerInventory.setLockStatus((byte) 1);
                 this.save(innerInventory);
 
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
-                wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().subtract(innerInventory.getInventoryTotalQty()));
+                //wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().subtract(innerInventory.getInventoryTotalQty()));
                 this.update(wmsInnerInventory);
             }else {
                 throw new BizErrorException("库存数量不足");
@@ -94,25 +94,25 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
             } else if (quantity.compareTo(wmsInnerInventory.getPackingQty()) == 0){
                 wmsInnerInventory.setLockStatus((byte) 0);
                 wmsInnerInventory.setPackingQty(new BigDecimal(0));
-                wmsInnerInventory.setInventoryTotalQty(new BigDecimal(0));
+                //wmsInnerInventory.setInventoryTotalQty(new BigDecimal(0));
             } else {
                 WmsInnerInventory innerInventory = new WmsInnerInventory();
                 BeanUtils.copyProperties(wmsInnerInventory,innerInventory);
                 innerInventory.setPackingQty(quantity);
-                innerInventory.setInventoryTotalQty(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity()));
+                //innerInventory.setInventoryTotalQty(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity()));
                 innerInventory.setParentInventoryId(id);
                 innerInventory.setInventoryId(null);
                 innerInventory.setLockStatus((byte) 0);
                 this.save(innerInventory);
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
-                wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().subtract(innerInventory.getInventoryTotalQty()));
+                //wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().subtract(innerInventory.getInventoryTotalQty()));
             }
             this.update(wmsInnerInventory);
             example.clear();
             example.createCriteria().andEqualTo("inventoryId",wmsInnerInventory.getParentInventoryId());
             wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
             wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(quantity));
-            wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().add(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity())));
+            //wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().add(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity())));
             this.update(wmsInnerInventory);
         } else {
             throw new BizErrorException("当前库存未进行锁定");
