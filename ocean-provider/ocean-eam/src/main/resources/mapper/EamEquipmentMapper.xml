@@ -59,6 +59,7 @@
     <result column="pro_line_name" jdbcType="VARCHAR" property="proLineName"/>
     <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
     <result column="station_name" jdbcType="VARCHAR" property="stationName"/>
     <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
     <result column="maintain_project_code" jdbcType="VARCHAR" property="maintainProjectCode"/>
@@ -113,7 +114,7 @@
     select <include refid="Base_Column_List"></include>,
     eec.equipment_category_desc as equipment_category_desc ,bw.warehouse_name as warehouse_name, bws.work_shop_name as work_shop_name,
     bst.station_name as station_name ,bpl.pro_name as pro_name, bse.section_name as section_name,
-    bp.process_name as process_name ,bf.factory_name as factory_name, emp.maintain_project_code as maintain_project_code,
+    bp.process_name as process_name ,bp.process_code as process_code ,bf.factory_name as factory_name, emp.maintain_project_code as maintain_project_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name

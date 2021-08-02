@@ -59,4 +59,11 @@ public class EamIssueDto extends EamIssue implements Serializable {
     @Excel(name = "产品型号", height = 20, width = 30,orderNum="3")
     private String productModelName;
 
+    /**
+     * 工序编码
+     */
+    @Transient
+    @ApiModelProperty(name = "processCode",value = "工序编码")
+    private String processCode;
+
 }

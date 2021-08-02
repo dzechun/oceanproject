@@ -1,13 +1,17 @@
 package com.fantechs.provider.eam.controller;
 
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamHtWiReleaseDto;
+import com.fantechs.common.base.general.dto.eam.EamNewsDto;
 import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
 import com.fantechs.common.base.general.entity.eam.EamWiRelease;
 import com.fantechs.common.base.general.entity.eam.history.EamHtReturnOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamNews;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamReturnOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWiRelease;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.eam.service.EamHtWiReleaseService;
 import com.fantechs.provider.eam.service.EamWiReleaseService;
@@ -20,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -80,7 +85,18 @@ public class EamWiReleaseController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchEamWiRelease searchEamWiRelease){
+        List<EamWiReleaseDto> list = eamWiReleaseService.findList(searchEamWiRelease);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出信息", "WI发布管理", EamWiReleaseDto.class, "WI发布管理.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
+    }
 
     @ApiOperation("审核")
     @PostMapping("/censor")

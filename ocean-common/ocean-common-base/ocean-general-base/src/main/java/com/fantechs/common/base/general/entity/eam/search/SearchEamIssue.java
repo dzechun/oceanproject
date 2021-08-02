@@ -45,4 +45,9 @@ public class SearchEamIssue extends BaseQuery implements Serializable {
     @ApiModelProperty(name="issueName",value = "问题名称")
     private String issueName;
 
+    /**
+     * 设备IP
+     */
+    @ApiModelProperty(name="equipmentIp",value = "设备IP")
+    private String equipmentIp;
 }

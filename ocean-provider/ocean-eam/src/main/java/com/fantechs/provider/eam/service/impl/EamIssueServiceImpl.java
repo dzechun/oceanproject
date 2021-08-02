@@ -3,11 +3,13 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.dto.eam.EamIssueDto;
 import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtIssue;
 import com.fantechs.common.base.general.entity.eam.history.EamHtNews;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWiRelease;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -47,33 +49,41 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
 
     @Override
     public List<EamIssueDto> findList(Map<String, Object> map) {
-        if(StringUtils.isEmpty(map.get("equipmentIp"))) {
-            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
-            map.put("orgId", user.getOrganizationId());
-        }else {
-            Example example = new Example(EamEquipment.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("equipmentIp",map.get("equipmentIp"));
-            List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
-            if(StringUtils.isEmpty(eamEquipments)){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        if (StringUtils.isNotEmpty(map.get("equipmentIp"))) {
+            SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
+            searchEamEquipment.setEquipmentIp(map.get("equipmentIp").toString());
+            List<EamEquipmentDto> eamEquipmentDtos = eamEquipmentMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
+            if (StringUtils.isEmpty(eamEquipmentDtos)) {
                 throw new BizErrorException("查无绑定此IP的设备");
             }
 
             SearchEamWiRelease searchEamWiRelease = new SearchEamWiRelease();
-            searchEamWiRelease.setWorkOrderStatus((byte)3);
-            searchEamWiRelease.setProLineId(eamEquipments.get(0).getProLineId());
+            searchEamWiRelease.setWorkOrderStatus((byte) 3);
+            searchEamWiRelease.setProLineId(eamEquipmentDtos.get(0).getProLineId());
             List<EamWiReleaseDto> eamWiReleaseDtos = eamWiReleaseMapper.findList(searchEamWiRelease);
-            if(StringUtils.isEmpty(eamWiReleaseDtos)){
+            if (StringUtils.isEmpty(eamWiReleaseDtos)) {
                 throw new BizErrorException("该产线没有生产中的工单");
             }
 
             map.put("materialId", eamWiReleaseDtos.get(0).getMaterialId());
-            map.put("orgId", eamWiReleaseDtos.get(0).getOrgId());
+            map.put("orgId", user.getOrganizationId());
+            List<EamIssueDto> list = eamIssueMapper.findList(map);
+
+            if(StringUtils.isNotEmpty(list)) {
+                for (EamIssueDto eamIssueDto : list) {
+                    eamIssueDto.setProcessCode(eamEquipmentDtos.get(0).getProcessCode());
+                }
+            }
+
+            return list;
         }
 
+        map.put("orgId", user.getOrganizationId());
         return eamIssueMapper.findList(map);
     }
 

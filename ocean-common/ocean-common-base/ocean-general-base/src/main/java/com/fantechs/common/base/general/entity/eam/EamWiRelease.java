@@ -26,7 +26,6 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * ESOP发布管理ID
      */
     @ApiModelProperty(name="wiReleaseId",value = "ESOP发布管理ID")
-    @Excel(name = "ESOP发布管理ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "wi_release_id")
     private Long wiReleaseId;
@@ -45,7 +44,6 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
     @NotNull(message = "工单ID不能为空")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
     @Column(name = "work_order_id")
     private Long workOrderId;
 
@@ -53,7 +51,6 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
     @Column(name = "material_id")
     private Long materialId;
 
@@ -61,7 +58,6 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 工艺路线ID
      */
     @ApiModelProperty(name="routeId",value = "工艺路线ID")
-    @Excel(name = "工艺路线ID", height = 20, width = 30,orderNum="") 
     @Column(name = "route_id")
     private Long routeId;
 
@@ -70,7 +66,6 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="proLineId",value = "产线ID")
     @NotNull(message = "产线ID不能为空")
-    @Excel(name = "产线ID", height = 20, width = 30,orderNum="") 
     @Column(name = "pro_line_id")
     private Long proLineId;
 
@@ -78,7 +73,6 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 车间ID
      */
     @ApiModelProperty(name="workShopId",value = "车间ID")
-    @Excel(name = "车间ID", height = 20, width = 30,orderNum="") 
     @Column(name = "work_shop_id")
     private Long workShopId;
 
@@ -86,7 +80,6 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 工厂ID
      */
     @ApiModelProperty(name="factoryId",value = "工厂ID")
-    @Excel(name = "工厂ID", height = 20, width = 30,orderNum="") 
     @Column(name = "factory_id")
     private Long factoryId;
 
@@ -94,28 +87,25 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 发布状态(1-待发布 2-已发布)
      */
     @ApiModelProperty(name="release_status",value = "发布状态(1-待发布 2-已发布)")
-    @Excel(name = "状态(1-待发布 2-已发布)", height = 20, width = 30,orderNum="11")
+    @Excel(name = "状态(1-待发布 2-已发布)", height = 20, width = 30,orderNum="11",replace = {"待发布_1","已发布_2"})
     private Byte releaseStatus;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -123,7 +113,6 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="12")
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -140,7 +129,6 @@ public class EamWiRelease extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="14")
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
