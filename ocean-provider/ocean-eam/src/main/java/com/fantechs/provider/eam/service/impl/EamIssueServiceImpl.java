@@ -47,11 +47,11 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
     public List<EamIssueDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+        throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+    }
         map.put("orgId", user.getOrganizationId());
         return eamIssueMapper.findList(map);
-    }
+}
 
     @Override
     public EamIssue selectByKey(Object key) {

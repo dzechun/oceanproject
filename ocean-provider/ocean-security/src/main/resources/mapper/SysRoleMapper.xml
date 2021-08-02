@@ -58,4 +58,24 @@
     left join sys_role sr on sar.role_id = sr.role_id
   </select>
 
+  <select id="findByUserName" parameterType="com.fantechs.common.base.entity.security.search.SearchSysRole" resultMap="BaseResultMapDto">
+    select sr.role_id, sr.role_code, sr.role_name, sr.role_desc, sr.create_user_id, u.user_name as create_user_name,
+    sr.create_time, sr.modified_user_id, s.user_name as modified_user_name,
+    sr.modified_time
+    from sys_role sr
+    left join sys_user u on sr.create_user_id=u.user_id
+    left join sys_user s on sr.modified_user_id=s.user_id
+    left join sys_user_role sur on sr.role_id=sur.role_id
+    left join sys_user su on sur.user_id=su.user_id
+    <where>
+      1=1
+      <if test="userName!=null and userName!=''">
+        and su.user_name=#{userName}
+      </if>
+      <if test="status!=null">
+        and sr.status=#{status}
+      </if>
+    </where>
+  </select>
+
 </mapper>

@@ -1,7 +1,6 @@
 package com.fantechs.security.controller;
 
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.history.SysHtSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;

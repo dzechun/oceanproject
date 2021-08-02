@@ -207,8 +207,8 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 上次保养时间
      */
     @ApiModelProperty(name="lastTimeMaintainTime",value = "上次保养时间")
-    @Excel(name = "上次保养时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "上次保养时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "last_time_maintain_time")
     private Date lastTimeMaintainTime;
 
@@ -216,8 +216,8 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 下次保养时间
      */
     @ApiModelProperty(name="nextTimeMaintainTime",value = "下次保养时间")
-    @Excel(name = "下次保养时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "下次保养时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "next_time_maintain_time")
     private Date nextTimeMaintainTime;
 
@@ -299,8 +299,8 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="17",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="17",exportFormat ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -315,8 +315,8 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="19",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="19",exportFormat ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "modified_time")
     private Date modifiedTime;
 

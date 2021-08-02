@@ -1,26 +1,37 @@
 package com.fantechs.security.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.security.SysRoleDto;
+import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysRole;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
+import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
+import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.security.mapper.SysRoleMapper;
 import com.fantechs.security.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 ;
@@ -41,6 +52,15 @@ public class LoginController {
 
     @Resource
     private SysUserService sysUserService;
+
+    @Resource
+    private SysRoleMapper sysRoleMapper;
+
+    @Resource
+    private EamFeignApi eamFeignApi;
+
+
+
 
     @PostMapping("/meslogin")
     @ApiOperation(value = "登陆接口")
@@ -102,5 +122,32 @@ public class LoginController {
         log.info("--------------返回一个可访问的token : " + token + "--------------");
 
         return ControllerUtil.returnDataSuccess("生成client_token成功", token);
+    }
+
+
+    @PostMapping("/eamlogin")
+    @ApiOperation(value = "设备登陆接口")
+    public ResponseEntity mesloginByEam(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId
+            , @RequestParam(value = "mac") String mac){
+
+        //获取当前用户所在的所有角色
+        SearchSysRole searchSysRole = new SearchSysRole();
+        searchSysRole.setUserName(username);
+        List<SysRoleDto> sysRoleDtos = sysRoleMapper.findByUserName(searchSysRole);
+
+        SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
+        searchEamEquipment.setEquipmentMacAddress(mac);
+        searchEamEquipment.setOrgId((long)29);
+        ResponseEntity<List<EamEquipmentDto>> list = eamFeignApi.findByMac(mac,(long)29);
+        if(StringUtils.isEmpty(list.getData())){
+            return ControllerUtil.returnFail("登录错误，该用户无权限登录",1);
+        }
+        ResponseEntity responseEntity = null;
+        for(SysRoleDto sysRoleDto : sysRoleDtos){
+            if(list.getData().get(0).getProcessName().equals(sysRoleDto.getRoleName()) ){
+                responseEntity = securityFeignApi.login(username, password,orgId);
+            }
+        }
+        return  responseEntity;
     }
 }
