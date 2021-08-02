@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.eam.EamJigRequisition;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -90,35 +91,6 @@ public class EamJigRequisitionDto extends EamJigRequisition implements Serializa
     @ApiModelProperty(name = "currentUsageTime",value = "当前使用次数")
     @Excel(name = "当前使用次数", height = 20, width = 30,orderNum="5")
     private Integer currentUsageTime;
-
-    /**
-     * 工单号
-     */
-    @Transient
-    @ApiModelProperty(name = "workOrderCode",value = "工单号")
-    @Excel(name = "工单号", height = 20, width = 30,orderNum="5")
-    private String workOrderCode;
-
-    /**
-     * 产品料号
-     */
-    @Transient
-    @ApiModelProperty(name = "materialCode",value = "产品料号")
-    private String materialCode;
-
-    /**
-     * 料号描述
-     */
-    @Transient
-    @ApiModelProperty(name = "materialDesc",value = "料号描述")
-    private String materialDesc;
-
-    /**
-     * 生产线名
-     */
-    @Transient
-    @ApiModelProperty(name = "proName",value = "生产线名")
-    private String proName;
 
     /**
      * 仓库

@@ -28,6 +28,9 @@
 
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamWiReleaseDto">
+      <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+      <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+      <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
       <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
       <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
       <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
@@ -68,7 +71,10 @@
     SELECT<include refid="BaseColumnList"/>,
     mpwo.work_order_code as work_order_code,mpwo.work_order_status as work_order_status,bm.material_code as material_code,
     bpm.product_model_name as product_model_name,bpm.product_model_code as product_model_code,br.route_name as route_name,
-    bf.factory_name as factory_name,bws.work_shop_name as work_shop_name,bpl.pro_name as pro_name
+    bf.factory_name as factory_name,bws.work_shop_name as work_shop_name,bpl.pro_name as pro_line_name,
+      u.user_name as create_user_name,
+      s.user_name as modified_user_name,
+      bo.organization_name
     FROM eam_wi_release ewr
     LEFT JOIN mes_pm_work_order mpwo ON ewr.work_order_id = mpwo.work_order_id
     LEFT JOIN base_material bm ON ewr.material_id = bm.material_id
@@ -77,13 +83,13 @@
     LEFT JOIN base_route br ON ewr.route_id = br.route_id
     LEFT JOIN base_factory bf ON ewr.factory_id = bf.factory_id
     LEFT JOIN base_work_shop bws ON ewr.work_shop_id = bws.work_shop_id
-    <if test="equipmentMacAddress!=null and equipmentMacAddress!=''">
+    <if test="equipmentIp!=null and equipmentIp!=''">
         LEFT JOIN eam_equipment ee ON ewr.pro_line_id = ee.pro_line_id
     </if>
     LEFT JOIN base_pro_line bpl ON ewr.pro_line_id = bpl.pro_line_id
-    LEFT JOIN ocean_v2.sys_user su ON ewr.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON ewr.modified_user_id = sus.user_id
-    LEFT JOIN base_organization bo ON ewr.org_id = bo.organization_id
+      left join ocean_v2.sys_user u on ewr.create_user_id=u.user_id
+      left join ocean_v2.sys_user s on ewr.modified_user_id=s.user_id
+      left join fantech_imes_v2.base_organization bo ON ewr.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">
         and ewr.org_id = #{orgId}
@@ -97,12 +103,18 @@
       <if test="materialCode!=null and materialCode!=''">
          and bm.material_code = #{materialCode}
        </if>
-      <if test="equipmentMacAddress!=null and equipmentMacAddress!=''">
-        and ee.equipment_mac_address = #{equipmentMacAddress}
+      <if test="equipmentIp!=null and equipmentIp!=''">
+            and ee.equipment_ip = #{equipmentIp}
       </if>
       <if test="releaseStatus!=null and releaseStatus!=''">
         and ewr.release_status = #{releaseStatus}
       </if>
+        <if test="workOrderStatus!=null and workOrderStatus!=''">
+            and mpwo.work_order_status = #{workOrderStatus}
+        </if>
+        <if test="proLineId!=null and proLineId!=''">
+            and ewr.pro_line_id = #{proLineId}
+        </if>
     </where>
   </select>
 

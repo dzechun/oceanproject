@@ -5,7 +5,9 @@ import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -117,6 +119,12 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    /**
+     * 附件信息
+     */
+    @ApiModelProperty(name="eamJigStandingBookAttachmentList",value = "附件信息")
+    private List<EamJigStandingBookAttachment> eamJigStandingBookAttachmentList = new ArrayList<>();
 
     private String option1;
 

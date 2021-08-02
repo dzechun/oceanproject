@@ -50,10 +50,10 @@
     <where>
       and mskpr.org_id = #{orgId}
       <if test="type == 1">
-        and mskpr.material_code = #{barcode}
+        and mskpr.material_code = #{customerBarcode}
       </if>
       <if test="type == 2">
-        and mskpr.part_barcode = #{barcode}
+        and mskpr.part_barcode = #{partBarcode}
       </if>
     </where>
   </select>
