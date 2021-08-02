@@ -57,7 +57,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         example.createCriteria().andEqualTo("inventoryId",id);
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
         if (wmsInnerInventory.getLockStatus() == 0){
-            if (StringUtils.isNotEmpty(wmsInnerInventory) && wmsInnerInventory.getPackingQty().compareTo(quantity) == 1){
+            if (StringUtils.isNotEmpty(wmsInnerInventory) && wmsInnerInventory.getPackingQty().compareTo(quantity) >= 0){
                 WmsInnerInventory innerInventory = new WmsInnerInventory();
                 BeanUtils.copyProperties(wmsInnerInventory, innerInventory);
                 innerInventory.setPackingQty(quantity);

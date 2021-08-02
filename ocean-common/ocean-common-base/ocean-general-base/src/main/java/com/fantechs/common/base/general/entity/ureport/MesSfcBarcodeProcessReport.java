@@ -38,7 +38,7 @@ public class MesSfcBarcodeProcessReport extends ValidGroup implements Serializab
      *工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)
      */
     @ApiModelProperty(name="workOrderStatus",value = "工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)")
-    @Excel(name = "工单状态", height = 20, width = 30,orderNum = "3",replace = {"1_待生成","2_条码打印完成","3_生产中","4_异常挂起","5_取消","6_完工","7_删除"})
+    @Excel(name = "工单状态", height = 20, width = 30,orderNum = "3",replace = {"待生成_1","条码打印完成_2","生产中_3","异常挂起_4","取消_5","完工_6","删除_7"})
     private Byte workOrderStatus;
 
     /**
@@ -92,7 +92,6 @@ public class MesSfcBarcodeProcessReport extends ValidGroup implements Serializab
      * 包箱记录
      */
     @ApiModelProperty(name="boxList",value = "包箱记录")
-    @ExcelCollection(name = "包箱记录")
     private List<BoxRecordUreport> boxList;
 
     /**
@@ -111,7 +110,6 @@ public class MesSfcBarcodeProcessReport extends ValidGroup implements Serializab
      * 栈板记录
      */
     @ApiModelProperty(name="palletList",value = "栈板记录")
-    @ExcelCollection(name = "栈板记录")
     private List<PalletRecordUreport> palletList;
 
     /**
