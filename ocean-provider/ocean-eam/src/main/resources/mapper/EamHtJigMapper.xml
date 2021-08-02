@@ -41,7 +41,6 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <result column="attachment_address" jdbcType="LONGVARCHAR" property="attachmentAddress" />
 
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -81,7 +80,6 @@
     ehj.maintain_user_id,
     ehj.backup_name,
     ehj.backup_qty,
-    ehj.attachment_address,
     ehj.`status`,
     ehj.remark,
     ehj.org_id,

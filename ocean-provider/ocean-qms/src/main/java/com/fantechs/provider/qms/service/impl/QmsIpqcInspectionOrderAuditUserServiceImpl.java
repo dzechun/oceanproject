@@ -11,6 +11,7 @@ import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderAuditUserMapper;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderAuditUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -45,6 +46,13 @@ public class QmsIpqcInspectionOrderAuditUserServiceImpl extends BaseService<QmsI
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        Example example = new Example(QmsIpqcInspectionOrderAuditUser.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("ipqcInspectionOrderId",record.getIpqcInspectionOrderId())
+                .andEqualTo("auditUserId",record.getAuditUserId());
+        qmsIpqcInspectionOrderAuditUserMapper.deleteByExample(example);
+
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());

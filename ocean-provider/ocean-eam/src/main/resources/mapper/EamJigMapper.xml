@@ -40,9 +40,11 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <result column="attachment_address" jdbcType="LONGVARCHAR" property="attachmentAddress" />
     <collection property="eamJigBarcodeList" ofType="com.fantechs.common.base.general.entity.eam.EamJigBarcode"
                 column="{jigId=jig_id}" select="com.fantechs.provider.eam.mapper.EamJigBarcodeMapper.findList">
+    </collection>
+    <collection property="eamJigAttachmentList" ofType="com.fantechs.common.base.general.entity.eam.EamJigAttachment"
+                column="{jigId=jig_id}" select="com.fantechs.provider.eam.mapper.EamJigAttachmentMapper.findList">
     </collection>
   </resultMap>
 
@@ -84,7 +86,6 @@
     ej.maintain_user_id,
     ej.backup_name,
     ej.backup_qty,
-    ej.attachment_address,
     ej.`status`,
     ej.remark,
     ej.org_id,

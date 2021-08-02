@@ -3,6 +3,7 @@ package com.fantechs.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcessRecord;
 import com.fantechs.common.base.general.entity.ureport.MesSfcBarcodeProcessReport;
 import com.fantechs.common.base.support.BaseService;
@@ -70,21 +71,38 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码不能为空");
         }
         map.put("orgId",user.getOrganizationId());
-        if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 1) {
+        if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 1 ||
+                (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
             SearchMesSfcBarcodeProcessRecord record = new SearchMesSfcBarcodeProcessRecord();
             record.setBarcode(map.get("barcode").toString());
-            mesSfcBarcodeProcessReport.setBarcodeList(sfcFeignApi.findList(record).getData());
-        } else if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 2) {
+            List<MesSfcBarcodeProcessRecordDto> data = sfcFeignApi.findList(record).getData();
+            if (StringUtils.isNotEmpty(data)) {
+                mesSfcBarcodeProcessReport.setBarcodeList(data);
+            }
+        }
+        if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 2 ||
+                (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
             mesSfcBarcodeProcessReport.setInspectionList(mesSfcBarcodeProcessReportMapper.findInspectionList(map));
-        } else if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 3) {
+        }
+        if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 3 ||
+                (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
             mesSfcBarcodeProcessReport.setBoxList(mesSfcBarcodeProcessReportMapper.findBoxList(map));
-        } else if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 4) {
             mesSfcBarcodeProcessReport.setPalletList(mesSfcBarcodeProcessReportMapper.findPalletList(map));
-        } else if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 5) {
+        }
+        if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 4 ||
+                (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
+            mesSfcBarcodeProcessReport.setPalletList(mesSfcBarcodeProcessReportMapper.findPalletList(map));
+        }
+        if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 5 ||
+                (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
             mesSfcBarcodeProcessReport.setReworkList(mesSfcBarcodeProcessReportMapper.findReworkList(map));
-        } else if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 6) {
-            mesSfcBarcodeProcessReport.setEquipmentParameterList(mesSfcBarcodeProcessReportMapper.findEquipmentParameterList(map));
-        } else if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 7) {
+        }
+        if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 6 ||
+                (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
+            //mesSfcBarcodeProcessReport.setEquipmentParameterList(mesSfcBarcodeProcessReportMapper.findEquipmentParameterList(map));
+        }
+        if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 7 ||
+                (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
             mesSfcBarcodeProcessReport.setAssemblyList(mesSfcBarcodeProcessReportMapper.findAssemblyList(map));
         }
         return mesSfcBarcodeProcessReport;

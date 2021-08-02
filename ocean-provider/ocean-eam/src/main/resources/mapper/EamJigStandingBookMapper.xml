@@ -21,7 +21,6 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <result column="attachment_path" jdbcType="LONGVARCHAR" property="attachmentPath" />
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamJigStandingBookDto">
@@ -45,7 +44,6 @@
     ei.release_date,
     ei.dept_id,
     ei.depreciable_life,
-    ei.attachment_path,
     ei.`status`,
     ei.remark,
     ei.org_id,
