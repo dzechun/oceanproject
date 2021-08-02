@@ -254,7 +254,6 @@ public class SocketServiceImpl implements SocketService {
                 }
 
             } catch (Exception e) {
-                log.info("--------------???并没有中心异常-----------");
                 updateStatus(ip,(byte)0);
                 e.printStackTrace();
             }

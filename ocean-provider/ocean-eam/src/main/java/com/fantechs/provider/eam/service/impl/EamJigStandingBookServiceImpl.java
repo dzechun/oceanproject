@@ -4,12 +4,15 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigStandingBookDto;
+import com.fantechs.common.base.general.entity.eam.EamJigAttachment;
 import com.fantechs.common.base.general.entity.eam.EamJigStandingBook;
+import com.fantechs.common.base.general.entity.eam.EamJigStandingBookAttachment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigStandingBook;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.eam.mapper.EamHtJigStandingBookMapper;
+import com.fantechs.provider.eam.mapper.EamJigStandingBookAttachmentMapper;
 import com.fantechs.provider.eam.mapper.EamJigStandingBookMapper;
 import com.fantechs.provider.eam.service.EamJigStandingBookService;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +38,9 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
 
     @Resource
     private EamHtJigStandingBookMapper eamHtJigStandingBookMapper;
+
+    @Resource
+    private EamJigStandingBookAttachmentMapper eamJigStandingBookAttachmentMapper;
 
     @Override
     public List<EamJigStandingBookDto> findList(Map<String, Object> map) {
@@ -64,6 +70,21 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
 
         int i = eamJigStandingBookMapper.insertUseGeneratedKeys(record);
 
+        //附件列表
+        List<EamJigStandingBookAttachment> eamJigStandingBookAttachmentList = record.getEamJigStandingBookAttachmentList();
+        if(StringUtils.isNotEmpty(eamJigStandingBookAttachmentList)){
+            for (EamJigStandingBookAttachment eamJigStandingBookAttachment : eamJigStandingBookAttachmentList){
+                eamJigStandingBookAttachment.setJigStandingBookId(record.getJigStandingBookId());
+                eamJigStandingBookAttachment.setCreateUserId(user.getUserId());
+                eamJigStandingBookAttachment.setCreateTime(new Date());
+                eamJigStandingBookAttachment.setModifiedUserId(user.getUserId());
+                eamJigStandingBookAttachment.setModifiedTime(new Date());
+                eamJigStandingBookAttachment.setStatus(StringUtils.isEmpty(eamJigStandingBookAttachment.getStatus())?1: eamJigStandingBookAttachment.getStatus());
+                eamJigStandingBookAttachment.setOrgId(user.getOrganizationId());
+            }
+            eamJigStandingBookAttachmentMapper.insertList(eamJigStandingBookAttachmentList);
+        }
+
         EamHtJigStandingBook eamHtJigStandingBook = new EamHtJigStandingBook();
         BeanUtils.copyProperties(record,eamHtJigStandingBook);
         eamHtJigStandingBookMapper.insert(eamHtJigStandingBook);
@@ -88,6 +109,27 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
         BeanUtils.copyProperties(entity,eamHtJigStandingBook);
         eamHtJigStandingBookMapper.insert(eamHtJigStandingBook);
 
+        //删除原附件
+        Example example1 = new Example(EamJigStandingBookAttachment.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("jigStandingBookId", entity.getJigStandingBookId());
+        eamJigStandingBookAttachmentMapper.deleteByExample(example1);
+
+        //附件列表
+        List<EamJigStandingBookAttachment> eamJigStandingBookAttachmentList = entity.getEamJigStandingBookAttachmentList();
+        if(StringUtils.isNotEmpty(eamJigStandingBookAttachmentList)){
+            for (EamJigStandingBookAttachment eamJigStandingBookAttachment : eamJigStandingBookAttachmentList){
+                eamJigStandingBookAttachment.setJigStandingBookId(entity.getJigStandingBookId());
+                eamJigStandingBookAttachment.setCreateUserId(user.getUserId());
+                eamJigStandingBookAttachment.setCreateTime(new Date());
+                eamJigStandingBookAttachment.setModifiedUserId(user.getUserId());
+                eamJigStandingBookAttachment.setModifiedTime(new Date());
+                eamJigStandingBookAttachment.setStatus(StringUtils.isEmpty(eamJigStandingBookAttachment.getStatus())?1: eamJigStandingBookAttachment.getStatus());
+                eamJigStandingBookAttachment.setOrgId(user.getOrganizationId());
+            }
+            eamJigStandingBookAttachmentMapper.insertList(eamJigStandingBookAttachmentList);
+        }
+
         return eamJigStandingBookMapper.updateByPrimaryKeySelective(entity);
     }
 
@@ -110,6 +152,12 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
             EamHtJigStandingBook eamHtJigStandingBook = new EamHtJigStandingBook();
             BeanUtils.copyProperties(eamJigStandingBook,eamHtJigStandingBook);
             list.add(eamHtJigStandingBook);
+
+            //删除附件信息
+            Example example1 = new Example(EamJigStandingBookAttachment.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("jigStandingBookId", id);
+            eamJigStandingBookAttachmentMapper.deleteByExample(example1);
         }
 
         eamHtJigStandingBookMapper.insertList(list);

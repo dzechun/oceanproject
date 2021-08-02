@@ -2,7 +2,6 @@ package com.fantechs.common.base.general.entity.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -11,54 +10,77 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 ;
 ;
 
 /**
- * 治具领用
- * eam_jig_requisition
+ * 治具台账附件
+ * eam_jig_standing_book_attachment
  * @author admin
- * @date 2021-07-30 09:22:00
+ * @date 2021-07-30 17:46:16
  */
 @Data
-@Table(name = "eam_jig_requisition")
-public class EamJigRequisition extends ValidGroup implements Serializable {
+@Table(name = "eam_jig_standing_book_attachment")
+public class EamJigStandingBookAttachment extends ValidGroup implements Serializable {
     /**
-     * 治具领用ID
+     * 治具台账附件ID
      */
-    @ApiModelProperty(name="jigRequisitionId",value = "治具领用ID")
-    @Excel(name = "治具领用ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="jigStandingBookAttachmentId",value = "治具台账附件ID")
+    @Excel(name = "治具台账附件ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "jig_requisition_id")
-    private Long jigRequisitionId;
+    @Column(name = "jig_standing_book_attachment_id")
+    private Long jigStandingBookAttachmentId;
 
     /**
-     * 工单ID
+     * 治具台账管理ID
      */
-    @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_id")
-    private Long workOrderId;
+    @ApiModelProperty(name="jigStandingBookId",value = "治具台账管理ID")
+    @Excel(name = "治具台账管理ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "jig_standing_book_id")
+    private Long jigStandingBookId;
 
     /**
-     * 治具ID
+     * 原文件名
      */
-    @ApiModelProperty(name="jigId",value = "治具ID")
-    @Excel(name = "治具ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "jig_id")
-    private Long jigId;
+    @ApiModelProperty(name="fileOrgName",value = "原文件名")
+    @Excel(name = "原文件名", height = 20, width = 30,orderNum="") 
+    @Column(name = "file_org_name")
+    private String fileOrgName;
 
     /**
-     * 治具条码ID
+     * 现文件名
      */
-    @ApiModelProperty(name="jigBarcodeId",value = "治具条码ID")
-    @Excel(name = "治具条码ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "jig_barcode_id")
-    private Long jigBarcodeId;
+    @ApiModelProperty(name="fileName",value = "现文件名")
+    @Excel(name = "现文件名", height = 20, width = 30,orderNum="") 
+    @Column(name = "file_name")
+    private String fileName;
+
+    /**
+     * 存储路径
+     */
+    @ApiModelProperty(name="storePath",value = "存储路径")
+    @Excel(name = "存储路径", height = 20, width = 30,orderNum="") 
+    @Column(name = "store_path")
+    private String storePath;
+
+    /**
+     * 访问路径
+     */
+    @ApiModelProperty(name="accessUrl",value = "访问路径")
+    @Excel(name = "访问路径", height = 20, width = 30,orderNum="") 
+    @Column(name = "access_url")
+    private String accessUrl;
+
+    /**
+     * 文件大小(M)
+     */
+    @ApiModelProperty(name="fileSize",value = "文件大小(M)")
+    @Excel(name = "文件大小(M)", height = 20, width = 30,orderNum="") 
+    @Column(name = "file_size")
+    private BigDecimal fileSize;
 
     /**
      * 状态(0无效，1有效)

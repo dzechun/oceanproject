@@ -1,6 +1,7 @@
 package com.fantechs.provider.eam.service;
 
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionDto;
+import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.EamJigRequisition;
 import com.fantechs.common.base.support.IService;
@@ -16,7 +17,9 @@ import java.util.Map;
 public interface EamJigRequisitionService extends IService<EamJigRequisition> {
     List<EamJigRequisitionDto> findList(Map<String, Object> map);
 
-    EamJigRequisitionDto findWorkOrder(String workOrderCode);
+    EamJigRequisitionWorkOrderDto findWorkOrder(String workOrderCode);
 
-    EamJigRequisitionDto checkJigBarcode(String jigBarcode,Long jigId);
+    EamJigBarcode checkJigBarcode(String jigBarcode,Long jigId,Integer usageQty,Integer count);
+
+    EamJigRequisitionWorkOrderDto findWorkOrderToTransform(String newWorkOrderCode,String oldWorkOrderCode);
 }
