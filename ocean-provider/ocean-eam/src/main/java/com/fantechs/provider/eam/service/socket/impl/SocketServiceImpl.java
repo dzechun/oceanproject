@@ -306,7 +306,7 @@ public class SocketServiceImpl implements SocketService {
                         if (!isJson){
                             return;
                         }
-                        EamEquipment equipment = getEquipment(ip);
+                        EamEquipment equipment = getEquipment(ip, null);
                         EamDataCollect dataCollect = EamDataCollect.builder()
                                 .status((byte) 1)
                                 .collectData(jsonStr)
