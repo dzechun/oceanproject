@@ -234,10 +234,9 @@ public class SocketServiceImpl implements SocketService {
 
                 //开机获取mac地址，保存ip
                 String mac = inputStreamToString(socket, addr.getHostAddress());
-                log.info("----mac地址----"+mac);
                 if(StringUtils.isNotEmpty(mac) && mac.length()>5){
                     EamEquipment equipment = getEquipment(null, mac);
-                    equipment.setEquipmentIp(addr.getHostAddress());
+                    equipment.setEquipmentIp(ip);
                     eamEquipmentMapper.updateByPrimaryKeySelective(equipment);
                 }
 
@@ -249,10 +248,10 @@ public class SocketServiceImpl implements SocketService {
                 Map<String, Object> managementDate = new HashMap();
                 List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
                 map.put("code", 1201);
-                map.put("url", "http://192.168.204.163/#/ESOPDataShow?ip=" + addr.getHostAddress());
+                map.put("url", "http://192.168.204.163/#/ESOPDataShow?ip=" + ip);
                 newList.add(map);
                 newMap.put("code", 1202);
-                newMap.put("url", "http://192.168.204.163/#/YunZhiESOP?ip=" + addr.getHostAddress());
+                newMap.put("url", "http://192.168.204.163/#/YunZhiESOP?ip=" + ip);
                 newList.add(newMap);
 
                 //配置项为展示状态且问题清单有数据。则发送信息。
@@ -261,12 +260,14 @@ public class SocketServiceImpl implements SocketService {
                 List<SysSpecItem> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
                 if(StringUtils.isNotEmpty(specItemList)) {
                     String[] paraValue =specItemList.get(0).getParaValue().split(",");
-                    Map IssueMap = null;
-                    IssueMap.put("equipmentIp",addr.getHostAddress());
+                    Map IssueMap = new HashMap();
+                    IssueMap.put("equipmentIp",ip);
+                    //ESOP
+                    IssueMap.put("orgId",(long)29);
                     List list = eamIssueService.findList(IssueMap);
                     if("1".equals(paraValue[0]) && StringUtils.isNotEmpty(list)){
                         managementDate.put("code", 1207);
-                        managementDate.put("url", "http://192.168.204.163/#/IssueList?ip=" + addr.getHostAddress());
+                        managementDate.put("url", "http://192.168.204.163/#/IssueList?ip=" + ip);
                         managementDate.put("seconds", paraValue[1]);
                         managementDate.put("isShow", 1);
                         newList.add(managementDate);

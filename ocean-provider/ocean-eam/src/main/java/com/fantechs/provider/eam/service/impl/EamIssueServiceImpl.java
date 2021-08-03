@@ -16,9 +16,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.eam.mapper.EamHtIssueMapper;
-import com.fantechs.provider.eam.mapper.EamIssueAttachmentMapper;
-import com.fantechs.provider.eam.mapper.EamIssueMapper;
+import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamIssueService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -44,14 +42,21 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
     private EamHtIssueMapper eamHtIssueMapper;
     @Resource
     private EamIssueAttachmentMapper eamIssueAttachmentMapper;
+    @Resource
+    private EamEquipmentMapper eamEquipmentMapper;
+    @Resource
+    private EamWiReleaseMapper eamWiReleaseMapper;
+
 
     @Override
     public List<EamIssueDto> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))){
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-
         if (StringUtils.isNotEmpty(map.get("equipmentIp"))) {
             SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
             searchEamEquipment.setEquipmentIp(map.get("equipmentIp").toString());
@@ -69,7 +74,7 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
             }
 
             map.put("materialId", eamWiReleaseDtos.get(0).getMaterialId());
-            map.put("orgId", user.getOrganizationId());
+        //    map.put("orgId", user.getOrganizationId());
             List<EamIssueDto> list = eamIssueMapper.findList(map);
 
             if(StringUtils.isNotEmpty(list)) {
@@ -81,7 +86,7 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
             return list;
         }
 
-        map.put("orgId", user.getOrganizationId());
+      //  map.put("orgId", user.getOrganizationId());
         return eamIssueMapper.findList(map);
     }
 

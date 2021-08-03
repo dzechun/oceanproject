@@ -135,9 +135,7 @@ public class LoginController {
         searchSysRole.setUserName(username);
         List<SysRoleDto> sysRoleDtos = sysRoleMapper.findByUserName(searchSysRole);
 
-        SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
-        searchEamEquipment.setEquipmentMacAddress(mac);
-        searchEamEquipment.setOrgId((long)29);
+        //ESOP
         ResponseEntity<List<EamEquipmentDto>> list = eamFeignApi.findByMac(mac,(long)29);
         if(StringUtils.isEmpty(list.getData())){
             return ControllerUtil.returnFail("登录错误，该用户无权限登录",1);
