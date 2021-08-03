@@ -62,7 +62,7 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
             searchEamEquipment.setEquipmentIp(map.get("equipmentIp").toString());
             List<EamEquipmentDto> eamEquipmentDtos = eamEquipmentMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
             if (StringUtils.isEmpty(eamEquipmentDtos)) {
-                throw new BizErrorException("查无绑定此IP的设备");
+                return null;
             }
 
             SearchEamWiRelease searchEamWiRelease = new SearchEamWiRelease();
@@ -70,7 +70,7 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
             searchEamWiRelease.setProLineId(eamEquipmentDtos.get(0).getProLineId());
             List<EamWiReleaseDto> eamWiReleaseDtos = eamWiReleaseMapper.findList(searchEamWiRelease);
             if (StringUtils.isEmpty(eamWiReleaseDtos)) {
-                throw new BizErrorException("该产线没有生产中的工单");
+                return null;
             }
 
             map.put("materialId", eamWiReleaseDtos.get(0).getMaterialId());

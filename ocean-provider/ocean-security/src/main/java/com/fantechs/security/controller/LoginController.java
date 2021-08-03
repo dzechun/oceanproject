@@ -136,7 +136,7 @@ public class LoginController {
         List<SysRoleDto> sysRoleDtos = sysRoleMapper.findByUserName(searchSysRole);
 
         //ESOP
-        ResponseEntity<List<EamEquipmentDto>> list = eamFeignApi.findByMac(mac,(long)29);
+        ResponseEntity<List<EamEquipmentDto>> list = eamFeignApi.findByMac(mac,orgId);
         if(StringUtils.isEmpty(list.getData())){
             return ControllerUtil.returnFail("登录错误，该用户无权限登录",1);
         }

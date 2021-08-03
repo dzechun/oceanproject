@@ -72,6 +72,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         EamWiRelease wiRelease = eamWiReleaseMapper.selectOneByExample(example1);
         if(StringUtils.isNotEmpty(wiRelease)) throw new BizErrorException("添加失败，已存在发布编码");
         example1.clear();
+
         EamWiRelease eamWiRelease = new EamWiRelease();
         BeanUtils.autoFillEqFields(eamWiReleaseDto, eamWiRelease);
         eamWiRelease.setCreateUserId(sysUser.getUserId());
@@ -107,6 +108,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(eamWiReleaseDto.getWiReleaseId()))
             throw new BizErrorException("id不能为空");
+        eamWiReleaseDto.setReleaseStatus((byte)1);
         eamWiReleaseMapper.updateByPrimaryKey(eamWiReleaseDto);
 
         Example example = new Example(EamWiRelease.class);
