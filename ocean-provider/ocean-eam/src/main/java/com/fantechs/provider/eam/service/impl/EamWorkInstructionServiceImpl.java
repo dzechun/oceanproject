@@ -114,10 +114,10 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
                     searchEamWorkInstruction.setWorkInstructionId(dto.getWorkInstructionId());
                 }
             }
-            if(StringUtils.isEmpty(searchEamWorkInstruction.getWorkInstructionId())) return new EamWorkInstructionDto();
+            if(StringUtils.isEmpty(searchEamWorkInstruction.getWorkInstructionId())) return null;
             searchEamWorkInstruction.setProLineId(list.get(0).getProLineId());
         }else{
-            return new EamWorkInstructionDto();
+            return null;
         }
         searchEamWorkInstruction.setProcessId(eamEquipment.getProcessId());
         searchEamWorkInstruction.setOrgId(eamEquipment.getOrgId());

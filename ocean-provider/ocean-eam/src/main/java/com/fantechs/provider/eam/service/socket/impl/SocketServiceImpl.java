@@ -136,7 +136,6 @@ public class SocketServiceImpl implements SocketService {
         if(StringUtils.isNotEmpty(proLineId ))
             criteria.andEqualTo("proLineId", proLineId);
         List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
-
         for (EamEquipment eamEquipment : eamEquipments) {
             try {
                 Socket socket = (Socket)hashtable.get(eamEquipment.getEquipmentIp());
@@ -219,25 +218,27 @@ public class SocketServiceImpl implements SocketService {
                 }
 
                 //开机连接发送新闻命令
+                String localHostIp = InetAddress.getLocalHost().getHostAddress();
                 hashtable.put(addr.getHostAddress(),socket);
                 Map<String, Object> map = new HashMap();
                 Map<String, Object> newMap = new HashMap();
                 Map<String, Object> newData = new HashMap();
                 Map<String, Object> managementDate = new HashMap();
                 List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
+
                 map.put("code", 1201);
-                map.put("url", "http://192.168.204.163/#/ESOPDataShow?ip=" + ip);
+                map.put("url", "http://"+localHostIp+"/#/ESOPDataShow?ip=" + ip);
                 newList.add(map);
                 newMap.put("code", 1202);
-                newMap.put("url", "http://192.168.204.163/#/YunZhiESOP?ip=" + ip);
+                newMap.put("url", "http://"+localHostIp+"/#/YunZhiESOP?ip=" + ip);
                 newList.add(newMap);
 
                 //配置项为展示状态且问题清单有数据。则发送信息。
                 SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
                 searchSysSpecItem.setSpecCode("IssueSeconds");
-                List<SysSpecItem> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+                ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
                 if(StringUtils.isNotEmpty(specItemList)) {
-                    String[] paraValue =specItemList.get(0).getParaValue().split(",");
+                    String[] paraValue =specItemList.getData().get(0).getParaValue().split(",");
                     Map IssueMap = new HashMap();
                     IssueMap.put("equipmentIp",ip);
                     //ESOP
@@ -245,7 +246,7 @@ public class SocketServiceImpl implements SocketService {
                     List list = eamIssueService.findList(IssueMap);
                     if("1".equals(paraValue[0]) && StringUtils.isNotEmpty(list)){
                         managementDate.put("code", 1207);
-                        managementDate.put("url", "http://192.168.204.163/#/IssueList?ip=" + ip);
+                        managementDate.put("url", "http://"+localHostIp+"/#/IssueList?ip=" + ip);
                         managementDate.put("seconds", paraValue[1]);
                         managementDate.put("isShow", 1);
                         newList.add(managementDate);

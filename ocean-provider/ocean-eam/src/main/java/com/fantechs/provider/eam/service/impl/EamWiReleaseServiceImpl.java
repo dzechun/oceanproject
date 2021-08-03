@@ -22,10 +22,12 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamWiReleaseService;
 import com.fantechs.provider.eam.service.socket.SocketService;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -133,6 +135,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         return i;
     }
 
+    @SneakyThrows
     @Override
     public int censor(EamWiRelease eamWiRelease) {
         SysUser sysUser = currentUser();
@@ -156,7 +159,8 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         eamWiRelease.setStatus((byte)1);
         eamWiRelease.setReleaseStatus((byte)2);
         int i = eamWiReleaseMapper.updateByPrimaryKeySelective(eamWiRelease);
-        socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://192.168.204.163/#/YunZhiESOP?ip=");
+        String localHostIp = InetAddress.getLocalHost().getHostAddress();
+        socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://"+localHostIp+"/#/YunZhiESOP?ip=");
         return i;
     }
 
