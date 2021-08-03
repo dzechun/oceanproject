@@ -50,6 +50,14 @@ public class EamHtJigRequisition extends ValidGroup implements Serializable {
     private Long workOrderId;
 
     /**
+     * 设备ID
+     */
+    @ApiModelProperty(name="equipmentId",value = "设备ID")
+    @Excel(name = "设备ID", height = 20, width = 30,orderNum="")
+    @Column(name = "equipment_id")
+    private Long equipmentId;
+
+    /**
      * 治具ID
      */
     @ApiModelProperty(name="jigId",value = "治具ID")

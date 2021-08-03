@@ -71,6 +71,9 @@
     left join ocean_v2.sys_user s on ejrm.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ejrm.org_id = bo.organization_id
     <where>
+      <if test="jigId!=null">
+        and ejrm.jig_id = #{jigId}
+      </if>
       <if test="materialId!=null">
         and ejrm.material_id = #{materialId}
       </if>

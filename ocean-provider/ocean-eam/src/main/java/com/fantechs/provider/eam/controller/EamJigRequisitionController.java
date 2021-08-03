@@ -1,6 +1,7 @@
 package com.fantechs.provider.eam.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
@@ -65,12 +66,12 @@ public class EamJigRequisitionController {
         return ControllerUtil.returnDataSuccess(eamJigBarcode,StringUtils.isEmpty(eamJigBarcode)?0:1);
     }
 
-    @ApiOperation(value = "转换工单-查询工单信息",notes = "转换工单-查询工单信息")
-    @PostMapping("/findWorkOrderToTransform")
-    public ResponseEntity findWorkOrderToTransform(@ApiParam(value = "新工单号",required = true) @RequestParam @NotBlank(message="新工单号不能为空") String newWorkOrderCode,
+    @ApiOperation(value = "转换工单-获取旧工单已领用数量",notes = "转换工单-获取旧工单已领用数量")
+    @PostMapping("/getRecordQty")
+    public ResponseEntity getRecordQty(@ApiParam(value = "新工单号",required = true) @RequestParam @NotBlank(message="新工单号不能为空") String newWorkOrderCode,
                                                    @ApiParam(value = "旧工单号",required = true) @RequestParam @NotBlank(message="旧工单号不能为空") String oldWorkOrderCode) {
-        EamJigRequisitionWorkOrderDto workOrderDto = eamJigRequisitionService.findWorkOrderToTransform(newWorkOrderCode,oldWorkOrderCode);
-        return ControllerUtil.returnDataSuccess(workOrderDto,StringUtils.isEmpty(workOrderDto)?0:1);
+        List<EamJigReMaterialDto> list = eamJigRequisitionService.getRecordQty(newWorkOrderCode,oldWorkOrderCode);
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
     @ApiOperation(value = "新增",notes = "新增")

@@ -8,6 +8,7 @@
     <id column="ht_jig_requisition_id" jdbcType="BIGINT" property="htJigRequisitionId" />
     <result column="jig_requisition_id" jdbcType="BIGINT" property="jigRequisitionId" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="equipment_id" jdbcType="BIGINT" property="equipmentId" />
     <result column="jig_id" jdbcType="BIGINT" property="jigId" />
     <result column="jig_barcode_id" jdbcType="BIGINT" property="jigBarcodeId" />
     <result column="this_time_usage_time" jdbcType="INTEGER" property="thisTimeUsageTime" />

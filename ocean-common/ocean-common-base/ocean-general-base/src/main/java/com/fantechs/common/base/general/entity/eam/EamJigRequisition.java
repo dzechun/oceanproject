@@ -10,6 +10,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +44,14 @@ public class EamJigRequisition extends ValidGroup implements Serializable {
     @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
     @Column(name = "work_order_id")
     private Long workOrderId;
+
+    /**
+     * 设备ID
+     */
+    @ApiModelProperty(name="equipmentId",value = "设备ID")
+    @Excel(name = "设备ID", height = 20, width = 30,orderNum="")
+    @Column(name = "equipment_id")
+    private Long equipmentId;
 
     /**
      * 治具ID
@@ -115,6 +124,13 @@ public class EamJigRequisition extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    /**
+     * 本次使用次数
+     */
+    @Transient
+    @ApiModelProperty(name = "thisTimeUsageTime",value = "本次使用次数")
+    private Integer thisTimeUsageTime;
 
     private String option1;
 

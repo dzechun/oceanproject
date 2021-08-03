@@ -27,7 +27,6 @@
     <result column="power" jdbcType="DECIMAL" property="power" />
     <result column="maintain_cycle" jdbcType="INTEGER" property="maintainCycle" />
     <result column="maintain_warning_days" jdbcType="INTEGER" property="maintainWarningDays" />
-    <result column="maintain_user_id" jdbcType="BIGINT" property="maintainUserId" />
     <result column="backup_name" jdbcType="VARCHAR" property="backupName" />
     <result column="backup_qty" jdbcType="INTEGER" property="backupQty" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -57,7 +56,6 @@
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
-    <result column="maintain_user_name" jdbcType="VARCHAR" property="maintainUserName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -83,7 +81,6 @@
     ej.power,
     ej.maintain_cycle,
     ej.maintain_warning_days,
-    ej.maintain_user_id,
     ej.backup_name,
     ej.backup_qty,
     ej.`status`,
@@ -101,7 +98,6 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
     ejc.jig_category_name,su.user_name,bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,
-    sus.user_name as maintain_user_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -110,12 +106,14 @@
     left join fantech_imes_v2.base_warehouse bw on ej.warehouse_id=bw.warehouse_id
     left join fantech_imes_v2.base_warehouse_area bwa on ej.warehouse_area_id=bwa.warehouse_area_id
     left join fantech_imes_v2.base_storage bs on ej.storage_id=bs.storage_id
-    left join ocean_v2.sys_user sus on ej.maintain_user_id=sus.user_id
     left join ocean_v2.sys_user su on ej.user_id=su.user_id
     left join ocean_v2.sys_user u on ej.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ej.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ej.org_id = bo.organization_id
     <where>
+      <if test="jigId != null">
+        and ej.jig_id = #{jigId}
+      </if>
       <if test="jigCode != null and jigCode!=''">
         and ej.jig_code like CONCAT('%', #{jigCode}, '%')
       </if>

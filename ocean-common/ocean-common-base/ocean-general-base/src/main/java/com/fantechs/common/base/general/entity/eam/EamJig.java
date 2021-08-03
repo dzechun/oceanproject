@@ -186,13 +186,6 @@ public class EamJig extends ValidGroup implements Serializable {
     private Integer maintainWarningDays;
 
     /**
-     * 保养人员
-     */
-    @ApiModelProperty(name="maintainUserId",value = "保养人员")
-    @Column(name = "maintain_user_id")
-    private Long maintainUserId;
-
-    /**
      * 备用件名称
      */
     @ApiModelProperty(name="backupName",value = "备用件名称")

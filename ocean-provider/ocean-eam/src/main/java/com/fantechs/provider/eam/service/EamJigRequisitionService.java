@@ -1,5 +1,6 @@
 package com.fantechs.provider.eam.service;
 
+import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
@@ -21,5 +22,7 @@ public interface EamJigRequisitionService extends IService<EamJigRequisition> {
 
     EamJigBarcode checkJigBarcode(String jigBarcode,Long jigId,Integer usageQty,Integer count);
 
-    EamJigRequisitionWorkOrderDto findWorkOrderToTransform(String newWorkOrderCode,String oldWorkOrderCode);
+    List<EamJigReMaterialDto> getRecordQty(String newWorkOrderCode, String oldWorkOrderCode);
+
+    int conversion(List<EamJigRequisition> list);
 }

@@ -1,7 +1,9 @@
 package com.fantechs.provider.eam.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamJigReturnDto;
+import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.EamJigReturn;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigReturn;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigReturn;
@@ -39,6 +41,35 @@ public class EamJigReturnController {
     private EamJigReturnService eamJigReturnService;
     @Resource
     private EamHtJigReturnService eamHtJigReturnService;
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchSave")
+    public ResponseEntity batchSave(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<EamJigReturn> list) {
+        return ControllerUtil.returnCRUD(eamJigReturnService.batchSave(list));
+    }
+
+    @ApiOperation("根据工单号查询治具领用记录")
+    @PostMapping("/findWorkOrder")
+    public ResponseEntity<EamJigRequisitionWorkOrderDto> findWorkOrder(@ApiParam(value = "工单号",required = true) @RequestParam @NotBlank(message="工单号不能为空") String workOrderCode) {
+        EamJigRequisitionWorkOrderDto workOrderDto = eamJigReturnService.findWorkOrder(workOrderCode);
+        return ControllerUtil.returnDataSuccess(workOrderDto,StringUtils.isEmpty(workOrderDto)?0:1);
+    }
+
+    @ApiOperation("检查治具条码")
+    @PostMapping("/checkJigBarcode")
+    public ResponseEntity<EamJigBarcode> checkJigBarcode(@ApiParam(value = "工单号",required = true) @RequestParam @NotBlank(message="工单号不能为空") String workOrderCode,
+                                                         @ApiParam(value = "治具ID",required = true) @RequestParam @NotBlank(message="治具ID不能为空") Long jigId,
+                                                         @ApiParam(value = "工单ID",required = true) @RequestParam @NotBlank(message="工单ID不能为空") Long workOrderId) {
+        EamJigBarcode eamJigBarcode = eamJigReturnService.checkJigBarcode(workOrderCode, jigId, workOrderId);
+        return ControllerUtil.returnDataSuccess(eamJigBarcode,StringUtils.isEmpty(eamJigBarcode)?0:1);
+    }
+
+    @ApiOperation("检查库位条码")
+    @PostMapping("/checkStorageCode")
+    public ResponseEntity checkStorageCode(@ApiParam(value = "库位编码",required = true) @RequestParam @NotBlank(message="库位编码不能为空")String storageCode,
+                                           @ApiParam(value = "治具ID",required = true) @RequestParam @NotBlank(message="治具ID不能为空") Long jigId) {
+        return ControllerUtil.returnCRUD(eamJigReturnService.checkStorageCode(storageCode, jigId));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

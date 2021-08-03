@@ -7,6 +7,7 @@
     -->
     <id column="jig_requisition_id" jdbcType="BIGINT" property="jigRequisitionId" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="equipment_id" jdbcType="BIGINT" property="equipmentId" />
     <result column="jig_id" jdbcType="BIGINT" property="jigId" />
     <result column="jig_barcode_id" jdbcType="BIGINT" property="jigBarcodeId" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -37,6 +38,7 @@
   <sql id="Base_Column_List">
     ejr.jig_requisition_id,
     ejr.work_order_id,
+    ejr.equipment_id,
     ejr.jig_id,
     ejr.jig_barcode_id,
     ejr.`status`,
@@ -69,6 +71,9 @@
     left join ocean_v2.sys_user s on ejr.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ejr.org_id = bo.organization_id
     <where>
+      <if test="jigId != null">
+        and wo.jig_id = #{jigId}
+      </if>
       <if test="workOrderId != null">
         and wo.work_order_id = #{workOrderId}
       </if>

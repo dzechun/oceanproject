@@ -57,36 +57,35 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
             }
             map.put("orgId", user.getOrganizationId());
         }
+
         if (StringUtils.isNotEmpty(map.get("equipmentIp"))) {
+            List<EamIssueDto> list = new ArrayList<>();
+
             SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
             searchEamEquipment.setEquipmentIp(map.get("equipmentIp").toString());
             List<EamEquipmentDto> eamEquipmentDtos = eamEquipmentMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
-            if (StringUtils.isEmpty(eamEquipmentDtos)) {
-                return null;
-            }
+            if (StringUtils.isNotEmpty(eamEquipmentDtos)) {
+                SearchEamWiRelease searchEamWiRelease = new SearchEamWiRelease();
+                searchEamWiRelease.setWorkOrderStatus((byte) 3);
+                searchEamWiRelease.setProLineId(eamEquipmentDtos.get(0).getProLineId());
+                List<EamWiReleaseDto> eamWiReleaseDtos = eamWiReleaseMapper.findList(searchEamWiRelease);
+                if (StringUtils.isNotEmpty(eamWiReleaseDtos)) {
+                    map.put("materialId", eamWiReleaseDtos.get(0).getMaterialId());
+                    //    map.put("orgId", user.getOrganizationId());
+                    list = eamIssueMapper.findList(map);
 
-            SearchEamWiRelease searchEamWiRelease = new SearchEamWiRelease();
-            searchEamWiRelease.setWorkOrderStatus((byte) 3);
-            searchEamWiRelease.setProLineId(eamEquipmentDtos.get(0).getProLineId());
-            List<EamWiReleaseDto> eamWiReleaseDtos = eamWiReleaseMapper.findList(searchEamWiRelease);
-            if (StringUtils.isEmpty(eamWiReleaseDtos)) {
-                return null;
-            }
-
-            map.put("materialId", eamWiReleaseDtos.get(0).getMaterialId());
-        //    map.put("orgId", user.getOrganizationId());
-            List<EamIssueDto> list = eamIssueMapper.findList(map);
-
-            if(StringUtils.isNotEmpty(list)) {
-                for (EamIssueDto eamIssueDto : list) {
-                    eamIssueDto.setProcessCode(eamEquipmentDtos.get(0).getProcessCode());
+                    //工序编码
+                    if(StringUtils.isNotEmpty(list)) {
+                        for (EamIssueDto eamIssueDto : list) {
+                            eamIssueDto.setProcessCode(eamEquipmentDtos.get(0).getProcessCode());
+                        }
+                    }
                 }
             }
 
             return list;
         }
 
-      //  map.put("orgId", user.getOrganizationId());
         return eamIssueMapper.findList(map);
     }
 
