@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.eam.EamJigReMaterial;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -116,4 +117,10 @@ public class EamJigReMaterialDto extends EamJigReMaterial implements Serializabl
     @ApiModelProperty(name = "materialVersion",value = "物料版本")
     private String materialVersion;
 
+    /**
+     * 记录数量
+     */
+    @Transient
+    @ApiModelProperty(name="recordQty",value = "记录数量")
+    private Integer recordQty;
 }

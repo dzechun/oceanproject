@@ -2,6 +2,8 @@ package com.fantechs.provider.eam.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionDto;
+import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
+import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.EamJigRequisition;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRequisition;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRequisition;
@@ -40,6 +42,36 @@ public class EamJigRequisitionController {
     @Resource
     private EamHtJigRequisitionService eamHtJigRequisitionService;
 
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchSave")
+    public ResponseEntity batchSave(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<EamJigRequisition> list) {
+        return ControllerUtil.returnCRUD(eamJigRequisitionService.batchSave(list));
+    }
+
+    @ApiOperation(value = "查询工单信息",notes = "查询工单信息")
+    @PostMapping("/findWorkOrder")
+    public ResponseEntity findWorkOrder(@ApiParam(value = "工单号",required = true) @RequestParam @NotBlank(message="工单号不能为空") String workOrderCode) {
+        EamJigRequisitionWorkOrderDto workOrderDto = eamJigRequisitionService.findWorkOrder(workOrderCode);
+        return ControllerUtil.returnDataSuccess(workOrderDto,StringUtils.isEmpty(workOrderDto)?0:1);
+    }
+
+    @ApiOperation(value = "检查治具条码",notes = "检查治具条码")
+    @PostMapping("/checkJigBarcode")
+    public ResponseEntity checkJigBarcode(@ApiParam(value = "治具条码",required = true) @RequestParam @NotBlank(message="治具条码不能为空") String jigBarcode,
+                                          @ApiParam(value = "治具ID",required = true) @RequestParam @NotNull(message="治具ID不能为空") Long jigId,
+                                          @ApiParam(value = "所需数量",required = true) @RequestParam @NotNull(message="所需数量不能为空") Integer usageQty,
+                                          @ApiParam(value = "已扫描数量",required = true) @RequestParam @NotNull(message="已扫描数量不能为空") Integer count) {
+        EamJigBarcode eamJigBarcode = eamJigRequisitionService.checkJigBarcode(jigBarcode, jigId, usageQty, count);
+        return ControllerUtil.returnDataSuccess(eamJigBarcode,StringUtils.isEmpty(eamJigBarcode)?0:1);
+    }
+
+    @ApiOperation(value = "转换工单-查询工单信息",notes = "转换工单-查询工单信息")
+    @PostMapping("/findWorkOrderToTransform")
+    public ResponseEntity findWorkOrderToTransform(@ApiParam(value = "新工单号",required = true) @RequestParam @NotBlank(message="新工单号不能为空") String newWorkOrderCode,
+                                                   @ApiParam(value = "旧工单号",required = true) @RequestParam @NotBlank(message="旧工单号不能为空") String oldWorkOrderCode) {
+        EamJigRequisitionWorkOrderDto workOrderDto = eamJigRequisitionService.findWorkOrderToTransform(newWorkOrderCode,oldWorkOrderCode);
+        return ControllerUtil.returnDataSuccess(workOrderDto,StringUtils.isEmpty(workOrderDto)?0:1);
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

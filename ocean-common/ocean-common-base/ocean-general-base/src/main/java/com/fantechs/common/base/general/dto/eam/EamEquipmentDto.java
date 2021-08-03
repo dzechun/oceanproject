@@ -81,6 +81,13 @@ public class EamEquipmentDto extends EamEquipment implements Serializable {
     private String processName;
 
     /**
+     * 工序编码
+     */
+    @Transient
+    @ApiModelProperty(name = "processCode",value = "工序编码")
+    private String processCode;
+
+    /**
      * 工位名称
      */
     @Transient

@@ -14,4 +14,7 @@ public interface SysRoleService  extends IService<SysRole>{
 
     //添加用户
     int addUser(Long roleId, List<Long> userIds);
+
+    //通过用户名查询角色信息
+    List<SysRoleDto> findByUserName(SearchSysRole searchSysRole);
 }

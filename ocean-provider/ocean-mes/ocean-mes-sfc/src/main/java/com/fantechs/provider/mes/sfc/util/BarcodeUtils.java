@@ -164,12 +164,21 @@ public class BarcodeUtils {
         if (baseStation == null) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003, "没有找到对对应的工位");
         }
+
+        //从工段表 base_workshop_section 取出工段编码和工段名称 2021-08-02 huangshuijun
+        ResponseEntity<BaseWorkshopSection> bwssResponseEntity = barcodeUtils.baseFeignApi.sectionDetail(baseProcess.getSectionId());
+        BaseWorkshopSection baseWorkshopSection = bwssResponseEntity.getData();
+        if(baseWorkshopSection == null)
+            throw new BizErrorException(ErrorCodeEnum.PDA40012035);
+
         mesSfcBarcodeProcess.setStationId(baseStation.getStationId());
         mesSfcBarcodeProcess.setStationCode(baseStation.getStationCode());
         mesSfcBarcodeProcess.setStationName(baseStation.getStationName());
-        mesSfcBarcodeProcess.setSectionId(baseProcess.getSectionId());
-        mesSfcBarcodeProcess.setSectionCode(baseProcess.getSectionCode());
-        mesSfcBarcodeProcess.setSectionName(baseProcess.getSectionName());
+        mesSfcBarcodeProcess.setSectionId(baseProcess.getSectionId());//工段id
+//        mesSfcBarcodeProcess.setSectionCode(baseProcess.getSectionCode());//工段code
+//        mesSfcBarcodeProcess.setSectionName(baseProcess.getSectionName());//工段名称
+        mesSfcBarcodeProcess.setSectionCode(baseWorkshopSection.getSectionCode());//工段code
+        mesSfcBarcodeProcess.setSectionName(baseWorkshopSection.getSectionName());//工段名称
         BaseProLine baseProLine = barcodeUtils.baseFeignApi.getProLineDetail(dto.getProLineId()).getData();
         if (baseProLine == null) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003, "该产线不存在或已被删除");

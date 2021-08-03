@@ -101,7 +101,6 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 产线ID
      */
     @ApiModelProperty(name="proLineId",value = "产线ID")
-    @Excel(name = "产线ID", height = 20, width = 30,orderNum="")
     @Column(name = "pro_line_id")
     private Long proLineId;
 
@@ -110,7 +109,6 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 工位ID
      */
     @ApiModelProperty(name="stationId",value = "工位ID")
-    @Excel(name = "工位ID", height = 20, width = 30,orderNum="")
     @Column(name = "station_id")
     private Long stationId;
 
@@ -118,7 +116,6 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 工段ID
      */
     @ApiModelProperty(name="sectionId",value = "工段ID")
-    @Excel(name = "工段ID", height = 20, width = 30,orderNum="")
     @Column(name = "section_id")
     private Long sectionId;
 
@@ -126,7 +123,6 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 工厂ID
      */
     @ApiModelProperty(name="factoryId",value = "工厂ID")
-    @Excel(name = "工厂ID", height = 20, width = 30,orderNum="")
     @Column(name = "factory_id")
     private Long factoryId;
 
@@ -134,7 +130,6 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 车间ID
      */
     @ApiModelProperty(name="workShopId",value = "车间ID")
-    @Excel(name = "车间ID", height = 20, width = 30,orderNum="")
     @Column(name = "work_shop_id")
     private Long workShopId;
 
@@ -192,6 +187,7 @@ public class EamEquipment extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="equipmentMacAddress",value = "MAC地址")
     @Column(name = "equipment_mac_address")
+    @NotBlank(message = "MAC地址不能为空")
     private String equipmentMacAddress;
     /**
      * 出厂日期
@@ -206,8 +202,8 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 上次保养时间
      */
     @ApiModelProperty(name="lastTimeMaintainTime",value = "上次保养时间")
-    @Excel(name = "上次保养时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "上次保养时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "last_time_maintain_time")
     private Date lastTimeMaintainTime;
 
@@ -215,8 +211,8 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 下次保养时间
      */
     @ApiModelProperty(name="nextTimeMaintainTime",value = "下次保养时间")
-    @Excel(name = "下次保养时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "下次保养时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "next_time_maintain_time")
     private Date nextTimeMaintainTime;
 
@@ -255,7 +251,6 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 线上状态(0-离线 1-在线)
      */
     @ApiModelProperty(name="onlineStatus",value = "线上状态(0-离线 1-在线 2-已登录 3-中心异常)")
-    @Excel(name = "线上状态(0-离线 1-在线 2-已登录 3-中心异常)", height = 20, width = 30,orderNum="",replace = {"离线_0", "在线_1" , "已登录_2", "中心异常_3"})
     @Column(name = "online_status")
     private Byte onlineStatus;
 
@@ -298,8 +293,8 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="17",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="17",exportFormat ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -314,8 +309,8 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="19",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="19",exportFormat ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "modified_time")
     private Date modifiedTime;
 

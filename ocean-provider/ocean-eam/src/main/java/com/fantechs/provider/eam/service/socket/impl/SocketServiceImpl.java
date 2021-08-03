@@ -1,15 +1,21 @@
 package com.fantechs.provider.eam.service.socket.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.eam.EamDataCollect;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.EamEquipmentMapper;
 import com.fantechs.provider.eam.service.EamDataCollectService;
+import com.fantechs.provider.eam.service.EamIssueService;
 import com.fantechs.provider.eam.service.socket.SocketService;
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,6 +41,10 @@ public class SocketServiceImpl implements SocketService {
 
     @Resource
     private EamEquipmentMapper eamEquipmentMapper;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private EamIssueService eamIssueService;
 
     //新加*************
     @Resource
@@ -200,19 +210,47 @@ public class SocketServiceImpl implements SocketService {
             String ip = addr.getHostAddress();
             try {
 
+                //开机获取mac地址，保存ip
+                String mac = inputStreamToString(socket, addr.getHostAddress());
+                if(StringUtils.isNotEmpty(mac) && mac.length()>5){
+                    EamEquipment equipment = getEquipment(null, mac);
+                    equipment.setEquipmentIp(ip);
+                    eamEquipmentMapper.updateByPrimaryKeySelective(equipment);
+                }
+
                 //开机连接发送新闻命令
                 hashtable.put(addr.getHostAddress(),socket);
-
                 Map<String, Object> map = new HashMap();
                 Map<String, Object> newMap = new HashMap();
                 Map<String, Object> newData = new HashMap();
+                Map<String, Object> managementDate = new HashMap();
                 List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
                 map.put("code", 1201);
-                map.put("url", "http://192.168.204.163/#/ESOPDataShow?ip=" + addr.getHostAddress());
+                map.put("url", "http://192.168.204.163/#/ESOPDataShow?ip=" + ip);
                 newList.add(map);
                 newMap.put("code", 1202);
-                newMap.put("url", "http://192.168.204.163/#/YunZhiESOP?ip=" + addr.getHostAddress());
+                newMap.put("url", "http://192.168.204.163/#/YunZhiESOP?ip=" + ip);
                 newList.add(newMap);
+
+                //配置项为展示状态且问题清单有数据。则发送信息。
+                SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+                searchSysSpecItem.setSpecCode("IssueSeconds");
+                List<SysSpecItem> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+                if(StringUtils.isNotEmpty(specItemList)) {
+                    String[] paraValue =specItemList.get(0).getParaValue().split(",");
+                    Map IssueMap = new HashMap();
+                    IssueMap.put("equipmentIp",ip);
+                    //ESOP
+                    IssueMap.put("orgId",(long)29);
+                    List list = eamIssueService.findList(IssueMap);
+                    if("1".equals(paraValue[0]) && StringUtils.isNotEmpty(list)){
+                        managementDate.put("code", 1207);
+                        managementDate.put("url", "http://192.168.204.163/#/IssueList?ip=" + ip);
+                        managementDate.put("seconds", paraValue[1]);
+                        managementDate.put("isShow", 1);
+                        newList.add(managementDate);
+                    }
+                }
                 newData.put("data", newList);
                 String outMsg = JSON.toJSONString(newData);
                 os=socket.getOutputStream();
@@ -227,12 +265,16 @@ public class SocketServiceImpl implements SocketService {
                     if( str!= null ){
                         ipMap.put(ip, System.currentTimeMillis());
                     }
-                    if("1205".equals(str))
+                    //重连更新mac地址
+                    if(StringUtils.isNotEmpty(str) && str.length()>5){
+                        EamEquipment equipment = getEquipment(null, mac);
+                        equipment.setEquipmentIp(addr.getHostAddress());
+                        eamEquipmentMapper.updateByPrimaryKeySelective(equipment);
                         updateStatus(ip, (byte)2);
+                    }
                 }
 
             } catch (Exception e) {
-                log.info("--------------???并没有中心异常-----------");
                 updateStatus(ip,(byte)0);
                 e.printStackTrace();
             }
@@ -333,20 +375,24 @@ public class SocketServiceImpl implements SocketService {
         return str;
     }
 
-    private EamEquipment getEquipment(String ip){
+    public EamEquipment getEquipment(String ip,String mac){
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentIp",ip);
+        if(StringUtils.isNotEmpty(ip))
+            criteria.andEqualTo("equipmentIp",ip);
+        if(StringUtils.isNotEmpty(mac))
+            criteria.andEqualTo("equipmentMacAddress",mac);
+
         EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
         if (StringUtils.isEmpty(eamEquipment)){
-            throw new BizErrorException("未查询到ip对应的设备信息");
+            throw new BizErrorException("未查询到对应的设备信息");
         }
         example.clear();
         return eamEquipment;
     }
 
-    private int updateStatus(String ip, Byte bytes) {
-        EamEquipment eamEquipment = getEquipment(ip);
+    public int updateStatus(String ip, Byte bytes) {
+        EamEquipment eamEquipment  = getEquipment(ip, null);
         eamEquipment.setOnlineStatus(bytes);
         eamEquipmentMapper.updateByPrimaryKeySelective(eamEquipment);
         return 1;
