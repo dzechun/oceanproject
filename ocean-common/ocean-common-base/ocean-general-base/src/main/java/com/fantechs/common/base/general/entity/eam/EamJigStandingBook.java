@@ -42,7 +42,7 @@ public class EamJigStandingBook extends ValidGroup implements Serializable {
      * 财产编码类别(1-固定资产  2-列管品)
      */
     @ApiModelProperty(name="propertyCodeCategory",value = "财产编码类别(1-固定资产  2-列管品)")
-    @Excel(name = "财产编码类别(1-固定资产  2-列管品)", height = 20, width = 30,orderNum="7")
+    @Excel(name = "财产编码类别(1-固定资产  2-列管品)", height = 20, width = 30,orderNum="7",replace = {"固定资产_1","列管品_2"})
     @Column(name = "property_code_category")
     private Byte propertyCodeCategory;
 

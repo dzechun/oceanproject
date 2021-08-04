@@ -9,14 +9,14 @@ import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
-import com.fantechs.common.base.general.entity.eam.EamJigRequisition;
-import com.fantechs.common.base.general.entity.eam.EamJigReturn;
+import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRequisition;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigReMaterial;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRequisition;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -52,6 +52,8 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
     private EamJigReturnMapper eamJigReturnMapper;
+    @Resource
+    private EamJigMapper eamJigMapper;
     @Resource
     private PMFeignApi pmFeignApi;
     @Resource
@@ -90,8 +92,8 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             throw new BizErrorException("查无此工单");
         }
 
-        if(newMesPmWorkOrderDtos.get(0).getMaterialId().longValue() != oldMesPmWorkOrderDtos.get(0).getMaterialId().longValue()){
-            throw new BizErrorException("新旧工单的物料不一致");
+        if(newMesPmWorkOrderDtos.get(0).getMaterialId().equals(oldMesPmWorkOrderDtos.get(0).getMaterialId())){
+            throw new BizErrorException("新旧工单的物料不一致，无法转换");
         }
 
         //按治具id分组查询领用记录
@@ -120,6 +122,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int conversion(List<EamJigRequisition> list){
         List<EamJigReturn> eamJigReturnList = new ArrayList<>();
         int sum = 0;
@@ -133,13 +136,10 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             eamJigReturn.setJigBarcodeId(eamJigRequisition.getJigBarcodeId());
             eamJigReturn.setThisTimeUsageTime(eamJigRequisition.getThisTimeUsageTime());
             eamJigReturnList.add(eamJigReturn);
+
+            eamJigRequisition.setJigRequisitionId(null);
         }
 
-        Example example = new Example(EamJigReturn.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigId", list.get(0).getJigId())
-                .andEqualTo("workOrderId",list.get(0).getWorkOrderId());
-        eamJigReturnMapper.deleteByExample(example);
         sum += eamJigReturnService.batchSave(eamJigReturnList);
 
         //保存领用记录
@@ -155,8 +155,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
      * @return
      */
     @Override
-    public EamJigBarcode checkJigBarcode(String jigBarcode,Long jigId,Integer usageQty,Integer count){
-        this.checkUsageQty(usageQty,count);
+    public EamJigBarcode checkJigBarcode(String jigBarcode,Long jigId){
 
         Example example = new Example(EamJigBarcode.class);
         Example.Criteria criteria = example.createCriteria();
@@ -166,7 +165,12 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             throw new BizErrorException("查无此治具条码");
         }
 
-        if(eamJigBarcode.getJigId() != jigId){
+        EamJig eamJig = eamJigMapper.selectByPrimaryKey(eamJigBarcode.getJigId());
+        if(eamJigBarcode.getCurrentUsageTime().intValue() >= eamJig.getMaxUsageTime().intValue()){
+            throw new BizErrorException("该治具已使用次数已达到治具最大使用次数");
+        }
+
+        if(!jigId.equals(eamJigBarcode.getJigId())){
             throw new BizErrorException("该治具条码不属于此治具");
         }
 
@@ -216,14 +220,17 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(EamJigRequisition.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigId", list.get(0).getJigId())
-                .andEqualTo("workOrderId",list.get(0).getWorkOrderId());
-        eamJigRequisitionMapper.deleteByExample(example);
+        //判断已扫描数量是否符合要求
+        this.checkUsageQty(list.get(0).getWorkOrderId(),list.get(0).getJigId(),list.size());
+
 
         List<EamHtJigRequisition> htList = new ArrayList<>();
         for (EamJigRequisition eamJigRequisition : list){
+            //原有的领用记录不再新增数据
+            if(StringUtils.isNotEmpty(eamJigRequisition.getJigRequisitionId())){
+                continue;
+            }
+
             eamJigRequisition.setCreateUserId(user.getUserId());
             eamJigRequisition.setCreateTime(new Date());
             eamJigRequisition.setModifiedUserId(user.getUserId());
@@ -248,11 +255,22 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     }
 
     /**
-     *  PDA治具领用--配置项判断
-     * @param
+     *  PDA治具领用--根据配置项判断已扫描数量是否符合要求
+     * @param workOrderId  工单id
+     * @param jigId  治具id
+     * @param count  已扫描数量
      * @return
      */
-    public boolean checkUsageQty(int usageQty,int count) {
+    public boolean checkUsageQty(Long workOrderId,Long jigId,int count) {
+        MesPmWorkOrder workOrder = pmFeignApi.workOrderDetail(workOrderId).getData();
+        Example example = new Example(SearchEamJigReMaterial.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("materialId",workOrder.getMaterialId())
+                .andEqualTo("jigId",jigId);
+        List<EamJigReMaterial> eamJigReMaterialList = eamJigReMaterialMapper.selectByExample(example);
+        //所需数量
+        int usageQty = eamJigReMaterialList.get(0).getUsageQty();
+
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("UsageQtyEqual");
         List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();

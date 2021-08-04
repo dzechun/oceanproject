@@ -20,7 +20,7 @@ public interface EamJigRequisitionService extends IService<EamJigRequisition> {
 
     EamJigRequisitionWorkOrderDto findWorkOrder(String workOrderCode);
 
-    EamJigBarcode checkJigBarcode(String jigBarcode,Long jigId,Integer usageQty,Integer count);
+    EamJigBarcode checkJigBarcode(String jigBarcode,Long jigId);
 
     List<EamJigReMaterialDto> getRecordQty(String newWorkOrderCode, String oldWorkOrderCode);
 

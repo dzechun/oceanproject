@@ -60,8 +60,8 @@
     left join ocean_v2.sys_user s on ejsba.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ejsba.org_id = bo.organization_id
     <where>
-      <if test="jigId!=null">
-        and ejsba.jig_id = #{jigId}
+      <if test="jigStandingBookId!=null">
+        and ejsba.jig_standing_book_id = #{jigStandingBookId}
       </if>
       <if test="orgId!=null">
         and ejsba.org_id=#{orgId}

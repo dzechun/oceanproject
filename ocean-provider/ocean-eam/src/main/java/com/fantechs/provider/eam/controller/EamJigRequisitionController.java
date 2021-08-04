@@ -59,10 +59,8 @@ public class EamJigRequisitionController {
     @ApiOperation(value = "检查治具条码",notes = "检查治具条码")
     @PostMapping("/checkJigBarcode")
     public ResponseEntity checkJigBarcode(@ApiParam(value = "治具条码",required = true) @RequestParam @NotBlank(message="治具条码不能为空") String jigBarcode,
-                                          @ApiParam(value = "治具ID",required = true) @RequestParam @NotNull(message="治具ID不能为空") Long jigId,
-                                          @ApiParam(value = "所需数量",required = true) @RequestParam @NotNull(message="所需数量不能为空") Integer usageQty,
-                                          @ApiParam(value = "已扫描数量",required = true) @RequestParam @NotNull(message="已扫描数量不能为空") Integer count) {
-        EamJigBarcode eamJigBarcode = eamJigRequisitionService.checkJigBarcode(jigBarcode, jigId, usageQty, count);
+                                          @ApiParam(value = "治具ID",required = true) @RequestParam @NotNull(message="治具ID不能为空") Long jigId) {
+        EamJigBarcode eamJigBarcode = eamJigRequisitionService.checkJigBarcode(jigBarcode, jigId);
         return ControllerUtil.returnDataSuccess(eamJigBarcode,StringUtils.isEmpty(eamJigBarcode)?0:1);
     }
 

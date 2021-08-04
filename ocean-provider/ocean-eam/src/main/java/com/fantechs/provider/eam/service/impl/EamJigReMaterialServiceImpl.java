@@ -140,7 +140,12 @@ public class EamJigReMaterialServiceImpl extends BaseService<EamJigReMaterial> i
         Example example = new Example(EamJigReMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("jigId", list.get(0).getJigId());
-        eamJigReMaterialMapper.deleteByExample(example);
+
+        if(StringUtils.isNotEmpty(list.get(0).getJigReMaterialId())) {
+            eamJigReMaterialMapper.deleteByExample(example);
+        }else if(StringUtils.isNotEmpty(eamJigReMaterialMapper.selectByExample(example))){
+            throw new BizErrorException("该治具已有绑定关系");
+        }
 
         for (EamJigReMaterial eamJigReMaterial : list){
             sum += this.save(eamJigReMaterial);

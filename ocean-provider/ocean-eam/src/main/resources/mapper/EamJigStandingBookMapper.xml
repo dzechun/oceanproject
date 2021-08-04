@@ -22,7 +22,7 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
     <collection property="eamJigStandingBookAttachmentList" ofType="com.fantechs.common.base.general.entity.eam.EamJigStandingBookAttachment"
-                column="{jigId=jig_id}" select="com.fantechs.provider.eam.mapper.EamJigStandingBookAttachmentMapper.findList">
+                column="{jigStandingBookId=jig_standing_book_id}" select="com.fantechs.provider.eam.mapper.EamJigStandingBookAttachmentMapper.findList">
     </collection>
   </resultMap>
 
@@ -37,6 +37,7 @@
     <result column="jig_desc" jdbcType="VARCHAR" property="jigDesc"/>
     <result column="jig_model" jdbcType="VARCHAR" property="jigModel"/>
     <result column="jig_category_name" jdbcType="VARCHAR" property="jigCategoryName"/>
+    <result column="jig_barcode" jdbcType="VARCHAR" property="jigBarcode"/>
     <result column="usage_status" jdbcType="VARCHAR" property="usageStatus"/>
   </resultMap>
 
@@ -61,7 +62,8 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    ejb.asset_code,ejb.usage_status,ej.jig_code,ej.jig_name,ej.jig_desc,ej.jig_model,ejc.jig_category_name,
+    ejb.asset_code,ejb.usage_status,ej.jig_code,ej.jig_name,ej.jig_desc,ej.jig_model,
+    ejc.jig_category_name,ejb.jig_barcode,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bd.dept_name,

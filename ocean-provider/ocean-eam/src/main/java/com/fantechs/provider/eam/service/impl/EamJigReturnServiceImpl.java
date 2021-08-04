@@ -84,6 +84,11 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
 
         List<EamHtJigReturn> htList = new ArrayList<>();
         for (EamJigReturn eamJigReturn : list){
+            //原有的归还记录不再新增数据
+            if(StringUtils.isNotEmpty(eamJigReturn.getJigReturnId())){
+                continue;
+            }
+
             eamJigReturn.setCreateUserId(user.getUserId());
             eamJigReturn.setCreateTime(new Date());
             eamJigReturn.setModifiedUserId(user.getUserId());
@@ -169,7 +174,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             throw new BizErrorException("查无此治具条码");
         }
 
-        if(eamJigBarcode.getJigId() != jigId){
+        if(!jigId.equals(eamJigBarcode.getJigId())){
             throw new BizErrorException("该治具条码不属于此治具");
         }
 

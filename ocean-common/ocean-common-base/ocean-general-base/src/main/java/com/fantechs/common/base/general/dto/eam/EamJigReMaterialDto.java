@@ -69,25 +69,11 @@ public class EamJigReMaterialDto extends EamJigReMaterial implements Serializabl
     private String jigModel;
 
     /**
-     * 仓库
+     * 仓库库位
      */
     @Transient
-    @ApiModelProperty(name = "warehouseName",value = "仓库")
-    private String warehouseName;
-
-    /**
-     * 库区
-     */
-    @Transient
-    @ApiModelProperty(name = "warehouseAreaName",value = "库区")
-    private String warehouseAreaName;
-
-    /**
-     * 推荐库位
-     */
-    @Transient
-    @ApiModelProperty(name = "storageCode",value = "推荐库位")
-    private String storageCode;
+    @ApiModelProperty(name = "warehouseStorage",value = "仓库库位")
+    private String warehouseStorage;
 
     /**
      * 物料编码
