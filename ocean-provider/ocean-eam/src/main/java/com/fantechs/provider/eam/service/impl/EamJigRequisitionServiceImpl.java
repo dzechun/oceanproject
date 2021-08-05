@@ -51,8 +51,6 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     @Resource
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
-    private EamJigReturnMapper eamJigReturnMapper;
-    @Resource
     private EamJigMapper eamJigMapper;
     @Resource
     private PMFeignApi pmFeignApi;
@@ -92,7 +90,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             throw new BizErrorException("查无此工单");
         }
 
-        if(newMesPmWorkOrderDtos.get(0).getMaterialId().equals(oldMesPmWorkOrderDtos.get(0).getMaterialId())){
+        if(!newMesPmWorkOrderDtos.get(0).getMaterialId().equals(oldMesPmWorkOrderDtos.get(0).getMaterialId())){
             throw new BizErrorException("新旧工单的物料不一致，无法转换");
         }
 
@@ -138,6 +136,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             eamJigReturnList.add(eamJigReturn);
 
             eamJigRequisition.setJigRequisitionId(null);
+            eamJigRequisition.setWorkOrderId(eamJigRequisition.getNewWorkOrderId());
         }
 
         sum += eamJigReturnService.batchSave(eamJigReturnList);
@@ -166,7 +165,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         }
 
         EamJig eamJig = eamJigMapper.selectByPrimaryKey(eamJigBarcode.getJigId());
-        if(eamJigBarcode.getCurrentUsageTime().intValue() >= eamJig.getMaxUsageTime().intValue()){
+        if(eamJigBarcode.getCurrentUsageTime()!=null && eamJigBarcode.getCurrentUsageTime().intValue() >= eamJig.getMaxUsageTime().intValue()){
             throw new BizErrorException("该治具已使用次数已达到治具最大使用次数");
         }
 
@@ -263,7 +262,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
      */
     public boolean checkUsageQty(Long workOrderId,Long jigId,int count) {
         MesPmWorkOrder workOrder = pmFeignApi.workOrderDetail(workOrderId).getData();
-        Example example = new Example(SearchEamJigReMaterial.class);
+        Example example = new Example(EamJigReMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId",workOrder.getMaterialId())
                 .andEqualTo("jigId",jigId);

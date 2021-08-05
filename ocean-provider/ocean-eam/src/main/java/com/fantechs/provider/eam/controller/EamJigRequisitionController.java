@@ -72,6 +72,12 @@ public class EamJigRequisitionController {
         return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
+    @ApiOperation(value = "转换工单--提交",notes = "转换工单--提交")
+    @PostMapping("/conversion")
+    public ResponseEntity conversion(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<EamJigRequisition> list) {
+        return ControllerUtil.returnCRUD(eamJigRequisitionService.conversion(list));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EamJigRequisition eamJigRequisition) {

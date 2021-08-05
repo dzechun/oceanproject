@@ -68,4 +68,10 @@ public class SearchEamJigRequisition extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="returnTime",value = "归还日期")
     private String returnTime;
+
+    /**
+     * 是否除去已归还的治具的领用记录（0-否 1-是）
+     */
+    @ApiModelProperty(name="ifExceptReturn",value = "是否除去已归还的治具的领用记录（0-否 1-是）")
+    private Integer ifExceptReturn;
 }

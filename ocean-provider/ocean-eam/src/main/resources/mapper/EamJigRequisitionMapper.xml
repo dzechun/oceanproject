@@ -60,7 +60,7 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
     ej.jig_code,ej.jig_name,ej.jig_desc,ej.jig_model,ejc.jig_category_name,
-    ejb.jig_barcode,ejb.current_usage_time,wo.work_order_code,bm.material_code,bm.material_desc,bpl.pro_name,
+    ejb.jig_barcode,ejb.current_usage_time,wo.work_order_code,
     ejr.create_time as requisition_time,ejret.create_time as return_time,ejret.this_time_usage_time,
     CONCAT_WS(';',bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code) AS warehouse_storage,
     u.user_name as create_user_name,
@@ -75,12 +75,13 @@
     left join fantech_imes_v2.eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
     left join fantech_imes_v2.eam_jig_barcode ejb on ejr.jig_barcode_id=ejb.jig_barcode_id
     left join fantech_imes_v2.mes_pm_work_order wo on ejr.work_order_id=wo.work_order_id
-    left join fantech_imes_v2.base_material bm on wo.material_id=bm.material_id
-    left join fantech_imes_v2.base_pro_line bpl on wo.pro_line_id=bpl.pro_line_id
     left join ocean_v2.sys_user u on ejr.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ejr.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ejr.org_id = bo.organization_id
     <where>
+      <if test="ifExceptReturn != null and ifExceptReturn == 1">
+        and ejret.jig_return_id IS NULL
+      </if>
       <if test="jigId != null">
         and wo.jig_id = #{jigId}
       </if>
