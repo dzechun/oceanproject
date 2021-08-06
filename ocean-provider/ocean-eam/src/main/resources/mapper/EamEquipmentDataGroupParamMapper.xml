@@ -64,6 +64,9 @@
       <if test="equipmentName != null and equipmentName!=''">
         and eedgp.equipment_data_group_name like CONCAT('%', #{equipment_data_group_name}, '%')
       </if>
+      <if test="equipmentDataGroupId != null and equipmentDataGroupId!=''">
+        and eedgp.equipment_data_group_id = #{equipmentDataGroupId}
+      </if>
       <if test="status!=null">
         and eedgp.status = #{status}
       </if>

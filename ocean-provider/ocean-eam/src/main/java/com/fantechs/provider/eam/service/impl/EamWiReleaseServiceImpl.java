@@ -160,7 +160,9 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         eamWiRelease.setReleaseStatus((byte)2);
         int i = eamWiReleaseMapper.updateByPrimaryKeySelective(eamWiRelease);
         String localHostIp = InetAddress.getLocalHost().getHostAddress();
-        socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://"+localHostIp+"/#/YunZhiESOP?ip=");
+   //     socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://"+localHostIp+"/#/YunZhiESOP?ip=");
+        socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://qmsapp.donlim.com/esop/#/YunZhiESOP?ip=");
+
         return i;
     }
 

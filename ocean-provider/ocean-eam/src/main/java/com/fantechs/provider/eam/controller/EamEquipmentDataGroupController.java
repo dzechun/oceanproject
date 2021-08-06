@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/08/02.
  */
 @RestController
-@Api(tags = "设备分组")
+@Api(tags = "设备组别")
 @RequestMapping("/eamEquipmentDataGroup")
 @Validated
 public class EamEquipmentDataGroupController {

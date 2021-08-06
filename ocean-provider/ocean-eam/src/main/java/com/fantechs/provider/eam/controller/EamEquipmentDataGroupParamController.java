@@ -27,7 +27,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/08/02.
  */
 @RestController
-@Api(tags = "设备分组参数")
+@Api(tags = "设备组别参数")
 @RequestMapping("/eamEquipmentDataGroupParam")
 @Validated
 public class EamEquipmentDataGroupParamController {

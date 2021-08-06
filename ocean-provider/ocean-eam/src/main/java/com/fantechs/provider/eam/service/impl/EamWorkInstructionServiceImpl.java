@@ -97,20 +97,21 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("equipmentIp", searchEamWorkInstruction.getEquipmentIp());
-        EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
+        List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
+        if(eamEquipments.size() >1) throw new BizErrorException("出现两个或两个以上的设备ip相同");
         example.clear();
 
         SearchEamWiRelease searchEamWiRelease = new SearchEamWiRelease();
         searchEamWiRelease.setEquipmentIp(searchEamWorkInstruction.getEquipmentIp());
-        searchEamWiRelease.setOrgId(eamEquipment.getOrgId());
+        searchEamWiRelease.setOrgId(eamEquipments.get(0).getOrgId());
         searchEamWiRelease.setReleaseStatus((byte)2);
-        searchEamWiRelease.setProLineId(eamEquipment.getProLineId());
+        searchEamWiRelease.setProLineId(eamEquipments.get(0).getProLineId());
         List<EamWiReleaseDto> list = eamWiReleaseMapper.findList(searchEamWiRelease);
      //   if(StringUtils.isEmpty(list)) throw new BizErrorException("未查询到该设备对应产线发布的WI");
         if(StringUtils.isNotEmpty(list) ) {
             if (list.size()>1)  throw new BizErrorException("查询到多条该设备对应产线发布的WI");
             for(EamWiReleaseDetDto dto : list.get(0).getEamWiReleaseDetDtos()){
-                if(dto.getProcessId().equals(eamEquipment.getProcessId()) ){
+                if(dto.getProcessId().equals(eamEquipments.get(0).getProcessId()) ){
                     searchEamWorkInstruction.setWorkInstructionId(dto.getWorkInstructionId());
                 }
             }
@@ -119,8 +120,8 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         }else{
             return null;
         }
-        searchEamWorkInstruction.setProcessId(eamEquipment.getProcessId());
-        searchEamWorkInstruction.setOrgId(eamEquipment.getOrgId());
+        searchEamWorkInstruction.setProcessId(eamEquipments.get(0).getProcessId());
+        searchEamWorkInstruction.setOrgId(eamEquipments.get(0).getOrgId());
         return eamWorkInstructionMapper.findList(searchEamWorkInstruction).get(0);
     }
 

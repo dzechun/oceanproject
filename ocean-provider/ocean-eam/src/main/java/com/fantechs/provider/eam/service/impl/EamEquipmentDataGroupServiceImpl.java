@@ -100,8 +100,8 @@ public class EamEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
 
         Example examples = new Example(EamEquipmentDataGroupParam.class);
         Example.Criteria criterias = examples.createCriteria();
-        criterias.andEqualTo("equipmentDataGroupParamId", eamEquipmentDataGroupDto.getEquipmentDataGroupId());
-        eamEquipmentDataGroupParamMapper.deleteByPrimaryKey(examples);
+        criterias.andEqualTo("equipmentDataGroupId", eamEquipmentDataGroupDto.getEquipmentDataGroupId());
+        eamEquipmentDataGroupParamMapper.deleteByExample(examples);
         examples.clear();
         //保存param表及其履历表
         saveParam(eamEquipmentDataGroupDto,user);
@@ -115,8 +115,8 @@ public class EamEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
         for (String id : idArry) {
             Example examples = new Example(EamEquipmentDataGroupParam.class);
             Example.Criteria criterias = examples.createCriteria();
-            criterias.andEqualTo("equipmentDataGroupParamId",id);
-            eamEquipmentDataGroupParamMapper.deleteByPrimaryKey(examples);
+            criterias.andEqualTo("equipmentDataGroupId",id);
+            eamEquipmentDataGroupParamMapper.deleteByExample(examples);
             i = eamEquipmentDataGroupMapper.deleteByExample(examples);
         }
 
