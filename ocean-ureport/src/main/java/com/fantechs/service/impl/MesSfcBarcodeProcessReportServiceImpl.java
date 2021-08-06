@@ -30,7 +30,7 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
     SFCFeignApi sfcFeignApi;
 
     @Override
-    public List<MesSfcBarcodeProcessReport> findList(Map<String, Object> map) {
+    public List<MesSfcBarcodeProcessReport>  findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
 
@@ -75,6 +75,9 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
         MesSfcBarcodeProcessReport mesSfcBarcodeProcessReport = new MesSfcBarcodeProcessReport();
         Object tabId = map.get("tabId");
         map.put("orgId",user.getOrganizationId());
+        if (StringUtils.isEmpty(map.get("barcode"))) {
+            return null;
+        }
         if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 1 ||
                 (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
             SearchMesSfcBarcodeProcessRecord record = new SearchMesSfcBarcodeProcessRecord();
@@ -93,7 +96,6 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
         if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 3 ||
                 (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
             mesSfcBarcodeProcessReport.setBoxList(mesSfcBarcodeProcessReportMapper.findBoxList(map));
-            mesSfcBarcodeProcessReport.setPalletList(mesSfcBarcodeProcessReportMapper.findPalletList(map));
         }
         if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 4 ||
                 (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
