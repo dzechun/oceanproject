@@ -23,7 +23,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    ssi.spec_id,ssi.menu_id, ssi.spec_code, ssi.spec_name, ssi.para, ssi.para_value, ssi.create_user_id, ssi.create_time, ssi.modified_user_id,
+    ssi.spec_id,ssi.menu_id, ssi.spec_code, ssi.spec_name, ssi.para, ssi.para_value,ssi.param_type, ssi.create_user_id, ssi.create_time, ssi.modified_user_id,
     ssi.modified_time, ssi.is_delete, ssi.option1, ssi.option2, ssi.option3
   </sql>
 
