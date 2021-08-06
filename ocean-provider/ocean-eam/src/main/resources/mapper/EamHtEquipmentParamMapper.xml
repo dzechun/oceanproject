@@ -29,7 +29,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    ehep.ht_equipment_param_id
+    ehep.ht_equipment_param_id,
     ehep.equipment_param_id,
     ehep.equipment_id,
     ehep.`status`,

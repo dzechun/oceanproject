@@ -123,6 +123,13 @@ public class EamJigRequisition extends ValidGroup implements Serializable {
     @Excel(name = "本次使用次数", height = 20, width = 30,orderNum="11")
     private Integer thisTimeUsageTime;
 
+    /**
+     * 新工单ID
+     */
+    @ApiModelProperty(name="newWorkOrderId",value = "新工单ID")
+    @Transient
+    private Long newWorkOrderId;
+
     private String option1;
 
     private String option2;
