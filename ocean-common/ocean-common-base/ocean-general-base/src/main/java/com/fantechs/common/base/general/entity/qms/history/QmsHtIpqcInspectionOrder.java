@@ -312,6 +312,14 @@ public class QmsHtIpqcInspectionOrder extends ValidGroup implements Serializable
     private String inspectionStandardName;
 
     /**
+     * 检验标准版本
+     */
+    @Transient
+    @ApiModelProperty(name = "inspectionStandardVersion",value = "检验标准版本")
+    @Excel(name = "检验标准版本", height = 20, width = 30,orderNum="11")
+    private String inspectionStandardVersion;
+
+    /**
      * 审核部门
      */
     @Transient

@@ -83,6 +83,17 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
+        if(baseInspectionStandard.getMaterialId()!=null && baseInspectionStandard.getMaterialId()==0){
+            example.clear();
+            example.createCriteria().andEqualTo("orgId", user.getOrganizationId())
+                    .andEqualTo("materialId", baseInspectionStandard.getMaterialId())
+                    .andEqualTo("inspectionWayId", baseInspectionStandard.getInspectionWayId());
+            BaseInspectionStandard baseInspectionStandard2 = baseInspectionStandardMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(baseInspectionStandard2)) {
+                throw new BizErrorException("该检验方式已有通用的检验标准");
+            }
+        }
+
         //新增检验标准
         baseInspectionStandard.setCreateUserId(user.getUserId());
         baseInspectionStandard.setCreateTime(new Date());
@@ -140,6 +151,18 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         BaseInspectionStandard baseInspectionStandard1 = baseInspectionStandardMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseInspectionStandard1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        if(baseInspectionStandard.getMaterialId()!=null && baseInspectionStandard.getMaterialId()==0){
+            example.clear();
+            example.createCriteria().andEqualTo("orgId",user.getOrganizationId())
+                    .andEqualTo("materialId",baseInspectionStandard.getMaterialId())
+                    .andEqualTo("inspectionWayId",baseInspectionStandard.getInspectionWayId())
+                    .andNotEqualTo("inspectionStandardId",baseInspectionStandard.getInspectionStandardId());
+            BaseInspectionStandard baseInspectionStandard2 = baseInspectionStandardMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(baseInspectionStandard2)){
+                throw new BizErrorException("该检验方式已有通用的检验标准");
+            }
         }
 
         //修改检验标准

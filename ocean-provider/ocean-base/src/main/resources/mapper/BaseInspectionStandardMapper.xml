@@ -8,6 +8,7 @@
     <id column="inspection_standard_id" jdbcType="BIGINT" property="inspectionStandardId" />
     <result column="inspection_standard_code" jdbcType="VARCHAR" property="inspectionStandardCode" />
     <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName" />
+    <result column="inspection_standard_version" jdbcType="VARCHAR" property="inspectionStandardVersion" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="inspection_type" jdbcType="TINYINT" property="inspectionType" />
@@ -34,6 +35,7 @@
     bis.inspection_standard_id,
     bis.inspection_standard_code,
     bis.inspection_standard_name,
+    bis.inspection_standard_version,
     bis.material_id,
     bis.supplier_id,
     bis.inspection_type,
@@ -67,6 +69,9 @@
       <if test="inspectionStandardName!=null and inspectionStandardName!=''">
         and bis.inspection_standard_name like CONCAT('%', #{inspectionStandardName}, '%')
       </if>
+      <if test="materialId!=null">
+        and bis.material_id = #{materialId}
+      </if>
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
@@ -76,11 +81,17 @@
       <if test="inspectionType!=null">
         and bis.inspection_type = #{inspectionType}
       </if>
-      <if test="supplierId!=null">
+      <if test="supplierId!=null and ifContainCommon!=1">
         and bis.supplier_id = #{supplierId}
       </if>
-      <if test="materialId!=null">
+      <if test="materialId!=null and ifContainCommon!=1">
         and bis.material_id = #{materialId}
+      </if>
+      <if test="materialId!=null and ifContainCommon==1">
+        and (bis.material_id = #{materialId} or bis.material_id = 0)
+      </if>
+      <if test="supplierId!=null and ifContainCommon==1">
+        and (bis.supplier_id = #{supplierId} or bis.material_id = 0)
       </if>
       <if test="inspectionWayId!=null">
         and bis.inspection_way_id = #{inspectionWayId}

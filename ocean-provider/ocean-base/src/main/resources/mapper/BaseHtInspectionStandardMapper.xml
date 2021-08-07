@@ -9,6 +9,7 @@
     <result column="inspection_standard_id" jdbcType="BIGINT" property="inspectionStandardId" />
     <result column="inspection_standard_code" jdbcType="VARCHAR" property="inspectionStandardCode" />
     <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName" />
+    <result column="inspection_standard_version" jdbcType="VARCHAR" property="inspectionStandardVersion" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="inspection_type" jdbcType="TINYINT" property="inspectionType" />
@@ -36,6 +37,7 @@
     bhis.inspection_standard_id,
     bhis.inspection_standard_code,
     bhis.inspection_standard_name,
+    bhis.inspection_standard_version,
     bhis.material_id,
     bhis.supplier_id,
     bhis.inspection_type,
