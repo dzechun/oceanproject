@@ -40,11 +40,13 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         httpServletResponse.setContentType("application/json;charset=utf-8");
         PrintWriter writer = httpServletResponse.getWriter();
         SysUserDto loginUser = MySecurityTool.getCurrentLoginUserDTO();
+        List<SysMenuInListDTO>  roleMenuList = new LinkedList<>();
         if (StringUtils.isNotEmpty(loginUser)) {
 
             //---加入角色权限所对应的菜单名称
             List<SysRole> roles = loginUser.getRoles();
             List<String> roleIds = new  LinkedList<>();
+
             //menuType 1-web(客户端) 2-pc 3-PDA(移动设备)
             int menuType=3;  //PDA
             log.info("=========================="+httpServletRequest.getHeader("user-agent"));
@@ -58,7 +60,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
                     roleIds.add(role.getRoleId().toString());
                 }
                 //构建角色菜单树
-                List<SysMenuInListDTO>  roleMenuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
+                roleMenuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
                         "parentId","0",
                         "menuType",menuType+""
                 ),roleIds);
@@ -75,9 +77,9 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         //如何带有token将token删除
         TokenUtil.clearTokenByRequest(httpServletRequest);
         //---生成token
-        SysUser sysUser = MySecurityTool.getCurrentLoginUser();
+        SysUserDto sysUser = MySecurityTool.getCurrentLoginUser();
         sysUser.setAuthority(permsSet);
-
+        sysUser.setMenuList(roleMenuList);
         String token = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,null);
         String refreshToken = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,getIpAddress(httpServletRequest));
         TokenUtil.save(token,sysUser);

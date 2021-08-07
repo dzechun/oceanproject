@@ -16,11 +16,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class MySecurityTool {
 
-    public static SysUser getCurrentLoginUser(){
+    public static SysUserDto getCurrentLoginUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(!(authentication instanceof AnonymousAuthenticationToken)){
             SysUserDto tSysUserDTO = (SysUserDto) authentication.getPrincipal();
-            SysUser mbUser = new SysUser();
+            SysUserDto mbUser = new SysUserDto();
             BeanUtils.copyProperties(tSysUserDTO, mbUser);
             return mbUser;
         }
