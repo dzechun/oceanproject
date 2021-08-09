@@ -47,6 +47,13 @@ public class QmsIpqcInspectionOrderController {
         return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.writeBack(ipqcInspectionOrderId));
     }
 
+    @ApiOperation(value = "创建检验单据",notes = "创建检验单据")
+    @PostMapping("/createOrder")
+    public ResponseEntity createOrder(@ApiParam(value = "工单号",required = true) @RequestParam @NotBlank(message="工单号不能为空") String workOrderCode,
+                                      @ApiParam(value = "检验方式",required = true) @RequestParam @NotBlank(message="检验方式不能为空") String inspectionWayDesc) {
+        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.createOrder(workOrderCode,inspectionWayDesc));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated QmsIpqcInspectionOrder qmsIpqcInspectionOrder) {

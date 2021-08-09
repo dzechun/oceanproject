@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.net.UnknownHostException;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class EamNewsController {
 
     @ApiOperation(value = "审核并发布",notes = "审核并发布")
     @PostMapping("/audit")
-    public ResponseEntity audit(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+    public ResponseEntity audit(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) throws UnknownHostException {
         return ControllerUtil.returnCRUD(eamNewsService.audit(ids));
     }
 

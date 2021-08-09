@@ -206,14 +206,6 @@ public class EamHtJig extends ValidGroup implements Serializable {
     private Integer maintainWarningDays;
 
     /**
-     * 保养人员
-     */
-    @ApiModelProperty(name="maintainUserId",value = "保养人员")
-    @Excel(name = "保养人员", height = 20, width = 30,orderNum="") 
-    @Column(name = "maintain_user_id")
-    private Long maintainUserId;
-
-    /**
      * 备用件名称
      */
     @ApiModelProperty(name="backupName",value = "备用件名称")
@@ -344,13 +336,6 @@ public class EamHtJig extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name = "storageCode",value = "推荐库位")
     private String storageCode;
-
-    /**
-     * 保养人员
-     */
-    @Transient
-    @ApiModelProperty(name = "maintainUserName",value = "保养人员")
-    private String maintainUserName;
 
     private String option1;
 

@@ -51,7 +51,7 @@
         ee.equipment_code,
         ee.equipment_name,
         ee.equipment_ip
-    FROM mes_sfc_data_collect msdc
+    FROM eam_data_collect msdc
     LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id
   </select>
 
@@ -67,7 +67,7 @@
     (SELECT SUBSTRING_INDEX( GROUP_CONCAT( data_collect_id ORDER BY data_collect_id DESC ), ',', 1 ) AS data_collect_id
     FROM eam_data_collect
     GROUP BY equipment_id ) AS dci
-    LEFT JOIN mes_sfc_data_collect msdc ON dci.data_collect_id = msdc.data_collect_id
+    LEFT JOIN eam_data_collect msdc ON dci.data_collect_id = msdc.data_collect_id
     LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id
     <where>
       <if test="equipmentId != null">

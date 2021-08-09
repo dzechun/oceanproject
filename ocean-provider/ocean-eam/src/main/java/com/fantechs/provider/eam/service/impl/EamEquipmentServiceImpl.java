@@ -42,11 +42,14 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
 
     @Override
     public List<EamEquipmentDto> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))){
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
+        List<EamEquipmentDto> list = eamEquipmentMapper.findList(map);
         return eamEquipmentMapper.findList(map);
     }
 
@@ -84,6 +87,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
         check(record);
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
@@ -108,15 +112,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        if(StringUtils.isNotEmpty(entity.getEquipmentIp())) {
-            Example examples = new Example(EamEquipment.class);
-            Example.Criteria criterias = examples.createCriteria();
-            criterias.andEqualTo("equipmentIp", entity.getEquipmentIp());
-            EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(examples);
-            if (StringUtils.isNotEmpty(eamEquipment)) {
-                throw new BizErrorException("设备ip不能重复");
-            }
-        }
+        check(entity);
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
         int i = eamEquipmentMapper.updateByPrimaryKeySelective(entity);
@@ -157,23 +153,40 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        if(StringUtils.isEmpty(entity.getProcessId())) throw new BizErrorException("工序不能为空");
-        if(StringUtils.isEmpty(entity.getProLineId())) throw new BizErrorException("产线不能为空");
 
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("equipmentCode", entity.getEquipmentCode());
+        if(StringUtils.isNotEmpty(entity.getEquipmentId())){
+            criteria.andNotEqualTo("equipmentId",entity.getEquipmentId());
+        }
         EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(eamEquipment)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        Example examples = new Example(EamEquipment.class);
-        Example.Criteria criterias = examples.createCriteria();
-        criterias.andEqualTo("equipmentIp", entity.getEquipmentIp());
-        eamEquipment = eamEquipmentMapper.selectOneByExample(examples);
-        if (StringUtils.isNotEmpty(eamEquipment)) {
-            throw new BizErrorException("设备ip不能重复");
+        if(StringUtils.isNotEmpty(entity.getEquipmentIp())) {
+            Example examples = new Example(EamEquipment.class);
+            Example.Criteria criterias = examples.createCriteria();
+            criterias.andEqualTo("equipmentIp", entity.getEquipmentIp());
+            if(StringUtils.isNotEmpty(entity.getEquipmentId())){
+                criterias.andNotEqualTo("equipmentId",entity.getEquipmentId());
+            }
+            if (StringUtils.isNotEmpty(eamEquipmentMapper.selectOneByExample(examples))) {
+                throw new BizErrorException("设备ip不能重复");
+            }
+        }
+
+        if(StringUtils.isNotEmpty(entity.getEquipmentMacAddress())){
+            Example macExample = new Example(EamEquipment.class);
+            Example.Criteria macCriteria = macExample.createCriteria();
+            macCriteria.andEqualTo("equipmentMacAddress", entity.getEquipmentMacAddress());
+            if(StringUtils.isNotEmpty(entity.getEquipmentId())){
+                macCriteria.andNotEqualTo("equipmentId",entity.getEquipmentId());
+            }
+            if (StringUtils.isNotEmpty(eamEquipmentMapper.selectOneByExample(macExample))) {
+                throw new BizErrorException("设备mac地址不能重复");
+            }
         }
     }
 }

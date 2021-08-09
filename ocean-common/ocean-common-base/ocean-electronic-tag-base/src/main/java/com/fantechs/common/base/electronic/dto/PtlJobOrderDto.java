@@ -23,4 +23,19 @@ public class PtlJobOrderDto extends PtlJobOrder implements Serializable {
 
     @ApiModelProperty(name = "modifiedUserCode",value = "修改账号")
     private String modifiedUserCode;
+
+    @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域id")
+    private Long warehouseAreaId;
+
+    @ApiModelProperty(name = "warehouseAreaCode",value = "仓库区域编码")
+    private String warehouseAreaCode;
+
+    @ApiModelProperty(name = "warehouseAreaName",value = "仓库区域名称")
+    private String warehouseAreaName;
+
+    @ApiModelProperty(name = "seq",value = "任务单激活顺序")
+    private Integer seq;
+
+    @ApiModelProperty(name = "isNew",value = "是否是新激活任务（0-不是 1-是）")
+    private Integer isNew;
 }

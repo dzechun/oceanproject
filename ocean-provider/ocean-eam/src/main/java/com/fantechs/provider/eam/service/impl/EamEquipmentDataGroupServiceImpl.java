@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,15 @@ public class EamEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
     public int save(EamEquipmentDataGroupDto eamEquipmentDataGroupDto) {
 
         SysUser user = getUser();
+
+        Example example = new Example(EamEquipmentDataGroup.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("equipmentDataGroupName", eamEquipmentDataGroupDto.getEquipmentDataGroupName());
+        List<EamEquipmentDataGroup> eamEquipmentDataGroups = eamEquipmentDataGroupMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(eamEquipmentDataGroups))   throw new BizErrorException("分组已存在");
+        example.clear();
+
+
         eamEquipmentDataGroupDto.setCreateUserId(user.getUserId());
         eamEquipmentDataGroupDto.setCreateTime(new Date());
         eamEquipmentDataGroupDto.setModifiedUserId(user.getUserId());
@@ -90,8 +100,8 @@ public class EamEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
 
         Example examples = new Example(EamEquipmentDataGroupParam.class);
         Example.Criteria criterias = examples.createCriteria();
-        criterias.andEqualTo("equipmentDataGroupParamId", eamEquipmentDataGroupDto.getEquipmentDataGroupId());
-        eamEquipmentDataGroupParamMapper.deleteByPrimaryKey(examples);
+        criterias.andEqualTo("equipmentDataGroupId", eamEquipmentDataGroupDto.getEquipmentDataGroupId());
+        eamEquipmentDataGroupParamMapper.deleteByExample(examples);
         examples.clear();
         //保存param表及其履历表
         saveParam(eamEquipmentDataGroupDto,user);
@@ -105,8 +115,8 @@ public class EamEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
         for (String id : idArry) {
             Example examples = new Example(EamEquipmentDataGroupParam.class);
             Example.Criteria criterias = examples.createCriteria();
-            criterias.andEqualTo("equipmentDataGroupParamId",id);
-            eamEquipmentDataGroupParamMapper.deleteByPrimaryKey(examples);
+            criterias.andEqualTo("equipmentDataGroupId",id);
+            eamEquipmentDataGroupParamMapper.deleteByExample(examples);
             i = eamEquipmentDataGroupMapper.deleteByExample(examples);
         }
 
@@ -116,9 +126,9 @@ public class EamEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
 
 
     public void saveParam(EamEquipmentDataGroupDto eamEquipmentDataGroupDto,SysUser user){
-        List<EamHtEquipmentDataGroupParamDto>  paramHtList= null;
+        List<EamHtEquipmentDataGroupParamDto>  paramHtList= new ArrayList<EamHtEquipmentDataGroupParamDto>();;
         if(StringUtils.isNotEmpty(eamEquipmentDataGroupDto.getEamEquipmentDataGroupParamDtos())){
-            List<EamEquipmentDataGroupParamDto> list = null;
+            List<EamEquipmentDataGroupParamDto> list = new ArrayList<EamEquipmentDataGroupParamDto>();
             for(EamEquipmentDataGroupParamDto dto : eamEquipmentDataGroupDto.getEamEquipmentDataGroupParamDtos()){
                 dto.setEquipmentDataGroupId(eamEquipmentDataGroupDto.getEquipmentDataGroupId());
                 dto.setCreateUserId(user.getUserId());

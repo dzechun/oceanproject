@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.eam.EamNewsDto;
 import com.fantechs.common.base.general.entity.eam.EamNews;
 import com.fantechs.common.base.support.IService;
 
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -14,5 +15,5 @@ import java.util.Map;
 
 public interface EamNewsService extends IService<EamNews> {
     List<EamNewsDto> findList(Map<String, Object> map);
-    int audit(String ids);
+    int audit(String ids) throws UnknownHostException;
 }

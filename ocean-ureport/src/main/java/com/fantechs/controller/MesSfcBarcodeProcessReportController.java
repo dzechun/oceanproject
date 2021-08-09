@@ -68,10 +68,15 @@ public class MesSfcBarcodeProcessReportController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchMesSfcBarcodeProcessReport searchMesSfcBarcodeProcessReport) throws IOException {
         Map<String, Object> stringObjectMap = ControllerUtil.dynamicConditionByEntity(searchMesSfcBarcodeProcessReport);
         stringObjectMap.put("export",1);
+        List<MesSfcBarcodeProcessReport> list = mesSfcBarcodeProcessReportService.findList(stringObjectMap);
         MesSfcBarcodeProcessReport recordList = mesSfcBarcodeProcessReportService.findRecordList(stringObjectMap);
         try {
             Map<String,String> map = new LinkedHashMap<>();
             List<Class<?>> clzList = new ArrayList<>();
+
+            map.put("过站详细信息",JsonUtils.objectToJson(list));
+            clzList.add(MesSfcBarcodeProcessReport.class);
+
             if (StringUtils.isNotEmpty(recordList.getAssemblyList())) {
                 map.put("装配记录",JsonUtils.objectToJson(recordList.getAssemblyList()));
                 clzList.add(AssemblyRecordUreport.class);

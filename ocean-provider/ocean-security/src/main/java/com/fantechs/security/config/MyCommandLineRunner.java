@@ -51,12 +51,12 @@ public class MyCommandLineRunner implements CommandLineRunner {
         if (StringUtils.isNotEmpty(list)) {
             redisUtil.set("specItemList", JsonUtils.objectToJson(list));
         }
-        List<SysMenuInListDTO> menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
-                "parentId", "0",
-                "menuType", 2
-        ), null);
-        if (StringUtils.isNotEmpty(menuList)) {
-            redisUtil.set("menuList", JsonUtils.objectToJson(menuList));
-        }
+//        List<SysMenuInListDTO> menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
+//                "parentId", "0",
+//                "menuType", 2
+//        ), null);
+//        if (StringUtils.isNotEmpty(menuList)) {
+//            redisUtil.set("menuList", JsonUtils.objectToJson(menuList));
+//        }
     }
 }

@@ -72,10 +72,4 @@ public class EamJigDto extends EamJig implements Serializable {
     @ApiModelProperty(name = "storageCode",value = "推荐库位")
     private String storageCode;
 
-    /**
-     * 保养人员
-     */
-    @Transient
-    @ApiModelProperty(name = "maintainUserName",value = "保养人员")
-    private String maintainUserName;
 }

@@ -22,10 +22,12 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamWiReleaseService;
 import com.fantechs.provider.eam.service.socket.SocketService;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -72,6 +74,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         EamWiRelease wiRelease = eamWiReleaseMapper.selectOneByExample(example1);
         if(StringUtils.isNotEmpty(wiRelease)) throw new BizErrorException("添加失败，已存在发布编码");
         example1.clear();
+
         EamWiRelease eamWiRelease = new EamWiRelease();
         BeanUtils.autoFillEqFields(eamWiReleaseDto, eamWiRelease);
         eamWiRelease.setCreateUserId(sysUser.getUserId());
@@ -107,6 +110,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(eamWiReleaseDto.getWiReleaseId()))
             throw new BizErrorException("id不能为空");
+        eamWiReleaseDto.setReleaseStatus((byte)1);
         eamWiReleaseMapper.updateByPrimaryKey(eamWiReleaseDto);
 
         Example example = new Example(EamWiRelease.class);
@@ -131,6 +135,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         return i;
     }
 
+    @SneakyThrows
     @Override
     public int censor(EamWiRelease eamWiRelease) {
         SysUser sysUser = currentUser();
@@ -154,7 +159,10 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         eamWiRelease.setStatus((byte)1);
         eamWiRelease.setReleaseStatus((byte)2);
         int i = eamWiReleaseMapper.updateByPrimaryKeySelective(eamWiRelease);
-        socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://192.168.204.163/#/YunZhiESOP?ip=");
+        String localHostIp = InetAddress.getLocalHost().getHostAddress();
+   //     socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://"+localHostIp+"/#/YunZhiESOP?ip=");
+        socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://qmsapp.donlim.com/esop/#/YunZhiESOP?ip=");
+
         return i;
     }
 

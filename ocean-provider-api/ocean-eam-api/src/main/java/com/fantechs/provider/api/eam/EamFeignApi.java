@@ -33,4 +33,8 @@ public interface EamFeignApi {
     @ApiOperation("通过IP获取详情")
     @GetMapping("/eamEquipment/detailByIp")
     ResponseEntity<EamEquipment> detailByIp(@ApiParam(value = "ip",required = true) @RequestParam @NotNull(message="id不能为空") String ip);
+
+    @ApiOperation("查询设备列表")
+    @PostMapping("/eamEquipment/findByMac")
+    ResponseEntity<List<EamEquipmentDto>> findByMac(@RequestParam(value = "mac") Object mac, @RequestParam(value = "orgId") Long orgId);
 }

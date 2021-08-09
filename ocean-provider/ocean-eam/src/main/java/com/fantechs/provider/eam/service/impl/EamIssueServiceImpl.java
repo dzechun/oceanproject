@@ -3,20 +3,20 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.dto.eam.EamIssueDto;
+import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
 import com.fantechs.common.base.general.entity.eam.EamIssue;
 import com.fantechs.common.base.general.entity.eam.EamIssueAttachment;
-import com.fantechs.common.base.general.entity.eam.EamNews;
-import com.fantechs.common.base.general.entity.eam.EamNewsAttachment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtIssue;
-import com.fantechs.common.base.general.entity.eam.history.EamHtNews;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamWiRelease;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.eam.mapper.EamHtIssueMapper;
-import com.fantechs.provider.eam.mapper.EamIssueAttachmentMapper;
-import com.fantechs.provider.eam.mapper.EamIssueMapper;
+import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamIssueService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -42,14 +42,50 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
     private EamHtIssueMapper eamHtIssueMapper;
     @Resource
     private EamIssueAttachmentMapper eamIssueAttachmentMapper;
+    @Resource
+    private EamEquipmentMapper eamEquipmentMapper;
+    @Resource
+    private EamWiReleaseMapper eamWiReleaseMapper;
+
 
     @Override
     public List<EamIssueDto> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))){
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
+
+        if (StringUtils.isNotEmpty(map.get("equipmentIp"))) {
+            List<EamIssueDto> list = new ArrayList<>();
+
+            SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
+            searchEamEquipment.setEquipmentIp(map.get("equipmentIp").toString());
+            List<EamEquipmentDto> eamEquipmentDtos = eamEquipmentMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
+            if (StringUtils.isNotEmpty(eamEquipmentDtos)) {
+                SearchEamWiRelease searchEamWiRelease = new SearchEamWiRelease();
+                searchEamWiRelease.setWorkOrderStatus((byte) 3);
+                searchEamWiRelease.setProLineId(eamEquipmentDtos.get(0).getProLineId());
+                List<EamWiReleaseDto> eamWiReleaseDtos = eamWiReleaseMapper.findList(searchEamWiRelease);
+                if (StringUtils.isNotEmpty(eamWiReleaseDtos)) {
+                    map.put("materialId", eamWiReleaseDtos.get(0).getMaterialId());
+                    //    map.put("orgId", user.getOrganizationId());
+                    list = eamIssueMapper.findList(map);
+
+                    //工序编码
+                    if(StringUtils.isNotEmpty(list)) {
+                        for (EamIssueDto eamIssueDto : list) {
+                            eamIssueDto.setProcessCode(eamEquipmentDtos.get(0).getProcessCode());
+                        }
+                    }
+                }
+            }
+
+            return list;
+        }
+
         return eamIssueMapper.findList(map);
     }
 

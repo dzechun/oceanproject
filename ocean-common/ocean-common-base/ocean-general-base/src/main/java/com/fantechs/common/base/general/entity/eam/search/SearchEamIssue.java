@@ -10,6 +10,12 @@ import java.io.Serializable;
 public class SearchEamIssue extends BaseQuery implements Serializable {
 
     /**
+     * 产品id
+     */
+    @ApiModelProperty(name="materialId",value = "产品id")
+    private Long materialId;
+
+    /**
      * 产品编码
      */
     @ApiModelProperty(name="materialCode",value = "产品编码")
@@ -39,4 +45,9 @@ public class SearchEamIssue extends BaseQuery implements Serializable {
     @ApiModelProperty(name="issueName",value = "问题名称")
     private String issueName;
 
+    /**
+     * 设备IP
+     */
+    @ApiModelProperty(name="equipmentIp",value = "设备IP")
+    private String equipmentIp;
 }

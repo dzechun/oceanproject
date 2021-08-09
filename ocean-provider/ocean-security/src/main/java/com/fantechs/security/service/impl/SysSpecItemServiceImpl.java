@@ -1,8 +1,10 @@
 package com.fantechs.security.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysMenuInListDTO;
+import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtSpecItem;
@@ -29,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.awt.SystemColor.menu;
+
 @Service
 public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements SysSpecItemService {
     @Resource
@@ -41,13 +45,17 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     @Override
     public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
         Object specItemList =redisUtil.get("specItemList");
-        Object menu = redisUtil.get("menuList");
-        if (StringUtils.isNotEmpty(specItemList,menu) && (StringUtils.isEmpty(searchSysSpecItem.getIfHotData()) || searchSysSpecItem.getIfHotData() == 1)) {
+//        Object menu = redisUtil.get("menuList");
+        if (StringUtils.isNotEmpty(specItemList) && (StringUtils.isEmpty(searchSysSpecItem.getIfHotData()) || searchSysSpecItem.getIfHotData() == 1)) {
             List<SysSpecItem>  specItemList1 = JsonUtils.jsonToList(specItemList.toString(),SysSpecItem.class);
             List<Long> menuIds = new ArrayList<>();
             if (StringUtils.isNotEmpty(searchSysSpecItem.getMenuId())) {
-                List<SysMenuInListDTO> menuList = JsonUtils.jsonToList(menu.toString(),SysMenuInListDTO.class);
-                SysMenuInListDTO dg = this.findNodes(menuList, searchSysSpecItem.getMenuId());
+                String token = CurrentUserInfoUtils.getToken();
+                Object o = redisUtil.get(token);
+                SysUserDto sysUserDto = JSONObject.parseObject(JSONObject.toJSONString(o), SysUserDto.class);
+
+//                List<SysMenuInListDTO> menuList = JsonUtils.jsonToList(menu.toString(),SysMenuInListDTO.class);
+                SysMenuInListDTO dg = this.findNodes(sysUserDto.getMenuList(), searchSysSpecItem.getMenuId());
                 menuIds.add(dg.getSysMenuInfoDto().getMenuId());
                 this.disassemblyTree(dg,menuIds);
             }

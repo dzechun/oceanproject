@@ -18,4 +18,5 @@ public interface QmsIpqcInspectionOrderService extends IService<QmsIpqcInspectio
     List<QmsIpqcInspectionOrder> findList(Map<String, Object> map);
     int writeBack(Long ipqcInspectionOrderId);
     String uploadFile(MultipartFile file);
+    int createOrder(String workOrderCode,String inspectionWayDesc);
 }

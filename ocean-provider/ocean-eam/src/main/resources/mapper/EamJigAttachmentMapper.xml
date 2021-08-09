@@ -37,6 +37,7 @@
     eja.file_name,
     eja.store_path,
     eja.access_url,
+    eja.file_size,
     eja.`status`,
     eja.remark,
     eja.org_id,

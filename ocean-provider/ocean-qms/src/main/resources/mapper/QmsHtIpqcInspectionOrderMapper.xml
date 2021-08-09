@@ -45,6 +45,7 @@
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
     <result column="inspection_way_desc" jdbcType="VARCHAR" property="inspectionWayDesc"/>
     <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName"/>
+    <result column="inspection_standard_version" jdbcType="VARCHAR" property="inspectionStandardVersion"/>
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
     <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
   </resultMap>
@@ -82,7 +83,7 @@
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
     mpwo.work_order_code,bm.material_code,bm.material_desc,bm.material_version,bp.process_name,
-    bpm.product_model_name,bs.supplier_name,biw.inspection_way_desc,bis.inspection_standard_name,
+    bpm.product_model_name,bs.supplier_name,biw.inspection_way_desc,bis.inspection_standard_name,bis.inspection_standard_version,
     bd.dept_name,su.user_name as audit_user_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,

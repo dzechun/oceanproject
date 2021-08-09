@@ -40,4 +40,16 @@ public class SearchEamWiRelease extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="release_status",value = "发布状态(1-待发布 2-已发布)")
     private Byte releaseStatus;
+
+    /**
+     * 工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)
+     */
+    @ApiModelProperty(name="workOrderStatus",value = "工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)")
+    private Byte workOrderStatus;
+
+    /**
+     * 产线ID
+     */
+    @ApiModelProperty(name="proLineId",value = "产线ID")
+    private Long proLineId;
 }

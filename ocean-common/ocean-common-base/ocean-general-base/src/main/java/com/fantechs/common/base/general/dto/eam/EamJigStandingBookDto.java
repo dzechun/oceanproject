@@ -93,6 +93,13 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
     private String jigCategoryName;
 
     /**
+     * 治具条码
+     */
+    @Transient
+    @ApiModelProperty(name = "jigBarcode",value = "治具条码")
+    private String jigBarcode;
+
+    /**
      * 使用状态(1-使用中 2-空闲)
      */
     @Transient

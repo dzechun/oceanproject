@@ -78,6 +78,7 @@ public class EamEquipmentController {
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<EamEquipmentDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEamEquipment searchEamEquipment) {
+        System.out.println("------------searchEamEquipment-----------"+searchEamEquipment);
         Page<Object> page = PageHelper.startPage(searchEamEquipment.getStartPage(),searchEamEquipment.getPageSize());
         List<EamEquipmentDto> list = eamEquipmentService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
@@ -102,5 +103,15 @@ public class EamEquipmentController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation("Mac地址查询")
+    @PostMapping("/findByMac")
+    public ResponseEntity<List<EamEquipmentDto>> findByMac(@RequestParam(value = "mac") Object mac, @RequestParam(value = "orgId") Long orgId) {
+        SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
+        searchEamEquipment.setOrgId(orgId);
+        searchEamEquipment.setEquipmentMacAddress(mac.toString());
+        List<EamEquipmentDto> list = eamEquipmentService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
+        return ControllerUtil.returnDataSuccess(list,1);
     }
 }

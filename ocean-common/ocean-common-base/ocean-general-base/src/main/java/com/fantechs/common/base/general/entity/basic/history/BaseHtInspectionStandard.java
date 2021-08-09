@@ -59,6 +59,14 @@ public class BaseHtInspectionStandard extends ValidGroup implements Serializable
     private String inspectionStandardName;
 
     /**
+     * 检验标准版本号
+     */
+    @ApiModelProperty(name="inspectionStandardVersion",value = "检验标准版本号")
+    @Excel(name = "检验标准版本号", height = 20, width = 30,orderNum="")
+    @Column(name = "inspection_standard_version")
+    private String inspectionStandardVersion;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")

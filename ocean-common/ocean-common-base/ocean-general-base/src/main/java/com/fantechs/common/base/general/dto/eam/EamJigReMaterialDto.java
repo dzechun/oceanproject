@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.eam.EamJigReMaterial;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -68,25 +69,11 @@ public class EamJigReMaterialDto extends EamJigReMaterial implements Serializabl
     private String jigModel;
 
     /**
-     * 仓库
+     * 仓库库位
      */
     @Transient
-    @ApiModelProperty(name = "warehouseName",value = "仓库")
-    private String warehouseName;
-
-    /**
-     * 库区
-     */
-    @Transient
-    @ApiModelProperty(name = "warehouseAreaName",value = "库区")
-    private String warehouseAreaName;
-
-    /**
-     * 推荐库位
-     */
-    @Transient
-    @ApiModelProperty(name = "storageCode",value = "推荐库位")
-    private String storageCode;
+    @ApiModelProperty(name = "warehouseStorage",value = "仓库库位")
+    private String warehouseStorage;
 
     /**
      * 物料编码
@@ -116,4 +103,10 @@ public class EamJigReMaterialDto extends EamJigReMaterial implements Serializabl
     @ApiModelProperty(name = "materialVersion",value = "物料版本")
     private String materialVersion;
 
+    /**
+     * 记录数量
+     */
+    @Transient
+    @ApiModelProperty(name="recordQty",value = "记录数量")
+    private Integer recordQty;
 }

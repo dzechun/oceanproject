@@ -54,6 +54,12 @@ public class SearchBaseInspectionStandard extends BaseQuery implements Serializa
     private Long materialId;
 
     /**
+     * 是否包含通用检验标准（0-否 1-是）
+     */
+    @ApiModelProperty(name="ifContainCommon" ,value="是否包含通用检验标准（0-否 1-是）")
+    private Integer ifContainCommon;
+
+    /**
      * 检验标准id
      */
     @ApiModelProperty(name="inspectionStandardId" ,value="检验标准id")

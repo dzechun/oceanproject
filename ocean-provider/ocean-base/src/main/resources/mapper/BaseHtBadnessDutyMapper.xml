@@ -48,10 +48,10 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhbd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="badnessCategoryCode != null and badnessCategoryCode != ''">
+      <if test="badnessDutyCode != null and badnessDutyCode != ''">
         and bhbd.badness_duty_code like CONCAT('%',#{badnessDutyCode},'%')
       </if>
-      <if test="badnessCategoryDesc != null and badnessCategoryDesc != ''">
+      <if test="badnessDutyDesc != null and badnessDutyDesc != ''">
         and bhbd.badness_duty_desc like CONCAT('%',#{badnessDutyDesc},'%')
       </if>
         <if test="orgId!=null">

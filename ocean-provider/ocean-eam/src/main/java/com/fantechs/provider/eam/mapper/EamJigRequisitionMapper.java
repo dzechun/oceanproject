@@ -11,4 +11,8 @@ import java.util.Map;
 @Mapper
 public interface EamJigRequisitionMapper extends MyMapper<EamJigRequisition> {
     List<EamJigRequisitionDto> findList(Map<String,Object> map);
+
+    List<Long> findJigId(Map<String,Object> map);
+
+    Integer getRecordQty(Map<String,Object> map);
 }

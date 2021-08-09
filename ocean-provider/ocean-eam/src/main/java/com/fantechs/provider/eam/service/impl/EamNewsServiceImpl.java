@@ -26,6 +26,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -92,7 +93,7 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int audit(String ids) {
+    public int audit(String ids) throws UnknownHostException {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -113,7 +114,9 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
         }
 
         //发送消息
-        socketService.BatchInstructions(null,"1201","http://192.168.204.163/#/ESOPDataShow?ip=");
+        String localHostIp = InetAddress.getLocalHost().getHostAddress();
+    //    socketService.BatchInstructions(null,"1201","http://"+localHostIp+"/#/ESOPDataShow?ip=");
+        socketService.BatchInstructions(null,"1201","http://qmsapp.donlim.com/esop/#/ESOPDataShow?ip=");
 
         return num;
     }
