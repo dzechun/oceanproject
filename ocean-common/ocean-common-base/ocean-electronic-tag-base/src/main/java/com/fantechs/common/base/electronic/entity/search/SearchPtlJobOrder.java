@@ -51,4 +51,7 @@ public class SearchPtlJobOrder extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name = "type", value = "0-默认查询当天 1-不查询当天")
     private Integer type=0;
+
+    @ApiModelProperty(name = "allwarehouseAreaId", value = "0-查询对应的工作区域 1-查询所有的工作区域")
+    private Integer allwarehouseAreaId;
 }

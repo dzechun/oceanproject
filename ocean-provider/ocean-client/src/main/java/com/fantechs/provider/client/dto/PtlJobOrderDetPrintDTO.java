@@ -6,10 +6,13 @@ import lombok.Data;
 @Data
 public class PtlJobOrderDetPrintDTO {
 
-    @ApiModelProperty(name="jobOrderCode",value = "任务单号")
+    @ApiModelProperty(name="jobOrderId",value = "作业单ID")
+    private Long jobOrderId;
+
+    @ApiModelProperty(name="jobOrderCode",value = "拣货单号")
     private String jobOrderCode;
 
-    @ApiModelProperty(name="despatchOrderCode",value = "发货单号")
+    @ApiModelProperty(name="despatchOrderCode",value = "灯颜色")
     private String despatchOrderCode;
 
     @ApiModelProperty(name="relatedOrderCode",value = "拣货单号")
@@ -41,4 +44,7 @@ public class PtlJobOrderDetPrintDTO {
 
     @ApiModelProperty(name="wholeOrScattered",value = "整或者零(0-零 1-整)")
     private Byte wholeOrScattered;
+
+    @ApiModelProperty(name="queueName" ,value="队列名称")
+    private String  queueName;
 }
