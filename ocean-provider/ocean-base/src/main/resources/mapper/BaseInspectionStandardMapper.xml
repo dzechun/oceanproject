@@ -69,9 +69,6 @@
       <if test="inspectionStandardName!=null and inspectionStandardName!=''">
         and bis.inspection_standard_name like CONCAT('%', #{inspectionStandardName}, '%')
       </if>
-      <if test="materialId!=null">
-        and bis.material_id = #{materialId}
-      </if>
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
