@@ -2,6 +2,7 @@ package com.fantechs.provider.materialapi.imes.config;
 
 import com.fantechs.provider.materialapi.imes.service.MaterialService;
 
+import com.fantechs.provider.materialapi.imes.service.impl.Chk_LogUserInfoServiceImpl;
 import com.fantechs.provider.materialapi.imes.service.impl.MaterialServiceImpl;
 import com.fantechs.provider.materialapi.imes.service.impl.SapPurchaseOrderServiceImpl;
 import com.fantechs.provider.materialapi.imes.service.impl.SapWorkOrderServiceImpl;
@@ -51,6 +52,13 @@ public class CxfConfig {
     public Endpoint purchaseOrder_endpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(),  new SapPurchaseOrderServiceImpl());
         endpoint.publish("/purchaseOrder");   //采购订单发布地址
+        return endpoint;
+    }
+
+    @Bean
+    public Endpoint chk_LogUserInfo_endpoint() {
+        EndpointImpl endpoint = new EndpointImpl(springBus(),  new Chk_LogUserInfoServiceImpl());
+        endpoint.publish("/chk_LogUserInfo");   //登录账号校验地址
         return endpoint;
     }
 
