@@ -6,7 +6,10 @@ import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -438,4 +441,8 @@ public interface BaseFeignApi {
     @PostMapping("/baseStorage/JobRule")
     ResponseEntity<List<StorageRuleDto>> JobRule(@RequestParam BigDecimal packageQty, @RequestParam Long warehouseId, @RequestParam Long materialId,
                                                         @RequestParam(required = false) String batchCode, @RequestParam(required = false) String proDate);
+
+    @ApiOperation("列表")
+    @PostMapping("/baseInventoryStatus/findList")
+    ResponseEntity<List<BaseInventoryStatus>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInventoryStatus searchBaseInventoryStatus);
 }

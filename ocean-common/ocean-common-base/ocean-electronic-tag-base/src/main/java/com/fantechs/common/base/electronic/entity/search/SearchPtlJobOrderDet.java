@@ -33,7 +33,7 @@ public class SearchPtlJobOrderDet extends BaseQuery implements Serializable {
     @ApiModelProperty(name="jobStatus",value = "作业状态(1-待作业 2-作业中 3-已完成 4-挂起)")
     private Byte jobStatus;
 
-    @ApiModelProperty(name="ifHangUp",value = "是否挂起（0-否 1-是）")
+    @ApiModelProperty(name="ifHangUp",value = "1-查询作业中和挂起状态")
     private Byte ifHangUp;
 
     @ApiModelProperty(name="equipmentTagId",value = "设备标签ID")

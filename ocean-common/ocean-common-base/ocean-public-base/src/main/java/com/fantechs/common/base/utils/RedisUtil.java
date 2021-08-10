@@ -28,6 +28,21 @@ public class RedisUtil {
     public static final int TOKEN_SECOND = 24*60*60;
 
     /**
+     * 线程获取锁的等待时间
+     */
+    private int timeoutMsecs = 5 * 1000;
+
+    /**
+     * 重试时间
+     */
+    private static final int DEFAULT_ACQUIRY_RETRY_MILLIS = 100;
+
+    /**
+     * 锁超时时间，防止线程在入锁以后，防止阻塞后面的线程无法获取锁
+     */
+    private int expireMsecs = 10 * 1000;
+
+    /**
      * 指定缓存失效时间
      * @param key 键
      * @param time 时间(秒)
@@ -594,6 +609,71 @@ public class RedisUtil {
         //绑定操作
         BoundListOperations<String, Object> boundValueOperations = redisTemplate.boundListOps(listKey);
         return boundValueOperations.rightPop();
+    }
+
+    /**
+     * key不存在则新增，存在不改变
+     * @param key
+     * @param value
+     * @return
+     */
+    private boolean setNX(final String key, final String value) {
+        Boolean setnx = redisTemplate.opsForValue().setIfAbsent(key, value);
+        return setnx;
+    }
+
+    /**
+     * 设置新值，返回旧值
+     * @param key
+     * @param value
+     * @return
+     */
+    private String getSet(final String key, final String value) {
+
+        Object obj = redisTemplate.opsForValue().getAndSet(key, value);
+
+        return obj != null ? (String) obj : null;
+    }
+
+    /**
+     * 获取锁
+     * @return 获取锁成功返回ture，超时返回false
+     * @throws InterruptedException
+     */
+    public synchronized boolean lock(String lockKey) throws InterruptedException {
+
+        int timeout = timeoutMsecs;
+        while (timeout >= 0) {
+            long expires = System.currentTimeMillis() + expireMsecs + 1;
+            String expiresStr = String.valueOf(expires); //锁到期时间
+            if (this.setNX(lockKey, expiresStr)) {
+                return true;
+            }
+            //redis里key的时间
+            String currentValue = String.valueOf(this.get(lockKey));
+            //判断锁是否已经过期，过期则重新设置并获取
+            if (StringUtils.isNotEmpty(currentValue) && Long.parseLong(currentValue) < System.currentTimeMillis()) {
+                // 设置新锁并返回旧值
+                String oldValue = this.getSet(lockKey, expiresStr);
+                //比较锁的时间，如果不一致则可能是其他锁已经修改了值并获取
+                if (StringUtils.isNotEmpty(oldValue) && oldValue.equals(currentValue)) {
+                    return true;
+                }
+            }
+            timeout -= DEFAULT_ACQUIRY_RETRY_MILLIS;
+            //延时
+            Thread.sleep(DEFAULT_ACQUIRY_RETRY_MILLIS);
+        }
+        return false;
+    }
+    /**
+     * 释放获取到的锁
+     */
+    public synchronized void unlock(String lockKey, String lockValue) {
+        String currentValue = String.valueOf(this.get(lockKey));
+        if (StringUtils.isNotEmpty(currentValue) && lockValue.equals(currentValue)) {
+            this.del(lockKey);
+        }
     }
 
 }

@@ -188,6 +188,7 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    @ApiModelProperty(name="option1",value = "灯颜色 0-红色 1-绿色 2-黄色")
     private String option1;
 
     private String option2;

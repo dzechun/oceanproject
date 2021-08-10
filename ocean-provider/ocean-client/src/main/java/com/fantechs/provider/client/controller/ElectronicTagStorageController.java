@@ -41,15 +41,15 @@ public class ElectronicTagStorageController {
 
     @GetMapping(value = "/sendElectronicTagStorage")
     @ApiOperation(value = "激活（拣取发送亮灯）", notes = "激活（拣取发送亮灯）")
-    public ResponseEntity<PtlJobOrder> sendElectronicTagStorage(
-            @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId,
+    public ResponseEntity<List<PtlJobOrderDto>> sendElectronicTagStorage(
+            @ApiParam(value = "任务单Id列表，多个逗号分隔", required = true) @RequestParam String ids,
             @ApiParam(value = "仓库区域Id")@RequestParam(required = false) Long warehouseAreaId) {
         try {
             if (StringUtils.isEmpty(warehouseAreaId)) {
                 warehouseAreaId = Long.valueOf(0);
             }
-            PtlJobOrder ptlJobOrder = electronicTagStorageService.sendElectronicTagStorage(jobOrderId, warehouseAreaId, 0);
-            return ControllerUtil.returnDataSuccess("操作成功", ptlJobOrder);
+            List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagStorageService.sendElectronicTagStorage(ids, warehouseAreaId, 0);
+            return ControllerUtil.returnDataSuccess("操作成功", ptlJobOrderDtoList);
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
         }
@@ -71,10 +71,10 @@ public class ElectronicTagStorageController {
     @GetMapping("/printPtlJobOrderLabel")
     @ApiOperation(value = "作业任务打印标签", notes = "作业任务打印标签")
     public ResponseEntity<List<PtlJobOrderDetPrintDTO>> printPtlJobOrderLabel(
-            @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId,
+            @ApiParam(value = "任务单Id列表，多个逗号分隔", required = true) @RequestParam String ids,
             @ApiParam(value = "作业人员Id", required = true) @RequestParam Long workUserId) {
         try {
-            List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = electronicTagStorageService.printPtlJobOrderLabel(jobOrderId, workUserId);
+            List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = electronicTagStorageService.printPtlJobOrderLabel(ids, workUserId, 0);
             return ControllerUtil.returnDataSuccess(ptlJobOrderDetPrintDTOList, ptlJobOrderDetPrintDTOList.size());
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
@@ -123,10 +123,10 @@ public class ElectronicTagStorageController {
     @GetMapping("/activateAndPrint")
     @ApiOperation(value = "激活任务单并打印", notes = "激活任务单并打印")
     public ResponseEntity activateAndPrint(
-            @ApiParam(value = "任务单Id", required = true) @RequestParam Long jobOrderId,
+            @ApiParam(value = "任务单Id列表，多个逗号分隔", required = true) @RequestParam String ids,
             @ApiParam(value = "作业人员Id", required = true) @RequestParam Long workUserId) {
         try {
-            int i = electronicTagStorageService.activateAndPrint(jobOrderId, workUserId);
+            int i = electronicTagStorageService.activateAndPrint(ids, workUserId);
             return ControllerUtil.returnCRUD(i);
         } catch (Exception e) {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.GL99990500.getCode());
