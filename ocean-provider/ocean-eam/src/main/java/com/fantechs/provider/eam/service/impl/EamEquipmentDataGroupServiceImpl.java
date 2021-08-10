@@ -52,7 +52,6 @@ public class EamEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
         map.put("orgId", user.getOrganizationId());
         return eamEquipmentDataGroupMapper.findList(map);
     }
-
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipmentDataGroupDto eamEquipmentDataGroupDto) {
@@ -155,4 +154,5 @@ public class EamEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
         }
         return user;
     }
+
 }

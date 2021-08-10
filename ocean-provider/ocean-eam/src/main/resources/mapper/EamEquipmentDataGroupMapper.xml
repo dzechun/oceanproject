@@ -23,6 +23,13 @@
 
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="equipment_total" jdbcType="VARCHAR" property="equipmentTotal"/>
+    <result column="equipment_online" jdbcType="VARCHAR" property="equipmentOnline"/>
+    <result column="equipment_offline" jdbcType="VARCHAR" property="equipmentOffline"/>
+    <result column="equipment_unknown" jdbcType="VARCHAR" property="equipmentUnknown"/>
     <collection property="eamEquipmentDataGroupParamDtos" ofType="com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupParamDto"
                 column="{equipmentDataGroupId=equipment_data_group_id}" select="com.fantechs.provider.eam.mapper.EamEquipmentDataGroupParamMapper.findList">
     </collection>
@@ -51,6 +58,7 @@
     s.user_name as modified_user_name,
     bo.organization_name
     from eam_equipment_data_group eedg
+    left join eam_equipment_data_group_re_dc eedgrde ON eedg.equipment_data_group_id = eedgrde.equipment_data_group_id
     left join ocean_v2.sys_user u on eedg.create_user_id=u.user_id
     left join ocean_v2.sys_user s on eedg.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON eedg.org_id = bo.organization_id

@@ -1,8 +1,10 @@
 package com.fantechs.provider.eam.controller;
 
 import com.fantechs.common.base.general.dto.eam.EamDataCollectDto;
+import com.fantechs.common.base.general.dto.eam.EamDataCollectModel;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamDataCollect;
 import com.fantechs.common.base.general.entity.eam.EamDataCollect;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentDataGroup;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
@@ -76,11 +78,18 @@ public class EamDataCollectController {
         return ControllerUtil.returnCRUD(1);
     }
 
-    @ApiOperation("分组查询最后一条")
+    @ApiOperation("根据设备id查询最后一条")
     @PostMapping("/findByGroup")
     public ResponseEntity<List<EamDataCollectDto>> findByGroup(@ApiParam(value = "equipmentId") @RequestParam(required = false) Long equipmentId){
-        List<EamDataCollectDto> sfcDataCollectDtos = eamDataCollectService.findByGroup(equipmentId);
+        List<EamDataCollectDto> sfcDataCollectDtos = eamDataCollectService.findByEquipmentId(equipmentId);
         return ControllerUtil.returnDataSuccess(sfcDataCollectDtos, sfcDataCollectDtos.size());
+    }
+
+    @ApiOperation("根据分组查询最后一条")
+    @PostMapping("/findByGroups")
+    public ResponseEntity<EamDataCollectModel> findByGroups(@ApiParam(value = "查询对象") @RequestBody SearchEamEquipmentDataGroup searchEamEquipmentDataGroup){
+        EamDataCollectModel model = eamDataCollectService.findByGroup(searchEamEquipmentDataGroup);
+        return ControllerUtil.returnDataSuccess(model, 1);
     }
 
 }

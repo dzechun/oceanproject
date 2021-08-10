@@ -1,7 +1,9 @@
 package com.fantechs.provider.eam.service;
 
 import com.fantechs.common.base.general.dto.eam.EamDataCollectDto;
+import com.fantechs.common.base.general.dto.eam.EamDataCollectModel;
 import com.fantechs.common.base.general.entity.eam.EamDataCollect;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentDataGroup;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -15,5 +17,8 @@ import java.util.Map;
 public interface EamDataCollectService extends IService<EamDataCollect> {
     List<EamDataCollectDto> findList(Map<String, Object> map);
 
-    List<EamDataCollectDto> findByGroup(Long equipmentId);
+    List<EamDataCollectDto> findByEquipmentId(Long equipmentId);
+
+    EamDataCollectModel findByGroup(SearchEamEquipmentDataGroup searchEamEquipmentDataGroup);
+
 }

@@ -28,4 +28,8 @@ public class EamDataCollectDto extends EamDataCollect implements Serializable {
 
     @ApiModelProperty(name="yAxis",value = "Y坐标")
     private BigDecimal yAxis;
+
+    @ApiModelProperty(name="tableName",value = "表头")
+    private String tableName;
+
 }

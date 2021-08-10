@@ -12,6 +12,6 @@ import java.util.Map;
 @Mapper
 public interface EamDataCollectMapper extends MyMapper<EamDataCollect> {
     List<EamDataCollectDto> findList(Map<String, Object> map);
-
-    List<EamDataCollectDto> findByGroup(@Param(value="equipmentId") Long equipmentId);
+    List<EamDataCollectDto> findByEquipmentId(@Param(value="equipmentId") Long equipmentId);
+    String findByGroup(@Param(value="equipmentDataGroupId") Long equipmentDataGroupId);
 }
