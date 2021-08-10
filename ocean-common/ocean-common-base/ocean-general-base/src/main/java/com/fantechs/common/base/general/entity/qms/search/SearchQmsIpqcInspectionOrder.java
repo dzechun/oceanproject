@@ -63,7 +63,7 @@ public class SearchQmsIpqcInspectionOrder extends BaseQuery implements Serializa
     /**
      * 检验方式编码
      */
-    @ApiModelProperty(name="inspectionWayDesc" ,value="检验方式编码")
+    @ApiModelProperty(name="inspectionWayCode" ,value="检验方式编码")
     private String inspectionWayCode;
 
     /**

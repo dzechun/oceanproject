@@ -1,6 +1,7 @@
 package com.fantechs.provider.qms.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.qms.QmsIpqcInspectionOrderDetDto;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -20,6 +21,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -66,6 +68,14 @@ public class QmsIpqcInspectionOrderDetController {
         Page<Object> page = PageHelper.startPage(searchQmsIpqcInspectionOrderDet.getStartPage(),searchQmsIpqcInspectionOrderDet.getPageSize());
         List<QmsIpqcInspectionOrderDet> list = qmsIpqcInspectionOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrderDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("展示单据明细")
+    @PostMapping("/showOrderDet")
+    public ResponseEntity<List<QmsIpqcInspectionOrderDetDto>> showOrderDet(@ApiParam(value = "检验标准id",required = true)@RequestParam  @NotNull(message="检验标准id不能为空")Long inspectionStandardId,
+                                                                           @ApiParam(value = "数量",required = true)@RequestParam  @NotNull(message="数量不能为空") BigDecimal qty) {
+        List<QmsIpqcInspectionOrderDetDto> list = qmsIpqcInspectionOrderDetService.showOrderDet(inspectionStandardId,qty);
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
    /* @ApiOperation("历史列表")

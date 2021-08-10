@@ -56,6 +56,7 @@ public class EamJigReMaterial extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="usageQty",value = "使用数量")
     @Column(name = "usage_qty")
+    @NotNull(message = "使用数量不能为空")
     private Integer usageQty;
 
     /**

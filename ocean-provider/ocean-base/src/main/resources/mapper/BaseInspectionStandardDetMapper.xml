@@ -29,9 +29,14 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="sample_process_code" jdbcType="VARCHAR" property="sampleProcessCode"/>
+    <result column="sample_process_type" jdbcType="VARCHAR" property="sampleProcessType"/>
     <result column="inspection_item_desc_small" jdbcType="VARCHAR" property="inspectionItemDescSmall"/>
     <result column="inspection_item_standard" jdbcType="VARCHAR" property="inspectionItemStandard"/>
     <result column="inspection_item_desc_big" jdbcType="VARCHAR" property="inspectionItemDescBig"/>
+    <result column="aql_value" jdbcType="DECIMAL" property="aqlValue"/>
+    <result column="ac_value" jdbcType="INTEGER" property="acValue"/>
+    <result column="re_value" jdbcType="INTEGER" property="reValue"/>
+    <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -58,7 +63,8 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bsp.sample_process_code,bii2.inspection_item_desc as inspection_item_desc_big,
+    bsp.sample_process_code,bii2.inspection_item_desc as inspection_item_desc_big,bsp.sample_process_type,
+    bspa.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,
     bii.inspection_item_desc as inspection_item_desc_small,bii.inspection_item_standard,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
@@ -66,6 +72,7 @@
     left join fantech_imes_v2.base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
     left join fantech_imes_v2.base_inspection_item bii2 on bii.parent_id=bii2.inspection_item_id
     left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
+    left join fantech_imes_v2.base_sample_plan_aql bspa on bsp.sample_plan_aql_id=bspa.sample_plan_aql_id
     left join ocean_v2.sys_user u on bisd.create_user_id=u.user_id
     left join ocean_v2.sys_user s on bisd.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo on bisd.org_id = bo.organization_id

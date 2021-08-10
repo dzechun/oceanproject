@@ -48,7 +48,7 @@
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
     <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
     <collection property="qmsIpqcInspectionOrderDets" ofType="com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet"
-                column="{ipqcInspectionOrderId=ipqc_inspection_order_id}" select="com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetMapper.findList">
+                column="{ipqcInspectionOrderId=ipqc_inspection_order_id}" select="com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetMapper.findDetList">
     </collection>
   </resultMap>
 

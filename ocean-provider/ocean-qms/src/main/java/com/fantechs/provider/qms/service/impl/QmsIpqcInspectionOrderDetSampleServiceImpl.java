@@ -47,8 +47,6 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
     @Resource
     private QmsIpqcInspectionOrderMapper qmsIpqcInspectionOrderMapper;
     @Resource
-    private QmsIpqcInspectionOrderService qmsIpqcInspectionOrderService;
-    @Resource
     private SFCFeignApi sfcFeignApi;
     @Resource
     private PMFeignApi pmFeignApi;
@@ -133,17 +131,8 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
 
         Map<String,Object> map = new HashMap();
         map.put("ipqcInspectionOrderDetId",ipqcInspectionOrderDetId);
-        QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet = qmsIpqcInspectionOrderDetMapper.findList(map).get(0);
-        QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderService.selectByKey(qmsIpqcInspectionOrderDet.getIpqcInspectionOrderId());
-
-        //赋值Qty、AC、RE
-        for (QmsIpqcInspectionOrderDet ipqcInspectionOrderDet:qmsIpqcInspectionOrder.getQmsIpqcInspectionOrderDets()){
-            if(ipqcInspectionOrderDetId.equals(ipqcInspectionOrderDet.getIpqcInspectionOrderDetId())){
-                qmsIpqcInspectionOrderDet.setSampleQty(ipqcInspectionOrderDet.getSampleQty());
-                qmsIpqcInspectionOrderDet.setAcValue(ipqcInspectionOrderDet.getAcValue());
-                qmsIpqcInspectionOrderDet.setReValue(ipqcInspectionOrderDet.getReValue());
-            }
-        }
+        QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet = qmsIpqcInspectionOrderDetMapper.findDetList(map).get(0);
+        QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.selectByPrimaryKey(qmsIpqcInspectionOrderDet.getIpqcInspectionOrderId());
 
         //当已检验样本数等于样本数时，才计算不良数量、检验结果
         if(qmsIpqcInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(qmsIpqcInspectionOrderDetSampleList.size()))==0) {
@@ -158,7 +147,6 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
             //更新检验状态
             if(qmsIpqcInspectionOrder.getInspectionStatus()==(byte)1){
                 qmsIpqcInspectionOrder.setInspectionStatus((byte)2);
-                qmsIpqcInspectionOrder.setIpqcInspectionOrderId(qmsIpqcInspectionOrderDet.getIpqcInspectionOrderId());
                 qmsIpqcInspectionOrderMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrder);
             }
         }
