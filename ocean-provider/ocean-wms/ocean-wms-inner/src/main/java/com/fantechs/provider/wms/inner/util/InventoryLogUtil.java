@@ -1,18 +1,14 @@
 package com.fantechs.provider.wms.inner.util;
 
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryLogService;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @Author mr.lei

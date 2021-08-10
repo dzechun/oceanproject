@@ -437,6 +437,11 @@ public interface BaseFeignApi {
     @PostMapping("/baseWorkShop/batchAdd")
     ResponseEntity<List<BaseWorkShop>>  batchAddWorkshop(@ApiParam(value = "保存对象")@RequestBody List<BaseWorkShop> baseWorkShops);
 
+    @ApiOperation("上架分配规则")
+    @PostMapping("/baseStorage/JobRule")
+    ResponseEntity<List<StorageRuleDto>> JobRule(@RequestParam BigDecimal packageQty, @RequestParam Long warehouseId, @RequestParam Long materialId,
+                                                        @RequestParam(required = false) String batchCode, @RequestParam(required = false) String proDate);
+
     @ApiOperation("列表")
     @PostMapping("/baseInventoryStatus/findList")
     ResponseEntity<List<BaseInventoryStatus>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInventoryStatus searchBaseInventoryStatus);

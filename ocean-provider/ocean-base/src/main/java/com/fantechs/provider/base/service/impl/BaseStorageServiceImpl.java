@@ -277,6 +277,11 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     }
 
     @Override
+    public List<StorageRuleDto> findStorageMaterial(Map<String, Object> map) {
+        return baseStorageMapper.findStorageMaterial(map);
+    }
+
+    @Override
     public List<StorageRuleDto> findPutawayRule(Map<String,Object> map) {
         return baseStorageMapper.findPutawayRule(map);
     }

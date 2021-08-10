@@ -108,27 +108,9 @@ public class StorageDistributionRuleUtils {
         Map<String,Object> map = new HashMap<>();
         map.put("warehouseId",warehouseId);
         map.put("materialId",materialId);
-        List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.findPutawayRule(map);
+        List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.findStorageMaterial(map);
         list = calculateStorage(storageRuleDtos);
-//        if(storageRuleDtos.size()>0){
-//            for (StorageRuleDto storageRuleDto : storageRuleDtos) {
-//                if(StringUtils.isEmpty(storageRuleDto.getVolume(),storageRuleDto.getNetWeight())){
-//                    throw new BizErrorException("请维护物料体积重量");
-//                }
-//                //库位按体积可上架数 = 剩余体积/物料体积 向下去整数
-//                storageRuleDto.setVolumeQty(storageRuleDto.getSurplusVolume().divide(storageRuleDto.getVolume(),0,BigDecimal.ROUND_DOWN));
-//                storageRuleDto.setNetWeightQty(storageRuleDto.getSurplusLoad().divide(storageRuleDto.getNetWeight(),0,BigDecimal.ROUND_DOWN));
-//                if(storageRuleDto.getVolumeQty().compareTo(storageRuleDto.getNetWeightQty())==1){
-//                    storageRuleDto.setPutawayQty(storageRuleDto.getNetWeightQty());
-//                }else{
-//                    storageRuleDto.setPutawayQty(storageRuleDto.getVolumeQty());
-//                }
-//                if(storageRuleDto.getPutawayQty().compareTo(BigDecimal.ZERO)==1){
-//                    list.add(storageRuleDto);
-//                }
-//            }
-//        }
-        return storageRuleDtos;
+        return list;
     }
 
     /**
@@ -226,6 +208,8 @@ public class StorageDistributionRuleUtils {
                     if(storageRuleDto.getPutawayQty().compareTo(BigDecimal.ZERO)==1){
                         list.add(storageRuleDto);
                     }
+                }else{
+                    throw new BizErrorException("请维护物料体积重量");
                 }
             }
         }
@@ -297,12 +281,12 @@ public class StorageDistributionRuleUtils {
         List<StorageRuleDto> list = new ArrayList<>();
         for (StorageRuleDto storageRuleDto : storageRuleDtos) {
             if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
-                if(jobTotalPackageQty_BU.compareTo(storageRuleDto.getPutawayQty())>1){
-                    storageRuleDto.setPutawayQty(jobTotalPackageQty_BU);
-                    list.add(storageRuleDto);
-                    jobTotalPackageQty_BU = BigDecimal.ZERO;
-                }
-                if(jobTotalPackageQty_BU.compareTo(storageRuleDto.getPutawayQty())==1){
+//                if(jobTotalPackageQty_BU.compareTo(storageRuleDto.getPutawayQty())==1){
+//                    storageRuleDto.setPutawayQty(jobTotalPackageQty_BU);
+//                    list.add(storageRuleDto);
+//                    jobTotalPackageQty_BU = BigDecimal.ZERO;
+//                }
+                if(jobTotalPackageQty_BU.compareTo(storageRuleDto.getPutawayQty())<1){
                     storageRuleDto.setPutawayQty(jobTotalPackageQty_BU);
                     list.add(storageRuleDto);
                     jobTotalPackageQty_BU = jobTotalPackageQty_BU.subtract(storageRuleDto.getPutawayQty());
