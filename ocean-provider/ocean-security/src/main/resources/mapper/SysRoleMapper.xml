@@ -42,8 +42,8 @@
       <if test="roleName!=null and roleName!=''">
         and sr.role_name like CONCAT('%', #{roleName}, '%')
       </if>
-      <if test="roleDesc!=null and roleDesc!=''">
-        and sr.role_desc like CONCAT('%', #{roleDesc}, '%')
+      <if test="roleName!=null and roleName!=''">
+        and sr.role_name =#{roleName}
       </if>
       <if test="status!=null">
         and sr.status=#{status}
@@ -51,11 +51,16 @@
     </where>
   </select>
 
-  <select id="findMenuRoles" resultMap="BaseResultMapDto" >
+  <select id="findMenuRoles" resultMap="BaseResultMapDto" parameterType="list">
     select sr.role_id,sr.role_code, sr.role_name, sr.role_desc, sr.create_user_id, sr.create_time, sr.modified_user_id,
     sr.modified_time,sr.status, sr.is_delete,sar.menu_id
     from sys_auth_role sar
     left join sys_role sr on sar.role_id = sr.role_id
+    <where>
+      <foreach collection="list" item="item" open="sar.role_id in (" close=")" separator="," >
+        #{item}
+      </foreach>
+    </where>
   </select>
 
   <select id="findByUserName" parameterType="com.fantechs.common.base.entity.security.search.SearchSysRole" resultMap="BaseResultMapDto">
@@ -69,6 +74,9 @@
     left join sys_user su on sur.user_id=su.user_id
     <where>
       1=1
+      <if test="userName!=null and userName!=''">
+        and su.user_name=#{userName}
+      </if>
       <if test="userName!=null and userName!=''">
         and su.user_name=#{userName}
       </if>

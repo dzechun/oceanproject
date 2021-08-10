@@ -43,22 +43,15 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     @Override
     public List<EamEquipmentDto> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))){
-            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
+            SysUser user = getUser();
             map.put("orgId", user.getOrganizationId());
         }
-        List<EamEquipmentDto> list = eamEquipmentMapper.findList(map);
         return eamEquipmentMapper.findList(map);
     }
 
     @Override
     public List<EamHtEquipment> findHtList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+        SysUser user = getUser();
         map.put("orgId", user.getOrganizationId());
         return eamHtEquipmentMapper.findHtList(map);
     }
@@ -83,11 +76,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipment record) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
+        SysUser user = getUser();
         check(record);
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
@@ -107,11 +96,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquipment entity) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
+        SysUser user = getUser();
         check(entity);
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
@@ -128,11 +113,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
+        getUser();
         String[] idArry = ids.split(",");
         for (String id : idArry) {
             EamEquipment eamEquipment = eamEquipmentMapper.selectByPrimaryKey(id);
@@ -148,12 +129,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     }
 
     public void check(EamEquipment entity){
-
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
+        getUser();
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("equipmentCode", entity.getEquipmentCode());
@@ -189,4 +165,23 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             }
         }
     }
+
+
+    @Override
+    public List<EamEquipmentDto> findNoGroup(Map<String, Object> map) {
+        SysUser user = getUser();
+        map.put("orgId", user.getOrganizationId());
+        return eamEquipmentMapper.findNoGroup(map);
+    }
+
+
+
+    public SysUser getUser(){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        return user;
+    }
+
 }

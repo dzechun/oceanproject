@@ -15,7 +15,7 @@ public interface SysRoleMapper extends MyMapper<SysRole> {
 
 //    List<SysUser> findBindUser(Map<String,Object> map);
 
-    List<SysRoleDto> findMenuRoles();
+    List<SysRoleDto> findMenuRoles(List<String> list);
 
     List<SysRoleDto> findByUserName(SearchSysRole searchSysRole);
 }

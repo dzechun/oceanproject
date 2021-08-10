@@ -2,14 +2,10 @@ package com.fantechs.security.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysRoleDto;
-import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -24,15 +20,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 ;
 
@@ -129,23 +122,25 @@ public class LoginController {
     @ApiOperation(value = "设备登陆接口")
     public ResponseEntity mesloginByEam(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId
             , @RequestParam(value = "mac") String mac){
-
-        //获取当前用户所在的所有角色
-        SearchSysRole searchSysRole = new SearchSysRole();
-        searchSysRole.setUserName(username);
-        List<SysRoleDto> sysRoleDtos = sysRoleMapper.findByUserName(searchSysRole);
-
-        //ESOP
+        ResponseEntity responseEntity = null;
+        //通过mac地址查询设备
         ResponseEntity<List<EamEquipmentDto>> list = eamFeignApi.findByMac(mac,orgId);
         if(StringUtils.isEmpty(list.getData())){
             return ControllerUtil.returnFail("登录错误，该用户无权限登录",1);
         }
-        ResponseEntity responseEntity = null;
-        for(SysRoleDto sysRoleDto : sysRoleDtos){
-            if(list.getData().get(0).getProcessName().equals(sysRoleDto.getRoleName()) ){
-                responseEntity = securityFeignApi.login(username, password,orgId);
-            }
+
+        //获取当前用户角色
+        SearchSysRole searchSysRole = new SearchSysRole();
+        searchSysRole.setUserName(username);
+        searchSysRole.setRoleName(list.getData().get(0).getProcessName());
+        List<SysRoleDto> sysRoleDtos = sysRoleMapper.findByUserName(searchSysRole);
+
+        if(StringUtils.isNotEmpty(sysRoleDtos)){
+            responseEntity = securityFeignApi.login(username, password,orgId);
+        }else{
+            return ControllerUtil.returnFail("登录错误，该用户无权限登录",1);
         }
+
         return  responseEntity;
     }
 }

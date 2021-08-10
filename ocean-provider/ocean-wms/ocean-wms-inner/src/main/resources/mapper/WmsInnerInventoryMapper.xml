@@ -165,6 +165,9 @@ wii.storage_id,
       <if test="salesOrderCode!=null and salesOrderCode != ''">
         and wii.sales_order_code like CONCAT("%",#{salesOrderCode},"%")
       </if>
+      <if test="inspectionOrderCode!=null and inspectionOrderCode != ''">
+        and wii.inspection_order_code like CONCAT("%",#{inspectionOrderCode},"%")
+      </if>
       <if test="supplierName!=null and supplierName != ''">
         and wii.supplier_name like CONCAT("%",#{supplierName},"%")
       </if>

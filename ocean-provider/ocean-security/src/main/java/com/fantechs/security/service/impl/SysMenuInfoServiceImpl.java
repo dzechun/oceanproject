@@ -25,10 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -281,7 +278,7 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         //获取当前登录所属角色所有的子菜单
         List<SysMenuInfoDto> list = sysMenuInfoMapper.findByUsreId(roleIds,map.get("menuType"));
 
-        List<SysRoleDto> menuRoles = sysRoleMapper.findMenuRoles();
+        List<SysRoleDto> menuRoles = sysRoleMapper.findMenuRoles(roleIds==null?new ArrayList<>():roleIds);
         Map<Long, List<SysRoleDto>> roleMap = menuRoles.stream().collect(Collectors.groupingBy(SysRoleDto::getMenuId));
 
         if(StringUtils.isNotEmpty(menuinfos)){

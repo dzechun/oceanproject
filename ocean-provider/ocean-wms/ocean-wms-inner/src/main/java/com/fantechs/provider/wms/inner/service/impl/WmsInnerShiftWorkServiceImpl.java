@@ -376,13 +376,19 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 .andEqualTo("warehouseId", oldDto.getWarehouseId())
                 .andEqualTo("storageId", oldDto.getOutStorageId())
                 .andEqualTo("jobOrderDetId", oldDto.getJobOrderDetId())
-                .andEqualTo("jobStatus", (byte) 2);
+                .andEqualTo("jobStatus", (byte) 2)
+                .andEqualTo("stockLock", 0)
+                .andEqualTo("qcLock", 0)
+                .andEqualTo("lockStatus", 0);
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
         example.clear();
         example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
                 .andEqualTo("warehouseId", oldDto.getWarehouseId())
-                .andEqualTo("storageId", oldDto.getOutStorageId())
-                .andEqualTo("jobStatus", (byte) 1);
+                .andEqualTo("storageId", baseStorage.getStorageId())
+                .andEqualTo("jobStatus", (byte) 1)
+                .andEqualTo("stockLock", 0)
+                .andEqualTo("qcLock", 0)
+                .andEqualTo("lockStatus", 0);
         WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
         if (StringUtils.isEmpty(wmsInnerInventory_old)) {
             if (StringUtils.isEmpty(wmsInnerInventory)) {
@@ -395,7 +401,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerInventory_old.setPackingQty(wmsInnerInventory_old.getPackingQty() != null ? wmsInnerInventory_old.getPackingQty().add(wmsInnerInventory.getPackingQty()) : wmsInnerInventory.getPackingQty());
             wmsInnerInventory_old.setRelevanceOrderCode(wmsInnerInventory.getRelevanceOrderCode());
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory_old);
-            wmsInnerInventoryService.delete(wmsInnerInventory);
+            wmsInnerInventory.setPackingQty(BigDecimal.ZERO);
+            wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
+//            wmsInnerInventoryService.delete(wmsInnerInventory);
         }
 
         //更新库存明细

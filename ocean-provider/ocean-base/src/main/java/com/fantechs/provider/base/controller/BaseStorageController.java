@@ -2,6 +2,7 @@ package com.fantechs.provider.base.controller;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseFactoryImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
@@ -14,6 +15,7 @@ import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseHtStorageService;
 import com.fantechs.provider.base.service.BaseStorageService;
+import com.fantechs.provider.base.util.StorageDistributionRuleUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -159,5 +162,13 @@ public class BaseStorageController {
     public ResponseEntity plusSurplusCanPutSalver(@ApiParam(value = "库位id", required = true) @RequestParam @NotNull(message = "库位id")Long storageId,
                                                    @ApiParam(value = "待加可放托盘数", required = true) @RequestParam @NotNull(message = "待减可放托盘数不能为空") Integer num) {
         return ControllerUtil.returnCRUD(baseStorageService.plusSurplusCanPutSalver(storageId,num));
+    }
+
+    @ApiOperation("上架分配规则")
+    @PostMapping("/baseStorage/JobRule")
+    public ResponseEntity<List<StorageRuleDto>> JobRule(@RequestParam BigDecimal packageQty, @RequestParam Long warehouseId, @RequestParam Long materialId,
+                                                        @RequestParam(required = false) String batchCode, @RequestParam(required = false) String proDate){
+        List<StorageRuleDto> list = StorageDistributionRuleUtils.JobMainRule(packageQty, warehouseId,materialId,batchCode,proDate);
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 }

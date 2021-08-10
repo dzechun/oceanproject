@@ -8,8 +8,10 @@ import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionStandard;
+import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionStandard;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
@@ -263,10 +265,23 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
             searchWmsInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
             ResponseEntity<List<WmsInnerInventoryDto>> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory);
-            if(StringUtils.isEmpty(innerInventoryDtoList.getData())) throw new BizErrorException("未查询到对应库存信息");
+            if(StringUtils.isEmpty(innerInventoryDtoList.getData())){
+                throw new BizErrorException("未查询到对应库存信息");
+            }
             WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.getData().get(0);
+
+
+            SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+            searchBaseInventoryStatus.setWarehouseId(wmsInnerInventoryDto.getWarehouseId());
+            searchBaseInventoryStatus.setMaterialOwnerId(wmsInnerInventoryDto.getMaterialOwnerId());
+            searchBaseInventoryStatus.setInventoryStatusName(qualifiedCount==qmsInspectionOrderDetList.size() ? "合格" : "不合格");
+            List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
+            if(StringUtils.isEmpty(inventoryStatusList)){
+                throw new BizErrorException("未查询到库存对应库存状态");
+            }
+
             wmsInnerInventoryDto.setQcLock((byte)0);
-            wmsInnerInventoryDto.setInventoryStatusId(qualifiedCount==qmsInspectionOrderDetList.size() ? (long)102 : (long)104);
+            wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
             innerFeignApi.update(wmsInnerInventoryDto);
 
             return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);

@@ -20,4 +20,6 @@ public interface EamEquipmentService extends IService<EamEquipment> {
     int batchUpdate(List<EamEquipment> list);
 
     EamEquipment detailByIp(String ip);
+
+    List<EamEquipmentDto> findNoGroup(Map<String, Object> map);
 }

@@ -6,6 +6,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
+import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
@@ -24,10 +25,7 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJo
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.CodeUtils;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.RedisUtil;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
@@ -147,30 +145,60 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }
                 //推荐库位
-                Long storageId = wmsInPutawayOrderMapper.findStorage(wms.getMaterialId(), wmsInnerJobOrder.getWarehouseId(), sysUser.getOrganizationId());
-                storageId = storageId == null ? wmsInPutawayOrderMapper.SelectStorage() : storageId;
-                if (StringUtils.isEmpty(storageId)) {
-                    throw new BizErrorException("未查询到推荐库位");
+//                Long storageId = wmsInPutawayOrderMapper.findStorage(wms.getMaterialId(), wmsInnerJobOrder.getWarehouseId(), sysUser.getOrganizationId());
+                ResponseEntity<List<StorageRuleDto>> responseEntity = baseFeignApi.JobRule(wms.getPlanQty(),wms.getWarehouseId(),wms.getMaterialId(),wms.getBatchCode(), DateUtils.getDateString(wms.getProductionDate(),"yyyy-MM-dd"));
+                if(responseEntity.getCode()!=0){
+                    throw new BizErrorException("上架分配规则获取失败");
                 }
-                num += wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
-                        .jobOrderDetId(wms.getJobOrderDetId())
-                        .inStorageId(storageId)
-                        .distributionQty(wms.getPlanQty())
-                        .modifiedUserId(sysUser.getUserId())
-                        .modifiedTime(new Date())
-                        .orderStatus((byte) 3)
-                        .build());
-                //库位容量减1
-                baseFeignApi.minusSurplusCanPutSalver(wms.getInStorageId(), 1);
+                List<StorageRuleDto> list1 = responseEntity.getData();
+                BigDecimal totalQty = BigDecimal.ZERO;
+                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDetDto();
+                for (StorageRuleDto storageRuleDto : list1) {
+                    Long jobDetid = null;
+                    if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
+                        if(StringUtils.isNotEmpty(storageRuleDto.getPutawayQty()) && storageRuleDto.getPutawayQty().compareTo(wms.getPlanQty())==-1){
+                            totalQty = wms.getPlanQty().subtract(storageRuleDto.getPutawayQty());
+                            BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
+                            wmsInnerJobOrderDet.setPlanQty(totalQty);
+                        }
+                        num += wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
+                                .jobOrderDetId(wms.getJobOrderDetId())
+                                .inStorageId(storageRuleDto.getStorageId())
+                                .planQty(wms.getPlanQty().subtract(totalQty))
+                                .distributionQty(wms.getPlanQty())
+                                .modifiedUserId(sysUser.getUserId())
+                                .modifiedTime(new Date())
+                                .orderStatus((byte) 3)
+                                .build());
+                        jobDetid = wms.getJobOrderDetId();
+                    }else{
+                        if(StringUtils.isNotEmpty(storageRuleDto.getPutawayQty()) && storageRuleDto.getPutawayQty().compareTo(wms.getPlanQty())==-1){
+                            totalQty = wms.getPlanQty().subtract(storageRuleDto.getPutawayQty());
+                            BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
+                        }
+                        wmsInnerJobOrderDet.setPlanQty(wmsInnerJobOrderDet.getPlanQty().subtract(totalQty));
+                        wmsInnerJobOrderDet.setInStorageId(storageRuleDto.getStorageId());
+                        wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getPlanQty());
+                        num += wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+                        jobDetid = wmsInnerJobOrderDet.getJobOrderDetId();
+                    }
 
-                SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
-                searchWmsInnerJobOrder.setJobOrderId(wms.getJobOrderId());
-                WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInPutawayOrderMapper.findList(searchWmsInnerJobOrder).get(0);
-                SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
-                searchWmsInnerJobOrderDet.setJobOrderDetId(wms.getJobOrderDetId());
-                WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
-                //分配库存
-                num += this.updateInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto);
+                    SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+                    searchWmsInnerJobOrder.setJobOrderId(wms.getJobOrderId());
+                    WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInPutawayOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+                    SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
+                    searchWmsInnerJobOrderDet.setJobOrderDetId(jobDetid);
+                    WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
+                    //分配库存
+                    num += this.updateInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto);
+                }
+//                storageId = storageId == null ? wmsInPutawayOrderMapper.SelectStorage() : storageId;
+//                if (StringUtils.isEmpty(storageId)) {
+//                    throw new BizErrorException("未查询到推荐库位");
+//                }
+
+                //库位容量减1
+//                baseFeignApi.minusSurplusCanPutSalver(wms.getInStorageId(), 1);
             }
             //待激活
             SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
@@ -841,7 +869,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //        if(StringUtils.isEmpty(barCode)){
 //            throw new BizErrorException("获取栈板信息失败");
 //        }
-        example.createCriteria().andEqualTo("asnCode", asnOrderCode).andEqualTo("storageId", wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId", wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcode", barcode).andEqualTo("jobStatus",1);
+        example.createCriteria().andEqualTo("asnCode", asnOrderCode).andEqualTo("storageId", wmsInnerJobOrderDet.getInStorageId()).andEqualTo("materialId", wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcode", barcode).andEqualTo("jobStatus",1);
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
         if (StringUtils.isEmpty(wmsInnerInventoryDet)) {
             throw new BizErrorException("未查询到收货条码");

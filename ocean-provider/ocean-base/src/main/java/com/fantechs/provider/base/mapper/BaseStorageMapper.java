@@ -14,6 +14,9 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
     //批量更新
     int batchUpdate(List<BaseStorage> baseStorages);
 
+    ///获取物料专用库位列表
+    List<StorageRuleDto> findStorageMaterial(Map<String,Object> map);
+
     List<StorageRuleDto> findPutawayRule(Map<String,Object>map);
 
     Integer findPutawayNo(@Param("warehouseId")Long warehouseId,@Param("materialId")Long materialId);

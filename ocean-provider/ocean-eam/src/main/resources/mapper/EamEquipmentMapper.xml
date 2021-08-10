@@ -128,6 +128,8 @@
     left join base_factory bf on ee.factory_id=bf.factory_id
     left join base_process bp on ee.process_id=bp.process_id
     left join eam_maintain_project emp on ee.maintain_project_id=emp.maintain_project_id
+    left join eam_equipment_data_group_re_dc eedgrd on ee.equipment_id=eedgrd.equipment_id
+    left join eam_equipment_data_group eedg on eedgrd.equipment_data_group_id=eedg.equipment_data_group_id
     left join ocean_v2.sys_user u on ee.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ee.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ee.org_id = bo.organization_id
@@ -159,6 +161,9 @@
       <if test="equipmentMacAddress != null and equipmentMacAddress!=''">
         and ee.equipment_mac_address = #{equipmentMacAddress}
       </if>
+      <if test="equipmentDataGroupId != null and equipmentDataGroupId!=''">
+        and eedg.equipment_data_group_id = #{equipmentDataGroupId}
+      </if>
     </where>
     order by ee.create_time desc
   </select>
@@ -171,4 +176,20 @@
       where ee.equipment_id = #{item.equipmentId}
     </foreach>
   </update>
+
+
+  <select id="findNoGroup" parameterType="map" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>
+    from ( SELECT * FROM eam_equipment WHERE equipment_id NOT IN
+    ( SELECT equipment_id FROM eam_equipment_data_group_re_dc group by equipment_id) ) ee
+    <where>
+      <if test="status!=null">
+        and ee.status = #{status}
+      </if>
+      <if test="orgId!=null">
+        and ee.org_id=#{orgId}
+      </if>
+
+    </where>
+  </select>
 </mapper>
