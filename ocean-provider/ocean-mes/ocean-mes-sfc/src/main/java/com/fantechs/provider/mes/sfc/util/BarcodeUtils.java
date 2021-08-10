@@ -497,8 +497,22 @@ public class BarcodeUtils {
         if(baseMaterialPackageDtos.size() <= 0){
             throw new BizErrorException();
         }
-        BaseBarcodeRule baseBarcodeRule = barcodeUtils.baseFeignApi.baseBarcodeRuleDetail(baseMaterialPackageDtos.get(0).getBarcodeRuleId()).getData();
 
+        //根据materialId和processId 找唯一的条码规则 2021-08-09 by huangshuijun
+        BaseMaterialPackageDto bMaterialPackageDto=null;
+        for (BaseMaterialPackageDto baseMaterialPackageDto : baseMaterialPackageDtos) {
+            if(baseMaterialPackageDto.getMaterialId().equals(materialId) && baseMaterialPackageDto.getProcessId().equals(processId)) {
+                bMaterialPackageDto=baseMaterialPackageDto;
+                break;
+            }
+        }
+
+        //BaseBarcodeRule baseBarcodeRule = barcodeUtils.baseFeignApi.baseBarcodeRuleDetail(baseMaterialPackageDtos.get(0).getBarcodeRuleId()).getData();
+        //根据materialId和processId 找唯一的条码规则 2021-08-09 by huangshuijun
+        if(bMaterialPackageDto==null)
+            throw new BizErrorException(ErrorCodeEnum.PDA40012036,materialId,processId);
+
+        BaseBarcodeRule baseBarcodeRule = barcodeUtils.baseFeignApi.baseBarcodeRuleDetail(bMaterialPackageDto.getBarcodeRuleId()).getData();
         return baseBarcodeRule;
     }
 

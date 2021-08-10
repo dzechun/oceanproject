@@ -282,7 +282,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             //删除物料页签对应的履历
             Example example6 = new Example(BaseTab.class);
             Example.Criteria criteria6 = example6.createCriteria();
-            criteria6.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria6.andEqualTo("materialId",materialId);
             baseTabMapper.deleteByExample(example6);
 
