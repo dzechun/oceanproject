@@ -13,4 +13,6 @@ public interface EamEquipmentMapper extends MyMapper<EamEquipment> {
     List<EamEquipmentDto> findList(Map<String,Object> map);
 
     int batchUpdate(List<EamEquipment> list);
+
+    List<EamEquipmentDto> findNoGroup(Map<String,Object> map);
 }

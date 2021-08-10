@@ -42,6 +42,13 @@ public class EamEquipmentReEsDto extends EamEquipmentReEs implements Serializabl
     @Transient
     private String equipmentName;
 
+    /**
+     * 设备描述
+     */
+    @ApiModelProperty(name="equipmentDesc",value = "设备描述")
+    @Transient
+    private String equipmentDesc;
+
 
     /**
      * 设备型号

@@ -78,7 +78,6 @@ public class EamEquipmentController {
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<EamEquipmentDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEamEquipment searchEamEquipment) {
-        System.out.println("------------searchEamEquipment-----------"+searchEamEquipment);
         Page<Object> page = PageHelper.startPage(searchEamEquipment.getStartPage(),searchEamEquipment.getPageSize());
         List<EamEquipmentDto> list = eamEquipmentService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
@@ -113,5 +112,13 @@ public class EamEquipmentController {
         searchEamEquipment.setEquipmentMacAddress(mac.toString());
         List<EamEquipmentDto> list = eamEquipmentService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
         return ControllerUtil.returnDataSuccess(list,1);
+    }
+
+    @ApiOperation("未绑定分组查询")
+    @PostMapping("/findNoGroup")
+    public ResponseEntity<List<EamEquipmentDto>> findNoGroup(@ApiParam(value = "查询对象")@RequestBody SearchEamEquipment searchEamEquipment) {
+        Page<Object> page = PageHelper.startPage(searchEamEquipment.getStartPage(),searchEamEquipment.getPageSize());
+        List<EamEquipmentDto> list = eamEquipmentService.findNoGroup(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }

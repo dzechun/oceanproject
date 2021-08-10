@@ -54,11 +54,19 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
+    count( ee.equipment_id ) AS equipment_total,
+    (select count(*) from eam_equipment where equipment_id in (select equipment_id from eam_equipment_data_group_re_dc
+    where equipment_data_group_id=eedg.equipment_data_group_id ) and (online_status = 1 or online_status = 2)) AS equipment_online,
+    (select count(*) from eam_equipment where equipment_id in (select equipment_id from eam_equipment_data_group_re_dc
+    where equipment_data_group_id=eedg.equipment_data_group_id ) and online_status = 0) AS equipment_offline,
+    (select count(*) from eam_equipment where equipment_id in (select equipment_id from eam_equipment_data_group_re_dc
+    where equipment_data_group_id=eedg.equipment_data_group_id ) and online_status = 3) AS equipment_unknown,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from eam_equipment_data_group eedg
     left join eam_equipment_data_group_re_dc eedgrde ON eedg.equipment_data_group_id = eedgrde.equipment_data_group_id
+    left join eam_equipment ee on eedgrde.equipment_id = ee.equipment_id
     left join ocean_v2.sys_user u on eedg.create_user_id=u.user_id
     left join ocean_v2.sys_user s on eedg.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON eedg.org_id = bo.organization_id
@@ -73,6 +81,8 @@
         and eedg.org_id=#{orgId}
       </if>
     </where>
+    group by
+    eedg.equipment_data_group_id
     order by eedg.create_time desc
   </select>
 

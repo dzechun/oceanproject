@@ -23,6 +23,15 @@
 
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupReDcDto">
+      <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+      <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+      <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
+      <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
+      <result column="equipment_desc" jdbcType="VARCHAR" property="equipmentDesc"/>
+      <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel"/>
+      <result column="equipment_category_id" jdbcType="VARCHAR" property="equipmentCategoryId"/>
+      <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp"/>
+      <result column="equipment_mac_address" jdbcType="VARCHAR" property="equipmentMacAddress"/>
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -44,10 +53,13 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT<include refid="BaseColumnList"/>,
+    ee.equipment_code as equipment_code,ee.equipment_name as equipment_name,ee.equipment_desc as equipment_desc,ee.equipment_model as equipment_model,
+    ee.equipment_category_id as equipment_category_id,ee.equipment_ip as equipment_ip,ee.equipment_mac_address as equipment_mac_address,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     FROM eam_equipment_data_group_re_dc eedgrd
+    left join eam_equipment ee on eedgrd.equipment_id=ee.equipment_id
     left join ocean_v2.sys_user u on eedgrd.create_user_id=u.user_id
     left join ocean_v2.sys_user s on eedgrd.modified_user_id=s.user_id
     left join base_organization bo ON eedgrd.org_id = bo.organization_id
