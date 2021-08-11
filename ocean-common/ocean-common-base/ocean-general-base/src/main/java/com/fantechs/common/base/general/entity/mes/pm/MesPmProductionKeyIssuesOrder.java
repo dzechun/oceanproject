@@ -185,14 +185,6 @@ public class MesPmProductionKeyIssuesOrder extends ValidGroup implements Seriali
     private String workOrderCode;
 
     /**
-     * 单据状态(1-待确认 2-已确认)
-     */
-    @ApiModelProperty(name="orderStatus" ,value="单据状态")
-    @Transient
-    @Excel(name = "单据状态", height = 20, width = 30,orderNum="1")
-    private String orderStatus;
-
-    /**
      * 产品关键事项确认明细
      */
     @ApiModelProperty(name="mesPmProductionKeyIssuesOrderDetList" ,value="产品关键事项确认明细")

@@ -14,4 +14,7 @@ import java.util.Map;
 
 public interface EamJigBarcodeService extends IService<EamJigBarcode> {
     List<EamJigBarcodeDto> findList(Map<String, Object> map);
+
+    //增加治具当前使用次数
+    int plusCurrentUsageTime(Long jigBarcodeId, Integer num);
 }

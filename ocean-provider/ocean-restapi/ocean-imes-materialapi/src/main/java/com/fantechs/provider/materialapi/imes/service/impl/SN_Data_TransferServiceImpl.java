@@ -4,6 +4,8 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
+import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
+import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.dto.mes.sfc.UpdateProcessDto;
@@ -14,6 +16,7 @@ import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.materialapi.imes.service.Chk_LogUserInfoService;
 import com.fantechs.provider.materialapi.imes.service.SN_Data_TransferService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
@@ -42,6 +45,8 @@ public class SN_Data_TransferServiceImpl implements SN_Data_TransferService {
     private DeviceInterFaceUtils deviceInterFaceUtils;
     @Resource
     private BarcodeUtils barcodeUtils;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     @LcnTransaction
@@ -71,7 +76,17 @@ public class SN_Data_TransferServiceImpl implements SN_Data_TransferService {
             return check;
         }
 
-        //返写治具编号使用次数
+        //返写治具编号使用次数 暂时默认治具使用次数为 1
+        if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getEamJigBarCode())){
+            String[] jigBarCodeArr=restapiSNDataTransferApiDto.getEamJigBarCode().split(",");
+            for (String item : jigBarCodeArr) {
+                if(StringUtils.isNotEmpty(item)) {
+                    ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = deviceInterFaceUtils.getJigBarCode(item);
+                    EamJigBarcodeDto eamJigBarcodeDto=eamJigBarcodeDtoList.getData().get(0);
+                    baseFeignApi.plusCurrentUsageTime(eamJigBarcodeDto.getJigBarcodeId(),1);
+                }
+            }
+        }
 
         //过站
         BaseOrganizationDto baseOrganizationDto=deviceInterFaceUtils.getOrId().getData().get(0);
