@@ -11,6 +11,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapRouteApiService;
+import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
 import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.ProLineApi.SIMESPROCESSQUERYOut;
@@ -29,6 +30,8 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
     private BaseFeignApi baseFeignApi;
     @Resource
     private LogsUtils logsUtils;
+    @Resource
+    private BaseUtils baseUtils;
 
     private String userName = "MESPIALEUSER"; //雷赛wsdl用户名
     private String password = "1234qwer"; //雷赛wsdl密码
@@ -48,9 +51,9 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE()) ){
             if(StringUtils.isEmpty(res.getPROCESS())) throw new BizErrorException("请求结果为空");
             //保存或更新工艺路线
-            BaseMaterial baseMaterial = getBaseMaterial(searchSapRouteApi.getMaterialCode());
+            BaseMaterial baseMaterial = baseUtils.getBaseMaterial(baseUtils.removeZero(searchSapRouteApi.getMaterialCode()));
             if(StringUtils.isEmpty(baseMaterial)) throw new BizErrorException("未查询到对应的物料信息");
-            Long orgId = getOrId();
+            Long orgId = baseUtils.getOrId();
             //保存工艺路线
             BaseRoute baseRoute = new BaseRoute();
             baseRoute.setRouteName(res.getPROCESS().get(0).getKTEXT());
@@ -64,7 +67,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             //保存产品工艺路线
             BaseProductProcessRoute  baseProductProcessRoute = new BaseProductProcessRoute();
             baseProductProcessRoute.setProductType(0);
-            baseProductProcessRoute.setMaterialId(getBaseMaterial(searchSapRouteApi.getMaterialCode()).getMaterialId());
+            baseProductProcessRoute.setMaterialId(baseUtils.getBaseMaterial(searchSapRouteApi.getMaterialCode()).getMaterialId());
             baseProductProcessRoute.setRouteId(baseRoute.getRouteId());
             baseProductProcessRoute.setStatus(1);
             baseProductProcessRoute.setOrganizationId(orgId);
@@ -94,7 +97,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
                 BaseProcess  baseProcess = new BaseProcess();
                 baseProcess.setProcessName(process.getLTXA1());
                 baseProcess.setProcessDesc(process.getLTXA1());
-                baseProcess.setProcessCode(process.getVORNR());
+                baseProcess.setProcessCode(baseUtils.removeZero(process.getVORNR()));
                 baseProcess.setSectionId(baseWorkshopSectionResponseEntity.getData().getSectionId());
                 baseProcess.setSectionCode(baseWorkshopSectionResponseEntity.getData().getSectionCode());
                 baseProcess.setOrganizationId(orgId);
@@ -109,21 +112,4 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
         }
     }
 
-    public BaseMaterial getBaseMaterial(String materialCode){
-        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-        searchBaseMaterial.setMaterialCode(materialCode);
-        searchBaseMaterial.setOrganizationId(getOrId());
-        ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findSmtMaterialList(searchBaseMaterial);
-        if(StringUtils.isEmpty(parentMaterialList.getData()))
-            throw new BizErrorException("未查询到对应的物料："+materialCode);
-        return parentMaterialList.getData().get(0);
-    }
-
-    public Long getOrId() {
-        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-        searchBaseOrganization.setOrganizationName("雷赛");
-        ResponseEntity<List<BaseOrganizationDto>> organizationList = baseFeignApi.findOrganizationList(searchBaseOrganization);
-        if (StringUtils.isEmpty(organizationList.getData())) throw new BizErrorException("未查询到对应组织");
-        return organizationList.getData().get(0).getOrganizationId();
-    }
 }

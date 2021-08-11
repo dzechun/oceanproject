@@ -73,19 +73,20 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
         }
     }
 
-    public void saveAndUpdate(DTMESMATERIAL material, List<BaseMaterial> addList, List<BaseMaterial> updateList ){
+    public void saveAndUpdate(DTMESMATERIAL material, List<BaseMaterial> addList, List<BaseMaterial> updateList){
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-        searchBaseMaterial.setMaterialCode(material.getMATNR());
+        String materialCode =baseUtils.removeZero(material.getMATNR());
+        Long orgId = baseUtils.getOrId();
+        searchBaseMaterial.setMaterialCode(materialCode);
+        searchBaseMaterial.setOrganizationId(orgId);
         ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
         BaseMaterial baseMaterial = new BaseMaterial();
-        Long orgId = baseUtils.getOrId();
-
         baseMaterial.setOrganizationId(orgId);
 
         if(StringUtils.isEmpty(list.getData())){
             baseMaterial.setMaterialName(material.getMAKTX());
             baseMaterial.setMaterialDesc(material.getMAKTX());
-            baseMaterial.setMaterialCode(material.getMATNR());
+            baseMaterial.setMaterialCode(materialCode);
             baseMaterial.setCreateTime(new Date());
             baseMaterial.setModifiedTime(new Date());
             baseMaterial.setStatus((byte)1);
@@ -100,5 +101,4 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
         }
 
     }
-
 }

@@ -67,6 +67,9 @@
       <if test="orgId!=null and orgId!=''">
         and eedgrd.org_id = #{orgId}
       </if>
+       <if test="equipmentDataGroupId != null and equipmentDataGroupId!=''">
+          and eedgrd.equipment_data_group_id = #{equipmentDataGroupId}
+       </if>
     </where>
   </select>
 

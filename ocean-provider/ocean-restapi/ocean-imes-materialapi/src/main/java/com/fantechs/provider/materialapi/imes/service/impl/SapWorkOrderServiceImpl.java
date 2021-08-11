@@ -18,6 +18,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapWorkOrderService;
+import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 
 import javax.annotation.Resource;
@@ -41,6 +42,8 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
     private BaseFeignApi baseFeignApi;
     @Resource
     private LogsUtils logsUtils;
+    @Resource
+    private BaseUtils baseUtils;
 
     @Override
     @LcnTransaction
@@ -50,7 +53,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         Map<String,String> bomMap = new HashMap<String,String>();
         List<MesPmWorkOrderBom> mesPmWorkOrderBomList = new ArrayList<MesPmWorkOrderBom>();
 
-        Long orgId = getOrId();
+        Long orgId = baseUtils.getOrId();
         for(RestapiWorkOrderApiDto restapiWorkOrderApiDto : restapiWorkOrderApiDtos) {
             String check = check(restapiWorkOrderApiDto);
             if (!check.equals("1")) {
@@ -60,12 +63,12 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
             //保存工单，如已经保存则后续循环不再保存
             if(StringUtils.isEmpty(orderMap.get(restapiWorkOrderApiDto.getAUFNR()))){
                 MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
-                mesPmWorkOrder.setWorkOrderCode(restapiWorkOrderApiDto.getAUFNR());
+                mesPmWorkOrder.setWorkOrderCode(baseUtils.removeZero(restapiWorkOrderApiDto.getAUFNR()));
                 if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGSTRP()))
                     mesPmWorkOrder.setPlanStartTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGSTRP()));
                 if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGLTRP()))
                     mesPmWorkOrder.setPlanEndTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGLTRP()));
-                mesPmWorkOrder.setMaterialId(getBaseMaterial(restapiWorkOrderApiDto.getMATNR()).getMaterialId());
+                mesPmWorkOrder.setMaterialId((baseUtils.getBaseMaterial(restapiWorkOrderApiDto.getMATNR()).getMaterialId()));
                 if(StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGAMNG()))
                  mesPmWorkOrder.setWorkOrderQty(new BigDecimal(restapiWorkOrderApiDto.getGAMNG().trim()));
                 //目前还未同步产线
@@ -83,7 +86,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 bom.setUsageQty(new BigDecimal(restapiWorkOrderApiDto.getMENGE().trim()));
                 bom.setOption1(restapiWorkOrderApiDto.getRSPOS());
                 bom.setWorkOrderId(orderMap.get(restapiWorkOrderApiDto.getAUFNR()));
-                bom.setPartMaterialId(getBaseMaterial(restapiWorkOrderApiDto.getZJMATNR()).getMaterialId());
+                bom.setPartMaterialId(baseUtils.getBaseMaterial(restapiWorkOrderApiDto.getZJMATNR()).getMaterialId());
                 bom.setOrgId(orgId);
                 mesPmWorkOrderBomList.add(bom);
                 bomMap.put(restapiWorkOrderApiDto.getRSPOS(),restapiWorkOrderApiDto.getZJMATNR());
@@ -116,21 +119,4 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         return list.getData().get(0).getProLineId();
     }
 
-    public Long getOrId() {
-        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-        searchBaseOrganization.setOrganizationName("雷赛");
-        ResponseEntity<List<BaseOrganizationDto>> organizationList = baseFeignApi.findOrganizationList(searchBaseOrganization);
-        if (StringUtils.isEmpty(organizationList.getData())) throw new BizErrorException("未查询到对应组织");
-        return organizationList.getData().get(0).getOrganizationId();
-    }
-
-    public BaseMaterial getBaseMaterial(String materialCode){
-        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-        searchBaseMaterial.setMaterialCode(materialCode);
-        searchBaseMaterial.setOrganizationId(getOrId());
-        ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findSmtMaterialList(searchBaseMaterial);
-        if(StringUtils.isEmpty(parentMaterialList.getData()))
-            throw new BizErrorException("未查询到对应的物料："+materialCode);
-        return parentMaterialList.getData().get(0);
-    }
 }
