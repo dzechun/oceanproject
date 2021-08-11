@@ -214,5 +214,6 @@ public class SysUser extends ValidGroup implements Serializable {
     /**
      * 菜单字符串
      */
+    @Transient
     private String menu;
 }
