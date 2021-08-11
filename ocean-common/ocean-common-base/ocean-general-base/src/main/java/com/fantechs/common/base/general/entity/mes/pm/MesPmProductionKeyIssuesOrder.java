@@ -56,6 +56,12 @@ public class MesPmProductionKeyIssuesOrder extends ValidGroup implements Seriali
     private Byte status;
 
     /**
+     * 单据状态(1-待确认 2-已确认)
+     */
+    @ApiModelProperty(name="order_status",value = "单据状态(1-待确认 2-已确认)")
+    private Byte orderStatus;
+
+    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")

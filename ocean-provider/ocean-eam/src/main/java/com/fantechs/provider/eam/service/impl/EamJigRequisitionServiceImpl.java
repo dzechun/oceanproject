@@ -80,6 +80,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     public List<EamJigReMaterialDto> getRecordQty(String newWorkOrderCode,String oldWorkOrderCode){
         //查询工单
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+        searchMesPmWorkOrder.setCodeQueryMark(1);
         //新工单
         searchMesPmWorkOrder.setWorkOrderCode(newWorkOrderCode);
         List<MesPmWorkOrderDto> newMesPmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
@@ -191,6 +192,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         //查询工单
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+        searchMesPmWorkOrder.setCodeQueryMark(1);
         List<MesPmWorkOrderDto> mesPmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
         if(StringUtils.isEmpty(mesPmWorkOrderDtos)){
             throw new BizErrorException("查无此工单");

@@ -8,6 +8,18 @@
     <id column="ipqc_inspection_order_det_id" jdbcType="BIGINT" property="ipqcInspectionOrderDetId" />
     <result column="ipqc_inspection_order_id" jdbcType="BIGINT" property="ipqcInspectionOrderId" />
     <result column="inspection_standard_det_id" jdbcType="BIGINT" property="inspectionStandardDetId" />
+    <result column="if_must_inspection" jdbcType="TINYINT" property="ifMustInspection"/>
+    <result column="small_inspection_item_desc" jdbcType="VARCHAR" property="smallInspectionItemDesc"/>
+    <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName"/>
+    <result column="big_inspection_item_desc" jdbcType="VARCHAR" property="bigInspectionItemDesc"/>
+    <result column="inspection_tag" jdbcType="TINYINT" property="inspectionTag"/>
+    <result column="specification_upper_limit" jdbcType="DECIMAL" property="specificationUpperLimit"/>
+    <result column="specification_floor" jdbcType="DECIMAL" property="specificationFloor"/>
+    <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
+    <result column="aql_value" jdbcType="DECIMAL" property="aqlValue"/>
+    <result column="ac_value" jdbcType="INTEGER" property="acValue"/>
+    <result column="re_value" jdbcType="INTEGER" property="reValue"/>
+    <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty"/>
     <result column="badness_qty" jdbcType="BIGINT" property="badnessQty" />
     <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
     <result column="inspection_time" jdbcType="TIMESTAMP" property="inspectionTime" />
@@ -27,6 +39,13 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType"/>
+    <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
+    <result column="badness_category_code" jdbcType="VARCHAR" property="badnessCategoryCode"/>
+    <result column="badness_category_desc" jdbcType="VARCHAR" property="badnessCategoryDesc"/>
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.qms.QmsIpqcInspectionOrderDetDto">
     <result column="if_must_inspection" jdbcType="TINYINT" property="ifMustInspection"/>
     <result column="inspection_item_desc_small" jdbcType="VARCHAR" property="inspectionItemDescSmall"/>
     <result column="inspection_item_standard" jdbcType="VARCHAR" property="inspectionItemStandard"/>
@@ -41,14 +60,24 @@
     <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty"/>
     <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType"/>
     <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
-    <result column="badness_category_code" jdbcType="VARCHAR" property="badnessCategoryCode"/>
-    <result column="badness_category_desc" jdbcType="VARCHAR" property="badnessCategoryDesc"/>
   </resultMap>
 
   <sql id="Base_Column_List">
     qiiod.ipqc_inspection_order_det_id,
     qiiod.ipqc_inspection_order_id,
     qiiod.inspection_standard_det_id,
+    qiiod.if_must_inspection,
+    qiiod.big_inspection_item_desc,
+    qiiod.small_inspection_item_desc,
+    qiiod.inspection_standard_name,
+    qiiod.inspection_tag,
+    qiiod.sample_qty,
+    qiiod.specification_upper_limit,
+    qiiod.specification_floor,
+    qiiod.unit_name,
+    qiiod.aql_value,
+    qiiod.ac_value,
+    qiiod.re_value,
     qiiod.badness_qty,
     qiiod.inspection_result,
     qiiod.inspection_time,
@@ -66,9 +95,41 @@
     qiiod.option3
   </sql>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+  <select id="findDetList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bisd.if_must_inspection,bii.inspection_item_standard,bbc.badness_category_code,bbc.badness_category_desc,
+    bbc.badness_category_code,bbc.badness_category_desc,
+    bsp.sample_process_type,bsp.sample_process_id,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.qms_ipqc_inspection_order_det qiiod
+    left join fantech_imes_v2.base_inspection_standard_det bisd on qiiod.inspection_standard_det_id=bisd.inspection_standard_det_id
+    left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
+    left join fantech_imes_v2.base_badness_category bbc on qiiod.badness_category_id=bbc.badness_category_id
+    left join ocean_v2.sys_user u on qiiod.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on qiiod.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON qiiod.org_id = bo.organization_id
+    <where>
+      <if test="ipqcInspectionOrderId!=null">
+        and qiiod.ipqc_inspection_order_id = #{ipqcInspectionOrderId}
+      </if>
+      <if test="ipqcInspectionOrderDetId!=null">
+        and qiiod.ipqc_inspection_order_det_id = #{ipqcInspectionOrderDetId}
+      </if>
+      <if test="status!=null">
+        and qiiod.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qiiod.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and qiiod.org_id=#{orgId}
+      </if>
+    </where>
+  </select>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select bisd.if_must_inspection,bii.inspection_item_standard,bbc.badness_category_code,bbc.badness_category_desc,
     bii2.inspection_item_desc as inspection_item_desc_big,bii.inspection_item_desc as inspection_item_desc_small,
     bisd.inspection_tag,bisd.specification_upper_limit,bisd.specification_floor,bisd.unit_name,
     bspa.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,bsp.sample_process_type,bsp.sample_process_id,

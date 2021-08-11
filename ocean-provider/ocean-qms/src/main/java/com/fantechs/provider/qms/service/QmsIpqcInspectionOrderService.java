@@ -1,6 +1,7 @@
 package com.fantechs.provider.qms.service;
 
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrder;
 import com.fantechs.common.base.support.IService;
 import feign.Response;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,5 +19,5 @@ public interface QmsIpqcInspectionOrderService extends IService<QmsIpqcInspectio
     List<QmsIpqcInspectionOrder> findList(Map<String, Object> map);
     int writeBack(Long ipqcInspectionOrderId);
     String uploadFile(MultipartFile file);
-    int createOrder(String workOrderCode,String inspectionWayDesc);
+    QmsIpqcInspectionOrder createOrder( SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder);
 }

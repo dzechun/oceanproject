@@ -125,6 +125,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
         //查询工单
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+        searchMesPmWorkOrder.setCodeQueryMark(1);
         List<MesPmWorkOrderDto> mesPmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
         if(StringUtils.isEmpty(mesPmWorkOrderDtos)){
             throw new BizErrorException("查无此工单");

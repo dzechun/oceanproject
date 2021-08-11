@@ -137,6 +137,38 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     private Byte isEditDisplay;
 
     /**
+     * 是否检索（0-否 1-是）
+     */
+    @ApiModelProperty(name="isSearch",value = "是否检索（0-否 1-是）")
+    @Excel(name = "是否检索（0-否 1-是）", height = 20, width = 30)
+    @Column(name = "is_search")
+    private Byte isSearch;
+
+    /**
+     * 是否表格（0-否 1-是）
+     */
+    @ApiModelProperty(name="isTable",value = "是否表格（0-否 1-是）")
+    @Excel(name = "是否表格（0-否 1-是）", height = 20, width = 30)
+    @Column(name = "is_table")
+    private Byte isTable;
+
+    /**
+     * 是否表单（0-否 1-是）
+     */
+    @ApiModelProperty(name="isForm",value = "是否表单（0-否 1-是）")
+    @Excel(name = "是否表单（0-否 1-是）", height = 20, width = 30)
+    @Column(name = "is_form")
+    private Byte isForm;
+
+    /**
+     * 是否详情（0-否 1-是）
+     */
+    @ApiModelProperty(name="isDetail",value = "是否详情（0-否 1-是）")
+    @Excel(name = "是否详情（0-否 1-是）", height = 20, width = 30)
+    @Column(name = "is_detail")
+    private Byte isDetail;
+
+    /**
      * 配置项Code
      */
     @ApiModelProperty(name="specCode",value = "配置项Code")

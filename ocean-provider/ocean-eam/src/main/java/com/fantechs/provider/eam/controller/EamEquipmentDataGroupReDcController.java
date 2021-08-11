@@ -93,4 +93,10 @@ public class EamEquipmentDataGroupReDcController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation("批量添加")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "对象，equipmentDataGroupId必传",required = true)@RequestBody @Validated List<EamEquipmentDataGroupReDc> eamEquipmentDataGroupReDcs){
+        return  ControllerUtil.returnCRUD(eamEquipmentDataGroupReDcService.batchAdd(eamEquipmentDataGroupReDcs));
+    }
 }

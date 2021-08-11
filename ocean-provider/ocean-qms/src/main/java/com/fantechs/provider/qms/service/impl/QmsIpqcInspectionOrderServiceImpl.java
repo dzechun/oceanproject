@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.qms.QmsIpqcInspectionOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionStandard;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionStandardDet;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
@@ -14,6 +15,7 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.general.entity.qms.*;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIpqcInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrderDet;
+import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -63,7 +65,7 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
     @Resource
     private QmsHtIpqcInspectionOrderMapper qmsHtIpqcInspectionOrderMapper;
     @Resource
-    private QmsIpqcInspectionOrderDetService qmsIpqcInspectionOrderDetService;
+    private QmsIpqcInspectionOrderDetServiceImpl qmsIpqcInspectionOrderDetService;
     @Resource
     private FileFeignApi fileFeignApi;
     @Resource
@@ -81,29 +83,23 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
             map.put("orgId", user.getOrganizationId());
         }
         List<QmsIpqcInspectionOrder> qmsIpqcInspectionOrders = qmsIpqcInspectionOrderMapper.findList(map);
-        SearchQmsIpqcInspectionOrderDet searchIpqcQmsInspectionOrderDet = new SearchQmsIpqcInspectionOrderDet();
-
-        for (QmsIpqcInspectionOrder qmsIpqcInspectionOrder:qmsIpqcInspectionOrders){
-            searchIpqcQmsInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
-            List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets = qmsIpqcInspectionOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchIpqcQmsInspectionOrderDet));
-            qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDets);
-        }
 
         return qmsIpqcInspectionOrders;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int createOrder(String workOrderCode,String inspectionWayDesc) {
+    public QmsIpqcInspectionOrder createOrder( SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder) {
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-        searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+        searchMesPmWorkOrder.setWorkOrderCode(searchQmsIpqcInspectionOrder.getWorkOrderCode());
+        searchMesPmWorkOrder.setCodeQueryMark(1);
         List<MesPmWorkOrderDto> workOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
         if(StringUtils.isEmpty(workOrderDtos)){
             throw new BizErrorException("查无此工单");
         }
 
         SearchBaseInspectionWay searchBaseInspectionWay = new SearchBaseInspectionWay();
-        searchBaseInspectionWay.setInspectionWayDesc(inspectionWayDesc);
+        searchBaseInspectionWay.setInspectionWayDesc(searchQmsIpqcInspectionOrder.getInspectionWayDesc());
         List<BaseInspectionWay> baseInspectionWays = baseFeignApi.findList(searchBaseInspectionWay).getData();
         if(StringUtils.isEmpty(baseInspectionWays)){
             throw new BizErrorException("查无此检验方式");
@@ -128,16 +124,35 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         qmsIpqcInspectionOrder.setInspectionWayId(baseInspectionWays.get(0).getInspectionWayId());
         qmsIpqcInspectionOrder.setInspectionStandardId(inspectionStandards.get(0).getInspectionStandardId());
 
+        //获取明细信息
+        List<QmsIpqcInspectionOrderDetDto> qmsIpqcInspectionOrderDetDtos = qmsIpqcInspectionOrderDetService.showOrderDet(inspectionStandards.get(0).getInspectionStandardId(), workOrderDtos.get(0).getWorkOrderQty());
+
         List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets = new ArrayList<>();
-        List<BaseInspectionStandardDet> baseInspectionStandardDets = inspectionStandards.get(0).getBaseInspectionStandardDets();
-        for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets){
+        for (QmsIpqcInspectionOrderDetDto detDto : qmsIpqcInspectionOrderDetDtos){
             QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet = new QmsIpqcInspectionOrderDet();
-            qmsIpqcInspectionOrderDet.setInspectionStandardDetId(baseInspectionStandardDet.getInspectionStandardDetId());
+            qmsIpqcInspectionOrderDet.setInspectionStandardDetId(detDto.getInspectionStandardDetId());
+            qmsIpqcInspectionOrderDet.setIfMustInspection(detDto.getIfMustInspection());
+            qmsIpqcInspectionOrderDet.setBigInspectionItemDesc(detDto.getInspectionItemDescBig());
+            qmsIpqcInspectionOrderDet.setSmallInspectionItemDesc(detDto.getInspectionItemDescSmall());
+            qmsIpqcInspectionOrderDet.setInspectionStandardName(detDto.getInspectionItemStandard());
+            qmsIpqcInspectionOrderDet.setInspectionTag(detDto.getInspectionTag());
+            qmsIpqcInspectionOrderDet.setSampleQty(detDto.getSampleQty());
+            qmsIpqcInspectionOrderDet.setSpecificationUpperLimit(detDto.getSpecificationUpperLimit());
+            qmsIpqcInspectionOrderDet.setSpecificationFloor(detDto.getSpecificationFloor());
+            qmsIpqcInspectionOrderDet.setUnitName(detDto.getUnitName());
+            qmsIpqcInspectionOrderDet.setAqlValue(detDto.getAqlValue());
+            qmsIpqcInspectionOrderDet.setAcValue(detDto.getAcValue());
+            qmsIpqcInspectionOrderDet.setReValue(detDto.getReValue());
             qmsIpqcInspectionOrderDets.add(qmsIpqcInspectionOrderDet);
         }
         qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDets);
+        this.save(qmsIpqcInspectionOrder);
 
-        return this.save(qmsIpqcInspectionOrder);
+        Map<String, Object> map = new HashMap<>();
+        map.put("ipqcInspectionOrderId",qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
+        List<QmsIpqcInspectionOrder> list = this.findList(map);
+
+        return list.get(0);
     }
 
 
@@ -148,7 +163,7 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.findList(map).get(0);
         SearchQmsIpqcInspectionOrderDet searchQmsIpqcInspectionOrderDet = new SearchQmsIpqcInspectionOrderDet();
         searchQmsIpqcInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
-        List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDetList = qmsIpqcInspectionOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrderDet));
+        List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDetList = qmsIpqcInspectionOrderDetMapper.findDetList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrderDet));
         qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDetList);
 
         return qmsIpqcInspectionOrder;

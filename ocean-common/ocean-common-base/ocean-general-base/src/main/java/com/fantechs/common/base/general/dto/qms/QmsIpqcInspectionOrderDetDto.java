@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.qms;
+package com.fantechs.common.base.general.dto.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -19,13 +19,9 @@ import java.util.Date;
 
 /**
  * IPQC检验单明细
- * qms_ipqc_inspection_order_det
- * @author admin
- * @date 2021-06-02 14:03:32
  */
 @Data
-@Table(name = "qms_ipqc_inspection_order_det")
-public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializable {
+public class QmsIpqcInspectionOrderDetDto implements Serializable {
     /**
      * IPQC检验单明细ID
      */
@@ -174,15 +170,23 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     /**
      * 是否必检(0-否 1-是)
      */
-    @Column(name = "if_must_inspection")
+    @Transient
     @ApiModelProperty(name = "ifMustInspection",value = "是否必检(0-否 1-是)")
     @Excel(name = "是否必检(0-否 1-是)", height = 20, width = 30,orderNum="1")
     private Byte ifMustInspection;
 
     /**
+     * 检验项目
+     */
+    @Transient
+    @ApiModelProperty(name = "inspectionItem",value = "检验项目")
+    @Excel(name = "检验项目", height = 20, width = 30,orderNum="2")
+    private String inspectionItem;
+
+    /**
      * 检验标识(1-定性 2-定量)
      */
-    @Column(name = "inspection_tag")
+    @Transient
     @ApiModelProperty(name = "inspectionTag",value = "检验标识(1-定性 2-定量)")
     @Excel(name = "检验标识(1-定性 2-定量)", height = 20, width = 30,orderNum="3")
     private Byte inspectionTag;
@@ -190,7 +194,7 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     /**
      * 规格上限
      */
-    @Column(name = "specification_upper_limit")
+    @Transient
     @ApiModelProperty(name = "specificationUpperLimit",value = "规格上限")
     @Excel(name = "规格上限", height = 20, width = 30,orderNum="5")
     private BigDecimal specificationUpperLimit;
@@ -198,7 +202,7 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     /**
      * 规格下限
      */
-    @Column(name = "specification_floor")
+    @Transient
     @ApiModelProperty(name = "specificationFloor",value = "规格下限")
     @Excel(name = "规格下限", height = 20, width = 30,orderNum="6")
     private BigDecimal specificationFloor;
@@ -206,7 +210,7 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     /**
      * 单位名称
      */
-    @Column(name = "unit_name")
+    @Transient
     @ApiModelProperty(name = "unitName",value = "单位名称")
     @Excel(name = "单位名称", height = 20, width = 30,orderNum="7")
     private String unitName;
@@ -214,7 +218,7 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     /**
      * AQL值
      */
-    @Column(name = "aql_value")
+    @Transient
     @ApiModelProperty(name = "aqlValue",value = "AQL值")
     @Excel(name = "AQL值", height = 20, width = 30,orderNum="8")
     private BigDecimal aqlValue;
@@ -222,7 +226,7 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     /**
      * AC值
      */
-    @Column(name = "ac_value")
+    @Transient
     @ApiModelProperty(name = "acValue",value = "AC值")
     @Excel(name = "AC值", height = 20, width = 30,orderNum="9")
     private Integer acValue;
@@ -230,7 +234,7 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     /**
      * RE值
      */
-    @Column(name = "re_value")
+    @Transient
     @ApiModelProperty(name = "reValue",value = "RE值")
     @Excel(name = "RE值", height = 20, width = 30,orderNum="10")
     private Integer reValue;
@@ -238,7 +242,7 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     /**
      * 样本数
      */
-    @Column(name = "sample_qty")
+    @Transient
     @ApiModelProperty(name = "sampleQty",value = "样本数")
     @Excel(name = "样本数", height = 20, width = 30,orderNum="4")
     private BigDecimal sampleQty;
@@ -260,26 +264,26 @@ public class QmsIpqcInspectionOrderDet extends ValidGroup implements Serializabl
     /**
      * 检验项目-小类
      */
-    @ApiModelProperty(name="smallInspectionItemDesc" ,value="检验项目-小类")
-    @Column(name = "small_inspection_item_desc")
+    @ApiModelProperty(name="inspectionItemDescSmall" ,value="检验项目-小类")
+    @Transient
     @Excel(name = "检验项目-小类", height = 20, width = 30,orderNum="5")
-    private String smallInspectionItemDesc;
+    private String inspectionItemDescSmall;
 
     /**
      * 检验项目-大类
      */
-    @ApiModelProperty(name="bigInspectionItemDesc" ,value="检验项目-大类")
-    @Column(name = "big_inspection_item_desc")
+    @ApiModelProperty(name="inspectionItemDescBig" ,value="检验项目-大类")
+    @Transient
     @Excel(name = "检验项目-大类", height = 20, width = 30,orderNum="5")
-    private String bigInspectionItemDesc;
+    private String inspectionItemDescBig;
 
     /**
-     * 检验项目标准
+     * 检验标准
      */
-    @ApiModelProperty(name="inspectionStandardName" ,value="检验项目标准")
-    @Column(name = "inspection_standard_name")
-    @Excel(name = "检验项目标准", height = 20, width = 30,orderNum="5")
-    private String inspectionStandardName;
+    @ApiModelProperty(name="inspectionItemStandard" ,value="检验标准")
+    @Transient
+    @Excel(name = "检验标准", height = 20, width = 30,orderNum="5")
+    private String inspectionItemStandard;
 
     /**
      * 不良类别编码

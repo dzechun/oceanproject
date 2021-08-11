@@ -3,7 +3,11 @@ package com.fantechs.provider.qms.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.qms.QmsIpqcInspectionOrderDetDto;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionStandard;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionStandardDet;
 import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionStandard;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder;
@@ -18,9 +22,12 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderDetService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,8 +41,6 @@ public class QmsIpqcInspectionOrderDetServiceImpl extends BaseService<QmsIpqcIns
     @Resource
     private QmsIpqcInspectionOrderDetMapper qmsIpqcInspectionOrderDetMapper;
     @Resource
-    private QmsIpqcInspectionOrderMapper qmsIpqcInspectionOrderMapper;
-    @Resource
     private BaseFeignApi baseFeignApi;
 
     @Override
@@ -46,34 +51,43 @@ public class QmsIpqcInspectionOrderDetServiceImpl extends BaseService<QmsIpqcIns
         }
         map.put("orgId",user.getOrganizationId());
 
-        //传IPQC检验单id，查对应的IPQC检验单明细
-        QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.findList(map).get(0);
-        SearchQmsIpqcInspectionOrderDet searchQmsIpqcInspectionOrderDet = new SearchQmsIpqcInspectionOrderDet();
-        searchQmsIpqcInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
-        List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets = qmsIpqcInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrderDet));
-        QmsIpqcInspectionOrder ipqcInspectionOrder = this.getAcReQty(qmsIpqcInspectionOrder, qmsIpqcInspectionOrderDets);
-
-        return ipqcInspectionOrder.getQmsIpqcInspectionOrderDets();
+        return qmsIpqcInspectionOrderDetMapper.findDetList(map);
     }
 
 
-    public QmsIpqcInspectionOrder getAcReQty(QmsIpqcInspectionOrder qmsIpqcInspectionOrder, List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets){
-        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDets)){
-            for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDets){
+    public List<QmsIpqcInspectionOrderDetDto> showOrderDet(Long inspectionStandardId, BigDecimal qty){
+        List<QmsIpqcInspectionOrderDetDto> qmsIpqcInspectionOrderDetDtos = new ArrayList<>();
+
+        SearchBaseInspectionStandard searchBaseInspectionStandard = new SearchBaseInspectionStandard();
+        searchBaseInspectionStandard.setInspectionStandardId(inspectionStandardId);
+        List<BaseInspectionStandard> baseInspectionStandards = baseFeignApi.findList(searchBaseInspectionStandard).getData();
+        List<BaseInspectionStandardDet> baseInspectionStandardDets = baseInspectionStandards.get(0).getBaseInspectionStandardDets();
+
+        if(StringUtils.isNotEmpty(baseInspectionStandardDets)){
+            for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets){
+                QmsIpqcInspectionOrderDetDto qmsIpqcInspectionOrderDetDto = new QmsIpqcInspectionOrderDetDto();
+                BeanUtils.copyProperties(baseInspectionStandardDet, qmsIpqcInspectionOrderDetDto);
+
                 //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
-                if(qmsIpqcInspectionOrderDet.getSampleProcessType()!=null&&qmsIpqcInspectionOrderDet.getSampleProcessType()==(byte)4){
-                    BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsIpqcInspectionOrderDet.getSampleProcessId(), qmsIpqcInspectionOrder.getQty()).getData();
+                if(baseInspectionStandardDet.getSampleProcessType()!=null&&baseInspectionStandardDet.getSampleProcessType()==(byte)4){
+                    BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(baseInspectionStandardDet.getSampleProcessId(), qty).getData();
                     if(StringUtils.isNotEmpty(baseSampleProcess)) {
                         //总数量<样本数时,样本数=总数量
-                        qmsIpqcInspectionOrderDet.setSampleQty(qmsIpqcInspectionOrder.getQty().compareTo(baseSampleProcess.getSampleQty())==-1 ? qmsIpqcInspectionOrder.getQty() : baseSampleProcess.getSampleQty());
-                        qmsIpqcInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
-                        qmsIpqcInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
+                        qmsIpqcInspectionOrderDetDto.setSampleQty(qty.compareTo(baseSampleProcess.getSampleQty())==-1 ? qty : baseSampleProcess.getSampleQty());
+                        qmsIpqcInspectionOrderDetDto.setAcValue(baseSampleProcess.getAcValue());
+                        qmsIpqcInspectionOrderDetDto.setReValue(baseSampleProcess.getReValue());
                     }
+                }else if(baseInspectionStandardDet.getSampleProcessType()!=null&&baseInspectionStandardDet.getSampleProcessType()!=(byte)4){
+                    qmsIpqcInspectionOrderDetDto.setSampleQty(baseInspectionStandardDet.getSampleQty());
+                    qmsIpqcInspectionOrderDetDto.setAcValue(baseInspectionStandardDet.getAcValue());
+                    qmsIpqcInspectionOrderDetDto.setReValue(baseInspectionStandardDet.getReValue());
                 }
+
+                qmsIpqcInspectionOrderDetDtos.add(qmsIpqcInspectionOrderDetDto);
             }
-            qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDets);
         }
-        return qmsIpqcInspectionOrder;
+
+        return qmsIpqcInspectionOrderDetDtos;
     }
 
 }

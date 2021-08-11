@@ -67,7 +67,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             //保存或更新采购订单
             if(StringUtils.isEmpty(purchaseMap.get(purchaseOrderApiDto.getEBELN()))) {
                 OmPurchaseOrder omPurchaseOrder = new OmPurchaseOrder();
-                omPurchaseOrder.setPurchaseOrderCode(purchaseOrderApiDto.getEBELN());
+                omPurchaseOrder.setPurchaseOrderCode(baseUtils.removeZero(purchaseOrderApiDto.getEBELN()));
                 omPurchaseOrder.setOrderType(purchaseOrderApiDto.getBSART());
                 if (StringUtils.isNotEmpty(purchaseOrderApiDto.getAEDAT()))
                     omPurchaseOrder.setOrderDate(DateUtils.getStrToDate("yyyyMMdd", purchaseOrderApiDto.getAEDAT()));
@@ -79,8 +79,8 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             //保存或更新采购订单详情表
             OmPurchaseOrderDet purchaseOrderDet = new OmPurchaseOrderDet();
             purchaseOrderDet.setPurchaseOrderId(purchaseMap.get(purchaseOrderApiDto.getEBELN()));
-            purchaseOrderDet.setProjectCode(purchaseOrderApiDto.getEBELP());
-            purchaseOrderDet.setMaterialId(getBaseMaterial(purchaseOrderApiDto.getMATNR()).getMaterialId());
+            purchaseOrderDet.setProjectCode(baseUtils.removeZero(purchaseOrderApiDto.getEBELP()));
+            purchaseOrderDet.setMaterialId(baseUtils.getBaseMaterial(purchaseOrderApiDto.getMATNR()).getMaterialId());
             purchaseOrderDet.setOrderQty(new BigDecimal(purchaseOrderApiDto.getMENGE().trim()));
             purchaseOrderDet.setStatus((byte)1);
             purchaseOrderDet.setWarehouseId(getWarehouse(purchaseOrderApiDto.getLGORT(),orgId));
@@ -110,7 +110,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
 
     public Long getSupplier(String supplierCode,Long orgId){
         SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
-        searchBaseSupplier.setSupplierCode(supplierCode);
+        searchBaseSupplier.setSupplierCode(baseUtils.removeZero(supplierCode));
         searchBaseSupplier.setOrganizationId(orgId);
         ResponseEntity<List<BaseSupplier>> baseSupplierList = baseFeignApi.findSupplierList(searchBaseSupplier);
         if(StringUtils.isEmpty(baseSupplierList.getData()))
@@ -125,7 +125,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
      */
     public Long getWarehouse(String warehouseCode,Long orgId){
         SearchBaseWarehouse searchBaseWarehouse = new SearchBaseWarehouse();
-        searchBaseWarehouse.setWarehouseCode(warehouseCode);
+        searchBaseWarehouse.setWarehouseCode(baseUtils.removeZero(warehouseCode));
         searchBaseWarehouse.setOrgId(orgId);
         ResponseEntity<List<BaseWarehouse>> baseWarehouseList = baseFeignApi.findList(searchBaseWarehouse);
         if(StringUtils.isEmpty(baseWarehouseList.getData()))
@@ -133,20 +133,9 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
         return baseWarehouseList.getData().get(0).getWarehouseId();
     }
 
-
-    public BaseMaterial getBaseMaterial(String materialCode){
-        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-        searchBaseMaterial.setMaterialCode(materialCode);
-        searchBaseMaterial.setOrganizationId(baseUtils.getOrId());
-        ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findSmtMaterialList(searchBaseMaterial);
-        if(StringUtils.isEmpty(parentMaterialList.getData()))
-            throw new BizErrorException("未查询到对应的物料："+materialCode);
-        return parentMaterialList.getData().get(0);
-    }
-
     public Long getFactory(String factoryCode,Long orgId){
         SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
-        searchBaseFactory.setFactoryCode(factoryCode);
+        searchBaseFactory.setFactoryCode(baseUtils.removeZero(factoryCode));
         searchBaseFactory.setOrgId(orgId);
         ResponseEntity<List<BaseFactoryDto>> factoryList = baseFeignApi.findFactoryList(searchBaseFactory);
         if(StringUtils.isEmpty(factoryList.getData()))
