@@ -57,17 +57,17 @@ public class EamJigReturnController {
 
     @ApiOperation("检查治具条码")
     @PostMapping("/checkJigBarcode")
-    public ResponseEntity<EamJigBarcode> checkJigBarcode(@ApiParam(value = "工单号",required = true) @RequestParam @NotBlank(message="工单号不能为空") String workOrderCode,
-                                                         @ApiParam(value = "治具ID",required = true) @RequestParam @NotBlank(message="治具ID不能为空") Long jigId,
-                                                         @ApiParam(value = "工单ID",required = true) @RequestParam @NotBlank(message="工单ID不能为空") Long workOrderId) {
-        EamJigBarcode eamJigBarcode = eamJigReturnService.checkJigBarcode(workOrderCode, jigId, workOrderId);
+    public ResponseEntity<EamJigBarcode> checkJigBarcode(@ApiParam(value = "治具条码",required = true) @RequestParam @NotBlank(message="治具条码不能为空") String jigBarcode,
+                                                         @ApiParam(value = "治具ID",required = true) @RequestParam @NotNull(message="治具ID不能为空") Long jigId,
+                                                         @ApiParam(value = "工单ID",required = true) @RequestParam @NotNull(message="工单ID不能为空") Long workOrderId) {
+        EamJigBarcode eamJigBarcode = eamJigReturnService.checkJigBarcode(jigBarcode, jigId, workOrderId);
         return ControllerUtil.returnDataSuccess(eamJigBarcode,StringUtils.isEmpty(eamJigBarcode)?0:1);
     }
 
     @ApiOperation("检查库位条码")
     @PostMapping("/checkStorageCode")
     public ResponseEntity checkStorageCode(@ApiParam(value = "库位编码",required = true) @RequestParam @NotBlank(message="库位编码不能为空")String storageCode,
-                                           @ApiParam(value = "治具ID",required = true) @RequestParam @NotBlank(message="治具ID不能为空") Long jigId) {
+                                           @ApiParam(value = "治具ID",required = true) @RequestParam @NotNull(message="治具ID不能为空") Long jigId) {
         return ControllerUtil.returnCRUD(eamJigReturnService.checkStorageCode(storageCode, jigId));
     }
 

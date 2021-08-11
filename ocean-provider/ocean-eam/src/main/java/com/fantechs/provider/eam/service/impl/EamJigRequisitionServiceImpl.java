@@ -108,6 +108,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             searchEamJigRequisition.setJigId(jigId);
             Integer recordQty = eamJigRequisitionMapper.getRecordQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
             eamJigReMaterialDto.setRecordQty(recordQty);
+            eamJigReMaterialDto.setOldWorkOrderId(oldMesPmWorkOrderDtos.get(0).getWorkOrderId());
 
             list.add(eamJigReMaterialDto);
         }
@@ -203,6 +204,15 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
         searchEamJigReMaterial.setMaterialId(eamJigRequisitionWorkOrderDto.getMaterialId());
         List<EamJigReMaterialDto> eamJigReMaterialDtos = eamJigReMaterialMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigReMaterial));
+
+        SearchEamJigRequisition searchEamJigRequisition = new SearchEamJigRequisition();
+        searchEamJigRequisition.setWorkOrderId(mesPmWorkOrderDtos.get(0).getWorkOrderId());
+        for (EamJigReMaterialDto eamJigReMaterialDto : eamJigReMaterialDtos){
+            searchEamJigRequisition.setJigId(eamJigReMaterialDto.getJigId());
+            Integer recordQty = eamJigRequisitionMapper.getRecordQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
+            eamJigReMaterialDto.setRecordQty(recordQty);
+        }
+
         eamJigRequisitionWorkOrderDto.setList(eamJigReMaterialDtos);
 
         return eamJigRequisitionWorkOrderDto;

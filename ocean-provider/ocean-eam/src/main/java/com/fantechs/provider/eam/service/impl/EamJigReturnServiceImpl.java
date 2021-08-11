@@ -149,6 +149,8 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             searchEamJigRequisition.setJigId(jigId);
             Integer recordQty = eamJigRequisitionMapper.getRecordQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
             eamJigReMaterialDto.setRecordQty(recordQty);
+            Integer returnQty = eamJigReturnMapper.getReturnQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
+            eamJigReMaterialDto.setReturnQty(returnQty);
 
             list.add(eamJigReMaterialDto);
         }

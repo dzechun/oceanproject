@@ -116,4 +116,16 @@
     </where>
     order by ejr.create_time desc
   </select>
+
+  <select id="getReturnQty" parameterType="map" resultType="java.lang.Integer">
+    select count(1) from fantech_imes_v2.eam_jig_return ejr
+    <where>
+      <if test="workOrderId != null">
+        and ejr.work_order_id = #{workOrderId}
+      </if>
+      <if test="jigId != null">
+        and ejr.jig_id = #{jigId}
+      </if>
+    </where>
+  </select>
 </mapper>

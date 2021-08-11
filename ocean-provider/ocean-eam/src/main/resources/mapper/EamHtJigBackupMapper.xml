@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.eam.mapper.EamHtJigBarcodeMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eam.history.EamHtJigBarcode">
+<mapper namespace="com.fantechs.provider.eam.mapper.EamHtJigBackupMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eam.history.EamHtJigBackup">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="ht_jig_barcode_id" jdbcType="BIGINT" property="htJigBarcodeId" />
-    <result column="jig_barcode_id" jdbcType="BIGINT" property="jigBarcodeId" />
+    <id column="ht_jig_backup_id" jdbcType="BIGINT" property="htJigBackupId" />
+    <result column="jig_backup_id" jdbcType="BIGINT" property="jigBackupId" />
+    <result column="jig_backup_code" jdbcType="VARCHAR" property="jigBackupCode" />
+    <result column="jig_backup_name" jdbcType="VARCHAR" property="jigBackupName" />
+    <result column="jig_backup_desc" jdbcType="VARCHAR" property="jigBackupDesc" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="qty" jdbcType="INTEGER" property="qty" />
     <result column="jig_id" jdbcType="BIGINT" property="jigId" />
-    <result column="jig_barcode" jdbcType="VARCHAR" property="jigBarcode" />
-    <result column="asset_code" jdbcType="VARCHAR" property="assetCode" />
-    <result column="current_usage_time" jdbcType="INTEGER" property="currentUsageTime" />
-    <result column="current_usage_days" jdbcType="INTEGER" property="currentUsageDays" />
-    <result column="last_time_maintain_time" jdbcType="TIMESTAMP" property="lastTimeMaintainTime" />
-    <result column="current_maintain_time" jdbcType="INTEGER" property="currentMaintainTime" />
-    <result column="current_maintain_usage_time" jdbcType="INTEGER" property="currentMaintainUsageTime" />
-    <result column="current_maintain_usage_days" jdbcType="INTEGER" property="currentMaintainUsageDays" />
-    <result column="usage_status" jdbcType="TINYINT" property="usageStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -31,21 +29,22 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
   </resultMap>
 
   <sql id="Base_Column_List">
-    ehjb.ht_jig_barcode_id,
-    ehjb.jig_barcode_id,
+    ehjb.ht_jig_backup_id,
+    ehjb.jig_backup_id,
+    ehjb.jig_backup_code,
+    ehjb.jig_backup_name,
+    ehjb.jig_backup_desc,
+    ehjb.warehouse_id,
+    ehjb.warehouse_area_id,
+    ehjb.storage_id,
+    ehjb.qty,
     ehjb.jig_id,
-    ehjb.jig_barcode,
-    ehjb.asset_code,
-    ehjb.current_usage_time,
-    ehjb.current_usage_days,
-    ehjb.last_time_maintain_time,
-    ehjb.current_maintain_time,
-    ehjb.current_maintain_usage_time,
-    ehjb.current_maintain_usage_days,
-    ehjb.usage_status,
     ehjb.`status`,
     ehjb.remark,
     ehjb.org_id,
@@ -60,10 +59,14 @@
 
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
+    bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_jig_barcode ehjb
+    from fantech_imes_v2.eam_ht_jig_backup ehjb
+    left join fantech_imes_v2.base_warehouse bw on ehjb.warehouse_id=bw.warehouse_id
+    left join fantech_imes_v2.base_warehouse_area bwa on ehjb.warehouse_area_id=bwa.warehouse_area_id
+    left join fantech_imes_v2.base_storage bs on ehjb.storage_id=bs.storage_id
     left join ocean_v2.sys_user u on ehjb.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ehjb.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ehjb.org_id = bo.organization_id

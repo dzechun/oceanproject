@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.eam.mapper.EamJigBarcodeMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eam.EamJigBarcode">
+<mapper namespace="com.fantechs.provider.eam.mapper.EamJigBackupMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eam.EamJigBackup">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="jig_barcode_id" jdbcType="BIGINT" property="jigBarcodeId" />
+    <id column="jig_backup_id" jdbcType="BIGINT" property="jigBackupId" />
+    <result column="jig_backup_code" jdbcType="VARCHAR" property="jigBackupCode" />
+    <result column="jig_backup_name" jdbcType="VARCHAR" property="jigBackupName" />
+    <result column="jig_backup_desc" jdbcType="VARCHAR" property="jigBackupDesc" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="qty" jdbcType="INTEGER" property="qty" />
     <result column="jig_id" jdbcType="BIGINT" property="jigId" />
-    <result column="jig_barcode" jdbcType="VARCHAR" property="jigBarcode" />
-    <result column="asset_code" jdbcType="VARCHAR" property="assetCode" />
-    <result column="current_usage_time" jdbcType="INTEGER" property="currentUsageTime" />
-    <result column="current_usage_days" jdbcType="INTEGER" property="currentUsageDays" />
-    <result column="last_time_maintain_time" jdbcType="TIMESTAMP" property="lastTimeMaintainTime" />
-    <result column="current_maintain_time" jdbcType="INTEGER" property="currentMaintainTime" />
-    <result column="current_maintain_usage_time" jdbcType="INTEGER" property="currentMaintainUsageTime" />
-    <result column="current_maintain_usage_days" jdbcType="INTEGER" property="currentMaintainUsageDays" />
-    <result column="usage_status" jdbcType="TINYINT" property="usageStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -28,22 +26,25 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamJigBackupDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
   </resultMap>
 
   <sql id="Base_Column_List">
-    ejb.jig_barcode_id,
+    ejb.jig_backup_id,
+    ejb.jig_backup_code,
+    ejb.jig_backup_name,
+    ejb.jig_backup_desc,
+    ejb.warehouse_id,
+    ejb.warehouse_area_id,
+    ejb.storage_id,
+    ejb.qty,
     ejb.jig_id,
-    ejb.jig_barcode,
-    ejb.asset_code,
-    ejb.current_usage_time,
-    ejb.last_time_maintain_time,
-    ejb.current_maintain_time,
-    ejb.current_maintain_usage_time,
-    ejb.usage_status,
     ejb.`status`,
     ejb.remark,
     ejb.org_id,
@@ -58,12 +59,14 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    DATEDIFF(NOW(),ejb.create_time) as current_usage_days,
-    DATEDIFF(NOW(),ejb.last_time_maintain_time) as current_maintain_usage_days,
+    bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_jig_barcode ejb
+    from fantech_imes_v2.eam_jig_backup ejb
+    left join fantech_imes_v2.base_warehouse bw on ejb.warehouse_id=bw.warehouse_id
+    left join fantech_imes_v2.base_warehouse_area bwa on ejb.warehouse_area_id=bwa.warehouse_area_id
+    left join fantech_imes_v2.base_storage bs on ejb.storage_id=bs.storage_id
     left join ocean_v2.sys_user u on ejb.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ejb.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ejb.org_id = bo.organization_id

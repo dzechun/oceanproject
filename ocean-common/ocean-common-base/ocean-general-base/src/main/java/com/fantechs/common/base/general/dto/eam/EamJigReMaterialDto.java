@@ -109,4 +109,18 @@ public class EamJigReMaterialDto extends EamJigReMaterial implements Serializabl
     @Transient
     @ApiModelProperty(name="recordQty",value = "记录数量")
     private Integer recordQty;
+
+    /**
+     * 归还数量
+     */
+    @Transient
+    @ApiModelProperty(name="returnQty",value = "归还数量")
+    private Integer returnQty;
+
+    /**
+     * 旧工单id
+     */
+    @Transient
+    @ApiModelProperty(name="oldWorkOrderId",value = "旧工单id")
+    private Long oldWorkOrderId;
 }

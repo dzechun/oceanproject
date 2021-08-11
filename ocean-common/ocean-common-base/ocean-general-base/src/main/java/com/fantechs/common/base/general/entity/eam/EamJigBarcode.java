@@ -66,6 +66,14 @@ public class EamJigBarcode extends ValidGroup implements Serializable {
     private Integer currentUsageTime;
 
     /**
+     * 当前使用天数
+     */
+    @ApiModelProperty(name="currentUsageDays",value = "当前使用天数")
+    @Excel(name = "当前使用天数", height = 20, width = 30,orderNum="3")
+    @Column(name = "current_usage_days")
+    private Integer currentUsageDays;
+
+    /**
      * 上次保养时间
      */
     @ApiModelProperty(name="lastTimeMaintainTime",value = "上次保养时间")
@@ -83,10 +91,26 @@ public class EamJigBarcode extends ValidGroup implements Serializable {
     private Integer currentMaintainTime;
 
     /**
-     * 使用状态(1-使用中 2-空闲)
+     * 当前保养累计使用次数
      */
-    @ApiModelProperty(name="usageStatus",value = "使用状态(1-使用中 2-空闲)")
-    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="6")
+    @ApiModelProperty(name="currentMaintainUsageTime",value = "当前保养累计使用次数")
+    @Excel(name = "当前保养累计使用次数", height = 20, width = 30,orderNum="5")
+    @Column(name = "current_maintain_usage_time")
+    private Integer currentMaintainUsageTime;
+
+    /**
+     * 当前保养累计使用天数
+     */
+    @ApiModelProperty(name="currentMaintainUsageDays",value = "当前保养累计使用天数")
+    @Excel(name = "当前保养累计使用天数", height = 20, width = 30,orderNum="5")
+    @Column(name = "current_maintain_usage_days")
+    private Integer currentMaintainUsageDays;
+
+    /**
+     * 使用状态(1-使用中 2-空闲 3-停用)
+     */
+    @ApiModelProperty(name="usageStatus",value = "使用状态(1-使用中 2-空闲 3-停用)")
+    @Excel(name = "使用状态(1-使用中 2-空闲 3-停用)", height = 20, width = 30,orderNum="6")
     @Column(name = "usage_status")
     private Byte usageStatus;
 

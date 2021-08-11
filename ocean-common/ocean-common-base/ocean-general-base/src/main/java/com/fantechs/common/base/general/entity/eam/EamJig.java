@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.eam.EamJigBackupDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -106,6 +107,20 @@ public class EamJig extends ValidGroup implements Serializable {
     @ApiModelProperty(name="storageId",value = "推荐库位")
     @Column(name = "storage_id")
     private Long storageId;
+
+    /**
+     * 保养最大使用次数
+     */
+    @ApiModelProperty(name="maintainMaxUsageTime",value = "保养最大使用次数")
+    @Column(name = "maintain_max_usage_time")
+    private Integer maintainMaxUsageTime;
+
+    /**
+     * 保养警告次数
+     */
+    @ApiModelProperty(name="maintainWarningTime",value = "保养警告次数")
+    @Column(name = "maintain_warning_time")
+    private Integer maintainWarningTime;
 
     /**
      * 最大使用次数
@@ -262,6 +277,12 @@ public class EamJig extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="eamJigAttachmentList",value = "附件信息")
     private List<EamJigAttachment> eamJigAttachmentList = new ArrayList<>();
+
+    /**
+     * 备用件信息
+     */
+    @ApiModelProperty(name="eamJigBackupDtoList",value = "备用件信息")
+    private List<EamJigBackupDto> eamJigBackupDtoList = new ArrayList<>();
 
     private String option1;
 
