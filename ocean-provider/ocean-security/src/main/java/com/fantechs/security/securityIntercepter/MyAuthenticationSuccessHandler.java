@@ -77,9 +77,9 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         //如何带有token将token删除
         TokenUtil.clearTokenByRequest(httpServletRequest);
         //---生成token
-        SysUserDto sysUser = MySecurityTool.getCurrentLoginUser();
+        SysUser sysUser = MySecurityTool.getCurrentLoginUser();
         sysUser.setAuthority(permsSet);
-        sysUser.setMenuList(roleMenuList);
+        sysUser.setMenu(JsonUtils.objectToJson(roleMenuList));
         String token = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,null);
         String refreshToken = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,getIpAddress(httpServletRequest));
         TokenUtil.save(token,sysUser);
