@@ -2,10 +2,7 @@ package com.fantechs.provider.materialapi.imes.config;
 
 import com.fantechs.provider.materialapi.imes.service.MaterialService;
 
-import com.fantechs.provider.materialapi.imes.service.impl.Chk_LogUserInfoServiceImpl;
-import com.fantechs.provider.materialapi.imes.service.impl.MaterialServiceImpl;
-import com.fantechs.provider.materialapi.imes.service.impl.SapPurchaseOrderServiceImpl;
-import com.fantechs.provider.materialapi.imes.service.impl.SapWorkOrderServiceImpl;
+import com.fantechs.provider.materialapi.imes.service.impl.*;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.jaxws.EndpointImpl;
@@ -56,9 +53,23 @@ public class CxfConfig {
     }
 
     @Bean
-    public Endpoint chk_LogUserInfo_endpoint() {
+    public Endpoint Chk_LogUserInfo_endpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(),  new Chk_LogUserInfoServiceImpl());
-        endpoint.publish("/chk_LogUserInfo");   //登录账号校验地址
+        endpoint.publish("/Chk_LogUserInfo");   //登录账号校验地址
+        return endpoint;
+    }
+
+    @Bean
+    public Endpoint Chk_SNRouting_endpoint() {
+        EndpointImpl endpoint = new EndpointImpl(springBus(),  new Chk_SNRoutingServiceImpl());
+        endpoint.publish("/Chk_SNRouting");   //条码流程检查业务信息
+        return endpoint;
+    }
+
+    @Bean
+    public Endpoint SN_Data_Transfer_endpoint() {
+        EndpointImpl endpoint = new EndpointImpl(springBus(),  new SN_Data_TransferServiceImpl());
+        endpoint.publish("/SN_Data_Transfer");   //条码过站
         return endpoint;
     }
 

@@ -14,6 +14,6 @@ import java.text.ParseException;
 public interface SN_Data_TransferService {
 
     @WebMethod
-    String SN_Data_Transfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws ParseException;
+    String SN_Data_Transfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception;
 
 }

@@ -8,10 +8,11 @@ import java.io.Serializable;
 public class RestapiSNDataTransferApiDto implements Serializable {
 
     protected String partBarcode; //半成品SN 部件条码
-    protected String barcodeCode; //成品SN
+    protected String barCode; //成品SN
     protected String rfidCode; //RFID
     protected String proCode;  //产线编码
     protected String sectionCode;   //工段编码
+    protected String stationCode;   //工位编码
     protected String processCode;   //工序编码
     protected String userCode; //员工编号
     protected String equipmentCode; //设备SN

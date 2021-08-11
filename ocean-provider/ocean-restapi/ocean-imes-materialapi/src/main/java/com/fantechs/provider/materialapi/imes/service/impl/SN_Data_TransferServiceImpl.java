@@ -1,18 +1,24 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
+import com.fantechs.common.base.general.dto.mes.sfc.UpdateProcessDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkLogUserInfoApiDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiSNDataTransferApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
+import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.materialapi.imes.service.Chk_LogUserInfoService;
 import com.fantechs.provider.materialapi.imes.service.SN_Data_TransferService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
+import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.Resource;
@@ -20,6 +26,10 @@ import javax.jws.WebService;
 import java.text.ParseException;
 import java.util.List;
 
+/**
+ * @author Huangshuijun
+ * @create 2021/08/11
+ */
 @WebService(serviceName = "SN_Data_TransferService", // 与接口中指定的name一致
         targetNamespace = "http://workOrder.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
         endpointInterface = "com.fantechs.provider.materialapi.imes.service.SN_Data_TransferService"// 接口地址
@@ -30,52 +40,70 @@ public class SN_Data_TransferServiceImpl implements SN_Data_TransferService {
     private LogsUtils logsUtils;
     @Resource
     private DeviceInterFaceUtils deviceInterFaceUtils;
+    @Resource
+    private BarcodeUtils barcodeUtils;
 
     @Override
-    public String SN_Data_Transfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws ParseException {
+    @LcnTransaction
+    public String SN_Data_Transfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception {
+        /*
+         * 1 验证传参基础信息是否正确
+         * 2 检查成品SN、半成品SN状态、流程是否正确
+         * 3 检查设备、治具状态及绑定关系是否正确
+         * 4 检查设备、治具是否可以在该产品生产
+         * 5 检查产前、关键事项是否完成
+         * 前5项判断在checkParameter方法中完成
+         * 6 返写治具编号使用次数
+         * 7 记录条码过站时间、结果
+         */
         String pass="Pass";
-        String check = check(restapiSNDataTransferApiDto);
+        if(StringUtils.isEmpty(restapiSNDataTransferApiDto)){
+            return "Fail 过站信息为空";
+        }
+
+        String check = deviceInterFaceUtils.checkParameter(restapiSNDataTransferApiDto.getProCode(),restapiSNDataTransferApiDto.getProcessCode(),
+                restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getPartBarcode(),
+                restapiSNDataTransferApiDto.getEamJigBarCode(),restapiSNDataTransferApiDto.getEquipmentCode(),
+                restapiSNDataTransferApiDto.getSectionCode(),restapiSNDataTransferApiDto.getUserCode(),
+                restapiSNDataTransferApiDto.getBadnessPhenotypeCode());
         if (!check.equals("1")) {
             logsUtils.addlog((byte) 0, (byte) 2, (long) 1002, check, restapiSNDataTransferApiDto.toString());
             return check;
         }
+
+        //返写治具编号使用次数
+
+        //过站
+        BaseOrganizationDto baseOrganizationDto=deviceInterFaceUtils.getOrId().getData().get(0);
+        Long orgId=baseOrganizationDto.getOrganizationId();
+        SysUser user=deviceInterFaceUtils.getSysUser(restapiSNDataTransferApiDto.getUserCode(),orgId).getData().get(0);
+        BaseProLine baseProLine=deviceInterFaceUtils.getProLine(restapiSNDataTransferApiDto.getProCode(),orgId).getData().get(0);
+        BaseProcess baseProcess=deviceInterFaceUtils.getProcess(restapiSNDataTransferApiDto.getProcessCode(),orgId).getData().get(0);
+        MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto=deviceInterFaceUtils.getWorkOrderBarcode(restapiSNDataTransferApiDto.getBarCode()).getData().get(0);
+        Long workOrderId=mesSfcWorkOrderBarcodeDto.getWorkOrderId();
+        MesPmWorkOrderDto mesPmWorkOrderDto=deviceInterFaceUtils.getWorkOrder(workOrderId).getData().get(0);
+        BaseStation baseStation=deviceInterFaceUtils.getStation(restapiSNDataTransferApiDto.getStationCode(),orgId).getData().get(0);
+
+        UpdateProcessDto updateProcessDto = UpdateProcessDto.builder()
+                .badnessPhenotypeCode("N/A")
+                .barCode(restapiSNDataTransferApiDto.getBarCode())
+                .equipmentId("N/A")
+                .operatorUserId(user.getUserId())
+                .proLineId(baseProLine.getProLineId())
+                .routeId(mesPmWorkOrderDto.getRouteId())
+                .nowProcessId(baseProcess.getProcessId())
+                .nowStationId(baseStation.getStationId())
+                .workOrderId(mesPmWorkOrderDto.getWorkOrderId())
+                .passCode("")
+                .passCodeType((byte) 1)
+                .build();
+
+        barcodeUtils.updateProcess(updateProcessDto);
+
+        //不良现象未处理
+
         logsUtils.addlog((byte)1,(byte)2,(long)1002,null,null);
-        return pass+" 登录信息验证通过";
-    }
-
-
-    public String check(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) {
-        String check = "1";
-        String fail="Fail";
-        Long orgId=null;
-        ResponseEntity<List<BaseOrganizationDto>> baseOrganizationDtoList=deviceInterFaceUtils.getOrId();
-        if(StringUtils.isEmpty(baseOrganizationDtoList.getData())){
-            check = fail+" 请求失败,未查询到对应组织";
-        }
-        //获取组织ID
-        orgId=baseOrganizationDtoList.getData().get(0).getOrganizationId();
-
-        if(StringUtils.isEmpty(restapiSNDataTransferApiDto))
-            check = fail+" 请求失败,参数为空";
-        if(StringUtils.isEmpty(restapiSNDataTransferApiDto.getProCode()))
-            check = fail+" 请求失败,产线编码不能为空";
-        else{
-            ResponseEntity<List<BaseProLine>> baseProLinelist=deviceInterFaceUtils.getProLine(restapiSNDataTransferApiDto.getProCode(),orgId);
-            if(StringUtils.isEmpty(baseProLinelist.getData())){
-                check = fail+" 请求失败,产线编码不存在";
-            }
-
-        }
-        if(StringUtils.isEmpty(restapiSNDataTransferApiDto.getProcessCode()))
-            check = fail+" 请求失败,工序编码不能为空";
-        else {
-            ResponseEntity<List<BaseProcess>> baseProcesslist=deviceInterFaceUtils.getProcess(restapiSNDataTransferApiDto.getProcessCode(),orgId);
-            if(StringUtils.isEmpty(baseProcesslist.getData())){
-                check = fail+" 请求失败,工序编码不存在";
-            }
-        }
-
-        return check;
+        return pass+" 过站成功";
     }
 
 

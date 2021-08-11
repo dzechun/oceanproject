@@ -156,6 +156,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseWorkshopSection/detail")
     ResponseEntity<BaseWorkshopSection> sectionDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
+    @ApiOperation("根据条件查询工段信息列表")
+    @PostMapping("/baseWorkshopSection/findList")
+    ResponseEntity<List<BaseWorkshopSection>> findWorkshopSectionList(@RequestBody SearchBaseWorkshopSection searchBaseWorkshopSection);
+
 
     @ApiOperation("获取产品型号详情")
     @PostMapping("/baseProductModel/detail")
@@ -321,6 +325,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseStation/detail")
     ResponseEntity<BaseStation> findStationDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
+    @ApiOperation("根据条件查询工位列表")
+    @PostMapping("/baseStation/findList")
+    ResponseEntity<List<BaseStation>> findBaseStationList(@ApiParam(value = "查询对象") @RequestBody SearchBaseStation searchBaseStation);
+
     @ApiOperation(value = "生成条码-Map")
     @PostMapping("/baseBarcodeRule/newGenerateCode")
     ResponseEntity<String> newGenerateCode(
@@ -417,6 +425,11 @@ public interface BaseFeignApi {
     @ApiOperation("检验标准列表")
     @PostMapping("/baseInspectionStandard/findList")
     ResponseEntity<List<BaseInspectionStandard>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionStandard searchBaseInspectionStandard);
+
+    @ApiOperation("不良现象列表")
+    @PostMapping("/baseBadnessPhenotype/findList")
+    ResponseEntity<List<BaseBadnessPhenotypeDto>> findBadnessPhenotypeDtoList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBadnessPhenotype searchBaseBadnessPhenotype);
+
 
     @ApiOperation("检验方式列表")
     @PostMapping("/baseInspectionWay/findList")
