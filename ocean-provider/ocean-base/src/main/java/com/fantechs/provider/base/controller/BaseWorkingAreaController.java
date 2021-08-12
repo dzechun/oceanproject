@@ -1,7 +1,10 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWorkingAreaImport;
 import com.fantechs.common.base.general.entity.basic.BaseWorkingArea;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkingArea;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkingArea;
@@ -16,19 +19,23 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Api(tags = "工作区信息")
 @RequestMapping("/baseWorkingArea")
 @Validated
+@Slf4j
 public class BaseWorkingAreaController {
 
     @Resource
@@ -88,6 +95,27 @@ public class BaseWorkingAreaController {
         EasyPoiUtils.exportExcel(list, "工作区导出信息", "工作区信息", BaseWorkingAreaDto.class, "工作区.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseWorkingAreaImport> baseWorkingAreaImports = EasyPoiUtils.importExcel(file, 2, 1, BaseWorkingAreaImport.class);
+            Map<String, Object> resultMap = baseWorkingAreaService.importExcel(baseWorkingAreaImports);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }
