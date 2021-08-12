@@ -439,8 +439,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("上架分配规则")
     @PostMapping("/baseStorage/JobRule")
-    ResponseEntity<List<StorageRuleDto>> JobRule(@RequestParam BigDecimal packageQty, @RequestParam Long warehouseId, @RequestParam Long materialId,
-                                                        @RequestParam(required = false) String batchCode, @RequestParam(required = false) String proDate);
+    ResponseEntity<List<StorageRuleDto>> JobRule(@RequestBody JobRuleDto jobRuleDto);
 
     @ApiOperation("列表")
     @PostMapping("/baseInventoryStatus/findList")

@@ -59,7 +59,7 @@ public class StorageDistributionRuleUtils {
                 jobTotalPackageQty_BU = (BigDecimal) map.get("jobTotalPackageQty_BU");
             }
         }
-        if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
+        if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1 || batchCode!=null){
             //获取批次相同库位
             list  = getBatchEqualStorageList(warehouseId,batchCode,proDate);
             if(StringUtils.isNotEmpty(list) && list.size()>0){
@@ -69,7 +69,7 @@ public class StorageDistributionRuleUtils {
             }
         }
 
-        if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
+        if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1 || proDate!=null){
             //获取空库位
             putawayMoveLineNo = storageDistributionRuleUtils.baseStorageService.findPutawayNo(warehouseId,materialId);
             Map<String,Object> map = getCanPutawayEmptyStorageList(warehouseId,putawayMoveLineNo);
@@ -82,7 +82,7 @@ public class StorageDistributionRuleUtils {
             }
         }
 
-        if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1){
+        if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1 || proDate!=null){
             //获取混放库位
             putawayMoveLineNo = storageDistributionRuleUtils.baseStorageService.findPutawayNo(warehouseId,materialId);
             Map<String,Object> map = getCanPutawayEmptyStorageList(warehouseId,putawayMoveLineNo);

@@ -2,6 +2,7 @@ package com.fantechs.provider.base.controller;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.JobRuleDto;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseFactoryImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
@@ -165,10 +166,9 @@ public class BaseStorageController {
     }
 
     @ApiOperation("上架分配规则")
-    @PostMapping("/baseStorage/JobRule")
-    public ResponseEntity<List<StorageRuleDto>> JobRule(@RequestParam BigDecimal packageQty, @RequestParam Long warehouseId, @RequestParam Long materialId,
-                                                        @RequestParam(required = false) String batchCode, @RequestParam(required = false) String proDate){
-        List<StorageRuleDto> list = StorageDistributionRuleUtils.JobMainRule(packageQty, warehouseId,materialId,batchCode,proDate);
+    @PostMapping("/JobRule")
+    public ResponseEntity<List<StorageRuleDto>> JobRule(@RequestBody JobRuleDto jobRuleDto){
+        List<StorageRuleDto> list = StorageDistributionRuleUtils.JobMainRule(jobRuleDto.getPackageQty(), jobRuleDto.getWarehouseId(),jobRuleDto.getMaterialId(),StringUtils.isEmpty(jobRuleDto.getBatchCode())?null:jobRuleDto.getBatchCode(),StringUtils.isEmpty(jobRuleDto.getProDate())?null:jobRuleDto.getProDate());
         return ControllerUtil.returnDataSuccess(list,list.size());
     }
 }

@@ -6,6 +6,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
+import com.fantechs.common.base.general.dto.basic.JobRuleDto;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
@@ -146,18 +147,28 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
                 //推荐库位
 //                Long storageId = wmsInPutawayOrderMapper.findStorage(wms.getMaterialId(), wmsInnerJobOrder.getWarehouseId(), sysUser.getOrganizationId());
-                ResponseEntity<List<StorageRuleDto>> responseEntity = baseFeignApi.JobRule(wms.getPlanQty(),wms.getWarehouseId(),wms.getMaterialId(),wms.getBatchCode(), DateUtils.getDateString(wms.getProductionDate(),"yyyy-MM-dd"));
+                JobRuleDto jobRuleDto = new JobRuleDto();
+                jobRuleDto.setPackageQty(wms.getPlanQty());
+                jobRuleDto.setWarehouseId(wms.getWarehouseId());
+                jobRuleDto.setMaterialId(wms.getMaterialId());
+                jobRuleDto.setBatchCode(StringUtils.isEmpty(wms.getBatchCode())?null:wms.getBatchCode());
+                jobRuleDto.setProDate(StringUtils.isEmpty(wms.getProductionDate())?null:DateUtils.getDateString(wms.getProductionDate(),"yyyy-MM-dd"));
+                ResponseEntity<List<StorageRuleDto>> responseEntity = baseFeignApi.JobRule(jobRuleDto);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException("上架分配规则获取失败");
                 }
                 List<StorageRuleDto> list1 = responseEntity.getData();
+                if(list1.size()<1){
+                    throw new BizErrorException("暂无分配库位");
+                }
                 BigDecimal totalQty = BigDecimal.ZERO;
-                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDetDto();
+                WmsInnerJobOrderDet wmsInnerJobOrderDet =null;
                 for (StorageRuleDto storageRuleDto : list1) {
                     Long jobDetid = null;
                     if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
                         if(StringUtils.isNotEmpty(storageRuleDto.getPutawayQty()) && storageRuleDto.getPutawayQty().compareTo(wms.getPlanQty())==-1){
                             totalQty = wms.getPlanQty().subtract(storageRuleDto.getPutawayQty());
+                            wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                             BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
                             wmsInnerJobOrderDet.setPlanQty(totalQty);
                         }
