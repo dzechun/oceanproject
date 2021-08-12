@@ -569,14 +569,14 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }else{
                 throw new BizErrorException("未查询到货主信息");
             }
-            SearchBaseConsignee searchBaseConsignee = new SearchBaseConsignee();
+/*            SearchBaseConsignee searchBaseConsignee = new SearchBaseConsignee();
             searchBaseConsignee.setMaterialOwnerId(palletAutoAsnDto.getMaterialOwnerId());
             ResponseEntity<List<BaseConsignee>> baseConsignees = baseFeignApi.findList(searchBaseConsignee);
             if(StringUtils.isNotEmpty(baseConsignees.getData())){
                 BeanUtils.autoFillEqFields(baseConsignees.getData().get(0),palletAutoAsnDto);
             }else{
                 throw new BizErrorException("未查询到收货人信息");
-            }
+            }*/
 
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
             searchBaseStorage.setMinSurplusCanPutSalver(0);
