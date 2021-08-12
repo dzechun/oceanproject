@@ -30,6 +30,7 @@
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto">
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_id" jdbcType="VARCHAR" property="warehouseId"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
@@ -63,11 +64,12 @@ wiid.delivery_order_code,
         wiid.is_delete
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-        select<include refid="Base_Column_List"/>
-        ,bs.storage_code,bs.warehouse_id,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS
+        select<include refid="Base_Column_List"/>,
+        bs.storage_code,bs.warehouse_id,bw.warehouse_name,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS
         create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
         LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
+        LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id
         LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
         LEFT JOIN base_supplier bss ON wiid.supplier_id = bss.supplier_id
         LEFT JOIN ocean_v2.sys_user su ON wiid.create_user_id = su.user_id

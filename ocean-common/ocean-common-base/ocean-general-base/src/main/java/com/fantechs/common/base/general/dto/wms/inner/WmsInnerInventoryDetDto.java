@@ -23,6 +23,13 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     private String storageCode;
 
     /**
+     * 仓库名称
+     */
+    @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    @Transient
+    private String warehouseName;
+
+    /**
      * 仓库
      */
     @ApiModelProperty(name="warehouseId",value = "仓库")
