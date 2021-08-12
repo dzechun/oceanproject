@@ -60,9 +60,9 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
             List<DTMESBOM>  parentList = new ArrayList<DTMESBOM>();
             HashSet<String> materialCodes = new HashSet<String>();
             for(DTMESBOM bom: res.getBOM()){
-                materialCodes.add(bom.getMATNR());
+                materialCodes.add(baseUtils.removeZero(bom.getMATNR()));
                 if(bom.getMATNR().equals(searchSapProductBomApi.getMaterialCode())){
-                    if(StringUtils.isNotEmpty(bom.getAENNR()))
+                    if(StringUtils.isNotEmpty(baseUtils.removeZero(bom.getAENNR())))
                         parentList.add(bom);
                 }
             }

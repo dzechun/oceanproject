@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapSupplierApiService;
+import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
 import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.supplierApi.SIMESSUPPLIERQUERYOut;
@@ -24,6 +25,8 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
     private BaseFeignApi baseFeignApi;
     @Resource
     private LogsUtils logsUtils;
+    @Resource
+    private BaseUtils baseUtils;
 
     private String userName = "MESPIALEUSER"; //雷赛wsdl用户名
     private String password = "1234qwer"; //雷赛wsdl密码
@@ -46,7 +49,7 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
                 if(StringUtils.isEmpty(supplier.getLIFNR())) throw new BizErrorException("新增或更新失败，物料编码为空");
                 BaseSupplier baseSupplier = new BaseSupplier();
                 baseSupplier.setSupplierName(supplier.getNAME1());
-                baseSupplier.setSupplierCode(supplier.getLIFNR());
+                baseSupplier.setSupplierCode(baseUtils.removeZero(supplier.getLIFNR()));
                 baseSupplier.setSupplierDesc(supplier.getNAME1());
                 baseSupplier.setStatus((byte)1);
                 baseSupplier.setSupplierType((byte)1);

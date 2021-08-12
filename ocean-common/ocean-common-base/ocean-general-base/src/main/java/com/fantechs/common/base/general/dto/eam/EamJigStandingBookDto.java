@@ -17,7 +17,7 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="13")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="13",needMerge = true)
     private String createUserName;
 
     /**
@@ -25,7 +25,7 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="15")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="15",needMerge = true)
     private String modifiedUserName;
 
     /**
@@ -33,7 +33,7 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "deptName",value = "部门名称")
-    @Excel(name = "部门名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "部门名称", height = 20, width = 30,orderNum="9",needMerge = true)
     private String deptName;
 
     /**
@@ -49,7 +49,7 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "assetCode",value = "资产条码")
-    @Excel(name = "资产条码", height = 20, width = 30,orderNum="1")
+    @Excel(name = "资产条码", height = 20, width = 30,orderNum="1",needMerge = true)
     private String assetCode;
 
     /**
@@ -57,7 +57,7 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "jigCode",value = "治具编码")
-    @Excel(name = "治具编码", height = 20, width = 30,orderNum="2")
+    @Excel(name = "治具编码", height = 20, width = 30,orderNum="2",needMerge = true)
     private String jigCode;
 
     /**
@@ -65,7 +65,7 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "jigName",value = "治具名称")
-    @Excel(name = "治具名称", height = 20, width = 30,orderNum="3")
+    @Excel(name = "治具名称", height = 20, width = 30,orderNum="3",needMerge = true)
     private String jigName;
 
     /**
@@ -73,7 +73,7 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "jigDesc",value = "治具描述")
-    @Excel(name = "治具描述", height = 20, width = 30,orderNum="4")
+    @Excel(name = "治具描述", height = 20, width = 30,orderNum="4",needMerge = true)
     private String jigDesc;
 
     /**
@@ -81,7 +81,7 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "jigModel",value = "治具型号")
-    @Excel(name = "治具型号", height = 20, width = 30,orderNum="5")
+    @Excel(name = "治具型号", height = 20, width = 30,orderNum="5",needMerge = true)
     private String jigModel;
 
     /**
@@ -89,7 +89,7 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "jigCategoryName",value = "治具类别")
-    @Excel(name = "治具类别", height = 20, width = 30,orderNum="6")
+    @Excel(name = "治具类别", height = 20, width = 30,orderNum="6",needMerge = true)
     private String jigCategoryName;
 
     /**
@@ -104,7 +104,7 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "usageStatus",value = "使用状态(1-使用中 2-空闲)")
-    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="11")
+    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="11",needMerge = true)
     private Byte usageStatus;
 
 }

@@ -133,4 +133,14 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
 
         return eamJigBarcodeMapper.deleteByIds(ids);
     }
+
+    @Override
+    public int plusCurrentUsageTime(Long jigBarcodeId, Integer num) {
+        EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(jigBarcodeId);
+        if (StringUtils.isEmpty(eamJigBarcode)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+        }
+        eamJigBarcode.setCurrentUsageTime(eamJigBarcode.getCurrentUsageTime()+num);
+        return eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
+    }
 }

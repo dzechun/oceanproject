@@ -93,4 +93,14 @@ public class EamJigBarcodeController {
         throw new BizErrorException(e);
         }
     }
+    /*
+    * 2021/08/11
+    * huangshuijun
+    */
+    @ApiOperation("增加治具条码使用次数")
+    @PostMapping("/plusCurrentUsageTime")
+    public ResponseEntity plusCurrentUsageTime(@ApiParam(value = "治具条码id", required = true) @RequestParam @NotNull(message = "治具条码id")Long jigBarcodeId,
+                                                  @ApiParam(value = "治具使用次数", required = true) @RequestParam @NotNull(message = "治具使用次数不能为空") Integer num) {
+        return ControllerUtil.returnCRUD(eamJigBarcodeService.plusCurrentUsageTime(jigBarcodeId,num));
+    }
 }

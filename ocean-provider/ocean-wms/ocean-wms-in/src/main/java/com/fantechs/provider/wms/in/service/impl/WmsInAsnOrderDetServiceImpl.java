@@ -212,6 +212,8 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 wmsInnerInventoryDet.setProductionBatchCode(wmsInAsnOrderDetDto.getBatchCode());
                 wmsInnerInventoryDet.setAsnCode(wmsInAsnOrderDto.getAsnCode());
                 wmsInnerInventoryDet.setReceivingDate(new Date());
+                wmsInnerInventoryDet.setJobStatus((byte)1);
+                wmsInnerInventoryDet.setStatus((byte)2);
                 wmsInnerInventoryDets.add(wmsInnerInventoryDet);
                 ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
                 if(responseEntity.getCode()!=0){

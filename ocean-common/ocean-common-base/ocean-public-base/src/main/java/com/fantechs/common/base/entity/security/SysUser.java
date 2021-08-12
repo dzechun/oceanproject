@@ -210,4 +210,10 @@ public class SysUser extends ValidGroup implements Serializable {
      */
     @Transient
     private List<String> organizationIds;
+
+    /**
+     * 菜单字符串
+     */
+    @Transient
+    private String menu;
 }

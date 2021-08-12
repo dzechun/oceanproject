@@ -50,7 +50,7 @@ public class SapCustomerApiServiceImpl implements SapCustomerApiService {
                 if(StringUtils.isEmpty(customer.getKUNNR())) throw new BizErrorException("新增或更新失败，物料编码为空");
                 BaseSupplier baseSupplier = new BaseSupplier();
                 baseSupplier.setSupplierName(customer.getNAME1());
-                baseSupplier.setSupplierCode(customer.getKUNNR());
+                baseSupplier.setSupplierCode(baseUtils.removeZero(customer.getKUNNR()));
                 baseSupplier.setSupplierDesc(customer.getNAME1());
                 baseSupplier.setStatus((byte)1);
                 baseSupplier.setSupplierType((byte)2);

@@ -6,10 +6,7 @@ import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -155,6 +152,10 @@ public interface BaseFeignApi {
     @ApiOperation("获取工序的详情")
     @PostMapping("/baseWorkshopSection/detail")
     ResponseEntity<BaseWorkshopSection> sectionDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
+
+    @ApiOperation("根据条件查询工段信息列表")
+    @PostMapping("/baseWorkshopSection/findList")
+    ResponseEntity<List<BaseWorkshopSection>> findWorkshopSectionList(@RequestBody SearchBaseWorkshopSection searchBaseWorkshopSection);
 
 
     @ApiOperation("获取产品型号详情")
@@ -321,6 +322,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseStation/detail")
     ResponseEntity<BaseStation> findStationDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
+    @ApiOperation("根据条件查询工位列表")
+    @PostMapping("/baseStation/findList")
+    ResponseEntity<List<BaseStation>> findBaseStationList(@ApiParam(value = "查询对象") @RequestBody SearchBaseStation searchBaseStation);
+
     @ApiOperation(value = "生成条码-Map")
     @PostMapping("/baseBarcodeRule/newGenerateCode")
     ResponseEntity<String> newGenerateCode(
@@ -418,6 +423,11 @@ public interface BaseFeignApi {
     @PostMapping("/baseInspectionStandard/findList")
     ResponseEntity<List<BaseInspectionStandard>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionStandard searchBaseInspectionStandard);
 
+    @ApiOperation("不良现象列表")
+    @PostMapping("/baseBadnessPhenotype/findList")
+    ResponseEntity<List<BaseBadnessPhenotypeDto>> findBadnessPhenotypeDtoList(@ApiParam(value = "查询对象")@RequestBody SearchBaseBadnessPhenotype searchBaseBadnessPhenotype);
+
+
     @ApiOperation("检验方式列表")
     @PostMapping("/baseInspectionWay/findList")
     ResponseEntity<List<BaseInspectionWay>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionWay searchBaseInspectionWay);
@@ -444,4 +454,9 @@ public interface BaseFeignApi {
     @ApiOperation("列表")
     @PostMapping("/baseInventoryStatus/findList")
     ResponseEntity<List<BaseInventoryStatus>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInventoryStatus searchBaseInventoryStatus);
+
+    @ApiOperation("治具增加使用次数")
+    @PostMapping("/eamJigBarcode/plusCurrentUsageTime")
+    ResponseEntity plusCurrentUsageTime(@ApiParam(value = "治具条码id", required = true) @RequestParam @NotNull(message = "治具条码id") Long jigBarcodeId,
+                                           @ApiParam(value = "治具使用次数", required = true) @RequestParam @NotNull(message = "治具使用次数不能为空") Integer num);
 }

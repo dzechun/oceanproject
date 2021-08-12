@@ -234,5 +234,44 @@ public class BaseInspectionStandardDet extends ValidGroup implements Serializabl
     @Excel(name = "抽样过程", height = 20, width = 30,orderNum="5")
     private String sampleProcessCode;
 
+    /**
+     * 抽样类型
+     */
+    @ApiModelProperty(name="sampleProcessType" ,value="抽样类型")
+    @Transient
+    private Byte sampleProcessType;
+
+    /**
+     * AQL值
+     */
+    @Transient
+    @ApiModelProperty(name = "aqlValue",value = "AQL值")
+    @Excel(name = "AQL值", height = 20, width = 30,orderNum="8")
+    private BigDecimal aqlValue;
+
+    /**
+     * AC值
+     */
+    @Transient
+    @ApiModelProperty(name = "acValue",value = "AC值")
+    @Excel(name = "AC值", height = 20, width = 30,orderNum="9")
+    private Integer acValue;
+
+    /**
+     * RE值
+     */
+    @Transient
+    @ApiModelProperty(name = "reValue",value = "RE值")
+    @Excel(name = "RE值", height = 20, width = 30,orderNum="10")
+    private Integer reValue;
+
+    /**
+     * 样本数
+     */
+    @Transient
+    @ApiModelProperty(name = "sampleQty",value = "样本数")
+    @Excel(name = "样本数", height = 20, width = 30,orderNum="4")
+    private BigDecimal sampleQty;
+
     private static final long serialVersionUID = 1L;
 }

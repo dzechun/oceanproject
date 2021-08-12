@@ -60,7 +60,7 @@ public class SapBadnessCategoryApiServiceImpl implements SapBadnessCategoryApiSe
             Long orgId = baseUtils.getOrId();
             //保存或更新不良代类别
             BaseBadnessCategory baseBadnessCategory = new BaseBadnessCategory();
-            baseBadnessCategory.setBadnessCategoryCode(searchSapBadnessCategoryApi.getBadnessCodes());
+            baseBadnessCategory.setBadnessCategoryCode(baseUtils.removeZero(searchSapBadnessCategoryApi.getBadnessCodes()));
             baseBadnessCategory.setBadnessCategoryDesc(searchSapBadnessCategoryApi.getCatalogue());
             baseBadnessCategory.setOrgId(orgId);
             baseBadnessCategory.setStatus((byte)1);
@@ -69,7 +69,7 @@ public class SapBadnessCategoryApiServiceImpl implements SapBadnessCategoryApiSe
             //保存产品工艺路线
             for(DTMESBADCODE badCode: res.getBADCODE()) {
                 BaseBadnessCause baseBadnessCause = new BaseBadnessCause();
-                baseBadnessCause.setBadnessCauseCode(badCode.getCODE());
+                baseBadnessCause.setBadnessCauseCode(baseUtils.removeZero(badCode.getCODE()));
                 baseBadnessCause.setBadnessCauseDesc(badCode.getKURZTEXT());
                 baseBadnessCause.setBadnessCategoryId(baseBadnessCategoryResponseEntity.getData().getBadnessCategoryId());
                 baseBadnessCause.setOrgId(orgId);
@@ -82,6 +82,5 @@ public class SapBadnessCategoryApiServiceImpl implements SapBadnessCategoryApiSe
             throw new BizErrorException("接口请求失败");
         }
     }
-
 
 }

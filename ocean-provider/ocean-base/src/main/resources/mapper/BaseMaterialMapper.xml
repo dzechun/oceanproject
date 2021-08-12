@@ -66,6 +66,7 @@
         LEFT JOIN fantech_imes_v2.base_barcode_rule_set sbrs on sm.barcode_rule_set_id = sbrs.barcode_rule_set_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON sm.org_id = bo.organization_id
         LEFT JOIN fantech_imes_v2.base_material_tab bt on sm.material_id = bt.material_id
+        LEFT JOIN fantech_imes_v2.base_material_category bmc on bmc.material_category_id = bt.material_category_id
         <where>
             <if test="propertyQueryMark!=null and propertyQueryMark == 1">
                 and bt.material_property in(0,1)
@@ -104,6 +105,12 @@
             </if>
             <if test="materialCategoryId!=null and materialCategoryId!=''">
             and bt.material_category_id = #{materialCategoryId}
+            </if>
+            <if test="ifUseSpecMaterialCategory !=null and ifUseSpecMaterialCategory==1">
+                and bmc.material_category_code in
+                <foreach item="materialCategoryCode" collection="materialCategoryCodes" open="(" separator="," close=")">
+                    #{materialCategoryCode}
+                </foreach>
             </if>
         </where>
         order by sm.create_time desc

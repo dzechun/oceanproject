@@ -51,14 +51,14 @@ public class EamJigRequisitionController {
 
     @ApiOperation(value = "查询工单信息",notes = "查询工单信息")
     @PostMapping("/findWorkOrder")
-    public ResponseEntity findWorkOrder(@ApiParam(value = "工单号",required = true) @RequestParam @NotBlank(message="工单号不能为空") String workOrderCode) {
+    public ResponseEntity<EamJigRequisitionWorkOrderDto> findWorkOrder(@ApiParam(value = "工单号",required = true) @RequestParam @NotBlank(message="工单号不能为空") String workOrderCode) {
         EamJigRequisitionWorkOrderDto workOrderDto = eamJigRequisitionService.findWorkOrder(workOrderCode);
         return ControllerUtil.returnDataSuccess(workOrderDto,StringUtils.isEmpty(workOrderDto)?0:1);
     }
 
     @ApiOperation(value = "检查治具条码",notes = "检查治具条码")
     @PostMapping("/checkJigBarcode")
-    public ResponseEntity checkJigBarcode(@ApiParam(value = "治具条码",required = true) @RequestParam @NotBlank(message="治具条码不能为空") String jigBarcode,
+    public ResponseEntity<EamJigBarcode> checkJigBarcode(@ApiParam(value = "治具条码",required = true) @RequestParam @NotBlank(message="治具条码不能为空") String jigBarcode,
                                           @ApiParam(value = "治具ID",required = true) @RequestParam @NotNull(message="治具ID不能为空") Long jigId) {
         EamJigBarcode eamJigBarcode = eamJigRequisitionService.checkJigBarcode(jigBarcode, jigId);
         return ControllerUtil.returnDataSuccess(eamJigBarcode,StringUtils.isEmpty(eamJigBarcode)?0:1);
@@ -66,7 +66,7 @@ public class EamJigRequisitionController {
 
     @ApiOperation(value = "转换工单-获取旧工单已领用数量",notes = "转换工单-获取旧工单已领用数量")
     @PostMapping("/getRecordQty")
-    public ResponseEntity getRecordQty(@ApiParam(value = "新工单号",required = true) @RequestParam @NotBlank(message="新工单号不能为空") String newWorkOrderCode,
+    public ResponseEntity<List<EamJigReMaterialDto>> getRecordQty(@ApiParam(value = "新工单号",required = true) @RequestParam @NotBlank(message="新工单号不能为空") String newWorkOrderCode,
                                                    @ApiParam(value = "旧工单号",required = true) @RequestParam @NotBlank(message="旧工单号不能为空") String oldWorkOrderCode) {
         List<EamJigReMaterialDto> list = eamJigRequisitionService.getRecordQty(newWorkOrderCode,oldWorkOrderCode);
         return ControllerUtil.returnDataSuccess(list,list.size());

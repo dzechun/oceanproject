@@ -3,8 +3,10 @@ package com.fantechs.provider.api.mes.pm;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderProcessReWo;
@@ -86,4 +88,8 @@ public interface PMFeignApi {
     @ApiOperation("工单bom列表")
     @PostMapping("/mesPmWorkOrderBom/findList")
     ResponseEntity<List<MesPmWorkOrderBomDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmWorkOrderBom searchMesPmWorkOrderBom);
+
+    @ApiOperation("产前关键事项确认列表")
+    @PostMapping("/mesPmProductionKeyIssuesOrder/findList")
+    ResponseEntity<List<MesPmProductionKeyIssuesOrder>> findPmPKIOList(@ApiParam(value = "查询对象") @RequestBody SearchMesPmProductionKeyIssuesOrder searchMesPmProductionKeyIssuesOrder);
 }

@@ -20,7 +20,7 @@ public class EamJigRequisitionDto extends EamJigRequisition implements Serializa
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="12")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="15")
     private String createUserName;
 
     /**
@@ -28,7 +28,7 @@ public class EamJigRequisitionDto extends EamJigRequisition implements Serializa
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="14")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="17")
     private String modifiedUserName;
 
     /**
@@ -87,26 +87,43 @@ public class EamJigRequisitionDto extends EamJigRequisition implements Serializa
     private String jigBarcode;
 
     /**
-     * 当前使用次数
+     * 仓库
      */
     @Transient
-    @ApiModelProperty(name = "currentUsageTime",value = "当前使用次数")
-    private Integer currentUsageTime;
+    @ApiModelProperty(name = "warehouseName",value = "仓库")
+    @Excel(name = "仓库", height = 20, width = 30,orderNum="8")
+    private String warehouseName;
 
     /**
-     * 仓库库位
+     * 库区
      */
     @Transient
-    @ApiModelProperty(name = "warehouseStorage",value = "仓库库位")
-    @Excel(name = "仓库库位", height = 20, width = 30,orderNum="8")
-    private String warehouseStorage;
+    @ApiModelProperty(name = "warehouseAreaName",value = "库区")
+    @Excel(name = "库区", height = 20, width = 30,orderNum="9")
+    private String warehouseAreaName;
+
+    /**
+     * 库位
+     */
+    @Transient
+    @ApiModelProperty(name = "storageCode",value = "库位")
+    @Excel(name = "库位", height = 20, width = 30,orderNum="10")
+    private String storageCode;
+
+    /**
+     * 领用状态（0-已归还 1-已领用）
+     */
+    @Transient
+    @ApiModelProperty(name = "requisitionStatus",value = "领用状态（0-已归还 1-已领用）")
+    @Excel(name = "领用状态（0-已归还 1-已领用）", height = 20, width = 30,orderNum="11")
+    private Byte requisitionStatus;
 
     /**
      * 领用时间
      */
     @Transient
     @ApiModelProperty(name = "requisitionTime",value = "领用时间")
-    @Excel(name = "领用时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "领用时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date requisitionTime;
 
@@ -115,7 +132,7 @@ public class EamJigRequisitionDto extends EamJigRequisition implements Serializa
      */
     @Transient
     @ApiModelProperty(name = "returnTime",value = "归还时间")
-    @Excel(name = "归还时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "归还时间", height = 20, width = 30,orderNum="13",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date returnTime;
 

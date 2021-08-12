@@ -55,7 +55,7 @@
     LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id
   </select>
 
-  <select id="findByGroup" resultMap="BaseResultDtoMap" parameterType="java.lang.Long">
+  <select id="findByEquipmentId" resultMap="BaseResultDtoMap" parameterType="java.lang.Long">
     SELECT
     <include refid="BaseColumnList"/>,
     ee.equipment_code,
@@ -75,5 +75,26 @@
       </if>
     </where>
   </select>
+
+
+  <select id="findByGroup" resultType="java.lang.String" parameterType="java.lang.Long">
+    SELECT
+    concat(msdc.collect_data) as collect_data
+    FROM
+     eam_data_collect msdc
+   /* LEFT JOIN eam_data_collect msdc ON dci.data_collect_id = msdc.data_collect_id*/
+    LEFT JOIN eam_equipment ee ON msdc.equipment_id = ee.equipment_id
+    LEFT JOIN eam_equipment_data_group_re_dc eedgrd ON ee.equipment_id=eedgrd.equipment_id
+    LEFT JOIN eam_equipment_data_group eedg ON eedgrd.equipment_data_group_id=eedg.equipment_data_group_id
+    <where>
+     <!-- <if test="equipmentId != null">
+        and msdc.equipment_id = #{equipmentId}
+      </if>-->
+      <if test="equipmentDataGroupId != null and equipmentDataGroupId!=''">
+        and eedg.equipment_data_group_id = #{equipmentDataGroupId}
+      </if>
+    </where>
+  </select>
+
 
 </mapper>

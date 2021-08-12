@@ -15,6 +15,8 @@
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="maintain_max_usage_time" jdbcType="INTEGER" property="maintainMaxUsageTime" />
+    <result column="maintain_warning_time" jdbcType="INTEGER" property="maintainWarningTime" />
     <result column="max_usage_time" jdbcType="INTEGER" property="maxUsageTime" />
     <result column="warning_time" jdbcType="INTEGER" property="warningTime" />
     <result column="max_usage_days" jdbcType="INTEGER" property="maxUsageDays" />
@@ -45,6 +47,9 @@
     <collection property="eamJigAttachmentList" ofType="com.fantechs.common.base.general.entity.eam.EamJigAttachment"
                 column="{jigId=jig_id}" select="com.fantechs.provider.eam.mapper.EamJigAttachmentMapper.findList">
     </collection>
+    <collection property="eamJigBackupDtoList" ofType="com.fantechs.common.base.general.dto.eam.EamJigBackupDto"
+                column="{jigId=jig_id}" select="com.fantechs.provider.eam.mapper.EamJigBackupMapper.findList">
+    </collection>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamJigDto">
@@ -69,6 +74,8 @@
     ej.warehouse_id,
     ej.warehouse_area_id,
     ej.storage_id,
+    ej.maintain_max_usage_time,
+    ej.maintain_warning_time,
     ej.max_usage_time,
     ej.warning_time,
     ej.max_usage_days,

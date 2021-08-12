@@ -52,10 +52,10 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
             if (StringUtils.isNotEmpty(searchSysSpecItem.getMenuId())) {
                 String token = CurrentUserInfoUtils.getToken();
                 Object o = redisUtil.get(token);
-                SysUserDto sysUserDto = JSONObject.parseObject(JSONObject.toJSONString(o), SysUserDto.class);
+                SysUser sysUser = JSONObject.parseObject(JSONObject.toJSONString(o), SysUser.class);
 
 //                List<SysMenuInListDTO> menuList = JsonUtils.jsonToList(menu.toString(),SysMenuInListDTO.class);
-                SysMenuInListDTO dg = this.findNodes(sysUserDto.getMenuList(), searchSysSpecItem.getMenuId());
+                SysMenuInListDTO dg = this.findNodes(JsonUtils.jsonToList(sysUser.getMenu(),SysMenuInListDTO.class), searchSysSpecItem.getMenuId());
                 menuIds.add(dg.getSysMenuInfoDto().getMenuId());
                 this.disassemblyTree(dg,menuIds);
             }

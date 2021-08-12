@@ -8,6 +8,7 @@
     <id column="production_key_issues_order_id" jdbcType="BIGINT" property="productionKeyIssuesOrderId" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -40,6 +41,7 @@
     mppkio.production_key_issues_order_id,
     mppkio.work_order_id,
     mppkio.material_id,
+    mppkio.order_status,
     mppkio.`status`,
     mppkio.remark,
     mppkio.org_id,

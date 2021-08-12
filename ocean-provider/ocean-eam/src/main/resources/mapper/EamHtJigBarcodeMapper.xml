@@ -11,8 +11,11 @@
     <result column="jig_barcode" jdbcType="VARCHAR" property="jigBarcode" />
     <result column="asset_code" jdbcType="VARCHAR" property="assetCode" />
     <result column="current_usage_time" jdbcType="INTEGER" property="currentUsageTime" />
+    <result column="current_usage_days" jdbcType="INTEGER" property="currentUsageDays" />
     <result column="last_time_maintain_time" jdbcType="TIMESTAMP" property="lastTimeMaintainTime" />
     <result column="current_maintain_time" jdbcType="INTEGER" property="currentMaintainTime" />
+    <result column="current_maintain_usage_time" jdbcType="INTEGER" property="currentMaintainUsageTime" />
+    <result column="current_maintain_usage_days" jdbcType="INTEGER" property="currentMaintainUsageDays" />
     <result column="usage_status" jdbcType="TINYINT" property="usageStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -37,8 +40,11 @@
     ehjb.jig_barcode,
     ehjb.asset_code,
     ehjb.current_usage_time,
+    ehjb.current_usage_days,
     ehjb.last_time_maintain_time,
     ehjb.current_maintain_time,
+    ehjb.current_maintain_usage_time,
+    ehjb.current_maintain_usage_days,
     ehjb.usage_status,
     ehjb.`status`,
     ehjb.remark,

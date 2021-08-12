@@ -108,6 +108,9 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             eamJigBarcode.setCurrentUsageTime(eamJigBarcode.getCurrentUsageTime()==null ?
                     eamJigReturn.getThisTimeUsageTime():
                     eamJigBarcode.getCurrentUsageTime()+eamJigReturn.getThisTimeUsageTime());
+            eamJigBarcode.setCurrentMaintainUsageTime(eamJigBarcode.getCurrentMaintainUsageTime()==null ?
+                    eamJigReturn.getThisTimeUsageTime():
+                    eamJigBarcode.getCurrentMaintainUsageTime()+eamJigReturn.getThisTimeUsageTime());
             eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
         }
 
@@ -125,6 +128,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
         //查询工单
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+        searchMesPmWorkOrder.setCodeQueryMark(1);
         List<MesPmWorkOrderDto> mesPmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
         if(StringUtils.isEmpty(mesPmWorkOrderDtos)){
             throw new BizErrorException("查无此工单");
@@ -148,6 +152,8 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             searchEamJigRequisition.setJigId(jigId);
             Integer recordQty = eamJigRequisitionMapper.getRecordQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
             eamJigReMaterialDto.setRecordQty(recordQty);
+            Integer returnQty = eamJigReturnMapper.getReturnQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
+            eamJigReMaterialDto.setReturnQty(returnQty);
 
             list.add(eamJigReMaterialDto);
         }

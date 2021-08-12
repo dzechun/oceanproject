@@ -10,8 +10,11 @@
     <result column="jig_barcode" jdbcType="VARCHAR" property="jigBarcode" />
     <result column="asset_code" jdbcType="VARCHAR" property="assetCode" />
     <result column="current_usage_time" jdbcType="INTEGER" property="currentUsageTime" />
+    <result column="current_usage_days" jdbcType="INTEGER" property="currentUsageDays" />
     <result column="last_time_maintain_time" jdbcType="TIMESTAMP" property="lastTimeMaintainTime" />
     <result column="current_maintain_time" jdbcType="INTEGER" property="currentMaintainTime" />
+    <result column="current_maintain_usage_time" jdbcType="INTEGER" property="currentMaintainUsageTime" />
+    <result column="current_maintain_usage_days" jdbcType="INTEGER" property="currentMaintainUsageDays" />
     <result column="usage_status" jdbcType="TINYINT" property="usageStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -39,6 +42,7 @@
     ejb.current_usage_time,
     ejb.last_time_maintain_time,
     ejb.current_maintain_time,
+    ejb.current_maintain_usage_time,
     ejb.usage_status,
     ejb.`status`,
     ejb.remark,
@@ -54,6 +58,8 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
+    DATEDIFF(NOW(),ejb.create_time) as current_usage_days,
+    DATEDIFF(NOW(),ejb.last_time_maintain_time) as current_maintain_usage_days,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name

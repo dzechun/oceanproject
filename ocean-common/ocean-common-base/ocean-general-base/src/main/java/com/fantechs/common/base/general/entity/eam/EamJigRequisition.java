@@ -94,7 +94,7 @@ public class EamJigRequisition extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="13",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="16",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -110,7 +110,7 @@ public class EamJigRequisition extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="15",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="18",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -120,7 +120,7 @@ public class EamJigRequisition extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "thisTimeUsageTime",value = "本次使用次数")
-    @Excel(name = "本次使用次数", height = 20, width = 30,orderNum="11")
+    @Excel(name = "本次使用次数", height = 20, width = 30,orderNum="14")
     private Integer thisTimeUsageTime;
 
     /**

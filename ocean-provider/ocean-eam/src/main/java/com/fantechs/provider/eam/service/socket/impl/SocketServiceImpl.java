@@ -227,10 +227,12 @@ public class SocketServiceImpl implements SocketService {
                 List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
 
                 map.put("code", 1201);
-                map.put("url", "http://"+localHostIp+"/#/ESOPDataShow?ip=" + ip);
+           //     map.put("url", "http://qmsapp.donlim.com/esop/#/ESOPDataShow?ip=" + ip);
+                map.put("url", "http://192.168.204.163/#/ESOPDataShow?ip=" + ip);
                 newList.add(map);
                 newMap.put("code", 1202);
-                newMap.put("url", "http://"+localHostIp+"/#/YunZhiESOP?ip=" + ip);
+                newMap.put("url", "http://192.168.204.163/#/YunZhiESOP?ip=" + ip);
+          //      newMap.put("url", "http://qmsapp.donlim.com/esop/#/YunZhiESOP?ip=" + ip);
                 newList.add(newMap);
 
                 //配置项为展示状态且问题清单有数据。则发送信息。
@@ -246,7 +248,8 @@ public class SocketServiceImpl implements SocketService {
                     List list = eamIssueService.findList(IssueMap);
                     if("1".equals(paraValue[0]) && StringUtils.isNotEmpty(list)){
                         managementDate.put("code", 1207);
-                        managementDate.put("url", "http://"+localHostIp+"/#/IssueList?ip=" + ip);
+                        managementDate.put("url", "http://192.168.204.163/#/IssueList?ip=" + ip);
+                //        managementDate.put("url", "http://qmsapp.donlim.com/esop/#/IssueList?ip=" + ip);
                         managementDate.put("seconds", paraValue[1]);
                         managementDate.put("isShow", 1);
                         newList.add(managementDate);
@@ -332,7 +335,6 @@ public class SocketServiceImpl implements SocketService {
                 }
 
             } catch (Exception e) {
-                log.info("--------------???并没有中心异常-----------");
                 updateStatus(ip,(byte)0);
                 e.printStackTrace();
             }

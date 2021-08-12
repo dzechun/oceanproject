@@ -80,6 +80,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     public List<EamJigReMaterialDto> getRecordQty(String newWorkOrderCode,String oldWorkOrderCode){
         //查询工单
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+        searchMesPmWorkOrder.setCodeQueryMark(1);
         //新工单
         searchMesPmWorkOrder.setWorkOrderCode(newWorkOrderCode);
         List<MesPmWorkOrderDto> newMesPmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
@@ -107,6 +108,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             searchEamJigRequisition.setJigId(jigId);
             Integer recordQty = eamJigRequisitionMapper.getRecordQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
             eamJigReMaterialDto.setRecordQty(recordQty);
+            eamJigReMaterialDto.setOldWorkOrderId(oldMesPmWorkOrderDtos.get(0).getWorkOrderId());
 
             list.add(eamJigReMaterialDto);
         }
@@ -191,6 +193,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         //查询工单
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+        searchMesPmWorkOrder.setCodeQueryMark(1);
         List<MesPmWorkOrderDto> mesPmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
         if(StringUtils.isEmpty(mesPmWorkOrderDtos)){
             throw new BizErrorException("查无此工单");
@@ -201,6 +204,15 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
         searchEamJigReMaterial.setMaterialId(eamJigRequisitionWorkOrderDto.getMaterialId());
         List<EamJigReMaterialDto> eamJigReMaterialDtos = eamJigReMaterialMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigReMaterial));
+
+        SearchEamJigRequisition searchEamJigRequisition = new SearchEamJigRequisition();
+        searchEamJigRequisition.setWorkOrderId(mesPmWorkOrderDtos.get(0).getWorkOrderId());
+        for (EamJigReMaterialDto eamJigReMaterialDto : eamJigReMaterialDtos){
+            searchEamJigRequisition.setJigId(eamJigReMaterialDto.getJigId());
+            Integer recordQty = eamJigRequisitionMapper.getRecordQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
+            eamJigReMaterialDto.setRecordQty(recordQty);
+        }
+
         eamJigRequisitionWorkOrderDto.setList(eamJigReMaterialDtos);
 
         return eamJigRequisitionWorkOrderDto;

@@ -2,6 +2,8 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseMaterialImport;
 import com.fantechs.common.base.general.entity.basic.*;
@@ -26,6 +28,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.qms.QmsFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseMaterialService;
 import org.springframework.beans.BeanUtils;
@@ -71,6 +74,8 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     private BaseLabelCategoryMapper baseLabelCategoryMapper;
     @Resource
     private BaseBarcodeRuleSetMapper baseBarcodeRuleSetMapper;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<BaseMaterialDto> findList(Map<String, Object> map){
@@ -82,6 +87,21 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
 
             map.put("organizationId", user.getOrganizationId());
         }
+
+        //是否启用配置项物料类别
+        String ifUseSpecMaterialCategory = StringUtils.isEmpty(map.get("ifUseSpecMaterialCategory"))?"":map.get("ifUseSpecMaterialCategory").toString();
+        if ("1".equals(ifUseSpecMaterialCategory)) {
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("SpecMaterialCategoryCode");
+            List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if(StringUtils.isNotEmpty(sysSpecItemList)){
+                SysSpecItem sysSpecItem = sysSpecItemList.get(0);
+                String paraValue = sysSpecItem.getParaValue();
+                List<String> materialCategoryCodes = Arrays.asList(paraValue.split(","));
+                map.put("materialCategoryCodes",materialCategoryCodes);
+            }
+        }
+
         List<BaseMaterialDto> smtMaterialDtos = baseMaterialMapper.findList(map);
         if (StringUtils.isNotEmpty(smtMaterialDtos)) {
             for (BaseMaterialDto smtMaterialDto : smtMaterialDtos) {
