@@ -108,6 +108,9 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             eamJigBarcode.setCurrentUsageTime(eamJigBarcode.getCurrentUsageTime()==null ?
                     eamJigReturn.getThisTimeUsageTime():
                     eamJigBarcode.getCurrentUsageTime()+eamJigReturn.getThisTimeUsageTime());
+            eamJigBarcode.setCurrentMaintainUsageTime(eamJigBarcode.getCurrentMaintainUsageTime()==null ?
+                    eamJigReturn.getThisTimeUsageTime():
+                    eamJigBarcode.getCurrentMaintainUsageTime()+eamJigReturn.getThisTimeUsageTime());
             eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
         }
 

@@ -29,7 +29,6 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 治具台账附件ID
      */
     @ApiModelProperty(name="jigStandingBookAttachmentId",value = "治具台账附件ID")
-    @Excel(name = "治具台账附件ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "jig_standing_book_attachment_id")
     private Long jigStandingBookAttachmentId;
@@ -38,7 +37,6 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 治具台账管理ID
      */
     @ApiModelProperty(name="jigStandingBookId",value = "治具台账管理ID")
-    @Excel(name = "治具台账管理ID", height = 20, width = 30,orderNum="") 
     @Column(name = "jig_standing_book_id")
     private Long jigStandingBookId;
 
@@ -46,7 +44,6 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 原文件名
      */
     @ApiModelProperty(name="fileOrgName",value = "原文件名")
-    @Excel(name = "原文件名", height = 20, width = 30,orderNum="") 
     @Column(name = "file_org_name")
     private String fileOrgName;
 
@@ -54,7 +51,7 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 现文件名
      */
     @ApiModelProperty(name="fileName",value = "现文件名")
-    @Excel(name = "现文件名", height = 20, width = 30,orderNum="") 
+    @Excel(name = "现文件名", height = 20, width = 30,orderNum="1")
     @Column(name = "file_name")
     private String fileName;
 
@@ -62,7 +59,6 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 存储路径
      */
     @ApiModelProperty(name="storePath",value = "存储路径")
-    @Excel(name = "存储路径", height = 20, width = 30,orderNum="") 
     @Column(name = "store_path")
     private String storePath;
 
@@ -70,7 +66,6 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 访问路径
      */
     @ApiModelProperty(name="accessUrl",value = "访问路径")
-    @Excel(name = "访问路径", height = 20, width = 30,orderNum="") 
     @Column(name = "access_url")
     private String accessUrl;
 
@@ -78,7 +73,6 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 文件大小(M)
      */
     @ApiModelProperty(name="fileSize",value = "文件大小(M)")
-    @Excel(name = "文件大小(M)", height = 20, width = 30,orderNum="") 
     @Column(name = "file_size")
     private BigDecimal fileSize;
 
@@ -86,21 +80,19 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备注", height = 20, width = 30,orderNum="3")
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -108,7 +100,6 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -116,7 +107,7 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="2",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -125,7 +116,6 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -133,7 +123,6 @@ public class EamJigStandingBookAttachment extends ValidGroup implements Serializ
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

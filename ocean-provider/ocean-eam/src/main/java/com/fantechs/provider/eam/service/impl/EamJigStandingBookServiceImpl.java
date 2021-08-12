@@ -68,7 +68,7 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
         record.setModifiedUserId(user.getUserId());
         record.setOrgId(user.getOrganizationId());
 
-        int i = eamJigStandingBookMapper.insertUseGeneratedKeys(record);
+        eamJigStandingBookMapper.insertUseGeneratedKeys(record);
 
         //附件列表
         List<EamJigStandingBookAttachment> eamJigStandingBookAttachmentList = record.getEamJigStandingBookAttachmentList();
@@ -87,7 +87,7 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
 
         EamHtJigStandingBook eamHtJigStandingBook = new EamHtJigStandingBook();
         BeanUtils.copyProperties(record,eamHtJigStandingBook);
-        eamHtJigStandingBookMapper.insert(eamHtJigStandingBook);
+        int i = eamHtJigStandingBookMapper.insert(eamHtJigStandingBook);
 
         return i;
     }

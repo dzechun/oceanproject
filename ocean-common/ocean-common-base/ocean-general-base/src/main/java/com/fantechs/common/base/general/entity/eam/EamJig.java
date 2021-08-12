@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.general.dto.eam.EamJigBackupDto;
 import com.fantechs.common.base.support.ValidGroup;

@@ -32,10 +32,12 @@
     <result column="jig_model" jdbcType="VARCHAR" property="jigModel"/>
     <result column="jig_barcode" jdbcType="VARCHAR" property="jigBarcode"/>
     <result column="jig_category_name" jdbcType="VARCHAR" property="jigCategoryName"/>
-    <result column="current_usage_time" jdbcType="VARCHAR" property="currentUsageTime"/>
+    <result column="requisition_status" jdbcType="TINYINT" property="requisitionStatus"/>
     <result column="requisition_time" jdbcType="TIMESTAMP" property="requisitionTime"/>
     <result column="return_time" jdbcType="TIMESTAMP" property="returnTime"/>
-    <result column="warehouse_storage" jdbcType="VARCHAR" property="warehouseStorage"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
     <result column="this_time_usage_time" jdbcType="VARCHAR" property="thisTimeUsageTime"/>
   </resultMap>
 
@@ -60,9 +62,9 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
     ej.jig_code,ej.jig_name,ej.jig_desc,ej.jig_model,ejc.jig_category_name,
-    ejb.jig_barcode,ejb.current_usage_time,wo.work_order_code,
+    ejb.jig_barcode,wo.work_order_code,isnull(ejret.jig_return_id) as requisition_status,
     ejr.create_time as requisition_time,ejret.create_time as return_time,ejret.this_time_usage_time,
-    CONCAT_WS(';',bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code) AS warehouse_storage,
+    bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
