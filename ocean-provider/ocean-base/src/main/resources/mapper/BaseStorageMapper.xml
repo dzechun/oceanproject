@@ -194,7 +194,7 @@
         FROM base_storage_material bsm
                  LEFT JOIN base_storage bs ON bsm.storage_id = bs.storage_id
                  LEFT JOIN base_material_tab bmt ON bsm.material_id = bmt.material_id
-        WHERE bs.warehouse_id =#{warehouseId} AND bsm.material_id =#{materialId}
+        WHERE bs.warehouse_id =#{warehouseId} AND bsm.material_id =#{materialId} and bs.storage_type=2
     </select>
     <select id="findPutawayRule" resultMap="StorageRuleMap">
         SELECT
@@ -213,6 +213,7 @@
                  LEFT JOIN wms_inner_inventory wii ON bs.storage_id = wii.storage_id AND wii.packing_qty>0
                  LEFT JOIN base_material_tab bmt ON wii.material_id = bmt.material_id
         <where>
+             bs.storage_type=2
             <if test="warehouseId!=null and warehouseId!=''">
                 and  wii.warehouse_id =#{warehouseId}
             </if>
@@ -242,6 +243,6 @@
         select bs.putaway_move_line_no From wms_inner_inventory wii
 LEFT JOIN base_storage bs ON bs.storage_id = wii.storage_id
 where wii.warehouse_id = #{warehouseId} and wii.material_id = #{materialId}
-order by wii.modified_time desc limit 1
+order by wii.modified_time desc limit 1 and bs.storage_type=2
     </select>
 </mapper>
