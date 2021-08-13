@@ -15,6 +15,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerStockOrderService;
+import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -609,15 +610,20 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 if(StringUtils.isEmpty(wmsInnerInventoryDet)){
                     throw new BizErrorException("库存查询失败");
                 }
+                Byte addOrSubtract = null;
                 if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty())||wmsInnerInventoryDet.getMaterialQty().compareTo(wmsInnerStockOrderDet.getStockQty())==-1){
                     //盘盈
                     wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().add(wmsInnerStockOrderDet.getVarianceQty()));
                     num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+                    addOrSubtract = 1;
                 }else {
                     //盘亏
                     wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().subtract(wmsInnerStockOrderDet.getVarianceQty()));
                     num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+                    addOrSubtract = 2;
                 }
+                //添加库存日志
+                InventoryLogUtil.addLog(wmsInnerStockOrder,wmsInnerInventory,addOrSubtract);
             }
             return num;
     }

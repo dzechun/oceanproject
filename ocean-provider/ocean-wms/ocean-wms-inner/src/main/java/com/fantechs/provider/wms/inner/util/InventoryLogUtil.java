@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author mr.lei
@@ -58,6 +60,9 @@ public class InventoryLogUtil {
         //收货
         wmsInnerInventoryLog.setJobOrderType(jobStatus);
         wmsInnerInventoryLog.setAddOrSubtract(addOrSubtract);
+        wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getInStorageId());
+        wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrderDet.getWarehouseId());
+        wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
         wmsInnerInventoryLog.setProductionDate(wmsInnerJobOrderDet.getProductionDate());
         wmsInnerInventoryLog.setExpiredDate(wmsInnerJobOrderDet.getExpiredDate());
         wmsInnerInventoryLog.setBatchCode(wmsInnerJobOrderDet.getBatchCode());
@@ -68,41 +73,41 @@ public class InventoryLogUtil {
         inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
     }
 
-//    /**
-//     * 盘点日志记录
-//     * @param wmsInnerStockOrder
-//     * @param wmsInnerInventory
-//     * @param addOrSubtract
-//     */
-//    public static void addLog(WmsInnerStockOrder wmsInnerStockOrder, WmsInnerInventory wmsInnerInventory, Byte addOrSubtract){
-//        WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
-//        wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerStockOrder.getStockOrderCode());
-//        //收货
-//        wmsInnerInventoryLog.setJobOrderType((byte)7);
-//        wmsInnerInventoryLog.setAddOrSubtract(addOrSubtract);
-//        wmsInnerInventoryLog.setProductionDate(wmsInnerInventory.getProductionDate());
-//        wmsInnerInventoryLog.setExpiredDate(wmsInnerInventory.getExpiredDate());
-//        wmsInnerInventoryLog.setBatchCode(wmsInnerInventory.getBatchCode());
-//        wmsInnerInventoryLog.setPalletCode(wmsInnerInventory.getPalletCode());
-//        wmsInnerInventoryLog.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
-//        wmsInnerInventoryLog.setChangeQty(wmsInnerInventory.getPackingQty());
-//        wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerInventory.getMaterialOwnerId());
-//        wmsInnerInventoryLog.setInventoryStatusName(inventoryLogUtil.wmsInnerInventoryLogService.findInvName(wmsInnerInventoryLog.getInventoryLogId()));
-//        //期初数量
-//        Map<String,Object> map = paramUtil(wmsInnerInventoryLog);
-//        wmsInnerInventoryLog.setInitialQty(inventoryLogUtil.wmsInnerInventoryLogService.findInv(map));
-//        wmsInnerInventoryLog.setFinalQty(wmsInnerInventoryLog.getInitialQty().add(wmsInnerInventoryLog.getChangeQty()));
-//        inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
-//    }
+    /**
+     * 盘点日志记录
+     * @param wmsInnerStockOrder
+     * @param wmsInnerInventory
+     * @param addOrSubtract
+     */
+    public static void addLog(WmsInnerStockOrder wmsInnerStockOrder, WmsInnerInventory wmsInnerInventory, Byte addOrSubtract){
+        WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
+        wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerStockOrder.getStockOrderCode());
+        //收货
+        wmsInnerInventoryLog.setJobOrderType((byte)7);
+        wmsInnerInventoryLog.setAddOrSubtract(addOrSubtract);
+        wmsInnerInventoryLog.setProductionDate(wmsInnerInventory.getProductionDate());
+        wmsInnerInventoryLog.setExpiredDate(wmsInnerInventory.getExpiredDate());
+        wmsInnerInventoryLog.setBatchCode(wmsInnerInventory.getBatchCode());
+        wmsInnerInventoryLog.setPalletCode(wmsInnerInventory.getPalletCode());
+        wmsInnerInventoryLog.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
+        wmsInnerInventoryLog.setChangeQty(wmsInnerInventory.getPackingQty());
+        wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerInventory.getMaterialOwnerId());
+        wmsInnerInventoryLog.setInventoryStatusName(inventoryLogUtil.wmsInnerInventoryLogService.findInvName(wmsInnerInventoryLog.getInventoryLogId()));
+        //期初数量
+        Map<String,Object> map = paramUtil(wmsInnerInventoryLog);
+        wmsInnerInventoryLog.setInitialQty(inventoryLogUtil.wmsInnerInventoryLogService.findInv(map));
+        wmsInnerInventoryLog.setFinalQty(wmsInnerInventoryLog.getInitialQty().add(wmsInnerInventoryLog.getChangeQty()));
+        inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
+    }
 
-//
-//    private static Map<String,Object> paramUtil(WmsInnerInventoryLog wmsInnerInventoryLog){
-//        Map<String,Object> map = new HashMap<>();
-//        map.put("warehouseId",wmsInnerInventoryLog.getWarehouseId());
-//        map.put("storageId",wmsInnerInventoryLog.getStorageId());
-//        map.put("materialId",wmsInnerInventoryLog.getMaterialId());
-//        map.put("batchCode",wmsInnerInventoryLog.getBatchCode());
-//        map.put("inventoryStatusId",wmsInnerInventoryLog.getInventoryStatusId());
-//        return map;
-//    }
+
+    private static Map<String,Object> paramUtil(WmsInnerInventoryLog wmsInnerInventoryLog){
+        Map<String,Object> map = new HashMap<>();
+        map.put("warehouseId",wmsInnerInventoryLog.getWarehouseId());
+        map.put("storageId",wmsInnerInventoryLog.getStorageId());
+        map.put("materialId",wmsInnerInventoryLog.getMaterialId());
+        map.put("batchCode",wmsInnerInventoryLog.getBatchCode());
+        map.put("inventoryStatusId",wmsInnerInventoryLog.getInventoryStatusId());
+        return map;
+    }
 }
