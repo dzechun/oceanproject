@@ -134,8 +134,11 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
      * 条码状态(1-待收货、2-已收货、3-在库、4-已拣选、5-已复核、6-已出库、7-已取消)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "条码状态(1-待收货、2-已收货、3-在库、4-已拣选、5-已复核、6-已出库、7-已取消)", height = 20, width = 30,orderNum="15")
     private Byte status;
+
+    @ApiModelProperty(name = "barcodeStatus",value = "条码状态(1-待收货、2-已收货、3-在库、4-已拣选、5-已复核、6-已出库、7-已取消)")
+    @Column(name = "barcode_status")
+    private Byte barcodeStatus;
 
     /**
      * 备注

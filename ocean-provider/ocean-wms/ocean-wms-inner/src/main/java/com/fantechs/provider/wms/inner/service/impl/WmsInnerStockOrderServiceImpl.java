@@ -567,6 +567,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 //盘点数大于库存数 原有数量新增
+        Byte addOrSubtract = null;
         if(StringUtils.isEmpty(wmsInnerInventory)){
             wmsInnerInventory = new WmsInnerInventory();
             wmsInnerInventory.setWarehouseId(wmsInnerStockOrder.getWarehouseId());
@@ -589,6 +590,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         }else if(!StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) && wmsInnerStockOrderDet.getStockQty().compareTo(wmsInnerInventory.getPackingQty())==1){
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(wmsInnerStockOrderDet.getVarianceQty()));
                 num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+            addOrSubtract = 1;
         }else{
             if(wmsInnerInventory.getPackingQty().compareTo(wmsInnerStockOrderDet.getVarianceQty())==-1){
                 throw new BizErrorException("库存波动，请重新盘点");
@@ -596,6 +598,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //盘点数小于库存
             wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerStockOrderDet.getVarianceQty()));
             num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+            addOrSubtract = 2;
         }
 
             //PDA扫码盘点
@@ -610,7 +613,6 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 if(StringUtils.isEmpty(wmsInnerInventoryDet)){
                     throw new BizErrorException("库存查询失败");
                 }
-                Byte addOrSubtract = null;
                 if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty())||wmsInnerInventoryDet.getMaterialQty().compareTo(wmsInnerStockOrderDet.getStockQty())==-1){
                     //盘盈
                     wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().add(wmsInnerStockOrderDet.getVarianceQty()));
@@ -622,9 +624,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
                     addOrSubtract = 2;
                 }
-                //添加库存日志
-                InventoryLogUtil.addLog(wmsInnerStockOrder,wmsInnerInventory,addOrSubtract);
             }
+        //添加库存日志
+        InventoryLogUtil.addLog(wmsInnerStockOrder,wmsInnerInventory,addOrSubtract);
             return num;
     }
     /**
