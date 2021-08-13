@@ -27,4 +27,10 @@ public class SearchEamJigMaintainProject extends BaseQuery implements Serializab
     @ApiModelProperty(name="jigMaintainProjectDesc",value = "治具保养描述")
     private String jigMaintainProjectDesc;
 
+    /**
+     * 治具类别id
+     */
+    @ApiModelProperty(name="jigCategoryId",value = "治具类别id")
+    private Long jigCategoryId;
+
 }

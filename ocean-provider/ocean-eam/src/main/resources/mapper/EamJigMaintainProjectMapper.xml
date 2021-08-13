@@ -62,6 +62,9 @@
     left join ocean_v2.sys_user s on ejmp.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ejmp.org_id = bo.organization_id
     <where>
+      <if test="jigCategoryId!=null">
+        and ejmp.jig_category_id = #{jigCategoryId}
+      </if>
       <if test="jigMaintainProjectCode != null and jigMaintainProjectCode!=''">
         and ejmp.jig_maintain_project_code like CONCAT('%', #{jigMaintainProjectCode}, '%')
       </if>

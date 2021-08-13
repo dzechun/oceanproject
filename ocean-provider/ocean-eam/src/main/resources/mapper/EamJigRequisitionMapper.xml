@@ -109,10 +109,10 @@
         and ejc.jig_category_name like CONCAT('%', #{jigCategoryName}, '%')
       </if>
       <if test="requisitionTime != null and requisitionTime!=''">
-        and ejr.create_time = #{requisitionTime}
+        and date_format(ejr.create_time, '%Y-%m-%d') = #{requisitionTime}
       </if>
       <if test="returnTime != null and returnTime!=''">
-        and ejret.create_time = #{returnTime}
+        and date_format(ejret.create_time, '%Y-%m-%d') = #{returnTime}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ejr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
