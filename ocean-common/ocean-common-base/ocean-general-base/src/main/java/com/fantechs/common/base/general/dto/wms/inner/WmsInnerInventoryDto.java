@@ -43,6 +43,13 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
     private String storageCode;
 
     /**
+     * 库位类型（1-存货 2-收货 3-发货）
+     */
+    @ApiModelProperty(name="storageType",value = "库位类型（1-存货 2-收货 3-发货）")
+    @Transient
+    private Byte storageType;
+
+    /**
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
