@@ -43,7 +43,9 @@
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto">
-
+        <collection property="mesPmWorkOrderBomDtos" ofType="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto"
+                    column="{workOrderId=work_order_id}" select="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderBomMapper.findList">
+        </collection>
     </resultMap>
 
     <resultMap id="BomResultMap" type="com.fantechs.common.base.general.entity.basic.BaseProductBomDet">

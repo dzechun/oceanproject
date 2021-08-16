@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
@@ -209,4 +210,7 @@ public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
     @Transient
     @ApiModelProperty(name = "processLink",value = "工序链")
     private String processLink;
+
+    @Transient
+    List<MesPmWorkOrderBomDto> mesPmWorkOrderBomDtos;
 }
