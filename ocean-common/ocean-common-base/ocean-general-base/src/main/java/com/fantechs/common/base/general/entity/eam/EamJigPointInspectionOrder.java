@@ -20,31 +20,31 @@ import java.util.List;
 ;
 
 /**
- * 治具保养单
- * eam_jig_maintain_order
+ * 治具点检单
+ * eam_jig_point_inspection_order
  * @author admin
- * @date 2021-08-13 09:16:44
+ * @date 2021-08-16 11:36:35
  */
 @Data
-@Table(name = "eam_jig_maintain_order")
-public class EamJigMaintainOrder extends ValidGroup implements Serializable {
+@Table(name = "eam_jig_point_inspection_order")
+public class EamJigPointInspectionOrder extends ValidGroup implements Serializable {
     /**
-     * 治具保养单ID
+     * 治具点检单ID
      */
-    @ApiModelProperty(name="jigMaintainOrderId",value = "治具保养单ID")
+    @ApiModelProperty(name="jigPointInspectionOrderId",value = "治具点检单ID")
     @Id
-    @Column(name = "jig_maintain_order_id")
-    @NotNull(groups = update.class,message = "治具保养单ID不能为空")
-    private Long jigMaintainOrderId;
+    @Column(name = "jig_point_inspection_order_id")
+    @NotNull(groups = update.class,message = "治具点检单ID不能为空")
+    private Long jigPointInspectionOrderId;
 
     /**
-     * 治具保养单号
+     * 治具点检单号
      */
-    @ApiModelProperty(name="jigMaintainOrderCode",value = "治具保养单号")
-    @Excel(name = "治具保养单号", height = 20, width = 30,orderNum="1")
-    @Column(name = "jig_maintain_order_code")
-    @NotBlank(message = "治具保养单号不能为空")
-    private String jigMaintainOrderCode;
+    @ApiModelProperty(name="jigPointInspectionOrderCode",value = "治具点检单号")
+    @Excel(name = "治具点检单号", height = 20, width = 30,orderNum="1")
+    @Column(name = "jig_point_inspection_order_code")
+    @NotBlank(message = "治具点检单号不能为空")
+    private String jigPointInspectionOrderCode;
 
     /**
      * 治具ID
@@ -62,17 +62,17 @@ public class EamJigMaintainOrder extends ValidGroup implements Serializable {
     private Long jigBarcodeId;
 
     /**
-     * 治具保养项目ID
+     * 治具点检项目ID
      */
-    @ApiModelProperty(name="jigMaintainProjectId",value = "治具保养项目ID")
-    @Column(name = "jig_maintain_project_id")
-    private Long jigMaintainProjectId;
+    @ApiModelProperty(name="jigPointInspectionProjectId",value = "治具点检项目ID")
+    @Column(name = "jig_point_inspection_project_id")
+    private Long jigPointInspectionProjectId;
 
     /**
-     * 单据状态(1-待保养 2-已保养)
+     * 单据状态(1-待点检 2-已点检)
      */
-    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待保养 2-已保养)")
-    @Excel(name = "单据状态(1-待保养 2-已保养)", height = 20, width = 30,orderNum="8")
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待点检 2-已点检)")
+    @Excel(name = "单据状态(1-待点检 2-已点检)", height = 20, width = 30,orderNum="8")
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -128,10 +128,10 @@ public class EamJigMaintainOrder extends ValidGroup implements Serializable {
     private Date modifiedTime;
 
     /**
-     * 保养单明细
+     * 治具点检单事项列表
      */
-    @ApiModelProperty(name="list",value = "保养单明细")
-    private List<EamJigMaintainOrderDet> list = new ArrayList<>();
+    @ApiModelProperty(name="list",value = "治具点检单事项列表")
+    private List<EamJigPointInspectionOrderDet> list = new ArrayList<>();
 
     private String option1;
 

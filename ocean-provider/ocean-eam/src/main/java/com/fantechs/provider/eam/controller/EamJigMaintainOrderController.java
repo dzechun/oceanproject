@@ -42,9 +42,9 @@ public class EamJigMaintainOrderController {
 
     @ApiOperation("新建保养单")
     @PostMapping("/pdaCreateOrder")
-    public ResponseEntity<EamJigMaintainOrder> pdaCreateOrder(@ApiParam(value = "治具条码",required = true)@RequestParam  @NotBlank(message="治具条码不能为空") String jigBarcode) {
-        EamJigMaintainOrder  eamJigMaintainOrder = eamJigMaintainOrderService.pdaCreateOrder(jigBarcode);
-        return  ControllerUtil.returnDataSuccess(eamJigMaintainOrder,StringUtils.isEmpty(eamJigMaintainOrder)?0:1);
+    public ResponseEntity<EamJigMaintainOrderDto> pdaCreateOrder(@ApiParam(value = "治具条码",required = true)@RequestParam  @NotBlank(message="治具条码不能为空") String jigBarcode) {
+        EamJigMaintainOrderDto  eamJigMaintainOrderDto = eamJigMaintainOrderService.pdaCreateOrder(jigBarcode);
+        return  ControllerUtil.returnDataSuccess(eamJigMaintainOrderDto,StringUtils.isEmpty(eamJigMaintainOrderDto)?0:1);
     }
 
     @ApiOperation(value = "新增",notes = "新增")
