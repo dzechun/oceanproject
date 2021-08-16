@@ -146,7 +146,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         lableItem.setSpecCode("BaseLabel");
         ResponseEntity<List<SysSpecItem>> lableList = securityFeignApi.findSpecItemList(lableItem);
         if(StringUtils.isEmpty(lableList.getData())) throw new BizErrorException("未设置默认标签");
-        LabelRuteDto labelRuteDto = wmsInnerMaterialBarcodeMapper.findRule(lableList.getData().get(0).getParaValue(),materialId,sysUser.getOrganizationId());
+        LabelRuteDto labelRuteDto = wmsInnerMaterialBarcodeMapper.findRule(lableList.getData().get(0).getParaValue(),materialId);
         if(StringUtils.isEmpty(labelRuteDto)) throw new BizErrorException("标签卡为空");
 
         if(barcodeRuleSetId != 0) {
