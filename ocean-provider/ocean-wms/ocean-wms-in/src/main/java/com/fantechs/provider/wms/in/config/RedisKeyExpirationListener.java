@@ -30,7 +30,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
     public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer) {
         super(listenerContainer);
     }
-    private final static String  MAYIKT_REDIS_KEY="test";
+    private final static String  MAYIKT_REDIS_KEY="pallet_id";
     @Override
     public void onMessage(Message message, byte[] pattern) {
         // 用户做自己的业务处理即可,注意message.toString()可以获取失效的key
