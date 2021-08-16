@@ -10,7 +10,7 @@ import java.text.ParseException;
 import java.util.List;
 
 @WebService(name = "Chk_LogUserInfoService", // 暴露服务名称
-        targetNamespace = "http://imes.materialapi.provider.fantechs.com"// 命名空间,一般是接口的包名倒序
+        targetNamespace = "http://Chk_LogUserInfo.imes.materialapi.provider.fantechs.com"// 命名空间,一般是接口的包名倒序
 )
 public interface Chk_LogUserInfoService {
 
