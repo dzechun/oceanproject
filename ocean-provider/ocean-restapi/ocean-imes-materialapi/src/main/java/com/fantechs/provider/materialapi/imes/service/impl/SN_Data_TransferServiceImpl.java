@@ -34,7 +34,7 @@ import java.util.List;
  * @create 2021/08/11
  */
 @WebService(serviceName = "SN_Data_TransferService", // 与接口中指定的name一致
-        targetNamespace = "http://workOrder.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
+        targetNamespace = "http://SN_Data_Transfer.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
         endpointInterface = "com.fantechs.provider.materialapi.imes.service.SN_Data_TransferService"// 接口地址
 )
 public class SN_Data_TransferServiceImpl implements SN_Data_TransferService {

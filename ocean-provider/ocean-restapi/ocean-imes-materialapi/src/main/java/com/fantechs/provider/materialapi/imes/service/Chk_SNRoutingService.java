@@ -9,7 +9,7 @@ import javax.jws.WebService;
 import java.text.ParseException;
 
 @WebService(name = "Chk_SNRoutingService", // 暴露服务名称
-        targetNamespace = "http://imes.materialapi.provider.fantechs.com"// 命名空间,一般是接口的包名倒序
+        targetNamespace = "http://Chk_SNRouting.imes.materialapi.provider.fantechs.com"// 命名空间,一般是接口的包名倒序
 )
 public interface Chk_SNRoutingService {
 

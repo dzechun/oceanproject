@@ -94,6 +94,7 @@ public class DeviceInterFaceUtils {
         SearchBaseProcess searchBaseProcess = new SearchBaseProcess();
         searchBaseProcess.setProcessCode(ProcessCode);
         searchBaseProcess.setOrgId(orgId);
+        searchBaseProcess.setCodeQueryMark(1);//编码查询标记(设为1做等值查询)
         baseProcessList = baseFeignApi.findProcessList(searchBaseProcess);
         return baseProcessList;
     }

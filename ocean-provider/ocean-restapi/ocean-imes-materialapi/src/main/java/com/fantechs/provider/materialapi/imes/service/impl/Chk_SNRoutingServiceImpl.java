@@ -34,7 +34,7 @@ import java.util.Optional;
  * @create 2021/08/10
  */
 @WebService(serviceName = "Chk_SNRoutingService", // 与接口中指定的name一致
-        targetNamespace = "http://workOrder.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
+        targetNamespace = "http://Chk_SNRouting.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
         endpointInterface = "com.fantechs.provider.materialapi.imes.service.Chk_SNRoutingService"// 接口地址
 )
 public class Chk_SNRoutingServiceImpl implements Chk_SNRoutingService {
@@ -58,7 +58,7 @@ public class Chk_SNRoutingServiceImpl implements Chk_SNRoutingService {
         String pass="Pass";
 
         if(StringUtils.isEmpty(restapiChkSNRoutingApiDto)){
-            return "Fail 登录信息为空";
+            return "Fail 条码流程检查信息为空";
         }
 
         String check = deviceInterFaceUtils.checkParameter(restapiChkSNRoutingApiDto.getProCode(),restapiChkSNRoutingApiDto.getProcessCode(),
@@ -70,7 +70,7 @@ public class Chk_SNRoutingServiceImpl implements Chk_SNRoutingService {
             return check;
         }
         logsUtils.addlog((byte)1,(byte)2,(long)1002,null,null);
-        return pass+" 登录信息验证通过";
+        return pass+" 条码流程检查信息验证通过";
     }
 
 
