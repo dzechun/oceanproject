@@ -124,10 +124,4 @@ public class WmsInAsnOrderController {
     public ResponseEntity palletAutoAsnOrder(@RequestBody PalletAutoAsnDto palletAutoAsnDto){
         return ControllerUtil.returnCRUD(wmsInAsnOrderService.palletAutoAsnOrder(palletAutoAsnDto));
     }
-
-    @PostMapping("/test")
-    public ResponseEntity test(){
-        redisUtil.set("test","001",5);
-        return ControllerUtil.returnSuccess();
-    }
 }

@@ -743,6 +743,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                         .endReceivingDate(new Date())
                         .productPalletId(palletAutoAsnDto.getProductPalletId())
                         .orgId(sysUser.getOrganizationId())
+                        .remark(DateUtils.getDateString(new Date(),"yyyy-MM-dd"))
                         .build();
                 int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(wmsInAsnOrder);
                 if(num<1){
