@@ -36,4 +36,6 @@ public interface WmsInnerJobOrderMapper extends MyMapper<WmsInnerJobOrder> {
     Long findStorageId(Map<String,Object> map);
 
     String findMaterialCode(@Param("materialId") Long materialId);
+
+    List<String> workBarCodeList(@Param("productPalletId")Long productPalletId);
 }
