@@ -93,6 +93,7 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
     public EamWorkInstructionDto findByEquipmentIp(SearchEamWorkInstruction searchEamWorkInstruction) {
         if(StringUtils.isEmpty(searchEamWorkInstruction.getEquipmentIp()))
             throw new BizErrorException("设备ip不能为空");
+        SysUser sysUser = currentUser();
 
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();
@@ -122,7 +123,9 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         }
         searchEamWorkInstruction.setProcessId(eamEquipments.get(0).getProcessId());
         searchEamWorkInstruction.setOrgId(eamEquipments.get(0).getOrgId());
-        return eamWorkInstructionMapper.findList(searchEamWorkInstruction).get(0);
+        EamWorkInstructionDto eamWorkInstructionDto = eamWorkInstructionMapper.findList(searchEamWorkInstruction).get(0);
+        eamWorkInstructionDto.setUserName(sysUser.getUserName());
+        return eamWorkInstructionDto;
     }
 
     @Override

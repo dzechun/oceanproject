@@ -19,5 +19,6 @@ public interface WmsInnerMaterialBarcodeMapper extends MyMapper<WmsInnerMaterial
 
     PrintModel findPrintModel(@Param("id")Long id);
 
-    LabelRuteDto findRule(@Param("code")String code, @Param("materialId")Long materialId);
+    LabelRuteDto findRule(@Param("code")String code, @Param("materialId")Long materialId , @Param("orgId")Long orgId);
+
 }
