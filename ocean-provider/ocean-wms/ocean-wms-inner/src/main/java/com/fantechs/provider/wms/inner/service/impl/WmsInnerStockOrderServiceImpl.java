@@ -15,6 +15,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerStockOrderService;
+import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -566,6 +567,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 //盘点数大于库存数 原有数量新增
+        Byte addOrSubtract = null;
         if(StringUtils.isEmpty(wmsInnerInventory)){
             wmsInnerInventory = new WmsInnerInventory();
             wmsInnerInventory.setWarehouseId(wmsInnerStockOrder.getWarehouseId());
@@ -588,6 +590,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         }else if(!StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) && wmsInnerStockOrderDet.getStockQty().compareTo(wmsInnerInventory.getPackingQty())==1){
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(wmsInnerStockOrderDet.getVarianceQty()));
                 num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+            addOrSubtract = 1;
         }else{
             if(wmsInnerInventory.getPackingQty().compareTo(wmsInnerStockOrderDet.getVarianceQty())==-1){
                 throw new BizErrorException("库存波动，请重新盘点");
@@ -595,6 +598,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //盘点数小于库存
             wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerStockOrderDet.getVarianceQty()));
             num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+            addOrSubtract = 2;
         }
 
             //PDA扫码盘点
@@ -613,12 +617,16 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     //盘盈
                     wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().add(wmsInnerStockOrderDet.getVarianceQty()));
                     num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+                    addOrSubtract = 1;
                 }else {
                     //盘亏
                     wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().subtract(wmsInnerStockOrderDet.getVarianceQty()));
                     num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+                    addOrSubtract = 2;
                 }
             }
+        //添加库存日志
+        InventoryLogUtil.addLog(wmsInnerStockOrder,wmsInnerInventory,addOrSubtract);
             return num;
     }
     /**

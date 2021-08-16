@@ -29,7 +29,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="sample_process_code" jdbcType="VARCHAR" property="sampleProcessCode"/>
-    <result column="sample_process_type" jdbcType="VARCHAR" property="sampleProcessType"/>
+    <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType"/>
     <result column="inspection_item_desc_small" jdbcType="VARCHAR" property="inspectionItemDescSmall"/>
     <result column="inspection_item_standard" jdbcType="VARCHAR" property="inspectionItemStandard"/>
     <result column="inspection_item_desc_big" jdbcType="VARCHAR" property="inspectionItemDescBig"/>

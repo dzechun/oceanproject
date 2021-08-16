@@ -220,7 +220,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         wmsInnerInventoryDet.setDeliveryOrderCode(jobOrderCode);
         wmsInnerInventoryDet.setDeliverDate(new Date());
         wmsInnerInventoryDet.setJobStatus((byte)3);
-        wmsInnerInventoryDet.setStatus((byte)4);
+        wmsInnerInventoryDet.setBarcodeStatus((byte)4);
         return wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
     }
 

@@ -48,6 +48,7 @@
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName" />
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
+    <result column="storage_type" jdbcType="TINYINT" property="storageType" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
@@ -97,7 +98,7 @@ wii.storage_id,
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"/>,bmo.material_owner_name,bw.warehouse_name,bs.storage_code,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    select <include refid="Base_Column_List"/>,bmo.material_owner_name,bw.warehouse_name,bs.storage_code,bs.storage_type,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
     ,bis.inventory_status_name,wii.packing_qty * wii.package_specification_quantity
     from wms_inner_inventory wii
     LEFT JOIN base_material_owner bmo ON wii.material_owner_id = bmo.material_owner_id
@@ -111,6 +112,12 @@ wii.storage_id,
     LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wii.inventory_status_id
     <where>
       and wii.packing_qty > 0
+      <if test="storageType!=null and storageType != ''">
+        and bs.storage_type = #{storageType}
+      </if>
+      <if test="qcLock!=null and qcLock != ''">
+        and wii.qc_lock = #{qcLock}
+      </if>
       <if test="lockStatus!=null and lockStatus != ''">
         and wii.lock_status = #{lockStatus}
       </if>

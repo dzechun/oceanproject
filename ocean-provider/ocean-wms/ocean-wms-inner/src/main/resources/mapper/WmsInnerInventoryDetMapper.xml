@@ -19,6 +19,7 @@
         <result column="asn_code" jdbcType="VARCHAR" property="asnCode"/>
         <result column="deliver_date" jdbcType="TIMESTAMP" property="deliverDate"/>
         <result column="delivery_order_code" jdbcType="VARCHAR" property="deliveryOrderCode"/>
+        <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId"/>
@@ -54,6 +55,7 @@ wiid.if_stock_lock,
 wiid.asn_code,
 wiid.deliver_date,
 wiid.delivery_order_code,
+wiid.barcode_status,
         wiid.status,
         wiid.remark,
         wiid.org_id,

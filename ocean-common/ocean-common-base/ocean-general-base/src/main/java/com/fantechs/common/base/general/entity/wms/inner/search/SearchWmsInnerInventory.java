@@ -164,5 +164,17 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     @ApiModelProperty(name="jobStatus",value = "作业状态(1正常 2待出)")
     private Byte jobStatus;
 
+    /**
+     * 质检锁(0-否 1-是)
+     */
+    @ApiModelProperty(name="qcLock",value = "质检锁(0-否 1-是)")
+    private Byte qcLock;
+
+    /**
+     * 库位类型（1-存货 2-收货 3-发货）
+     */
+    @ApiModelProperty(name="storageType",value = "库位类型（1-存货 2-收货 3-发货）")
+    private Byte storageType;
+
     private static final long serialVersionUID = 1L;
 }

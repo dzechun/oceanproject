@@ -22,6 +22,23 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="jig_code" jdbcType="VARCHAR" property="jigCode"/>
+    <result column="jig_name" jdbcType="VARCHAR" property="jigName"/>
+    <result column="jig_desc" jdbcType="VARCHAR" property="jigDesc"/>
+    <result column="jig_model" jdbcType="VARCHAR" property="jigModel"/>
+    <result column="jig_barcode" jdbcType="VARCHAR" property="jigBarcode"/>
+    <result column="jig_category_name" jdbcType="VARCHAR" property="jigCategoryName"/>
+    <result column="requisition_status" jdbcType="TINYINT" property="requisitionStatus"/>
+    <result column="requisition_time" jdbcType="TIMESTAMP" property="requisitionTime"/>
+    <result column="return_time" jdbcType="TIMESTAMP" property="returnTime"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+    <result column="this_time_usage_time" jdbcType="VARCHAR" property="thisTimeUsageTime"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -46,9 +63,9 @@
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
     ej.jig_code,ej.jig_name,ej.jig_desc,ej.jig_model,ejc.jig_category_name,
-    ejb.jig_barcode,ejb.current_usage_time,wo.work_order_code,bm.material_code,bm.material_desc,bpl.pro_name,
+    ejb.jig_barcode,wo.work_order_code,isnull(ejret.jig_return_id) as requisition_status,
     ehjr.create_time as requisition_time,ejret.create_time as return_time,ejret.this_time_usage_time,
-    CONCAT_WS(';',bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code) AS warehouse_storage,
+    bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -61,8 +78,6 @@
     left join fantech_imes_v2.eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
     left join fantech_imes_v2.eam_jig_barcode ejb on ehjr.jig_barcode_id=ejb.jig_barcode_id
     left join fantech_imes_v2.mes_pm_work_order wo on ehjr.work_order_id=wo.work_order_id
-    left join fantech_imes_v2.base_material bm on wo.material_id=bm.material_id
-    left join fantech_imes_v2.base_pro_line bpl on wo.pro_line_id=bpl.pro_line_id
     left join ocean_v2.sys_user u on ehjr.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ehjr.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ehjr.org_id = bo.organization_id

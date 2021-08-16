@@ -465,7 +465,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setWorkOrderCode(wmsInAsnOrderDetDto.getWorkOrderCode());
             wmsInnerInventory.setInventoryStatusId(wmsInAsnOrderDetDto.getInventoryStatusId());
             wmsInnerInventory.setMaterialOwnerId(wmsInAsnOrderDto.getMaterialOwnerId());
-            wmsInnerInventory.setReceivingDate(wmsInAsnOrderDto.getEndReceivingDate());
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
             wmsInnerInventory.setPackingQty(qty);
             wmsInnerInventory.setPalletCode(wmsInAsnOrderDetDto.getPalletCode());
@@ -474,6 +473,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setWarehouseId(wmsInAsnOrderDetDto.getWarehouseId());
             wmsInnerInventory.setStorageId(wmsInAsnOrderDetDto.getStorageId());
             wmsInnerInventory.setBatchCode(wmsInAsnOrderDetDto.getBatchCode());
+            wmsInnerInventory.setReceivingDate(new Date());
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
             wmsInnerInventory.setJobStatus((byte)1);
             wmsInnerInventory.setCreateTime(new Date());

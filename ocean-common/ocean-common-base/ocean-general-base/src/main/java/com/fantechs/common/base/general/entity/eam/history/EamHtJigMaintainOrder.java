@@ -17,46 +17,38 @@ import java.util.Date;
 ;
 
 /**
- * 治具领用履历表
- * eam_ht_jig_requisition
+ * 治具保养单履历表
+ * eam_ht_jig_maintain_order
  * @author admin
- * @date 2021-07-30 09:22:00
+ * @date 2021-08-13 09:16:45
  */
 @Data
-@Table(name = "eam_ht_jig_requisition")
-public class EamHtJigRequisition extends ValidGroup implements Serializable {
+@Table(name = "eam_ht_jig_maintain_order")
+public class EamHtJigMaintainOrder extends ValidGroup implements Serializable {
     /**
-     * 治具领用履历表ID
+     * 治具保养单履历ID
      */
-    @ApiModelProperty(name="htJigRequisitionId",value = "治具领用履历表ID")
-    @Excel(name = "治具领用履历表ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="htJigMaintainOrderId",value = "治具保养单履历ID")
+    @Excel(name = "治具保养单履历ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "ht_jig_requisition_id")
-    private Long htJigRequisitionId;
+    @Column(name = "ht_jig_maintain_order_id")
+    private Long htJigMaintainOrderId;
 
     /**
-     * 治具领用ID
+     * 治具保养单ID
      */
-    @ApiModelProperty(name="jigRequisitionId",value = "治具领用ID")
-    @Excel(name = "治具领用ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "jig_requisition_id")
-    private Long jigRequisitionId;
+    @ApiModelProperty(name="jigMaintainOrderId",value = "治具保养单ID")
+    @Excel(name = "治具保养单ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "jig_maintain_order_id")
+    private Long jigMaintainOrderId;
 
     /**
-     * 工单ID
+     * 治具保养单号
      */
-    @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_id")
-    private Long workOrderId;
-
-    /**
-     * 设备ID
-     */
-    @ApiModelProperty(name="equipmentId",value = "设备ID")
-    @Excel(name = "设备ID", height = 20, width = 30,orderNum="")
-    @Column(name = "equipment_id")
-    private Long equipmentId;
+    @ApiModelProperty(name="jigMaintainOrderCode",value = "治具保养单号")
+    @Excel(name = "治具保养单号", height = 20, width = 30,orderNum="") 
+    @Column(name = "jig_maintain_order_code")
+    private String jigMaintainOrderCode;
 
     /**
      * 治具ID
@@ -75,12 +67,20 @@ public class EamHtJigRequisition extends ValidGroup implements Serializable {
     private Long jigBarcodeId;
 
     /**
-     * 本次使用次数
+     * 治具保养项目ID
      */
-    @ApiModelProperty(name="thisTimeUsageTime",value = "本次使用次数")
-    @Excel(name = "本次使用次数", height = 20, width = 30,orderNum="") 
-    @Column(name = "this_time_usage_time")
-    private Integer thisTimeUsageTime;
+    @ApiModelProperty(name="jigMaintainProjectId",value = "治具保养项目ID")
+    @Excel(name = "治具保养项目ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "jig_maintain_project_id")
+    private Long jigMaintainProjectId;
+
+    /**
+     * 单据状态(1-待保养 2-已保养)
+     */
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待保养 2-已保养)")
+    @Excel(name = "单据状态(1-待保养 2-已保养)", height = 20, width = 30,orderNum="") 
+    @Column(name = "order_status")
+    private Byte orderStatus;
 
     /**
      * 状态(0无效，1有效)
@@ -143,7 +143,7 @@ public class EamHtJigRequisition extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="15")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="4")
     private String createUserName;
 
     /**
@@ -151,7 +151,7 @@ public class EamHtJigRequisition extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="17")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="6")
     private String modifiedUserName;
 
     /**
@@ -162,11 +162,19 @@ public class EamHtJigRequisition extends ValidGroup implements Serializable {
     private String organizationName;
 
     /**
+     * 治具条码
+     */
+    @Transient
+    @ApiModelProperty(name = "jigBarcode",value = "治具条码")
+    @Excel(name = "治具条码", height = 20, width = 30,orderNum="4")
+    private String jigBarcode;
+
+    /**
      * 治具编码
      */
     @Transient
     @ApiModelProperty(name = "jigCode",value = "治具编码")
-    @Excel(name = "治具编码", height = 20, width = 30,orderNum="2")
+    @Excel(name = "治具编码", height = 20, width = 30,orderNum="4")
     private String jigCode;
 
     /**
@@ -178,86 +186,28 @@ public class EamHtJigRequisition extends ValidGroup implements Serializable {
     private String jigName;
 
     /**
-     * 治具描述
-     */
-    @Transient
-    @ApiModelProperty(name = "jigDesc",value = "治具描述")
-    @Excel(name = "治具描述", height = 20, width = 30,orderNum="5")
-    private String jigDesc;
-
-    /**
-     * 治具型号
-     */
-    @Transient
-    @ApiModelProperty(name = "jigModel",value = "治具型号")
-    @Excel(name = "治具型号", height = 20, width = 30,orderNum="6")
-    private String jigModel;
-
-    /**
      * 治具类别
      */
     @Transient
     @ApiModelProperty(name = "jigCategoryName",value = "治具类别")
-    @Excel(name = "治具类别", height = 20, width = 30,orderNum="7")
+    @Excel(name = "治具类别", height = 20, width = 30,orderNum="4")
     private String jigCategoryName;
 
     /**
-     * 治具条码
+     * 治具保养项目编码
      */
     @Transient
-    @ApiModelProperty(name = "jigBarcode",value = "治具条码")
-    @Excel(name = "治具条码", height = 20, width = 30,orderNum="1")
-    private String jigBarcode;
+    @ApiModelProperty(name = "jigMaintainProjectCode",value = "治具保养项目编码")
+    @Excel(name = "治具保养项目编码", height = 20, width = 30,orderNum="4")
+    private String jigMaintainProjectCode;
 
     /**
-     * 仓库
+     * 治具保养项目名称
      */
     @Transient
-    @ApiModelProperty(name = "warehouseName",value = "仓库")
-    @Excel(name = "仓库", height = 20, width = 30,orderNum="8")
-    private String warehouseName;
-
-    /**
-     * 库区
-     */
-    @Transient
-    @ApiModelProperty(name = "warehouseAreaName",value = "库区")
-    @Excel(name = "库区", height = 20, width = 30,orderNum="9")
-    private String warehouseAreaName;
-
-    /**
-     * 库位
-     */
-    @Transient
-    @ApiModelProperty(name = "storageCode",value = "库位")
-    @Excel(name = "库位", height = 20, width = 30,orderNum="10")
-    private String storageCode;
-
-    /**
-     * 领用状态（0-已归还 1-已领用）
-     */
-    @Transient
-    @ApiModelProperty(name = "requisitionStatus",value = "领用状态（0-已归还 1-已领用）")
-    @Excel(name = "领用状态（0-已归还 1-已领用）", height = 20, width = 30,orderNum="11")
-    private Byte requisitionStatus;
-
-    /**
-     * 领用时间
-     */
-    @Transient
-    @ApiModelProperty(name = "requisitionTime",value = "领用时间")
-    @Excel(name = "领用时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    private Date requisitionTime;
-
-    /**
-     * 归还时间
-     */
-    @Transient
-    @ApiModelProperty(name = "returnTime",value = "归还时间")
-    @Excel(name = "归还时间", height = 20, width = 30,orderNum="13",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    private Date returnTime;
+    @ApiModelProperty(name = "jigMaintainProjectName",value = "治具保养项目名称")
+    @Excel(name = "治具保养项目名称", height = 20, width = 30,orderNum="4")
+    private String jigMaintainProjectName;
 
     private String option1;
 

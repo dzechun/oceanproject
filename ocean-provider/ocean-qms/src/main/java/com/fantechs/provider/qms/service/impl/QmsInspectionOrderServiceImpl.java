@@ -381,9 +381,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                             SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
                             searchWmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
                             searchWmsInnerInventory.setMaterialId(wmsInAsnOrderDet.getMaterialId());
+                            searchWmsInnerInventory.setQcLock((byte)0);
                             ResponseEntity<List<WmsInnerInventoryDto>> list = innerFeignApi.findList(searchWmsInnerInventory);
                             if (StringUtils.isEmpty(list.getData()))
-                                throw new BizErrorException("未查询到对应库存，asnCode为：" + wmsInAsnOrderDto.getAsnCode() + ",物料id为：" + wmsInAsnOrderDet.getMaterialId());
+                                throw new BizErrorException("未查询到质检锁为否的对应库存，asnCode为：" + wmsInAsnOrderDto.getAsnCode() + ",物料id为：" + wmsInAsnOrderDet.getMaterialId());
                             WmsInnerInventoryDto wmsInnerInventory = list.getData().get(0);
                             wmsInnerInventory.setQcLock((byte) 1);
                             wmsInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());

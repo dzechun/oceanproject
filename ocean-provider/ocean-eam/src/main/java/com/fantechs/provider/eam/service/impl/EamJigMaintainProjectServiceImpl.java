@@ -176,8 +176,8 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
         Example example = new Example(EamJigMaintainProject.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
-        criteria.andEqualTo("orgId", user.getOrganizationId());
-        criteria.andEqualTo("jigMaintainProjectCode",eamJigMaintainProject.getJigMaintainProjectCode());
+        criteria.andEqualTo("jigMaintainProjectCode",eamJigMaintainProject.getJigMaintainProjectCode())
+                .orEqualTo("jigCategoryId",eamJigMaintainProject.getJigCategoryId());
         if (StringUtils.isNotEmpty(eamJigMaintainProject.getJigMaintainProjectId())){
             criteria.andNotEqualTo("jigMaintainProjectId",eamJigMaintainProject.getJigMaintainProjectId());
         }

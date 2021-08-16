@@ -890,7 +890,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
         wmsInnerInventoryDet.setReceivingDate(new Date());
         wmsInnerInventoryDet.setJobStatus((byte)2);
-        wmsInnerInventoryDet.setStatus((byte)3);
+        wmsInnerInventoryDet.setBarcodeStatus((byte)3);
         return wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
     }
 
