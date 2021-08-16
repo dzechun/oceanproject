@@ -126,6 +126,7 @@
     left join base_pro_line bpl on ee.pro_line_id=bpl.pro_line_id
     left join base_workshop_section bse on ee.section_id=bse.section_id
     left join base_factory bf on ee.factory_id=bf.factory_id
+    left join base_work_shop bws on ee.work_shop_id=bws.work_shop_id
     left join base_process bp on ee.process_id=bp.process_id
     left join eam_maintain_project emp on ee.maintain_project_id=emp.maintain_project_id
     left join eam_equipment_data_group_re_dc eedgrd on ee.equipment_id=eedgrd.equipment_id
