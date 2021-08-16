@@ -138,7 +138,12 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         map.clear();
         map.put("materialId", materialId);
         map.put("storageId", dto.getStorageId());
-        map.put("jobStatus", (byte) 1);
+        if(dto.getJobOrderDetId() == null){
+            map.put("jobStatus", (byte) 1);
+        }else {
+            map.put("jobStatus", (byte) 2);
+            map.put("jobOrderDetId", dto.getJobOrderDetId());
+        }
         map.put("lockStatus", (byte) 0);
         map.put("stockLock", (byte) 0);
         map.put("qcLock", (byte) 0);
@@ -178,14 +183,14 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         searchBaseWorker.setWarehouseId(dto.getWarehouseId());
         searchBaseWorker.setUserId(sysUser.getUserId());
         // 判断是否有作业单
-        if (!dto.getIsPda()) {
+        if (dto.getJobOrderDetId() != null) {
             // 移位作业明细单 变更移位状态
             WmsInnerJobOrderDet jobOrderDet = wmsInnerJobOrderDetService.selectByKey(dto.getJobOrderDetId());
             jobOrderDet.setOrderStatus((byte) 4);
             jobOrderDet.setActualQty(jobOrderDet.getActualQty() != null ? jobOrderDet.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
-            Byte status = 4;
+            Byte status = 2;
             if (jobOrderDet.getActualQty().compareTo(jobOrderDet.getDistributionQty()) == 0) {
-                status = (byte) 5;
+                status = (byte) 3;
             }
             jobOrderDet.setShiftStorageStatus(status);
             wmsInnerJobOrderDetService.update(jobOrderDet);
