@@ -212,8 +212,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 wmsInnerInventoryDet.setProductionBatchCode(wmsInAsnOrderDetDto.getBatchCode());
                 wmsInnerInventoryDet.setAsnCode(wmsInAsnOrderDto.getAsnCode());
                 wmsInnerInventoryDet.setReceivingDate(new Date());
-                wmsInnerInventoryDet.setJobStatus((byte)1);
-                wmsInnerInventoryDet.setStatus((byte)2);
+                wmsInnerInventoryDet.setBarcodeStatus((byte)2);
                 wmsInnerInventoryDets.add(wmsInnerInventoryDet);
                 ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
                 if(responseEntity.getCode()!=0){
@@ -225,8 +224,7 @@ public class WmsInAsnOrderDetServiceImpl extends BaseService<WmsInAsnOrderDet> i
                 inventoryDet.setMaterialQty(BigDecimal.ONE);
                 inventoryDet.setAsnCode(wmsInAsnOrderDto.getAsnCode());
                 inventoryDet.setReceivingDate(new Date());
-                inventoryDet.setJobStatus((byte)1);
-                inventoryDet.setStatus((byte)2);
+                inventoryDet.setBarcodeStatus((byte)2);
                 ResponseEntity responseEntity = innerFeignApi.update(inventoryDet);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException("修改库存明细失败");

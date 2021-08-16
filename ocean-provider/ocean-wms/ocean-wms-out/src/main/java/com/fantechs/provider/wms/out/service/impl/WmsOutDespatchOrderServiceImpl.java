@@ -137,8 +137,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     wmsInnerInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
                     wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDetDto.getOutStorageId());
                     wmsInnerInventoryDet.setMaterialQty(wmsInnerJobOrderDetDto.getActualQty());
-                    wmsInnerInventoryDet.setJobStatus((byte)4);
-                    wmsInnerInventoryDet.setStatus((byte)6);
+                    wmsInnerInventoryDet.setBarcodeStatus((byte)6);
                     rs = innerFeignApi.subtract(wmsInnerInventoryDet);
                     if(responseEntity.getCode()!=0){
                         throw new BizErrorException("发运失败");
