@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.entity.qms.*;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
@@ -83,19 +84,7 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
                 throw new BizErrorException("该条码对应的工单号与检验单的工单号不一致");
             }
         }else if(StringUtils.isNotEmpty(qmsIpqcInspectionOrder.getMaterialId())) {
-            if (StringUtils.isEmpty(workOrderBarcode)) {
-                throw new BizErrorException("无该条码对应工单");
-            }
-            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-            searchMesPmWorkOrder.setWorkOrderId(workOrderBarcode.getWorkOrderId());
-            List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
-            if (StringUtils.isEmpty(workOrderList)) {
-                throw new BizErrorException("无该条码对应工单");
-            }
-            MesPmWorkOrderDto mesPmWorkOrderDto = workOrderList.get(0);
-            if (!qmsIpqcInspectionOrder.getMaterialId().equals(mesPmWorkOrderDto.getMaterialId())) {
-                throw new BizErrorException("该条码对应的产品料号与检验单的产品料号不一致");
-            }
+            bool = true;
         }
 
         return bool;
@@ -165,7 +154,8 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
         if(StringUtils.isNotEmpty(record.getBarcode())) {
             Example example = new Example(QmsIpqcInspectionOrderDetSample.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("barcode", record.getBarcode());
+            criteria.andEqualTo("barcode", record.getBarcode())
+                    .andEqualTo("ipqcInspectionOrderDetId",record.getIpqcInspectionOrderDetId());
             List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSamples = qmsIpqcInspectionOrderDetSampleMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(qmsIpqcInspectionOrderDetSamples)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -193,6 +183,7 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
         Example example = new Example(QmsIpqcInspectionOrderDetSample.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("barcode", entity.getBarcode())
+                .andEqualTo("ipqcInspectionOrderDetId",entity.getIpqcInspectionOrderDetId())
                 .andNotEqualTo("inspectionOrderDetSampleId",entity.getInspectionOrderDetSampleId());
         List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSamples = qmsIpqcInspectionOrderDetSampleMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDetSamples)){
