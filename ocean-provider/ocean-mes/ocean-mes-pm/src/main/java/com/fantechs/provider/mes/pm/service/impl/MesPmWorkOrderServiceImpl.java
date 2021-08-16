@@ -66,6 +66,9 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         mesPmWorkOrderDto.setWorkOrderStatus((byte) 1);
         mesPmWorkOrderDto.setCreateUserId(currentUser.getUserId());
         mesPmWorkOrderDto.setCreateTime(new Date());
+        mesPmWorkOrderDto.setModifiedUserId(currentUser.getUserId());
+        mesPmWorkOrderDto.setModifiedTime(new Date());
+        mesPmWorkOrderDto.setOrgId(currentUser.getOrganizationId());
         int i = mesPmWorkOrderMapper.insertUseGeneratedKeys(mesPmWorkOrderDto);
 
         //工单履历表
@@ -106,12 +109,9 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
             }
 
-
             mesPmWorkOrderDto.setModifiedUserId(currentUser.getUserId());
             mesPmWorkOrderDto.setModifiedTime(new Date());
-            mesPmWorkOrderDto.setCreateTime(null);
             i = mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrderDto);
-
 
             //新增工单历史信息
             MesPmHtWorkOrder mesPmHtWorkOrder = new MesPmHtWorkOrder();
@@ -160,16 +160,16 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             mesPmHtWorkOrder.setModifiedTime(new Date());
             list.add(mesPmHtWorkOrder);
         }
-        smtHtWorkOrderMapper.insertList(list);
-
+        if(StringUtils.isNotEmpty(list)) smtHtWorkOrderMapper.insertList(list);
         return mesPmWorkOrderMapper.deleteByIds(ids);
     }
 
 
     @Override
     public List<MesPmWorkOrderDto> findList(SearchMesPmWorkOrder searchMesPmWorkOrder) {
-        List<MesPmWorkOrderDto> list = mesPmWorkOrderMapper.findList(searchMesPmWorkOrder);
-        return list;
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        searchMesPmWorkOrder.setOrgId(user.getOrganizationId());
+        return mesPmWorkOrderMapper.findList(searchMesPmWorkOrder);
     }
 
     @Override
@@ -245,7 +245,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 boms.add(mesPmWorkOrderBomDto);
             }
         }
-        mesPmWorkOrderBomMapper.insertList(boms);
+        if(StringUtils.isNotEmpty(boms))  mesPmWorkOrderBomMapper.insertList(boms);
     }
 
 }
