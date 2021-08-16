@@ -69,6 +69,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         mesPmWorkOrderDto.setModifiedUserId(currentUser.getUserId());
         mesPmWorkOrderDto.setModifiedTime(new Date());
         mesPmWorkOrderDto.setOrgId(currentUser.getOrganizationId());
+        mesPmWorkOrderDto.setIsDelete((byte)1);
         int i = mesPmWorkOrderMapper.insertUseGeneratedKeys(mesPmWorkOrderDto);
 
         //工单履历表
