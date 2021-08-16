@@ -43,7 +43,6 @@ public class EamJigMaintainOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="jigMaintainOrderCode",value = "治具保养单号")
     @Excel(name = "治具保养单号", height = 20, width = 30,orderNum="1")
     @Column(name = "jig_maintain_order_code")
-    @NotBlank(message = "治具保养单号不能为空")
     private String jigMaintainOrderCode;
 
     /**

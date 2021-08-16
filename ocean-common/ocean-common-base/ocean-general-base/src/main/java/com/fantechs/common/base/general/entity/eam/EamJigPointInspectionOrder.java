@@ -43,7 +43,6 @@ public class EamJigPointInspectionOrder extends ValidGroup implements Serializab
     @ApiModelProperty(name="jigPointInspectionOrderCode",value = "治具点检单号")
     @Excel(name = "治具点检单号", height = 20, width = 30,orderNum="1")
     @Column(name = "jig_point_inspection_order_code")
-    @NotBlank(message = "治具点检单号不能为空")
     private String jigPointInspectionOrderCode;
 
     /**
