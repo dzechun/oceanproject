@@ -4,7 +4,12 @@ package com.fantechs.provider.mes.pm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamWiReleaseDetDto;
+import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.entity.eam.EamWiReleaseDet;
+import com.fantechs.common.base.general.entity.eam.history.EamHtWiReleaseDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
@@ -39,19 +44,18 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     @Resource
     private MesPmWorkOrderBomMapper mesPmWorkOrderBomMapper;
 
-
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int save(MesPmWorkOrder mesPmWorkOrder) {
+    public int save(MesPmWorkOrderDto mesPmWorkOrderDto) {
         SysUser currentUser = currentUser();
 
 
-        if(StringUtils.isEmpty(mesPmWorkOrder.getWorkOrderCode())){
-            mesPmWorkOrder.setWorkOrderCode(CodeUtils.getId("WORK"));
+        if(StringUtils.isEmpty(mesPmWorkOrderDto.getWorkOrderCode())){
+            mesPmWorkOrderDto.setWorkOrderCode(CodeUtils.getId("WORK"));
         }else{
             Example example = new Example(MesPmWorkOrder.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("workOrderCode", mesPmWorkOrder.getWorkOrderCode());
+            criteria.andEqualTo("workOrderCode", mesPmWorkOrderDto.getWorkOrderCode());
 
             List<MesPmWorkOrder> mesPmWorkOrders = mesPmWorkOrderMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(mesPmWorkOrders)) {
@@ -59,17 +63,16 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             }
         }
 
-        mesPmWorkOrder.setWorkOrderStatus((byte) 1);
-        mesPmWorkOrder.setCreateUserId(currentUser.getUserId());
-        mesPmWorkOrder.setCreateTime(new Date());
-        if(mesPmWorkOrderMapper.insertSelective(mesPmWorkOrder)<=0){
-            return 0;
-        }
+        mesPmWorkOrderDto.setWorkOrderStatus((byte) 1);
+        mesPmWorkOrderDto.setCreateUserId(currentUser.getUserId());
+        mesPmWorkOrderDto.setCreateTime(new Date());
+        int i = mesPmWorkOrderMapper.insertUseGeneratedKeys(mesPmWorkOrderDto);
 
-        //新增工单历史信息
-        recordHistory(mesPmWorkOrder,"新增");
-
-        return 1;
+        //工单履历表
+        recordHistory(mesPmWorkOrderDto);
+        //保存bom表
+        savebom(mesPmWorkOrderDto,currentUser);
+        return i;
     }
 
     @Override
@@ -81,44 +84,52 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int update(MesPmWorkOrder mesPmWorkOrder) {
+    public int update(MesPmWorkOrderDto mesPmWorkOrderDto) {
         int i = 0;
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        MesPmWorkOrder order = mesPmWorkOrderMapper.selectByPrimaryKey(mesPmWorkOrder.getWorkOrderId());
+        MesPmWorkOrder order = mesPmWorkOrderMapper.selectByPrimaryKey(mesPmWorkOrderDto.getWorkOrderId());
 
         //工单状态(0、待生产 1、生产中 2、暂停生产 3、生产完成)
         Integer workOrderStatus = order.getWorkOrderStatus().intValue();
         if (workOrderStatus != 4) {
             Example example = new Example(MesPmWorkOrder.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("workOrderCode", mesPmWorkOrder.getWorkOrderCode());
+            criteria.andEqualTo("workOrderCode", mesPmWorkOrderDto.getWorkOrderCode());
 
             MesPmWorkOrder workOrder = mesPmWorkOrderMapper.selectOneByExample(example);
 
-            if (StringUtils.isNotEmpty(workOrder) && !workOrder.getWorkOrderId().equals(mesPmWorkOrder.getWorkOrderId())) {
+            if (StringUtils.isNotEmpty(workOrder) && !workOrder.getWorkOrderId().equals(mesPmWorkOrderDto.getWorkOrderId())) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
             }
 
 
-            mesPmWorkOrder.setModifiedUserId(currentUser.getUserId());
-            mesPmWorkOrder.setModifiedTime(new Date());
-            mesPmWorkOrder.setCreateTime(null);
-            i = mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder);
+            mesPmWorkOrderDto.setModifiedUserId(currentUser.getUserId());
+            mesPmWorkOrderDto.setModifiedTime(new Date());
+            mesPmWorkOrderDto.setCreateTime(null);
+            i = mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrderDto);
 
 
             //新增工单历史信息
             MesPmHtWorkOrder mesPmHtWorkOrder = new MesPmHtWorkOrder();
-            BeanUtils.copyProperties(mesPmWorkOrder, mesPmHtWorkOrder);
+            BeanUtils.copyProperties(mesPmWorkOrderDto, mesPmHtWorkOrder);
             mesPmHtWorkOrder.setModifiedUserId(currentUser.getUserId());
             mesPmHtWorkOrder.setModifiedTime(new Date());
             smtHtWorkOrderMapper.insertSelective(mesPmHtWorkOrder);
         } else {
             throw new BizErrorException("生产完成的工单不允许修改");
         }
+
+        Example detExample = new Example(MesPmWorkOrderBom.class);
+        Example.Criteria detCriteria = detExample.createCriteria();
+        detCriteria.andEqualTo("workOrderId", mesPmWorkOrderDto.getWorkOrderId());
+        mesPmWorkOrderBomMapper.deleteByExample(detExample);
+        detExample.clear();
+        //保存bom表
+        savebom(mesPmWorkOrderDto,currentUser);
 
         return i;
     }
@@ -181,14 +192,9 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     /**
      * 记录操作历史
      * @param mesPmWorkOrder
-     * @param operation
      */
-    private void recordHistory(MesPmWorkOrder mesPmWorkOrder, String operation){
+    private void recordHistory(MesPmWorkOrder mesPmWorkOrder){
         MesPmHtWorkOrder mesPmHtWorkOrder = new MesPmHtWorkOrder();
-        mesPmHtWorkOrder.setOption1(operation);
-        if (StringUtils.isEmpty(mesPmWorkOrder)){
-            return;
-        }
         BeanUtils.copyProperties(mesPmWorkOrder, mesPmHtWorkOrder);
         smtHtWorkOrderMapper.insertSelective(mesPmHtWorkOrder);
     }
@@ -224,6 +230,22 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     @Override
     public int batchUpdate(List<MesPmWorkOrder> mesPmWorkOrders) {
         return mesPmWorkOrderMapper.batchUpdate(mesPmWorkOrders);
+    }
+
+    public  void savebom(MesPmWorkOrderDto mesPmWorkOrderDto , SysUser user){
+        List<MesPmWorkOrderBom> boms = new ArrayList<>();
+        if(StringUtils.isNotEmpty(mesPmWorkOrderDto.getMesPmWorkOrderBomDtos())) {
+            for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto :  mesPmWorkOrderDto.getMesPmWorkOrderBomDtos()) {
+                mesPmWorkOrderBomDto.setCreateUserId(user.getUserId());
+                mesPmWorkOrderBomDto.setCreateTime(new Date());
+                mesPmWorkOrderBomDto.setModifiedUserId(user.getUserId());
+                mesPmWorkOrderBomDto.setModifiedTime(new Date());
+                mesPmWorkOrderBomDto.setOrgId(user.getOrganizationId());
+                mesPmWorkOrderBomDto.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+                boms.add(mesPmWorkOrderBomDto);
+            }
+        }
+        mesPmWorkOrderBomMapper.insertList(boms);
     }
 
 }
