@@ -1430,6 +1430,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             inv.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
             num+=wmsInnerInventoryMapper.insertSelective(inv);
         } else {
+            if(StringUtils.isEmpty(wmsInnerInventorys.getPackingQty()) || wmsInnerInventorys.getPackingQty().compareTo(BigDecimal.ZERO)==0){
+                wmsInnerInventorys.setReceivingDate(wmsInnerInventory.getReceivingDate());
+            }
             //原库存
             wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().add(newDto.getActualQty()));
             wmsInnerInventorys.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
