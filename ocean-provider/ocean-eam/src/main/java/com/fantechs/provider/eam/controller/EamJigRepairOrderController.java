@@ -1,6 +1,7 @@
 package com.fantechs.provider.eam.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamJigRepairOrder;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRepairOrder;
@@ -39,6 +40,13 @@ public class EamJigRepairOrderController {
     private EamJigRepairOrderService eamJigRepairOrderService;
     @Resource
     private EamHtJigRepairOrderService eamHtJigRepairOrderService;
+
+    @ApiOperation("新建维修单")
+    @PostMapping("/pdaCreateOrder")
+    public ResponseEntity<EamJigRepairOrderDto> pdaCreateOrder(@ApiParam(value = "治具条码",required = true)@RequestParam  @NotBlank(message="治具条码不能为空") String jigBarcode) {
+        EamJigRepairOrderDto eamJigRepairOrderDto = eamJigRepairOrderService.pdaCreateOrder(jigBarcode);
+        return  ControllerUtil.returnDataSuccess(eamJigRepairOrderDto,StringUtils.isEmpty(eamJigRepairOrderDto)?0:1);
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

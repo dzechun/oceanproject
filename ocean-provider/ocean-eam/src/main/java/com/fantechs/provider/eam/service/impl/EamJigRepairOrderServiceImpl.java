@@ -3,20 +3,21 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderDto;
-import com.fantechs.common.base.general.entity.eam.EamJigMaintainProject;
-import com.fantechs.common.base.general.entity.eam.EamJigMaintainProjectItem;
-import com.fantechs.common.base.general.entity.eam.EamJigRepairOrder;
-import com.fantechs.common.base.general.entity.eam.EamJigRepairOrderReplacement;
+import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainProject;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRepairOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionProject;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRepairOrder;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.eam.mapper.EamHtJigRepairOrderMapper;
-import com.fantechs.provider.eam.mapper.EamJigRepairOrderMapper;
-import com.fantechs.provider.eam.mapper.EamJigRepairOrderReplacementMapper;
+import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamJigRepairOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,9 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
     private EamJigRepairOrderReplacementMapper eamJigRepairOrderReplacementMapper;
     @Resource
     private EamHtJigRepairOrderMapper eamHtJigRepairOrderMapper;
+    @Resource
+    private EamJigBarcodeMapper eamJigBarcodeMapper;
+
 
     @Override
     public List<EamJigRepairOrderDto> findList(Map<String, Object> map) {
@@ -52,6 +56,31 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
         map.put("orgId", user.getOrganizationId());
 
         return eamJigRepairOrderMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public EamJigRepairOrderDto pdaCreateOrder(String jigBarcode) {
+        Example example = new Example(EamJigBarcode.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("jigBarcode",jigBarcode);
+        List<EamJigBarcode> eamJigBarcodes = eamJigBarcodeMapper.selectByExample(example);
+        if(StringUtils.isEmpty(eamJigBarcodes)){
+            throw new BizErrorException("查不到此治具条码");
+        }
+
+        EamJigRepairOrder eamJigRepairOrder = new EamJigRepairOrder();
+        eamJigRepairOrder.setJigBarcode(jigBarcode);
+        eamJigRepairOrder.setJigId(eamJigBarcodes.get(0).getJigId());
+        eamJigRepairOrder.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
+        eamJigRepairOrder.setRequestForRepairTime(new Date());
+        this.save(eamJigRepairOrder);
+
+        SearchEamJigRepairOrder searchEamJigRepairOrder = new SearchEamJigRepairOrder();
+        searchEamJigRepairOrder.setJigRepairOrderId(eamJigRepairOrder.getJigRepairOrderId());
+        List<EamJigRepairOrderDto> eamJigRepairOrderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigRepairOrder));
+
+        return eamJigRepairOrderDtos.get(0);
     }
 
     @Override

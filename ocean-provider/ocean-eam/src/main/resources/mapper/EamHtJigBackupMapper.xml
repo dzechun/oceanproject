@@ -12,6 +12,7 @@
     <result column="jig_backup_desc" jdbcType="VARCHAR" property="jigBackupDesc" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
+    <result column="working_area_id" jdbcType="BIGINT" property="workingAreaId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="qty" jdbcType="INTEGER" property="qty" />
     <result column="jig_id" jdbcType="BIGINT" property="jigId" />
@@ -32,6 +33,7 @@
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+    <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -42,6 +44,7 @@
     ehjb.jig_backup_desc,
     ehjb.warehouse_id,
     ehjb.warehouse_area_id,
+    ehjb.working_area_id,
     ehjb.storage_id,
     ehjb.qty,
     ehjb.jig_id,
@@ -59,13 +62,14 @@
 
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,
+    bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,bwo.working_area_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.eam_ht_jig_backup ehjb
     left join fantech_imes_v2.base_warehouse bw on ehjb.warehouse_id=bw.warehouse_id
     left join fantech_imes_v2.base_warehouse_area bwa on ehjb.warehouse_area_id=bwa.warehouse_area_id
+    left join fantech_imes_v2.base_working_area bwo on ehjb.working_area_id=bwo.working_area_id
     left join fantech_imes_v2.base_storage bs on ehjb.storage_id=bs.storage_id
     left join ocean_v2.sys_user u on ehjb.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ehjb.modified_user_id=s.user_id

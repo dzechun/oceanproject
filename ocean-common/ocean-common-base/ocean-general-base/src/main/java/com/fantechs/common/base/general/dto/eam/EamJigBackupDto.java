@@ -52,6 +52,14 @@ public class EamJigBackupDto extends EamJigBackup implements Serializable {
     private String warehouseAreaName;
 
     /**
+     * 工作区
+     */
+    @Transient
+    @ApiModelProperty(name = "workingAreaCode",value = "工作区")
+    @Excel(name = "工作区", height = 20, width = 30,orderNum="6")
+    private String workingAreaCode;
+
+    /**
      * 库位
      */
     @Transient

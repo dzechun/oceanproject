@@ -11,6 +11,7 @@
     <result column="jig_backup_desc" jdbcType="VARCHAR" property="jigBackupDesc" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
+    <result column="working_area_id" jdbcType="BIGINT" property="workingAreaId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="qty" jdbcType="INTEGER" property="qty" />
     <result column="jig_id" jdbcType="BIGINT" property="jigId" />
@@ -32,6 +33,7 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode"/>
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
   </resultMap>
 
@@ -42,6 +44,7 @@
     ejb.jig_backup_desc,
     ejb.warehouse_id,
     ejb.warehouse_area_id,
+    ejb.working_area_id,
     ejb.storage_id,
     ejb.qty,
     ejb.jig_id,
@@ -59,13 +62,14 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,
+    bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,bwo.working_area_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.eam_jig_backup ejb
     left join fantech_imes_v2.base_warehouse bw on ejb.warehouse_id=bw.warehouse_id
     left join fantech_imes_v2.base_warehouse_area bwa on ejb.warehouse_area_id=bwa.warehouse_area_id
+    left join fantech_imes_v2.base_working_area bwo on ejb.working_area_id=bwo.working_area_id
     left join fantech_imes_v2.base_storage bs on ejb.storage_id=bs.storage_id
     left join ocean_v2.sys_user u on ejb.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ejb.modified_user_id=s.user_id

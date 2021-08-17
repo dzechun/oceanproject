@@ -76,6 +76,13 @@ public class EamJigBackup extends ValidGroup implements Serializable {
     private Long warehouseAreaId;
 
     /**
+     * 工作区ID
+     */
+    @ApiModelProperty(name="workingAreaId",value = "工作区ID")
+    @Column(name = "working_area_id")
+    private Long workingAreaId;
+
+    /**
      * 库位ID
      */
     @ApiModelProperty(name="storageId",value = "库位ID")

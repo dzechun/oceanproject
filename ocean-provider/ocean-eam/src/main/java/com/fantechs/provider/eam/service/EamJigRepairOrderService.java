@@ -14,4 +14,6 @@ import java.util.Map;
 
 public interface EamJigRepairOrderService extends IService<EamJigRepairOrder> {
     List<EamJigRepairOrderDto> findList(Map<String, Object> map);
+
+    EamJigRepairOrderDto pdaCreateOrder(String jigBarcode);
 }

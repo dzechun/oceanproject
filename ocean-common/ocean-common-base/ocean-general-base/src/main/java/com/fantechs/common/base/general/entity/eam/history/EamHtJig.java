@@ -108,6 +108,13 @@ public class EamHtJig extends ValidGroup implements Serializable {
     private Long warehouseAreaId;
 
     /**
+     * 工作区ID
+     */
+    @ApiModelProperty(name="workingAreaId",value = "工作区ID")
+    @Column(name = "working_area_id")
+    private Long workingAreaId;
+
+    /**
      * 推荐库位
      */
     @ApiModelProperty(name="storageId",value = "推荐库位")
@@ -329,6 +336,13 @@ public class EamHtJig extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name = "warehouseAreaName",value = "库区")
     private String warehouseAreaName;
+
+    /**
+     * 工作区
+     */
+    @Transient
+    @ApiModelProperty(name = "workingAreaCode",value = "工作区")
+    private String workingAreaCode;
 
     /**
      * 推荐库位
