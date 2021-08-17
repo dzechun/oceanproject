@@ -60,7 +60,13 @@
       </if>
       <if test="proLineId!=null and proLineId!=''">
         and mpwo.pro_line_id = #{proLineId}
-    </if>
+      </if>
+      <if test="workOrderCode!=null and workOrderCode!=''">
+        and mpwo.work_order_code = #{workOrderCode}
+      </if>
+      <if test="workOrderStatus!=null and workOrderStatus!=''">
+        and mpwo.work_order_status = #{workOrderStatus}
+      </if>
       <if test="status!=null">
         and mpdp.status = #{status}
       </if>
