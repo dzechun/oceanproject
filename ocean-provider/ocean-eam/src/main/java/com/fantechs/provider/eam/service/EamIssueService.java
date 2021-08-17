@@ -13,4 +13,6 @@ import java.util.Map;
 
 public interface EamIssueService extends IService<EamIssue> {
     List<EamIssueDto> findList(Map<String, Object> map);
+
+    int batchAdd(List<EamIssue> eamIssues);
 }

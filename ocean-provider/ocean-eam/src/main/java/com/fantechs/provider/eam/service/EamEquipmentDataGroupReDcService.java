@@ -17,6 +17,4 @@ public interface EamEquipmentDataGroupReDcService extends IService<EamEquipmentD
     List<EamEquipmentDataGroupReDcDto> findList(Map<String, Object> map);
 
     int batchAdd(List<EamEquipmentDataGroupReDc> eamEquipmentDataGroupReDcs);
-
-    int batchUpdate(List<EamEquipmentDataGroupReDc> eamEquipmentDataGroupReDcs );
 }

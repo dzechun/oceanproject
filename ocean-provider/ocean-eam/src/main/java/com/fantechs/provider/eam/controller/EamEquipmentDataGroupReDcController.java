@@ -99,10 +99,4 @@ public class EamEquipmentDataGroupReDcController {
     public ResponseEntity batchAdd(@ApiParam(value = "对象，equipmentDataGroupId必传",required = true)@RequestBody @Validated List<EamEquipmentDataGroupReDc> eamEquipmentDataGroupReDcs){
         return  ControllerUtil.returnCRUD(eamEquipmentDataGroupReDcService.batchAdd(eamEquipmentDataGroupReDcs));
     }
-
-    @ApiOperation("批量修改")
-    @PostMapping("/batchUpdate")
-    public ResponseEntity batchUpdate(@ApiParam(value = "对象，equipmentDataGroupId必传",required = true)@RequestBody @Validated List<EamEquipmentDataGroupReDc> eamEquipmentDataGroupReDcs){
-        return  ControllerUtil.returnCRUD(eamEquipmentDataGroupReDcService.batchUpdate(eamEquipmentDataGroupReDcs));
-    }
 }
