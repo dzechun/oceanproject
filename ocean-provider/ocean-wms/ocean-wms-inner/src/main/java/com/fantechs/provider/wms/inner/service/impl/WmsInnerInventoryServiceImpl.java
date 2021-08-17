@@ -17,6 +17,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -47,6 +48,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int lock(Long id, BigDecimal quantity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -80,6 +82,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int unlock(Long id, BigDecimal quantity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
@@ -121,6 +124,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public WmsInnerInventory selectOneByExample(Map<String,Object> map) {
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -137,16 +141,19 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         if(!StringUtils.isEmpty(map.get("inventoryStatusId"))){
             criteria.andEqualTo("inventoryStatusId",map.get("inventoryStatusId"));
         }
+        criteria.andEqualTo("stockLock", 0).andEqualTo("qcLock", 0).andEqualTo("lockStatus", 0);
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         return wmsInnerInventorys;
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int updateByPrimaryKeySelective(WmsInnerInventory wmsInnerInventory) {
         return wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int updateByExampleSelective(WmsInnerInventory wmsInnerInventory, Map<String,Object> map) {
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -167,16 +174,19 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int insertSelective(WmsInnerInventory wmsInnerInventory) {
         return wmsInnerInventoryMapper.insertSelective(wmsInnerInventory);
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int batchUpdate(List<WmsInnerInventory> list) {
         return wmsInnerInventoryMapper.batchUpdate(list);
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int save(WmsInnerInventory record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -199,6 +209,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int update(WmsInnerInventory entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -216,6 +227,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
