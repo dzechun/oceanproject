@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.eam.EamIssue;
 import com.fantechs.common.base.general.entity.eam.EamIssueAttachment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtIssue;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamIssue;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWiRelease;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -65,14 +66,16 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
             searchEamEquipment.setEquipmentIp(map.get("equipmentIp").toString());
             List<EamEquipmentDto> eamEquipmentDtos = eamEquipmentMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
             if (StringUtils.isNotEmpty(eamEquipmentDtos)) {
+                //查询该设备所在产线的WI
                 SearchEamWiRelease searchEamWiRelease = new SearchEamWiRelease();
-                searchEamWiRelease.setWorkOrderStatus((byte) 3);
                 searchEamWiRelease.setProLineId(eamEquipmentDtos.get(0).getProLineId());
                 List<EamWiReleaseDto> eamWiReleaseDtos = eamWiReleaseMapper.findList(searchEamWiRelease);
                 if (StringUtils.isNotEmpty(eamWiReleaseDtos)) {
-                    map.put("materialId", eamWiReleaseDtos.get(0).getMaterialId());
-                    //    map.put("orgId", user.getOrganizationId());
-                    list = eamIssueMapper.findList(map);
+                    //查询该WI绑定的产品型号的问题清单
+                    SearchEamIssue searchEamIssue = new SearchEamIssue();
+                    searchEamIssue.setProductModelCode(eamWiReleaseDtos.get(0).getProductModelCode());
+                    searchEamIssue.setCodeQueryMark(1);
+                    list = eamIssueMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamIssue));
 
                     //工序编码
                     if(StringUtils.isNotEmpty(list)) {

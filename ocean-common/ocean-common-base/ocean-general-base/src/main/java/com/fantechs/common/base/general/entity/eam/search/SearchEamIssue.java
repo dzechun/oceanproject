@@ -28,6 +28,12 @@ public class SearchEamIssue extends BaseQuery implements Serializable {
     private String materialName;
 
     /**
+     * 产品型号编码
+     */
+    @ApiModelProperty(name="productModelCode",value = "产品型号编码")
+    private String productModelCode;
+
+    /**
      * 产品型号
      */
     @ApiModelProperty(name="productModelName",value = "产品型号")
@@ -50,4 +56,10 @@ public class SearchEamIssue extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="equipmentIp",value = "设备IP")
     private String equipmentIp;
+
+    /**
+     * 根据编码查询方式标记（传1则为等值查询）
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "查询方式标记")
+    private Integer codeQueryMark;
 }

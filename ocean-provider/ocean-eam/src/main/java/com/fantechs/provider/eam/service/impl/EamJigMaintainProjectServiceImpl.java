@@ -173,17 +173,27 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(EamJigMaintainProject.class);
-        Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
-        criteria.andEqualTo("jigMaintainProjectCode",eamJigMaintainProject.getJigMaintainProjectCode())
-                .orEqualTo("jigCategoryId",eamJigMaintainProject.getJigCategoryId());
+        Example example = new Example(EamJigMaintainProject.class);
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("jigMaintainProjectCode",eamJigMaintainProject.getJigMaintainProjectCode());
         if (StringUtils.isNotEmpty(eamJigMaintainProject.getJigMaintainProjectId())){
-            criteria.andNotEqualTo("jigMaintainProjectId",eamJigMaintainProject.getJigMaintainProjectId());
+            criteria1.andNotEqualTo("jigMaintainProjectId",eamJigMaintainProject.getJigMaintainProjectId());
         }
-        EamJigMaintainProject jigMaintainProject = eamJigMaintainProjectMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(jigMaintainProject)){
+        EamJigMaintainProject jigMaintainProject1 = eamJigMaintainProjectMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(jigMaintainProject1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        example.clear();
+        Example.Criteria criteria2 = example.createCriteria();
+        criteria2.andEqualTo("jigCategoryId",eamJigMaintainProject.getJigCategoryId());
+        if (StringUtils.isNotEmpty(eamJigMaintainProject.getJigMaintainProjectId())){
+            criteria2.andNotEqualTo("jigMaintainProjectId",eamJigMaintainProject.getJigMaintainProjectId());
+        }
+        EamJigMaintainProject jigMaintainProject2 = eamJigMaintainProjectMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(jigMaintainProject2)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"已存在绑定该治具类别的保养项目");
         }
     }
 }

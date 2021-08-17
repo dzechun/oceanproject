@@ -50,8 +50,11 @@
       <if test="inspectionWayCode!=null and inspectionWayCode!=''">
         and biw.inspection_way_code like CONCAT('%', #{inspectionWayCode}, '%')
       </if>
-      <if test="inspectionWayDesc!=null and inspectionWayDesc!=''">
+      <if test="inspectionWayDesc!=null and inspectionWayDesc!='' and queryMark != 1">
         and biw.inspection_way_desc like CONCAT('%', #{inspectionWayDesc}, '%')
+      </if>
+      <if test="inspectionWayDesc!=null and inspectionWayDesc!='' and queryMark == 1">
+        and biw.inspection_way_desc = #{inspectionWayDesc}
       </if>
       <if test="inspectionType!=null">
         and biw.inspection_type = #{inspectionType}

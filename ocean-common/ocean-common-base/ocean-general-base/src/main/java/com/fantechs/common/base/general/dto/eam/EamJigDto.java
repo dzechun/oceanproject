@@ -66,6 +66,13 @@ public class EamJigDto extends EamJig implements Serializable {
     private String warehouseAreaName;
 
     /**
+     * 工作区
+     */
+    @Transient
+    @ApiModelProperty(name = "workingAreaCode",value = "工作区")
+    private String workingAreaCode;
+
+    /**
      * 推荐库位
      */
     @Transient

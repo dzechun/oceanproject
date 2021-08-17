@@ -103,6 +103,13 @@ public class EamJig extends ValidGroup implements Serializable {
     private Long warehouseAreaId;
 
     /**
+     * 工作区ID
+     */
+    @ApiModelProperty(name="workingAreaId",value = "工作区ID")
+    @Column(name = "working_area_id")
+    private Long workingAreaId;
+
+    /**
      * 推荐库位
      */
     @ApiModelProperty(name="storageId",value = "推荐库位")

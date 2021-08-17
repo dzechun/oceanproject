@@ -100,6 +100,8 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
 
         SearchBaseInspectionWay searchBaseInspectionWay = new SearchBaseInspectionWay();
         searchBaseInspectionWay.setInspectionWayDesc(searchQmsIpqcInspectionOrder.getInspectionWayDesc());
+        searchBaseInspectionWay.setInspectionType((byte)4);
+        searchBaseInspectionWay.setQueryMark(1);
         List<BaseInspectionWay> baseInspectionWays = baseFeignApi.findList(searchBaseInspectionWay).getData();
         if(StringUtils.isEmpty(baseInspectionWays)){
             throw new BizErrorException("查无此检验方式");
@@ -295,9 +297,11 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         criteria.andEqualTo("ipqcInspectionOrderId",ipqcInspectionOrderId);
         List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets = qmsIpqcInspectionOrderDetMapper.selectByExample(example);
 
-        //计算明细项目合格数与不合格数
+        //计算明细项目合格数、不合格数、必检项目已检验数、必检项目数
         int qualifiedCount = 0;
         int unqualifiedCount = 0;
+        int inspectionCount = 0;
+        int mustInspectionCount = 0;
         for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDets){
             if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDet.getInspectionResult())){
                 if(qmsIpqcInspectionOrderDet.getInspectionResult()==(byte)0){
@@ -306,13 +310,22 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
                     qualifiedCount++;
                 }
             }
+
+            if(qmsIpqcInspectionOrderDet.getIfMustInspection()==(byte)1){
+                mustInspectionCount++;
+            }
+
+            if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDet.getInspectionResult())
+                    &&qmsIpqcInspectionOrderDet.getIfMustInspection()==(byte)1){
+                inspectionCount++;
+            }
         }
 
-        if(qualifiedCount + unqualifiedCount == qmsIpqcInspectionOrderDets.size()){
+        if(inspectionCount == mustInspectionCount){
             QmsIpqcInspectionOrder qmsIpqcInspectionOrder = new QmsIpqcInspectionOrder();
             qmsIpqcInspectionOrder.setIpqcInspectionOrderId(ipqcInspectionOrderId);
             qmsIpqcInspectionOrder.setInspectionStatus((byte) 3);
-            qmsIpqcInspectionOrder.setInspectionResult(qualifiedCount==qmsIpqcInspectionOrderDets.size() ? (byte)1 : (byte)2);
+            qmsIpqcInspectionOrder.setInspectionResult(unqualifiedCount==0 ? (byte)1 : (byte)2);
             return qmsIpqcInspectionOrderMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrder);
         }
 

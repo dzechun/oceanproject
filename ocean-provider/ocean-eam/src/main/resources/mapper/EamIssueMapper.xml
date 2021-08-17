@@ -52,7 +52,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    bm.material_code,bm.material_name,bpm.product_model_name,
+    bm.material_code,bm.material_name,bpm.product_model_name,bpm.product_model_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -81,6 +81,12 @@
       </if>
       <if test="productModelName != null and productModelName!=''">
         and bpm.product_model_name like CONCAT('%', #{productModelName}, '%')
+      </if>
+      <if test="productModelCode != null and productModelCode!='' and codeQueryMark!=1">
+        and bpm.product_model_code like CONCAT('%', #{productModelCode}, '%')
+      </if>
+      <if test="productModelCode != null and productModelCode!='' and codeQueryMark==1">
+        and bpm.product_model_code = #{productModelCode}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ei.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

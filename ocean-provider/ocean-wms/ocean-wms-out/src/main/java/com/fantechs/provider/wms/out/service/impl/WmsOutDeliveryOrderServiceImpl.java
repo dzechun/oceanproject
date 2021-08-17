@@ -194,8 +194,12 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
 
         //出库单
-        if(StringUtils.isEmpty(wmsOutDeliveryOrder.getDeliveryOrderCode())){
+        if(wmsOutDeliveryOrder.getOrderTypeId()==1){
             wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("XSCK-"));
+        }else if(wmsOutDeliveryOrder.getOrderTypeId()==2){
+            wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("DBCK-"));
+        }else if(wmsOutDeliveryOrder.getOrderTypeId()==7){
+            wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("OTCK-"));
         }
         wmsOutDeliveryOrder.setCreateTime(new Date());
         wmsOutDeliveryOrder.setCreateUserId(user.getUserId());

@@ -16,6 +16,7 @@ import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDetSamp
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
@@ -56,6 +57,11 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     private SFCFeignApi sfcFeignApi;
     @Resource
     private PMFeignApi pmFeignApi;
+    @Resource
+    private RedisUtil redisUtil;
+
+    //存入redis前缀
+    private static String DEFAULT_NAME="INSPECTION:";
 
     @Override
     public List<QmsInspectionOrderDetSample> findList(Map<String, Object> map) {
@@ -69,6 +75,23 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
 
     @Override
     public Boolean checkBarcode(String barcode, Long qmsInspectionOrderDetId) {
+
+        if(redisUtil.hasKey(DEFAULT_NAME+qmsInspectionOrderDetId.toString())){
+            List<Object> list = redisUtil.lGet(DEFAULT_NAME + qmsInspectionOrderDetId.toString(), 0, -1);
+            if(list.contains(barcode)){
+                throw new BizErrorException("同一检验项目不可重复扫描同一条码");
+            }else {
+                list.add(barcode);
+                redisUtil.lSet(DEFAULT_NAME+qmsInspectionOrderDetId.toString(),list,(long)600);
+            }
+        }else {
+            //将扫描的条码存入redis
+            List<String> barcodeList = new ArrayList<>();
+            barcodeList.add(barcode);
+            redisUtil.lSet(DEFAULT_NAME+qmsInspectionOrderDetId.toString(),barcodeList,(long)600);
+        }
+
+
         Boolean bool = true;
         QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.selectByPrimaryKey(qmsInspectionOrderDetId);
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDet.getInspectionOrderId());
@@ -102,6 +125,10 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         if(StringUtils.isEmpty(qmsInspectionOrderDetSampleList)){
             throw new BizErrorException("样本信息不能为空");
         }
+
+        //删除条码缓存
+        redisUtil.del(DEFAULT_NAME+qmsInspectionOrderDetSampleList.get(0).getInspectionOrderDetId().toString());
+
 
         //原数据删除
         Long inspectionOrderDetId = qmsInspectionOrderDetSampleList.get(0).getInspectionOrderDetId();

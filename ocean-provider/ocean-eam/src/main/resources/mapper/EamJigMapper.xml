@@ -14,6 +14,7 @@
     <result column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
+    <result column="working_area_id" jdbcType="BIGINT" property="workingAreaId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="maintain_max_usage_time" jdbcType="INTEGER" property="maintainMaxUsageTime" />
     <result column="maintain_warning_time" jdbcType="INTEGER" property="maintainWarningTime" />
@@ -60,6 +61,7 @@
     <result column="user_name" jdbcType="VARCHAR" property="userName"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
+    <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode"/>
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
   </resultMap>
 
@@ -73,6 +75,7 @@
     ej.user_id,
     ej.warehouse_id,
     ej.warehouse_area_id,
+    ej.working_area_id,
     ej.storage_id,
     ej.maintain_max_usage_time,
     ej.maintain_warning_time,
@@ -104,7 +107,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    ejc.jig_category_name,su.user_name,bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,
+    ejc.jig_category_name,su.user_name,bw.warehouse_name,bwa.warehouse_area_name,bs.storage_code,bwo.working_area_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -112,6 +115,7 @@
     left join fantech_imes_v2.eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
     left join fantech_imes_v2.base_warehouse bw on ej.warehouse_id=bw.warehouse_id
     left join fantech_imes_v2.base_warehouse_area bwa on ej.warehouse_area_id=bwa.warehouse_area_id
+    left join fantech_imes_v2.base_working_area bwo on ej.working_area_id=bwo.working_area_id
     left join fantech_imes_v2.base_storage bs on ej.storage_id=bs.storage_id
     left join ocean_v2.sys_user su on ej.user_id=su.user_id
     left join ocean_v2.sys_user u on ej.create_user_id=u.user_id

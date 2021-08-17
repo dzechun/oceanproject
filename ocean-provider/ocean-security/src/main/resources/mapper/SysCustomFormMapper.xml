@@ -49,6 +49,9 @@
             <if test="customFormCode!=null and customFormCode!=''">
                 and cf.custom_form_code=#{customFormCode}
             </if>
+            <if test="customFormName!=null and customFormName!=''">
+                and cf.custom_form_name like CONCAT('%',#{customFormName},'%')
+            </if>
             <if test="fromRout!=null and fromRout!=''">
                 and cf.from_rout=#{fromRout}
             </if>

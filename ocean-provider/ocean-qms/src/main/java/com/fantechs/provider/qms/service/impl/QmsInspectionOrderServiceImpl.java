@@ -245,6 +245,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         //计算明细项目合格数与不合格数
         int qualifiedCount = 0;
         int unqualifiedCount = 0;
+        int inspectionCount = 0;
+        int mustInspectionCount = 0;
         for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDetList){
             if(StringUtils.isNotEmpty(qmsInspectionOrderDet.getInspectionResult())){
                 if(qmsInspectionOrderDet.getInspectionResult()==(byte)0){
@@ -253,13 +255,22 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     qualifiedCount++;
                 }
             }
+
+            if(qmsInspectionOrderDet.getIfMustInspection()==(byte)1){
+                mustInspectionCount++;
+            }
+
+            if(StringUtils.isNotEmpty(qmsInspectionOrderDet.getInspectionResult())
+                    &&qmsInspectionOrderDet.getIfMustInspection()==(byte)1){
+                inspectionCount++;
+            }
         }
 
-        if(qualifiedCount + unqualifiedCount == qmsInspectionOrderDetList.size()){
+        if(inspectionCount == mustInspectionCount){
             QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
             qmsInspectionOrder.setInspectionOrderId(inspectionOrderId);
             qmsInspectionOrder.setInspectionStatus((byte) 3);
-            qmsInspectionOrder.setInspectionResult(qualifiedCount==qmsInspectionOrderDetList.size() ? (byte)1 : (byte)0);
+            qmsInspectionOrder.setInspectionResult(unqualifiedCount==0 ? (byte)1 : (byte)0);
 
             //检验结果返写回仓库
             SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
@@ -272,9 +283,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
 
             SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
-            searchBaseInventoryStatus.setWarehouseId(wmsInnerInventoryDto.getWarehouseId());
-            searchBaseInventoryStatus.setMaterialOwnerId(wmsInnerInventoryDto.getMaterialOwnerId());
-            searchBaseInventoryStatus.setInventoryStatusName(qualifiedCount==qmsInspectionOrderDetList.size() ? "合格" : "不合格");
+            searchBaseInventoryStatus.setInventoryStatusName(unqualifiedCount==0 ? "合格" : "不合格");
+            searchBaseInventoryStatus.setNameQueryMark(1);
             List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
             if(StringUtils.isEmpty(inventoryStatusList)){
                 throw new BizErrorException("未查询到库存对应库存状态");

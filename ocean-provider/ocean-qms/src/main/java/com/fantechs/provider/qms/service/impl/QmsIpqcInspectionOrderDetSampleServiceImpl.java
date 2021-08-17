@@ -29,10 +29,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -51,6 +48,11 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
     private SFCFeignApi sfcFeignApi;
     @Resource
     private PMFeignApi pmFeignApi;
+    @Resource
+    private RedisUtil redisUtil;
+
+    //存入redis前缀
+    private static String DEFAULT_NAME="IPQCINSPECTION:";
 
     @Override
     public List<QmsIpqcInspectionOrderDetSample> findList(Map<String, Object> map) {
@@ -64,6 +66,23 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
 
     @Override
     public Boolean checkBarcode(String barcode, Long qmsIpqcInspectionOrderDetId) {
+
+        if(redisUtil.hasKey(DEFAULT_NAME+qmsIpqcInspectionOrderDetId.toString())){
+            List<Object> list = redisUtil.lGet(DEFAULT_NAME + qmsIpqcInspectionOrderDetId.toString(), 0, -1);
+            if(list.contains(barcode)){
+                throw new BizErrorException("同一检验项目不可重复扫描同一条码");
+            }else {
+                list.add(barcode);
+                redisUtil.lSet(DEFAULT_NAME+qmsIpqcInspectionOrderDetId.toString(),list,(long)600);
+            }
+        }else {
+            //将扫描的条码存入redis
+            List<String> barcodeList = new ArrayList<>();
+            barcodeList.add(barcode);
+            redisUtil.lSet(DEFAULT_NAME+qmsIpqcInspectionOrderDetId.toString(),barcodeList,(long)600);
+        }
+
+
         Boolean bool = true;
         QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet = qmsIpqcInspectionOrderDetMapper.selectByPrimaryKey(qmsIpqcInspectionOrderDetId);
         QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.selectByPrimaryKey(qmsIpqcInspectionOrderDet.getIpqcInspectionOrderId());
@@ -101,6 +120,9 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
         if(StringUtils.isEmpty(qmsIpqcInspectionOrderDetSampleList)){
             throw new BizErrorException("样本信息不能为空");
         }
+
+        //删除条码缓存
+        redisUtil.del(DEFAULT_NAME+qmsIpqcInspectionOrderDetSampleList.get(0).getIpqcInspectionOrderDetId().toString());
 
         //原数据删除
         Long ipqcInspectionOrderDetId = qmsIpqcInspectionOrderDetSampleList.get(0).getIpqcInspectionOrderDetId();

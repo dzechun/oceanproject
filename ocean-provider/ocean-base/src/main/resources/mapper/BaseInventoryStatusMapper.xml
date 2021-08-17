@@ -72,8 +72,11 @@
       <if test="warehouseName!=null and warehouseName!=''">
         and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
       </if>
-      <if test="inventoryStatusName!=null and inventoryStatusName!=''">
+      <if test="inventoryStatusName!=null and inventoryStatusName!='' and nameQueryMark!=1">
         and bis.inventory_status_name like CONCAT('%', #{inventoryStatusName}, '%')
+      </if>
+      <if test="inventoryStatusName!=null and inventoryStatusName!='' and nameQueryMark==1">
+        and bis.inventory_status_name = #{inventoryStatusName}
       </if>
       <if test="status!=null">
         and bis.status=#{status}

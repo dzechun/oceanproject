@@ -41,4 +41,10 @@ public class SearchBaseInventoryStatus extends BaseQuery implements Serializable
     @ApiModelProperty(name="inventoryStatusName" ,value="状态名称")
     private String inventoryStatusName;
 
+    /**
+     * 名称查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "nameQueryMark",value = "名称查询标记(设为1做等值查询)")
+    private Integer nameQueryMark;
+
 }

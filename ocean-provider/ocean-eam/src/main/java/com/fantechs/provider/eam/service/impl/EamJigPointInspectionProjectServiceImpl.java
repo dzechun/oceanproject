@@ -173,18 +173,27 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(EamJigPointInspectionProject.class);
-        Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
-        criteria.andEqualTo("jigPointInspectionProjectCode",eamJigPointInspectionProject.getJigPointInspectionProjectCode())
-                .orEqualTo("jigCategoryId",eamJigPointInspectionProject.getJigCategoryId());
+        Example example = new Example(EamJigPointInspectionProject.class);
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("jigPointInspectionProjectCode",eamJigPointInspectionProject.getJigPointInspectionProjectCode());
         if (StringUtils.isNotEmpty(eamJigPointInspectionProject.getJigPointInspectionProjectId())){
-            criteria.andNotEqualTo("jigPointInspectionProjectId",eamJigPointInspectionProject.getJigPointInspectionProjectId());
+            criteria1.andNotEqualTo("jigPointInspectionProjectId",eamJigPointInspectionProject.getJigPointInspectionProjectId());
+        }
+        EamJigPointInspectionProject jigPointInspectionProject1 = eamJigPointInspectionProjectMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(jigPointInspectionProject1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        EamJigPointInspectionProject jigPointInspectionProject = eamJigPointInspectionProjectMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(jigPointInspectionProject)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        example.clear();
+        Example.Criteria criteria2 = example.createCriteria();
+        criteria2.andEqualTo("jigCategoryId",eamJigPointInspectionProject.getJigCategoryId());
+        if (StringUtils.isNotEmpty(eamJigPointInspectionProject.getJigPointInspectionProjectId())){
+            criteria1.andNotEqualTo("jigPointInspectionProjectId",eamJigPointInspectionProject.getJigPointInspectionProjectId());
+        }
+        EamJigPointInspectionProject jigPointInspectionProject2 = eamJigPointInspectionProjectMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(jigPointInspectionProject2)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"已存在绑定该治具类别的点检项目");
         }
     }
 }

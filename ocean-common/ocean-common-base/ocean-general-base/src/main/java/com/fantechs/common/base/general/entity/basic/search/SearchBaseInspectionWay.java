@@ -29,5 +29,9 @@ public class SearchBaseInspectionWay extends BaseQuery implements Serializable {
     @ApiModelProperty(name="inspectionType" ,value="检验类型")
     private Byte inspectionType;
 
-
+    /**
+     * 查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "queryMark",value = "查询标记(设为1做等值查询)")
+    private Integer queryMark;
 }
