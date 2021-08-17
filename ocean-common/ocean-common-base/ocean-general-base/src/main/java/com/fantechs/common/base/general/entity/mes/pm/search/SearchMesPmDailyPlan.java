@@ -35,4 +35,7 @@ public class SearchMesPmDailyPlan extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="planTime",value = "计划时间")
     private String planTime;
+
+    @ApiModelProperty(name="workOrderStatus" ,value="工单状态")
+    private String workOrderStatus;
 }

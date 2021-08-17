@@ -185,6 +185,9 @@
             <if test="materialDesc!=null and materialDesc!=''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and swo.pro_line_id=#{proLineId}
+            </if>
             and swo.is_delete = 1
         </where>
         order by swo.modified_time desc
