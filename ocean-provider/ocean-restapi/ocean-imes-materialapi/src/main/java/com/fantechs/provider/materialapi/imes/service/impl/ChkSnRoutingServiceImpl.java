@@ -1,43 +1,26 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
-import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
-import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
-import com.fantechs.common.base.general.entity.basic.BaseProLine;
-import com.fantechs.common.base.general.entity.basic.BaseProcess;
-import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.materialapi.imes.service.Chk_SNRoutingService;
+import com.fantechs.provider.materialapi.imes.service.ChkSnRoutingService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import java.text.ParseException;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Huangshuijun
  * @create 2021/08/10
  */
-@WebService(serviceName = "Chk_SNRoutingService", // 与接口中指定的name一致
-        targetNamespace = "http://Chk_SNRouting.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
-        endpointInterface = "com.fantechs.provider.materialapi.imes.service.Chk_SNRoutingService"// 接口地址
+@WebService(serviceName = "ChkSnRoutingService", // 与接口中指定的name一致
+        targetNamespace = "http://ChkSnRouting.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
+        endpointInterface = "com.fantechs.provider.materialapi.imes.service.ChkSnRoutingService"// 接口地址
 )
-public class Chk_SNRoutingServiceImpl implements Chk_SNRoutingService {
+public class ChkSnRoutingServiceImpl implements ChkSnRoutingService {
 
     @Resource
     private LogsUtils logsUtils;
@@ -47,7 +30,7 @@ public class Chk_SNRoutingServiceImpl implements Chk_SNRoutingService {
     private BarcodeUtils barcodeUtils;
 
     @Override
-    public String Chk_SNRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws ParseException {
+    public String ChkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws ParseException {
         /*
         * 1 验证传参基础信息是否正确
         * 2 检查成品SN、半成品SN状态、流程是否正确

@@ -54,22 +54,22 @@ public class CxfConfig {
 
     @Bean
     public Endpoint Chk_LogUserInfo_endpoint() {
-        EndpointImpl endpoint = new EndpointImpl(springBus(),  new Chk_LogUserInfoServiceImpl());
-        endpoint.publish("/Chk_LogUserInfo");   //登录账号校验地址
+        EndpointImpl endpoint = new EndpointImpl(springBus(),  new ChkLogUserInfoServiceImpl());
+        endpoint.publish("/ChkLogUserInfo");   //登录账号校验地址
         return endpoint;
     }
 
     @Bean
     public Endpoint Chk_SNRouting_endpoint() {
-        EndpointImpl endpoint = new EndpointImpl(springBus(),  new Chk_SNRoutingServiceImpl());
-        endpoint.publish("/Chk_SNRouting");   //条码流程检查业务信息
+        EndpointImpl endpoint = new EndpointImpl(springBus(),  new ChkSnRoutingServiceImpl());
+        endpoint.publish("/ChkSnRouting");   //条码流程检查业务信息
         return endpoint;
     }
 
     @Bean
     public Endpoint SN_Data_Transfer_endpoint() {
-        EndpointImpl endpoint = new EndpointImpl(springBus(),  new SN_Data_TransferServiceImpl());
-        endpoint.publish("/SN_Data_Transfer");   //条码过站
+        EndpointImpl endpoint = new EndpointImpl(springBus(),  new SnDataTransferServiceImpl());
+        endpoint.publish("/SnDataTransfer");   //条码过站
         return endpoint;
     }
 

@@ -2,22 +2,13 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkLogUserInfoApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
-import com.fantechs.provider.materialapi.imes.service.Chk_LogUserInfoService;
+import com.fantechs.provider.materialapi.imes.service.ChkLogUserInfoService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,16 +16,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@WebService(serviceName = "Chk_LogUserInfoService", // 与接口中指定的name一致
-        targetNamespace = "http://Chk_LogUserInfo.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
-        endpointInterface = "com.fantechs.provider.materialapi.imes.service.Chk_LogUserInfoService"// 接口地址
+@WebService(serviceName = "ChkLogUserInfoService", // 与接口中指定的name一致
+        targetNamespace = "http://ChkLogUserInfo.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
+        endpointInterface = "com.fantechs.provider.materialapi.imes.service.ChkLogUserInfoService"// 接口地址
 )
-public class Chk_LogUserInfoServiceImpl implements Chk_LogUserInfoService {
+public class ChkLogUserInfoServiceImpl implements ChkLogUserInfoService {
 
     @Resource
     private LogsUtils logsUtils;
@@ -42,7 +30,7 @@ public class Chk_LogUserInfoServiceImpl implements Chk_LogUserInfoService {
     private DeviceInterFaceUtils deviceInterFaceUtils;
 
     @Override
-    public String Chk_LogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws ParseException {
+    public String ChkLogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws ParseException {
         String pass="Pass";
         String check = check(restapiChkLogUserInfoApiDto);
         if (!check.equals("1")) {

@@ -5,11 +5,9 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
-import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.dto.mes.sfc.UpdateProcessDto;
-import com.fantechs.common.base.general.dto.restapi.RestapiChkLogUserInfoApiDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiSNDataTransferApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
@@ -18,27 +16,24 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.eam.EamFeignApi;
-import com.fantechs.provider.materialapi.imes.service.Chk_LogUserInfoService;
-import com.fantechs.provider.materialapi.imes.service.SN_Data_TransferService;
+import com.fantechs.provider.materialapi.imes.service.SnDataTransferService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
-import java.text.ParseException;
 import java.util.List;
 
 /**
  * @author Huangshuijun
  * @create 2021/08/11
  */
-@WebService(serviceName = "SN_Data_TransferService", // 与接口中指定的name一致
-        targetNamespace = "http://SN_Data_Transfer.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
-        endpointInterface = "com.fantechs.provider.materialapi.imes.service.SN_Data_TransferService"// 接口地址
+@WebService(serviceName = "SnDataTransferService", // 与接口中指定的name一致
+        targetNamespace = "http://SnDataTransfer.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
+        endpointInterface = "com.fantechs.provider.materialapi.imes.service.SnDataTransferService"// 接口地址
 )
-public class SN_Data_TransferServiceImpl implements SN_Data_TransferService {
+public class SnDataTransferServiceImpl implements SnDataTransferService {
 
     @Resource
     private LogsUtils logsUtils;
@@ -53,7 +48,7 @@ public class SN_Data_TransferServiceImpl implements SN_Data_TransferService {
 
     @Override
     @LcnTransaction
-    public String SN_Data_Transfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception {
+    public String SnDataTransfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception {
         /*
          * 1 验证传参基础信息是否正确
          * 2 检查成品SN、半成品SN状态、流程是否正确
