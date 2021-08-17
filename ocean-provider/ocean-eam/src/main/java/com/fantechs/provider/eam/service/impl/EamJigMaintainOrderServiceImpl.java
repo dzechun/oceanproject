@@ -61,7 +61,7 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public EamJigMaintainOrder pdaCreateOrder(String jigBarcode) {
+    public EamJigMaintainOrderDto pdaCreateOrder(String jigBarcode) {
         Example example = new Example(EamJigBarcode.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("jigBarcode",jigBarcode);
@@ -75,6 +75,9 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
         SearchEamJigMaintainProject searchEamJigMaintainProject = new SearchEamJigMaintainProject();
         searchEamJigMaintainProject.setJigCategoryId(eamJig.getJigCategoryId());
         List<EamJigMaintainProjectDto> list = eamJigMaintainProjectMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaintainProject));
+        if(StringUtils.isEmpty(list)){
+            throw new BizErrorException("查不到该治具所属类别的保养项目");
+        }
         EamJigMaintainProjectDto eamJigMaintainProjectDto = list.get(0);
 
         EamJigMaintainOrder eamJigMaintainOrder = new EamJigMaintainOrder();
@@ -94,7 +97,10 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
 
         this.save(eamJigMaintainOrder);
 
-        return eamJigMaintainOrderMapper.selectByPrimaryKey(eamJigMaintainOrder.getJigMaintainOrderId());
+        SearchEamJigMaintainOrder searchEamJigMaintainOrder = new SearchEamJigMaintainOrder();
+        searchEamJigMaintainOrder.setJigMaintainOrderId(eamJigMaintainOrder.getJigMaintainOrderId());
+        List<EamJigMaintainOrderDto> jigMaintainOrderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaintainOrder));
+        return jigMaintainOrderDtos.get(0);
     }
 
     @Override

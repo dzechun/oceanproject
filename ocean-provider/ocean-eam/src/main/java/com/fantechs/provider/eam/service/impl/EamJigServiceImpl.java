@@ -44,8 +44,6 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     private EamJigAttachmentMapper eamJigAttachmentMapper;
     @Resource
     private EamJigBackupMapper eamJigBackupMapper;
-    @Resource
-    private FileFeignApi fileFeignApi;
 
     @Override
     public List<EamJigDto> findList(Map<String, Object> map) {

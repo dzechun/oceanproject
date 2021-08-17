@@ -38,6 +38,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="specifications" jdbcType="VARCHAR" property="specifications"/>
     <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+    <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
 
     <collection property="eamWiBoms" ofType="com.fantechs.common.base.general.entity.eam.EamWiBom"
             column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamWiBomMapper.findList">
@@ -95,24 +96,30 @@
       <if test="orgId!=null and orgId!=''">
         and ewi.org_id = #{orgId}
       </if>
-        <if test="workInstructionName!=null and workInstructionName!=''">
-            and ewi.work_instruction_name = #{workInstructionName}
-        </if>
-        <if test="workInstructionCode!=null and workInstructionCode!=''">
-            and ewi.work_instruction_code = #{workInstructionCode}
-        </if>
-        <if test="materialCode!=null and materialCode!=''">
-            and bm.material_code = #{materialCode}
-        </if>
-        <if test="materialId!=null and materialId!=''">
-            and ewi.material_id = #{materialId}
-        </if>
-        <if test="processId!=null and processId!=''">
-            and ewi.process_id = #{processId}
-        </if>
-        <if test="workInstructionId!=null and workInstructionId!=''">
-            and ewi.work_instruction_id = #{workInstructionId}
-        </if>
+       <if test="workInstructionName!=null and workInstructionName!=''">
+           and ewi.work_instruction_name = #{workInstructionName}
+       </if>
+       <if test="workInstructionCode!=null and workInstructionCode!=''">
+           and ewi.work_instruction_code = #{workInstructionCode}
+       </if>
+       <if test="materialCode!=null and materialCode!=''">
+          and bm.material_code = #{materialCode}
+       </if>
+       <if test="materialId!=null and materialId!=''">
+          and ewi.material_id = #{materialId}
+       </if>
+       <if test="processId!=null and processId!=''">
+          and ewi.process_id = #{processId}
+       </if>
+       <if test="workInstructionId!=null and workInstructionId!=''">
+           and ewi.work_instruction_id = #{workInstructionId}
+       </if>
+       <if test="productModelCode!=null and productModelCode!=''">
+           and ewi.product_model_code = #{productModelCode}
+       </if>
+       <if test="processName!=null and processName!=''">
+           and sp.process_name = like CONCAT('%', #{processName}, '%')
+       </if>
     </where>
   </select>
 </mapper>

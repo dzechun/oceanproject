@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class EamJigMaintainProject extends ValidGroup implements Serializable {
     @ApiModelProperty(name="jigMaintainProjectCode",value = "治具保养编码")
     @Excel(name = "治具保养编码", height = 20, width = 30,orderNum="1")
     @Column(name = "jig_maintain_project_code")
+    @NotBlank(message = "治具保养编码不能为空")
     private String jigMaintainProjectCode;
 
     /**
@@ -50,6 +52,7 @@ public class EamJigMaintainProject extends ValidGroup implements Serializable {
     @ApiModelProperty(name="jigMaintainProjectName",value = "治具保养名称")
     @Excel(name = "治具保养名称", height = 20, width = 30,orderNum="2")
     @Column(name = "jig_maintain_project_name")
+    @NotBlank(message = "治具保养名称不能为空")
     private String jigMaintainProjectName;
 
     /**
@@ -65,6 +68,7 @@ public class EamJigMaintainProject extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="jigCategoryId",value = "治具类别ID")
     @Column(name = "jig_category_id")
+    @NotNull(message = "治具类别不能为空")
     private Long jigCategoryId;
 
     /**

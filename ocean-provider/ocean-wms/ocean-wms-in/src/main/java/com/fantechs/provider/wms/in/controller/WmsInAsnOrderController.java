@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.provider.wms.in.service.WmsInAsnOrderService;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -38,6 +39,8 @@ public class WmsInAsnOrderController {
 
     @Resource
     private WmsInAsnOrderService wmsInAsnOrderService;
+    @Resource
+    private RedisUtil redisUtil;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

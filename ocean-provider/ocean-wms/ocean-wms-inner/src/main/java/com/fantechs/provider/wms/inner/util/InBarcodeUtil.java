@@ -19,6 +19,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderReMsppMapper;
+import com.google.common.base.Joiner;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
 
@@ -43,6 +44,8 @@ public class InBarcodeUtil {
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
     @Resource
     private WmsInnerJobOrderMapper wmsInnerJobOrderMapper;
+    @Resource
+    private WmsInnerJobOrderReMsppMapper wmsInnerJobOrderReMsppMapper;
 
     private static InBarcodeUtil inBarcodeUtil;
 
@@ -53,6 +56,7 @@ public class InBarcodeUtil {
         inBarcodeUtil.sfcFeignApi = sfcFeignApi;
         inBarcodeUtil.wmsInnerInventoryDetMapper = wmsInnerInventoryDetMapper;
         inBarcodeUtil.wmsInnerJobOrderMapper = wmsInnerJobOrderMapper;
+        inBarcodeUtil.wmsInnerJobOrderReMsppMapper = wmsInnerJobOrderReMsppMapper;
     }
 
     /**
@@ -138,5 +142,26 @@ public class InBarcodeUtil {
             throw new BizErrorException("暂无入库数量");
         }
         return totalQty;
+    }
+
+    /**
+     * 获取栈板绑定工单条码信息
+     * @param jobOrderId
+     * @return
+     */
+    public static String getWorkBarCodeList(Long jobOrderId){
+        Example example = new Example(WmsInnerJobOrderReMspp.class);
+        example.createCriteria().andEqualTo("jobOrderId",jobOrderId);
+        WmsInnerJobOrderReMspp wmsInnerJobOrderReMspp = inBarcodeUtil.wmsInnerJobOrderReMsppMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(wmsInnerJobOrderReMspp)){
+            throw new BizErrorException("信息匹配失败");
+        }
+        //获取栈板绑定
+        List<String> barCodeList = inBarcodeUtil.wmsInnerJobOrderMapper.workBarCodeList(wmsInnerJobOrderReMspp.getProductPalletId());
+        if(barCodeList.size()<1){
+            throw new BizErrorException("条码信息匹配失败");
+        }
+        String barCode = Joiner.on(",").join(barCodeList);
+        return barCode;
     }
 }

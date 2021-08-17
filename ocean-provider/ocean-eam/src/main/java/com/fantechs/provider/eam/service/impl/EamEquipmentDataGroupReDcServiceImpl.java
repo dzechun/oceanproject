@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupReDcDto;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShop;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkShop;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentDataGroupParam;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentDataGroupReDc;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentDataGroupReDc;
 import com.fantechs.common.base.support.BaseService;
@@ -38,13 +39,12 @@ public class EamEquipmentDataGroupReDcServiceImpl extends BaseService<EamEquipme
 
     @Override
     public List<EamEquipmentDataGroupReDcDto> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+        SysUser user = getUser();
         map.put("orgId", user.getOrganizationId());
         return eamEquipmentDataGroupReDcMapper.findList(map);
     }
+
+
 
 
     @Override
@@ -79,9 +79,29 @@ public class EamEquipmentDataGroupReDcServiceImpl extends BaseService<EamEquipme
         if(StringUtils.isNotEmpty(ins)) {
             i = eamEquipmentDataGroupReDcMapper.insertList(ins);
         }
-        //新增车间历史信息
+        //新增设备分组历史信息
         if(StringUtils.isNotEmpty(eamHtEquipmentDataGroupReDcs))
             eamHtEquipmentDataGroupReDcMapper.insertList(eamHtEquipmentDataGroupReDcs);
         return i;
+    }
+
+
+    @Override
+    public int batchUpdate(List<EamEquipmentDataGroupReDc> eamEquipmentDataGroupReDcs ) {
+        Example examples = new Example(EamEquipmentDataGroupParam.class);
+        Example.Criteria criterias = examples.createCriteria();
+        criterias.andEqualTo("equipmentDataGroupId", eamEquipmentDataGroupReDcs.get(0).getEquipmentDataGroupId());
+        eamEquipmentDataGroupReDcMapper.deleteByExample(examples);
+        this.batchAdd(eamEquipmentDataGroupReDcs);
+        return 1;
+    }
+
+
+    public SysUser getUser(){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        return user;
     }
 }

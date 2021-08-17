@@ -218,4 +218,9 @@
     <select id="findMaterialCode" resultType="java.lang.String">
         select material_code FROM base_material where material_id = #{materialId}
     </select>
+    <select id="workBarCodeList" resultType="java.lang.String">
+        SELECT msfwo.barcode FROM mes_sfc_product_pallet_det msfpd
+        LEFT JOIN mes_sfc_work_order_barcode msfwo ON msfpd.work_order_barcode_id = msfwo.work_order_barcode_id
+        WHERE msfpd.product_pallet_id=#{productPalletId}
+    </select>
 </mapper>

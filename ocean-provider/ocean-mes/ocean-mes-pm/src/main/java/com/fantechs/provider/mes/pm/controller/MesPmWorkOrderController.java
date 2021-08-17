@@ -52,8 +52,8 @@ public class MesPmWorkOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：materialId、workOrderQuantity、proLineId、routeId",required = true)@RequestBody @Validated MesPmWorkOrder mesPmWorkOrder) {
-        return ControllerUtil.returnCRUD(mesPmWorkOrderService.save(mesPmWorkOrder));
+    public ResponseEntity add(@ApiParam(value = "必传：materialId、workOrderQuantity、proLineId、routeId",required = true)@RequestBody @Validated MesPmWorkOrderDto mesPmWorkOrderDto) {
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.save(mesPmWorkOrderDto));
     }
 
     @ApiOperation("删除")
@@ -64,8 +64,8 @@ public class MesPmWorkOrderController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrder mesPmWorkOrder) {
-        return ControllerUtil.returnCRUD(mesPmWorkOrderService.update(mesPmWorkOrder));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrderDto mesPmWorkOrderDto) {
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.update(mesPmWorkOrderDto));
     }
 
     @ApiOperation("批量修改完工数量")

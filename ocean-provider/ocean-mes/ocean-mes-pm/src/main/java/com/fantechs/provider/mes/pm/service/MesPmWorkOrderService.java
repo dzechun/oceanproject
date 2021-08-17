@@ -26,4 +26,8 @@ public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
     List<MesPmWorkOrder> getWorkOrderList(List<String> workOrderIds);
 
     int batchUpdate(List<MesPmWorkOrder> mesPmWorkOrders);
+
+    int save(MesPmWorkOrderDto mesPmWorkOrderDto);
+
+    int update(MesPmWorkOrderDto mesPmWorkOrderDto);
 }
