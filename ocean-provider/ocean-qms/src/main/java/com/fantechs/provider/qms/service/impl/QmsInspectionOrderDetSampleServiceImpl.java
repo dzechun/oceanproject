@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
+import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDetSample;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -162,6 +163,17 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        if(StringUtils.isNotEmpty(qmsInspectionOrderDetSample.getBarcode())) {
+            Example example = new Example(QmsInspectionOrderDetSample.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("barcode", qmsInspectionOrderDetSample.getBarcode())
+                    .andEqualTo("inspectionOrderDetId",qmsInspectionOrderDetSample.getInspectionOrderDetId());
+            List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(qmsInspectionOrderDetSamples)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            }
         }
 
         qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());

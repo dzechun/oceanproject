@@ -647,7 +647,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         if(StringUtils.isEmpty(mesPmWorkOrder.getInventoryQty())){
             mesPmWorkOrder.setInventoryQty(BigDecimal.ZERO);
         }
-        if(PackingQty.compareTo(mesPmWorkOrder.getWorkOrderQty())==1 || resultQty.compareTo(mesPmWorkOrder.getWorkOrderQty())==1 ||mesPmWorkOrder.getInventoryQty().add(PackingQty).compareTo(mesPmWorkOrder.getWorkOrderQty())==1){
+        if(PackingQty.compareTo(mesPmWorkOrder.getProductionQty())==1 || resultQty.compareTo(mesPmWorkOrder.getProductionQty())==1 ||mesPmWorkOrder.getInventoryQty().add(PackingQty).compareTo(mesPmWorkOrder.getProductionQty())==1){
             throw new BizErrorException("超出工单数量范围");
         }
         return mesPmWorkOrder;

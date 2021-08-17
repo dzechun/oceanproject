@@ -49,4 +49,9 @@ public interface EamFeignApi {
     @ApiOperation("查询治具绑定产品列表")
     @PostMapping("/eamJigReMaterial/findList")
     ResponseEntity<List<EamJigReMaterialDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchEamJigReMaterial searchEamJigReMaterial);
+
+    @ApiOperation("治具增加使用次数")
+    @PostMapping("/eamJigBarcode/plusCurrentUsageTime")
+    ResponseEntity plusCurrentUsageTime(@ApiParam(value = "治具条码id", required = true) @RequestParam @NotNull(message = "治具条码id") Long jigBarcodeId,
+                                        @ApiParam(value = "治具使用次数", required = true) @RequestParam @NotNull(message = "治具使用次数不能为空") Integer num);
 }

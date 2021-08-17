@@ -17,6 +17,7 @@ import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.materialapi.imes.service.Chk_LogUserInfoService;
 import com.fantechs.provider.materialapi.imes.service.SN_Data_TransferService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
@@ -47,6 +48,8 @@ public class SN_Data_TransferServiceImpl implements SN_Data_TransferService {
     private BarcodeUtils barcodeUtils;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private EamFeignApi eamFeignApi;
 
     @Override
     @LcnTransaction
@@ -83,7 +86,7 @@ public class SN_Data_TransferServiceImpl implements SN_Data_TransferService {
                 if(StringUtils.isNotEmpty(item)) {
                     ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = deviceInterFaceUtils.getJigBarCode(item);
                     EamJigBarcodeDto eamJigBarcodeDto=eamJigBarcodeDtoList.getData().get(0);
-                    baseFeignApi.plusCurrentUsageTime(eamJigBarcodeDto.getJigBarcodeId(),1);
+                    eamFeignApi.plusCurrentUsageTime(eamJigBarcodeDto.getJigBarcodeId(),1);
                 }
             }
         }

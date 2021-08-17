@@ -16,9 +16,45 @@ public class SearchEamJigBarcode extends BaseQuery implements Serializable {
     private Long jigId;
 
     /**
+     * 治具编码
+     */
+    @ApiModelProperty(name="jigCode",value = "治具编码")
+    private String jigCode;
+
+    /**
+     * 治具名称
+     */
+    @ApiModelProperty(name="jigName",value = "治具名称")
+    private String jigName;
+
+    /**
+     * 治具描述
+     */
+    @ApiModelProperty(name="jigDesc",value = "治具描述")
+    private String jigDesc;
+
+    /**
+     * 治具型号
+     */
+    @ApiModelProperty(name="jigModel",value = "治具型号")
+    private String jigModel;
+
+    /**
      * 治具条码
      */
-    @ApiModelProperty(name="jigBarCode",value = "治具ID")
+    @ApiModelProperty(name="jigBarCode",value = "治具条码")
     private String jigBarCode;
+
+    /**
+     * 资产条码
+     */
+    @ApiModelProperty(name="assetCode",value = "资产条码")
+    private String assetCode;
+
+    /**
+     * 是否按治具id分组（0-否 1-是）
+     */
+    @ApiModelProperty(name="ifGroup",value = "是否按治具id分组（0-否 1-是）")
+    private Integer ifGroup;
 
 }
