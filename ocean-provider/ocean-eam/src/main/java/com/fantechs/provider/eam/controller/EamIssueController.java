@@ -93,4 +93,10 @@ public class EamIssueController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<EamIssue> eamIssues) {
+        return ControllerUtil.returnCRUD(eamIssueService.batchAdd(eamIssues));
+    }
 }

@@ -115,8 +115,8 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
 
         //发送消息
         String localHostIp = InetAddress.getLocalHost().getHostAddress();
-    //    socketService.BatchInstructions(null,"1201","http://192.168.204.163/#/ESOPDataShow?ip=");
-       socketService.BatchInstructions(null,"1201","http://qmsapp.donlim.com/esop/#/ESOPDataShow?ip=");
+        socketService.BatchInstructions(null,"1201","http://192.168.204.163/#/ESOPDataShow?ip=");
+   //   socketService.BatchInstructions(null,"1201","http://qmsapp.donlim.com/esop/#/ESOPDataShow?ip=");
 
         return num;
     }

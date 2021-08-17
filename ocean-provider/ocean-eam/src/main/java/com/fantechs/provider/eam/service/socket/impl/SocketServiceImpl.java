@@ -232,7 +232,7 @@ public class SocketServiceImpl implements SocketService {
                 newList.add(map);
                 newMap.put("code", 1202);
                 newMap.put("url", "http://192.168.204.163/#/YunZhiESOP?ip=" + ip);
-          //      newMap.put("url", "http://qmsapp.donlim.com/esop/#/YunZhiESOP?ip=" + ip);
+           //     newMap.put("url", "http://qmsapp.donlim.com/esop/#/YunZhiESOP?ip=" + ip);
                 newList.add(newMap);
 
                 //配置项为展示状态且问题清单有数据。则发送信息。

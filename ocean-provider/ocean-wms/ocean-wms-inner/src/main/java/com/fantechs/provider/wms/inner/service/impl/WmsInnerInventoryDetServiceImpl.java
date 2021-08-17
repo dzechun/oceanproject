@@ -62,7 +62,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int subtract(WmsInnerInventoryDet wmsInnerInventoryDet) {
-        Example example = new Example(WmsInnerJobOrderDet.class);
+        Example example = new Example(WmsInnerInventoryDet.class);
         Example.Criteria criteria = example.createCriteria();
         if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty()) || wmsInnerInventoryDet.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
             throw new BizErrorException("出库数量错误");

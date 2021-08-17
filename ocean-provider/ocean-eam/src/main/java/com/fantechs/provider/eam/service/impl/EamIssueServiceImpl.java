@@ -210,4 +210,20 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
 
         return eamIssueMapper.deleteByIds(ids);
     }
+
+    @Override
+    public int batchAdd(List<EamIssue> eamIssues) {
+        int i=0;
+        if(StringUtils.isNotEmpty(eamIssues)){
+            Example example1 = new Example(EamIssueAttachment.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("materialId", eamIssues.get(0).getMaterialId());
+            eamIssueMapper.deleteByExample(example1);
+
+            eamIssueMapper.insertList(eamIssues);
+        }
+
+        return 0;
+    }
+
 }

@@ -59,7 +59,7 @@ public class EamEquipmentDataGroupReDcServiceImpl extends BaseService<EamEquipme
         for(EamEquipmentDataGroupReDc dc : eamEquipmentDataGroupReDcs) {
             Example example = new Example(EamEquipmentDataGroupReDc.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("organizationId", user.getOrganizationId());
+            criteria.andEqualTo("orgId", user.getOrganizationId());
             criteria.andEqualTo("equipmentDataGroupId", dc.getEquipmentDataGroupId());
             eamEquipmentDataGroupReDcMapper.deleteByExample(example);
             example.clear();
@@ -84,18 +84,6 @@ public class EamEquipmentDataGroupReDcServiceImpl extends BaseService<EamEquipme
             eamHtEquipmentDataGroupReDcMapper.insertList(eamHtEquipmentDataGroupReDcs);
         return i;
     }
-
-
-    @Override
-    public int batchUpdate(List<EamEquipmentDataGroupReDc> eamEquipmentDataGroupReDcs ) {
-        Example examples = new Example(EamEquipmentDataGroupParam.class);
-        Example.Criteria criterias = examples.createCriteria();
-        criterias.andEqualTo("equipmentDataGroupId", eamEquipmentDataGroupReDcs.get(0).getEquipmentDataGroupId());
-        eamEquipmentDataGroupReDcMapper.deleteByExample(examples);
-        this.batchAdd(eamEquipmentDataGroupReDcs);
-        return 1;
-    }
-
 
     public SysUser getUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
