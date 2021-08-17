@@ -1,11 +1,14 @@
 package com.fantechs.security.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.security.SysCustomFormDetDto;
 import com.fantechs.common.base.general.entity.security.SysCustomFormDet;
 import com.fantechs.common.base.general.entity.security.search.SearchSysCustomFormDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.service.SysCustomFormDetService;
@@ -39,6 +42,12 @@ public class SysCustomFormDetController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SysCustomFormDet sysCustomFormDet) {
+        // 获取登录用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        sysCustomFormDet.setOrgId(user.getOrganizationId());
         return ControllerUtil.returnCRUD(sysCustomFormDetService.save(sysCustomFormDet));
     }
 
@@ -51,6 +60,12 @@ public class SysCustomFormDetController {
     @ApiOperation("修改")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SysCustomFormDet.update.class) SysCustomFormDet sysCustomFormDet) {
+        // 获取登录用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        sysCustomFormDet.setOrgId(user.getOrganizationId());
         return ControllerUtil.returnCRUD(sysCustomFormDetService.update(sysCustomFormDet));
     }
 

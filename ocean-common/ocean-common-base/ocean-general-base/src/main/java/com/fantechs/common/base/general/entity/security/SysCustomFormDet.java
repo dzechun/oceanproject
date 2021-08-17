@@ -287,5 +287,13 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="orgId",value = "组织id")
+    @Excel(name = "组织id", height = 20, width = 30,orderNum="")
+    @Column(name = "org_id")
+    private Long orgId;
+
     private static final long serialVersionUID = 1L;
 }
