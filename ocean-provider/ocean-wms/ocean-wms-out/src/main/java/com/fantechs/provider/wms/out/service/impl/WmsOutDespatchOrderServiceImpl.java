@@ -114,7 +114,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     if(StringUtils.isEmpty(wmsInnerInventory)){
                         throw new BizErrorException("未匹配到库存");
                     }
-                    if(wmsInnerJobOrderDetDto.getActualQty().compareTo(wmsInnerInventory.getPackingQty())==1){
+                    if(StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) || wmsInnerJobOrderDetDto.getActualQty().compareTo(wmsInnerInventory.getPackingQty())==1){
                         throw new BizErrorException("库存不足");
                     }
                     wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerJobOrderDetDto.getActualQty()));
