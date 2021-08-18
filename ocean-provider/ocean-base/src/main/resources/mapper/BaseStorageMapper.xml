@@ -213,7 +213,7 @@
                  LEFT JOIN wms_inner_inventory wii ON bs.storage_id = wii.storage_id AND wii.packing_qty>0
                  LEFT JOIN base_material_tab bmt ON wii.material_id = bmt.material_id
         <where>
-             bs.storage_type=2
+             bs.storage_type=1
             <if test="warehouseId!=null and warehouseId!=''">
                 and  wii.warehouse_id =#{warehouseId}
             </if>
@@ -243,25 +243,25 @@
         select bs.putaway_move_line_no From wms_inner_inventory wii
 LEFT JOIN base_storage bs ON bs.storage_id = wii.storage_id
 where wii.warehouse_id = #{warehouseId} and wii.material_id = #{materialId}
-order by wii.modified_time desc limit 1 and bs.storage_type=2
+order by wii.modified_time desc limit 1 and bs.storage_type=1
     </select>
     <select id="BatchEqualStorage" resultMap="StorageRuleMap">
         SELECT bs.storage_id as storageId, bs.roadway, bs.row_no as rowNo, bs.column_no as columnNo, bs.level_no as levelNo, bs.putaway_move_line_no as putawayMoveLineNo, IFNULL(bs.surplus_load,0) as surplusLoad, IFNULL(bs.surplus_volume,0) as surplusVolume, bs.surplus_can_put_salver as surplusCanPutSalver, IFNULL(bmt.volume,0) as volume, IFNULL(bmt.net_weight,0) as netWeight
         FROM wms_inner_inventory wii
                  LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
                  LEFT JOIN base_material_tab bmt ON wii.material_id = bmt.material_id
-        WHERE wii.warehouse_id=#{warehouseId} AND wii.material_id=#{materialId} AND wii.batch_code=#{batchCode} and bs.storage_type=2
+        WHERE wii.warehouse_id=#{warehouseId} AND wii.material_id=#{materialId} AND wii.batch_code=#{batchCode} and bs.storage_type=1
     </select>
     <select id="EmptyStorage" resultMap="StorageRuleMap">
         SELECT bs.storage_id as storageId, bs.roadway, bs.row_no as rowNo, bs.column_no as columnNo, bs.level_no as levelNo, bs.putaway_move_line_no as putawayMoveLineNo, IFNULL(bs.surplus_load,0) as surplusLoad, IFNULL(bs.surplus_volume,0) as surplusVolume, bs.surplus_can_put_salver as surplusCanPutSalver, IFNULL(bmt.volume,0) as volume, IFNULL(bmt.net_weight,0) as netWeight
         FROM base_storage bs
                  LEFT JOIN base_material_tab bmt ON bmt.material_id=#{materialId}
-        WHERE bs.storage_id NOT IN(SELECT wii.storage_id FROM wms_inner_inventory wii WHERE wii.packing_qty>0 ) and bs.warehouse_id=#{warehouseId} and  bs.storage_type=2
+        WHERE bs.storage_id NOT IN(SELECT wii.storage_id FROM wms_inner_inventory wii WHERE wii.packing_qty>0 ) and bs.warehouse_id=#{warehouseId} and  bs.storage_type=1
     </select>
     <select id="MixedWithStorage" resultMap="StorageRuleMap">
         SELECT bs.storage_id as storageId, bs.roadway, bs.row_no as rowNo, bs.column_no as columnNo, bs.level_no as levelNo, bs.putaway_move_line_no as putawayMoveLineNo, IFNULL(bs.surplus_load,0) as surplusLoad, IFNULL(bs.surplus_volume,0) as surplusVolume, bs.surplus_can_put_salver as surplusCanPutSalver, IFNULL(bmt.volume,0) as volume, IFNULL(bmt.net_weight,0) as netWeight
         FROM base_storage bs
                  LEFT JOIN base_material_tab bmt ON bmt.material_id=#{materialId}
-        WHERE bs.storage_id IN(SELECT wii.storage_id FROM wms_inner_inventory wii WHERE wii.warehouse_id=#{warehouseId} GROUP BY wii.material_id HAVING COUNT(wii.material_id)>=2) AND bs.storage_type=2
+        WHERE bs.storage_id IN(SELECT wii.storage_id FROM wms_inner_inventory wii WHERE wii.warehouse_id=#{warehouseId} GROUP BY wii.material_id HAVING COUNT(wii.material_id)>=2) AND bs.storage_type=1
     </select>
 </mapper>
