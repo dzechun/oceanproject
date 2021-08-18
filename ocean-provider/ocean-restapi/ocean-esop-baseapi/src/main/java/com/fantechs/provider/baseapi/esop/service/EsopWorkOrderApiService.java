@@ -1,13 +1,11 @@
 package com.fantechs.provider.baseapi.esop.service;
 
 
-import com.fantechs.common.base.general.dto.restapi.SearchSapMaterialApi;
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
-
-import java.text.ParseException;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 
 public interface EsopWorkOrderApiService {
 
-    int getWorkOrder(String proLineId);
+    int getWorkOrder(String proCode);
 
+    int getAllWorkOrder(SearchBaseProLine searchBaseProLine);
 }

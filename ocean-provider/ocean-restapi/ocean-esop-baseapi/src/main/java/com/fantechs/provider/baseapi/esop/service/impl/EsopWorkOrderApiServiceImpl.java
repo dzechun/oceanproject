@@ -3,9 +3,9 @@ package com.fantechs.provider.baseapi.esop.service.impl;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseProductModel;
+import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductModel;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
@@ -52,11 +52,11 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
 
     @Override
     @LcnTransaction
-    public int getWorkOrder(String proLineId) {
-        if (StringUtils.isEmpty(proLineId)) throw new BizErrorException("产线id不能为空");
+    public int getWorkOrder(String proCode) {
+        if (StringUtils.isEmpty(proCode)) throw new BizErrorException("产线id不能为空");
         String result = null;
         try {
-            URL realUrl = new URL(url +"?lineId="+ proLineId);
+            URL realUrl = new URL(url +"?lineId="+ proCode);
             CloseableHttpClient httpClient = SkipHttpsUtil.wrapClient();
             HttpGet get = new HttpGet(String.valueOf(realUrl));
             CloseableHttpResponse response = null;
@@ -68,16 +68,13 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
                     HttpEntity entity = response.getEntity();
                     result = EntityUtils.toString(entity);
                     Map<String, Object> map = JsonUtils.jsonToMap(result);
+                    log.info("-----map----"+map);
                     Map<String, Object> data = (Map<String, Object>) map.get("data");
                     //校验产品编码(新宝一级公司没有物料因此产品编码当做物料使用存入物料表)
-                  //  ResponseEntity<List<BaseMaterial>> list = null;
-                    log.info("---data----"+data);
-                    if(StringUtils.isEmpty(data.get("product_model"))){
-                        throw new BizErrorException("同步错误，返回的产品型号为空");
-                    }else {
+                    if(StringUtils.isNotEmpty(data) && StringUtils.isNotEmpty(data.get("product_model"))){
                         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
                         searchBaseMaterial.setMaterialCode((String)data.get("product_model"));
-                        searchBaseMaterial.setOrgId(baseUtils.getOrId());
+                        searchBaseMaterial.setOrganizationId(baseUtils.getOrId());
                         ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
 
                         if(StringUtils.isEmpty(list.getData())) {
@@ -91,19 +88,22 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
                         }else{
                             material = list.getData().get(0);
                         }
+                        MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
+                        mesPmWorkOrder.setWorkOrderCode(String.valueOf(data.get("code")));
+                        mesPmWorkOrder.setWorkOrderQty(new BigDecimal((int)data.get("num")));
+                        mesPmWorkOrder.setPlanStartTime(new Date());
+                        mesPmWorkOrder.setWorkOrderStatus((byte)3);
+                        mesPmWorkOrder.setWorkOrderType((byte)0);
+                        mesPmWorkOrder.setMaterialId(material.getMaterialId());
+                        mesPmWorkOrder.setOrgId(orgId);
+                        pmFeignApi.saveByApi(mesPmWorkOrder);
+                    }else{
+                //        logsUtils.addlog((byte)2,(byte)1,orgId,result,proCode);
                     }
 
-                    MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
-                    mesPmWorkOrder.setWorkOrderCode(String.valueOf(data.get("code")));
-                    mesPmWorkOrder.setWorkOrderQty(new BigDecimal((int)data.get("num")));
-                    mesPmWorkOrder.setPlanStartTime(new Date());
-                    mesPmWorkOrder.setWorkOrderStatus((byte)3);
-                    mesPmWorkOrder.setWorkOrderType((byte)0);
-                    mesPmWorkOrder.setMaterialId(material.getMaterialId());
-                    log.info("----mesPmWorkOrder---"+mesPmWorkOrder);
-                    pmFeignApi.saveByApi(mesPmWorkOrder);
 
                 }
+             //   logsUtils.addlog((byte)1,(byte)1,orgId,result,proCode);
                 return 1;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -128,6 +128,18 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
             e.printStackTrace();
         }
     return 0;
+    }
+
+    @Override
+    public int getAllWorkOrder(SearchBaseProLine searchBaseProLine) {
+        searchBaseProLine.setOrgId(baseUtils.getOrId());
+        ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);
+        if(StringUtils.isNotEmpty(list.getData())){
+            for(BaseProLine baseProLine : list.getData()){
+               this.getWorkOrder(baseProLine.getProCode());
+            }
+        }
+        return 1;
     }
 
 }

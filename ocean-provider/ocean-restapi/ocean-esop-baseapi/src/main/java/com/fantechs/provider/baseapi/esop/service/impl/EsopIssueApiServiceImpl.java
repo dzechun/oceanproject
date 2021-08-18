@@ -2,11 +2,9 @@ package com.fantechs.provider.baseapi.esop.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.restapi.esop.EsopIssueRes;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.eam.EamIssue;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.SkipHttpsUtil;
@@ -16,7 +14,6 @@ import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.baseapi.esop.service.EsopIssueApiService;
 import com.fantechs.provider.baseapi.esop.util.BaseUtils;
 import com.fantechs.provider.baseapi.esop.util.LogsUtils;
-import com.google.gson.Gson;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -30,7 +27,10 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 @org.springframework.stereotype.Service
@@ -54,18 +54,17 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
     public int getIssue(String materialCode) {
         if (StringUtils.isEmpty(materialCode)) throw new BizErrorException("物料（产品）编码不能为空");
         String result = null;
+        Long orgId = baseUtils.getOrId();
         try {
             URL realUrl = new URL(url +"?productModel="+ materialCode);
             CloseableHttpClient httpClient = SkipHttpsUtil.wrapClient();
             HttpGet get = new HttpGet(String.valueOf(realUrl));
             CloseableHttpResponse response = null;
-
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(materialCode);
-            searchBaseMaterial.setOrgId(baseUtils.getOrId());
+            searchBaseMaterial.setOrgId(orgId);
             ResponseEntity<List<BaseMaterial>> baseMaterials = baseFeignApi.findList(searchBaseMaterial);
 
-            if(StringUtils.isEmpty(baseMaterials.getData())) throw new BizErrorException("同步错误，未查询到对应的产品型号，请先同步产品型号");
             try {
                 response = httpClient.execute(get);
                 if (response != null && response.getStatusLine().getStatusCode() == 200) {
@@ -87,6 +86,7 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
                     }
                    eamFeignApi.batchAdd(eamIssues);
                 }
+              //  logsUtils.addlog((byte)1,(byte)1,orgId,result,materialCode);
                 return 1;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -111,6 +111,18 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
             e.printStackTrace();
         }
     return 0;
+    }
+
+    @Override
+    public int getAllIssue(SearchBaseMaterial searchBaseMaterial) {
+        searchBaseMaterial.setOrgId(baseUtils.getOrId());
+        ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
+        if(StringUtils.isNotEmpty(list.getData())){
+            for(BaseMaterial baseMaterial : list.getData()){
+                this.getIssue(baseMaterial.getMaterialCode());
+            }
+        }
+        return 1;
     }
 
 }
