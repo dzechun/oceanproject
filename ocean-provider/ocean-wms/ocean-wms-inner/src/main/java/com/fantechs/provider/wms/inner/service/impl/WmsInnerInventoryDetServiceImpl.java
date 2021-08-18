@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -61,6 +62,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int subtract(WmsInnerInventoryDet wmsInnerInventoryDet) {
         Example example = new Example(WmsInnerInventoryDet.class);
         Example.Criteria criteria = example.createCriteria();
