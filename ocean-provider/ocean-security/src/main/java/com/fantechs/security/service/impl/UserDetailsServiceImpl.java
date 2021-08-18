@@ -111,7 +111,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         //新宝刷卡登录（免密）
         if(StringUtils.isNotEmpty(CustomWebAuthenticationDetails.TYPE) && "2".equals(CustomWebAuthenticationDetails.TYPE)){
             logger.info("--------刷卡登录----------");
-            userDto.setPassword(new BCryptPasswordEncoder().encode("skdl123456"));
+            userDto.setPassword(new BCryptPasswordEncoder().encode("123456"));
         }
         return userDto;
     }

@@ -138,6 +138,7 @@ public class LoginController {
         searchSysRole.setRoleName(list.getData().get(0).getProcessName());
         List<SysRoleDto> sysRoleDtos = sysRoleMapper.findByUserName(searchSysRole);
 
+        log.info("---username---"+username+","+"----orgId--"+orgId+",---type-"+type);
         //密码登录
         if("1".equals(type)) {
             if (StringUtils.isNotEmpty(sysRoleDtos)) {
@@ -148,7 +149,8 @@ public class LoginController {
          //刷卡登录
         }else if("2".equals(type)){
             if (StringUtils.isNotEmpty(sysRoleDtos)) {
-                responseEntity = securityFeignApi.login(username, "skdl123456",orgId,type);
+
+                responseEntity = securityFeignApi.login(username, "123456",orgId,type);
             } else {
                 return ControllerUtil.returnFail("登录错误，该用户无权限登录", 1);
             }

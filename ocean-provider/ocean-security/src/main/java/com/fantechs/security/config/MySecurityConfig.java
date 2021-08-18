@@ -3,7 +3,6 @@ package com.fantechs.security.config;
 
 import com.fantechs.security.filter.CustomAuthenticationDetailsSource;
 import com.fantechs.security.securityIntercepter.*;
-import com.fantechs.security.service.impl.PasswordEncoderImpl;
 import com.fantechs.security.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -41,8 +40,6 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
     private MyAccessDeniedHandler myAccessDeniedHandler;
     @Resource
     private MyLogoutSuccessHandler myLogoutSuccessHandler;
-    @Resource
-    private PasswordEncoderImpl passwordEncoderImpl;
 
     @Autowired
     private CustomAuthenticationDetailsSource customAuthenticationDetailsSource;
