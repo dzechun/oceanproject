@@ -51,12 +51,9 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
 
     @Override
     public List<EamIssueDto> findList(Map<String, Object> map) {
-        if(StringUtils.isEmpty(map.get("orgId"))){
-            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
-            map.put("orgId", user.getOrganizationId());
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
         if (StringUtils.isNotEmpty(map.get("equipmentIp"))) {
@@ -75,6 +72,7 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
                     SearchEamIssue searchEamIssue = new SearchEamIssue();
                     searchEamIssue.setProductModelCode(eamWiReleaseDtos.get(0).getProductModelCode());
                     searchEamIssue.setCodeQueryMark(1);
+                    searchEamIssue.setOrgId(user.getOrganizationId());
                     list = eamIssueMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamIssue));
 
                     //工序编码
@@ -85,11 +83,11 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
                     }
                 }
             }
-
             return list;
+        }else {
+            map.put("orgId", user.getOrganizationId());
+            return eamIssueMapper.findList(map);
         }
-
-        return eamIssueMapper.findList(map);
     }
 
     @Override
