@@ -1,11 +1,7 @@
 package com.fantechs.provider.api.qms;
 
-import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
-import com.fantechs.common.base.general.dto.basic.BaseInspectionTypeDto;
 import com.fantechs.common.base.general.dto.qms.QmsPdaInspectionDto;
 import com.fantechs.common.base.general.dto.qms.QmsQualityConfirmationDto;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
-import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsQualityConfirmation;
 import com.fantechs.common.base.general.entity.qms.search.*;
 import com.fantechs.common.base.response.ResponseEntity;
