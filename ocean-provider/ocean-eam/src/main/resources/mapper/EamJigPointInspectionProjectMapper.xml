@@ -20,7 +20,7 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <collection property="list" ofType="com.fantechs.common.base.general.entity.eam.EamJigPointInspectionProjectItem"
+    <collection property="list" ofType="com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectItemDto"
                 column="{jigPointInspectionProjectId=jig_point_inspection_project_id}" select="com.fantechs.provider.eam.mapper.EamJigPointInspectionProjectItemMapper.findList">
     </collection>
   </resultMap>

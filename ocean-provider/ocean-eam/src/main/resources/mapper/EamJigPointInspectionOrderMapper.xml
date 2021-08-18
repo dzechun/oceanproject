@@ -21,7 +21,7 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <collection property="list" ofType="com.fantechs.common.base.general.entity.eam.EamJigPointInspectionOrderDet"
+    <collection property="list" ofType="com.fantechs.common.base.general.dto.eam.EamJigPointInspectionOrderDetDto"
                 column="{jigPointInspectionOrderId=jig_point_inspection_order_id}" select="com.fantechs.provider.eam.mapper.EamJigPointInspectionOrderDetMapper.findList">
     </collection>
   </resultMap>

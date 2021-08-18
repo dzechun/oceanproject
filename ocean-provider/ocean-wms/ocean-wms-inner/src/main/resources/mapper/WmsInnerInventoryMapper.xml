@@ -212,5 +212,4 @@ wii.storage_id,
       where inventory_id =#{item.inventoryId}
     </foreach>
   </update>
-
 </mapper>

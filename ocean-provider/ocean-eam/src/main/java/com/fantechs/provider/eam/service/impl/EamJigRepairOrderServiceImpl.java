@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderReplacementDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainProject;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRepairOrder;
@@ -104,7 +105,7 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
         eamJigRepairOrderMapper.insertUseGeneratedKeys(record);
 
         //治具维修单替换件
-        List<EamJigRepairOrderReplacement> list = record.getList();
+        List<EamJigRepairOrderReplacementDto> list = record.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamJigRepairOrderReplacement eamJigRepairOrderReplacement : list){
                 eamJigRepairOrderReplacement.setJigRepairOrderId(record.getJigRepairOrderId());
@@ -146,7 +147,7 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
         eamJigRepairOrderReplacementMapper.deleteByExample(example1);
 
         //治具维修单替换件
-        List<EamJigRepairOrderReplacement> list = entity.getList();
+        List<EamJigRepairOrderReplacementDto> list = entity.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamJigRepairOrderReplacement eamJigRepairOrderReplacement : list){
                 eamJigRepairOrderReplacement.setJigRepairOrderId(entity.getJigRepairOrderId());

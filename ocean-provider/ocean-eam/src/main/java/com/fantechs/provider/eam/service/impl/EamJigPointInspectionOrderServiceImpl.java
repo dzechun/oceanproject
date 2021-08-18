@@ -3,10 +3,7 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamJigMaintainOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamJigMaintainProjectDto;
-import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectDto;
+import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainOrder;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigPointInspectionOrder;
@@ -85,15 +82,15 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         EamJigPointInspectionProjectDto eamJigPointInspectionProjectDto = list.get(0);
 
         EamJigPointInspectionOrder eamJigPointInspectionOrder = new EamJigPointInspectionOrder();
-        List<EamJigPointInspectionOrderDet> eamJigPointInspectionOrderDetList = new ArrayList<>();
+        List<EamJigPointInspectionOrderDetDto> eamJigPointInspectionOrderDetList = new ArrayList<>();
 
         eamJigPointInspectionOrder.setJigPointInspectionOrderCode(CodeUtils.getId("DJ-"));
         eamJigPointInspectionOrder.setJigId(eamJig.getJigId());
         eamJigPointInspectionOrder.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
         eamJigPointInspectionOrder.setJigPointInspectionProjectId(eamJigPointInspectionProjectDto.getJigPointInspectionProjectId());
-        List<EamJigPointInspectionProjectItem> eamJigPointInspectionProjectItemList = eamJigPointInspectionProjectDto.getList();
+        List<EamJigPointInspectionProjectItemDto> eamJigPointInspectionProjectItemList = eamJigPointInspectionProjectDto.getList();
         for (EamJigPointInspectionProjectItem eamJigPointInspectionProjectItem : eamJigPointInspectionProjectItemList){
-            EamJigPointInspectionOrderDet eamJigPointInspectionOrderDet = new EamJigPointInspectionOrderDet();
+            EamJigPointInspectionOrderDetDto eamJigPointInspectionOrderDet = new EamJigPointInspectionOrderDetDto();
             eamJigPointInspectionOrderDet.setJigPointInspectionProjectItemId(eamJigPointInspectionProjectItem.getJigPointInspectionProjectItemId());
             eamJigPointInspectionOrderDetList.add(eamJigPointInspectionOrderDet);
         }
@@ -127,7 +124,7 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         eamJigPointInspectionOrderMapper.insertUseGeneratedKeys(record);
 
         //点检单事项
-        List<EamJigPointInspectionOrderDet> list = record.getList();
+        List<EamJigPointInspectionOrderDetDto> list = record.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamJigPointInspectionOrderDet eamJigPointInspectionOrderDet : list){
                 eamJigPointInspectionOrderDet.setJigPointInspectionOrderId(record.getJigPointInspectionOrderId());
@@ -169,7 +166,7 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         eamJigPointInspectionOrderDetMapper.deleteByExample(example1);
 
         //点检单事项
-        List<EamJigPointInspectionOrderDet> list = entity.getList();
+        List<EamJigPointInspectionOrderDetDto> list = entity.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamJigPointInspectionOrderDet eamJigPointInspectionOrderDet : list){
                 eamJigPointInspectionOrderDet.setJigPointInspectionOrderId(entity.getJigPointInspectionOrderId());

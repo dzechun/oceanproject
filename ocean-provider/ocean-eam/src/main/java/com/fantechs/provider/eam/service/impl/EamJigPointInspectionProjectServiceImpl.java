@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectDto;
+import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectItemDto;
 import com.fantechs.common.base.general.entity.eam.EamJigMaintainProject;
 import com.fantechs.common.base.general.entity.eam.EamJigMaintainProjectItem;
 import com.fantechs.common.base.general.entity.eam.EamJigPointInspectionProject;
@@ -72,7 +73,7 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
         eamJigPointInspectionProjectMapper.insertUseGeneratedKeys(record);
 
         //点检项目事项
-        List<EamJigPointInspectionProjectItem> list = record.getList();
+        List<EamJigPointInspectionProjectItemDto> list = record.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamJigPointInspectionProjectItem eamJigPointInspectionProjectItem : list){
                 eamJigPointInspectionProjectItem.setJigPointInspectionProjectId(record.getJigPointInspectionProjectId());
@@ -114,7 +115,7 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
         eamJigPointInspectionProjectMapper.deleteByExample(example1);
 
         //点检项目事项
-        List<EamJigPointInspectionProjectItem> list = entity.getList();
+        List<EamJigPointInspectionProjectItemDto> list = entity.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamJigPointInspectionProjectItem eamJigPointInspectionProjectItem : list){
                 eamJigPointInspectionProjectItem.setJigPointInspectionProjectId(entity.getJigPointInspectionProjectId());

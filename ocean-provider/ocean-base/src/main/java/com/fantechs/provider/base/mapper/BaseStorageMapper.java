@@ -20,4 +20,8 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
     List<StorageRuleDto> findPutawayRule(Map<String,Object>map);
 
     Integer findPutawayNo(@Param("warehouseId")Long warehouseId,@Param("materialId")Long materialId);
+
+    List<StorageRuleDto> BatchEqualStorage(Map<String,Object> map);
+    List<StorageRuleDto> EmptyStorage(Map<String ,Object> map);
+    List<StorageRuleDto> MixedWithStorage(Map<String ,Object> map);
 }

@@ -295,5 +295,15 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     @Column(name = "org_id")
     private Long orgId;
 
+    @ApiModelProperty(name="selectName",value = "下拉自定义名称")
+    @Excel(name = "下拉自定义名称", height = 20, width = 30)
+    @Column(name = "select_name")
+    private String selectName;
+
+    @ApiModelProperty(name="selectValue",value = "下拉自定义值")
+    @Excel(name = "下拉自定义值", height = 20, width = 30)
+    @Column(name = "select_value")
+    private String selectValue;
+
     private static final long serialVersionUID = 1L;
 }

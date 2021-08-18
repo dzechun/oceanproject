@@ -75,6 +75,7 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
                     SearchEamIssue searchEamIssue = new SearchEamIssue();
                     searchEamIssue.setProductModelCode(eamWiReleaseDtos.get(0).getProductModelCode());
                     searchEamIssue.setCodeQueryMark(1);
+                    searchEamIssue.setOrgId(eamEquipmentDtos.get(0).getOrgId());
                     list = eamIssueMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamIssue));
 
                     //工序编码

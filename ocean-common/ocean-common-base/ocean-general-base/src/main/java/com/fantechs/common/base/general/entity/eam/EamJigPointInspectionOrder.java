@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionOrderDetDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -130,7 +131,7 @@ public class EamJigPointInspectionOrder extends ValidGroup implements Serializab
      * 治具点检单事项列表
      */
     @ApiModelProperty(name="list",value = "治具点检单事项列表")
-    private List<EamJigPointInspectionOrderDet> list = new ArrayList<>();
+    private List<EamJigPointInspectionOrderDetDto> list = new ArrayList<>();
 
     private String option1;
 
