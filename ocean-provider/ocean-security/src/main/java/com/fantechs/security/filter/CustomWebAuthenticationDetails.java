@@ -11,10 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 public class CustomWebAuthenticationDetails extends WebAuthenticationDetails {
     private static final long serialVersionUID = 6975601077710753878L;
     public static String ORGANIZATIONID;
+    public static String TYPE;
     public static boolean pass = true;
 
     public CustomWebAuthenticationDetails(HttpServletRequest request) {
         super(request);
         ORGANIZATIONID = request.getParameter("orgId");
+        TYPE = request.getParameter("type");
     }
 }

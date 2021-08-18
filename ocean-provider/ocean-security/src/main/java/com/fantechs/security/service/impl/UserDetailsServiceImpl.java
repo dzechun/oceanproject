@@ -15,6 +15,8 @@ import com.fantechs.security.mapper.SysRoleMapper;
 import com.fantechs.security.mapper.SysSpecItemMapper;
 import com.fantechs.security.mapper.SysUserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -41,6 +44,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
+    protected static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     @Autowired
     private SysUserMapper sysUserMapper;
@@ -104,6 +108,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         SysUserDto userDto  = new SysUserDto();
         BeanUtils.copyProperties(user,userDto);
         userDto.setRoles(rolesByUserId);
+        //新宝刷卡登录（免密）
+        if(StringUtils.isNotEmpty(CustomWebAuthenticationDetails.TYPE) && "2".equals(CustomWebAuthenticationDetails.TYPE)){
+            logger.info("--------刷卡登录----------");
+            userDto.setPassword(new BCryptPasswordEncoder().encode("skdl123456"));
+        }
         return userDto;
     }
 

@@ -157,5 +157,10 @@ public class BaseMaterialController {
         return ControllerUtil.returnCRUD(baseMaterialService.batchUpdate(baseMaterials));
     }
 
-
+    @ApiOperation("增加物料信息")
+    @PostMapping("/saveApi")
+    public ResponseEntity<BaseMaterial> saveApi(@ApiParam(value = "必传：materialCode",required = true)@RequestBody @Validated BaseMaterial baseMaterial){
+        BaseMaterial material = baseMaterialService.saveApi(baseMaterial);
+        return ControllerUtil.returnDataSuccess(material,1);
+    }
 }

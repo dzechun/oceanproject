@@ -592,4 +592,22 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         resultMap.put("操作失败行数",fail);
         return resultMap;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public BaseMaterial saveApi(BaseMaterial baseMaterial) {
+        Example example = new Example(BaseMaterial.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", baseMaterial.getOrganizationId());
+        criteria.andEqualTo("materialCode", baseMaterial.getMaterialCode());
+        baseMaterialMapper.deleteByExample(example);
+        baseMaterial.setOrganizationId(baseMaterial.getOrganizationId());
+        int i = baseMaterialMapper.insertUseGeneratedKeys(baseMaterial);
+
+        //新增物料历史信息
+        BaseHtMaterial baseHtMaterial = new BaseHtMaterial();
+        BeanUtils.copyProperties(baseMaterial, baseHtMaterial);
+        baseHtMaterialMapper.insertSelective(baseHtMaterial);
+        return baseMaterial;
+    }
 }
