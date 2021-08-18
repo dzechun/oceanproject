@@ -57,6 +57,7 @@ public class EamEquipmentStationServiceImpl extends BaseService<EamEquipmentStat
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipmentStationDto eamEquipmentStationDto) {
         SysUser user = getUser();
+        if(StringUtils.isNotEmpty(eamEquipmentStationDto.getMapUrl()))   throw new BizErrorException("监测站平面图不能为空");
         Example example = new Example(EamEquipmentStation.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("equipmentStationCode", eamEquipmentStationDto.getEquipmentStationCode());
@@ -112,7 +113,7 @@ public class EamEquipmentStationServiceImpl extends BaseService<EamEquipmentStat
         for (String id : idArry) {
             Example examples = new Example(EamEquipmentStation.class);
             Example.Criteria criterias = examples.createCriteria();
-            criterias.andEqualTo("equipmentDataGroupId",id);
+            criterias.andEqualTo("equipmentStationId",id);
             eamEquipmentReEsMapper.deleteByExample(examples);
             i = eamEquipmentStationMapper.deleteByExample(examples);
             examples.clear();

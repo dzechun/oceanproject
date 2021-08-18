@@ -20,4 +20,6 @@ public interface BaseMaterialService extends IService<BaseMaterial>{
     int batchUpdate(List<BaseMaterial> baseMaterials);
 
     Map<String, Object> importExcel(List<BaseMaterialImport> baseMaterialImports);
+
+    BaseMaterial saveApi(BaseMaterial baseMaterial);
 }

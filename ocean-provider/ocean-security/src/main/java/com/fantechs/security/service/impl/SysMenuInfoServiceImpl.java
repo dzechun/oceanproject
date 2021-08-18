@@ -243,7 +243,6 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         Example example = new Example(SysMenuInfo.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("menuCode", sysMenuInfo.getMenuCode());
-
         SysMenuInfo odlSysMenuinfo = sysMenuInfoMapper.selectOneByExample(example);
 
         if(StringUtils.isNotEmpty(odlSysMenuinfo)&&!odlSysMenuinfo.getMenuId().equals(sysMenuInfo.getMenuId())){
