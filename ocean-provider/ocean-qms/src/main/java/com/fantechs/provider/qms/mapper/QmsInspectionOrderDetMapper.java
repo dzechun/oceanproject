@@ -9,5 +9,5 @@ import java.util.Map;
 
 @Mapper
 public interface QmsInspectionOrderDetMapper extends MyMapper<QmsInspectionOrderDet> {
-    List<QmsInspectionOrderDet> findList(Map<String, Object> map);
+    List<QmsInspectionOrderDet> findDetList(Map<String, Object> map);
 }

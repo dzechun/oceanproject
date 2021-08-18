@@ -71,14 +71,18 @@ public class QmsIpqcInspectionOrderDetServiceImpl extends BaseService<QmsIpqcIns
                 //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
                 if(baseInspectionStandardDet.getSampleProcessType()!=null&&baseInspectionStandardDet.getSampleProcessType()==(byte)4){
                     BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(baseInspectionStandardDet.getSampleProcessId(), qty).getData();
-                    if(StringUtils.isNotEmpty(baseSampleProcess)) {
+                    if(StringUtils.isNotEmpty(baseSampleProcess.getSampleQty())) {
                         //总数量<样本数时,样本数=总数量
                         qmsIpqcInspectionOrderDetDto.setSampleQty(qty.compareTo(baseSampleProcess.getSampleQty())==-1 ? qty : baseSampleProcess.getSampleQty());
-                        qmsIpqcInspectionOrderDetDto.setAcValue(baseSampleProcess.getAcValue());
-                        qmsIpqcInspectionOrderDetDto.setReValue(baseSampleProcess.getReValue());
                     }
+                    qmsIpqcInspectionOrderDetDto.setAcValue(baseSampleProcess.getAcValue());
+                    qmsIpqcInspectionOrderDetDto.setReValue(baseSampleProcess.getReValue());
+
                 }else if(baseInspectionStandardDet.getSampleProcessType()!=null&&baseInspectionStandardDet.getSampleProcessType()!=(byte)4){
-                    qmsIpqcInspectionOrderDetDto.setSampleQty(baseInspectionStandardDet.getSampleQty());
+                    if(StringUtils.isNotEmpty(baseInspectionStandardDet.getSampleQty())) {
+                        //总数量<样本数时,样本数=总数量
+                        qmsIpqcInspectionOrderDetDto.setSampleQty(qty.compareTo(baseInspectionStandardDet.getSampleQty()) == -1 ? qty : baseInspectionStandardDet.getSampleQty());
+                    }
                     qmsIpqcInspectionOrderDetDto.setAcValue(baseInspectionStandardDet.getAcValue());
                     qmsIpqcInspectionOrderDetDto.setReValue(baseInspectionStandardDet.getReValue());
                 }

@@ -5,11 +5,8 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectDto;
 import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectItemDto;
-import com.fantechs.common.base.general.entity.eam.EamJigMaintainProject;
-import com.fantechs.common.base.general.entity.eam.EamJigMaintainProjectItem;
 import com.fantechs.common.base.general.entity.eam.EamJigPointInspectionProject;
 import com.fantechs.common.base.general.entity.eam.EamJigPointInspectionProjectItem;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainProject;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigPointInspectionProject;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -108,16 +105,33 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
         entity.setModifiedTime(new Date());
         eamJigPointInspectionProjectMapper.updateByPrimaryKeySelective(entity);
 
+        //原来有的明细只更新
+        ArrayList<Long> idList = new ArrayList<>();
+        List<EamJigPointInspectionProjectItemDto> list = entity.getList();
+        if(StringUtils.isNotEmpty(list)) {
+            for (EamJigPointInspectionProjectItemDto eamJigPointInspectionProjectItemDto : list) {
+                if (StringUtils.isNotEmpty(eamJigPointInspectionProjectItemDto.getJigPointInspectionProjectItemId())) {
+                    eamJigPointInspectionProjectItemMapper.updateByPrimaryKeySelective(eamJigPointInspectionProjectItemDto);
+                    idList.add(eamJigPointInspectionProjectItemDto.getJigPointInspectionProjectItemId());
+                }
+            }
+        }
+
         //删除原点检项目事项
         Example example1 = new Example(EamJigPointInspectionProjectItem.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("jigPointInspectionProjectId", entity.getJigPointInspectionProjectId());
+        if (idList.size() > 0) {
+            criteria1.andNotIn("jigPointInspectionProjectItemId", idList);
+        }
         eamJigPointInspectionProjectMapper.deleteByExample(example1);
 
         //点检项目事项
-        List<EamJigPointInspectionProjectItemDto> list = entity.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamJigPointInspectionProjectItem eamJigPointInspectionProjectItem : list){
+                if (idList.contains(eamJigPointInspectionProjectItem.getJigPointInspectionProjectItemId())) {
+                    continue;
+                }
                 eamJigPointInspectionProjectItem.setJigPointInspectionProjectId(entity.getJigPointInspectionProjectId());
                 eamJigPointInspectionProjectItem.setCreateUserId(user.getUserId());
                 eamJigPointInspectionProjectItem.setCreateTime(new Date());

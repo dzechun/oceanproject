@@ -91,6 +91,9 @@
       <if test="orderStatus!=null">
         and ejpio.order_status = #{orderStatus}
       </if>
+      <if test="jigBarcodeId!=null">
+        and ejpio.jig_barcode_id = #{jigBarcodeId}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ejpio.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

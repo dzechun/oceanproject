@@ -45,5 +45,15 @@ public class SearchEamJigRepairOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="jigModel",value = "治具型号")
     private String jigModel;
 
+    /**
+     * 单据状态(1-待维修 2-维修中 3-已维修)
+     */
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待维修 2-维修中 3-已维修)")
+    private Byte orderStatus;
 
+    /**
+     * 治具条码ID
+     */
+    @ApiModelProperty(name="jigBarcodeId",value = "治具条码ID")
+    private Long jigBarcodeId;
 }

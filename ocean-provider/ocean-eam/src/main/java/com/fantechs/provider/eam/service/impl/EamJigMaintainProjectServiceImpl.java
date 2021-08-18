@@ -7,10 +7,7 @@ import com.fantechs.common.base.general.dto.eam.EamJigMaintainProjectDto;
 import com.fantechs.common.base.general.dto.eam.EamJigMaintainProjectItemDto;
 import com.fantechs.common.base.general.entity.eam.EamJigMaintainProject;
 import com.fantechs.common.base.general.entity.eam.EamJigMaintainProjectItem;
-import com.fantechs.common.base.general.entity.eam.EamJigStandingBook;
-import com.fantechs.common.base.general.entity.eam.EamJigStandingBookAttachment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainProject;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJigStandingBook;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -108,16 +105,33 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
         entity.setModifiedTime(new Date());
         eamJigMaintainProjectMapper.updateByPrimaryKeySelective(entity);
 
+        //原来有的明细只更新
+        ArrayList<Long> idList = new ArrayList<>();
+        List<EamJigMaintainProjectItemDto> list = entity.getList();
+        if(StringUtils.isNotEmpty(list)) {
+            for (EamJigMaintainProjectItemDto eamJigMaintainProjectItemDto : list) {
+                if (StringUtils.isNotEmpty(eamJigMaintainProjectItemDto.getJigMaintainProjectItemId())) {
+                    eamJigMaintainProjectItemMapper.updateByPrimaryKeySelective(eamJigMaintainProjectItemDto);
+                    idList.add(eamJigMaintainProjectItemDto.getJigMaintainProjectItemId());
+                }
+            }
+        }
+
         //删除原保养项目事项
         Example example1 = new Example(EamJigMaintainProjectItem.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("jigMaintainProjectId", entity.getJigMaintainProjectId());
+        if (idList.size() > 0) {
+            criteria1.andNotIn("jigMaintainProjectItemId", idList);
+        }
         eamJigMaintainProjectItemMapper.deleteByExample(example1);
 
         //保养项目事项
-        List<EamJigMaintainProjectItemDto> list = entity.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamJigMaintainProjectItem eamJigMaintainProjectItem : list){
+                if (idList.contains(eamJigMaintainProjectItem.getJigMaintainProjectItemId())) {
+                    continue;
+                }
                 eamJigMaintainProjectItem.setJigMaintainProjectId(entity.getJigMaintainProjectId());
                 eamJigMaintainProjectItem.setCreateUserId(user.getUserId());
                 eamJigMaintainProjectItem.setCreateTime(new Date());

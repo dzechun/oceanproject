@@ -36,6 +36,13 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
     private Long inventoryStatusId;
 
     /**
+     * 状态编码
+     */
+    @ApiModelProperty(name="inventoryStatusCode",value = "状态编码")
+    @Column(name = "inventory_status_code")
+    private String inventoryStatusCode;
+
+    /**
      * 状态名称
      */
     @ApiModelProperty(name="inventoryStatusName",value = "状态名称")

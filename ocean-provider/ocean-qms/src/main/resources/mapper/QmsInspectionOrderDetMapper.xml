@@ -22,13 +22,10 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
 
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="if_must_inspection" jdbcType="TINYINT" property="ifMustInspection"/>
-    <result column="inspection_item_desc_small" jdbcType="VARCHAR" property="inspectionItemDescSmall"/>
-    <result column="inspection_item_standard" jdbcType="VARCHAR" property="inspectionItemStandard"/>
-    <result column="inspection_item_desc_big" jdbcType="VARCHAR" property="inspectionItemDescBig"/>
+    <result column="small_inspection_item_desc" jdbcType="VARCHAR" property="smallInspectionItemDesc"/>
+    <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName"/>
+    <result column="big_inspection_item_desc" jdbcType="VARCHAR" property="bigInspectionItemDesc"/>
     <result column="inspection_tag" jdbcType="TINYINT" property="inspectionTag"/>
     <result column="specification_upper_limit" jdbcType="DECIMAL" property="specificationUpperLimit"/>
     <result column="specification_floor" jdbcType="DECIMAL" property="specificationFloor"/>
@@ -39,12 +36,27 @@
     <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty"/>
     <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType"/>
     <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
     qiod.inspection_order_det_id,
     qiod.inspection_order_id,
     qiod.inspection_standard_det_id,
+    qiod.if_must_inspection,
+    qiod.big_inspection_item_desc,
+    qiod.small_inspection_item_desc,
+    qiod.inspection_standard_name,
+    qiod.inspection_tag,
+    qiod.sample_qty,
+    qiod.specification_upper_limit,
+    qiod.specification_floor,
+    qiod.unit_name,
+    qiod.aql_value,
+    qiod.ac_value,
+    qiod.re_value,
     qiod.badness_qty,
     qiod.inspection_result,
     qiod.`status`,
@@ -60,21 +72,15 @@
     qiod.option3
   </sql>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+  <select id="findDetList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bisd.if_must_inspection,bii.inspection_item_standard,
-    bii2.inspection_item_desc as inspection_item_desc_big,bii.inspection_item_desc as inspection_item_desc_small,
-    bisd.inspection_tag,bisd.specification_upper_limit,bisd.specification_floor,bisd.unit_name,
-    bspa.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,bsp.sample_process_type,bsp.sample_process_id,
+    bsp.sample_process_type,bsp.sample_process_id,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.qms_inspection_order_det qiod
     left join fantech_imes_v2.base_inspection_standard_det bisd on qiod.inspection_standard_det_id=bisd.inspection_standard_det_id
-    left join fantech_imes_v2.base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
-    left join fantech_imes_v2.base_inspection_item bii2 on bii.parent_id=bii2.inspection_item_id
     left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
-    left join fantech_imes_v2.base_sample_plan_aql bspa on bsp.sample_plan_aql_id=bspa.sample_plan_aql_id
     left join ocean_v2.sys_user u on qiod.create_user_id=u.user_id
     left join ocean_v2.sys_user s on qiod.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON qiod.org_id = bo.organization_id

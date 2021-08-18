@@ -116,6 +116,12 @@
       <if test="jigModel != null and jigModel!=''">
         and ej.jig_model like CONCAT('%', #{jigModel}, '%')
       </if>
+      <if test="orderStatus!=null">
+        and ejro.order_status = #{orderStatus}
+      </if>
+      <if test="jigBarcodeId!=null">
+        and ejro.jig_barcode_id = #{jigBarcodeId}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ejro.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

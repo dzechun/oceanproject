@@ -116,6 +116,9 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         if(StringUtils.isEmpty(inspectionStandards)){
             searchBaseInspectionStandard.setMaterialId((long)0);
             inspectionStandards = baseFeignApi.findList(searchBaseInspectionStandard).getData();
+            if(StringUtils.isEmpty(inspectionStandards)){
+                throw new BizErrorException("未维护与该工单物料及该检验方式绑定的检验标准");
+            }
         }
 
         //检验单信息
@@ -280,6 +283,35 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
                 qmsIpqcInspectionOrderDet.setStatus(StringUtils.isEmpty(qmsIpqcInspectionOrderDet.getStatus())?1:qmsIpqcInspectionOrderDet.getStatus());
                 qmsIpqcInspectionOrderDet.setOrgId(user.getOrganizationId());
                 qmsIpqcInspectionOrderDetMapper.insert(qmsIpqcInspectionOrderDet);
+            }
+        }
+
+        //返写检验状态与检验结果
+        this.writeBack(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int PDASubmit(QmsIpqcInspectionOrder qmsIpqcInspectionOrder){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        //修改IPQC检验单
+        qmsIpqcInspectionOrder.setModifiedUserId(user.getUserId());
+        qmsIpqcInspectionOrder.setModifiedTime(new Date());
+        int i=qmsIpqcInspectionOrderMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrder);
+
+        //修改IPQC检验单明细
+        List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets = qmsIpqcInspectionOrder.getQmsIpqcInspectionOrderDets();
+        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDets)){
+            for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet:qmsIpqcInspectionOrderDets){
+                qmsIpqcInspectionOrderDet.setModifiedUserId(user.getUserId());
+                qmsIpqcInspectionOrderDet.setModifiedTime(new Date());
+                qmsIpqcInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrderDet);
             }
         }
 

@@ -5,10 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.entity.eam.*;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainOrder;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigPointInspectionOrder;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaintainOrder;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaintainProject;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionProject;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -80,6 +77,14 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
             throw new BizErrorException("查不到该治具所属类别的点检项目");
         }
         EamJigPointInspectionProjectDto eamJigPointInspectionProjectDto = list.get(0);
+
+        SearchEamJigPointInspectionOrder searchEamJigPointInspectionOrder1 = new SearchEamJigPointInspectionOrder();
+        searchEamJigPointInspectionOrder1.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
+        searchEamJigPointInspectionOrder1.setOrderStatus((byte)1);
+        List<EamJigPointInspectionOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigPointInspectionOrder1));
+        if(StringUtils.isNotEmpty(orderDtos)){
+            throw new BizErrorException("已存在该治具待点检状态的单据");
+        }
 
         EamJigPointInspectionOrder eamJigPointInspectionOrder = new EamJigPointInspectionOrder();
         List<EamJigPointInspectionOrderDetDto> eamJigPointInspectionOrderDetList = new ArrayList<>();

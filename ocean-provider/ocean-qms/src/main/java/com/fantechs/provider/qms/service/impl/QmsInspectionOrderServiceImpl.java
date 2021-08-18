@@ -80,14 +80,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         map.put("orgId",user.getOrganizationId());
-        List<QmsInspectionOrder> qmsInspectionOrders = qmsInspectionOrderMapper.findList(map);
-        SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
 
-        for (QmsInspectionOrder qmsInspectionOrder : qmsInspectionOrders){
-            searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
-            List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
-            qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
-        }
+        List<QmsInspectionOrder> qmsInspectionOrders = qmsInspectionOrderMapper.findList(map);
 
         return qmsInspectionOrders;
     }
@@ -99,7 +93,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.findList(map).get(0);
         SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
         searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
-        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findDetList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
         qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
 
         return qmsInspectionOrder;
@@ -287,7 +281,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             searchBaseInventoryStatus.setNameQueryMark(1);
             List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
             if(StringUtils.isEmpty(inventoryStatusList)){
-                throw new BizErrorException("未查询到库存对应库存状态");
+                throw new BizErrorException("未查询到对应库存状态");
             }
 
             wmsInnerInventoryDto.setQcLock((byte)0);

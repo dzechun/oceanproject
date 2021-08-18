@@ -6,6 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
+    <result column="inventory_status_code" jdbcType="VARCHAR" property="inventoryStatusCode" />
     <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
@@ -31,6 +32,7 @@
 
   <sql id="Base_Column_List">
     bis.inventory_status_id,
+    bis.inventory_status_code,
     bis.inventory_status_name,
     bis.warehouse_id,
     bis.material_owner_id,

@@ -16,6 +16,12 @@ public class SearchEamJigPointInspectionOrder extends BaseQuery implements Seria
     private Long jigPointInspectionOrderId;
 
     /**
+     * 治具条码ID
+     */
+    @ApiModelProperty(name="jigBarcodeId",value = "治具条码ID")
+    private Long jigBarcodeId;
+
+    /**
      * 治具点检单号
      */
     @ApiModelProperty(name="jigPointInspectionOrderCode",value = "治具点检单号")

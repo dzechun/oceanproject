@@ -111,7 +111,7 @@
         and qiio.ipqc_inspection_order_code like CONCAT('%', #{ipqcInspectionOrderCode}, '%')
       </if>
       <if test="inspectionWayDesc != null and inspectionWayDesc!=''">
-        and biw.inspection_way_desc like CONCAT('%', #{inspectionWayDesc}, '%')
+        and biw.inspection_way_desc = #{inspectionWayDesc}
       </if>
       <if test="workOrderCode != null and workOrderCode!=''">
         and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')

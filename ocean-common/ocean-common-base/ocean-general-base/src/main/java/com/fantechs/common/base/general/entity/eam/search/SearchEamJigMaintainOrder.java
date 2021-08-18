@@ -16,6 +16,12 @@ public class SearchEamJigMaintainOrder extends BaseQuery implements Serializable
     private Long jigMaintainOrderId;
 
     /**
+     * 治具条码ID
+     */
+    @ApiModelProperty(name="jigBarcodeId",value = "治具条码ID")
+    private Long jigBarcodeId;
+
+    /**
      * 治具保养单号
      */
     @ApiModelProperty(name="jigMaintainOrderCode",value = "治具保养单号")

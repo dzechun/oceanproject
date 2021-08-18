@@ -9,7 +9,6 @@ import com.fantechs.common.base.general.dto.eam.EamJigMaintainProjectDto;
 import com.fantechs.common.base.general.dto.eam.EamJigMaintainProjectItemDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainOrder;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainProject;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaintainOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaintainProject;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -81,6 +80,14 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
             throw new BizErrorException("查不到该治具所属类别的保养项目");
         }
         EamJigMaintainProjectDto eamJigMaintainProjectDto = list.get(0);
+
+        SearchEamJigMaintainOrder searchEamJigMaintainOrder1 = new SearchEamJigMaintainOrder();
+        searchEamJigMaintainOrder1.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
+        searchEamJigMaintainOrder1.setOrderStatus((byte)1);
+        List<EamJigMaintainOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaintainOrder1));
+        if(StringUtils.isNotEmpty(orderDtos)){
+            throw new BizErrorException("已存在该治具待保养状态的单据");
+        }
 
         EamJigMaintainOrder eamJigMaintainOrder = new EamJigMaintainOrder();
         List<EamJigMaintainOrderDetDto> eamJigMaintainOrderDetList = new ArrayList<>();

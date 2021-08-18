@@ -43,8 +43,8 @@ public class QmsIpqcInspectionOrderController {
 
     @ApiOperation("PDA提交")
     @PostMapping("/PDASubmit")
-    public ResponseEntity PDASubmit(@ApiParam(value = "IPQC检验单id",required = true) @RequestParam @NotNull(message="IPQC检验单id不能为空") Long ipqcInspectionOrderId) {
-        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.writeBack(ipqcInspectionOrderId));
+    public ResponseEntity PDASubmit(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsIpqcInspectionOrder.update.class) QmsIpqcInspectionOrder qmsIpqcInspectionOrder) {
+        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderService.PDASubmit(qmsIpqcInspectionOrder));
     }
 
     @ApiOperation(value = "创建检验单据",notes = "创建检验单据")

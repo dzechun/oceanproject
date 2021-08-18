@@ -43,32 +43,7 @@ public class QmsInspectionOrderDetServiceImpl extends BaseService<QmsInspectionO
         }
         map.put("orgId",user.getOrganizationId());
 
-        //传检验单id，查对应的检验单明细
-        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.findList(map).get(0);
-        SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
-        searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
-        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
-        QmsInspectionOrder inspectionOrder = this.getAcReQty(qmsInspectionOrder, qmsInspectionOrderDets);
-
-        return inspectionOrder.getQmsInspectionOrderDets();
+        return qmsInspectionOrderDetMapper.findDetList(map);
     }
 
-    public QmsInspectionOrder getAcReQty(QmsInspectionOrder qmsInspectionOrder, List<QmsInspectionOrderDet> qmsInspectionOrderDets){
-        if(StringUtils.isNotEmpty(qmsInspectionOrderDets)){
-            for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
-                //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
-                if(qmsInspectionOrderDet.getSampleProcessType()!=null&&qmsInspectionOrderDet.getSampleProcessType()==(byte)4){
-                    BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(qmsInspectionOrderDet.getSampleProcessId(), qmsInspectionOrder.getOrderQty()).getData();
-                    if(StringUtils.isNotEmpty(baseSampleProcess)) {
-                        //总数量<样本数时,样本数=总数量
-                        qmsInspectionOrderDet.setSampleQty(qmsInspectionOrder.getOrderQty().compareTo(baseSampleProcess.getSampleQty())==-1 ? qmsInspectionOrder.getOrderQty() : baseSampleProcess.getSampleQty());
-                        qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
-                        qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
-                    }
-                }
-            }
-            qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
-        }
-        return qmsInspectionOrder;
-    }
 }

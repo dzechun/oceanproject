@@ -3,15 +3,10 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderReplacementDto;
 import com.fantechs.common.base.general.entity.eam.*;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainProject;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRepairOrder;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionOrder;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionProject;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRepairOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -68,6 +63,14 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
         List<EamJigBarcode> eamJigBarcodes = eamJigBarcodeMapper.selectByExample(example);
         if(StringUtils.isEmpty(eamJigBarcodes)){
             throw new BizErrorException("查不到此治具条码");
+        }
+
+        SearchEamJigRepairOrder searchEamJigRepairOrder1 = new SearchEamJigRepairOrder();
+        searchEamJigRepairOrder1.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
+        searchEamJigRepairOrder1.setOrderStatus((byte)1);
+        List<EamJigRepairOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigRepairOrder1));
+        if(StringUtils.isNotEmpty(orderDtos)){
+            throw new BizErrorException("已存在该治具待维修状态的单据");
         }
 
         EamJigRepairOrder eamJigRepairOrder = new EamJigRepairOrder();

@@ -35,6 +35,9 @@
     <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
     <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName"/>
     <result column="inspection_way_code" jdbcType="VARCHAR" property="inspectionWayCode"/>
+    <collection property="qmsInspectionOrderDets" ofType="com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet"
+                column="{inspectionOrderId=inspection_order_id}" select="com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper.findDetList">
+    </collection>
   </resultMap>
 
   <sql id="Base_Column_List">
