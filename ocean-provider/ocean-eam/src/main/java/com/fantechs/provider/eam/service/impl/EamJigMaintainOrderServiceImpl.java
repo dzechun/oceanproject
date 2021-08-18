@@ -3,8 +3,10 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamJigMaintainOrderDetDto;
 import com.fantechs.common.base.general.dto.eam.EamJigMaintainOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamJigMaintainProjectDto;
+import com.fantechs.common.base.general.dto.eam.EamJigMaintainProjectItemDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainOrder;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainProject;
@@ -81,15 +83,15 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
         EamJigMaintainProjectDto eamJigMaintainProjectDto = list.get(0);
 
         EamJigMaintainOrder eamJigMaintainOrder = new EamJigMaintainOrder();
-        List<EamJigMaintainOrderDet> eamJigMaintainOrderDetList = new ArrayList<>();
+        List<EamJigMaintainOrderDetDto> eamJigMaintainOrderDetList = new ArrayList<>();
 
         eamJigMaintainOrder.setJigMaintainOrderCode(CodeUtils.getId("BY-"));
         eamJigMaintainOrder.setJigId(eamJig.getJigId());
         eamJigMaintainOrder.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
         eamJigMaintainOrder.setJigMaintainProjectId(eamJigMaintainProjectDto.getJigMaintainProjectId());
-        List<EamJigMaintainProjectItem> eamJigMaintainProjectItemList = eamJigMaintainProjectDto.getList();
+        List<EamJigMaintainProjectItemDto> eamJigMaintainProjectItemList = eamJigMaintainProjectDto.getList();
         for (EamJigMaintainProjectItem eamJigMaintainProjectItem : eamJigMaintainProjectItemList){
-            EamJigMaintainOrderDet eamJigMaintainOrderDet = new EamJigMaintainOrderDet();
+            EamJigMaintainOrderDetDto eamJigMaintainOrderDet = new EamJigMaintainOrderDetDto();
             eamJigMaintainOrderDet.setJigMaintainProjectItemId(eamJigMaintainProjectItem.getJigMaintainProjectItemId());
             eamJigMaintainOrderDetList.add(eamJigMaintainOrderDet);
         }
@@ -123,7 +125,7 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
         eamJigMaintainOrderMapper.insertUseGeneratedKeys(record);
 
         //保养单事项
-        List<EamJigMaintainOrderDet> list = record.getList();
+        List<EamJigMaintainOrderDetDto> list = record.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamJigMaintainOrderDet eamJigMaintainOrderDet : list){
                 eamJigMaintainOrderDet.setJigMaintainOrderId(record.getJigMaintainOrderId());
@@ -165,7 +167,7 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
         eamJigMaintainOrderDetMapper.deleteByExample(example1);
 
         //保养单事项
-        List<EamJigMaintainOrderDet> list = entity.getList();
+        List<EamJigMaintainOrderDetDto> list = entity.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamJigMaintainOrderDet eamJigMaintainOrderDet : list){
                 eamJigMaintainOrderDet.setJigMaintainOrderId(entity.getJigMaintainOrderId());
