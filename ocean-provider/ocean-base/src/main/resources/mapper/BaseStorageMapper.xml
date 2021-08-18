@@ -194,7 +194,7 @@
         FROM base_storage_material bsm
                  LEFT JOIN base_storage bs ON bsm.storage_id = bs.storage_id
                  LEFT JOIN base_material_tab bmt ON bsm.material_id = bmt.material_id
-        WHERE bs.warehouse_id =#{warehouseId} AND bsm.material_id =#{materialId} and bs.storage_type=2
+        WHERE bs.warehouse_id =#{warehouseId} AND bsm.material_id =#{materialId} and bs.storage_type=1
     </select>
     <select id="findPutawayRule" resultMap="StorageRuleMap">
         SELECT
@@ -242,8 +242,8 @@
     <select id="findPutawayNo" resultType="java.lang.Integer">
         select bs.putaway_move_line_no From wms_inner_inventory wii
 LEFT JOIN base_storage bs ON bs.storage_id = wii.storage_id
-where wii.warehouse_id = #{warehouseId} and wii.material_id = #{materialId}
-order by wii.modified_time desc limit 1 and bs.storage_type=1
+where wii.warehouse_id = #{warehouseId} and wii.material_id = #{materialId} and bs.storage_type=1
+order by wii.modified_time desc limit 1
     </select>
     <select id="BatchEqualStorage" resultMap="StorageRuleMap">
         SELECT bs.storage_id as storageId, bs.roadway, bs.row_no as rowNo, bs.column_no as columnNo, bs.level_no as levelNo, bs.putaway_move_line_no as putawayMoveLineNo, IFNULL(bs.surplus_load,0) as surplusLoad, IFNULL(bs.surplus_volume,0) as surplusVolume, bs.surplus_can_put_salver as surplusCanPutSalver, IFNULL(bmt.volume,0) as volume, IFNULL(bmt.net_weight,0) as netWeight
