@@ -1,34 +1,26 @@
 package com.fantechs.security.controller;
 
-import com.esotericsoftware.minlog.Log;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.security.SysRoleDto;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysRole;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
-import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
-import com.fantechs.security.mapper.SysRoleMapper;
-import com.fantechs.security.mapper.SysUserMapper;
+import com.fantechs.security.service.SysLoginByEquipmentService;
 import com.fantechs.security.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 ;
 
@@ -50,12 +42,8 @@ public class LoginController {
     private SysUserService sysUserService;
 
     @Resource
-    private SysRoleMapper sysRoleMapper;
+    private SysLoginByEquipmentService sysLoginByEquipmentService;
 
-    @Resource
-    private EamFeignApi eamFeignApi;
-    @Resource
-    private SysUserMapper sysUserMapper;
 
 
 
@@ -126,37 +114,6 @@ public class LoginController {
     @ApiOperation(value = "设备登陆接口")
     public ResponseEntity mesloginByEam(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId
             , @RequestParam(value = "mac") String mac ,@RequestParam(value = "type") String type ){
-        ResponseEntity responseEntity = null;
-        //通过mac地址查询设备
-        ResponseEntity<List<EamEquipmentDto>> list = eamFeignApi.findByMac(mac, orgId);
-        if (StringUtils.isEmpty(list.getData())) {
-            return ControllerUtil.returnFail("登录错误，未查询到设备信息", 1);
-        }
-        //获取当前用户角色
-        SearchSysRole searchSysRole = new SearchSysRole();
-        searchSysRole.setUserName(username);
-        searchSysRole.setRoleName(list.getData().get(0).getProcessName());
-        List<SysRoleDto> sysRoleDtos = sysRoleMapper.findByUserName(searchSysRole);
-
-        log.info("---username---"+username+","+"----orgId--"+orgId+",---type-"+type);
-        //密码登录
-        if("1".equals(type)) {
-            if (StringUtils.isNotEmpty(sysRoleDtos)) {
-                responseEntity = securityFeignApi.login(username, "654321",orgId,null);
-            } else {
-                return ControllerUtil.returnFail("登录错误，该用户无权限登录", 1);
-            }
-         //刷卡登录
-        }else if("2".equals(type)){
-            if (StringUtils.isNotEmpty(sysRoleDtos)) {
-
-                responseEntity = securityFeignApi.login(username, "123456",orgId,type);
-            } else {
-                return ControllerUtil.returnFail("登录错误，该用户无权限登录", 1);
-            }
-        }
-
-
-        return  responseEntity;
+        return  sysLoginByEquipmentService.eamLogin(username,password,orgId,mac,type);
     }
 }
