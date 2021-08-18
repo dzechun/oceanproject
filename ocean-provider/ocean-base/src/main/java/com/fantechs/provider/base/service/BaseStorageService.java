@@ -33,4 +33,10 @@ public interface BaseStorageService extends IService<BaseStorage> {
     List<StorageRuleDto> findPutawayRule(Map<String,Object> map);
 
     Integer findPutawayNo(Long warehouseId,Long materialId);
+
+    List<StorageRuleDto> BatchEqualStorage(Map<String ,Object> map);
+
+    List<StorageRuleDto> EmptyStorage(Map<String ,Object> map);
+
+    List<StorageRuleDto> MixedWithStorage(Map<String ,Object> map);
 }

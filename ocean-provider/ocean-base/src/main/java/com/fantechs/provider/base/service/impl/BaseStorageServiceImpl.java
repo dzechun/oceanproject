@@ -290,4 +290,19 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     public Integer findPutawayNo(Long warehouseId, Long materialId) {
         return baseStorageMapper.findPutawayNo(warehouseId,materialId);
     }
+
+    @Override
+    public List<StorageRuleDto> BatchEqualStorage(Map<String, Object> map) {
+        return baseStorageMapper.BatchEqualStorage(map);
+    }
+
+    @Override
+    public List<StorageRuleDto> EmptyStorage(Map<String, Object> map) {
+        return baseStorageMapper.EmptyStorage(map);
+    }
+
+    @Override
+    public List<StorageRuleDto> MixedWithStorage(Map<String, Object> map) {
+        return baseStorageMapper.MixedWithStorage(map);
+    }
 }

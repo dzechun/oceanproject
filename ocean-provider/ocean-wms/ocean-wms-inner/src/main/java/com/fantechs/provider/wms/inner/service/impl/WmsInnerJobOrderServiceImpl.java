@@ -155,7 +155,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 jobRuleDto.setProDate(StringUtils.isEmpty(wms.getProductionDate())?null:DateUtils.getDateString(wms.getProductionDate(),"yyyy-MM-dd"));
                 ResponseEntity<List<StorageRuleDto>> responseEntity = baseFeignApi.JobRule(jobRuleDto);
                 if(responseEntity.getCode()!=0){
-                    throw new BizErrorException("上架分配规则获取失败");
+                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                 }
                 List<StorageRuleDto> list1 = responseEntity.getData();
                 if(list1.size()<1){

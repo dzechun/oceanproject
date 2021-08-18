@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.inner.util;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
@@ -42,12 +43,19 @@ public class OutInventoryRule {
      */
     public static List<WmsInnerInventory> jobMainRule(Long warehouseId,Long materialId,String batchCode,String productionDate){
         Example example = new Example(WmsInnerInventory.class);
-        example.createCriteria().andEqualTo("warehouseId",warehouseId)
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("warehouseId",warehouseId)
                 .andEqualTo("materialId",materialId)
-                .andEqualTo("batchCode",batchCode)
-                .andEqualTo("productionDate",productionDate)
                 .andGreaterThan("packingQty", BigDecimal.ZERO);
-        example.orderBy("production_date,packing_qty desc");
+        if(StringUtils.isNotEmpty(batchCode)){
+            criteria.andEqualTo("batchCode",batchCode);
+
+        }
+        if(StringUtils.isNotEmpty(productionDate)){
+            criteria.andEqualTo("productionDate",productionDate);
+        }
+        criteria.andEqualTo("jobStatus",1);
+        example.setOrderByClause("production_date,packing_qty desc");
         List<WmsInnerInventory> list  = outInventoryRule.wmsInnerInventoryMapper.selectByExample(example);
         if(list.size()<1){
             throw new BizErrorException("未查询到匹配的库存");

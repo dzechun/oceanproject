@@ -1,6 +1,7 @@
 package com.fantechs.provider.base.service.impl;
 
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
@@ -16,18 +17,15 @@ import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
 import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
-import com.fantechs.common.base.general.dto.basic.BaseInspectionTypeDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
-import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionType;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseMaterialService;
@@ -382,6 +380,8 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int batchSave(List<BaseMaterial> baseMaterials) {
         int i = 0;
         if (StringUtils.isNotEmpty(baseMaterials)) {
@@ -487,19 +487,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                     continue;
                 }
                 baseMaterialImport.setInspectionItemId(qmsInspectionItemDtos.get(0).getInspectionItemId());
-            }
-
-            //检验类型编码不为空则判断检查类型信息是否存在
-            if (StringUtils.isNotEmpty(inspectionTypeCode)){
-                SearchQmsInspectionType searchQmsInspectionType = new SearchQmsInspectionType();
-                searchQmsInspectionType.setCodeQueryMark((byte) 1);
-                searchQmsInspectionType.setInspectionTypeCode(inspectionTypeCode);
-                List<BaseInspectionTypeDto> baseInspectionTypeDtos = baseFeignApi.findInspectionTypeList(searchQmsInspectionType).getData();
-                if (StringUtils.isEmpty(baseInspectionTypeDtos)){
-                    fail.add(i+4);
-                    continue;
-                }
-                baseMaterialImport.setInspectionTypeId(baseInspectionTypeDtos.get(0).getInspectionTypeId());
             }
 
             //标签类别编码不为空则判断标签类别信息是否存在
