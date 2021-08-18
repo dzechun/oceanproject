@@ -1,5 +1,6 @@
 package com.fantechs.provider.eam.service.impl;
 
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -13,6 +14,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.*;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWiRelease;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamWiReleaseDet;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWorkInstruction;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -79,6 +81,8 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
     @Resource
     private EamEquipmentMapper eamEquipmentMapper ;
 
+    @Resource
+    private EamWiReleaseDetMapper eamWiReleaseDetMapper;
 
     @Override
     public List<EamWorkInstructionDto> findList(SearchEamWorkInstruction searchEamWorkInstruction) {
@@ -216,6 +220,28 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         eamWiFileMapper.deleteByExample(fileExample);
         saveFile(eamWorkInstructionDto,eamWorkInstruction.getWorkInstructionId(),user);
         fileExample.clear();
+
+        /*
+        * 电子WI管理审核
+        * 如果在SOP已发布明细中找到相应的WI编码数据
+        * 则重新调用一次EamWiReleaseServiceImpl.censor()方法
+        */
+
+        byte wiStatus=eamWorkInstructionDto.getWiStatus();
+        if(wiStatus==(byte) 2){
+            Long workInstructionId=eamWorkInstructionDto.getWorkInstructionId();
+            Example exampleWiRDet = new Example(EamWiReleaseDet.class);
+            Example.Criteria criteriaWiRDet = exampleWiRDet.createCriteria();
+            criteriaWiRDet.andEqualTo("workInstructionId", workInstructionId);
+            List<EamWiReleaseDet> eamWiReleaseDetList=eamWiReleaseDetMapper.selectByExample(exampleWiRDet);
+            for (EamWiReleaseDet eamWiReleaseDet : eamWiReleaseDetList) {
+                Long wiReleaseId=eamWiReleaseDet.getWiReleaseId();
+                EamWiRelease eamWiRelease=eamWiReleaseMapper.selectByPrimaryKey(wiReleaseId);
+                if(eamWiRelease.getReleaseStatus()==(byte)2){
+                    new EamWiReleaseServiceImpl().censor(eamWiRelease);
+                }
+            }
+        }
 
         return i;
     }
