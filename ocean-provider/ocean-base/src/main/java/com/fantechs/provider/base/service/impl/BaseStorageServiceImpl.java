@@ -305,4 +305,9 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     public List<StorageRuleDto> MixedWithStorage(Map<String, Object> map) {
         return baseStorageMapper.MixedWithStorage(map);
     }
+
+    @Override
+    public List<StorageRuleDto> LastStorage(Map<String, Object> map) {
+        return baseStorageMapper.LastStorage(map);
+    }
 }

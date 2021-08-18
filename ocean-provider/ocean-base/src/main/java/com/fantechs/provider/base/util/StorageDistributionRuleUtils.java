@@ -82,7 +82,11 @@ public class StorageDistributionRuleUtils {
 //                list = (List<StorageRuleDto>) map.get("list");
 //                jobTotalPackageQty_BU = (BigDecimal) map.get("jobTotalPackageQty_BU");
 //            }
-            List<StorageRuleDto> EmptyStorageList = getCanPutawayEmptyStorageList(warehouseId,materialId);
+            //查询是否有最近上架库位
+            List<StorageRuleDto> EmptyStorageList = LasetStorage(warehouseId,materialId);
+            if(StringUtils.isEmpty(EmptyStorageList) || EmptyStorageList.size()<1){
+                EmptyStorageList = getCanPutawayEmptyStorageList(warehouseId,materialId);
+            }
             if(StringUtils.isNotEmpty(EmptyStorageList) && EmptyStorageList.size()>0){
                 Map<String,Object> map = dedicatedStorager(EmptyStorageList,jobTotalPackageQty_BU);
                 list.addAll((List<StorageRuleDto>) map.get("list"));
@@ -146,12 +150,22 @@ public class StorageDistributionRuleUtils {
         return list;
     }
 
-    private static List<StorageRuleDto> getCanPutawayEmptyStorageList(Long warehouseId,Long materialId){
+   private static List<StorageRuleDto> getCanPutawayEmptyStorageList(Long warehouseId,Long materialId){
         List<StorageRuleDto> list;
         Map<String,Object> map = new HashMap<>();
         map.put("warehouseId",warehouseId);
         map.put("materialId",materialId);
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.EmptyStorage(map);
+        list = calculateStorage(storageRuleDtos);
+        return list;
+    }
+
+    private static List<StorageRuleDto> LasetStorage(Long warehouseId,Long materialId){
+        List<StorageRuleDto> list;
+        Map<String,Object> map = new HashMap<>();
+        map.put("warehouseId",warehouseId);
+        map.put("materialId",materialId);
+        List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.LastStorage(map);
         list = calculateStorage(storageRuleDtos);
         return list;
     }
