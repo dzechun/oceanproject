@@ -49,6 +49,7 @@
     SELECT<include refid="BaseColumnList"/>,bm.material_name as material_name,
       bm.material_code as material_code,bm.material_version as material_version
     FROM eam_ht_wi_bom ehwb
+    LEFT JOIN base_material bm ON ehwb.material_id = bm.material_id
     LEFT JOIN eam_ht_work_instruction ehwi ON ehwb.work_instruction_id = ehwi.work_instruction_id
     LEFT JOIN ocean_v2.sys_user su ON ehwb.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON ehwb.modified_user_id = sus.user_id
