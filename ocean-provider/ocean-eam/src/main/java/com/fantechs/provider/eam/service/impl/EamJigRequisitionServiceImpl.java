@@ -189,6 +189,11 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
      */
     @Override
     public EamJigRequisitionWorkOrderDto findWorkOrder(String workOrderCode){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
         EamJigRequisitionWorkOrderDto eamJigRequisitionWorkOrderDto = new EamJigRequisitionWorkOrderDto();
         //查询工单
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
@@ -203,6 +208,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         //查询治具与产品绑定关系
         SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
         searchEamJigReMaterial.setMaterialId(eamJigRequisitionWorkOrderDto.getMaterialId());
+        searchEamJigReMaterial.setOrgId(user.getOrganizationId());
         List<EamJigReMaterialDto> eamJigReMaterialDtos = eamJigReMaterialMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigReMaterial));
 
         SearchEamJigRequisition searchEamJigRequisition = new SearchEamJigRequisition();
