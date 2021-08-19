@@ -89,6 +89,9 @@
       <if test="equipmentName != null and equipmentName!=''">
         and ehe.equipment_name like CONCAT('%', #{equipmentName}, '%')
       </if>
+      <if test="equipmentModel != null and equipmentModel!=''">
+        and ee.equipment_model like CONCAT('%', #{equipmentModel}, '%')
+      </if>
       <if test="equipmentDesc != null and equipmentDesc!=''">
         and ehe.equipment_desc like CONCAT('%', #{equipmentDesc}, '%')
       </if>
