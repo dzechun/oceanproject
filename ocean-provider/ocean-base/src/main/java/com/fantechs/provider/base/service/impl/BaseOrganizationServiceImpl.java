@@ -120,6 +120,11 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
         if (StringUtils.isNotEmpty(userId)){
             return baseOrganizationMapper.findOrganizationByUserId(new Long(userId.toString()));
         }
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isNotEmpty(user)){
+            map.put("organizationId", user.getOrganizationId());
+        }
         return baseOrganizationMapper.findList(map);
     }
 
