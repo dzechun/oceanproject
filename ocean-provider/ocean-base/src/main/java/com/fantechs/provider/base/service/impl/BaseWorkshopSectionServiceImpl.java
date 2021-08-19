@@ -200,6 +200,7 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
                 baseWorkshopSection.setModifiedTime(new Date());
                 baseWorkshopSection.setModifiedUserId(currentUser.getUserId());
                 baseWorkshopSection.setOrganizationId(currentUser.getOrganizationId());
+                baseWorkshopSection.setStatus(workshopSectionImport.getStatus().byteValue());
                 list.add(baseWorkshopSection);
             }
 

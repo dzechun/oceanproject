@@ -2,6 +2,7 @@ package com.fantechs.provider.base.controller;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.imports.BaseStationImport;
 import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStation;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStation;
@@ -112,8 +113,8 @@ public class BaseStationController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BaseStation> baseStations = EasyPoiUtils.importExcel(file, BaseStation.class);
-            Map<String, Object> resultMap = baseStationService.importExcel(baseStations);
+            List<BaseStationImport> baseStationImports = EasyPoiUtils.importExcel(file, 2,1, BaseStationImport.class);
+            Map<String, Object> resultMap = baseStationService.importExcel(baseStationImports);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
         }catch (RuntimeException e) {
             e.printStackTrace();
