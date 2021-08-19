@@ -24,6 +24,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamWorkInstructionService;
+import com.fantechs.provider.eam.service.socket.SocketService;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -83,6 +84,9 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
 
     @Resource
     private EamWiReleaseDetMapper eamWiReleaseDetMapper;
+
+    @Resource
+    private SocketService socketService;
 
     @Override
     public List<EamWorkInstructionDto> findList(SearchEamWorkInstruction searchEamWorkInstruction) {
@@ -239,7 +243,7 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
                 Long wiReleaseId=eamWiReleaseDet.getWiReleaseId();
                 EamWiRelease eamWiRelease=eamWiReleaseMapper.selectByPrimaryKey(wiReleaseId);
                 if(eamWiRelease.getReleaseStatus()==(byte)2){
-                    new EamWiReleaseServiceImpl().censor(eamWiRelease);
+                    socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://192.168.204.163/#/YunZhiESOP?ip=");
                 }
             }
         }
