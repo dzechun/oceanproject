@@ -2,7 +2,9 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
@@ -26,6 +28,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
@@ -38,6 +41,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
@@ -77,6 +81,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Resource
     BaseFeignApi baseFeignApi;
+
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
@@ -213,7 +220,11 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             if (innerInventoryDtos == null || innerInventoryDtos.size() <= 0) {
                 throw new BizErrorException(ErrorCodeEnum.PDA5001009);
             }
-            WmsInnerInventoryDto innerInventoryDto = innerInventoryDtos.get(0);
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("inventory_status_value");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            List<WmsInnerInventoryDto> dtos = innerInventoryDtos.stream().filter(item -> item.getInventoryStatusName().equals(specItems.get(0).getParaValue())).collect(Collectors.toList());
+            WmsInnerInventoryDto innerInventoryDto = dtos.get(0);
             if (innerInventoryDto.getPackingQty().compareTo(dto.getMaterialQty()) < -1) {
                 throw new BizErrorException(ErrorCodeEnum.PDA5001012);
             }
@@ -387,13 +398,17 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 .andEqualTo("lockStatus", 0);
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
         example.clear();
-        example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
+        Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
                 .andEqualTo("warehouseId", oldDto.getWarehouseId())
                 .andEqualTo("storageId", baseStorage.getStorageId())
                 .andEqualTo("jobStatus", (byte) 1)
                 .andEqualTo("stockLock", 0)
                 .andEqualTo("qcLock", 0)
-                .andEqualTo("lockStatus", 0);
+                .andEqualTo("lockStatus", 0)
+                .andGreaterThan("packingQty", 0);
+        if (StringUtils.isNotEmpty(wmsInnerInventory)){
+            criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
+        }
         WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
         if (StringUtils.isEmpty(wmsInnerInventory_old)) {
             if (StringUtils.isEmpty(wmsInnerInventory)) {
@@ -445,29 +460,22 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             throw new BizErrorException(ErrorCodeEnum.PDA5001014);
         }
 
+        WmsInnerJobOrder ws = new WmsInnerJobOrder();
+        ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
+        ws.setActualQty(resQty);
+        ws.setModifiedUserId(sysUser.getUserId());
+        ws.setModifiedTime(new Date());
+        ws.setWorkEndtTime(new Date());
+        ws.setWorkerId(workerDtos.get(0).getWorkerId());
         if (oCount == count) {
-            WmsInnerJobOrder ws = new WmsInnerJobOrder();
-            ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
             ws.setOrderStatus((byte) 5);
-            ws.setActualQty(resQty);
-            ws.setModifiedUserId(sysUser.getUserId());
-            ws.setModifiedTime(new Date());
-            ws.setWorkEndtTime(new Date());
-            ws.setWorkerId(workerDtos.get(0).getWorkerId());
-            num += wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
         } else {
-            WmsInnerJobOrder ws = new WmsInnerJobOrder();
-            ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
             ws.setOrderStatus((byte) 4);
-            ws.setActualQty(resQty);
-            ws.setModifiedUserId(sysUser.getUserId());
-            ws.setModifiedTime(new Date());
-            ws.setWorkerId(workerDtos.get(0).getWorkerId());
             if (StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())) {
                 ws.setWorkStartTime(new Date());
             }
-            num += wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
         }
+        num += wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
         return num;
     }
 

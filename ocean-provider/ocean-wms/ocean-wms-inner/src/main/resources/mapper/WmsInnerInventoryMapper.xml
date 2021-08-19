@@ -199,6 +199,9 @@ wii.storage_id,
       <if test="jobOrderDetId!=null and jobOrderDetId != ''">
         and wii.job_order_det_id = #{jobOrderDetId}
       </if>
+      <if test="jobOrderDetId!=null and jobOrderDetId != ''">
+        and wii.job_order_det_id = #{jobOrderDetId}
+      </if>
     </where>
     order by wii.create_time desc
   </select>
