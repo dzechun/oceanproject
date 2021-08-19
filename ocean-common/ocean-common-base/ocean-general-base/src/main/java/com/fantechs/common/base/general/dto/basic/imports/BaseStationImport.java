@@ -40,7 +40,7 @@ public class BaseStationImport implements Serializable {
      * 工序编码
      */
     @ApiModelProperty(name = "processCode",value = "工序编码")
-    @Excel(name = "工序编码", height = 20, width = 30)
+    @Excel(name = "工序编码(必填)", height = 20, width = 30)
     private String processCode;
 
     /**
