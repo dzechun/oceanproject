@@ -73,6 +73,9 @@
       <if test="orgId!=null">
         and bwa.org_id=#{orgId}
       </if>
+      <if test="warehouseAreaId!=null">
+        and bwa.warehouse_area_id=#{warehouseAreaId}
+      </if>
     </where>
     order by create_time desc
   </select>

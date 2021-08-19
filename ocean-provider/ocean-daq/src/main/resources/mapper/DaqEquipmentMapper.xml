@@ -20,8 +20,6 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="x_axis" jdbcType="DECIMAL" property="xAxis" />
-    <result column="y_axis" jdbcType="DECIMAL" property="yAxis" />
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
@@ -49,8 +47,6 @@
     ee.create_time,
     ee.modified_user_id,
     ee.modified_time,
-    ee.x_axis,
-    ee.y_axis,
     ee.option1,
     ee.option2,
     ee.option3
@@ -68,11 +64,8 @@
     LEFT JOIN ocean_v2.sys_user s ON ee.modified_user_id = s.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON ee.org_id = bo.organization_id
     <where>
-      <if test="equipmentCode != null and equipmentCode!='' and codeQueryMark!=1">
+      <if test="equipmentCode != null and equipmentCode!=''">
         and ee.equipment_code like CONCAT('%', #{equipmentCode}, '%')
-      </if>
-      <if test="equipmentCode != null and equipmentCode!='' and codeQueryMark==1">
-        and ee.equipment_code = #{equipmentCode}
       </if>
       <if test="equipmentName != null and equipmentName!=''">
         and ee.equipment_name like CONCAT('%', #{equipmentName}, '%')
@@ -82,6 +75,9 @@
       </if>
       <if test="equipmentIp != null and equipmentIp!=''">
         and ee.equipment_ip = #{equipmentIp}
+      </if>
+      <if test="equipmentModel != null and equipmentModel!=''">
+        and ee.equipment_model like CONCAT('%', #{equipmentModel}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ee.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigBackupDto;
 import com.fantechs.common.base.general.dto.eam.EamJigDto;
+import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectItemDto;
 import com.fantechs.common.base.general.entity.eam.EamJig;
 import com.fantechs.common.base.general.entity.eam.EamJigAttachment;
 import com.fantechs.common.base.general.entity.eam.EamJigBackup;
@@ -153,11 +154,24 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
 
             Example example = new Example(EamJigBarcode.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("jigBarcode", eamJigBarcode.getJigBarcode())
-                    .orEqualTo("assetCode", eamJigBarcode.getAssetCode());
+            criteria.andEqualTo("jigBarcode", eamJigBarcode.getJigBarcode());
+            if(StringUtils.isNotEmpty(eamJigBarcode.getJigBarcodeId())){
+                criteria.andNotEqualTo("jigBarcodeId",eamJigBarcode.getJigBarcodeId());
+            }
             EamJigBarcode jigBarcode = eamJigBarcodeMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(jigBarcode)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "条码重复");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "治具条码重复");
+            }
+
+            example.clear();
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria1.andEqualTo("assetCode", eamJigBarcode.getAssetCode());
+            if(StringUtils.isNotEmpty(eamJigBarcode.getJigBarcodeId())){
+                criteria1.andNotEqualTo("jigBarcodeId",eamJigBarcode.getJigBarcodeId());
+            }
+            EamJigBarcode jigBarcode1 = eamJigBarcodeMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(jigBarcode1)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "资产条码重复");
             }
 
             jigBarcodes.add(eamJigBarcode.getJigBarcode());
@@ -186,18 +200,35 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         entity.setModifiedUserId(user.getUserId());
         int i = eamJigMapper.updateByPrimaryKeySelective(entity);
 
+        //原来有的条码信息只更新
+        List<Long> jigBarcodeIdList = new ArrayList<>();
+        List<EamJigBarcode> eamJigBarcodeList = entity.getEamJigBarcodeList();
+        if(StringUtils.isNotEmpty(eamJigBarcodeList)) {
+            for (EamJigBarcode eamJigBarcode : eamJigBarcodeList) {
+                if (StringUtils.isNotEmpty(eamJigBarcode.getJigBarcodeId())) {
+                    eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
+                    jigBarcodeIdList.add(eamJigBarcode.getJigBarcodeId());
+                }
+            }
+        }
+
         //删除原条码
         Example example1 = new Example(EamJigBarcode.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("jigId", entity.getJigId());
+        if (jigBarcodeIdList.size() > 0) {
+            criteria1.andNotIn("jigBarcodeId", jigBarcodeIdList);
+        }
         eamJigBarcodeMapper.deleteByExample(example1);
 
         //条码列表
-        List<EamJigBarcode> eamJigBarcodeList = entity.getEamJigBarcodeList();
         if(StringUtils.isNotEmpty(eamJigBarcodeList)){
             this.barcodeIfRepeat(eamJigBarcodeList);
 
             for (EamJigBarcode eamJigBarcode : eamJigBarcodeList){
+                if(jigBarcodeIdList.contains(eamJigBarcode.getJigBarcodeId())){
+                    continue;
+                }
                 eamJigBarcode.setJigId(entity.getJigId());
                 eamJigBarcode.setCreateUserId(user.getUserId());
                 eamJigBarcode.setCreateTime(new Date());
@@ -206,8 +237,8 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
                 eamJigBarcode.setStatus(StringUtils.isEmpty(eamJigBarcode.getStatus())?1: eamJigBarcode.getStatus());
                 eamJigBarcode.setOrgId(user.getOrganizationId());
                 eamJigBarcode.setUsageStatus((byte)2);
+                eamJigBarcodeMapper.insert(eamJigBarcode);
             }
-            eamJigBarcodeMapper.insertList(eamJigBarcodeList);
         }
 
         //删除原附件

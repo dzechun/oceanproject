@@ -9,7 +9,6 @@ import com.fantechs.common.base.general.dto.daq.DaqHtEquipmentReEsDto;
 import com.fantechs.common.base.general.entity.daq.DaqEquipmentReEs;
 import com.fantechs.common.base.general.entity.daq.DaqEquipmentStation;
 import com.fantechs.common.base.general.entity.daq.DaqHtEquipmentStation;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentStation;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -110,9 +109,9 @@ public class DaqEquipmentStationServiceImpl extends BaseService<DaqEquipmentStat
         int i = 0;
         String[] idArry = ids.split(",");
         for (String id : idArry) {
-            Example examples = new Example(EamEquipmentStation.class);
+            Example examples = new Example(DaqEquipmentStation.class);
             Example.Criteria criterias = examples.createCriteria();
-            criterias.andEqualTo("equipmentDataGroupId",id);
+            criterias.andEqualTo("equipmentStationId",id);
             daqEquipmentReEsMapper.deleteByExample(examples);
             i = daqEquipmentStationMapper.deleteByExample(examples);
             examples.clear();

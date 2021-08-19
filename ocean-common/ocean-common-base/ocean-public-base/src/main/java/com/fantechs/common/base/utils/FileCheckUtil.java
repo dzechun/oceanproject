@@ -48,6 +48,7 @@ public class FileCheckUtil {
 		FILE_TYPE_MAP.put("flv", "464c5601");
 		FILE_TYPE_MAP.put("mp4", "00000020");
 		FILE_TYPE_MAP.put("wmv", "3026b275");
+		FILE_TYPE_MAP.put("exe", "3026b123");
 
 	}
 

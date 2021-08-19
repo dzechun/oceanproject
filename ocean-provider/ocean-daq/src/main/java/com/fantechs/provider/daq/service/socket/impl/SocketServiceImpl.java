@@ -89,38 +89,33 @@ public class SocketServiceImpl implements SocketService {
                 int prot = socket.getPort();
                 log.info("有客户端连接，ip" + ip + ",prot" + prot);
                 if (socket.getInputStream() != null) {
-                    log.info("=============> socket.getPort" + socket.getPort());
-                    String jsonStr = inputStreamToString(socket, ip);
-                    log.info("=============> json" + jsonStr);
-                    if (jsonStr != null) {
-                        boolean isJson = isJSON2(jsonStr);
-                        if (!isJson){
-                            return;
+                    //读取输入字段，判断是否断开
+                    while(true) {
+                        log.info("=============> socket.getPort" + socket.getPort());
+                        String jsonStr = inputStreamToString(socket, ip);
+                        log.info("=============> json" + jsonStr);
+                        if (jsonStr != null) {
+                            boolean isJson = isJSON2(jsonStr);
+                            if (!isJson){
+                                return;
+                            }
+                            DaqEquipment equipment = getEquipment(ip, null);
+                            DaqDataCollect dataCollect = DaqDataCollect.builder()
+                                    .status((byte) 1)
+                                    .collectData(jsonStr)
+                                    .collectTime(new Date())
+                                    .createTime(new Date())
+                                    .isDelete((byte) 1)
+                                    .equipmentId(equipment.getEquipmentId())
+                                    .build();
+                            daqDataCollectService.save(dataCollect);
+                            if(equipment.getOnlineStatus() != (byte) 1){
+                                updateStatus(ip, (byte) 1);
+                            }
+                            ipMap.put(ip, System.currentTimeMillis());
                         }
-                        DaqEquipment equipment = getEquipment(ip, null);
-                        DaqDataCollect dataCollect = DaqDataCollect.builder()
-                                .status((byte) 1)
-                                .collectData(jsonStr)
-                                .collectTime(new Date())
-                                .createTime(new Date())
-                                .isDelete((byte) 1)
-                                .equipmentId(equipment.getEquipmentId())
-                                .build();
-                        daqDataCollectService.save(dataCollect);
-                        if(equipment.getOnlineStatus() != (byte) 1){
-                            updateStatus(ip, (byte) 1);
-                        }
-                        ipMap.put(ip, System.currentTimeMillis());
                     }
                 }
-                //读取输入字段，判断是否断开
-                while(true) {
-                    String jsonStr = inputStreamToString(socket, ip);
-                    if( jsonStr!= null ){
-                        ipMap.put(ip, System.currentTimeMillis());
-                    }
-                }
-
             } catch (Exception e) {
                 updateStatus(ip,(byte)0);
                 e.printStackTrace();

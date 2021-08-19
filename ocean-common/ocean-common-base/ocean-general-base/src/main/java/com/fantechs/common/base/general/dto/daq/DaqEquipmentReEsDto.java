@@ -57,9 +57,9 @@ public class DaqEquipmentReEsDto extends DaqEquipmentReEs implements Serializabl
     /**
      * 设备分组ID
      */
-    @ApiModelProperty(name="equipmentDataGroupTd",value = "设备分组ID")
+    @ApiModelProperty(name="equipmentDataGroupId",value = "设备分组ID")
     @Transient
-    private Long equipmentDataGroupTd;
+    private Long equipmentDataGroupId;
 
     /**
      * 设备IP

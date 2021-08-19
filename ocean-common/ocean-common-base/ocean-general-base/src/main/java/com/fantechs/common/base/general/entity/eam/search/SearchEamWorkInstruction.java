@@ -78,4 +78,11 @@ public class SearchEamWorkInstruction extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name="processName",value = "工序名称")
     private String processName;
+
+
+    /**
+     * 设备序号
+     */
+    @ApiModelProperty(name="equipmentSeqNum",value = "设备序号")
+    private String equipmentSeqNum;
 }

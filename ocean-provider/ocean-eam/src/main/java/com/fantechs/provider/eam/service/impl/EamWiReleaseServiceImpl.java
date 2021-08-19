@@ -28,10 +28,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -74,6 +71,14 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         EamWiRelease wiRelease = eamWiReleaseMapper.selectOneByExample(example1);
         if(StringUtils.isNotEmpty(wiRelease)) throw new BizErrorException("添加失败，已存在发布编码");
         example1.clear();
+
+
+        //验证子表编码不能重复
+        HashSet set = new HashSet();
+        for(EamWiReleaseDetDto dto :eamWiReleaseDto.getEamWiReleaseDetDtos()){
+            set.add(dto.getWiReleaseDetSeqNum());
+        }
+        if(set.size() != eamWiReleaseDto.getEamWiReleaseDetDtos().size()) throw new BizErrorException("添加失败，wi序号重复");
 
         EamWiRelease eamWiRelease = new EamWiRelease();
         BeanUtils.autoFillEqFields(eamWiReleaseDto, eamWiRelease);
@@ -149,17 +154,18 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", sysUser.getOrganizationId())
                 .andEqualTo("proLineId", eamWiRelease.getProLineId());
-        EamWiRelease oldWiRelease = eamWiReleaseMapper.selectOneByExample(example);
-        if(StringUtils.isNotEmpty(oldWiRelease)) {
-            oldWiRelease.setStatus((byte)0);
-            eamWiReleaseMapper.updateByPrimaryKeySelective(oldWiRelease);
+        List<EamWiRelease> eamWiReleases = eamWiReleaseMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(eamWiReleases)) {
+            for(EamWiRelease wi : eamWiReleases) {
+                wi.setStatus((byte) 0);
+                eamWiReleaseMapper.updateByPrimaryKeySelective(wi);
+            }
         }
         example.clear();
 
         eamWiRelease.setStatus((byte)1);
         eamWiRelease.setReleaseStatus((byte)2);
         int i = eamWiReleaseMapper.updateByPrimaryKeySelective(eamWiRelease);
-        String localHostIp = InetAddress.getLocalHost().getHostAddress();
         socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://192.168.204.163/#/YunZhiESOP?ip=");
    //    socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://qmsapp.donlim.com/esop/#/YunZhiESOP?ip=");
 
