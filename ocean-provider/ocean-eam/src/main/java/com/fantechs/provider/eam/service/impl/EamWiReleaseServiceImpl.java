@@ -157,7 +157,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         List<EamWiRelease> eamWiReleases = eamWiReleaseMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(eamWiReleases)) {
             for(EamWiRelease wi : eamWiReleases) {
-                wi.setStatus((byte) 0);
+                wi.setReleaseStatus((byte)1);
                 eamWiReleaseMapper.updateByPrimaryKeySelective(wi);
             }
         }
