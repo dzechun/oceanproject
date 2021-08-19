@@ -29,7 +29,7 @@
     <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
     <result column="equipment_desc" jdbcType="VARCHAR" property="equipmentDesc"/>
     <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel"/>
-    <result column="equipment_data_group_id" jdbcType="VARCHAR" property="equipmentDataGroupTd"/>
+    <result column="equipment_data_group_id" jdbcType="VARCHAR" property="equipmentDataGroupId"/>
     <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp"/>
     <result column="equipment_mac_address" jdbcType="VARCHAR" property="equipmentMacAddress"/>
   </resultMap>
