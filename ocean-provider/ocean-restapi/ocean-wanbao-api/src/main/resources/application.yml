@@ -1,0 +1,25 @@
+server:
+  port: 9002
+  max-http-header-size: 10000000
+
+spring:
+  profiles:
+    include: dev
+  application:
+    name: @pom.artifactId@
+  datasource:
+    primary:
+      jdbc-url: jdbc:oracle:thin:@192.168.204.160:1521:ORCL
+      type: com.alibaba.druid.pool.DruidDataSource
+      username: smt
+      password: smt
+      driverClassName: oracle.jdbc.driver.OracleDriver
+    secondary:
+      jdbc-url: jdbc:oracle:thin:@192.168.204.160:1521:ORCL
+      type: com.alibaba.druid.pool.DruidDataSource
+      username: smt
+      password: smt
+      driverClassName: oracle.jdbc.driver.OracleDriver
+
+logging:
+  file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log

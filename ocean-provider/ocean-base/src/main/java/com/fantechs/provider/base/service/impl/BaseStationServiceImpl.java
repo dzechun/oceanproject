@@ -1,11 +1,12 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.imports.BaseStationImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.general.entity.basic.BaseWorkshopSection;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStation;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseStation;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
@@ -142,7 +143,7 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<BaseStation> baseStations) {
+    public Map<String, Object> importExcel(List<BaseStationImport> baseStationImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -152,14 +153,16 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<BaseStation> list = new LinkedList<>();
         LinkedList<BaseHtStation> htList = new LinkedList<>();
-        for (int i = 0; i < baseStations.size(); i++) {
-            BaseStation baseStation = baseStations.get(i);
-            String stationCode = baseStation.getStationCode();
-            String sectionCode = baseStation.getSectionCode();
-            String processCode = baseStation.getProcessCode();
+        ArrayList<BaseStationImport> baseStationImportList = new ArrayList<>();
+        for (int i = 0; i < baseStationImports.size(); i++) {
+            BaseStationImport baseStationImport = baseStationImports.get(i);
+            String stationCode = baseStationImport.getStationCode();
+            String stationName = baseStationImport.getStationName();
+            String sectionCode = baseStationImport.getSectionCode();
+            String processCode = baseStationImport.getProcessCode();
 
             if (StringUtils.isEmpty(
-                    stationCode,sectionCode,processCode
+                    stationCode,stationName,sectionCode,processCode
             )){
                 fail.add(i+3);
                 continue;
@@ -175,6 +178,7 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
                 continue;
             }
 
+
             //判断工段是否存在
             Example example1 = new Example(BaseWorkshopSection.class);
             Example.Criteria criteria1 = example1.createCriteria();
@@ -185,25 +189,31 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
                 fail.add(i+3);
                 continue;
             }
+            baseStationImport.setSectionId(baseWorkshopSection.getSectionId());
+
 
             //判断工序是否存在
             Example example2 = new Example(BaseProcess.class);
             Example.Criteria criteria2 = example2.createCriteria();
             criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
-            criteria2.andEqualTo("processCode",processCode);
+            criteria2.andEqualTo("processCode", processCode);
             BaseProcess baseProcess = baseProcessMapper.selectOneByExample(example2);
-            if (StringUtils.isEmpty(baseProcess)){
-                fail.add(i+3);
+            if (StringUtils.isEmpty(baseProcess)) {
+                fail.add(i + 3);
                 continue;
             }
+            baseStationImport.setProcessId(baseProcess.getProcessId());
 
+            baseStationImportList.add(baseStationImport);
+        }
+
+        for (BaseStationImport baseStationImport : baseStationImportList){
+            BaseStation baseStation = new BaseStation();
+            BeanUtils.copyProperties(baseStationImport, baseStation);
             baseStation.setCreateTime(new Date());
             baseStation.setCreateUserId(currentUser.getUserId());
             baseStation.setModifiedTime(new Date());
             baseStation.setModifiedUserId(currentUser.getUserId());
-            baseStation.setStatus(1);
-            baseStation.setProcessId(baseProcess.getProcessId());
-            baseStation.setSectionId(baseWorkshopSection.getSectionId());
             baseStation.setOrganizationId(currentUser.getOrganizationId());
             list.add(baseStation);
         }

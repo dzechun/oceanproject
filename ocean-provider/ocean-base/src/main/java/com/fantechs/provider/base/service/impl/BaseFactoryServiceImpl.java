@@ -198,13 +198,17 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
             }
 
             //判断集合中是否已经存在同样的数据
+            boolean tag = false;
             if (StringUtils.isNotEmpty(list)){
                 for (BaseFactory baseFactory : list) {
                     if (baseFactory.getFactoryCode().equals(factoryCode)){
-                        fail.add(i+4);
-                        continue;
+                        tag = true;
                     }
                 }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
             }
 
 
