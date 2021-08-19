@@ -55,9 +55,9 @@ public class SapBadnessCategoryApiServiceImpl implements SapBadnessCategoryApiSe
         req.setKATALOGART(searchSapBadnessCategoryApi.getCatalogue());
         req.setCODEGRUPPE(searchSapBadnessCategoryApi.getBadnessCodes());
         DTMESBADCODEQUERYRES res = out.siMESBADCODEQUERYOut(req);
+        Long orgId = baseUtils.getOrId();
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE()) ){
             if(StringUtils.isEmpty(res.getBADCODE())) throw new BizErrorException("请求结果为空");
-            Long orgId = baseUtils.getOrId();
             //保存或更新不良代类别
             BaseBadnessCategory baseBadnessCategory = new BaseBadnessCategory();
             baseBadnessCategory.setBadnessCategoryCode(baseUtils.removeZero(searchSapBadnessCategoryApi.getBadnessCodes()));
@@ -75,10 +75,10 @@ public class SapBadnessCategoryApiServiceImpl implements SapBadnessCategoryApiSe
                 baseBadnessCause.setOrgId(orgId);
                 baseFeignApi.saveByApi(baseBadnessCause);
             }
-            logsUtils.addlog((byte)1,(byte)1,(long)1002,null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,(long)1002,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }

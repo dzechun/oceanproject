@@ -18,7 +18,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @ComponentScan({"com.fantechs.provider.materialapi.imes","com.fantechs.common"})
 @MapperScan({"com.fantechs.provider.materialapi.imes.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider")
-@EnableDistributedTransaction
+//@EnableDistributedTransaction
 public class OceanImesMaterialapiApplication {
 
     public static void main(String[] args) {

@@ -129,6 +129,7 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         searchEamWorkInstruction.setOrgId(eamEquipments.get(0).getOrgId());
         EamWorkInstructionDto eamWorkInstructionDto = eamWorkInstructionMapper.findList(searchEamWorkInstruction).get(0);
         eamWorkInstructionDto.setUserName(sysUser.getUserName());
+        eamWorkInstructionDto.setWorkShopName(list.get(0).getWorkShopName());
         return eamWorkInstructionDto;
     }
 

@@ -43,9 +43,10 @@ public class SapCustomerApiServiceImpl implements SapCustomerApiService {
             throw new BizErrorException("工厂号不能为空");
         req.setWERKS(searchSapSupplierApi.getWerks());
         DTMESCUSTOMERQUERYRES res = out.siMESCUSTOMERQUERYOut(req);
+        Long orgId = baseUtils.getOrId();
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())){
             if(StringUtils.isEmpty(res.getCUSTOMER())) throw new BizErrorException("请求结果为空");
-            Long orgId = baseUtils.getOrId();
+
             for(DTMESCUSTOMER customer: res.getCUSTOMER()){
                 if(StringUtils.isEmpty(customer.getKUNNR())) throw new BizErrorException("新增或更新失败，物料编码为空");
                 BaseSupplier baseSupplier = new BaseSupplier();
@@ -57,10 +58,10 @@ public class SapCustomerApiServiceImpl implements SapCustomerApiService {
                 baseSupplier.setOrganizationId(orgId);
                 baseFeignApi.saveByApi(baseSupplier);
             }
-            logsUtils.addlog((byte)1,(byte)1,(long)1002,null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,(long)1002,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }

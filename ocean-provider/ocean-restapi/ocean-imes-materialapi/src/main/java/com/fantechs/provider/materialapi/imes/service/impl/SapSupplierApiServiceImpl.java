@@ -40,7 +40,7 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
         DTMESSUPPLIERQUERYREQ req = new DTMESSUPPLIERQUERYREQ();
         if(StringUtils.isEmpty(searchSapSupplierApi.getWerks()))
             throw new BizErrorException("工厂号不能为空");
-
+        Long orgId = baseUtils.getOrId();
         req.setWERKS(searchSapSupplierApi.getWerks());
         DTMESSUPPLIERQUERYRES res = out.siMESSUPPLIERQUERYOut(req);
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())){
@@ -55,10 +55,10 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
                 baseSupplier.setSupplierType((byte)1);
                 baseFeignApi.saveByApi(baseSupplier);
             }
-            logsUtils.addlog((byte)1,(byte)1,(long)1002,null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,(long)1002,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }

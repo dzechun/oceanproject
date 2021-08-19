@@ -25,7 +25,9 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
     <result column="manufacture_procedure" jdbcType="LONGVARCHAR" property="manufactureProcedure" />
     <result column="process_req_and_announcements" jdbcType="LONGVARCHAR" property="processReqAndAnnouncements" />
+    <result column="standard_time" jdbcType="DECIMAL" property="standardTime" />
   </resultMap>
+
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap"
              type="com.fantechs.common.base.general.dto.eam.EamWorkInstructionDto">
@@ -73,7 +75,8 @@
         ewi.modified_time,
         ewi.option1,
         ewi.option2,
-        ewi.option3
+        ewi.option3,
+        ewi.standard_time
     </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">

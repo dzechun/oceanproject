@@ -43,6 +43,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
         SIMESPROCESSQUERYOutService service = new SIMESPROCESSQUERYOutService();
         SIMESPROCESSQUERYOut out = service.getHTTPPort();
         DTMESPROCESSQUERYREQ req = new DTMESPROCESSQUERYREQ();
+        Long orgId = baseUtils.getOrId();
         if(StringUtils.isEmpty(searchSapRouteApi.getMaterialCode()) || StringUtils.isEmpty(searchSapRouteApi.getWerks()))
             throw new BizErrorException("物料编码和工厂不能为空");
         req.setMATNR(searchSapRouteApi.getMaterialCode());
@@ -53,7 +54,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             //保存或更新工艺路线
             BaseMaterial baseMaterial = baseUtils.getBaseMaterial(baseUtils.removeZero(searchSapRouteApi.getMaterialCode()));
             if(StringUtils.isEmpty(baseMaterial)) throw new BizErrorException("未查询到对应的物料信息");
-            Long orgId = baseUtils.getOrId();
+
             //保存工艺路线
             BaseRoute baseRoute = new BaseRoute();
             baseRoute.setRouteName(res.getPROCESS().get(0).getKTEXT());
@@ -104,10 +105,10 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
                 baseProcess.setProcessCategoryId(baseProcessCategoryResponseEntity.getData().getProcessCategoryId());
                 baseFeignApi.addOrUpdate(baseProcess);
             }
-            logsUtils.addlog((byte)1,(byte)1,(long)1002,null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,(long)1002,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }

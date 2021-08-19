@@ -64,6 +64,7 @@ public class EsopWorkshopServiceImpl extends BaseService<EsopWorkshop> implement
         baseWorkShop.setModifiedTime(esopWorkshop.getModifyTime());
         baseWorkShop.setIsDelete(esopWorkshop.getIsDeleted());
         baseWorkShop.setOrganizationId((long)1002);
+        baseWorkShop.setIsDelete((byte)1);
         return baseWorkShop;
     }
 }

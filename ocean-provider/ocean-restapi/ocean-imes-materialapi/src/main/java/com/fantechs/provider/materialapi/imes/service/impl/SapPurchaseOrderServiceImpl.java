@@ -56,14 +56,13 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
         if(StringUtils.isEmpty(purchaseOrderApiDtos)) return "采购订单参数为空";
         Map<String,Long> purchaseMap = new HashMap<String,Long>();
         List<OmPurchaseOrderDet> omPurchaseOrderDetList = new ArrayList<OmPurchaseOrderDet>();
-
+        Long orgId =baseUtils.getOrId();
         for(RestapiPurchaseOrderApiDto purchaseOrderApiDto : purchaseOrderApiDtos) {
             String check = check(purchaseOrderApiDto);
             if (!check.equals("1")) {
                 logsUtils.addlog((byte)0,(byte)2,(long)1002,check,purchaseOrderApiDto.toString());
                 return check;
             }
-            Long orgId = baseUtils.getOrId();
             //保存或更新采购订单
             if(StringUtils.isEmpty(purchaseMap.get(purchaseOrderApiDto.getEBELN()))) {
                 OmPurchaseOrder omPurchaseOrder = new OmPurchaseOrder();
@@ -88,7 +87,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             omPurchaseOrderDetList.add(purchaseOrderDet);
         }
         oMFeignApi.saveByApi(omPurchaseOrderDetList);
-        logsUtils.addlog((byte)0,(byte)2,(long)1002,null,null);
+        logsUtils.addlog((byte)0,(byte)2,orgId,null,null);
         return "success";
     }
 

@@ -5,6 +5,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.restapi.*;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.reportWorkApi.SIMESWORKORDERREPORTSAVEOut;
 import com.fantechs.provider.materialapi.imes.utils.reportWorkApi.SIMESWORKORDERREPORTSAVEOutService;
@@ -20,9 +21,9 @@ import java.text.ParseException;
 public class SapReportWorkApiServiceImpl implements SapReportWorkApiService {
 
     @Resource
-    private BaseFeignApi baseFeignApi;
-    @Resource
     private LogsUtils logsUtils;
+    @Resource
+    private BaseUtils baseUtils;
 
     private String userName = "MESPIALEUSER"; //雷赛wsdl用户名
     private String password = "1234qwer"; //雷赛wsdl密码
@@ -35,18 +36,18 @@ public class SapReportWorkApiServiceImpl implements SapReportWorkApiService {
         SIMESWORKORDERREPORTSAVEOutService service = new SIMESWORKORDERREPORTSAVEOutService();
         SIMESWORKORDERREPORTSAVEOut out = service.getHTTPPort();
         DTMESWORKORDERREPORTSAVEREQ req = new DTMESWORKORDERREPORTSAVEREQ();
-
         req.setAUFNR(searchSapReportWorkApi.getWorkOrderCode());
         req.setVORNR(searchSapReportWorkApi.getProcessCode());
         req.setLMNGA(searchSapReportWorkApi.getProductionQty());
         req.setRMNGA(searchSapReportWorkApi.getReWorkQty());
         req.setXMNGA(searchSapReportWorkApi.getScrapQty());
         DTMESWORKORDERREPORTSAVERES res = out.siMESWORKORDERREPORTSAVEOut(req);
+        Long orgId =baseUtils.getOrId();
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())){
-            logsUtils.addlog((byte)1,(byte)1,(long)1002,null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,(long)1002,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败,失败原因："+res.getMESSAGE());
         }
     }

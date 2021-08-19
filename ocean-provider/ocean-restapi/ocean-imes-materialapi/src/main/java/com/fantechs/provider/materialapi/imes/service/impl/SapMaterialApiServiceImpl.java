@@ -49,6 +49,7 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
         SIMESMATERIALQUERYOutService service = new SIMESMATERIALQUERYOutService();
         SIMESMATERIALQUERYOut out = service.getHTTPPort();
         DTMESMATERIALQUERYREQ req = new DTMESMATERIALQUERYREQ();
+        Long orgId =baseUtils.getOrId();
         if(StringUtils.isEmpty(searchSapMaterialApi.getStartTime()) || StringUtils.isEmpty(searchSapMaterialApi.getEndTime()))
             throw new BizErrorException("开始和结束时间不能为空");
         req.setERSDA(searchSapMaterialApi.getStartTime());
@@ -65,10 +66,10 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
             }
             baseFeignApi.addList(addList);
             baseFeignApi.batchUpdateByCode(updateList);
-            logsUtils.addlog((byte)1,(byte)1,(long)1002,null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,(long)1002,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }

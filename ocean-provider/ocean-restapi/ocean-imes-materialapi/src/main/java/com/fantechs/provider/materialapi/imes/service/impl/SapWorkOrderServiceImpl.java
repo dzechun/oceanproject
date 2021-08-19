@@ -57,7 +57,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         for(RestapiWorkOrderApiDto restapiWorkOrderApiDto : restapiWorkOrderApiDtos) {
             String check = check(restapiWorkOrderApiDto);
             if (!check.equals("1")) {
-                logsUtils.addlog((byte)0,(byte)2,(long)1002,check,restapiWorkOrderApiDto.toString());
+                logsUtils.addlog((byte)0,(byte)2,orgId,check,restapiWorkOrderApiDto.toString());
                 return check;
             }
             //保存工单，如已经保存则后续循环不再保存
@@ -93,7 +93,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
             }
             pmFeignApi.addMesPmWorkOrderBom(mesPmWorkOrderBomList);
         }
-        logsUtils.addlog((byte)1,(byte)2,(long)1002,null,null);
+        logsUtils.addlog((byte)1,(byte)2,orgId,null,null);
         return "success";
     }
 

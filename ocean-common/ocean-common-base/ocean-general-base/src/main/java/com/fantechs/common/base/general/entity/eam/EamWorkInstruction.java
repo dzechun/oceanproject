@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 ;
@@ -164,4 +165,14 @@ public class EamWorkInstruction extends ValidGroup implements Serializable {
     private String processReqAndAnnouncements;
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 标准工时(小时)
+     */
+    @ApiModelProperty(name="standardTime",value = "标准工时（小时)")
+    @Column(name = "standard_time")
+    private BigDecimal standardTime;
+
+
+
 }

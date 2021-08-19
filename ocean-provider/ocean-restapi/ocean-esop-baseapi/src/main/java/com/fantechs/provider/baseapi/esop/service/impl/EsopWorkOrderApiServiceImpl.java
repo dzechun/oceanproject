@@ -88,13 +88,24 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
                         }else{
                             material = list.getData().get(0);
                         }
+
+
+                        SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
+                        searchBaseProLine.setProCode(proCode);
+                        searchBaseProLine.setOrgId(orgId);
+                        ResponseEntity<List<BaseProLine>> baseProLines = baseFeignApi.findList(searchBaseProLine);
+                        if(StringUtils.isEmpty(baseProLines.getData()))
+                            throw new BizErrorException("未查询到对应的产线,请先同步产线"+proCode);
+
                         MesPmWorkOrder mesPmWorkOrder = new MesPmWorkOrder();
                         mesPmWorkOrder.setWorkOrderCode(String.valueOf(data.get("code")));
                         mesPmWorkOrder.setWorkOrderQty(new BigDecimal((int)data.get("num")));
+                        mesPmWorkOrder.setProLineId(baseProLines.getData().get(0).getProLineId());
                         mesPmWorkOrder.setPlanStartTime(new Date());
                         mesPmWorkOrder.setWorkOrderStatus((byte)3);
                         mesPmWorkOrder.setWorkOrderType((byte)0);
                         mesPmWorkOrder.setMaterialId(material.getMaterialId());
+                        mesPmWorkOrder.setIsDelete((byte)1);
                         mesPmWorkOrder.setOrgId(orgId);
                         pmFeignApi.saveByApi(mesPmWorkOrder);
                     }else{
