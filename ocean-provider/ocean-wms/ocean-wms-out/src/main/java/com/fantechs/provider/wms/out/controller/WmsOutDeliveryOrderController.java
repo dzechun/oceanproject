@@ -1,8 +1,10 @@
 package com.fantechs.provider.wms.out.controller;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
+import com.fantechs.common.base.general.entity.om.OmSalesOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
@@ -17,6 +19,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +48,14 @@ public class WmsOutDeliveryOrderController {
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutDeliveryOrder wmsOutDeliveryOrder) {
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.save(wmsOutDeliveryOrder));
+    }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/addList")
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public ResponseEntity addList(@ApiParam(value = "销售出库单信息集合") @RequestBody List<WmsOutDeliveryOrder> outDeliveryOrders){
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.batchSave(outDeliveryOrders));
     }
 
     @ApiOperation(value = "创建作业单",notes = "创建作业单")

@@ -51,6 +51,10 @@ public interface PMFeignApi {
     @PostMapping("/mesPmWorkOrder/add")
     ResponseEntity addWorkOrder(@ApiParam(value = "必传：workOrderCode、materialId、workOrderQuantity、routeId、proLineId", required = true) @RequestBody MesPmWorkOrder mesPmWorkOrder);
 
+    @ApiOperation(value = "批量新增工单",notes = "批量新增工单")
+    @PostMapping("/mesPmWorkOrder/addList")
+    ResponseEntity addList(@ApiParam(value = "工单信息集合") @RequestBody List<MesPmWorkOrder> pmWorkOrders);
+
     @ApiOperation("工单记录完工数量")
     @GetMapping("/mesPmWorkOrder/finishedProduct")
     ResponseEntity<Integer> finishedProduct(
