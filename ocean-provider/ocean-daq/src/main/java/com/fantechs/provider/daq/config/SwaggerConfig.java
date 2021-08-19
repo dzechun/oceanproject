@@ -45,7 +45,7 @@ public class SwaggerConfig
                 .apiInfo(apiInfo())
                 .select()
                 // 指定当前包路径，这里就添加了两个包，注意方法变成了basePackage，中间加上成员变量splitor
-                .apis(basePackage("com.fantechs.provider.eam.controller"))
+                .apis(basePackage("com.fantechs.provider.daq.controller"))
                 // 扫描所有 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
@@ -61,7 +61,7 @@ public class SwaggerConfig
                 //页面标题
                 .title("Spring Boot 测试使用 Swagger2 构建RESTful API")
                 //创建人
-                .contact(new Contact("security 相关接口", "http://www.baidu.com", ""))
+                .contact(new Contact("数据采集 相关接口", "http://www.baidu.com", ""))
                 //版本号
                 .version("1.0")
                 //描述
