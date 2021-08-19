@@ -21,8 +21,6 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="x_axis" jdbcType="DECIMAL" property="xAxis" />
-    <result column="y_axis" jdbcType="DECIMAL" property="yAxis" />
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
@@ -48,8 +46,6 @@
     ehe.create_time,
     ehe.modified_user_id,
     ehe.modified_time,
-    ehe.x_axis,
-    ehe.y_axis,
     ehe.option1,
     ehe.option2,
     ehe.option3

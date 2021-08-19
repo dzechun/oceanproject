@@ -867,6 +867,16 @@ public class PickingOrderServiceImpl implements PickingOrderService {
      */
     private int plus(WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto){
         SysUser sysUser = currentUser();
+
+        Map<Long,BigDecimal> map = (Map<Long, BigDecimal>) redisUtil.get(this.REDIS_KEY+wmsInnerJobOrderDetDto.getJobOrderDetId().toString());
+        WmsInnerInventory wmsInnerInventory = null;
+        for (Map.Entry<Long, BigDecimal> m : map.entrySet()) {
+            wmsInnerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(m.getKey());
+            if(wmsInnerJobOrder!=null){
+                break;
+            }
+        }
+
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
         int num = 0;
@@ -884,6 +894,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         if(StringUtils.isEmpty(wmsInnerInventorys)){
             //新增一条分配库存
             WmsInnerInventory wms = new WmsInnerInventory();
+            BeanUtil.copyProperties(wmsInnerInventory,wms);
+            wms.setInventoryId(null);
             wms.setMaterialOwnerId(wmsInnerJobOrderDto.getMaterialOwnerId());
             wms.setWarehouseId(wmsInnerJobOrderDto.getWarehouseId());
             wms.setStorageId(wmsInnerJobOrderDetDto.getOutStorageId());
@@ -891,7 +903,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wms.setPackingQty(wmsInnerJobOrderDetDto.getDistributionQty());
             wms.setPackingUnitName(wmsInnerJobOrderDetDto.getPackingUnitName());
             wms.setMaterialId(wmsInnerJobOrderDetDto.getMaterialId());
-            wms.setInventoryStatusId(wmsInnerJobOrderDetDto.getInventoryStatusId());
             wms.setJobStatus((byte)2);
             wms.setJobOrderDetId(wmsInnerJobOrderDetDto.getJobOrderDetId());
             wms.setCreateTime(new Date());
