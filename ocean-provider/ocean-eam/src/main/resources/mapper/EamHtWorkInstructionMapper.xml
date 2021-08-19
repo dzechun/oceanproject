@@ -103,7 +103,7 @@
         and ehwi.material_id = #{materialId}
       </if>
       <if test="processId!=null and processId!=''">
-        and bm.process_id = #{processId}
+        and sp.process_id = #{processId}
       </if>
     </where>
   </select>

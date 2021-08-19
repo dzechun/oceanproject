@@ -49,6 +49,8 @@ public class DaqDataCollectServiceImpl extends BaseService<DaqDataCollect> imple
 
     @Override
     public DaqDataCollectModel findByGroup(SearchDaqEquipmentDataGroup searchDaqEquipmentDataGroup) {
+        DaqDataCollectModel model = new DaqDataCollectModel();
+
         Map map = new HashMap();
         map.put("equipmentDataGroupId",searchDaqEquipmentDataGroup.getEquipmentDataGroupId());
         List<DaqEquipment> EamEquipmentList = daqEquipmentMapper.findList(map);
@@ -56,8 +58,10 @@ public class DaqDataCollectServiceImpl extends BaseService<DaqDataCollect> imple
         List collectDate = new ArrayList();
         for(DaqEquipment eamEquipment : EamEquipmentList){
             List<DaqDataCollectDto> collectDtos = daqDataCollectMapper.findByEquipmentId(eamEquipment.getEquipmentId());
-            if(StringUtils.isNotEmpty(collectDtos))
+            if(StringUtils.isNotEmpty(collectDtos)) {
                 collectDate.add(collectDtos.get(0).getCollectData());
+                model.setEamEquipment(eamEquipment);
+            }
         }
         List<DaqEquipmentDataGroupDto> daqEquipmentDataGroupDtos = daqEquipmentDataGroupMapper.findList(ControllerUtil.dynamicConditionByEntity(searchDaqEquipmentDataGroup));
         if(StringUtils.isEmpty(daqEquipmentDataGroupDtos)) throw new BizErrorException("未查询到对应组别");
@@ -76,7 +80,7 @@ public class DaqDataCollectServiceImpl extends BaseService<DaqDataCollect> imple
             tableNames.add(tableName);
         }
      //   tableName += "]";
-        DaqDataCollectModel model = new DaqDataCollectModel();
+
         model.setTableName(tableNames);
         model.setCollectDate(collectDate);
         return model;
