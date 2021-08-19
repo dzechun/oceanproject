@@ -23,7 +23,7 @@
   </resultMap>
 
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamWiReleaseDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamHtEquipmentDataGroupReDcDto">
 
   </resultMap>
 
