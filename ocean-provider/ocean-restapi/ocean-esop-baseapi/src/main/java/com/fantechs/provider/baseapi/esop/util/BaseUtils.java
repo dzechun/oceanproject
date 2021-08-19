@@ -35,8 +35,4 @@ public class BaseUtils {
         return organizationList.getData().get(0).getOrganizationId();
     }
 
-    public String removeZero(String str){
-        String newStr = str.replaceAll("^(0+)", "");
-        return newStr;
-    }
 }

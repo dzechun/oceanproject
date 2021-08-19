@@ -77,6 +77,14 @@ public class EamEquipment extends ValidGroup implements Serializable {
     private Long equipmentCategoryId;
 
     /**
+     * 设备序号
+     */
+    @ApiModelProperty(name="equipmentSeqNum",value = "设备序号")
+    @Excel(name = "设备型号", height = 20, width = 30,orderNum="4")
+    @Column(name = "equipment_seq_num")
+    private String equipmentSeqNum;
+
+    /**
      * 功率(kw)
      */
     @ApiModelProperty(name="power",value = "功率(kw)")

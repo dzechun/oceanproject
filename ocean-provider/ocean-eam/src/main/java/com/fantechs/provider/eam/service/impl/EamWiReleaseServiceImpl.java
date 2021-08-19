@@ -149,10 +149,12 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", sysUser.getOrganizationId())
                 .andEqualTo("proLineId", eamWiRelease.getProLineId());
-        EamWiRelease oldWiRelease = eamWiReleaseMapper.selectOneByExample(example);
-        if(StringUtils.isNotEmpty(oldWiRelease)) {
-            oldWiRelease.setStatus((byte)0);
-            eamWiReleaseMapper.updateByPrimaryKeySelective(oldWiRelease);
+        List<EamWiRelease> eamWiReleases = eamWiReleaseMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(eamWiReleases)) {
+            for(EamWiRelease wi : eamWiReleases) {
+                wi.setStatus((byte) 0);
+                eamWiReleaseMapper.updateByPrimaryKeySelective(wi);
+            }
         }
         example.clear();
 

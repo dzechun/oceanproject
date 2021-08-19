@@ -102,21 +102,26 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("equipmentIp", searchEamWorkInstruction.getEquipmentIp());
+        criteria.andEqualTo("orgId", sysUser.getOrganizationId());
         List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
         if(eamEquipments.size() >1) throw new BizErrorException("出现两个或两个以上的设备ip相同");
         example.clear();
 
+        //查询到对应的wi
         SearchEamWiRelease searchEamWiRelease = new SearchEamWiRelease();
         searchEamWiRelease.setEquipmentIp(searchEamWorkInstruction.getEquipmentIp());
         searchEamWiRelease.setOrgId(eamEquipments.get(0).getOrgId());
         searchEamWiRelease.setReleaseStatus((byte)2);
         searchEamWiRelease.setProLineId(eamEquipments.get(0).getProLineId());
         List<EamWiReleaseDto> list = eamWiReleaseMapper.findList(searchEamWiRelease);
-     //   if(StringUtils.isEmpty(list)) throw new BizErrorException("未查询到该设备对应产线发布的WI");
+        //客户要求不再根据工序发布，根据设备序号发布
         if(StringUtils.isNotEmpty(list) ) {
             if (list.size()>1)  throw new BizErrorException("查询到多条该设备对应产线发布的WI");
             for(EamWiReleaseDetDto dto : list.get(0).getEamWiReleaseDetDtos()){
-                if(dto.getProcessId().equals(eamEquipments.get(0).getProcessId()) ){
+                /*if(dto.getProcessId().equals(eamEquipments.get(0).getProcessId()) ){
+                    searchEamWorkInstruction.setWorkInstructionId(dto.getWorkInstructionId());
+                }*/
+                if(dto.getWiReleaseDetSeqNum().equals(eamEquipments.get(0).getEquipmentSeqNum()) ){
                     searchEamWorkInstruction.setWorkInstructionId(dto.getWorkInstructionId());
                 }
             }
@@ -125,7 +130,7 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         }else{
             return null;
         }
-        searchEamWorkInstruction.setProcessId(eamEquipments.get(0).getProcessId());
+        //searchEamWorkInstruction.setProcessId(eamEquipments.get(0).getProcessId());
         searchEamWorkInstruction.setOrgId(eamEquipments.get(0).getOrgId());
         EamWorkInstructionDto eamWorkInstructionDto = eamWorkInstructionMapper.findList(searchEamWorkInstruction).get(0);
         eamWorkInstructionDto.setUserName(sysUser.getUserName());
@@ -185,6 +190,7 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         Example example = new Example(EamWorkInstruction.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         EamWorkInstruction eamWorkInstruction = eamWorkInstructionMapper.selectOneByExample(example);
 
         //保存履历表
