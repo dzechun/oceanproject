@@ -111,7 +111,7 @@ public class DaqEquipmentStationServiceImpl extends BaseService<DaqEquipmentStat
         for (String id : idArry) {
             Example examples = new Example(DaqEquipmentStation.class);
             Example.Criteria criterias = examples.createCriteria();
-            criterias.andEqualTo("equipmentDataGroupId",id);
+            criterias.andEqualTo("equipmentStationId",id);
             daqEquipmentReEsMapper.deleteByExample(examples);
             i = daqEquipmentStationMapper.deleteByExample(examples);
             examples.clear();
