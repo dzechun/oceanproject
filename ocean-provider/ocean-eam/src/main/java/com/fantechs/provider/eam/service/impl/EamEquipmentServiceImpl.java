@@ -77,13 +77,13 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipment record) {
         SysUser user = getUser();
+        record.setOrgId(user.getOrganizationId());
         check(record);
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
         record.setModifiedTime(new Date());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
-        record.setOrgId(user.getOrganizationId());
         eamEquipmentMapper.insertUseGeneratedKeys(record);
 
         EamHtEquipment eamHtEquipment = new EamHtEquipment();
@@ -145,11 +145,23 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             Example examples = new Example(EamEquipment.class);
             Example.Criteria criterias = examples.createCriteria();
             criterias.andEqualTo("equipmentIp", entity.getEquipmentIp());
+            criterias.andEqualTo("orgId", entity.getOrgId());
             if(StringUtils.isNotEmpty(entity.getEquipmentId())){
                 criterias.andNotEqualTo("equipmentId",entity.getEquipmentId());
             }
             if (StringUtils.isNotEmpty(eamEquipmentMapper.selectOneByExample(examples))) {
                 throw new BizErrorException("设备ip不能重复");
+            }
+        }
+
+        if(StringUtils.isNotEmpty(entity.getEquipmentSeqNum())) {
+            Example numExample = new Example(EamEquipment.class);
+            Example.Criteria numCriteria = numExample.createCriteria();
+            numCriteria.andEqualTo("equipmentSeqNum", entity.getEquipmentSeqNum());
+            numCriteria.andEqualTo("proLineId", entity.getProLineId());
+            numCriteria.andEqualTo("orgId", entity.getOrgId());
+            if (StringUtils.isNotEmpty(eamEquipmentMapper.selectOneByExample(numExample))) {
+                throw new BizErrorException("同一产线的设备编码不能重复");
             }
         }
 

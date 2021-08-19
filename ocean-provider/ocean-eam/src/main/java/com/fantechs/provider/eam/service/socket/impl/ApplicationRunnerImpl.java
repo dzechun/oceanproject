@@ -20,6 +20,5 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         log.info("通过实现ApplicationRunner接口，在spring boot项目esop启动后启动socket服务端");
         socketService.openService();
-     //   socketService.openServiceEam();
     }
 }
