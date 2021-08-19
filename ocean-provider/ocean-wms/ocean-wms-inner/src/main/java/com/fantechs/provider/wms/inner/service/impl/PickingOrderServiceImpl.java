@@ -895,6 +895,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             //新增一条分配库存
             WmsInnerInventory wms = new WmsInnerInventory();
             BeanUtil.copyProperties(wmsInnerInventory,wms);
+            wms.setInventoryId(null);
             wms.setMaterialOwnerId(wmsInnerJobOrderDto.getMaterialOwnerId());
             wms.setWarehouseId(wmsInnerJobOrderDto.getWarehouseId());
             wms.setStorageId(wmsInnerJobOrderDetDto.getOutStorageId());
@@ -902,7 +903,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wms.setPackingQty(wmsInnerJobOrderDetDto.getDistributionQty());
             wms.setPackingUnitName(wmsInnerJobOrderDetDto.getPackingUnitName());
             wms.setMaterialId(wmsInnerJobOrderDetDto.getMaterialId());
-            wms.setInventoryStatusId(wmsInnerJobOrderDetDto.getInventoryStatusId());
             wms.setJobStatus((byte)2);
             wms.setJobOrderDetId(wmsInnerJobOrderDetDto.getJobOrderDetId());
             wms.setCreateTime(new Date());
