@@ -12,7 +12,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 ;
@@ -98,14 +97,6 @@ public class DaqHtEquipment extends ValidGroup implements Serializable {
     @ApiModelProperty(name="onlineStatus",value = "线上状态(0-离线 1-在线 2-已登录 3-中心异常)")
     @Column(name = "online_status")
     private Byte onlineStatus;
-
-    @ApiModelProperty(name="xAxis",value = "X坐标")
-    @Column(name = "x_axis")
-    private BigDecimal xAxis;
-
-    @ApiModelProperty(name="yAxis",value = "Y坐标")
-    @Column(name = "y_axis")
-    private BigDecimal yAxis;
 
 
     /**
