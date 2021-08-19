@@ -79,6 +79,18 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         SysUser user = getUser();
         record.setOrgId(user.getOrganizationId());
         check(record);
+
+        if(StringUtils.isNotEmpty(record.getEquipmentSeqNum())) {
+            Example numExample = new Example(EamEquipment.class);
+            Example.Criteria numCriteria = numExample.createCriteria();
+            numCriteria.andEqualTo("equipmentSeqNum", record.getEquipmentSeqNum());
+            numCriteria.andEqualTo("proLineId", record.getProLineId());
+            numCriteria.andEqualTo("orgId", record.getOrgId());
+            if (StringUtils.isNotEmpty(eamEquipmentMapper.selectOneByExample(numExample))) {
+                throw new BizErrorException("同一产线的设备编码不能重复");
+            }
+        }
+
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
@@ -154,16 +166,6 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             }
         }
 
-        if(StringUtils.isNotEmpty(entity.getEquipmentSeqNum())) {
-            Example numExample = new Example(EamEquipment.class);
-            Example.Criteria numCriteria = numExample.createCriteria();
-            numCriteria.andEqualTo("equipmentSeqNum", entity.getEquipmentSeqNum());
-            numCriteria.andEqualTo("proLineId", entity.getProLineId());
-            numCriteria.andEqualTo("orgId", entity.getOrgId());
-            if (StringUtils.isNotEmpty(eamEquipmentMapper.selectOneByExample(numExample))) {
-                throw new BizErrorException("同一产线的设备编码不能重复");
-            }
-        }
 
         if(StringUtils.isNotEmpty(entity.getEquipmentMacAddress())){
             Example macExample = new Example(EamEquipment.class);
