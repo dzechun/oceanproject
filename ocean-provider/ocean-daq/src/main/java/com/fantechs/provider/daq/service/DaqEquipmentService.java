@@ -1,8 +1,8 @@
 package com.fantechs.provider.daq.service;
 
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentDto;
+import com.fantechs.common.base.general.entity.daq.DaqEquipment;
+import com.fantechs.common.base.general.entity.daq.DaqHtEquipment;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -13,13 +13,13 @@ import java.util.Map;
  * Created by leifengzhi on 2021/06/25.
  */
 
-public interface DaqEquipmentService extends IService<EamEquipment> {
-    List<EamEquipmentDto> findList(Map<String, Object> map);
-    List<EamHtEquipment> findHtList(Map<String, Object> map);
+public interface DaqEquipmentService extends IService<DaqEquipment> {
+    List<DaqEquipmentDto> findList(Map<String, Object> map);
+    List<DaqHtEquipment> findHtList(Map<String, Object> map);
 
-    int batchUpdate(List<EamEquipment> list);
+    int batchUpdate(List<DaqEquipment> list);
 
-    EamEquipment detailByIp(String ip);
+    DaqEquipment detailByIp(String ip);
 
-    List<EamEquipmentDto> findNoGroup(Map<String, Object> map);
+    List<DaqEquipmentDto> findNoGroup(Map<String, Object> map);
 }

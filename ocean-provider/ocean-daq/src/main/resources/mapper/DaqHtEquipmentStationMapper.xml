@@ -24,7 +24,7 @@
 
 
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.daqHtEquipmentStationDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.daq.DaqHtEquipmentStationDto">
 
   </resultMap>
 

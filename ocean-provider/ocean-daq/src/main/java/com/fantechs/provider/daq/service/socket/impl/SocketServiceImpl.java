@@ -2,8 +2,8 @@ package com.fantechs.provider.daq.service.socket.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.entity.eam.EamDataCollect;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.general.entity.daq.DaqDataCollect;
+import com.fantechs.common.base.general.entity.daq.DaqEquipment;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.daq.mapper.DaqEquipmentMapper;
 import com.fantechs.provider.daq.service.DaqDataCollectService;
@@ -97,8 +97,8 @@ public class SocketServiceImpl implements SocketService {
                         if (!isJson){
                             return;
                         }
-                        EamEquipment equipment = getEquipment(ip, null);
-                        EamDataCollect dataCollect = EamDataCollect.builder()
+                        DaqEquipment equipment = getEquipment(ip, null);
+                        DaqDataCollect dataCollect = DaqDataCollect.builder()
                                 .status((byte) 1)
                                 .collectData(jsonStr)
                                 .collectTime(new Date())
@@ -164,26 +164,26 @@ public class SocketServiceImpl implements SocketService {
         return str;
     }
 
-    public EamEquipment getEquipment(String ip,String mac){
-        Example example = new Example(EamEquipment.class);
+    public DaqEquipment getEquipment(String ip,String mac){
+        Example example = new Example(DaqEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         if(StringUtils.isNotEmpty(ip))
             criteria.andEqualTo("equipmentIp",ip);
         if(StringUtils.isNotEmpty(mac))
             criteria.andEqualTo("equipmentMacAddress",mac);
 
-        EamEquipment eamEquipment = daqEquipmentMapper.selectOneByExample(example);
-        if (StringUtils.isEmpty(eamEquipment)){
+        DaqEquipment daqEquipment = daqEquipmentMapper.selectOneByExample(example);
+        if (StringUtils.isEmpty(daqEquipment)){
             throw new BizErrorException("未查询到对应的设备信息");
         }
         example.clear();
-        return eamEquipment;
+        return daqEquipment;
     }
 
     public int updateStatus(String ip, Byte bytes) {
-        EamEquipment eamEquipment  = getEquipment(ip, null);
-        eamEquipment.setOnlineStatus(bytes);
-        daqEquipmentMapper.updateByPrimaryKeySelective(eamEquipment);
+        DaqEquipment daqEquipment  = getEquipment(ip, null);
+        daqEquipment.setOnlineStatus(bytes);
+        daqEquipmentMapper.updateByPrimaryKeySelective(daqEquipment);
         return 1;
     }
 

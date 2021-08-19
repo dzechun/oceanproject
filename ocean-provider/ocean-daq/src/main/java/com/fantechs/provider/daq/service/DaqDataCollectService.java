@@ -1,9 +1,9 @@
 package com.fantechs.provider.daq.service;
 
-import com.fantechs.common.base.general.dto.eam.EamDataCollectDto;
-import com.fantechs.common.base.general.dto.eam.EamDataCollectModel;
-import com.fantechs.common.base.general.entity.eam.EamDataCollect;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentDataGroup;
+import com.fantechs.common.base.general.dto.daq.DaqDataCollectDto;
+import com.fantechs.common.base.general.dto.daq.DaqDataCollectModel;
+import com.fantechs.common.base.general.entity.daq.DaqDataCollect;
+import com.fantechs.common.base.general.entity.daq.search.SearchDaqEquipmentDataGroup;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -14,11 +14,11 @@ import java.util.Map;
  * Created by leifengzhi on 2021/07/19.
  */
 
-public interface DaqDataCollectService extends IService<EamDataCollect> {
-    List<EamDataCollectDto> findList(Map<String, Object> map);
+public interface DaqDataCollectService extends IService<DaqDataCollect> {
+    List<DaqDataCollectDto> findList(Map<String, Object> map);
 
-    List<EamDataCollectDto> findByEquipmentId(Long equipmentId);
+    List<DaqDataCollectDto> findByEquipmentId(Long equipmentId);
 
-    EamDataCollectModel findByGroup(SearchEamEquipmentDataGroup searchEamEquipmentDataGroup);
+    DaqDataCollectModel findByGroup(SearchDaqEquipmentDataGroup searchEamEquipmentDataGroup);
 
 }

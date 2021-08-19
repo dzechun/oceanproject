@@ -1,10 +1,10 @@
 package com.fantechs.provider.daq.controller;
 
-import com.fantechs.common.base.general.dto.eam.EamDataCollectDto;
-import com.fantechs.common.base.general.dto.eam.EamDataCollectModel;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamDataCollect;
-import com.fantechs.common.base.general.entity.eam.EamDataCollect;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentDataGroup;
+import com.fantechs.common.base.general.dto.daq.DaqDataCollectDto;
+import com.fantechs.common.base.general.dto.daq.DaqDataCollectModel;
+import com.fantechs.common.base.general.entity.daq.DaqDataCollect;
+import com.fantechs.common.base.general.entity.daq.search.SearchDaqDataCollect;
+import com.fantechs.common.base.general.entity.daq.search.SearchDaqEquipmentDataGroup;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
@@ -41,8 +41,8 @@ public class DaqDataCollectController {
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：", required = true) @RequestBody @Validated EamDataCollect eamDataCollect) {
-        return ControllerUtil.returnCRUD(daqDataCollectService.save(eamDataCollect));
+    public ResponseEntity add(@ApiParam(value = "必传：", required = true) @RequestBody @Validated DaqDataCollect daqDataCollect) {
+        return ControllerUtil.returnCRUD(daqDataCollectService.save(daqDataCollect));
     }
 
     @ApiOperation("删除")
@@ -53,22 +53,22 @@ public class DaqDataCollectController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = EamDataCollect.update.class) EamDataCollect eamDataCollect) {
-        return ControllerUtil.returnCRUD(daqDataCollectService.update(eamDataCollect));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传", required = true) @RequestBody @Validated(value = DaqDataCollect.update.class) DaqDataCollect daqDataCollect) {
+        return ControllerUtil.returnCRUD(daqDataCollectService.update(daqDataCollect));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<EamDataCollect> detail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id) {
-        EamDataCollect eamDataCollect = daqDataCollectService.selectByKey(id);
-        return ControllerUtil.returnDataSuccess(eamDataCollect, StringUtils.isEmpty(eamDataCollect) ? 0 : 1);
+    public ResponseEntity<DaqDataCollect> detail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id) {
+        DaqDataCollect daqDataCollect = daqDataCollectService.selectByKey(id);
+        return ControllerUtil.returnDataSuccess(daqDataCollect, StringUtils.isEmpty(daqDataCollect) ? 0 : 1);
     }
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<EamDataCollectDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchEamDataCollect searchEamDataCollect) {
-        Page<Object> page = PageHelper.startPage(searchEamDataCollect.getStartPage(), searchEamDataCollect.getPageSize());
-        List<EamDataCollectDto> list = daqDataCollectService.findList(ControllerUtil.dynamicConditionByEntity(searchEamDataCollect));
+    public ResponseEntity<List<DaqDataCollectDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchDaqDataCollect searchDaqDataCollect) {
+        Page<Object> page = PageHelper.startPage(searchDaqDataCollect.getStartPage(), searchDaqDataCollect.getPageSize());
+        List<DaqDataCollectDto> list = daqDataCollectService.findList(ControllerUtil.dynamicConditionByEntity(searchDaqDataCollect));
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
@@ -80,15 +80,15 @@ public class DaqDataCollectController {
 
     @ApiOperation("根据设备id查询最后一条")
     @PostMapping("/findByGroup")
-    public ResponseEntity<List<EamDataCollectDto>> findByGroup(@ApiParam(value = "equipmentId") @RequestParam(required = false) Long equipmentId){
-        List<EamDataCollectDto> sfcDataCollectDtos = daqDataCollectService.findByEquipmentId(equipmentId);
+    public ResponseEntity<List<DaqDataCollectDto>> findByGroup(@ApiParam(value = "equipmentId") @RequestParam(required = false) Long equipmentId){
+        List<DaqDataCollectDto> sfcDataCollectDtos = daqDataCollectService.findByEquipmentId(equipmentId);
         return ControllerUtil.returnDataSuccess(sfcDataCollectDtos, sfcDataCollectDtos.size());
     }
 
     @ApiOperation("根据分组查询最后一条")
     @PostMapping("/findByGroups")
-    public ResponseEntity<EamDataCollectModel> findByGroups(@ApiParam(value = "查询对象") @RequestBody SearchEamEquipmentDataGroup searchEamEquipmentDataGroup){
-        EamDataCollectModel model = daqDataCollectService.findByGroup(searchEamEquipmentDataGroup);
+    public ResponseEntity<DaqDataCollectModel> findByGroups(@ApiParam(value = "查询对象") @RequestBody SearchDaqEquipmentDataGroup searchDaqEquipmentDataGroup){
+        DaqDataCollectModel model = daqDataCollectService.findByGroup(searchDaqEquipmentDataGroup);
         return ControllerUtil.returnDataSuccess(model, 1);
     }
 

@@ -3,12 +3,12 @@ package com.fantechs.provider.daq.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupDto;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupParamDto;
-import com.fantechs.common.base.general.dto.eam.EamHtEquipmentDataGroupParamDto;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentDataGroup;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentDataGroupParam;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentDataGroup;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentDataGroupDto;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentDataGroupParamDto;
+import com.fantechs.common.base.general.dto.daq.DaqHtEquipmentDataGroupParamDto;
+import com.fantechs.common.base.general.entity.daq.DaqEquipmentDataGroup;
+import com.fantechs.common.base.general.entity.daq.DaqEquipmentDataGroupParam;
+import com.fantechs.common.base.general.entity.daq.DaqHtEquipmentDataGroup;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -33,7 +33,7 @@ import java.util.Map;
  * Created by leifengzhi on 2021/08/02.
  */
 @Service
-public class DaqEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDataGroup> implements DaqEquipmentDataGroupService {
+public class DaqEquipmentDataGroupServiceImpl extends BaseService<DaqEquipmentDataGroup> implements DaqEquipmentDataGroupService {
 
     @Resource
     private DaqEquipmentDataGroupMapper daqEquipmentDataGroupMapper;
@@ -45,63 +45,63 @@ public class DaqEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
     private DaqHtEquipmentDataGroupParamMapper daqHtEquipmentDataGroupParamMapper;
 
     @Override
-    public List<EamEquipmentDataGroupDto> findList(Map<String, Object> map) {
+    public List<DaqEquipmentDataGroupDto> findList(Map<String, Object> map) {
         SysUser user = getUser();
         map.put("orgId", user.getOrganizationId());
         return daqEquipmentDataGroupMapper.findList(map);
     }
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int save(EamEquipmentDataGroupDto eamEquipmentDataGroupDto) {
+    public int save(DaqEquipmentDataGroupDto DaqEquipmentDataGroupDto) {
 
         SysUser user = getUser();
 
-        Example example = new Example(EamEquipmentDataGroup.class);
+        Example example = new Example(DaqEquipmentDataGroup.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentDataGroupName", eamEquipmentDataGroupDto.getEquipmentDataGroupName());
-        List<EamEquipmentDataGroup> eamEquipmentDataGroups = daqEquipmentDataGroupMapper.selectByExample(example);
-        if(StringUtils.isNotEmpty(eamEquipmentDataGroups))   throw new BizErrorException("分组已存在");
+        criteria.andEqualTo("equipmentDataGroupName", DaqEquipmentDataGroupDto.getEquipmentDataGroupName());
+        List<DaqEquipmentDataGroup> DaqEquipmentDataGroups = daqEquipmentDataGroupMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(DaqEquipmentDataGroups))   throw new BizErrorException("分组已存在");
         example.clear();
 
 
-        eamEquipmentDataGroupDto.setCreateUserId(user.getUserId());
-        eamEquipmentDataGroupDto.setCreateTime(new Date());
-        eamEquipmentDataGroupDto.setModifiedUserId(user.getUserId());
-        eamEquipmentDataGroupDto.setModifiedTime(new Date());
-        eamEquipmentDataGroupDto.setStatus(StringUtils.isEmpty(eamEquipmentDataGroupDto.getStatus())?1: eamEquipmentDataGroupDto.getStatus());
-        eamEquipmentDataGroupDto.setOrgId(user.getOrganizationId());
-        int i = daqEquipmentDataGroupMapper.insertUseGeneratedKeys(eamEquipmentDataGroupDto);
+        DaqEquipmentDataGroupDto.setCreateUserId(user.getUserId());
+        DaqEquipmentDataGroupDto.setCreateTime(new Date());
+        DaqEquipmentDataGroupDto.setModifiedUserId(user.getUserId());
+        DaqEquipmentDataGroupDto.setModifiedTime(new Date());
+        DaqEquipmentDataGroupDto.setStatus(StringUtils.isEmpty(DaqEquipmentDataGroupDto.getStatus())?1: DaqEquipmentDataGroupDto.getStatus());
+        DaqEquipmentDataGroupDto.setOrgId(user.getOrganizationId());
+        int i = daqEquipmentDataGroupMapper.insertUseGeneratedKeys(DaqEquipmentDataGroupDto);
 
         //保存履历表
-        EamHtEquipmentDataGroup eamHtEquipmentDataGroup = new EamHtEquipmentDataGroup();
-        BeanUtils.copyProperties(eamEquipmentDataGroupDto, eamHtEquipmentDataGroup);
-        daqHtEquipmentDataGroupMapper.insertSelective(eamHtEquipmentDataGroup);
+        DaqHtEquipmentDataGroup DaqHtEquipmentDataGroup = new DaqHtEquipmentDataGroup();
+        BeanUtils.copyProperties(DaqEquipmentDataGroupDto, DaqHtEquipmentDataGroup);
+        daqHtEquipmentDataGroupMapper.insertSelective(DaqHtEquipmentDataGroup);
 
         //保存param表及其履历表
-        saveParam(eamEquipmentDataGroupDto,user);
+        saveParam(DaqEquipmentDataGroupDto,user);
         return i;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int update(EamEquipmentDataGroupDto eamEquipmentDataGroupDto) {
+    public int update(DaqEquipmentDataGroupDto DaqEquipmentDataGroupDto) {
         SysUser user =getUser();
-        eamEquipmentDataGroupDto.setModifiedTime(new Date());
-        eamEquipmentDataGroupDto.setModifiedUserId(user.getUserId());
-        int i = daqEquipmentDataGroupMapper.updateByPrimaryKeySelective(eamEquipmentDataGroupDto);
+        DaqEquipmentDataGroupDto.setModifiedTime(new Date());
+        DaqEquipmentDataGroupDto.setModifiedUserId(user.getUserId());
+        int i = daqEquipmentDataGroupMapper.updateByPrimaryKeySelective(DaqEquipmentDataGroupDto);
 
         //更新履历表
-        EamHtEquipmentDataGroup eamHtEquipmentDataGroup = new EamHtEquipmentDataGroup();
-        BeanUtils.copyProperties(eamEquipmentDataGroupDto, eamHtEquipmentDataGroup);
-        daqHtEquipmentDataGroupMapper.insertSelective(eamHtEquipmentDataGroup);
+        DaqHtEquipmentDataGroup DaqHtEquipmentDataGroup = new DaqHtEquipmentDataGroup();
+        BeanUtils.copyProperties(DaqEquipmentDataGroupDto, DaqHtEquipmentDataGroup);
+        daqHtEquipmentDataGroupMapper.insertSelective(DaqHtEquipmentDataGroup);
 
-        Example examples = new Example(EamEquipmentDataGroupParam.class);
+        Example examples = new Example(DaqEquipmentDataGroupParam.class);
         Example.Criteria criterias = examples.createCriteria();
-        criterias.andEqualTo("equipmentDataGroupId", eamEquipmentDataGroupDto.getEquipmentDataGroupId());
+        criterias.andEqualTo("equipmentDataGroupId", DaqEquipmentDataGroupDto.getEquipmentDataGroupId());
         daqEquipmentDataGroupParamMapper.deleteByExample(examples);
         examples.clear();
         //保存param表及其履历表
-        saveParam(eamEquipmentDataGroupDto,user);
+        saveParam(DaqEquipmentDataGroupDto,user);
         return i;
     }
 
@@ -110,7 +110,7 @@ public class DaqEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
         int i = 0;
         String[] idArry = ids.split(",");
         for (String id : idArry) {
-            Example examples = new Example(EamEquipmentDataGroupParam.class);
+            Example examples = new Example(DaqEquipmentDataGroupParam.class);
             Example.Criteria criterias = examples.createCriteria();
             criterias.andEqualTo("equipmentDataGroupId",id);
             daqEquipmentDataGroupParamMapper.deleteByExample(examples);
@@ -122,22 +122,22 @@ public class DaqEquipmentDataGroupServiceImpl extends BaseService<EamEquipmentDa
 
 
 
-    public void saveParam(EamEquipmentDataGroupDto eamEquipmentDataGroupDto,SysUser user){
-        List<EamHtEquipmentDataGroupParamDto>  paramHtList= new ArrayList<EamHtEquipmentDataGroupParamDto>();;
-        if(StringUtils.isNotEmpty(eamEquipmentDataGroupDto.getEamEquipmentDataGroupParamDtos())){
-            List<EamEquipmentDataGroupParamDto> list = new ArrayList<EamEquipmentDataGroupParamDto>();
-            for(EamEquipmentDataGroupParamDto dto : eamEquipmentDataGroupDto.getEamEquipmentDataGroupParamDtos()){
-                dto.setEquipmentDataGroupId(eamEquipmentDataGroupDto.getEquipmentDataGroupId());
+    public void saveParam(DaqEquipmentDataGroupDto DaqEquipmentDataGroupDto,SysUser user){
+        List<DaqHtEquipmentDataGroupParamDto>  paramHtList= new ArrayList<DaqHtEquipmentDataGroupParamDto>();;
+        if(StringUtils.isNotEmpty(DaqEquipmentDataGroupDto.getDaqEquipmentDataGroupParamDtos())){
+            List<DaqEquipmentDataGroupParamDto> list = new ArrayList<DaqEquipmentDataGroupParamDto>();
+            for(DaqEquipmentDataGroupParamDto dto : DaqEquipmentDataGroupDto.getDaqEquipmentDataGroupParamDtos()){
+                dto.setEquipmentDataGroupId(DaqEquipmentDataGroupDto.getEquipmentDataGroupId());
                 dto.setCreateUserId(user.getUserId());
                 dto.setCreateTime(new Date());
                 dto.setModifiedUserId(user.getUserId());
                 dto.setModifiedTime(new Date());
-                dto.setStatus(StringUtils.isEmpty(eamEquipmentDataGroupDto.getStatus())?1: eamEquipmentDataGroupDto.getStatus());
+                dto.setStatus(StringUtils.isEmpty(DaqEquipmentDataGroupDto.getStatus())?1: DaqEquipmentDataGroupDto.getStatus());
                 dto.setOrgId(user.getOrganizationId());
                 list.add(dto);
-                EamHtEquipmentDataGroupParamDto eamHtEquipmentDataGroupParamDto = new EamHtEquipmentDataGroupParamDto();
-                BeanUtils.copyProperties(dto, eamHtEquipmentDataGroupParamDto);
-                paramHtList.add(eamHtEquipmentDataGroupParamDto);
+                DaqHtEquipmentDataGroupParamDto DaqHtEquipmentDataGroupParamDto = new DaqHtEquipmentDataGroupParamDto();
+                BeanUtils.copyProperties(dto, DaqHtEquipmentDataGroupParamDto);
+                paramHtList.add(DaqHtEquipmentDataGroupParamDto);
             }
             daqEquipmentDataGroupParamMapper.insertList(list);
             daqHtEquipmentDataGroupParamMapper.insertList(paramHtList);

@@ -3,7 +3,9 @@ package com.fantechs.provider.daq.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupReDcDto;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentDataGroupReDcDto;
+import com.fantechs.common.base.general.entity.daq.DaqEquipmentDataGroupReDc;
+import com.fantechs.common.base.general.entity.daq.DaqHtEquipmentDataGroupReDc;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentDataGroupReDc;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentDataGroupReDc;
 import com.fantechs.common.base.support.BaseService;
@@ -27,7 +29,7 @@ import java.util.Map;
  * Created by leifengzhi on 2021/08/02.
  */
 @Service
-public class DaqEquipmentDataGroupReDcServiceImpl extends BaseService<EamEquipmentDataGroupReDc> implements DaqEquipmentDataGroupReDcService {
+public class DaqEquipmentDataGroupReDcServiceImpl extends BaseService<DaqEquipmentDataGroupReDc> implements DaqEquipmentDataGroupReDcService {
 
     @Resource
     private DaqEquipmentDataGroupReDcMapper daqEquipmentDataGroupReDcMapper;
@@ -35,7 +37,7 @@ public class DaqEquipmentDataGroupReDcServiceImpl extends BaseService<EamEquipme
     private DaqHtEquipmentDataGroupReDcMapper daqHtEquipmentDataGroupReDcMapper;
 
     @Override
-    public List<EamEquipmentDataGroupReDcDto> findList(Map<String, Object> map) {
+    public List<DaqEquipmentDataGroupReDcDto> findList(Map<String, Object> map) {
         SysUser user = getUser();
         map.put("orgId", user.getOrganizationId());
         return daqEquipmentDataGroupReDcMapper.findList(map);
@@ -45,16 +47,16 @@ public class DaqEquipmentDataGroupReDcServiceImpl extends BaseService<EamEquipme
 
 
     @Override
-    public int batchAdd(List<EamEquipmentDataGroupReDc> eamEquipmentDataGroupReDcs ) {
+    public int batchAdd(List<DaqEquipmentDataGroupReDc> daqEquipmentDataGroupReDcs ) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-        List<EamEquipmentDataGroupReDc> ins = new ArrayList<EamEquipmentDataGroupReDc>();
-        List<EamHtEquipmentDataGroupReDc> eamHtEquipmentDataGroupReDcs = new ArrayList<EamHtEquipmentDataGroupReDc>();
+        List<DaqEquipmentDataGroupReDc> ins = new ArrayList<DaqEquipmentDataGroupReDc>();
+        List<DaqHtEquipmentDataGroupReDc> daqHtEquipmentDataGroupReDcs = new ArrayList<DaqHtEquipmentDataGroupReDc>();
 
-        for(EamEquipmentDataGroupReDc dc : eamEquipmentDataGroupReDcs) {
-            Example example = new Example(EamEquipmentDataGroupReDc.class);
+        for(DaqEquipmentDataGroupReDc dc : daqEquipmentDataGroupReDcs) {
+            Example example = new Example(DaqEquipmentDataGroupReDc.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("orgId", user.getOrganizationId());
             criteria.andEqualTo("equipmentDataGroupId", dc.getEquipmentDataGroupId());
@@ -68,17 +70,17 @@ public class DaqEquipmentDataGroupReDcServiceImpl extends BaseService<EamEquipme
             dc.setModifiedTime(new Date());
             dc.setStatus(StringUtils.isEmpty(dc.getStatus())?1: dc.getStatus());
             ins.add(dc);
-            EamHtEquipmentDataGroupReDc eamHtEquipmentDataGroupReDc =new EamHtEquipmentDataGroupReDc();
-            BeanUtils.copyProperties(dc, eamHtEquipmentDataGroupReDc);
-            eamHtEquipmentDataGroupReDcs.add(eamHtEquipmentDataGroupReDc);
+            DaqHtEquipmentDataGroupReDc daqHtEquipmentDataGroupReDc =new DaqHtEquipmentDataGroupReDc();
+            BeanUtils.copyProperties(dc, daqHtEquipmentDataGroupReDc);
+            daqHtEquipmentDataGroupReDcs.add(daqHtEquipmentDataGroupReDc);
         }
         int i = 0;
         if(StringUtils.isNotEmpty(ins)) {
             i = daqEquipmentDataGroupReDcMapper.insertList(ins);
         }
         //新增设备分组历史信息
-        if(StringUtils.isNotEmpty(eamHtEquipmentDataGroupReDcs))
-            daqHtEquipmentDataGroupReDcMapper.insertList(eamHtEquipmentDataGroupReDcs);
+        if(StringUtils.isNotEmpty(daqHtEquipmentDataGroupReDcs))
+            daqHtEquipmentDataGroupReDcMapper.insertList(daqHtEquipmentDataGroupReDcs);
         return i;
     }
 

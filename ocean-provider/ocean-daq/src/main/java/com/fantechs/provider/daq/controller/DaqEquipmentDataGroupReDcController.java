@@ -1,10 +1,10 @@
 package com.fantechs.provider.daq.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupReDcDto;
-import com.fantechs.common.base.general.dto.eam.EamHtEquipmentDataGroupReDcDto;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentDataGroupReDc;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentDataGroupReDc;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentDataGroupReDcDto;
+import com.fantechs.common.base.general.dto.daq.DaqHtEquipmentDataGroupReDcDto;
+import com.fantechs.common.base.general.entity.daq.DaqEquipmentDataGroupReDc;
+import com.fantechs.common.base.general.entity.daq.search.SearchDaqEquipmentDataGroupReDc;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -42,8 +42,8 @@ public class DaqEquipmentDataGroupReDcController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EamEquipmentDataGroupReDc eamEquipmentDataGroupReDc) {
-        return ControllerUtil.returnCRUD(daqEquipmentDataGroupReDcService.save(eamEquipmentDataGroupReDc));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated DaqEquipmentDataGroupReDc daqEquipmentDataGroupReDc) {
+        return ControllerUtil.returnCRUD(daqEquipmentDataGroupReDcService.save(daqEquipmentDataGroupReDc));
     }
 
     @ApiOperation("删除")
@@ -54,41 +54,41 @@ public class DaqEquipmentDataGroupReDcController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamEquipmentDataGroupReDc.update.class) EamEquipmentDataGroupReDc eamEquipmentDataGroupReDc) {
-        return ControllerUtil.returnCRUD(daqEquipmentDataGroupReDcService.update(eamEquipmentDataGroupReDc));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=DaqEquipmentDataGroupReDc.update.class) DaqEquipmentDataGroupReDc daqEquipmentDataGroupReDc) {
+        return ControllerUtil.returnCRUD(daqEquipmentDataGroupReDcService.update(daqEquipmentDataGroupReDc));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<EamEquipmentDataGroupReDc> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
-        EamEquipmentDataGroupReDc  eamEquipmentDataGroupReDc = daqEquipmentDataGroupReDcService.selectByKey(id);
-        return  ControllerUtil.returnDataSuccess(eamEquipmentDataGroupReDc,StringUtils.isEmpty(eamEquipmentDataGroupReDc)?0:1);
+    public ResponseEntity<DaqEquipmentDataGroupReDc> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
+        DaqEquipmentDataGroupReDc  daqEquipmentDataGroupReDc = daqEquipmentDataGroupReDcService.selectByKey(id);
+        return  ControllerUtil.returnDataSuccess(daqEquipmentDataGroupReDc,StringUtils.isEmpty(daqEquipmentDataGroupReDc)?0:1);
     }
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<EamEquipmentDataGroupReDcDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEamEquipmentDataGroupReDc searchEamEquipmentDataGroupReDc) {
-        Page<Object> page = PageHelper.startPage(searchEamEquipmentDataGroupReDc.getStartPage(),searchEamEquipmentDataGroupReDc.getPageSize());
-        List<EamEquipmentDataGroupReDcDto> list = daqEquipmentDataGroupReDcService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentDataGroupReDc));
+    public ResponseEntity<List<DaqEquipmentDataGroupReDcDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchDaqEquipmentDataGroupReDc searchDaqEquipmentDataGroupReDc) {
+        Page<Object> page = PageHelper.startPage(searchDaqEquipmentDataGroupReDc.getStartPage(),searchDaqEquipmentDataGroupReDc.getPageSize());
+        List<DaqEquipmentDataGroupReDcDto> list = daqEquipmentDataGroupReDcService.findList(ControllerUtil.dynamicConditionByEntity(searchDaqEquipmentDataGroupReDc));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<EamHtEquipmentDataGroupReDcDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchEamEquipmentDataGroupReDc searchEamEquipmentDataGroupReDc) {
-        Page<Object> page = PageHelper.startPage(searchEamEquipmentDataGroupReDc.getStartPage(),searchEamEquipmentDataGroupReDc.getPageSize());
-        List<EamHtEquipmentDataGroupReDcDto> list = daqHtEquipmentDataGroupReDcService.findHtList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentDataGroupReDc));
+    public ResponseEntity<List<DaqHtEquipmentDataGroupReDcDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchDaqEquipmentDataGroupReDc searchDaqEquipmentDataGroupReDc) {
+        Page<Object> page = PageHelper.startPage(searchDaqEquipmentDataGroupReDc.getStartPage(),searchDaqEquipmentDataGroupReDc.getPageSize());
+        List<DaqHtEquipmentDataGroupReDcDto> list = daqHtEquipmentDataGroupReDcService.findHtList(ControllerUtil.dynamicConditionByEntity(searchDaqEquipmentDataGroupReDc));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchEamEquipmentDataGroupReDc searchEamEquipmentDataGroupReDc){
-    List<EamEquipmentDataGroupReDcDto> list = daqEquipmentDataGroupReDcService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentDataGroupReDc));
+    @RequestBody(required = false) SearchDaqEquipmentDataGroupReDc searchDaqEquipmentDataGroupReDc){
+    List<DaqEquipmentDataGroupReDcDto> list = daqEquipmentDataGroupReDcService.findList(ControllerUtil.dynamicConditionByEntity(searchDaqEquipmentDataGroupReDc));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "EamEquipmentDataGroupReDc信息", EamEquipmentDataGroupReDcDto.class, "DaqEquipmentDataGroupReDc.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "DaqEquipmentDataGroupReDc信息", DaqEquipmentDataGroupReDcDto.class, "DaqEquipmentDataGroupReDc.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
@@ -96,7 +96,7 @@ public class DaqEquipmentDataGroupReDcController {
 
     @ApiOperation("批量添加")
     @PostMapping("/batchAdd")
-    public ResponseEntity batchAdd(@ApiParam(value = "对象，equipmentDataGroupId必传",required = true)@RequestBody @Validated List<EamEquipmentDataGroupReDc> eamEquipmentDataGroupReDcs){
-        return  ControllerUtil.returnCRUD(daqEquipmentDataGroupReDcService.batchAdd(eamEquipmentDataGroupReDcs));
+    public ResponseEntity batchAdd(@ApiParam(value = "对象，equipmentDataGroupId必传",required = true)@RequestBody @Validated List<DaqEquipmentDataGroupReDc> daqEquipmentDataGroupReDcs){
+        return  ControllerUtil.returnCRUD(daqEquipmentDataGroupReDcService.batchAdd(daqEquipmentDataGroupReDcs));
     }
 }

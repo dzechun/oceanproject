@@ -3,9 +3,9 @@ package com.fantechs.provider.daq.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentDto;
+import com.fantechs.common.base.general.entity.daq.DaqEquipment;
+import com.fantechs.common.base.general.entity.daq.DaqHtEquipment;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -27,7 +27,7 @@ import java.util.Map;
  * Created by leifengzhi on 2021/06/25.
  */
 @Service
-public class DaqEquipmentServiceImpl extends BaseService<EamEquipment> implements DaqEquipmentService {
+public class DaqEquipmentServiceImpl extends BaseService<DaqEquipment> implements DaqEquipmentService {
 
     @Resource
     private DaqEquipmentMapper daqEquipmentMapper;
@@ -35,7 +35,7 @@ public class DaqEquipmentServiceImpl extends BaseService<EamEquipment> implement
     private DaqHtEquipmentMapper daqHtEquipmentMapper;
 
     @Override
-    public List<EamEquipmentDto> findList(Map<String, Object> map) {
+    public List<DaqEquipmentDto> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))){
             SysUser user = getUser();
             map.put("orgId", user.getOrganizationId());
@@ -44,32 +44,32 @@ public class DaqEquipmentServiceImpl extends BaseService<EamEquipment> implement
     }
 
     @Override
-    public List<EamHtEquipment> findHtList(Map<String, Object> map) {
+    public List<DaqHtEquipment> findHtList(Map<String, Object> map) {
         SysUser user = getUser();
         map.put("orgId", user.getOrganizationId());
         return daqHtEquipmentMapper.findHtList(map);
     }
 
     @Override
-    public int batchUpdate(List<EamEquipment> list) {
+    public int batchUpdate(List<DaqEquipment> list) {
         return daqEquipmentMapper.batchUpdate(list);
     }
 
     @Override
-    public EamEquipment detailByIp(String ip) {
-        Example example = new Example(EamEquipment.class);
+    public DaqEquipment detailByIp(String ip) {
+        Example example = new Example(DaqEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("equipmentIp",ip);
-        EamEquipment eamEquipment = daqEquipmentMapper.selectOneByExample(example);
-        if (StringUtils.isEmpty(eamEquipment)){
+        DaqEquipment daqEquipment = daqEquipmentMapper.selectOneByExample(example);
+        if (StringUtils.isEmpty(daqEquipment)){
             throw new BizErrorException("未查询到ip对应的设备信息");
         }
-        return eamEquipment;
+        return daqEquipment;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int save(EamEquipment record) {
+    public int save(DaqEquipment record) {
         SysUser user = getUser();
         check(record);
         record.setCreateUserId(user.getUserId());
@@ -80,16 +80,16 @@ public class DaqEquipmentServiceImpl extends BaseService<EamEquipment> implement
         record.setOrgId(user.getOrganizationId());
         daqEquipmentMapper.insertUseGeneratedKeys(record);
 
-        EamHtEquipment eamHtEquipment = new EamHtEquipment();
-        BeanUtils.copyProperties(record, eamHtEquipment);
-        int i = daqHtEquipmentMapper.insertSelective(eamHtEquipment);
+        DaqHtEquipment daqHtEquipment = new DaqHtEquipment();
+        BeanUtils.copyProperties(record, daqHtEquipment);
+        int i = daqHtEquipmentMapper.insertSelective(daqHtEquipment);
 
         return i;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int update(EamEquipment entity) {
+    public int update(DaqEquipment entity) {
         SysUser user = getUser();
         check(entity);
         entity.setModifiedTime(new Date());
@@ -97,9 +97,9 @@ public class DaqEquipmentServiceImpl extends BaseService<EamEquipment> implement
         int i = daqEquipmentMapper.updateByPrimaryKeySelective(entity);
 
         //添加履历表
-        EamHtEquipment eamHtEquipment = new EamHtEquipment();
-        BeanUtils.copyProperties(entity, eamHtEquipment);
-        daqHtEquipmentMapper.insertSelective(eamHtEquipment);
+        DaqHtEquipment daqHtEquipment = new DaqHtEquipment();
+        BeanUtils.copyProperties(entity, daqHtEquipment);
+        daqHtEquipmentMapper.insertSelective(daqHtEquipment);
 
         return i;
     }
@@ -110,33 +110,33 @@ public class DaqEquipmentServiceImpl extends BaseService<EamEquipment> implement
         getUser();
         String[] idArry = ids.split(",");
         for (String id : idArry) {
-            EamEquipment eamEquipment = daqEquipmentMapper.selectByPrimaryKey(id);
-            if(StringUtils.isEmpty(eamEquipment)){
+            DaqEquipment daqEquipment = daqEquipmentMapper.selectByPrimaryKey(id);
+            if(StringUtils.isEmpty(daqEquipment)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
 
-            EamHtEquipment eamHtEquipment = new EamHtEquipment();
-            BeanUtils.copyProperties(eamEquipment, eamHtEquipment);
+            DaqHtEquipment daqHtEquipment = new DaqHtEquipment();
+            BeanUtils.copyProperties(daqEquipment, daqHtEquipment);
         }
 
         return daqEquipmentMapper.deleteByIds(ids);
     }
 
-    public void check(EamEquipment entity){
+    public void check(DaqEquipment entity){
         getUser();
-        Example example = new Example(EamEquipment.class);
+        Example example = new Example(DaqEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("equipmentCode", entity.getEquipmentCode());
         if(StringUtils.isNotEmpty(entity.getEquipmentId())){
             criteria.andNotEqualTo("equipmentId",entity.getEquipmentId());
         }
-        EamEquipment eamEquipment = daqEquipmentMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamEquipment)){
+        DaqEquipment daqEquipment = daqEquipmentMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(daqEquipment)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
         if(StringUtils.isNotEmpty(entity.getEquipmentIp())) {
-            Example examples = new Example(EamEquipment.class);
+            Example examples = new Example(DaqEquipment.class);
             Example.Criteria criterias = examples.createCriteria();
             criterias.andEqualTo("equipmentIp", entity.getEquipmentIp());
             if(StringUtils.isNotEmpty(entity.getEquipmentId())){
@@ -148,7 +148,7 @@ public class DaqEquipmentServiceImpl extends BaseService<EamEquipment> implement
         }
 
         if(StringUtils.isNotEmpty(entity.getEquipmentMacAddress())){
-            Example macExample = new Example(EamEquipment.class);
+            Example macExample = new Example(DaqEquipment.class);
             Example.Criteria macCriteria = macExample.createCriteria();
             macCriteria.andEqualTo("equipmentMacAddress", entity.getEquipmentMacAddress());
             if(StringUtils.isNotEmpty(entity.getEquipmentId())){
@@ -162,7 +162,7 @@ public class DaqEquipmentServiceImpl extends BaseService<EamEquipment> implement
 
 
     @Override
-    public List<EamEquipmentDto> findNoGroup(Map<String, Object> map) {
+    public List<DaqEquipmentDto> findNoGroup(Map<String, Object> map) {
         SysUser user = getUser();
         map.put("orgId", user.getOrganizationId());
         return daqEquipmentMapper.findNoGroup(map);

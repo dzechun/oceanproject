@@ -3,8 +3,8 @@ package com.fantechs.provider.daq.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamHtEquipmentReEsDto;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentReEs;
+import com.fantechs.common.base.general.dto.daq.DaqHtEquipmentReEsDto;
+import com.fantechs.common.base.general.entity.daq.DaqHtEquipmentReEs;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -21,13 +21,13 @@ import java.util.Map;
  * Created by leifengzhi on 2021/08/09.
  */
 @Service
-public class DaqHtEquipmentReEsServiceImpl extends BaseService<EamHtEquipmentReEs> implements DaqHtEquipmentReEsService {
+public class DaqHtEquipmentReEsServiceImpl extends BaseService<DaqHtEquipmentReEs> implements DaqHtEquipmentReEsService {
 
     @Resource
     private DaqHtEquipmentReEsMapper daqHtEquipmentReEsMapper;
 
     @Override
-    public List<EamHtEquipmentReEsDto> findHtList(Map<String, Object> map) {
+    public List<DaqHtEquipmentReEsDto> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(user)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);

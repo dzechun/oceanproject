@@ -1,13 +1,13 @@
 package com.fantechs.provider.daq.service.impl;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamDataCollectDto;
-import com.fantechs.common.base.general.dto.eam.EamDataCollectModel;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupDto;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupParamDto;
-import com.fantechs.common.base.general.entity.eam.EamDataCollect;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentDataGroup;
+import com.fantechs.common.base.general.dto.daq.DaqDataCollectDto;
+import com.fantechs.common.base.general.dto.daq.DaqDataCollectModel;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentDataGroupDto;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentDataGroupParamDto;
+import com.fantechs.common.base.general.entity.daq.DaqDataCollect;
+import com.fantechs.common.base.general.entity.daq.DaqEquipment;
+import com.fantechs.common.base.general.entity.daq.search.SearchDaqEquipmentDataGroup;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.StringUtils;
@@ -28,7 +28,7 @@ import java.util.Map;
  * Created by leifengzhi on 2021/07/19.
  */
 @Service
-public class DaqDataCollectServiceImpl extends BaseService<EamDataCollect> implements DaqDataCollectService {
+public class DaqDataCollectServiceImpl extends BaseService<DaqDataCollect> implements DaqDataCollectService {
 
     @Resource
     private DaqDataCollectMapper daqDataCollectMapper;
@@ -38,34 +38,34 @@ public class DaqDataCollectServiceImpl extends BaseService<EamDataCollect> imple
     private DaqEquipmentDataGroupMapper daqEquipmentDataGroupMapper;
 
     @Override
-    public List<EamDataCollectDto> findList(Map<String, Object> map) {
+    public List<DaqDataCollectDto> findList(Map<String, Object> map) {
         return daqDataCollectMapper.findList(map);
     }
 
     @Override
-    public List<EamDataCollectDto> findByEquipmentId(Long equipmentId) {
+    public List<DaqDataCollectDto> findByEquipmentId(Long equipmentId) {
         return daqDataCollectMapper.findByEquipmentId(equipmentId);
     }
 
     @Override
-    public EamDataCollectModel findByGroup( SearchEamEquipmentDataGroup searchEamEquipmentDataGroup) {
+    public DaqDataCollectModel findByGroup(SearchDaqEquipmentDataGroup searchDaqEquipmentDataGroup) {
         Map map = new HashMap();
-        map.put("equipmentDataGroupId",searchEamEquipmentDataGroup.getEquipmentDataGroupId());
-        List<EamEquipment> EamEquipmentList = daqEquipmentMapper.findList(map);
+        map.put("equipmentDataGroupId",searchDaqEquipmentDataGroup.getEquipmentDataGroupId());
+        List<DaqEquipment> EamEquipmentList = daqEquipmentMapper.findList(map);
         if(StringUtils.isEmpty(EamEquipmentList)) throw new BizErrorException("未查询到对应设备参数");
         List collectDate = new ArrayList();
-        for(EamEquipment eamEquipment : EamEquipmentList){
-            List<EamDataCollectDto> collectDtos = daqDataCollectMapper.findByEquipmentId(eamEquipment.getEquipmentId());
+        for(DaqEquipment eamEquipment : EamEquipmentList){
+            List<DaqDataCollectDto> collectDtos = daqDataCollectMapper.findByEquipmentId(eamEquipment.getEquipmentId());
             if(StringUtils.isNotEmpty(collectDtos))
                 collectDate.add(collectDtos.get(0).getCollectData());
         }
-        List<EamEquipmentDataGroupDto> eamEquipmentDataGroups = daqEquipmentDataGroupMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentDataGroup));
-        if(StringUtils.isEmpty(eamEquipmentDataGroups)) throw new BizErrorException("未查询到对应组别");
-        if(StringUtils.isEmpty(eamEquipmentDataGroups.get(0).getEamEquipmentDataGroupParamDtos())) throw new BizErrorException("该组别未配置对应参数");
+        List<DaqEquipmentDataGroupDto> daqEquipmentDataGroupDtos = daqEquipmentDataGroupMapper.findList(ControllerUtil.dynamicConditionByEntity(searchDaqEquipmentDataGroup));
+        if(StringUtils.isEmpty(daqEquipmentDataGroupDtos)) throw new BizErrorException("未查询到对应组别");
+        if(StringUtils.isEmpty(daqEquipmentDataGroupDtos.get(0).getDaqEquipmentDataGroupParamDtos())) throw new BizErrorException("该组别未配置对应参数");
       //  String tableName = "[";
         List tableNames = new ArrayList();
         int i = 1;
-        for(EamEquipmentDataGroupParamDto param : eamEquipmentDataGroups.get(0).getEamEquipmentDataGroupParamDtos()){
+        for(DaqEquipmentDataGroupParamDto param : daqEquipmentDataGroupDtos.get(0).getDaqEquipmentDataGroupParamDtos()){
             /*tableName = tableName + "{\"name\":\""+param.getParamName()+"\",\"value\":\""+param.getFieldName()+"\",\"address\":\""+param.getAddressLoca()+"\"," +
                     "\"min\":\""+param.getMinValue()+"\",\"max\":\""+param.getMaxValue()+"\"}";
             if (i < eamEquipmentDataGroups.get(0).getEamEquipmentDataGroupParamDtos().size())
@@ -76,7 +76,7 @@ public class DaqDataCollectServiceImpl extends BaseService<EamDataCollect> imple
             tableNames.add(tableName);
         }
      //   tableName += "]";
-        EamDataCollectModel model = new EamDataCollectModel();
+        DaqDataCollectModel model = new DaqDataCollectModel();
         model.setTableName(tableNames);
         model.setCollectDate(collectDate);
         return model;

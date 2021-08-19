@@ -3,10 +3,13 @@ package com.fantechs.provider.daq.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.*;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentReEs;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentReEsDto;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentStationDto;
+import com.fantechs.common.base.general.dto.daq.DaqHtEquipmentReEsDto;
+import com.fantechs.common.base.general.entity.daq.DaqEquipmentReEs;
+import com.fantechs.common.base.general.entity.daq.DaqEquipmentStation;
+import com.fantechs.common.base.general.entity.daq.DaqHtEquipmentStation;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentStation;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentStation;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -31,7 +34,7 @@ import java.util.Map;
  * Created by leifengzhi on 2021/08/09.
  */
 @Service
-public class DaqEquipmentStationServiceImpl extends BaseService<EamEquipmentStation> implements DaqEquipmentStationService {
+public class DaqEquipmentStationServiceImpl extends BaseService<DaqEquipmentStation> implements DaqEquipmentStationService {
 
     @Resource
     private DaqEquipmentStationMapper daqEquipmentStationMapper;
@@ -43,7 +46,7 @@ public class DaqEquipmentStationServiceImpl extends BaseService<EamEquipmentStat
     private DaqHtEquipmentReEsMapper daqHtEquipmentReEsMapper;
 
     @Override
-    public List<EamEquipmentStationDto> findList(Map<String, Object> map) {
+    public List<DaqEquipmentStationDto> findList(Map<String, Object> map) {
         SysUser user = getUser();
         map.put("orgId", user.getOrganizationId());
         return daqEquipmentStationMapper.findList(map);
@@ -52,53 +55,53 @@ public class DaqEquipmentStationServiceImpl extends BaseService<EamEquipmentStat
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int save(EamEquipmentStationDto eamEquipmentStationDto) {
+    public int save(DaqEquipmentStationDto daqEquipmentStationDto) {
         SysUser user = getUser();
-        Example example = new Example(EamEquipmentStation.class);
+        Example example = new Example(DaqEquipmentStation.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentStationCode", eamEquipmentStationDto.getEquipmentStationCode());
-        List<EamEquipmentStation> eamEquipmentStations = daqEquipmentStationMapper.selectByExample(example);
-        if(StringUtils.isNotEmpty(eamEquipmentStations))   throw new BizErrorException("监控站已存在");
+        criteria.andEqualTo("equipmentStationCode", daqEquipmentStationDto.getEquipmentStationCode());
+        List<DaqEquipmentStation> daqEquipmentStations = daqEquipmentStationMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(daqEquipmentStations))   throw new BizErrorException("监控站已存在");
         example.clear();
 
-        eamEquipmentStationDto.setCreateUserId(user.getUserId());
-        eamEquipmentStationDto.setCreateTime(new Date());
-        eamEquipmentStationDto.setModifiedUserId(user.getUserId());
-        eamEquipmentStationDto.setModifiedTime(new Date());
-        eamEquipmentStationDto.setStatus(StringUtils.isEmpty(eamEquipmentStationDto.getStatus())?1: eamEquipmentStationDto.getStatus());
-        eamEquipmentStationDto.setOrgId(user.getOrganizationId());
-        int i = daqEquipmentStationMapper.insertUseGeneratedKeys(eamEquipmentStationDto);
+        daqEquipmentStationDto.setCreateUserId(user.getUserId());
+        daqEquipmentStationDto.setCreateTime(new Date());
+        daqEquipmentStationDto.setModifiedUserId(user.getUserId());
+        daqEquipmentStationDto.setModifiedTime(new Date());
+        daqEquipmentStationDto.setStatus(StringUtils.isEmpty(daqEquipmentStationDto.getStatus())?1: daqEquipmentStationDto.getStatus());
+        daqEquipmentStationDto.setOrgId(user.getOrganizationId());
+        int i = daqEquipmentStationMapper.insertUseGeneratedKeys(daqEquipmentStationDto);
 
         //保存履历表
-        EamHtEquipmentStation eamHtEquipmentStation = new EamHtEquipmentStation();
-        BeanUtils.copyProperties(eamEquipmentStationDto, eamHtEquipmentStation);
-        daqHtEquipmentStationMapper.insertSelective(eamHtEquipmentStation);
+        DaqHtEquipmentStation daqHtEquipmentStation = new DaqHtEquipmentStation();
+        BeanUtils.copyProperties(daqEquipmentStationDto, daqHtEquipmentStation);
+        daqHtEquipmentStationMapper.insertSelective(daqHtEquipmentStation);
 
         //保存关系表及其履历表
-        saveReEs(eamEquipmentStationDto,user);
+        saveReEs(daqEquipmentStationDto,user);
         return i;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int update(EamEquipmentStationDto eamEquipmentStationDto) {
+    public int update(DaqEquipmentStationDto daqEquipmentStationDto) {
         SysUser user =getUser();
-        eamEquipmentStationDto.setModifiedTime(new Date());
-        eamEquipmentStationDto.setModifiedUserId(user.getUserId());
-        int i = daqEquipmentStationMapper.updateByPrimaryKeySelective(eamEquipmentStationDto);
+        daqEquipmentStationDto.setModifiedTime(new Date());
+        daqEquipmentStationDto.setModifiedUserId(user.getUserId());
+        int i = daqEquipmentStationMapper.updateByPrimaryKeySelective(daqEquipmentStationDto);
 
         //更新履历表
-        EamHtEquipmentStation eamHtEquipmentStation = new EamHtEquipmentStation();
-        BeanUtils.copyProperties(eamEquipmentStationDto, eamHtEquipmentStation);
-        daqHtEquipmentStationMapper.insertSelective(eamHtEquipmentStation);
+        DaqHtEquipmentStation daqHtEquipmentStation = new DaqHtEquipmentStation();
+        BeanUtils.copyProperties(daqEquipmentStationDto, daqHtEquipmentStation);
+        daqHtEquipmentStationMapper.insertSelective(daqHtEquipmentStation);
 
-        Example examples = new Example(EamEquipmentReEs.class);
+        Example examples = new Example(DaqEquipmentReEs.class);
         Example.Criteria criterias = examples.createCriteria();
-        criterias.andEqualTo("equipmentStationId", eamEquipmentStationDto.getEquipmentStationId());
+        criterias.andEqualTo("equipmentStationId", daqEquipmentStationDto.getEquipmentStationId());
         daqEquipmentReEsMapper.deleteByExample(examples);
         examples.clear();
         //保存param表及其履历表
-        saveReEs(eamEquipmentStationDto,user);
+        saveReEs(daqEquipmentStationDto,user);
         return i;
     }
 
@@ -120,22 +123,22 @@ public class DaqEquipmentStationServiceImpl extends BaseService<EamEquipmentStat
 
 
 
-    public void saveReEs(EamEquipmentStationDto eamEquipmentStationDto,SysUser user){
-        List<EamHtEquipmentReEsDto>  equipmentReEsHtList= new ArrayList<EamHtEquipmentReEsDto>();;
-        if(StringUtils.isNotEmpty(eamEquipmentStationDto.getEamEquipmentReEsDtoList())){
-            List<EamEquipmentReEsDto> list = new ArrayList<EamEquipmentReEsDto>();
-            for(EamEquipmentReEsDto dto : eamEquipmentStationDto.getEamEquipmentReEsDtoList()){
-                dto.setEquipmentStationId(eamEquipmentStationDto.getEquipmentStationId());
+    public void saveReEs(DaqEquipmentStationDto daqEquipmentStationDto,SysUser user){
+        List<DaqHtEquipmentReEsDto>  equipmentReEsHtList= new ArrayList<DaqHtEquipmentReEsDto>();;
+        if(StringUtils.isNotEmpty(daqEquipmentStationDto.getDaqEquipmentReEsDtoList())){
+            List<DaqEquipmentReEsDto> list = new ArrayList<DaqEquipmentReEsDto>();
+            for(DaqEquipmentReEsDto dto : daqEquipmentStationDto.getDaqEquipmentReEsDtoList()){
+                dto.setEquipmentStationId(daqEquipmentStationDto.getEquipmentStationId());
                 dto.setCreateUserId(user.getUserId());
                 dto.setCreateTime(new Date());
                 dto.setModifiedUserId(user.getUserId());
                 dto.setModifiedTime(new Date());
-                dto.setStatus(StringUtils.isEmpty(eamEquipmentStationDto.getStatus())?1: eamEquipmentStationDto.getStatus());
+                dto.setStatus(StringUtils.isEmpty(daqEquipmentStationDto.getStatus())?1: daqEquipmentStationDto.getStatus());
                 dto.setOrgId(user.getOrganizationId());
                 list.add(dto);
-                EamHtEquipmentReEsDto eamHtEquipmentReEsDto = new EamHtEquipmentReEsDto();
-                BeanUtils.copyProperties(dto, eamHtEquipmentReEsDto);
-                equipmentReEsHtList.add(eamHtEquipmentReEsDto);
+                DaqHtEquipmentReEsDto daqHtEquipmentReEsDto = new DaqHtEquipmentReEsDto();
+                BeanUtils.copyProperties(dto, daqHtEquipmentReEsDto);
+                equipmentReEsHtList.add(daqHtEquipmentReEsDto);
             }
             daqEquipmentReEsMapper.insertList(list);
             daqHtEquipmentReEsMapper.insertList(equipmentReEsHtList);

@@ -1,9 +1,9 @@
 package com.fantechs.provider.daq.controller;
 
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDataGroupParamDto;
-import com.fantechs.common.base.general.dto.eam.EamHtEquipmentDataGroupParamDto;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentDataGroupParam;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentDataGroupParam;
+import com.fantechs.common.base.general.dto.daq.DaqEquipmentDataGroupParamDto;
+import com.fantechs.common.base.general.dto.daq.DaqHtEquipmentDataGroupParamDto;
+import com.fantechs.common.base.general.entity.daq.DaqEquipmentDataGroupParam;
+import com.fantechs.common.base.general.entity.daq.search.SearchDaqEquipmentDataGroupParam;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
@@ -39,8 +39,8 @@ public class DaqEquipmentDataGroupParamController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EamEquipmentDataGroupParam eamEquipmentDataGroupParam) {
-        return ControllerUtil.returnCRUD(daqEquipmentDataGroupParamService.save(eamEquipmentDataGroupParam));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated DaqEquipmentDataGroupParam daqEquipmentDataGroupParam) {
+        return ControllerUtil.returnCRUD(daqEquipmentDataGroupParamService.save(daqEquipmentDataGroupParam));
     }
 
     @ApiOperation("删除")
@@ -51,30 +51,30 @@ public class DaqEquipmentDataGroupParamController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamEquipmentDataGroupParam.update.class) EamEquipmentDataGroupParam eamEquipmentDataGroupParam) {
-        return ControllerUtil.returnCRUD(daqEquipmentDataGroupParamService.update(eamEquipmentDataGroupParam));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=DaqEquipmentDataGroupParam.update.class) DaqEquipmentDataGroupParam daqEquipmentDataGroupParam) {
+        return ControllerUtil.returnCRUD(daqEquipmentDataGroupParamService.update(daqEquipmentDataGroupParam));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<EamEquipmentDataGroupParam> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
-        EamEquipmentDataGroupParam  eamEquipmentDataGroupParam = daqEquipmentDataGroupParamService.selectByKey(id);
-        return  ControllerUtil.returnDataSuccess(eamEquipmentDataGroupParam,StringUtils.isEmpty(eamEquipmentDataGroupParam)?0:1);
+    public ResponseEntity<DaqEquipmentDataGroupParam> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
+        DaqEquipmentDataGroupParam  daqEquipmentDataGroupParam = daqEquipmentDataGroupParamService.selectByKey(id);
+        return  ControllerUtil.returnDataSuccess(daqEquipmentDataGroupParam,StringUtils.isEmpty(daqEquipmentDataGroupParam)?0:1);
     }
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<EamEquipmentDataGroupParamDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEamEquipmentDataGroupParam searchEamEquipmentDataGroupParam) {
-        Page<Object> page = PageHelper.startPage(searchEamEquipmentDataGroupParam.getStartPage(),searchEamEquipmentDataGroupParam.getPageSize());
-        List<EamEquipmentDataGroupParamDto> list = daqEquipmentDataGroupParamService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentDataGroupParam));
+    public ResponseEntity<List<DaqEquipmentDataGroupParamDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchDaqEquipmentDataGroupParam searchDaqEquipmentDataGroupParam) {
+        Page<Object> page = PageHelper.startPage(searchDaqEquipmentDataGroupParam.getStartPage(),searchDaqEquipmentDataGroupParam.getPageSize());
+        List<DaqEquipmentDataGroupParamDto> list = daqEquipmentDataGroupParamService.findList(ControllerUtil.dynamicConditionByEntity(searchDaqEquipmentDataGroupParam));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<EamHtEquipmentDataGroupParamDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchEamEquipmentDataGroupParam searchEamEquipmentDataGroupParam) {
-        Page<Object> page = PageHelper.startPage(searchEamEquipmentDataGroupParam.getStartPage(),searchEamEquipmentDataGroupParam.getPageSize());
-        List<EamHtEquipmentDataGroupParamDto> list = daqHtEquipmentDataGroupParamService.findHtList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentDataGroupParam));
+    public ResponseEntity<List<DaqHtEquipmentDataGroupParamDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchDaqEquipmentDataGroupParam searchDaqEquipmentDataGroupParam) {
+        Page<Object> page = PageHelper.startPage(searchDaqEquipmentDataGroupParam.getStartPage(),searchDaqEquipmentDataGroupParam.getPageSize());
+        List<DaqHtEquipmentDataGroupParamDto> list = daqHtEquipmentDataGroupParamService.findHtList(ControllerUtil.dynamicConditionByEntity(searchDaqEquipmentDataGroupParam));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
