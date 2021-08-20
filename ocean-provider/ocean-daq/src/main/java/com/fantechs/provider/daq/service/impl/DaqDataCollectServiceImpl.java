@@ -50,7 +50,6 @@ public class DaqDataCollectServiceImpl extends BaseService<DaqDataCollect> imple
     @Override
     public DaqDataCollectModel findByGroup(SearchDaqEquipmentDataGroup searchDaqEquipmentDataGroup) {
         DaqDataCollectModel model = new DaqDataCollectModel();
-
         Map map = new HashMap();
         map.put("equipmentDataGroupId",searchDaqEquipmentDataGroup.getEquipmentDataGroupId());
         List<DaqEquipment> EamEquipmentList = daqEquipmentMapper.findList(map);
@@ -58,29 +57,18 @@ public class DaqDataCollectServiceImpl extends BaseService<DaqDataCollect> imple
         for(DaqEquipment eamEquipment : EamEquipmentList){
             List<DaqDataCollectDto> collectDtos = daqDataCollectMapper.findByEquipmentId(eamEquipment.getEquipmentId());
             if(StringUtils.isNotEmpty(collectDtos)) {
-                Map<String, Object> data = new HashMap<String, Object>();
-                data.put("eamEquipment", eamEquipment);
-                data.put("collectDate", collectDtos.get(0).getCollectData());
-                model.setData(data);
+                model.setDaqDataCollectDtos(collectDtos);
             }
         }
         List<DaqEquipmentDataGroupDto> daqEquipmentDataGroupDtos = daqEquipmentDataGroupMapper.findList(ControllerUtil.dynamicConditionByEntity(searchDaqEquipmentDataGroup));
         if(StringUtils.isEmpty(daqEquipmentDataGroupDtos)) throw new BizErrorException("未查询到对应组别");
         if(StringUtils.isEmpty(daqEquipmentDataGroupDtos.get(0).getDaqEquipmentDataGroupParamDtos())) throw new BizErrorException("该组别未配置对应参数");
-      //  String tableName = "[";
         List tableNames = new ArrayList();
-        int i = 1;
         for(DaqEquipmentDataGroupParamDto param : daqEquipmentDataGroupDtos.get(0).getDaqEquipmentDataGroupParamDtos()){
-            /*tableName = tableName + "{\"name\":\""+param.getParamName()+"\",\"value\":\""+param.getFieldName()+"\",\"address\":\""+param.getAddressLoca()+"\"," +
-                    "\"min\":\""+param.getMinValue()+"\",\"max\":\""+param.getMaxValue()+"\"}";
-            if (i < eamEquipmentDataGroups.get(0).getEamEquipmentDataGroupParamDtos().size())
-                tableName = tableName + ",";
-            i++;*/
             String tableName ="{\"name\":\""+param.getParamName()+"\",\"value\":\""+param.getFieldName()+"\",\"address\":\""+param.getAddressLoca()+"\"," +
                     "\"min\":\""+param.getMinValue()+"\",\"max\":\""+param.getMaxValue()+"\"}";
             tableNames.add(tableName);
         }
-     //   tableName += "]";
 
         model.setTableName(tableNames);
         return model;
