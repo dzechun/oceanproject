@@ -8,6 +8,7 @@
     <id column="wi_release_det_id" jdbcType="BIGINT" property="wiReleaseDetId" />
     <result column="wi_release_id" jdbcType="BIGINT" property="wiReleaseId" />
     <result column="work_instruction_id" jdbcType="BIGINT" property="workInstructionId" />
+    <result column="wi_release_det_seq_num" jdbcType="BIGINT" property="wiReleaseDetSeqNum" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -33,6 +34,7 @@
         ewrd.wi_release_det_id,
         ewrd.wi_release_id,
         ewrd.work_instruction_id,
+        ewrd.wi_release_det_seq_num,
         ewrd.status,
         ewrd.remark,
         ewrd.org_id,

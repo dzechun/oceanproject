@@ -42,6 +42,15 @@ public class EamWiReleaseDet extends ValidGroup implements Serializable {
     private Long wiReleaseId;
 
     /**
+     * ESOP发布序号
+     */
+    @ApiModelProperty(name="wiReleaseDetSeqNum",value = "ESOP发布序号")
+    @Column(name = "wi_release_det_seq_num")
+    private String wiReleaseDetSeqNum;
+
+
+
+    /**
      * 作业指导书ID
      */
     @ApiModelProperty(name="workInstructionId",value = "作业指导书ID")

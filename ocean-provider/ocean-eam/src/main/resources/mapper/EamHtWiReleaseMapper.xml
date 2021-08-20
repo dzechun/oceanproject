@@ -70,7 +70,7 @@
     SELECT<include refid="BaseColumnList"/>,
     mpwo.work_order_code as work_order_code,mpwo.work_order_status as work_order_status,bm.material_code as material_code,
     bpm.product_model_name as product_model_name,bpm.product_model_code as product_model_code,br.route_name as route_name,
-    bf.factory_name as factory_name,bws.work_shop_name as work_shop_name,bpl.pro_line_name as pro_line_name
+    bf.factory_name as factory_name,bws.work_shop_name as work_shop_name,bpl.pro_name as pro_line_name
     FROM eam_ht_wi_release ehwr
     LEFT JOIN mes_pm_work_order mpwo ON ehwr.work_order_id = mpwo.work_order_id
     LEFT JOIN base_material bm ON ehwr.material_id = bm.material_id

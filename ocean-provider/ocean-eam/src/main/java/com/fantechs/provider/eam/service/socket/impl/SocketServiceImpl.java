@@ -140,7 +140,6 @@ public class SocketServiceImpl implements SocketService {
             try {
                 Socket socket = (Socket)hashtable.get(eamEquipment.getEquipmentIp());
                 if(socket == null)  continue;
-                //throw new BizErrorException("未查询到ip对应的设备信息,请检查设备是否开启");
                 OutputStream os = socket.getOutputStream();
                 PrintWriter out =new PrintWriter(os);
 
@@ -154,10 +153,9 @@ public class SocketServiceImpl implements SocketService {
                 String outMsg = JSON.toJSONString(data);
                 out.write(outMsg);
                 out.flush();
-                return 1;
             } catch (IOException e) {
                 e.printStackTrace();
-                return 0;
+                continue;
             }
         }
         return 1;
@@ -386,12 +384,12 @@ public class SocketServiceImpl implements SocketService {
         if(StringUtils.isNotEmpty(mac))
             criteria.andEqualTo("equipmentMacAddress",mac);
 
-        EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
-        if (StringUtils.isEmpty(eamEquipment)){
+        List<EamEquipment> eamEquipments = eamEquipmentMapper.selectByExample(example);
+        if (StringUtils.isEmpty(eamEquipments)){
             throw new BizErrorException("未查询到对应的设备信息");
         }
         example.clear();
-        return eamEquipment;
+        return eamEquipments.get(0);
     }
 
     public int updateStatus(String ip, Byte bytes) {

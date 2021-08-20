@@ -11,6 +11,7 @@
     <result column="equipment_desc" jdbcType="VARCHAR" property="equipmentDesc" />
     <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel" />
     <result column="equipment_category_id" jdbcType="BIGINT" property="equipmentCategoryId" />
+    <result column="equipment_seq_num" jdbcType="VARCHAR" property="equipmentSeqNum" />
     <result column="power" jdbcType="DECIMAL" property="power" />
     <result column="weight" jdbcType="DECIMAL" property="weight" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
@@ -72,6 +73,7 @@
     ee.equipment_desc,
     ee.equipment_model,
     ee.equipment_category_id,
+    ee.equipment_seq_num,
     ee.power,
     ee.weight,
     ee.warehouse_id,
@@ -142,6 +144,9 @@
       </if>
       <if test="equipmentName != null and equipmentName!=''">
         and ee.equipment_name like CONCAT('%', #{equipmentName}, '%')
+      </if>
+      <if test="equipmentModel != null and equipmentModel!=''">
+        and ee.equipment_model like CONCAT('%', #{equipmentModel}, '%')
       </if>
       <if test="equipmentDesc != null and equipmentDesc!=''">
         and ee.equipment_desc like CONCAT('%', #{equipmentDesc}, '%')

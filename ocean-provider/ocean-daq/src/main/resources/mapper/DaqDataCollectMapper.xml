@@ -53,6 +53,11 @@
         ee.equipment_ip
     FROM daq_data_collect msdc
     LEFT JOIN daq_equipment ee ON msdc.equipment_id = ee.equipment_id
+    <where>
+      <if test="equipmentCode != null">
+        and ee.equipment_code = #{equipmentCode}
+      </if>
+    </where>
   </select>
 
   <select id="findByEquipmentId" resultMap="BaseResultDtoMap" parameterType="java.lang.Long">

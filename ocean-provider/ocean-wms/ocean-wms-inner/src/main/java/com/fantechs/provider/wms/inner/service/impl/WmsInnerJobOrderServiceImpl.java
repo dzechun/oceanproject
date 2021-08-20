@@ -567,13 +567,23 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                                 .andEqualTo("warehouseId", oldDto.getWarehouseId())
                                 .andEqualTo("storageId", oldDto.getOutStorageId())
                                 .andEqualTo("jobOrderDetId", oldDto.getJobOrderDetId())
-                                .andEqualTo("jobStatus", (byte) 2);
+                                .andEqualTo("jobStatus", (byte) 2)
+                                .andEqualTo("stockLock", 0)
+                                .andEqualTo("qcLock", 0)
+                                .andEqualTo("lockStatus", 0);
                         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example1);
                         example1.clear();
-                        example1.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
+                        Example.Criteria criteria1 = example1.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
                                 .andEqualTo("warehouseId", oldDto.getWarehouseId())
                                 .andEqualTo("storageId", oldDto.getOutStorageId())
-                                .andEqualTo("jobStatus", (byte) 1);
+                                .andEqualTo("jobStatus", (byte) 1)
+                                .andEqualTo("stockLock", 0)
+                                .andEqualTo("qcLock", 0)
+                                .andEqualTo("lockStatus", 0)
+                                .andGreaterThan("packingQty", 0);
+                        if (StringUtils.isNotEmpty(wmsInnerInventory)){
+                            criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
+                        }
                         WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example1);
                         if (StringUtils.isEmpty(wmsInnerInventory_old)) {
                             if (StringUtils.isEmpty(wmsInnerInventory)) {
@@ -718,14 +728,18 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("lockStatus", 0);
                 WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 example.clear();
-                example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
+                Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
                         .andEqualTo("warehouseId", oldDto.getWarehouseId())
                         .andEqualTo("storageId", oldDto.getInStorageId())
 //                        .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
                         .andEqualTo("jobStatus", (byte) 1)
                         .andEqualTo("stockLock", 0)
                         .andEqualTo("qcLock", 0)
-                        .andEqualTo("lockStatus", 0);
+                        .andEqualTo("lockStatus", 0)
+                        .andGreaterThan("packingQty", 0);
+                if (StringUtils.isNotEmpty(wmsInnerInventory)){
+                    criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
+                }
                 WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
                 if (StringUtils.isEmpty(wmsInnerInventory_old)) {
                     //添加库存

@@ -35,4 +35,10 @@ public class SearchBaseWorkingArea extends BaseQuery implements Serializable {
     @ApiModelProperty(name = "status",value = "状态")
     private Byte status;
 
+    /**
+     * 库区id
+     */
+    @ApiModelProperty(name="warehouseAreaId",value = "库区id")
+    private Long warehouseAreaId;
+
 }

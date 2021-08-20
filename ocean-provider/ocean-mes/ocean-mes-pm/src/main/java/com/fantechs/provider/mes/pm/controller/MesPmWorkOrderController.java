@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.pm.controller;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
@@ -16,6 +17,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +56,14 @@ public class MesPmWorkOrderController {
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：materialId、workOrderQuantity、proLineId、routeId",required = true)@RequestBody @Validated MesPmWorkOrderDto mesPmWorkOrderDto) {
         return ControllerUtil.returnCRUD(mesPmWorkOrderService.save(mesPmWorkOrderDto));
+    }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/addList")
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public ResponseEntity addList(@ApiParam(value = "工单信息集合") @RequestBody List<MesPmWorkOrder> pmWorkOrders){
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.batchSave(pmWorkOrders));
     }
 
     @ApiOperation("删除")
