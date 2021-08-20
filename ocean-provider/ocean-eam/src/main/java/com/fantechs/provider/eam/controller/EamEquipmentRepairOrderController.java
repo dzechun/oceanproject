@@ -40,6 +40,13 @@ public class EamEquipmentRepairOrderController {
     @Resource
     private EamHtEquipmentRepairOrderService eamHtEquipmentRepairOrderService;
 
+    @ApiOperation("新建维修单")
+    @PostMapping("/pdaCreateOrder")
+    public ResponseEntity<EamEquipmentRepairOrderDto> pdaCreateOrder(@ApiParam(value = "设备条码",required = true)@RequestParam  @NotBlank(message="设备条码不能为空") String equipmentBarcode) {
+        EamEquipmentRepairOrderDto  eamEquipmentRepairOrderDto = eamEquipmentRepairOrderService.pdaCreateOrder(equipmentBarcode);
+        return  ControllerUtil.returnDataSuccess(eamEquipmentRepairOrderDto,StringUtils.isEmpty(eamEquipmentRepairOrderDto)?0:1);
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EamEquipmentRepairOrderDto eamEquipmentRepairOrderDto) {

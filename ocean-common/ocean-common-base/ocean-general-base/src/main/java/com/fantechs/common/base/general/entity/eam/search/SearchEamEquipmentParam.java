@@ -9,28 +9,12 @@ import java.io.Serializable;
 @Data
 public class SearchEamEquipmentParam extends BaseQuery implements Serializable {
 
-    /**
-     * 设备编码
-     */
-    @ApiModelProperty(name="equipmentCode",value = "设备编码")
-    private String equipmentCode;
 
     /**
-     * 设备名称
+     * 设备类别名称
      */
-    @ApiModelProperty(name="equipmentName",value = "设备名称")
-    private String equipmentName;
+    @ApiModelProperty(name="equipmentCategoryName",value = "设备类别名称")
+    private String equipmentCategoryName;
 
-    /**
-     * 设备描述
-     */
-    @ApiModelProperty(name="equipmentDesc",value = "设备描述")
-    private String equipmentDesc;
-
-    /**
-     * 设备型号
-     */
-    @ApiModelProperty(name="equipmentModel",value = "设备型号")
-    private String equipmentModel;
 
 }

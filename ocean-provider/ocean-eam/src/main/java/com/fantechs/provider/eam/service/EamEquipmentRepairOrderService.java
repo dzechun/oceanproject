@@ -18,4 +18,6 @@ public interface EamEquipmentRepairOrderService extends IService<EamEquipmentRep
     int save(EamEquipmentRepairOrderDto record);
 
     int update(EamEquipmentRepairOrderDto record);
+
+    EamEquipmentRepairOrderDto pdaCreateOrder(String equipmentBarcode);
 }

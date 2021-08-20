@@ -37,12 +37,12 @@ public class EamEquipmentParam extends ValidGroup implements Serializable {
     private Long equipmentParamId;
 
     /**
-     * 设备信息ID
+     * 设备类别ID
      */
-    @ApiModelProperty(name="equipmentId",value = "设备信息ID")
-    @Column(name = "equipment_id")
-    @NotNull(message = "设备信息不能为空")
-    private Long equipmentId;
+    @ApiModelProperty(name="equipmentCategoryId",value = "设备类别ID")
+    @Column(name = "equipment_category_id")
+    @NotNull(message = "设备类别不能为空")
+    private Long equipmentCategoryId;
 
     /**
      * 状态(0无效，1有效)
