@@ -139,8 +139,8 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
                 eamJigPointInspectionProjectItem.setModifiedTime(new Date());
                 eamJigPointInspectionProjectItem.setStatus(StringUtils.isEmpty(eamJigPointInspectionProjectItem.getStatus())?1: eamJigPointInspectionProjectItem.getStatus());
                 eamJigPointInspectionProjectItem.setOrgId(user.getOrganizationId());
+                eamJigPointInspectionProjectItemMapper.insert(eamJigPointInspectionProjectItem);
             }
-            eamJigPointInspectionProjectItemMapper.insertList(list);
         }
 
         EamHtJigPointInspectionProject eamHtJigPointInspectionProject = new EamHtJigPointInspectionProject();

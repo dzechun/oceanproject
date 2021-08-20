@@ -2,7 +2,6 @@ package com.fantechs.common.base.general.entity.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,32 +9,28 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 ;
 ;
 
 /**
- * 治具绑定产品
- * eam_jig_re_material
+ * 治具绑定产品表头
+ * eam_jig_material
  * @author admin
- * @date 2021-07-28 15:25:21
+ * @date 2021-08-20 09:17:30
  */
 @Data
-@Table(name = "eam_jig_re_material")
-public class EamJigReMaterial extends ValidGroup implements Serializable {
+@Table(name = "eam_jig_material")
+public class EamJigMaterial extends ValidGroup implements Serializable {
     /**
-     * 绑定产品ID
+     * 治具绑定产品ID
      */
-    @ApiModelProperty(name="jigReMaterialId",value = "绑定产品ID")
+    @ApiModelProperty(name="jigMaterialId",value = "治具绑定产品ID")
     @Id
-    @Column(name = "jig_re_material_id")
-    @NotNull(groups = update.class,message = "绑定产品ID不能为空")
-    private Long jigReMaterialId;
+    @Column(name = "jig_material_id")
+    private Long jigMaterialId;
 
     /**
      * 治具ID
@@ -45,25 +40,10 @@ public class EamJigReMaterial extends ValidGroup implements Serializable {
     private Long jigId;
 
     /**
-     * 物料ID
-     */
-    @ApiModelProperty(name="materialId",value = "物料ID")
-    @Column(name = "material_id")
-    private Long materialId;
-
-    /**
-     * 使用数量
-     */
-    @ApiModelProperty(name="usageQty",value = "使用数量")
-    @Column(name = "usage_qty")
-    @NotNull(message = "使用数量不能为空")
-    private Integer usageQty;
-
-    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="5",replace = {"无效_0","有效_1"})
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="5")
     private Byte status;
 
     /**
@@ -110,12 +90,6 @@ public class EamJigReMaterial extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
-
-    /**
-     * 治具绑定产品信息
-     */
-    @ApiModelProperty(name="eamJigReMaterialDtos",value = "治具绑定产品信息")
-    private List<EamJigReMaterialDto> eamJigReMaterialDtos = new ArrayList<>();
 
     private String option1;
 

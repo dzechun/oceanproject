@@ -95,8 +95,6 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        this.codeIfRepeat(record);
-
         record.setJigRepairOrderCode(CodeUtils.getId("WX-"));
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
@@ -136,8 +134,6 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
-
-        this.codeIfRepeat(entity);
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());

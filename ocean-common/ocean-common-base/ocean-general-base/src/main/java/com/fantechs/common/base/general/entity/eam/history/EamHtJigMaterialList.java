@@ -18,37 +18,37 @@ import java.util.Date;
 
 /**
  * 治具绑定产品履历表
- * eam_ht_jig_re_material
+ * eam_ht_jig_material_list
  * @author admin
- * @date 2021-07-28 15:25:21
+ * @date 2021-08-20 09:17:31
  */
 @Data
-@Table(name = "eam_ht_jig_re_material")
-public class EamHtJigReMaterial extends ValidGroup implements Serializable {
+@Table(name = "eam_ht_jig_material_list")
+public class EamHtJigMaterialList extends ValidGroup implements Serializable {
     /**
-     * 绑定产品履历ID
+     * 治具绑定产品履历ID
      */
-    @ApiModelProperty(name="htJigReMaterialId",value = "绑定产品履历ID")
-    @Excel(name = "绑定产品履历ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="htJigMaterialListId",value = "治具绑定产品履历ID")
+    @Excel(name = "治具绑定产品履历ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "ht_jig_re_material_id")
-    private Long htJigReMaterialId;
+    @Column(name = "ht_jig_material_list_id")
+    private Long htJigMaterialListId;
 
     /**
-     * 绑定产品ID
+     * 治具绑定产品ID
      */
-    @ApiModelProperty(name="jigReMaterialId",value = "绑定产品ID")
-    @Excel(name = "绑定产品ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "jig_re_material_id")
-    private Long jigReMaterialId;
+    @ApiModelProperty(name="jigMaterialListId",value = "治具绑定产品ID")
+    @Excel(name = "治具绑定产品ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "jig_material_list_id")
+    private Long jigMaterialListId;
 
     /**
-     * 治具ID
+     * 治具绑定产品表头ID
      */
-    @ApiModelProperty(name="jigId",value = "治具ID")
-    @Excel(name = "治具ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "jig_id")
-    private Long jigId;
+    @ApiModelProperty(name="jigMaterialId",value = "治具绑定产品表头ID")
+    @Excel(name = "治具绑定产品表头ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "jig_material_id")
+    private Long jigMaterialId;
 
     /**
      * 物料ID
@@ -127,7 +127,7 @@ public class EamHtJigReMaterial extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="4")
     private String createUserName;
 
     /**
@@ -135,7 +135,7 @@ public class EamHtJigReMaterial extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="6")
     private String modifiedUserName;
 
     /**
@@ -146,37 +146,32 @@ public class EamHtJigReMaterial extends ValidGroup implements Serializable {
     private String organizationName;
 
     /**
-     * 治具编码
+     * 物料编码
      */
     @Transient
-    @ApiModelProperty(name = "jigCode",value = "治具编码")
-    @Excel(name = "治具编码", height = 20, width = 30,orderNum="1")
-    private String jigCode;
+    @ApiModelProperty(name = "materialCode",value = "物料编码")
+    private String materialCode;
 
     /**
-     * 治具名称
+     * 物料名称
      */
     @Transient
-    @ApiModelProperty(name = "jigName",value = "治具名称")
-    @Excel(name = "治具名称", height = 20, width = 30,orderNum="2")
-    private String jigName;
+    @ApiModelProperty(name = "materialName",value = "物料名称")
+    private String materialName;
 
     /**
-     * 治具描述
+     * 物料描述
      */
     @Transient
-    @ApiModelProperty(name = "jigDesc",value = "治具描述")
-    @Excel(name = "治具描述", height = 20, width = 30,orderNum="3")
-    private String jigDesc;
+    @ApiModelProperty(name = "materialDesc",value = "物料描述")
+    private String materialDesc;
 
     /**
-     * 治具型号
+     * 物料版本
      */
     @Transient
-    @ApiModelProperty(name = "jigModel",value = "治具型号")
-    @Excel(name = "治具型号", height = 20, width = 30,orderNum="4")
-    private String jigModel;
-
+    @ApiModelProperty(name = "materialVersion",value = "物料版本")
+    private String materialVersion;
 
     private String option1;
 

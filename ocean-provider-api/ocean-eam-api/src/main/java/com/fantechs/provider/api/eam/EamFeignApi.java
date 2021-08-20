@@ -2,12 +2,12 @@ package com.fantechs.provider.api.eam;
 
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
-import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
+import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamIssue;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigReMaterial;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.github.pagehelper.Page;
@@ -48,8 +48,8 @@ public interface EamFeignApi {
     ResponseEntity<List<EamJigBarcodeDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchEamJigBarcode searchEamJigBarcode);
 
     @ApiOperation("查询治具绑定产品列表")
-    @PostMapping("/eamJigReMaterial/findList")
-    ResponseEntity<List<EamJigReMaterialDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchEamJigReMaterial searchEamJigReMaterial);
+    @PostMapping("/eamJigMaterial/findList")
+    ResponseEntity<List<EamJigMaterialDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEamJigMaterial searchEamJigMaterial);
 
     @ApiOperation("治具增加使用次数")
     @PostMapping("/eamJigBarcode/plusCurrentUsageTime")

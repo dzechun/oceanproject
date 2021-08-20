@@ -11,6 +11,4 @@ import java.util.Map;
 @Mapper
 public interface EamJigReturnMapper extends MyMapper<EamJigReturn> {
     List<EamJigReturnDto> findList(Map<String,Object> map);
-
-    Integer getReturnQty(Map<String,Object> map);
 }
