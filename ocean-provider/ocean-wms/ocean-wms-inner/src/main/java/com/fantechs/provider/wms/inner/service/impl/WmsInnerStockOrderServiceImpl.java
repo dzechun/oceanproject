@@ -390,7 +390,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //解锁及复盘库存
             num+=this.unlockOrLock((byte)1,wmsInventoryVerificationDets,wmsInventoryVerification);
             //更改盘点状态（已完成）
-            wmsInventoryVerification.setOrderStatus((byte)5);
+            wmsInventoryVerification.setOrderStatus((byte)6);
             wmsInventoryVerification.setModifiedTime(new Date());
             wmsInventoryVerification.setModifiedUserId(sysUser.getUserId());
             num +=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
