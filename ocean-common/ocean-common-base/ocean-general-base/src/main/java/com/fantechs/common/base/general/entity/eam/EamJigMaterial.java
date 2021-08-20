@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -30,6 +31,7 @@ public class EamJigMaterial extends ValidGroup implements Serializable {
     @ApiModelProperty(name="jigMaterialId",value = "治具绑定产品ID")
     @Id
     @Column(name = "jig_material_id")
+    @NotNull(groups = update.class,message = "治具绑定产品ID不能为空")
     private Long jigMaterialId;
 
     /**
@@ -37,13 +39,14 @@ public class EamJigMaterial extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="jigId",value = "治具ID")
     @Column(name = "jig_id")
+    @NotNull(message = "治具不能为空")
     private Long jigId;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="5")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="5",replace = {"无效_0","有效_1"})
     private Byte status;
 
     /**

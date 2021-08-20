@@ -95,7 +95,7 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        record.setJigRepairOrderCode(CodeUtils.getId("WX-"));
+        record.setJigRepairOrderCode(CodeUtils.getId("ZJWX-"));
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());

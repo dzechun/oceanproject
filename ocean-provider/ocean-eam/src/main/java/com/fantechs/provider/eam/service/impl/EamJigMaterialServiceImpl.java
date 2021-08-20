@@ -59,6 +59,8 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        this.ifRepeat(record);
+
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
@@ -96,6 +98,8 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        this.ifRepeat(entity);
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
