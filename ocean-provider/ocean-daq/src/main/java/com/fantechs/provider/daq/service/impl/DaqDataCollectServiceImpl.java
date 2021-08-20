@@ -55,12 +55,13 @@ public class DaqDataCollectServiceImpl extends BaseService<DaqDataCollect> imple
         map.put("equipmentDataGroupId",searchDaqEquipmentDataGroup.getEquipmentDataGroupId());
         List<DaqEquipment> EamEquipmentList = daqEquipmentMapper.findList(map);
         if(StringUtils.isEmpty(EamEquipmentList)) throw new BizErrorException("未查询到对应设备参数");
-        List collectDate = new ArrayList();
         for(DaqEquipment eamEquipment : EamEquipmentList){
             List<DaqDataCollectDto> collectDtos = daqDataCollectMapper.findByEquipmentId(eamEquipment.getEquipmentId());
             if(StringUtils.isNotEmpty(collectDtos)) {
-                collectDate.add(collectDtos.get(0).getCollectData());
-                model.setEamEquipment(eamEquipment);
+                Map<String, Object> data = new HashMap<String, Object>();
+                data.put("eamEquipment", eamEquipment);
+                data.put("collectDate", collectDtos.get(0).getCollectData());
+                model.setData(data);
             }
         }
         List<DaqEquipmentDataGroupDto> daqEquipmentDataGroupDtos = daqEquipmentDataGroupMapper.findList(ControllerUtil.dynamicConditionByEntity(searchDaqEquipmentDataGroup));
@@ -82,7 +83,6 @@ public class DaqDataCollectServiceImpl extends BaseService<DaqDataCollect> imple
      //   tableName += "]";
 
         model.setTableName(tableNames);
-        model.setCollectDate(collectDate);
         return model;
     }
 }
