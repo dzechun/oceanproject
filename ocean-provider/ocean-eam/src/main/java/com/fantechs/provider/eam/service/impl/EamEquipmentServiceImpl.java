@@ -3,6 +3,8 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamEquMaintainOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
@@ -18,12 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -188,6 +184,19 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         return eamEquipmentMapper.findNoGroup(map);
     }
 
+    @Override
+    public List<EamEquInspectionOrderDto> findListForInspectionOrder(Map<String, Object> map) {
+        SysUser user = getUser();
+        map.put("orgId", user.getOrganizationId());
+        return eamEquipmentMapper.findListForInspectionOrder(map);
+    }
+
+    @Override
+    public List<EamEquMaintainOrderDto> findListForMaintainOrder(Map<String, Object> map) {
+        SysUser user = getUser();
+        map.put("orgId", user.getOrganizationId());
+        return eamEquipmentMapper.findListForMaintainOrder(map);
+    }
 
 
     public SysUser getUser(){

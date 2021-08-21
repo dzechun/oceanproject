@@ -1,5 +1,7 @@
 package com.fantechs.provider.eam.service;
 
+import com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamEquMaintainOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
@@ -22,4 +24,18 @@ public interface EamEquipmentService extends IService<EamEquipment> {
     EamEquipment detailByIp(String ip);
 
     List<EamEquipmentDto> findNoGroup(Map<String, Object> map);
+
+    /**
+     * 通过设备条码获取点检项目配置信息
+     * @param map
+     * @return
+     */
+    List<EamEquInspectionOrderDto> findListForInspectionOrder(Map<String, Object> map);
+
+    /**
+     * 通过设备条码获取保养项目配置信息
+     * @param map
+     * @return
+     */
+    List<EamEquMaintainOrderDto> findListForMaintainOrder(Map<String,Object> map);
 }

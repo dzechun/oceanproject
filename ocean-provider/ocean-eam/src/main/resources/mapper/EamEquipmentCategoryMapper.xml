@@ -7,6 +7,7 @@
     -->
     <id column="equipment_category_id" jdbcType="BIGINT" property="equipmentCategoryId" />
     <result column="equipment_category_code" jdbcType="VARCHAR" property="equipmentCategoryCode" />
+    <result column="equipment_category_name" jdbcType="VARCHAR" property="equipmentCategoryName" />
     <result column="equipment_category_desc" jdbcType="VARCHAR" property="equipmentCategoryDesc" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -29,6 +30,7 @@
   <sql id="Base_Column_List">
     eec.equipment_category_id,
     eec.equipment_category_code,
+    eec.equipment_category_name,
     eec.equipment_category_desc,
     eec.`status`,
     eec.remark,

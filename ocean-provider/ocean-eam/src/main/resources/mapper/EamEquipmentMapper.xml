@@ -66,6 +66,30 @@
     <result column="maintain_project_code" jdbcType="VARCHAR" property="maintainProjectCode"/>
   </resultMap>
 
+  <resultMap id="ResultEamEquInspectionOrderDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto">
+    <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
+    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
+    <result column="equipment_category_name" jdbcType="VARCHAR" property="equipmentCategoryName"/>
+    <result column="equ_point_inspection_project_code" jdbcType="VARCHAR" property="equPointInspectionProjectCode"/>
+    <result column="equ_point_inspection_project_name" jdbcType="VARCHAR" property="equPointInspectionProjectName"/>
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+    <collection property="items" ofType="com.fantechs.common.base.general.dto.eam.EamEquPointInspectionProjectItemDto"
+                column="{equPointInspectionProjectId=equ_point_inspection_project_id}" select="com.fantechs.provider.eam.mapper.EamEquPointInspectionProjectItemMapper.findList">
+    </collection>
+  </resultMap>
+
+  <resultMap id="ResultEamEquMaintainOrderDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamEquMaintainOrderDto">
+    <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
+    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
+    <result column="equipment_category_name" jdbcType="VARCHAR" property="equipmentCategoryName"/>
+    <result column="equipment_maintain_project_code" jdbcType="VARCHAR" property="equipmentMaintainProjectCode"/>
+    <result column="equipment_maintain_project_name" jdbcType="VARCHAR" property="equipmentMaintainProjectName"/>
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+    <collection property="items" ofType="com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainProjectItemDto"
+                column="{equipmentMaintainProjectId=equipment_maintain_project_id}" select="com.fantechs.provider.eam.mapper.EamEquipmentMaintainProjectItemMapper.findList">
+    </collection>
+  </resultMap>
+
   <sql id="Base_Column_List">
     ee.equipment_id,
     ee.equipment_code,
@@ -195,6 +219,58 @@
         and ee.org_id=#{orgId}
       </if>
 
+    </where>
+  </select>
+
+  <select id="findListForInspectionOrder" parameterType="map" resultMap="ResultEamEquInspectionOrderDto">
+    SELECT
+    ee.equipment_code,
+    ee.equipment_name,
+    eec.equipment_category_name,
+    eepip.equ_point_inspection_project_code,
+    eepip.equ_point_inspection_project_name,
+    1 AS order_status
+    FROM
+    eam_equipment ee
+    LEFT JOIN eam_equipment_barcode eeb ON eeb.equipment_id = ee.equipment_id
+    LEFT JOIN eam_equipment_category eec ON ee.equipment_category_id = eec.equipment_category_id
+    LEFT JOIN eam_equ_point_inspection_project eepip ON eepip.equipment_category_id = ee.equipment_category_id
+    <where>
+      <if test="equipmentBarcode!=null">
+        and eeb.equipment_barcode = #{equipmentBarcode}
+      </if>
+      <if test="status!=null">
+        and ee.status = #{status}
+      </if>
+      <if test="orgId!=null">
+        and ee.org_id=#{orgId}
+      </if>
+    </where>
+  </select>
+
+  <select id="findListForMaintainOrder" parameterType="map" resultMap="ResultEamEquMaintainOrderDto">
+    SELECT
+    ee.equipment_code,
+    ee.equipment_name,
+    eec.equipment_category_name,
+    eemp.equipment_maintain_project_code,
+    eemp.equipment_maintain_project_name,
+    1 AS order_status
+    FROM
+    eam_equipment ee
+    LEFT JOIN eam_equipment_barcode eeb ON eeb.equipment_id = ee.equipment_id
+    LEFT JOIN eam_equipment_category eec ON ee.equipment_category_id = eec.equipment_category_id
+    LEFT JOIN eam_equipment_maintain_project eemp ON ee.equipment_category_id = eemp.equipment_category_id
+    <where>
+      <if test="equipmentBarcode!=null">
+        and eeb.equipment_barcode = #{equipmentBarcode}
+      </if>
+      <if test="status!=null">
+        and ee.status = #{status}
+      </if>
+      <if test="orgId!=null">
+        and ee.org_id=#{orgId}
+      </if>
     </where>
   </select>
 </mapper>
