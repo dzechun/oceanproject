@@ -29,4 +29,6 @@ public interface EamWorkInstructionService extends IService<EamWorkInstruction> 
     int update(EamWorkInstructionDto eamWorkInstructionDto);
 
     String download(HttpServletResponse response) throws IOException;
+
+    int censor(EamWorkInstructionDto eamWorkInstructionDto);
 }
