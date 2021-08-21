@@ -11,6 +11,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.baseapi.esop.mapper.EsopDeptMapper;
 import com.fantechs.provider.baseapi.esop.service.EsopDeptService;
+import com.fantechs.provider.baseapi.esop.util.BaseUtils;
 import com.fantechs.provider.baseapi.esop.util.LogsUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,8 @@ public class EsopDeptServiceImpl extends BaseService<EsopDept> implements EsopDe
     private BaseFeignApi baseFeignApi;
     @Resource
     private LogsUtils logsUtils;
-
+    @Resource
+    private BaseUtils baseUtils;
 
 
     @Override
@@ -41,32 +43,35 @@ public class EsopDeptServiceImpl extends BaseService<EsopDept> implements EsopDe
     public List<BaseDept> addDept(Map<String, Object> map) throws ParseException {
         List<EsopDept> list = esopDeptMapper.findList(map);
         List<BaseDept> baseDepts = new ArrayList<BaseDept>();
+        Long orgId = baseUtils.getOrId();
         if(StringUtils.isNotEmpty(list)){
             for(EsopDept dept :list){
-                baseDepts.add(getBaseDepy(dept));
+                baseDepts.add(getBaseDepy(dept,orgId));
             }
         }
         ResponseEntity<List<BaseDept>> baseDeptlist = baseFeignApi.batchAddDept(baseDepts);
-        logsUtils.addlog((byte)1,(byte)1,(long)1002,null,null);
+        logsUtils.addlog((byte)1,(byte)1,orgId,null,null);
         return baseDeptlist.getData();
     }
 
 
-    public BaseDept getBaseDepy(EsopDept esopDept){
+    public BaseDept getBaseDepy(EsopDept esopDept,Long orgId){
         BaseDept baseDept = new BaseDept();
         baseDept.setDeptName(esopDept.getName());
         baseDept.setDeptCode(esopDept.getCode());
         baseDept.setDeptDesc(esopDept.getName());
         baseDept.setCreateTime(esopDept.getCreatedTime());
         baseDept.setModifiedTime(esopDept.getModifyTime());
+        baseDept.setIsDelete((byte)1);
+        baseDept.setStatus(1);
         //新宝未使用工厂，默认工厂关联部门与车间
         SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
-        searchBaseFactory.setOrgId((long)1002);
+        searchBaseFactory.setOrgId(orgId);
         ResponseEntity<List<BaseFactoryDto>> factoryList = baseFeignApi.findFactoryList(searchBaseFactory);
         if(StringUtils.isNotEmpty(factoryList.getData()))
             baseDept.setFactoryId(factoryList.getData().get(0).getFactoryId());
         baseDept.setIsDelete(esopDept.getIsDeleted());
-        baseDept.setOrganizationId((long)1002);
+        baseDept.setOrganizationId(orgId);
         return baseDept;
     }
 }

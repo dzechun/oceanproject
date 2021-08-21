@@ -82,6 +82,7 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
                         issue.setCreateTime(new Date());
                         issue.setModifiedTime(new Date());
                         issue.setOrgId(baseUtils.getOrId());
+                        issue.setStatus((byte)1);
                         eamIssues.add(issue);
                     }
                    eamFeignApi.batchAdd(eamIssues);
