@@ -1,17 +1,14 @@
 package com.fantechs.provider.eam.service.impl;
 
-import com.fantechs.common.base.general.dto.eam.EamEquipmentStandingBookAttachmentDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentStandingBookAttachment;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.api.fileserver.service.FileFeignApi;
-import com.fantechs.provider.eam.mapper.EamEquipmentStandingBookAttachmentMapper;
 import com.fantechs.provider.eam.service.EamEquipmentStandingBookAttachmentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
 
 /**
