@@ -1,7 +1,7 @@
 package com.fantechs.provider.eam.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
+import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
@@ -66,9 +66,9 @@ public class EamJigRequisitionController {
 
     @ApiOperation(value = "转换工单-获取旧工单已领用数量",notes = "转换工单-获取旧工单已领用数量")
     @PostMapping("/getRecordQty")
-    public ResponseEntity<List<EamJigReMaterialDto>> getRecordQty(@ApiParam(value = "新工单号",required = true) @RequestParam @NotBlank(message="新工单号不能为空") String newWorkOrderCode,
-                                                   @ApiParam(value = "旧工单号",required = true) @RequestParam @NotBlank(message="旧工单号不能为空") String oldWorkOrderCode) {
-        List<EamJigReMaterialDto> list = eamJigRequisitionService.getRecordQty(newWorkOrderCode,oldWorkOrderCode);
+    public ResponseEntity<List<EamJigMaterialDto>> getRecordQty(@ApiParam(value = "新工单号",required = true) @RequestParam @NotBlank(message="新工单号不能为空") String newWorkOrderCode,
+                                                                @ApiParam(value = "旧工单号",required = true) @RequestParam @NotBlank(message="旧工单号不能为空") String oldWorkOrderCode) {
+        List<EamJigMaterialDto> list = eamJigRequisitionService.getRecordQty(newWorkOrderCode,oldWorkOrderCode);
         return ControllerUtil.returnDataSuccess(list,list.size());
     }
 

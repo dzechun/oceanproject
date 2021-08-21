@@ -32,6 +32,7 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap"
              type="com.fantechs.common.base.general.dto.eam.EamWorkInstructionDto">
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
     <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
@@ -41,6 +42,7 @@
     <result column="specifications" jdbcType="VARCHAR" property="specifications"/>
     <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
     <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
+
 
     <collection property="eamWiBoms" ofType="com.fantechs.common.base.general.entity.eam.EamWiBom"
             column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.eam.mapper.EamWiBomMapper.findList">
@@ -82,7 +84,7 @@
   <select id="findList" resultMap="BaseResultMapDto">
 
     SELECT<include refid="BaseColumnList"/>,
-    bm.material_code as material_code,spm.product_model_code as product_model_code,spm.product_model_name as product_model_name,
+    bm.material_code as material_code,bm.material_name as material_name,spm.product_model_code as product_model_code,spm.product_model_name as product_model_name,
     sp.process_name as process_name,sp.process_code as process_code,su.user_name AS create_user_name,
     CONCAT(bt.length,',',bt.width,',',bt.height) as specifications,bpl.pro_name as pro_name,
     sus.user_name AS modified_user_name,bo.organization_name AS organization_name
@@ -116,9 +118,6 @@
        </if>
        <if test="workInstructionId!=null and workInstructionId!=''">
            and ewi.work_instruction_id = #{workInstructionId}
-       </if>
-       <if test="productModelCode!=null and productModelCode!=''">
-           and ewi.product_model_code = #{productModelCode}
        </if>
        <if test="processName!=null and processName!=''">
            and sp.process_name = like CONCAT('%', #{processName}, '%')

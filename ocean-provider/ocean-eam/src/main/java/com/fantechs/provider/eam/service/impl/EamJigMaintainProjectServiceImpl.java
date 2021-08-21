@@ -139,8 +139,8 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
                 eamJigMaintainProjectItem.setModifiedTime(new Date());
                 eamJigMaintainProjectItem.setStatus(StringUtils.isEmpty(eamJigMaintainProjectItem.getStatus())?1: eamJigMaintainProjectItem.getStatus());
                 eamJigMaintainProjectItem.setOrgId(user.getOrganizationId());
+                eamJigMaintainProjectItemMapper.insert(eamJigMaintainProjectItem);
             }
-            eamJigMaintainProjectItemMapper.insertList(list);
         }
 
         EamHtJigMaintainProject eamHtJigMaintainProject = new EamHtJigMaintainProject();

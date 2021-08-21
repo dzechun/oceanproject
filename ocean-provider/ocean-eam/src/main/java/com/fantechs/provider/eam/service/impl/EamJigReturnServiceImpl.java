@@ -4,18 +4,16 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigDto;
-import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
+import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamJigReturnDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.entity.eam.EamJig;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.EamJigRequisition;
 import com.fantechs.common.base.general.entity.eam.EamJigReturn;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJigRequisition;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigReturn;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJig;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigReMaterial;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRequisition;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -50,7 +48,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
     @Resource
     private EamJigRequisitionMapper eamJigRequisitionMapper;
     @Resource
-    private EamJigReMaterialMapper eamJigReMaterialMapper;
+    private EamJigMaterialMapper eamJigMaterialMapper;
     @Resource
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
@@ -140,22 +138,32 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
         searchEamJigRequisition.setWorkOrderId(eamJigRequisitionWorkOrderDto.getWorkOrderId());
         List<Long> jigIdList = eamJigRequisitionMapper.findJigId(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
 
-        List<EamJigReMaterialDto> list = new ArrayList<>();
+        Example example1 = new Example(EamJigRequisition.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("workOrderId",mesPmWorkOrderDtos.get(0).getWorkOrderId());
+
+        Example example2 = new Example(EamJigRequisition.class);
+        Example.Criteria criteria2 = example2.createCriteria();
+        criteria2.andEqualTo("workOrderId",mesPmWorkOrderDtos.get(0).getWorkOrderId());
+
+        List<EamJigMaterialDto> list = new ArrayList<>();
         for (Long jigId : jigIdList) {
             //获取治具信息
-            SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
-            searchEamJigReMaterial.setJigId(jigId);
-            List<EamJigReMaterialDto> eamJigReMaterialDtoList = eamJigReMaterialMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigReMaterial));
-            EamJigReMaterialDto eamJigReMaterialDto = eamJigReMaterialDtoList.get(0);
+            SearchEamJigMaterial searchEamJigMaterial = new SearchEamJigMaterial();
+            searchEamJigMaterial.setJigId(jigId);
+            List<EamJigMaterialDto> eamJigMaterialDtos = eamJigMaterialMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaterial));
+            EamJigMaterialDto eamJigMaterialDto = eamJigMaterialDtos.get(0);
 
             //获取领用数量
-            searchEamJigRequisition.setJigId(jigId);
-            Integer recordQty = eamJigRequisitionMapper.getRecordQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
-            eamJigReMaterialDto.setRecordQty(recordQty);
-            Integer returnQty = eamJigReturnMapper.getReturnQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
-            eamJigReMaterialDto.setReturnQty(returnQty);
+            criteria1.andEqualTo("jigId",jigId);
+            int recordQty = eamJigRequisitionMapper.selectCountByExample(example1);
+            eamJigMaterialDto.setRecordQty(recordQty);
+            //获取归还数量
+            criteria2.andEqualTo("jigId",jigId);
+            int returnQty = eamJigReturnMapper.selectCountByExample(example2);
+            eamJigMaterialDto.setReturnQty(returnQty);
 
-            list.add(eamJigReMaterialDto);
+            list.add(eamJigMaterialDto);
         }
         eamJigRequisitionWorkOrderDto.setList(list);
 

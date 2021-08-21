@@ -1,17 +1,18 @@
 package com.fantechs.common.base.general.dto.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eam.EamJigCategory;
-import com.fantechs.common.base.general.entity.eam.EamJigReMaterial;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentCategory;
+import com.fantechs.common.base.general.entity.eam.EamJigMaterial;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
-public class EamJigReMaterialDto extends EamJigReMaterial implements Serializable {
+public class EamJigMaterialDto extends EamJigMaterial implements Serializable {
 
     /**
      * 创建用户名称
@@ -35,6 +36,13 @@ public class EamJigReMaterialDto extends EamJigReMaterial implements Serializabl
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 仓库库位
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseStorage",value = "仓库库位")
+    private String warehouseStorage;
 
     /**
      * 治具编码
@@ -69,39 +77,11 @@ public class EamJigReMaterialDto extends EamJigReMaterial implements Serializabl
     private String jigModel;
 
     /**
-     * 仓库库位
+     * 使用数量
      */
     @Transient
-    @ApiModelProperty(name = "warehouseStorage",value = "仓库库位")
-    private String warehouseStorage;
-
-    /**
-     * 物料编码
-     */
-    @Transient
-    @ApiModelProperty(name = "materialCode",value = "物料编码")
-    private String materialCode;
-
-    /**
-     * 物料名称
-     */
-    @Transient
-    @ApiModelProperty(name = "materialName",value = "物料名称")
-    private String materialName;
-
-    /**
-     * 物料描述
-     */
-    @Transient
-    @ApiModelProperty(name = "materialDesc",value = "物料描述")
-    private String materialDesc;
-
-    /**
-     * 物料版本
-     */
-    @Transient
-    @ApiModelProperty(name = "materialVersion",value = "物料版本")
-    private String materialVersion;
+    @ApiModelProperty(name="usageQty",value = "使用数量")
+    private Integer usageQty;
 
     /**
      * 记录数量
@@ -123,4 +103,10 @@ public class EamJigReMaterialDto extends EamJigReMaterial implements Serializabl
     @Transient
     @ApiModelProperty(name="oldWorkOrderId",value = "旧工单id")
     private Long oldWorkOrderId;
+
+    /**
+     * 治具绑定产品明细
+     */
+    @ApiModelProperty(name = "list",value = "治具绑定产品明细")
+    private List<EamJigMaterialListDto> list = new ArrayList<>();
 }

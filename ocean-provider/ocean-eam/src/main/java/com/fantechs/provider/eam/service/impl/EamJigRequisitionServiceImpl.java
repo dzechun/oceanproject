@@ -5,18 +5,17 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
+import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRequisition;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigReMaterial;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRequisition;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -47,7 +46,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     @Resource
     private EamHtJigRequisitionMapper eamHtJigRequisitionMapper;
     @Resource
-    private EamJigReMaterialMapper eamJigReMaterialMapper;
+    private EamJigMaterialMapper eamJigMaterialMapper;
     @Resource
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
@@ -77,7 +76,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
      * @return
      */
     @Override
-    public List<EamJigReMaterialDto> getRecordQty(String newWorkOrderCode,String oldWorkOrderCode){
+    public List<EamJigMaterialDto> getRecordQty(String newWorkOrderCode, String oldWorkOrderCode){
         //查询工单
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setCodeQueryMark(1);
@@ -100,17 +99,21 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         searchEamJigRequisition.setWorkOrderId(oldMesPmWorkOrderDtos.get(0).getWorkOrderId());
         List<Long> jigIdList = eamJigRequisitionMapper.findJigId(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
 
-        List<EamJigReMaterialDto> list = new ArrayList<>();
-        for (Long jigId : jigIdList) {
-            EamJigReMaterialDto eamJigReMaterialDto = new EamJigReMaterialDto();
-            eamJigReMaterialDto.setJigId(jigId);
-            //获取记录数量
-            searchEamJigRequisition.setJigId(jigId);
-            Integer recordQty = eamJigRequisitionMapper.getRecordQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
-            eamJigReMaterialDto.setRecordQty(recordQty);
-            eamJigReMaterialDto.setOldWorkOrderId(oldMesPmWorkOrderDtos.get(0).getWorkOrderId());
+        Example example = new Example(EamJigRequisition.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("workOrderId",oldMesPmWorkOrderDtos.get(0).getWorkOrderId());
 
-            list.add(eamJigReMaterialDto);
+        List<EamJigMaterialDto> list = new ArrayList<>();
+        for (Long jigId : jigIdList) {
+            EamJigMaterialDto eamJigMaterialDto = new EamJigMaterialDto();
+            eamJigMaterialDto.setJigId(jigId);
+            //获取记录数量
+            criteria.andEqualTo("jigId",jigId);
+            int recordQty = eamJigRequisitionMapper.selectCountByExample(example);
+            eamJigMaterialDto.setRecordQty(recordQty);
+            eamJigMaterialDto.setOldWorkOrderId(oldMesPmWorkOrderDtos.get(0).getWorkOrderId());
+
+            list.add(eamJigMaterialDto);
         }
 
         return list;
@@ -206,20 +209,22 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         BeanUtils.copyProperties(mesPmWorkOrderDtos.get(0),eamJigRequisitionWorkOrderDto);
 
         //查询治具与产品绑定关系
-        SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
-        searchEamJigReMaterial.setMaterialId(eamJigRequisitionWorkOrderDto.getMaterialId());
-        searchEamJigReMaterial.setOrgId(user.getOrganizationId());
-        List<EamJigReMaterialDto> eamJigReMaterialDtos = eamJigReMaterialMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigReMaterial));
+        SearchEamJigMaterial searchEamJigMaterial = new SearchEamJigMaterial();
+        searchEamJigMaterial.setMaterialId(eamJigRequisitionWorkOrderDto.getMaterialId());
+        searchEamJigMaterial.setOrgId(user.getOrganizationId());
+        List<EamJigMaterialDto> jigList = eamJigMaterialMapper.findJigList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaterial));
 
-        SearchEamJigRequisition searchEamJigRequisition = new SearchEamJigRequisition();
-        searchEamJigRequisition.setWorkOrderId(mesPmWorkOrderDtos.get(0).getWorkOrderId());
-        for (EamJigReMaterialDto eamJigReMaterialDto : eamJigReMaterialDtos){
-            searchEamJigRequisition.setJigId(eamJigReMaterialDto.getJigId());
-            Integer recordQty = eamJigRequisitionMapper.getRecordQty(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
-            eamJigReMaterialDto.setRecordQty(recordQty);
+
+        Example example = new Example(EamJigRequisition.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("workOrderId",mesPmWorkOrderDtos.get(0).getWorkOrderId());
+        for (EamJigMaterialDto eamJigMaterialDto : jigList){
+            criteria.andEqualTo("jigId",eamJigMaterialDto.getJigId());
+            int recordQty = eamJigRequisitionMapper.selectCountByExample(example);
+            eamJigMaterialDto.setRecordQty(recordQty);
         }
 
-        eamJigRequisitionWorkOrderDto.setList(eamJigReMaterialDtos);
+        eamJigRequisitionWorkOrderDto.setList(jigList);
 
         return eamJigRequisitionWorkOrderDto;
     }
@@ -280,13 +285,13 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
      */
     public boolean checkUsageQty(Long workOrderId,Long jigId,int count) {
         MesPmWorkOrder workOrder = pmFeignApi.workOrderDetail(workOrderId).getData();
-        Example example = new Example(EamJigReMaterial.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialId",workOrder.getMaterialId())
-                .andEqualTo("jigId",jigId);
-        List<EamJigReMaterial> eamJigReMaterialList = eamJigReMaterialMapper.selectByExample(example);
+
+        SearchEamJigMaterial searchEamJigMaterial = new SearchEamJigMaterial();
+        searchEamJigMaterial.setJigId(jigId);
+        searchEamJigMaterial.setMaterialId(workOrder.getMaterialId());
+        List<EamJigMaterialDto> jigList = eamJigMaterialMapper.findJigList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaterial));
         //所需数量
-        int usageQty = eamJigReMaterialList.get(0).getUsageQty();
+        int usageQty = jigList.get(0).getUsageQty();
 
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("UsageQtyEqual");

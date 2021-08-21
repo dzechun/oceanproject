@@ -61,6 +61,6 @@ public class EamJigRequisitionWorkOrderDto implements Serializable {
      * 治具绑定产品
      */
     @ApiModelProperty(name="list",value = "治具绑定产品")
-    private List<EamJigReMaterialDto> list= new ArrayList<>();
+    private List<EamJigMaterialDto> list= new ArrayList<>();
 
 }
