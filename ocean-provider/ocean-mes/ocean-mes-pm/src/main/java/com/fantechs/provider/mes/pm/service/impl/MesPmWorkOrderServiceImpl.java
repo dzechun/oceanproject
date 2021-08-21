@@ -1,15 +1,12 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamWiReleaseDetDto;
-import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.entity.eam.EamWiReleaseDet;
-import com.fantechs.common.base.general.entity.eam.history.EamHtWiReleaseDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
@@ -17,7 +14,6 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderBomMapper;
@@ -88,6 +84,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int update(MesPmWorkOrderDto mesPmWorkOrderDto) {
         int i = 0;
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
