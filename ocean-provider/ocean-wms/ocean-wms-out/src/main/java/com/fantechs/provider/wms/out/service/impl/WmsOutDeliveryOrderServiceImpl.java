@@ -406,6 +406,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     wmsInnerJobOrderDet.setPackingUnitName(dto.getPackingUnitName());
                     wmsInnerJobOrderDet.setPlanQty(dto.getPackingQty());
                     wmsInnerJobOrderDet.setOrderStatus((byte) 1);
+                    wmsInnerJobOrderDet.setBatchCode(dto.getBatchCode());
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);

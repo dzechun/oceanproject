@@ -35,35 +35,12 @@ public class EamEquipmentParamDto extends EamEquipmentParam implements Serializa
     private String organizationName;
 
     /**
-     * 设备编码
+     * 设备类别名称
      */
-    @ApiModelProperty(name="equipmentCode",value = "设备编码")
-    @Excel(name = "设备编码", height = 20, width = 30,orderNum="1")
+    @ApiModelProperty(name="equipmentCategoryName",value = "设备类别名称")
+    @Excel(name = "设备类别名称", height = 20, width = 30,orderNum="1")
     @Transient
-    private String equipmentCode;
+    private String equipmentCategoryName;
 
-    /**
-     * 设备名称
-     */
-    @ApiModelProperty(name="equipmentName",value = "设备名称")
-    @Excel(name = "设备名称", height = 20, width = 30,orderNum="2")
-    @Transient
-    private String equipmentName;
-
-    /**
-     * 设备描述
-     */
-    @ApiModelProperty(name="equipmentDesc",value = "设备描述")
-    @Excel(name = "设备描述", height = 20, width = 30,orderNum="3")
-    @Transient
-    private String equipmentDesc;
-
-    /**
-     * 设备型号
-     */
-    @ApiModelProperty(name="equipmentModel",value = "设备型号")
-    @Excel(name = "设备型号", height = 20, width = 30,orderNum="4")
-    @Transient
-    private String equipmentModel;
 
 }
