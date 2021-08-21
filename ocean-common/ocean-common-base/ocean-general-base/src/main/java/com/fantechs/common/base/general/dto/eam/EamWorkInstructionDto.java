@@ -23,6 +23,13 @@ public class EamWorkInstructionDto extends EamWorkInstruction implements Seriali
     private String materialCode;
 
     /**
+     * 产品名称
+     */
+    @ApiModelProperty(name="materialName",value = "产品名称")
+    @Transient
+    private String materialName;
+
+    /**
      * 产品描述
      */
     @ApiModelProperty(name="productModelName",value = "产品描述")

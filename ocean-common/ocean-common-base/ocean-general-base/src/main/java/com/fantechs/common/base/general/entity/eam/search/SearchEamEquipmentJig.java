@@ -7,14 +7,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SearchEamEquipmentParam extends BaseQuery implements Serializable {
-
+public class SearchEamEquipmentJig extends BaseQuery implements Serializable {
 
     /**
-     * 设备类别名称
+     * 设备编码
      */
-    @ApiModelProperty(name="equipmentCategoryName",value = "设备类别名称")
-    private String equipmentCategoryName;
-
+    @ApiModelProperty(name="equipmentCode",value = "设备编码")
+    private String equipmentCode;
 
 }

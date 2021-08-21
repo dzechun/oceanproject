@@ -7,13 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SearchEamStandingBook extends BaseQuery implements Serializable {
-
-    /**
-     * 资产编码
-     */
-    @ApiModelProperty(name="assetCode",value = "资产编码")
-    private String assetCode;
+public class SearchEamEquipmentStandingBook extends BaseQuery implements Serializable {
 
     /**
      * 设备编码
@@ -26,5 +20,18 @@ public class SearchEamStandingBook extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="equipmentName",value = "设备名称")
     private String equipmentName;
+
+    /**
+     * 设备描述
+     */
+    @ApiModelProperty(name="equipmentDesc",value = "设备描述")
+    private String equipmentDesc;
+
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
+
 
 }

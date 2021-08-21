@@ -10,6 +10,12 @@ import java.io.Serializable;
 public class SearchEamEquipmentRepairOrder extends BaseQuery implements Serializable {
 
     /**
+     * 设备维修单id
+     */
+    @ApiModelProperty(name="equipmentRepairOrderId",value = "设备维修单id")
+    private Long equipmentRepairOrderId;
+
+    /**
      * 设备编码
      */
     @ApiModelProperty(name="equipmentCode",value = "设备编码")
@@ -26,5 +32,17 @@ public class SearchEamEquipmentRepairOrder extends BaseQuery implements Serializ
      */
     @ApiModelProperty(name="equipmentModel",value = "设备型号")
     private String equipmentModel;
+
+    /**
+     * 单据状态(1-待维修 2-维修中 3-已维修)
+     */
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待维修 2-维修中 3-已维修)")
+    private Byte orderStatus;
+
+    /**
+     * 设备条码ID
+     */
+    @ApiModelProperty(name="equipmentBarcodeId",value = "设备条码ID")
+    private Long equipmentBarcodeId;
 
 }

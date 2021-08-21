@@ -59,7 +59,7 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
 
         Example example = new Example(EamEquipmentParam.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentId", record.getEquipmentId());
+        criteria.andEqualTo("equipmentCategoryId", record.getEquipmentCategoryId());
         EamEquipmentParam eamEquipmentParam = eamEquipmentParamMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(eamEquipmentParam)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -106,7 +106,7 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
 
         Example example = new Example(EamEquipmentParam.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentId", entity.getEquipmentId())
+        criteria.andEqualTo("equipmentCategoryId", entity.getEquipmentCategoryId())
                 .andNotEqualTo("equipmentParamId",entity.getEquipmentParamId());
         EamEquipmentParam eamEquipmentParam = eamEquipmentParamMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(eamEquipmentParam)){

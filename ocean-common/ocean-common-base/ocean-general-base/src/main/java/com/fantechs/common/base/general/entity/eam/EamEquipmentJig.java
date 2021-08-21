@@ -1,54 +1,47 @@
 package com.fantechs.common.base.general.entity.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.support.ValidGroup;
+import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-;
-;
-
 /**
- * 设备参数设备表
- * eam_equipment_param
- * @author admin
- * @date 2021-06-25 17:52:34
+ * 设备绑定治具表头
+ * eam_equipment_jig
+ * @author Dylan
+ * @date 2021-08-20 14:28:58
  */
 @Data
-@Table(name = "eam_equipment_param")
-public class EamEquipmentParam extends ValidGroup implements Serializable {
+@Table(name = "eam_equipment_jig")
+public class EamEquipmentJig extends ValidGroup implements Serializable {
     /**
-     * 设备参数设备表ID
+     * 设备绑定治具表头ID
      */
-    @ApiModelProperty(name="equipmentParamId",value = "设备参数设备表ID")
+    @ApiModelProperty(name="equipmentJigId",value = "设备绑定治具表头ID")
     @Id
-    @Column(name = "equipment_param_id")
-    @NotNull(groups = update.class,message = "设备参数设备表ID不能为空")
-    private Long equipmentParamId;
+    @Column(name = "equipment_jig_id")
+    @NotNull(groups = update.class,message = "设备绑定治具表头ID不能为空")
+    private Long equipmentJigId;
 
     /**
-     * 设备类别ID
+     * 设备信息ID
      */
-    @ApiModelProperty(name="equipmentCategoryId",value = "设备类别ID")
-    @Column(name = "equipment_category_id")
-    @NotNull(message = "设备类别不能为空")
-    private Long equipmentCategoryId;
+    @ApiModelProperty(name="equipmentId",value = "设备信息ID")
+    @Column(name = "equipment_id")
+    @NotNull(message = "设备不能为空")
+    private Long equipmentId;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="5",replace = {"无效_0", "有效_1"})
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="5")
     private Byte status;
 
     /**
@@ -95,12 +88,6 @@ public class EamEquipmentParam extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
-
-    /**
-     * 设备参数定义明细
-     */
-    @ApiModelProperty(name="list",value = "设备参数定义明细")
-    private List<EamEquipmentParamList> list = new ArrayList<>();
 
     private String option1;
 

@@ -6,19 +6,16 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquRepairOrderReplacementDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentRepairOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderReplacementDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentRepairOrder;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJigRepairOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentRepairOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRepairOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.eam.mapper.EamEquRepairOrderReplacementMapper;
-import com.fantechs.provider.eam.mapper.EamEquipmentRepairOrderMapper;
-import com.fantechs.provider.eam.mapper.EamHtEquipmentRepairOrderMapper;
+import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamEquipmentRepairOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -44,6 +41,9 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
     private EamHtEquipmentRepairOrderMapper eamHtEquipmentRepairOrderMapper;
     @Resource
     private EamEquRepairOrderReplacementMapper eamEquRepairOrderReplacementMapper;
+    @Resource
+    private EamEquipmentBarcodeMapper eamEquipmentBarcodeMapper;
+
 
     @Override
     public List<EamEquipmentRepairOrderDto> findList(Map<String, Object> map) {
@@ -54,6 +54,40 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
         map.put("orgId", user.getOrganizationId());
 
         return eamEquipmentRepairOrderMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public EamEquipmentRepairOrderDto pdaCreateOrder(String equipmentBarcode) {
+        Example example = new Example(EamEquipmentBarcode.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("equipmentBarcode",equipmentBarcode);
+        List<EamEquipmentBarcode> eamEquipmentBarcodes = eamEquipmentBarcodeMapper.selectByExample(example);
+        if(StringUtils.isEmpty(eamEquipmentBarcodes)){
+            throw new BizErrorException("查不到该设备条码");
+        }
+
+        SearchEamEquipmentRepairOrder searchEamEquipmentRepairOrder = new SearchEamEquipmentRepairOrder();
+        searchEamEquipmentRepairOrder.setEquipmentBarcodeId(eamEquipmentBarcodes.get(0).getEquipmentBarcodeId());
+        searchEamEquipmentRepairOrder.setOrderStatus((byte)1);
+        List<EamEquipmentRepairOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentRepairOrder));
+        if(StringUtils.isNotEmpty(orderDtos)){
+            throw new BizErrorException("已存在该设备待维修状态的单据");
+        }
+
+        //保存
+        EamEquipmentRepairOrder eamEquipmentRepairOrder = new EamEquipmentRepairOrder();
+        eamEquipmentRepairOrder.setEquipmentBarcode(equipmentBarcode);
+        eamEquipmentRepairOrder.setEquipmentId(eamEquipmentBarcodes.get(0).getEquipmentId());
+        eamEquipmentRepairOrder.setEquipmentBarcodeId(eamEquipmentBarcodes.get(0).getEquipmentBarcodeId());
+        eamEquipmentRepairOrder.setRequestForRepairTime(new Date());
+        this.save(eamEquipmentRepairOrder);
+
+        SearchEamEquipmentRepairOrder searchEamEquipmentRepairOrder1 = new SearchEamEquipmentRepairOrder();
+        searchEamEquipmentRepairOrder1.setEquipmentRepairOrderId(eamEquipmentRepairOrder.getEquipmentRepairOrderId());
+        List<EamEquipmentRepairOrderDto> list = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentRepairOrder1));
+
+        return list.get(0);
     }
 
     @Override
