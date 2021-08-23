@@ -10,4 +10,7 @@ import java.util.List;
  */
 public interface SysAuthRoleService extends IService<SysAuthRole> {
     int updateBatch(List<SysAuthRole> list, Byte menuType);
+
+    //根据角色ID和菜单ID或者授权信息
+    SysAuthRole getSysAuthRole(Long roleId,Long menuId);
 }

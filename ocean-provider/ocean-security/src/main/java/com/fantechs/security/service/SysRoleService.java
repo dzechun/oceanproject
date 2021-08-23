@@ -2,6 +2,7 @@ package com.fantechs.security.service;
 
 import com.fantechs.common.base.dto.security.SysRoleDto;
 import com.fantechs.common.base.entity.security.SysRole;
+import com.fantechs.common.base.entity.security.SysUserRole;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
 import com.fantechs.common.base.support.IService;
 
@@ -17,4 +18,9 @@ public interface SysRoleService  extends IService<SysRole>{
 
     //通过用户名查询角色信息
     List<SysRoleDto> findByUserName(SearchSysRole searchSysRole);
+
+    //通过用户id获取角色
+    List<SysUserRole> findUserRoleList(Long userId);
+
+    //
 }

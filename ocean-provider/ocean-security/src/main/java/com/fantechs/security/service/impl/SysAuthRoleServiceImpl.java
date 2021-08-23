@@ -42,4 +42,13 @@ public class SysAuthRoleServiceImpl extends BaseService<SysAuthRole> implements 
         }
         return smtAuthRoleMapper.updateBatch(list);
     }
+
+    @Override
+    public SysAuthRole getSysAuthRole(Long roleId,Long menuId) {
+        Example example = new Example(SysAuthRole.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("roleId",roleId);
+        criteria.andEqualTo("menuId",menuId);
+        return smtAuthRoleMapper.selectOneByExample(example);
+    }
 }
