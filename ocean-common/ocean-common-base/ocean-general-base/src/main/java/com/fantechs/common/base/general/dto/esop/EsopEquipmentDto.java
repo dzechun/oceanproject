@@ -1,16 +1,15 @@
-package com.fantechs.common.base.general.dto.eam;
+package com.fantechs.common.base.general.dto.esop;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.general.entity.esop.EsopEquipment;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
-public class EamEquipmentDto extends EamEquipment implements Serializable {
+public class EsopEquipmentDto extends EsopEquipment implements Serializable {
 
     /**
      * 创建用户名称
@@ -104,6 +103,6 @@ public class EamEquipmentDto extends EamEquipment implements Serializable {
     /**
      * 保养编码
      */
-    @ApiModelProperty(name="equipmenMaintainProjectCode",value = "保养编码")
-    private Long equipmenMaintainProjectCode;
+    @ApiModelProperty(name="maintainProjectCode",value = "保养编码")
+    private Long maintainProjectCode;
 }

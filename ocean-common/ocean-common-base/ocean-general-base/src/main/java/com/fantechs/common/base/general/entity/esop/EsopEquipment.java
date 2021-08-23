@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.eam;
+package com.fantechs.common.base.general.entity.esop;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -20,13 +20,13 @@ import java.util.Date;
 
 /**
  * 设备信息
- * eam_equipment
+ * esop_equipment
  * @author admin
  * @date 2021-06-25 11:14:58
  */
 @Data
-@Table(name = "eam_equipment")
-public class EamEquipment extends ValidGroup implements Serializable {
+@Table(name = "esop_equipment")
+public class EsopEquipment extends ValidGroup implements Serializable {
     /**
      * 设备信息ID
      */
@@ -179,9 +179,9 @@ public class EamEquipment extends ValidGroup implements Serializable {
     /**
      * 保养项目ID
      */
-    @ApiModelProperty(name="equipmentMaintainProjectId",value = "保养项目ID")
-    @Column(name = "equipment_maintain_project_id")
-    private Long equipmentMaintainProjectId;
+    @ApiModelProperty(name="maintainProjectId",value = "保养项目ID")
+    @Column(name = "maintain_project_id")
+    private Long maintainProjectId;
 
     /**
      * 设备IP
