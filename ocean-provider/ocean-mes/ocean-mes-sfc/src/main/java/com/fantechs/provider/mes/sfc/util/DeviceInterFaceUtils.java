@@ -1,17 +1,19 @@
-package com.fantechs.provider.materialapi.imes.utils;
+package com.fantechs.provider.mes.sfc.util;
 
+import com.fantechs.common.base.entity.security.SysAuthRole;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.SysUserRole;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
@@ -19,14 +21,15 @@ import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -45,11 +48,11 @@ public class DeviceInterFaceUtils {
     @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
-    private SFCFeignApi sfcFeignApi;
-    @Resource
     private PMFeignApi pmFeignApi;
     @Resource
     private EamFeignApi eamFeignApi;
+    @Resource
+    private MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
 
     /*
      * 获取组织ID
@@ -126,14 +129,29 @@ public class DeviceInterFaceUtils {
         sysUserList = securityFeignApi.selectUsers(searchSysUser);
         return sysUserList;
     }
+
+    /*
+     * 获取用户对应角色信息
+     * */
+    public ResponseEntity<List<SysUserRole>> findUserRoleList(Long userId){
+        return securityFeignApi.findUserRoleList(userId);
+    }
+
+    /*
+     * 获取授权信息
+     * */
+    public ResponseEntity<SysAuthRole> getSysAuthRole(Long roleId,long menuId){
+        return securityFeignApi.getSysAuthRole(roleId,menuId);
+    }
+
     /*
      * 获取工单条码信息
      * */
-    public ResponseEntity<List<MesSfcWorkOrderBarcodeDto>> getWorkOrderBarcode(String barcodeCode){
-        ResponseEntity<List<MesSfcWorkOrderBarcodeDto>> mesSfcWorkOrderBarcodeDtoList=null;
+    public List<MesSfcWorkOrderBarcodeDto> getWorkOrderBarcode(String barcodeCode){
+        List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList=null;
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
         searchMesSfcWorkOrderBarcode.setBarcode(barcodeCode);
-        mesSfcWorkOrderBarcodeDtoList = sfcFeignApi.findList(searchMesSfcWorkOrderBarcode);
+        mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
         return mesSfcWorkOrderBarcodeDtoList;
     }
     /*
@@ -146,6 +164,33 @@ public class DeviceInterFaceUtils {
         mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder);
         return mesPmWorkOrderDtoList;
     }
+    /*
+    *获取工单信息
+    */
+    public ResponseEntity<List<MesPmWorkOrderDto>> getWorkOrder(String workOrderCode){
+        ResponseEntity<List<MesPmWorkOrderDto>> mesPmWorkOrderDtoList=null;
+        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+        searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+        mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder);
+        return mesPmWorkOrderDtoList;
+    }
+    /*
+     *获取工单BOM信息
+     */
+    public ResponseEntity<List<MesPmWorkOrderBomDto>> getWorkOrderBomList(SearchMesPmWorkOrderBom searchMesPmWorkOrderBom){
+        ResponseEntity<List<MesPmWorkOrderBomDto>> mesPmWorkOrderBomDtoList=null;
+        mesPmWorkOrderBomDtoList = pmFeignApi.findList(searchMesPmWorkOrderBom);
+        return mesPmWorkOrderBomDtoList;
+    }
+    /*
+     *获取产品BOM信息
+     */
+    public ResponseEntity<List<BaseProductBomDto>> getProductBomList(SearchBaseProductBom searchBaseProductBom){
+        ResponseEntity<List<BaseProductBomDto>> baseProductBomDtoList=null;
+        baseProductBomDtoList = baseFeignApi.findProductBomList(searchBaseProductBom);
+        return baseProductBomDtoList;
+    }
+
     /*
      * 获取治具条码信息
      * */
@@ -266,18 +311,18 @@ public class DeviceInterFaceUtils {
             return check;
         }
         else{
-            ResponseEntity<List<MesSfcWorkOrderBarcodeDto>> mesSfcWorkOrderBarcodeDtoList= this.getWorkOrderBarcode(barcodeCode);
-            if(StringUtils.isEmpty(mesSfcWorkOrderBarcodeDtoList.getData())){
+            List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList= this.getWorkOrderBarcode(barcodeCode);
+            if(StringUtils.isEmpty(mesSfcWorkOrderBarcodeDtoList)){
                 check = fail+" 请求失败,成品SN不存在";
                 return check;
             }
 
             //检查条码状态
-            if (mesSfcWorkOrderBarcodeDtoList.getData().size() > 1) {
+            if (mesSfcWorkOrderBarcodeDtoList.size() > 1) {
                 check = fail+" 请求失败,成品SN重复";
                 return check;
             }
-            MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = mesSfcWorkOrderBarcodeDtoList.getData().get(0);
+            MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = mesSfcWorkOrderBarcodeDtoList.get(0);
             if (mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == 2 || mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == 3) {
                 check = fail+" 请求失败,成品SN条码状态不正确";
                 return check;
@@ -324,10 +369,7 @@ public class DeviceInterFaceUtils {
                 check = fail+" 请求失败,工单状态已完成或已挂起";
                 return check;
             }
-            if (mesPmWorkOrderDto.getProductionQty().compareTo(mesPmWorkOrderDto.getWorkOrderQty()) > -1) {
-                check = fail+" 请求失败,工单投产数量大于等于工单数";
-                return check;
-            }
+
             /*
              * 产前关键事项是否完成判断
              * 1 获取配置项设置

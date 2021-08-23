@@ -2,6 +2,7 @@ package com.fantechs.security.controller;
 
 import com.fantechs.common.base.dto.security.SysRoleDto;
 import com.fantechs.common.base.entity.security.SysRole;
+import com.fantechs.common.base.entity.security.SysUserRole;
 import com.fantechs.common.base.entity.security.history.SysHtRole;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -112,5 +113,12 @@ public class SysRoleController {
         Page<Object> page = PageHelper.startPage(searchSysRole.getStartPage(),searchSysRole.getPageSize());
         List<SysHtRole> sysHtRoles = sysHtRoleService.selectHtRoles(searchSysRole);
         return  ControllerUtil.returnDataSuccess(sysHtRoles, (int)page.getTotal());
+    }
+
+    @ApiOperation(value = "获取用户角色信息", notes = "获取用户角色信息")
+    @PostMapping("/findUserRoleList")
+    public ResponseEntity<List<SysUserRole>> findUserRoleList(@ApiParam(value = "必传：userId", required = true) @RequestParam @Validated @NotNull(message = "userId不能为空") Long userId) {
+        List<SysUserRole> sysUserRoleList=sysRoleService.findUserRoleList(userId);
+        return  ControllerUtil.returnDataSuccess(sysUserRoleList, StringUtils.isEmpty(sysUserRoleList)?0:sysUserRoleList.size());
     }
 }
