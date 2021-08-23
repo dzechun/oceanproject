@@ -28,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/08/20.
  */
 @RestController
-@Api(tags = "eamEquPointInspectionOrderDet控制器")
+@Api(tags = "设备点检单明细")
 @RequestMapping("/eamEquPointInspectionOrderDet")
 @Validated
 public class EamEquPointInspectionOrderDetController {
@@ -84,7 +84,7 @@ public class EamEquPointInspectionOrderDetController {
     List<EamEquPointInspectionOrderDetDto> list = eamEquPointInspectionOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquPointInspectionOrderDet));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "EamEquPointInspectionOrderDet信息", EamEquPointInspectionOrderDetDto.class, "EamEquPointInspectionOrderDet.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "设备点检单明细", EamEquPointInspectionOrderDetDto.class, "设备点检单明细.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

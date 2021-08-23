@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/08/20.
  */
 @RestController
-@Api(tags = "eamEquPointInspectionOrder控制器")
+@Api(tags = "设备点检单")
 @RequestMapping("/eamEquPointInspectionOrder")
 @Validated
 public class EamEquPointInspectionOrderController {
@@ -95,7 +95,7 @@ public class EamEquPointInspectionOrderController {
     List<EamEquPointInspectionOrderDto> list = eamEquPointInspectionOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquPointInspectionOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "EamEquPointInspectionOrder信息", EamEquPointInspectionOrderDto.class, "EamEquPointInspectionOrder.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "设备点检单", EamEquPointInspectionOrderDto.class, "设备点检单.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
