@@ -1,11 +1,13 @@
 package com.fantechs.provider.api.eam;
 
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamIssue;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaterial;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -60,4 +62,8 @@ public interface EamFeignApi {
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/eamIssue/batchAdd")
     ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody List<EamIssue> eamIssues);
+
+    @ApiOperation("查询设备绑定产品列表")
+    @PostMapping("/eamEquipmentMaterial/findList")
+    ResponseEntity<List<EamEquipmentMaterialDto>> findEquipmentMaterialDtoList(@ApiParam(value = "查询对象")@RequestBody SearchEamEquipmentMaterial searchEamEquipmentMaterial);
 }

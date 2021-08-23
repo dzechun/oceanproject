@@ -10,14 +10,18 @@ import com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
+import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaterial;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
@@ -189,6 +193,24 @@ public class DeviceInterFaceUtils {
         ResponseEntity<List<BaseProductBomDto>> baseProductBomDtoList=null;
         baseProductBomDtoList = baseFeignApi.findProductBomList(searchBaseProductBom);
         return baseProductBomDtoList;
+    }
+
+    /*
+     *获取设备绑定产品信息
+     */
+    public ResponseEntity<List<EamEquipmentMaterialDto>> getEquipmentMaterialList(SearchEamEquipmentMaterial searchEamEquipmentMaterial){
+        ResponseEntity<List<EamEquipmentMaterialDto>> eamEquipmentMaterialDtoList=null;
+        eamEquipmentMaterialDtoList = eamFeignApi.findEquipmentMaterialDtoList(searchEamEquipmentMaterial);
+        return eamEquipmentMaterialDtoList;
+    }
+
+    /*
+     *获取治具绑定产品信息
+     */
+    public ResponseEntity<List<EamJigMaterialDto>> getJigMaterialDtoList(SearchEamJigMaterial searchEamJigMaterial){
+        ResponseEntity<List<EamJigMaterialDto>> eamJigMaterialDtoList=null;
+        eamJigMaterialDtoList = eamFeignApi.findList(searchEamJigMaterial);
+        return eamJigMaterialDtoList;
     }
 
     /*
@@ -395,6 +417,7 @@ public class DeviceInterFaceUtils {
 
                 }
             }
+
             //检查工序是否在工单的工艺路线工序中
             Long routeId=mesPmWorkOrderDto.getRouteId();
             ResponseEntity<List<BaseRouteProcess>> responseEntity=this.getBaseRouteProcess(routeId);
@@ -418,15 +441,15 @@ public class DeviceInterFaceUtils {
             MaterialId=mesPmWorkOrderDto.getMaterialId();
 
         }
-        //设备编码判断
-        if(StringUtils.isNotEmpty(equipmentCode)){
-            ResponseEntity<List<EamEquipmentDto>> eamEquipmentDtoList = this.getEamEquipment(equipmentCode);
-            if (StringUtils.isEmpty(eamEquipmentDtoList.getData())) {
-                check = fail + " 请求失败,设备编码不存在";
-                return check;
-            }
-        }
-        //治具SN判断
+
+        //治具SN判断//设备编码判断
+        //        if(StringUtils.isNotEmpty(equipmentCode)){
+        //            ResponseEntity<List<EamEquipmentDto>> eamEquipmentDtoList = this.getEamEquipment(equipmentCode);
+        //            if (StringUtils.isEmpty(eamEquipmentDtoList.getData())) {
+        //                check = fail + " 请求失败,设备编码不存在";
+        //                return check;
+        //            }
+        //        }
         if(StringUtils.isNotEmpty(eamJigBarCode)){
             String[] jigBarCodeA=eamJigBarCode.split(",");
             for (String item : jigBarCodeA) {
