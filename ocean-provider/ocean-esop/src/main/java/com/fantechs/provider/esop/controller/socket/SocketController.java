@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 @RestController
 @Api(tags = "设备状态监控")
-@RequestMapping("/equipmentStatus")
+@RequestMapping("/esopEquipmentStatus")
 @Validated
 public class SocketController {
     @Resource

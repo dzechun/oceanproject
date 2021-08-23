@@ -118,7 +118,7 @@ public class SocketServiceImpl implements SocketService {
                 Map<String, Object> data = new HashMap();
                 List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
                 map.put("code", code);
-                map.put("url", urlHeader+url+eamEquipment.getEquipmentIp());
+                map.put("url", urlHeader + url + eamEquipment.getEquipmentIp());
                 list.add(map);
                 data.put("data",list);
                 String outMsg = JSON.toJSONString(data);

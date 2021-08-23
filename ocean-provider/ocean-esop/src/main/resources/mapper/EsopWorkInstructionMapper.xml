@@ -26,6 +26,9 @@
     <result column="manufacture_procedure" jdbcType="LONGVARCHAR" property="manufactureProcedure" />
     <result column="process_req_and_announcements" jdbcType="LONGVARCHAR" property="processReqAndAnnouncements" />
     <result column="standard_time" jdbcType="DECIMAL" property="standardTime" />
+    <result column="write_make_user_name" jdbcType="VARCHAR" property="writeMakeUserName" />
+    <result column="write_make_time" jdbcType="TIMESTAMP" property="writeMakeTime" />
+    <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName" />
   </resultMap>
 
 
@@ -78,7 +81,10 @@
         ewi.option1,
         ewi.option2,
         ewi.option3,
-        ewi.standard_time
+        ewi.standard_time,
+        ewi.write_make_user_name,
+        ewi.write_make_time,
+        ewi.audit_user_name
     </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">

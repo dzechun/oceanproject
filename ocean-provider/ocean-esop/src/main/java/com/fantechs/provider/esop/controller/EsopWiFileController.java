@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
  */
 @RestController
 @Api(tags = "电子WI附件上传")
-@RequestMapping("/esopHtWiFile")
+@RequestMapping("/esopWiFile")
 @Validated
 public class EsopWiFileController {
 

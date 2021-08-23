@@ -53,7 +53,7 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from easop_news_attachment ena
+    from esop_news_attachment ena
     left join ocean_v2.sys_user u on ena.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ena.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ena.org_id = bo.organization_id
