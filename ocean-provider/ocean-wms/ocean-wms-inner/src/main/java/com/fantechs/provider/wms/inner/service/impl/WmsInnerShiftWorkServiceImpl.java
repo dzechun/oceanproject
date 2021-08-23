@@ -11,29 +11,21 @@ import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -381,10 +373,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
         List<WmsInnerJobOrderDet> wmsInnerJobOrderDetDto = wmsInnerJobOrderDto.getWmsInPutawayOrderDets();
 
-        BigDecimal resQty = wmsInnerJobOrderDetDto.stream()
-                .map(WmsInnerJobOrderDet::getActualQty)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         // 更改库存
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -459,6 +447,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (workerDtos.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001014);
         }
+
+        BigDecimal resQty = wmsInnerJobOrderDetDto.stream()
+                .map(WmsInnerJobOrderDet::getDistributionQty)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         WmsInnerJobOrder ws = new WmsInnerJobOrder();
         ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
