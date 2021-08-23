@@ -104,6 +104,6 @@ public class EamEquipmentDto extends EamEquipment implements Serializable {
     /**
      * 保养编码
      */
-    @ApiModelProperty(name="maintainProjectCode",value = "保养编码")
-    private Long maintainProjectCode;
+    @ApiModelProperty(name="equipmenMaintainProjectCode",value = "保养编码")
+    private Long equipmenMaintainProjectCode;
 }

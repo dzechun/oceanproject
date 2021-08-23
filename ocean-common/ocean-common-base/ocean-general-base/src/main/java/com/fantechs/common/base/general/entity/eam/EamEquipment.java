@@ -179,9 +179,9 @@ public class EamEquipment extends ValidGroup implements Serializable {
     /**
      * 保养项目ID
      */
-    @ApiModelProperty(name="maintainProjectId",value = "保养项目ID")
-    @Column(name = "maintain_project_id")
-    private Long maintainProjectId;
+    @ApiModelProperty(name="equipmentMaintainProjectId",value = "保养项目ID")
+    @Column(name = "equipment_maintain_project_id")
+    private Long equipmentMaintainProjectId;
 
     /**
      * 设备IP

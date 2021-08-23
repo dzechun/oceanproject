@@ -4,27 +4,28 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamEquPointInspectionOrderDetDto;
-import com.fantechs.common.base.general.dto.eam.EamEquPointInspectionOrderDto;
-import com.fantechs.common.base.general.entity.eam.EamEquPointInspectionOrder;
-import com.fantechs.common.base.general.entity.eam.EamEquPointInspectionOrderDet;
+import com.fantechs.common.base.general.dto.eam.*;
+import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquPointInspectionOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquPointInspectionOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquPointInspectionProject;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaintainOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaintainProject;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.eam.mapper.EamEquPointInspectionOrderMapper;
-import com.fantechs.provider.eam.mapper.EamHtEquPointInspectionOrderMapper;
+import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamEquPointInspectionOrderDetService;
 import com.fantechs.provider.eam.service.EamEquPointInspectionOrderService;
 import com.fantechs.provider.eam.service.EamEquipmentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +46,15 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
 
     @Resource
     private EamEquPointInspectionOrderDetService eamEquPointInspectionOrderDetService;
+
+    @Resource
+    private EamEquipmentBarcodeMapper eamEquipmentBarcodeMapper;
+
+    @Resource
+    private EamEquipmentMapper eamEquipmentMapper;
+
+    @Resource
+    private EamEquPointInspectionProjectMapper eamEquPointInspectionProjectMapper;
 
     @Override
     public List<EamEquPointInspectionOrderDto> findList(Map<String, Object> map) {
@@ -69,6 +79,83 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此设备条码没有关联设备或者设备类别");
         }
         return list.get(0);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public EamEquPointInspectionOrderDto pdaCreateOrder(String equipmentBarcode) {
+        //查设备条码信息
+        Example example = new Example(EamEquipmentBarcode.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("equipmentBarcode",equipmentBarcode);
+        List<EamEquipmentBarcode> eamEquipmentBarcodes = eamEquipmentBarcodeMapper.selectByExample(example);
+        if(StringUtils.isEmpty(eamEquipmentBarcodes)){
+            throw new BizErrorException("查不到此设备条码");
+        }
+        EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodes.get(0);
+        //修改设备状态为点检中
+        eamEquipmentBarcode.setEquipmentStatus((byte)6);
+        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+
+        EamEquipment eamEquipment = eamEquipmentMapper.selectByPrimaryKey(eamEquipmentBarcode.getEquipmentId());
+
+        //查设备对应的点检项目
+        SearchEamEquPointInspectionProject searchEamEquPointInspectionProject = new SearchEamEquPointInspectionProject();
+        searchEamEquPointInspectionProject.setEquipmentCategoryId(eamEquipment.getEquipmentCategoryId());
+        List<EamEquPointInspectionProjectDto> list = eamEquPointInspectionProjectMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquPointInspectionProject));
+        if(StringUtils.isEmpty(list)){
+            throw new BizErrorException("查不到该设备所属类别的点检项目");
+        }
+        EamEquPointInspectionProjectDto eamEquPointInspectionProjectDto = list.get(0);
+
+
+        SearchEamEquPointInspectionOrder searchEamEquPointInspectionOrder = new SearchEamEquPointInspectionOrder();
+        searchEamEquPointInspectionOrder.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
+        searchEamEquPointInspectionOrder.setOrderStatus((byte)1);
+        List<EamEquPointInspectionOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquPointInspectionOrder));
+        if(StringUtils.isNotEmpty(orderDtos)){
+            throw new BizErrorException("已存在该设备待点检状态的单据");
+        }
+
+
+        //保存点检单信息
+        EamEquPointInspectionOrder eamEquPointInspectionOrder = new EamEquPointInspectionOrder();
+        List<EamEquPointInspectionOrderDet> eamEquPointInspectionOrderDets = new ArrayList<>();
+
+        eamEquPointInspectionOrder.setEquPointInspectionOrderCode(CodeUtils.getId("SBDJ-"));
+        eamEquPointInspectionOrder.setEquipmentId(eamEquipmentBarcode.getEquipmentId());
+        eamEquPointInspectionOrder.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
+        eamEquPointInspectionOrder.setEquPointInspectionProjectId(eamEquPointInspectionProjectDto.getEquPointInspectionProjectId());
+        List<EamEquPointInspectionProjectItem> items = eamEquPointInspectionProjectDto.getItems();
+        for (EamEquPointInspectionProjectItem eamEquPointInspectionProjectItem : items){
+            EamEquPointInspectionOrderDet eamEquPointInspectionOrderDet = new EamEquPointInspectionOrderDet();
+            eamEquPointInspectionOrderDet.setEquPointInspectionProjectItemId(eamEquPointInspectionProjectItem.getEquPointInspectionProjectItemId());
+            eamEquPointInspectionOrderDets.add(eamEquPointInspectionOrderDet);
+        }
+        eamEquPointInspectionOrder.setOrderDets(eamEquPointInspectionOrderDets);
+
+        this.save(eamEquPointInspectionOrder);
+
+
+        SearchEamEquPointInspectionOrder searchEamEquPointInspectionOrder1 = new SearchEamEquPointInspectionOrder();
+        searchEamEquPointInspectionOrder1.setEquPointInspectionOrderId(eamEquPointInspectionOrder.getEquPointInspectionOrderId());
+        List<EamEquPointInspectionOrderDto> equPointInspectionOrderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquPointInspectionOrder1));
+        return equPointInspectionOrderDtos.get(0);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int pdaSubmit(EamEquPointInspectionOrder eamEquPointInspectionOrder) {
+        eamEquPointInspectionOrder.setOrderStatus((byte)2);
+        int i = this.update(eamEquPointInspectionOrder);
+
+        //修改该设备点检信息
+        EamEquipmentBarcode eamEquipmentBarcode = new EamEquipmentBarcode();
+        eamEquipmentBarcode.setEquipmentBarcodeId(eamEquPointInspectionOrder.getEquipmentBarcodeId());
+        eamEquipmentBarcode.setEquipmentStatus((byte)5);
+        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+
+        return i;
     }
 
     @Override

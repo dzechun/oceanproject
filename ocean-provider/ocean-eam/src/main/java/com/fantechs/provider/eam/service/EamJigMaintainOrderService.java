@@ -16,4 +16,6 @@ public interface EamJigMaintainOrderService extends IService<EamJigMaintainOrder
     List<EamJigMaintainOrderDto> findList(Map<String, Object> map);
 
     EamJigMaintainOrderDto pdaCreateOrder(String jigBarcode);
+
+    int pdaSubmit(EamJigMaintainOrder eamJigMaintainOrder);
 }

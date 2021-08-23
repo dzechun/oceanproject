@@ -48,11 +48,11 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhstr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="sampleSransitionRuleCode != null and sampleSransitionRuleCode!=''">
-        and bhstr.sample_transition_rule_code like CONCAT('%', #{sampleSransitionRuleCode}, '%')
+      <if test="sampleTransitionRuleCode != null and sampleTransitionRuleCode!=''">
+        and bhstr.sample_transition_rule_code like CONCAT('%', #{sampleTransitionRuleCode}, '%')
       </if>
-      <if test="sampleSransitionRuleDesc != null and sampleSransitionRuleDesc!=''">
-        and bhstr.sample_transition_rule_desc like CONCAT('%', #{sampleSransitionRuleDesc}, '%')
+      <if test="sampleTransitionRuleDesc != null and sampleTransitionRuleDesc!=''">
+        and bhstr.sample_transition_rule_desc like CONCAT('%', #{sampleTransitionRuleDesc}, '%')
       </if>
       <if test="orgId!=null">
         and bhstr.org_id=#{orgId}

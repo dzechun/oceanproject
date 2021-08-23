@@ -17,4 +17,6 @@ public interface EamJigPointInspectionOrderService extends IService<EamJigPointI
     List<EamJigPointInspectionOrderDto> findList(Map<String, Object> map);
 
     EamJigPointInspectionOrderDto pdaCreateOrder(String jigBarcode);
+
+    int pdaSubmit(EamJigPointInspectionOrder eamJigPointInspectionOrder);
 }

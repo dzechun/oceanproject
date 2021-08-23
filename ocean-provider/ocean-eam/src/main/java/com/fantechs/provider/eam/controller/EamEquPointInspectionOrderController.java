@@ -3,7 +3,9 @@ package com.fantechs.provider.eam.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamEquPointInspectionOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamEquPointInspectionOrder;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentMaintainOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquPointInspectionOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -37,6 +39,19 @@ public class EamEquPointInspectionOrderController {
 
     @Resource
     private EamEquPointInspectionOrderService eamEquPointInspectionOrderService;
+
+    @ApiOperation("新建保养单")
+    @PostMapping("/pdaCreateOrder")
+    public ResponseEntity<EamEquPointInspectionOrderDto> pdaCreateOrder(@ApiParam(value = "设备条码",required = true)@RequestParam  @NotBlank(message="设备条码不能为空") String equipmentBarcode) {
+        EamEquPointInspectionOrderDto eamEquPointInspectionOrderDto = eamEquPointInspectionOrderService.pdaCreateOrder(equipmentBarcode);
+        return  ControllerUtil.returnDataSuccess(eamEquPointInspectionOrderDto,StringUtils.isEmpty(eamEquPointInspectionOrderDto)?0:1);
+    }
+
+    @ApiOperation("提交")
+    @PostMapping("/pdaSubmit")
+    public ResponseEntity pdaSubmit(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamEquPointInspectionOrder.update.class) EamEquPointInspectionOrder eamEquPointInspectionOrder) {
+        return ControllerUtil.returnCRUD(eamEquPointInspectionOrderService.pdaSubmit(eamEquPointInspectionOrder));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

@@ -701,23 +701,11 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
             for (EamWiReleaseDet eamWiReleaseDet : eamWiReleaseDetList) {
                 EamWiRelease eamWiRelease = eamWiReleaseMapper.selectByPrimaryKey(eamWiReleaseDet.getWiReleaseId());
                 if (eamWiRelease.getReleaseStatus() == (byte) 2) {
-                    String url = getUrl();
-                    socketService.BatchInstructions(eamWiRelease.getProLineId(), "1202", url + "/#/YunZhiESOP?ip=");
+                    socketService.BatchInstructions(eamWiRelease.getProLineId(), "1202", "/#/YunZhiESOP?ip=");
                 }
             }
         }
         return 1;
-    }
-
-    public String getUrl(){
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("EsopUrl");
-        ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
-        List<SysSpecItem> sysSpecItemList = itemList.getData();
-        if(StringUtils.isNotEmpty(sysSpecItemList)){
-            return sysSpecItemList.get(0).getParaValue();
-        }
-        return null;
     }
 
 
