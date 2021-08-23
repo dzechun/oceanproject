@@ -25,7 +25,7 @@
     <result column="width" jdbcType="DECIMAL" property="width" />
     <result column="height" jdbcType="DECIMAL" property="height" />
     <result column="volume" jdbcType="DECIMAL" property="volume" />
-    <result column="maintain_project_id" jdbcType="BIGINT" property="maintainProjectId" />
+    <result column="equipment_maintain_project_id" jdbcType="BIGINT" property="equipmentMaintainProjectId" />
     <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp" />
     <result column="equipment_mac_address" jdbcType="VARCHAR" property="equipmentMacAddress" />
     <result column="release_date" jdbcType="TIMESTAMP" property="releaseDate" />
@@ -63,7 +63,7 @@
     <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
     <result column="station_name" jdbcType="VARCHAR" property="stationName"/>
     <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
-    <result column="maintain_project_code" jdbcType="VARCHAR" property="maintainProjectCode"/>
+    <result column="equipment_maintain_project_code" jdbcType="VARCHAR" property="equipmenMaintainProjectCode"/>
   </resultMap>
 
   <resultMap id="ResultEamEquInspectionOrderDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto">
@@ -111,7 +111,7 @@
     ee.width,
     ee.height,
     ee.volume,
-    ee.maintain_project_id,
+    ee.equipment_maintain_project_id,
     ee.equipment_ip,
     ee.equipment_mac_address,
     ee.release_date,
@@ -140,7 +140,7 @@
     select <include refid="Base_Column_List"></include>,
     eec.equipment_category_desc as equipment_category_desc ,bw.warehouse_name as warehouse_name, bws.work_shop_name as work_shop_name,
     bst.station_name as station_name ,bpl.pro_name as pro_name, bse.section_name as section_name,
-    bp.process_name as process_name ,bp.process_code as process_code ,bf.factory_name as factory_name, emp.maintain_project_code as maintain_project_code,
+    bp.process_name as process_name ,bp.process_code as process_code ,bf.factory_name as factory_name, emp.equipment_maintain_project_code as equipment_maintain_project_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -153,7 +153,7 @@
     left join base_workshop_section bse on ee.section_id=bse.section_id
     left join base_factory bf on ee.factory_id=bf.factory_id
     left join base_process bp on ee.process_id=bp.process_id
-    left join eam_equipment_maintain_project emp on ee.maintain_project_id=emp.maintain_project_id
+    left join eam_equipment_maintain_project emp on ee.equipment_maintain_project_id=emp.equipment_maintain_project_id
     left join eam_equipment_data_group_re_dc eedgrd on ee.equipment_id=eedgrd.equipment_id
     left join eam_equipment_data_group eedg on eedgrd.equipment_data_group_id=eedg.equipment_data_group_id
     left join ocean_v2.sys_user u on ee.create_user_id=u.user_id
