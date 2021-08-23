@@ -233,29 +233,6 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
             saveFile(eamWorkInstructionDto, eamWorkInstruction.getWorkInstructionId(), user);
             fileExample.clear();
 
-        /*
-        * 电子WI管理审核
-        * 如果在SOP已发布明细中找到相应的WI编码数据
-        * 则重新调用一次EamWiReleaseServiceImpl.censor()方法
-        */
-
-/*
-        byte wiStatus=eamWorkInstructionDto.getWiStatus();
-        if(wiStatus==(byte) 2){
-            Long workInstructionId=eamWorkInstructionDto.getWorkInstructionId();
-            Example exampleWiRDet = new Example(EamWiReleaseDet.class);
-            Example.Criteria criteriaWiRDet = exampleWiRDet.createCriteria();
-            criteriaWiRDet.andEqualTo("workInstructionId", workInstructionId);
-            List<EamWiReleaseDet> eamWiReleaseDetList=eamWiReleaseDetMapper.selectByExample(exampleWiRDet);
-            for (EamWiReleaseDet eamWiReleaseDet : eamWiReleaseDetList) {
-                Long wiReleaseId=eamWiReleaseDet.getWiReleaseId();
-                EamWiRelease eamWiRelease=eamWiReleaseMapper.selectByPrimaryKey(wiReleaseId);
-                if(eamWiRelease.getReleaseStatus()==(byte)2){
-                    socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://192.168.204.163/#/YunZhiESOP?ip=");
-                }
-            }
-        }*/
-
         return i;
     }
 
