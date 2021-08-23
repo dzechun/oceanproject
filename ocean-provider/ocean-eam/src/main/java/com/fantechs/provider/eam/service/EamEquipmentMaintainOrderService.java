@@ -43,4 +43,19 @@ public interface EamEquipmentMaintainOrderService extends IService<EamEquipmentM
      * @return
      */
     int batchDelete(String ids);
+
+    /**
+     * PDA创建保养单
+     * @param equipmentBarcode
+     * @return
+     */
+    EamEquipmentMaintainOrderDto pdaCreateOrder(String equipmentBarcode);
+
+
+    /**
+     * PDA提交
+     * @param eamEquipmentMaintainOrder
+     * @return
+     */
+    int pdaSubmit(EamEquipmentMaintainOrder eamEquipmentMaintainOrder);
 }

@@ -3,6 +3,7 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderReplacementDto;
 import com.fantechs.common.base.general.entity.eam.*;
@@ -64,19 +65,25 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
         if(StringUtils.isEmpty(eamJigBarcodes)){
             throw new BizErrorException("查不到此治具条码");
         }
+        EamJigBarcode eamJigBarcode = eamJigBarcodes.get(0);
+        //修改治具状态为停用
+        eamJigBarcode.setUsageStatus((byte)3);
+        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
+
 
         SearchEamJigRepairOrder searchEamJigRepairOrder1 = new SearchEamJigRepairOrder();
-        searchEamJigRepairOrder1.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
+        searchEamJigRepairOrder1.setJigBarcodeId(eamJigBarcode.getJigBarcodeId());
         searchEamJigRepairOrder1.setOrderStatus((byte)1);
         List<EamJigRepairOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigRepairOrder1));
         if(StringUtils.isNotEmpty(orderDtos)){
             throw new BizErrorException("已存在该治具待维修状态的单据");
         }
 
+        //保存维修单信息
         EamJigRepairOrder eamJigRepairOrder = new EamJigRepairOrder();
         eamJigRepairOrder.setJigBarcode(jigBarcode);
-        eamJigRepairOrder.setJigId(eamJigBarcodes.get(0).getJigId());
-        eamJigRepairOrder.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
+        eamJigRepairOrder.setJigId(eamJigBarcode.getJigId());
+        eamJigRepairOrder.setJigBarcodeId(eamJigBarcode.getJigBarcodeId());
         eamJigRepairOrder.setRequestForRepairTime(new Date());
         this.save(eamJigRepairOrder);
 
@@ -164,7 +171,22 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
         BeanUtils.copyProperties(entity,eamHtJigRepairOrder);
         int i = eamHtJigRepairOrderMapper.insert(eamHtJigRepairOrder);
 
+        updateJigUsageStatus(entity);
+
         return i;
+    }
+
+    /**
+     * 修改该治具使用状态
+     * @param entity
+     */
+    public void updateJigUsageStatus(EamJigRepairOrder entity) {
+        if(StringUtils.isNotEmpty(entity.getRepairUserId())) {
+            EamJigBarcode eamJigBarcode = new EamJigBarcode();
+            eamJigBarcode.setJigBarcodeId(entity.getJigBarcodeId());
+            eamJigBarcode.setUsageStatus((byte) 2);
+            eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
+        }
     }
 
     @Override

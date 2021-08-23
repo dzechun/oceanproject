@@ -3,7 +3,9 @@ package com.fantechs.provider.eam.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquMaintainOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamJigMaintainOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentMaintainOrder;
+import com.fantechs.common.base.general.entity.eam.EamJigMaintainOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaintainOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -37,6 +39,19 @@ public class EamEquipmentMaintainOrderController {
 
     @Resource
     private EamEquipmentMaintainOrderService eamEquipmentMaintainOrderService;
+
+    @ApiOperation("新建保养单")
+    @PostMapping("/pdaCreateOrder")
+    public ResponseEntity<EamEquipmentMaintainOrderDto> pdaCreateOrder(@ApiParam(value = "设备条码",required = true)@RequestParam  @NotBlank(message="设备条码不能为空") String equipmentBarcode) {
+        EamEquipmentMaintainOrderDto eamEquipmentMaintainOrderDto = eamEquipmentMaintainOrderService.pdaCreateOrder(equipmentBarcode);
+        return  ControllerUtil.returnDataSuccess(eamEquipmentMaintainOrderDto,StringUtils.isEmpty(eamEquipmentMaintainOrderDto)?0:1);
+    }
+
+    @ApiOperation("提交")
+    @PostMapping("/pdaSubmit")
+    public ResponseEntity pdaSubmit(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamEquipmentMaintainOrder.update.class) EamEquipmentMaintainOrder eamEquipmentMaintainOrder) {
+        return ControllerUtil.returnCRUD(eamEquipmentMaintainOrderService.pdaSubmit(eamEquipmentMaintainOrder));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

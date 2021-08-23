@@ -48,6 +48,12 @@ public class EamJigPointInspectionOrderController {
         return  ControllerUtil.returnDataSuccess(eamJigMaintainOrderDto,StringUtils.isEmpty(eamJigMaintainOrderDto)?0:1);
     }
 
+    @ApiOperation("提交")
+    @PostMapping("/pdaSubmit")
+    public ResponseEntity pdaSubmit(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamJigPointInspectionOrder.update.class) EamJigPointInspectionOrder eamJigPointInspectionOrder) {
+        return ControllerUtil.returnCRUD(eamJigPointInspectionOrderService.pdaSubmit(eamJigPointInspectionOrder));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EamJigPointInspectionOrder eamJigPointInspectionOrder) {

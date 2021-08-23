@@ -37,6 +37,7 @@
     <result column="jig_desc" jdbcType="VARCHAR" property="jigDesc" />
     <result column="jig_model" jdbcType="VARCHAR" property="jigModel" />
     <result column="jig_category_name" jdbcType="VARCHAR" property="jigCategoryName"/>
+    <result column="jig_category_id" jdbcType="BIGINT" property="jigCategoryId"/>
     <result column="user_name" jdbcType="VARCHAR" property="userName"/>
   </resultMap>
 
@@ -64,7 +65,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    ej.jig_code,ej.jig_name,ej.jig_desc,ej.jig_model,ejc.jig_category_name,su.user_name,
+    ej.jig_code,ej.jig_name,ej.jig_desc,ej.jig_model,ejc.jig_category_name,ejc.jig_category_id,su.user_name,
     DATEDIFF(NOW(),ejb.create_time) as current_usage_days,
     DATEDIFF(NOW(),ejb.last_time_maintain_time) as current_maintain_usage_days,
     u.user_name as create_user_name,

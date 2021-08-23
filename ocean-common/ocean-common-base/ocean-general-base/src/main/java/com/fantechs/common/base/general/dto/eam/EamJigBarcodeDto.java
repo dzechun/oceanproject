@@ -71,6 +71,13 @@ public class EamJigBarcodeDto extends EamJigBarcode implements Serializable {
     private String jigCategoryName;
 
     /**
+     * 治具类别ID
+     */
+    @Transient
+    @ApiModelProperty(name = "jigCategoryId",value = "治具类别ID")
+    private Long jigCategoryId;
+
+    /**
      * 治具管理员
      */
     @Transient

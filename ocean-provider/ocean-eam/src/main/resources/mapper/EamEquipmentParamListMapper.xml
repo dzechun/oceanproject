@@ -10,6 +10,9 @@
     <result column="parameter_name" jdbcType="VARCHAR" property="parameterName" />
     <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
     <result column="reference_value" jdbcType="VARCHAR" property="referenceValue" />
+    <result column="min_value" jdbcType="DECIMAL" property="minValue" />
+    <result column="max_value" jdbcType="DECIMAL" property="maxValue" />
+    <result column="address_loca" jdbcType="INTEGER" property="addressLoca" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -34,6 +37,9 @@
     eepl.parameter_name,
     eepl.unit_name,
     eepl.reference_value,
+    eepl.min_value,
+    eepl.max_value,
+    eepl.address_loca,
     eepl.`status`,
     eepl.remark,
     eepl.org_id,

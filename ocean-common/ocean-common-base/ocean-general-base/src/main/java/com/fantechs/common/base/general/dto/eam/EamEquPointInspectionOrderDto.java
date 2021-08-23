@@ -12,6 +12,22 @@ import java.io.Serializable;
 public class EamEquPointInspectionOrderDto extends EamEquPointInspectionOrder implements Serializable {
 
     /**
+     * 点检项目编码
+     */
+    @Transient
+    @ApiModelProperty(name="equPointInspectionProjectCode",value = "点检项目编码")
+    @Excel(name = "点检项目编码", height = 20, width = 30,orderNum="")
+    private String equPointInspectionProjectCode;
+
+    /**
+     * 点检项目名称
+     */
+    @Transient
+    @ApiModelProperty(name="equPointInspectionProjectName",value = "点检项目名称")
+    @Excel(name = "点检项目名称", height = 20, width = 30,orderNum="")
+    private String equPointInspectionProjectName;
+
+    /**
      * 设备编码
      */
     @Transient

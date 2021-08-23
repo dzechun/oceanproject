@@ -3,15 +3,20 @@ package com.fantechs.provider.esop.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamWorkInstructionDto;
 import com.fantechs.common.base.general.dto.esop.EsopEquipmentDto;
 import com.fantechs.common.base.general.dto.esop.EsopIssueDto;
 import com.fantechs.common.base.general.dto.esop.EsopWiReleaseDto;
+import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionDto;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamWorkInstruction;
 import com.fantechs.common.base.general.entity.esop.EsopIssue;
 import com.fantechs.common.base.general.entity.esop.EsopIssueAttachment;
+import com.fantechs.common.base.general.entity.esop.EsopWorkInstruction;
 import com.fantechs.common.base.general.entity.esop.history.EsopHtIssue;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopEquipment;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopIssue;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopWiRelease;
+import com.fantechs.common.base.general.entity.esop.search.SearchEsopWorkInstruction;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -46,7 +51,7 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
     @Resource
     private EsopEquipmentMapper esopEquipmentMapper;
     @Resource
-    private EsopWiReleaseMapper esopWiReleaseMapper;
+    private EsopWorkInstructionMapper esopWorkInstructionMapper;
 
 
     @Override
@@ -66,14 +71,14 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
             searchEsopEquipment.setEquipmentIp(map.get("equipmentIp").toString());
             List<EsopEquipmentDto> EsopEquipmentDtos = esopEquipmentMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEsopEquipment));
             if (StringUtils.isNotEmpty(EsopEquipmentDtos)) {
-                //查询该设备所在产线的WI
-                SearchEsopWiRelease searchEsopWiRelease = new SearchEsopWiRelease();
-                searchEsopWiRelease.setProLineId(EsopEquipmentDtos.get(0).getProLineId());
-                List<EsopWiReleaseDto> EsopWiReleaseDtos = esopWiReleaseMapper.findList(searchEsopWiRelease);
-                if (StringUtils.isNotEmpty(EsopWiReleaseDtos)) {
+                //查询该设备所在工序的WI
+                SearchEsopWorkInstruction searchEsopWorkInstruction = new SearchEsopWorkInstruction();
+                searchEsopWorkInstruction.setProcessId(EsopEquipmentDtos.get(0).getProcessId());
+                List<EsopWorkInstructionDto> esopWorkInstructionDtos = esopWorkInstructionMapper.findList(searchEsopWorkInstruction);
+                if (StringUtils.isNotEmpty(esopWorkInstructionDtos)) {
                     //查询该WI绑定的产品型号的问题清单
                     SearchEsopIssue searchEsopIssue = new SearchEsopIssue();
-                    searchEsopIssue.setProductModelCode(EsopWiReleaseDtos.get(0).getProductModelCode());
+                    searchEsopIssue.setProductModelCode(esopWorkInstructionDtos.get(0).getProductModelCode());
                     searchEsopIssue.setCodeQueryMark(1);
                     searchEsopIssue.setOrgId(EsopEquipmentDtos.get(0).getOrgId());
                     list = esopIssueMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEsopIssue));

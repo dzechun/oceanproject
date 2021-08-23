@@ -6,12 +6,14 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.dto.eam.EamIssueDto;
 import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
+import com.fantechs.common.base.general.dto.eam.EamWorkInstructionDto;
 import com.fantechs.common.base.general.entity.eam.EamIssue;
 import com.fantechs.common.base.general.entity.eam.EamIssueAttachment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtIssue;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamIssue;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamWiRelease;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamWorkInstruction;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -47,6 +49,8 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
     private EamEquipmentMapper eamEquipmentMapper;
     @Resource
     private EamWiReleaseMapper eamWiReleaseMapper;
+    @Resource
+    private EamWorkInstructionMapper eamWorkInstructionMapper;
 
 
     @Override
@@ -66,14 +70,14 @@ public class EamIssueServiceImpl extends BaseService<EamIssue> implements EamIss
             searchEamEquipment.setEquipmentIp(map.get("equipmentIp").toString());
             List<EamEquipmentDto> eamEquipmentDtos = eamEquipmentMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipment));
             if (StringUtils.isNotEmpty(eamEquipmentDtos)) {
-                //查询该设备所在产线的WI
-                SearchEamWiRelease searchEamWiRelease = new SearchEamWiRelease();
-                searchEamWiRelease.setProLineId(eamEquipmentDtos.get(0).getProLineId());
-                List<EamWiReleaseDto> eamWiReleaseDtos = eamWiReleaseMapper.findList(searchEamWiRelease);
-                if (StringUtils.isNotEmpty(eamWiReleaseDtos)) {
+                //查询该设备所在工序的WI
+                SearchEamWorkInstruction searchEamWorkInstruction = new SearchEamWorkInstruction();
+                searchEamWorkInstruction.setProcessId(eamEquipmentDtos.get(0).getProcessId());
+                List<EamWorkInstructionDto> workInstructionDtos = eamWorkInstructionMapper.findList(searchEamWorkInstruction);
+                if (StringUtils.isNotEmpty(workInstructionDtos)) {
                     //查询该WI绑定的产品型号的问题清单
                     SearchEamIssue searchEamIssue = new SearchEamIssue();
-                    searchEamIssue.setProductModelCode(eamWiReleaseDtos.get(0).getProductModelCode());
+                    searchEamIssue.setProductModelCode(workInstructionDtos.get(0).getProductModelCode());
                     searchEamIssue.setCodeQueryMark(1);
                     searchEamIssue.setOrgId(eamEquipmentDtos.get(0).getOrgId());
                     list = eamIssueMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamIssue));
