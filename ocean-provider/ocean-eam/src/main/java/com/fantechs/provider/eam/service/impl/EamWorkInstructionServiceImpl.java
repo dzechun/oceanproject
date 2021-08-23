@@ -190,6 +190,7 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         SysUser user = currentUser();
         if(StringUtils.isEmpty(eamWorkInstructionDto.getWorkInstructionId()))
             throw new BizErrorException("id不能为空");
+        eamWorkInstructionDto.setWiStatus((byte)1);
         eamWorkInstructionMapper.updateByPrimaryKeySelective(eamWorkInstructionDto);
 
         Example example = new Example(EamWorkInstruction.class);
@@ -204,56 +205,33 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         int i = eamHtWorkInstructionMapper.insertUseGeneratedKeys(eamHtWorkInstruction);
         example.clear();
 
+            Example bomExample = new Example(EamWiBom.class);
+            Example.Criteria bomCriteria = bomExample.createCriteria();
+            bomCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
+            eamWiBomMapper.deleteByExample(bomExample);
+            saveBom(eamWorkInstructionDto, eamWorkInstruction.getWorkInstructionId(), user);
+            bomExample.clear();
 
-        Example bomExample = new Example(EamWiBom.class);
-        Example.Criteria bomCriteria = bomExample.createCriteria();
-        bomCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
-        eamWiBomMapper.deleteByExample(bomExample);
-        saveBom(eamWorkInstructionDto,eamWorkInstruction.getWorkInstructionId(),user);
-        bomExample.clear();
+            Example toolExample = new Example(EamWiFTAndInspectionTool.class);
+            Example.Criteria toolCriteria = toolExample.createCriteria();
+            toolCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
+            eamWiFTAndInspectionToolMapper.deleteByExample(toolExample);
+            saveTool(eamWorkInstructionDto, eamWorkInstruction.getWorkInstructionId(), user);
+            toolExample.clear();
 
-        Example toolExample = new Example(EamWiFTAndInspectionTool.class);
-        Example.Criteria toolCriteria = toolExample.createCriteria();
-        toolCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
-        eamWiFTAndInspectionToolMapper.deleteByExample(toolExample);
-        saveTool(eamWorkInstructionDto,eamWorkInstruction.getWorkInstructionId(),user);
-        toolExample.clear();
+            Example standardsExample = new Example(EamWiQualityStandards.class);
+            Example.Criteria standardsCriteria = standardsExample.createCriteria();
+            standardsCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
+            eamWiQualityStandardsMapper.deleteByExample(standardsExample);
+            saveStandards(eamWorkInstructionDto, eamWorkInstruction.getWorkInstructionId(), user);
+            standardsExample.clear();
 
-        Example standardsExample = new Example(EamWiQualityStandards.class);
-        Example.Criteria standardsCriteria = standardsExample.createCriteria();
-        standardsCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
-        eamWiQualityStandardsMapper.deleteByExample(standardsExample);
-        saveStandards(eamWorkInstructionDto,eamWorkInstruction.getWorkInstructionId(),user);
-        standardsExample.clear();
-
-        Example fileExample = new Example(EamWiFile.class);
-        Example.Criteria fileCriteria = fileExample.createCriteria();
-        fileCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
-        eamWiFileMapper.deleteByExample(fileExample);
-        saveFile(eamWorkInstructionDto,eamWorkInstruction.getWorkInstructionId(),user);
-        fileExample.clear();
-
-        /*
-        * 电子WI管理审核
-        * 如果在SOP已发布明细中找到相应的WI编码数据
-        * 则重新调用一次EamWiReleaseServiceImpl.censor()方法
-        */
-
-        byte wiStatus=eamWorkInstructionDto.getWiStatus();
-        if(wiStatus==(byte) 2){
-            Long workInstructionId=eamWorkInstructionDto.getWorkInstructionId();
-            Example exampleWiRDet = new Example(EamWiReleaseDet.class);
-            Example.Criteria criteriaWiRDet = exampleWiRDet.createCriteria();
-            criteriaWiRDet.andEqualTo("workInstructionId", workInstructionId);
-            List<EamWiReleaseDet> eamWiReleaseDetList=eamWiReleaseDetMapper.selectByExample(exampleWiRDet);
-            for (EamWiReleaseDet eamWiReleaseDet : eamWiReleaseDetList) {
-                Long wiReleaseId=eamWiReleaseDet.getWiReleaseId();
-                EamWiRelease eamWiRelease=eamWiReleaseMapper.selectByPrimaryKey(wiReleaseId);
-                if(eamWiRelease.getReleaseStatus()==(byte)2){
-                    socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://192.168.204.163/#/YunZhiESOP?ip=");
-                }
-            }
-        }
+            Example fileExample = new Example(EamWiFile.class);
+            Example.Criteria fileCriteria = fileExample.createCriteria();
+            fileCriteria.andEqualTo("workInstructionId", eamWorkInstructionDto.getWorkInstructionId());
+            eamWiFileMapper.deleteByExample(fileExample);
+            saveFile(eamWorkInstructionDto, eamWorkInstruction.getWorkInstructionId(), user);
+            fileExample.clear();
 
         return i;
     }
@@ -456,7 +434,7 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         return list;
     }
 
-    //FIXME
+
     public List<EamWiBom> importWiBomData(InputStream in ) throws IOException {
         //xls用HSSFWorkbook ，xlsx用XSSFWorkbook
         Workbook workbook = new XSSFWorkbook(in);
@@ -674,7 +652,6 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         return fileUrl.substring(fileUrl.lastIndexOf("group"));
     }
 
-
     /**
      * 从输入流中获取字节数组
      * @param inputStream
@@ -705,6 +682,43 @@ public class EamWorkInstructionServiceImpl extends BaseService<EamWorkInstructio
         return user;
     }
 
+
+    @Override
+    public int censor(EamWorkInstructionDto eamWorkInstructionDto) {
+        SysUser user = currentUser();
+        if(StringUtils.isEmpty(eamWorkInstructionDto.getWorkInstructionId()))
+            throw new BizErrorException("id不能为空");
+        eamWorkInstructionMapper.updateByPrimaryKeySelective(eamWorkInstructionDto);
+
+        Long workInstructionId=eamWorkInstructionDto.getWorkInstructionId();
+        Example exampleWiRDet = new Example(EamWiReleaseDet.class);
+        Example.Criteria criteriaWiRDet = exampleWiRDet.createCriteria();
+        criteriaWiRDet.andEqualTo("workInstructionId", workInstructionId);
+        criteriaWiRDet.andEqualTo("orgId", user.getOrganizationId());
+        List<EamWiReleaseDet> eamWiReleaseDetList=eamWiReleaseDetMapper.selectByExample(exampleWiRDet);
+
+        if(StringUtils.isNotEmpty(eamWiReleaseDetList)) {
+            for (EamWiReleaseDet eamWiReleaseDet : eamWiReleaseDetList) {
+                EamWiRelease eamWiRelease = eamWiReleaseMapper.selectByPrimaryKey(eamWiReleaseDet.getWiReleaseId());
+                if (eamWiRelease.getReleaseStatus() == (byte) 2) {
+                    String url = getUrl();
+                    socketService.BatchInstructions(eamWiRelease.getProLineId(), "1202", url + "/#/YunZhiESOP?ip=");
+                }
+            }
+        }
+        return 1;
+    }
+
+    public String getUrl(){
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("EsopUrl");
+        ResponseEntity<List<SysSpecItem>> itemList= securityFeignApi.findSpecItemList(searchSysSpecItem);
+        List<SysSpecItem> sysSpecItemList = itemList.getData();
+        if(StringUtils.isNotEmpty(sysSpecItemList)){
+            return sysSpecItemList.get(0).getParaValue();
+        }
+        return null;
+    }
 
 
 }

@@ -158,4 +158,11 @@ public class EamWorkInstructionController {
         return ControllerUtil.returnDataSuccess(fileUrl,0);
     }
 
+
+    @ApiOperation("审核")
+    @PostMapping("/censor")
+    public ResponseEntity censor(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EamWorkInstruction.update.class) EamWorkInstructionDto eamWorkInstructionDto) {
+        return ControllerUtil.returnCRUD(eamWorkInstructionService.censor(eamWorkInstructionDto));
+    }
+
 }

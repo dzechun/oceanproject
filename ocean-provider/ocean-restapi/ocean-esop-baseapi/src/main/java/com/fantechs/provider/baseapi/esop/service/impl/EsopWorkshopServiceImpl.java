@@ -11,6 +11,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.baseapi.esop.mapper.EsopWorkshopMapper;
 import com.fantechs.provider.baseapi.esop.service.EsopWorkshopService;
+import com.fantechs.provider.baseapi.esop.util.BaseUtils;
 import com.fantechs.provider.baseapi.esop.util.LogsUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,38 +34,42 @@ public class EsopWorkshopServiceImpl extends BaseService<EsopWorkshop> implement
     private BaseFeignApi baseFeignApi;
     @Resource
     private LogsUtils logsUtils;
+    @Resource
+    private BaseUtils baseUtils;
 
   @Override
   @LcnTransaction
     public List<BaseWorkShop> addWorkshop(Map<String, Object> map) throws ParseException {
       List<EsopWorkshop> list = esopWorkshopMapper.findList(map);
       List<BaseWorkShop> baseWorkShops = new ArrayList<BaseWorkShop>();
+      Long orgId = baseUtils.getOrId();
       if(StringUtils.isNotEmpty(list)){
           for(EsopWorkshop esopWorkshop :list){
-              baseWorkShops.add(getBaseWorkshop(esopWorkshop));
+              baseWorkShops.add(getBaseWorkshop(esopWorkshop,orgId));
           }
       }
       ResponseEntity<List<BaseWorkShop>> baseWorkShopList = baseFeignApi.batchAddWorkshop(baseWorkShops);
-      logsUtils.addlog((byte)1,(byte)1,(long)1002,null,null);
+      logsUtils.addlog((byte)1,(byte)1,orgId,null,null);
       return baseWorkShopList.getData();
   }
 
-    public BaseWorkShop getBaseWorkshop(EsopWorkshop esopWorkshop){
+    public BaseWorkShop getBaseWorkshop(EsopWorkshop esopWorkshop ,Long orgId){
         BaseWorkShop baseWorkShop = new BaseWorkShop();
         baseWorkShop.setWorkShopCode(esopWorkshop.getCode());
         baseWorkShop.setWorkShopName(esopWorkshop.getName());
         baseWorkShop.setWorkShopDesc(esopWorkshop.getLongName());
         //新宝未使用工厂，默认工厂关联部门与车间
         SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
-        searchBaseFactory.setOrgId((long)1002);
+        searchBaseFactory.setOrgId(orgId);
         ResponseEntity<List<BaseFactoryDto>> factoryList = baseFeignApi.findFactoryList(searchBaseFactory);
         if(StringUtils.isNotEmpty(factoryList.getData()))
             baseWorkShop.setFactoryId(factoryList.getData().get(0).getFactoryId());
         baseWorkShop.setCreateTime(esopWorkshop.getCreatedTime());
         baseWorkShop.setModifiedTime(esopWorkshop.getModifyTime());
         baseWorkShop.setIsDelete(esopWorkshop.getIsDeleted());
-        baseWorkShop.setOrganizationId((long)1002);
+        baseWorkShop.setOrganizationId(orgId);
         baseWorkShop.setIsDelete((byte)1);
+        baseWorkShop.setStatus(1);
         return baseWorkShop;
     }
 }

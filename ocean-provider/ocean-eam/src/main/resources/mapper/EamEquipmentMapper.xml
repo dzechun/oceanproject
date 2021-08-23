@@ -25,7 +25,7 @@
     <result column="width" jdbcType="DECIMAL" property="width" />
     <result column="height" jdbcType="DECIMAL" property="height" />
     <result column="volume" jdbcType="DECIMAL" property="volume" />
-    <result column="maintain_project_id" jdbcType="BIGINT" property="maintainProjectId" />
+    <result column="equipment_maintain_project_id" jdbcType="BIGINT" property="equipmentMaintainProjectId" />
     <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp" />
     <result column="equipment_mac_address" jdbcType="VARCHAR" property="equipmentMacAddress" />
     <result column="release_date" jdbcType="TIMESTAMP" property="releaseDate" />
@@ -63,7 +63,31 @@
     <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
     <result column="station_name" jdbcType="VARCHAR" property="stationName"/>
     <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
-    <result column="maintain_project_code" jdbcType="VARCHAR" property="maintainProjectCode"/>
+    <result column="equipment_maintain_project_code" jdbcType="VARCHAR" property="equipmenMaintainProjectCode"/>
+  </resultMap>
+
+  <resultMap id="ResultEamEquInspectionOrderDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto">
+    <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
+    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
+    <result column="equipment_category_name" jdbcType="VARCHAR" property="equipmentCategoryName"/>
+    <result column="equ_point_inspection_project_code" jdbcType="VARCHAR" property="equPointInspectionProjectCode"/>
+    <result column="equ_point_inspection_project_name" jdbcType="VARCHAR" property="equPointInspectionProjectName"/>
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+    <collection property="items" ofType="com.fantechs.common.base.general.dto.eam.EamEquPointInspectionProjectItemDto"
+                column="{equPointInspectionProjectId=equ_point_inspection_project_id}" select="com.fantechs.provider.eam.mapper.EamEquPointInspectionProjectItemMapper.findList">
+    </collection>
+  </resultMap>
+
+  <resultMap id="ResultEamEquMaintainOrderDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamEquMaintainOrderDto">
+    <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
+    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
+    <result column="equipment_category_name" jdbcType="VARCHAR" property="equipmentCategoryName"/>
+    <result column="equipment_maintain_project_code" jdbcType="VARCHAR" property="equipmentMaintainProjectCode"/>
+    <result column="equipment_maintain_project_name" jdbcType="VARCHAR" property="equipmentMaintainProjectName"/>
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+    <collection property="items" ofType="com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainProjectItemDto"
+                column="{equipmentMaintainProjectId=equipment_maintain_project_id}" select="com.fantechs.provider.eam.mapper.EamEquipmentMaintainProjectItemMapper.findList">
+    </collection>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -87,7 +111,7 @@
     ee.width,
     ee.height,
     ee.volume,
-    ee.maintain_project_id,
+    ee.equipment_maintain_project_id,
     ee.equipment_ip,
     ee.equipment_mac_address,
     ee.release_date,
@@ -116,7 +140,7 @@
     select <include refid="Base_Column_List"></include>,
     eec.equipment_category_desc as equipment_category_desc ,bw.warehouse_name as warehouse_name, bws.work_shop_name as work_shop_name,
     bst.station_name as station_name ,bpl.pro_name as pro_name, bse.section_name as section_name,
-    bp.process_name as process_name ,bp.process_code as process_code ,bf.factory_name as factory_name, emp.maintain_project_code as maintain_project_code,
+    bp.process_name as process_name ,bp.process_code as process_code ,bf.factory_name as factory_name, emp.equipment_maintain_project_code as equipment_maintain_project_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -129,7 +153,7 @@
     left join base_workshop_section bse on ee.section_id=bse.section_id
     left join base_factory bf on ee.factory_id=bf.factory_id
     left join base_process bp on ee.process_id=bp.process_id
-    left join eam_maintain_project emp on ee.maintain_project_id=emp.maintain_project_id
+    left join eam_equipment_maintain_project emp on ee.equipment_maintain_project_id=emp.equipment_maintain_project_id
     left join eam_equipment_data_group_re_dc eedgrd on ee.equipment_id=eedgrd.equipment_id
     left join eam_equipment_data_group eedg on eedgrd.equipment_data_group_id=eedg.equipment_data_group_id
     left join ocean_v2.sys_user u on ee.create_user_id=u.user_id
@@ -195,6 +219,58 @@
         and ee.org_id=#{orgId}
       </if>
 
+    </where>
+  </select>
+
+  <select id="findListForInspectionOrder" parameterType="map" resultMap="ResultEamEquInspectionOrderDto">
+    SELECT
+    ee.equipment_code,
+    ee.equipment_name,
+    eec.equipment_category_name,
+    eepip.equ_point_inspection_project_code,
+    eepip.equ_point_inspection_project_name,
+    1 AS order_status
+    FROM
+    eam_equipment ee
+    LEFT JOIN eam_equipment_barcode eeb ON eeb.equipment_id = ee.equipment_id
+    LEFT JOIN eam_equipment_category eec ON ee.equipment_category_id = eec.equipment_category_id
+    LEFT JOIN eam_equ_point_inspection_project eepip ON eepip.equipment_category_id = ee.equipment_category_id
+    <where>
+      <if test="equipmentBarcode!=null">
+        and eeb.equipment_barcode = #{equipmentBarcode}
+      </if>
+      <if test="status!=null">
+        and ee.status = #{status}
+      </if>
+      <if test="orgId!=null">
+        and ee.org_id=#{orgId}
+      </if>
+    </where>
+  </select>
+
+  <select id="findListForMaintainOrder" parameterType="map" resultMap="ResultEamEquMaintainOrderDto">
+    SELECT
+    ee.equipment_code,
+    ee.equipment_name,
+    eec.equipment_category_name,
+    eemp.equipment_maintain_project_code,
+    eemp.equipment_maintain_project_name,
+    1 AS order_status
+    FROM
+    eam_equipment ee
+    LEFT JOIN eam_equipment_barcode eeb ON eeb.equipment_id = ee.equipment_id
+    LEFT JOIN eam_equipment_category eec ON ee.equipment_category_id = eec.equipment_category_id
+    LEFT JOIN eam_equipment_maintain_project eemp ON ee.equipment_category_id = eemp.equipment_category_id
+    <where>
+      <if test="equipmentBarcode!=null">
+        and eeb.equipment_barcode = #{equipmentBarcode}
+      </if>
+      <if test="status!=null">
+        and ee.status = #{status}
+      </if>
+      <if test="orgId!=null">
+        and ee.org_id=#{orgId}
+      </if>
     </where>
   </select>
 </mapper>

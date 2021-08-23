@@ -9,6 +9,8 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -169,6 +171,34 @@ public class EamEquipmentBarcode extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    /**
+     * 设备编码
+     */
+    @ApiModelProperty(name="equipmentCode",value = "设备编码")
+    @Transient
+    private String equipmentCode;
+
+    /**
+     * 设备名称
+     */
+    @ApiModelProperty(name="equipmentName",value = "设备名称")
+    @Transient
+    private String equipmentName;
+
+    /**
+     * 设备描述
+     */
+    @ApiModelProperty(name="equipmentDesc",value = "设备描述")
+    @Transient
+    private String equipmentDesc;
+
+    /**
+     * 设备型号
+     */
+    @ApiModelProperty(name="equipmentModel",value = "设备型号")
+    @Transient
+    private String equipmentModel;
 
     private String option1;
 

@@ -3,13 +3,8 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaReWDto;
 import com.fantechs.common.base.general.dto.eam.EamWiReleaseDetDto;
 import com.fantechs.common.base.general.dto.eam.EamWiReleaseDto;
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
-import com.fantechs.common.base.general.entity.basic.BaseWorker;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
-import com.fantechs.common.base.general.entity.eam.EamWiBom;
 import com.fantechs.common.base.general.entity.eam.EamWiRelease;
 import com.fantechs.common.base.general.entity.eam.EamWiReleaseDet;
 import com.fantechs.common.base.general.entity.eam.history.EamHtWiRelease;
@@ -19,7 +14,10 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.eam.mapper.*;
+import com.fantechs.provider.eam.mapper.EamHtWiReleaseDetMapper;
+import com.fantechs.provider.eam.mapper.EamHtWiReleaseMapper;
+import com.fantechs.provider.eam.mapper.EamWiReleaseDetMapper;
+import com.fantechs.provider.eam.mapper.EamWiReleaseMapper;
 import com.fantechs.provider.eam.service.EamWiReleaseService;
 import com.fantechs.provider.eam.service.socket.SocketService;
 import lombok.SneakyThrows;
@@ -27,8 +25,10 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.net.InetAddress;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  *
@@ -47,7 +47,6 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
     private EamHtWiReleaseDetMapper eamHtWiReleaseDetMapper ;
     @Resource
     private SocketService socketService;
-
 
     @Override
     public List<EamWiReleaseDto> findList(SearchEamWiRelease searchEamWiRelease) {
@@ -166,7 +165,7 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         eamWiRelease.setStatus((byte)1);
         eamWiRelease.setReleaseStatus((byte)2);
         int i = eamWiReleaseMapper.updateByPrimaryKeySelective(eamWiRelease);
-        socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://192.168.204.163/#/YunZhiESOP?ip=");
+        socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","/#/YunZhiESOP?ip=");
    //    socketService.BatchInstructions(eamWiRelease.getProLineId(),"1202","http://qmsapp.donlim.com/esop/#/YunZhiESOP?ip=");
 
         return i;
@@ -219,4 +218,5 @@ public class EamWiReleaseServiceImpl extends BaseService<EamWiRelease> implement
         }
         return user;
     }
+
 }

@@ -4,10 +4,9 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamNewsDto;
-import com.fantechs.common.base.general.entity.eam.*;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentParam;
-import com.fantechs.common.base.general.entity.eam.history.EamHtMaintainProject;
+import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.general.entity.eam.EamNews;
+import com.fantechs.common.base.general.entity.eam.EamNewsAttachment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtNews;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -112,10 +110,8 @@ public class EamNewsServiceImpl extends BaseService<EamNews> implements EamNewsS
             eamNews.setAuditUserId(user.getUserId());
             num += eamNewsMapper.updateByPrimaryKeySelective(eamNews);
         }
-
         //发送消息
-        String localHostIp = InetAddress.getLocalHost().getHostAddress();
-        socketService.BatchInstructions(null,"1201","http://192.168.204.163/#/ESOPDataShow?ip=");
+        socketService.BatchInstructions(null,"1201","/#/ESOPDataShow?ip=");
    //   socketService.BatchInstructions(null,"1201","http://qmsapp.donlim.com/esop/#/ESOPDataShow?ip=");
 
         return num;

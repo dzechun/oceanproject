@@ -4,8 +4,6 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -47,4 +45,9 @@ public class SearchEamEquipment extends BaseQuery implements Serializable {
     @ApiModelProperty(name="equipmentMacAddress",value = "MAC地址")
     private String equipmentMacAddress;
 
+    /**
+     * 设备型号
+     */
+    @ApiModelProperty(name="equipmentModel",value = "设备型号")
+    private String equipmentModel;
 }
