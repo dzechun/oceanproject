@@ -29,8 +29,10 @@ public class SysApiLogServiceImpl extends BaseService<SysApiLog> implements SysA
 
     @Override
     public List<SysApiLogDto> findList(Map<String, Object> map) {
-        SysUser sysUser = currentUser();
-        map.put("orgId", sysUser.getOrganizationId());
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser sysUser = currentUser();
+            map.put("orgId", sysUser.getOrganizationId());
+        }
         return sysApiLogMapper.findList(map);
     }
 
