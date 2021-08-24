@@ -125,6 +125,9 @@
             <if test="warehouseName!=null and warehouseName!=''">
                 and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>
+            <if test="warehouseCode!=null and warehouseCode!=''">
+                and sw.warehouse_code = #{warehouseCode}
+            </if>
             <if test="warehouseAreaId!=null and warehouseAreaId!=''">
                 and ss.warehouse_area_id=#{warehouseAreaId}
             </if>

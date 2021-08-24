@@ -340,9 +340,6 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     omSalesOrderDet.setSalesOrderDetId(wmsOutDeliveryOrderDet.getSourceOrderId());
                     omSalesOrderDet.setActualQty(wmsInnerJobOrderDetDto.getActualQty());
                     ResponseEntity responseEntity = omFeignApi.update(omSalesOrderDet);
-                    if(responseEntity.getCode()!=0){
-                        throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
-                    }
                 }
                 num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
                 break;
@@ -358,9 +355,6 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     omOtherOutOrderDet.setOtherOutOrderDetId(wmsOutDeliveryOrderDet.getOrderDetId());
                     omOtherOutOrderDet.setDispatchQty(wmsInnerJobOrderDetDto.getActualQty());
                     ResponseEntity responseEntity = omFeignApi.writeQtyToOut(omOtherOutOrderDet);
-                    if(responseEntity.getCode()!=0){
-                        throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
-                    }
                     num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
                 }
                 break;
