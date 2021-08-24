@@ -19,6 +19,7 @@ public class OmSalesReturnOrderDto extends OmSalesReturnOrder implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "materialOwnerName",value = "货主")
+    @Excel(name = "货主", height = 20, width = 30,orderNum="3")
     private String materialOwnerName;
 
     /**
@@ -34,7 +35,7 @@ public class OmSalesReturnOrderDto extends OmSalesReturnOrder implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改人")
-    @Excel(name = "修改人", height = 20, width = 30,orderNum="16")
+    @Excel(name = "修改人", height = 20, width = 30,orderNum="17")
     private String modifiedUserName;
 
     /**
