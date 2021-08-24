@@ -205,6 +205,8 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
             baseBarcodeRule.setBarcodeRule(barcodeRule);
             this.update(baseBarcodeRule);
 
+            //同一条码规则类别，条码规则不能重复
+            this.ifBarcodeRuleRepeat(baseBarcodeRule);
 
             for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
                 baseBarcodeRuleSpec.setFillDirection(StringUtils.isEmpty(baseBarcodeRuleSpec.getFillDirection()) ? (byte)0 : baseBarcodeRuleSpec.getFillDirection());
@@ -232,9 +234,26 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
             //配置好条码规则后，设置进条码规则中
             baseBarcodeRule.setBarcodeRule(barcodeRule);
             i = this.update(baseBarcodeRule);
+
+            //同一条码规则类别，条码规则不能重复
+           this.ifBarcodeRuleRepeat(baseBarcodeRule);
+
             baseBarcodeRuleSpecMapper.insertList(list);
         }
         return i;
+    }
+
+    public void ifBarcodeRuleRepeat(BaseBarcodeRule baseBarcodeRule){
+        Example example1 = new Example(BaseBarcodeRule.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("labelCategoryId",baseBarcodeRule.getLabelCategoryId())
+                .andEqualTo("barcodeRule",baseBarcodeRule.getBarcodeRule())
+                .andEqualTo("organizationId",baseBarcodeRule.getOrganizationId())
+                .andNotEqualTo("barcodeRuleId",baseBarcodeRule.getBarcodeRuleId());
+        BaseBarcodeRule baseBarcodeRule2 = baseBarcodeRuleMapper.selectOneByExample(example1);
+        if (StringUtils.isNotEmpty(baseBarcodeRule2)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"同一条码规则类别，条码规则不能重复");
+        }
     }
 
     @Override

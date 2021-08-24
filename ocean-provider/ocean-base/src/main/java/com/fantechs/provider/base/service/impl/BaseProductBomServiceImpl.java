@@ -126,9 +126,10 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
 
         Example example = new Example(BaseProductBom.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
-        criteria.andEqualTo("productBomCode", baseProductBom.getProductBomCode())
-                .andEqualTo("productBomVersion", baseProductBom.getProductBomVersion());
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId())
+                .andEqualTo("productBomCode", baseProductBom.getProductBomCode())
+                .andEqualTo("productBomVersion", baseProductBom.getProductBomVersion())
+                .andNotEqualTo("productBomId",baseProductBom.getProductBomId());
         BaseProductBom baseProductBom1 = baseProductBomMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseProductBom1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);

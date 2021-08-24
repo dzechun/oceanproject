@@ -1,13 +1,15 @@
 package com.fantechs.common.base.general.dto.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.general.entity.eam.*;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class EamEquipmentDto extends EamEquipment implements Serializable {
@@ -105,5 +107,13 @@ public class EamEquipmentDto extends EamEquipment implements Serializable {
      * 保养编码
      */
     @ApiModelProperty(name="equipmenMaintainProjectCode",value = "保养编码")
-    private Long equipmenMaintainProjectCode;
+    private String equipmenMaintainProjectCode;
+
+    /**
+     * 设备管理员用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "equipmentMgtUserName",value = "设备管理员用户名称")
+    private String equipmentMgtUserName;
+
 }

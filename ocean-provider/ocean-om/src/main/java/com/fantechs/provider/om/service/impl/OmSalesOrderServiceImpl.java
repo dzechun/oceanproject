@@ -312,7 +312,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         wmsOutDeliveryOrder.setRelatedOrderCode1(omSalesOrderDto.getSalesOrderCode());
         List<BaseMaterialOwnerDto> baseMaterialOwnerDtos = baseFeignApi.findList(new SearchBaseMaterialOwner()).getData();
         if (StringUtils.isEmpty(baseMaterialOwnerDtos)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003, "不存在货主信息");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "不存在货主信息");
         }
         wmsOutDeliveryOrder.setMaterialOwnerId(baseMaterialOwnerDtos.get(0).getMaterialOwnerId());
         wmsOutDeliveryOrder.setOrderDate(new Date());
@@ -325,6 +325,10 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         if (StringUtils.isNotEmpty(omSalesOrderDetDtoList)) {
             List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = new ArrayList<>();
             for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtoList) {
+                if(StringUtils.isEmpty(omSalesOrderDetDto.getWarehouseId())){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "销售订单明细仓库不能为空");
+                }
+
                 if (omSalesOrderDetDto.getArrangeDispatchQty().compareTo(new BigDecimal("0")) == 1) {
                     WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto = new WmsOutDeliveryOrderDetDto();
                     wmsOutDeliveryOrderDetDto.setSourceOrderId(omSalesOrderDto.getSalesOrderId());
@@ -349,15 +353,16 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                 }
             }
             wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetDtos);
+
+            //下发仓库
+            ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryOrder);
+            if (responseEntity.getCode() != 0) {
+                throw new BizErrorException("下发仓库失败");
+            }
+            return 1;
         }
 
-        //下发仓库
-        ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryOrder);
-        if (responseEntity.getCode() != 0) {
-            throw new BizErrorException("下发仓库失败");
-        }
-
-        return 1;
+        return 0;
     }
 
 }

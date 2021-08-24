@@ -45,6 +45,12 @@ public class SearchBasePlateParts extends BaseQuery implements Serializable {
     @ApiModelProperty(name="materialId",value = "产品ID")
     private Long materialId;
 
+    /**
+     * 是否是定制产品（0、否 1、是）
+     */
+    @ApiModelProperty(name="ifCustomized",value = "是否是定制产品（0、否 1、是）")
+    private Byte ifCustomized;
+
 
     private static final long serialVersionUID = 1L;
 }
