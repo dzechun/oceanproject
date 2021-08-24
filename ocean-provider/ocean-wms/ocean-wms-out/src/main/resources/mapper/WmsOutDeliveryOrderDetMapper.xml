@@ -29,6 +29,9 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
   <resultMap id="BaseResultMapDTO" extends="BaseResultMap"
@@ -70,7 +73,10 @@
     wodod.create_time,
     wodod.modified_user_id,
     wodod.modified_time,
-    wodod.is_delete
+    wodod.is_delete,
+    wodod.option1,
+    wodod.option2,
+    wodod.option3
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">

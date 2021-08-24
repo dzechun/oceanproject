@@ -3,13 +3,10 @@ package com.fantechs.provider.wms.out.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
-import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -24,7 +21,6 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderMapper;
@@ -443,5 +439,10 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         wms.setModifiedTime(new Date());
         wms.setModifiedUserId(sysUser.getUserId());
         return wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wms);
+    }
+
+    @Override
+    public int updateStatus(List<Long> ids) {
+        return wmsOutDeliveryOrderMapper.batchUpdateStatus(ids);
     }
 }

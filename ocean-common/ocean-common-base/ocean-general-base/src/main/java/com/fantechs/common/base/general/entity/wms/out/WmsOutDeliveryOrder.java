@@ -10,7 +10,6 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -233,6 +232,14 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     private Byte orderStatus;
 
     /**
+     * 审核状态(0-未审核 1-已审核)
+     */
+    @ApiModelProperty(name="auditStatus",value = "审核状态(0-未审核 1-已审核)")
+    @Excel(name = "审核状态(0-未审核 1-已审核)", height = 20, width = 30,orderNum="19")
+    @Column(name = "order_status")
+    private Byte auditStatus;
+
+    /**
      * 是否有效（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "是否有效（0、无效 1、有效）")
@@ -290,6 +297,24 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * 扩展字段1
+     */
+    @ApiModelProperty(name="option1",value = "扩展字段1")
+    private String option1;
+
+    /**
+     * 扩展字段2
+     */
+    @ApiModelProperty(name="option2",value = "扩展字段2")
+    private String option2;
+
+    /**
+     * 扩展字段3
+     */
+    @ApiModelProperty(name="option3",value = "扩展字段3")
+    private String option3;
 
     @ApiModelProperty(name="wmsOutDeliveryOrderDetList",value = "出库单明细")
     private List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = new ArrayList<>();
