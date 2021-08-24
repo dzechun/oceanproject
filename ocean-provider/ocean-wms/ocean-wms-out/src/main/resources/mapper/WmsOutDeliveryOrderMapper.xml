@@ -30,6 +30,7 @@
     <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
     <result column="descr" jdbcType="VARCHAR" property="descr" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -38,6 +39,9 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
   <resultMap id="BaseResultMapDTO" extends="BaseResultMap"
@@ -76,6 +80,7 @@
     wodo.detailed_address,
     wodo.descr,
     wodo.order_status,
+    wodo.audit_status,
     wodo.`status`,
     wodo.org_id,
     wodo.remark,
@@ -83,7 +88,10 @@
     wodo.create_time,
     wodo.modified_user_id,
     wodo.modified_time,
-    wodo.is_delete
+    wodo.is_delete,
+    wodo.option1,
+    wodo.option2,
+    wodo.option3
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
@@ -142,4 +150,12 @@
     </where>
     order by wodo.create_time desc
   </select>
+
+  <update id="batchUpdateStatus" parameterType="java.util.List">
+    <foreach collection="list" item="item" separator=";">
+      update wms_out_delivery_order wodo set
+      wodo.audit_status = 1
+      where wodo.delivery_order_id = #{item}
+    </foreach>
+  </update>
 </mapper>

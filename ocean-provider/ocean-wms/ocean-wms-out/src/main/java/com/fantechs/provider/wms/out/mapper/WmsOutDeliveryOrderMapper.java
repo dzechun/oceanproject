@@ -11,4 +11,11 @@ import java.util.Map;
 @Mapper
 public interface WmsOutDeliveryOrderMapper extends MyMapper<WmsOutDeliveryOrder> {
     List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map);
+
+    /**
+     * 批量修改审核状态为1
+     * @param ids
+     * @return
+     */
+    int batchUpdateStatus(List<Long> ids);
 }

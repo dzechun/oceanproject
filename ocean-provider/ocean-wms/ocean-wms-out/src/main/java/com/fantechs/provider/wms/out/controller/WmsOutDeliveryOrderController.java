@@ -4,9 +4,7 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
-import com.fantechs.common.base.general.entity.om.OmSalesOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -27,9 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -74,6 +70,12 @@ public class WmsOutDeliveryOrderController {
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsOutDeliveryOrder.update.class) WmsOutDeliveryOrder wmsOutDeliveryOrder) {
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.update(wmsOutDeliveryOrder));
+    }
+
+    @ApiOperation("修改审核状态")
+    @PostMapping("/updateStatus")
+    public ResponseEntity updateStatus(@ApiParam(value = "对象ID列表",required = true) @RequestParam @NotBlank(message="ids不能为空") List<Long> ids){
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.updateStatus(ids));
     }
 
     @ApiOperation("获取详情")
