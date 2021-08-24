@@ -175,4 +175,28 @@ public class EsopWorkInstruction extends ValidGroup implements Serializable {
 
 
 
+    /**
+     * 编制人名称
+     */
+    @ApiModelProperty(name="writeMakeUserName",value = "编制人名称")
+    @Column(name = "write_make_user_name")
+    private String writeMakeUserName;
+
+    /**
+     * 编制时间
+     */
+    @ApiModelProperty(name="writeMakeTime",value = "修改时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "write_make_time")
+    private Date writeMakeTime;
+
+
+    /**
+     * 审核人名称
+     */
+    @ApiModelProperty(name="auditUserName",value = "审核人名称")
+    @Column(name = "audit_user_name")
+    private String auditUserName;
+
+
 }

@@ -29,6 +29,13 @@ public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
     private BigDecimal noScheduleQty;
 
     /**
+     * 物料名称.
+     */
+    @Transient
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
+
+    /**
      * 物料编码.
      */
     @Transient
