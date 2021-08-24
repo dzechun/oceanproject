@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -132,8 +133,11 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         if(!StringUtils.isEmpty(map.get("relevanceOrderCode"))){
             criteria.andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode"));
         }
-        if(!StringUtils.isEmpty(map.get("storageId")) && !StringUtils.isEmpty(map.get("warehouseId"))){
-            criteria.andEqualTo("warehouseId",map.get("warehouseId")).andEqualTo("storageId",map.get("storageId"));
+        if(!StringUtils.isEmpty(map.get("warehouseId"))){
+            criteria.andEqualTo("warehouseId",map.get("warehouseId"));
+        }
+        if(!StringUtils.isEmpty(map.get("storageId"))){
+            criteria.andEqualTo("storageId",map.get("storageId"));
         }
         if(!StringUtils.isEmpty(map.get("jobOrderDetId")) && !StringUtils.isEmpty("jobStatus")){
             criteria.andEqualTo("jobOrderDetId",map.get("jobOrderDetId")).andEqualTo("jobStatus",map.get("jobStatus"));
@@ -148,12 +152,14 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int updateByPrimaryKeySelective(WmsInnerInventory wmsInnerInventory) {
         return wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int updateByExampleSelective(WmsInnerInventory wmsInnerInventory, Map<String,Object> map) {
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -167,6 +173,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         if(!StringUtils.isEmpty(map.get("jobOrderDetId")) && !StringUtils.isEmpty("jobStatus")){
             criteria.andEqualTo("jobOrderDetId",map.get("jobOrderDetId")).andEqualTo("jobStatus",map.get("jobStatus"));
         }
+        criteria.andEqualTo("stockLock", 0).andEqualTo("qcLock", 0).andEqualTo("lockStatus", 0);
         wmsInnerInventory.setPackingQty(new BigDecimal(Double.parseDouble(map.get("actualQty").toString())
         ));
         int num = wmsInnerInventoryMapper.updateByExampleSelective(wmsInnerInventory, example);
@@ -175,6 +182,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int insertSelective(WmsInnerInventory wmsInnerInventory) {
         return wmsInnerInventoryMapper.insertSelective(wmsInnerInventory);
     }
