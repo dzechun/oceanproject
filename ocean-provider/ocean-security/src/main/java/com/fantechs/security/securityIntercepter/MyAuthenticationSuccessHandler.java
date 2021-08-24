@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,8 +32,14 @@ import java.util.Set;
 public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     private static Logger log= LoggerFactory.getLogger(MyAuthenticationSuccessHandler.class);
 
+    // 菜单缓存redis的key
+    private static String MENU_REDIS_KEY = "MENU_REDIS_KEY";
+
     @Autowired
     private SysMenuInfoService sysMenuInfoService;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     private Set<String> permsSet = new HashSet<>();
 
@@ -70,7 +77,13 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
                     //获取所有菜单地址
                     getPermsSet(roleMenuList);
                 }
-
+            }
+            if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
+                List<SysMenuInListDTO> menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
+                        "parentId", "0",
+                        "menuType", menuType + ""
+                ), null);
+                redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(menuList));
             }
         }
 
@@ -79,7 +92,6 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         //---生成token
         SysUser sysUser = MySecurityTool.getCurrentLoginUser();
         sysUser.setAuthority(permsSet);
-        sysUser.setMenu(JsonUtils.objectToJson(roleMenuList));
         String token = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,null);
         String refreshToken = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,getIpAddress(httpServletRequest));
         TokenUtil.save(token,sysUser);

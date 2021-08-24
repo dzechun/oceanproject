@@ -1,10 +1,9 @@
 package com.fantechs.security.service.impl;
 
 
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.core.util.ObjectUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysMenuInListDTO;
-import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtSpecItem;
@@ -28,13 +27,13 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import static java.awt.SystemColor.menu;
 
 @Service
 public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements SysSpecItemService {
+    // 菜单缓存redis的key
+    private static String MENU_REDIS_KEY = "MENU_REDIS_KEY";
+
     @Resource
     private SysSpecItemMapper sysSpecItemMapper;
     @Resource
@@ -45,17 +44,16 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     @Override
     public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
         Object specItemList =redisUtil.get("specItemList");
-//        Object menu = redisUtil.get("menuList");
         if (StringUtils.isNotEmpty(specItemList) && (StringUtils.isEmpty(searchSysSpecItem.getIfHotData()) || searchSysSpecItem.getIfHotData() == 1)) {
             List<SysSpecItem>  specItemList1 = JsonUtils.jsonToList(specItemList.toString(),SysSpecItem.class);
             List<Long> menuIds = new ArrayList<>();
             if (StringUtils.isNotEmpty(searchSysSpecItem.getMenuId())) {
-                String token = CurrentUserInfoUtils.getToken();
-                Object o = redisUtil.get(token);
-                SysUser sysUser = JSONObject.parseObject(JSONObject.toJSONString(o), SysUser.class);
-
-//                List<SysMenuInListDTO> menuList = JsonUtils.jsonToList(menu.toString(),SysMenuInListDTO.class);
-                SysMenuInListDTO dg = this.findNodes(JsonUtils.jsonToList(sysUser.getMenu(),SysMenuInListDTO.class), searchSysSpecItem.getMenuId());
+                Object menuList = redisUtil.get(MENU_REDIS_KEY);
+                if(ObjectUtil.isNull(menuList)){
+                    throw new BizErrorException(ErrorCodeEnum.UAC10012008);
+                }
+                List<SysMenuInListDTO> menuInListDTOS = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
+                SysMenuInListDTO dg = this.findNodes(menuInListDTOS, searchSysSpecItem.getMenuId());
                 menuIds.add(dg.getSysMenuInfoDto().getMenuId());
                 this.disassemblyTree(dg,menuIds);
             }
