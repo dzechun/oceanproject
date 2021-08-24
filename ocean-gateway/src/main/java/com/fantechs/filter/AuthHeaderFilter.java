@@ -15,7 +15,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.*;
+import com.fantechs.common.base.utils.RedisUtil;
+import com.fantechs.common.base.utils.RestTemplateUtil;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.TokenUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +55,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			"/ocean-security/userinfo,/ocean-security/logout,/ocean-fileserver/file/download,/ocean-fileserver/file/multipleFileBase64" +
 			",/ocean-fileserver/file/upload,/ocean-fileserver/file/uploadToSVG,/ocean-imes-materialapi/material/api" +
 			",/ocean-security/sysSpecItem/findList,/ocean-exhibition-client/RCSAPI/agvCallback,/ocean-base/baseOrganization/findList"+
-			",/ocean-imes-materialapi/material/workOrder,/ocean-imes-materialapi/material/purchaseOrder,/ocean-esop/eamNews/findList" +
+			",/ocean-imes-materialapi/material/workOrder,/ocean-imes-materialapi/material/purchaseOrder,/ocean-esop/esopNews/findList" +
 			",/ocean-imes-materialapi/material/ChkLogUserInfo,/ocean-imes-materialapi/material/ChkSnRouting,/ocean-imes-materialapi/material/SnDataTransfer" +
 			",/ocean-security/eamlogin";
 	private static final String SWAGGER_URI = "/v2/api-docs";
