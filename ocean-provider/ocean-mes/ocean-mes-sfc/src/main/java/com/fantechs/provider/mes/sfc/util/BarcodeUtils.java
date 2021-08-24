@@ -983,7 +983,7 @@ public class BarcodeUtils {
             * 5 不存在半成品料号 报错
              */
             String workOrderCode=null;
-            Long worOrderId=0L;
+            Long workOrderId=0L;
             Long materialId=0L;//产品物料ID
             Long partMaterialId=0L;//半成品物料ID
             Long processId=0L;//工序ID
@@ -999,7 +999,7 @@ public class BarcodeUtils {
 
             //产品工单ID
             MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto=(MesSfcWorkOrderBarcodeDto)baseExecuteResultDto.getExecuteResult();
-            worOrderId=mesSfcWorkOrderBarcodeDto.getWorkOrderId();
+            workOrderId=mesSfcWorkOrderBarcodeDto.getWorkOrderId();
             materialId=mesSfcWorkOrderBarcodeDto.getMaterialId();
 
             baseExecuteResultDto=checkBarcodeStatus(halfProductionSn);
@@ -1032,7 +1032,7 @@ public class BarcodeUtils {
                 updateProcessDto.setPartMaterialId(partMaterialId);
 
                 SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
-                searchMesPmWorkOrderBom.setWorkOrderId(worOrderId);
+                searchMesPmWorkOrderBom.setWorkOrderId(workOrderId);
                 searchMesPmWorkOrderBom.setPartMaterialId(partMaterialId);
                 searchMesPmWorkOrderBom.setProcessId(processId);
                 ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = barcodeUtils.deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
@@ -1350,16 +1350,35 @@ public class BarcodeUtils {
      * userId 操作用户ID
      * orgId 组织ID
      */
-    public static BaseExecuteResultDto bandingWorkOrderBarcode(Long workOrderId,String productionSn,String halfProductionSn,
+    public static BaseExecuteResultDto bandingWorkOrderBarcode(Long workOrderId,Long partMaterialId,String productionSn,String halfProductionSn,
                            Long proLineId,Long processId,Long stationId,Long materialId,Long userId,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
             if(StringUtils.isNotEmpty(halfProductionSn)){
+
                 /*
                 * 1 获取工单BOM明细
-                * 2 比较使用量与当前已绑定量
+                * 2 比较使用量 usageQty 与当前已绑定量
                 * 3 绑定到mes_sfc_key_part_relevance 生产管理-关键部件关联表
                 */
+
+                SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
+                searchMesPmWorkOrderBom.setWorkOrderId(workOrderId);
+                searchMesPmWorkOrderBom.setPartMaterialId(partMaterialId);
+                searchMesPmWorkOrderBom.setProcessId(processId);
+                ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = barcodeUtils.deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
+                if(StringUtils.isEmpty(responseEntityBom.getData())){
+                    throw new Exception("找不到当前工单工序所需的物料信息");
+                }
+                MesPmWorkOrderBomDto mesPmWorkOrderBomDto=responseEntityBom.getData().get(0);
+                Map<String, Object> map = new HashMap<>();
+                // 关键部件物料清单
+                map.clear();
+                //map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
+                //map.put("processId", dto.getProcessId());
+//            map.put("materialId", mesPmWorkOrder.getMaterialId());
+                //map.put("workOrderBarcodeId", orderBarcodeDto.getWorkOrderBarcodeId());
+                //List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
 
             }
 

@@ -1,7 +1,11 @@
 package com.fantechs.provider.api.mes.sfc;
 
+import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.*;
+import com.fantechs.common.base.general.dto.restapi.RestapiChkLogUserInfoApiDto;
+import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
+import com.fantechs.common.base.general.dto.restapi.RestapiSNDataTransferApiDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
@@ -68,4 +72,18 @@ public interface SFCFeignApi {
     @ApiOperation("产品条码过站记录列表")
     @PostMapping("/mesSfcBarcodeProcessRecord/findList")
     ResponseEntity<List<MesSfcBarcodeProcessRecordDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcBarcodeProcessRecord searchMesSfcBarcodeProcessRecord);
+
+    @ApiOperation("过站作业-用户登录信息校验")
+    @PostMapping("/mesSfcScanBarcode/chkLogUserInfo")
+    ResponseEntity<BaseExecuteResultDto> chkLogUserInfo(@ApiParam(value = "用户登录参数")@RequestBody RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto);
+
+    @ApiOperation("过站作业-过站信息校验")
+    @PostMapping("/mesSfcScanBarcode/chkSnRouting")
+    ResponseEntity<BaseExecuteResultDto> chkSnRouting(@ApiParam(value = "过站参数")@RequestBody RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto);
+
+    @ApiOperation("过站作业-条码过站")
+    @PostMapping("/mesSfcScanBarcode/snDataTransfer")
+    ResponseEntity<BaseExecuteResultDto> snDataTransfer(@ApiParam(value = "过站参数")@RequestBody RestapiSNDataTransferApiDto restapiSNDataTransferApiDto);
+
+
 }
