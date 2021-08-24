@@ -24,6 +24,10 @@ public class UpdateProcessDto implements Serializable {
     private String workOrderCode;
     // 产品条码
     private String barCode;
+    // 产品条码ID
+    private Long workOrderBarcodeId;
+    //成品物料ID
+    private Long materialId;
     //半成品物料ID
     private Long partMaterialId;
     // 当前扫码工序ID

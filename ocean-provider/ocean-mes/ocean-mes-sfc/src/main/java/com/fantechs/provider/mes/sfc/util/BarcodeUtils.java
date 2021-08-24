@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.sfc.util;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysAuthRole;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -28,10 +29,7 @@ import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcessRecord;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcReworkOrder;
-import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -43,6 +41,7 @@ import com.fantechs.provider.mes.sfc.service.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.PostConstruct;
@@ -76,6 +75,8 @@ public class BarcodeUtils {
     @Resource
     private MesSfcReworkOrderBarcodeService mesSfcReworkOrderBarcodeService;
     @Resource
+    private MesSfcKeyPartRelevanceService mesSfcKeyPartRelevanceService;
+    @Resource
     private PMFeignApi pmFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
@@ -107,6 +108,7 @@ public class BarcodeUtils {
         barcodeUtils.redisUtil = this.redisUtil;
         barcodeUtils.deviceInterFaceUtils=this.deviceInterFaceUtils;
         barcodeUtils.eamFeignApi=this.eamFeignApi;
+        barcodeUtils.mesSfcKeyPartRelevanceService=this.mesSfcKeyPartRelevanceService;
     }
 
 
@@ -786,11 +788,29 @@ public class BarcodeUtils {
             checkProductionDto.setProcessId(updateProcessDto.getNowProcessId());
             checkSN(checkProductionDto);
 
+            //绑定半成品条码
+            baseExecuteResultDto=bandingWorkOrderBarcode(updateProcessDto.getWorkOrderId(),partMaterialId,
+                    restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getPartBarcode(),updateProcessDto.getWorkOrderBarcodeId(),
+                    updateProcessDto.getProLineId(),updateProcessDto.getNowProcessId(),updateProcessDto.getNowStationId(),updateProcessDto.getMaterialId(),
+                    updateProcessDto.getOperatorUserId(),orgId);
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            //返写治具条码使用次数 暂时默认治具使用次数为 1
+            baseExecuteResultDto=upJigBarcodeUseTimes(restapiSNDataTransferApiDto.getEamJigBarCode());
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            //返写设备条码使用次数 暂时默认次数为1
+            baseExecuteResultDto=upEquipmentBarCodeUseTimes(restapiSNDataTransferApiDto.getEquipmentCode());
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
             //过站
             barcodeUtils.updateProcess(updateProcessDto);
 
             baseExecuteResultDto.setIsSuccess(true);
-            baseExecuteResultDto.setSuccessMsg(" 验证通过 ");
+            baseExecuteResultDto.setSuccessMsg(" 过站成功 ");
         }catch (Exception ex) {
             baseExecuteResultDto.setIsSuccess(false);
             baseExecuteResultDto.setFailMsg(ex.getMessage());
@@ -887,7 +907,10 @@ public class BarcodeUtils {
                 updateProcessDto.setWorkOrderId(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId());
                 //设置工单编号
                 updateProcessDto.setWorkOrderCode(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderCode());
-
+                //设置工单条码ID
+                updateProcessDto.setWorkOrderBarcodeId(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId());
+                //设置产品物料ID
+                updateProcessDto.setMaterialId(mesSfcWorkOrderBarcodeDtoList.get(0).getMaterialId());
                 //获取工单
                 ResponseEntity<MesPmWorkOrder> responseEntityWorkOrder=barcodeUtils.pmFeignApi.workOrderDetail(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId());
                 if(StringUtils.isEmpty(responseEntityWorkOrder.getData()))
@@ -1353,13 +1376,14 @@ public class BarcodeUtils {
      * orgId 组织ID
      */
     public static BaseExecuteResultDto bandingWorkOrderBarcode(Long workOrderId,Long partMaterialId,String productionSn,String halfProductionSn,
-                           Long proLineId,Long processId,Long stationId,Long materialId,Long userId,Long orgId) throws Exception{
+            Long workOrderBarcodeId,Long proLineId,Long processId,Long stationId,Long materialId,Long userId,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
             if(StringUtils.isNotEmpty(halfProductionSn)){
 
                 /*
                 * 1 获取工单BOM明细
+                * 2 是否已绑定
                 * 2 比较使用量 usageQty 与当前已绑定量
                 * 3 绑定到mes_sfc_key_part_relevance 生产管理-关键部件关联表
                 */
@@ -1372,18 +1396,125 @@ public class BarcodeUtils {
                 if(StringUtils.isEmpty(responseEntityBom.getData())){
                     throw new Exception("找不到当前工单工序所需的物料信息");
                 }
+
                 MesPmWorkOrderBomDto mesPmWorkOrderBomDto=responseEntityBom.getData().get(0);
+                // 半成品条码是否已绑定
+                Example example = new Example(MesSfcKeyPartRelevance.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("partBarcode", halfProductionSn);
+                int countByExample = barcodeUtils.mesSfcKeyPartRelevanceService.selectCountByExample(example);
+                if (countByExample > 0) {
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012028,"该半成品条码已绑定条码，不可重复扫描");
+                }
+
                 Map<String, Object> map = new HashMap<>();
                 // 关键部件物料清单
                 map.clear();
-                //map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
-                //map.put("processId", dto.getProcessId());
-//            map.put("materialId", mesPmWorkOrder.getMaterialId());
-                //map.put("workOrderBarcodeId", orderBarcodeDto.getWorkOrderBarcodeId());
-                //List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
+                map.put("workOrderId", workOrderId);
+                map.put("processId", processId);
+                //map.put("materialId", mesPmWorkOrder.getMaterialId());
+                map.put("workOrderBarcodeId", workOrderBarcodeId);
+                List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = barcodeUtils.mesSfcKeyPartRelevanceService.findList(map);
+                // 关键部件物料数量大于等于用量
+                if (keyPartRelevanceDtos.size() >= mesPmWorkOrderBomDto.getUsageQty().intValue()) {
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012020,"物料清单已满，不可扫码");
+                }
+
+                BaseProLine proLine = barcodeUtils.baseFeignApi.selectProLinesDetail(proLineId).getData();
+                BaseProcess baseProcess = barcodeUtils.baseFeignApi.processDetail(processId).getData();
+                BaseStation baseStation = barcodeUtils.baseFeignApi.findStationDetail(stationId).getData();
+
+                // 绑定附件码跟条码关系
+                barcodeUtils.mesSfcKeyPartRelevanceService.save(MesSfcKeyPartRelevance.builder()
+                        .barcodeCode(productionSn)
+                        .workOrderId(workOrderId)
+                        .workOrderCode("")
+                        .workOrderBarcodeId(workOrderBarcodeId)
+                        .proLineId(proLineId)
+                        .proCode(proLine.getProCode())
+                        .proName(proLine.getProName())
+                        .processId(processId)
+                        .processCode(baseProcess.getProcessCode())
+                        .processName(baseProcess.getProcessName())
+                        .stationId(baseStation.getStationId())
+                        .stationCode(baseStation.getStationCode())
+                        .stationName(baseStation.getStationName())
+                        .materialId(materialId)
+                        .partBarcode(halfProductionSn)
+                        .operatorUserId(userId)
+                        .operatorTime(new Date())
+                        .orgId(orgId)
+                        .createTime(new Date())
+                        .createUserId(userId)
+                        .isDelete((byte) 1)
+                        .build());
+            }
+
+            baseExecuteResultDto.setIsSuccess(true);
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
+    }
+
+    /*
+     * 回写治具使用次数
+     * jigBarCode 治具条码
+     */
+    public static BaseExecuteResultDto upJigBarcodeUseTimes(String jigBarCode) throws Exception{
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        try {
+            //获取配置项检查治具与产品关系  JigsIfCheckProductionRelation
+            String paraValue = getSysSpecItemValue("JigsIfCheckProductionRelation");
+            if ("1".equals(paraValue)) {
+                if(StringUtils.isNotEmpty(jigBarCode)){
+                    String[] jigBarCodeArr=jigBarCode.split(",");
+                    for (String item : jigBarCodeArr) {
+                        if(StringUtils.isNotEmpty(item)) {
+                            ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getJigBarCode(item);
+                            EamJigBarcodeDto eamJigBarcodeDto=eamJigBarcodeDtoList.getData().get(0);
+                            barcodeUtils.eamFeignApi.plusCurrentUsageTime(eamJigBarcodeDto.getJigBarcodeId(),1);
+                        }
+                    }
+                }
 
             }
 
+            baseExecuteResultDto.setIsSuccess(true);
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
+    }
+
+    /*
+     * 回写设备使用次数
+     * jigBarCode 治具条码
+     */
+    public static BaseExecuteResultDto upEquipmentBarCodeUseTimes(String equipmentCode) throws Exception{
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        try {
+            //获取配置项检查设备与产品关系  EquipmentIfCheckProductionRelation
+            String paraValue = getSysSpecItemValue("EquipmentIfCheckProductionRelation");
+            if ("1".equals(paraValue)) {
+                if(StringUtils.isNotEmpty(equipmentCode)){
+                    String[] jigBarCodeArr=equipmentCode.split(",");
+//                    for (String item : jigBarCodeArr) {
+//                        if(StringUtils.isNotEmpty(item)) {
+//                            ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getJigBarCode(item);
+//                            EamJigBarcodeDto eamJigBarcodeDto=eamJigBarcodeDtoList.getData().get(0);
+//                            barcodeUtils.eamFeignApi.plusCurrentUsageTime(eamJigBarcodeDto.getJigBarcodeId(),1);
+//                        }
+//                    }
+                }
+
+            }
 
             baseExecuteResultDto.setIsSuccess(true);
 

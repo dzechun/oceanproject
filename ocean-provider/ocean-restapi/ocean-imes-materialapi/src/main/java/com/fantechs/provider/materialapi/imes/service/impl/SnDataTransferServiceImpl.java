@@ -69,18 +69,6 @@ public class SnDataTransferServiceImpl implements SnDataTransferService {
                 restapiSNDataTransferApiDto.getSectionCode(),restapiSNDataTransferApiDto.getUserCode(),
                 restapiSNDataTransferApiDto.getBadnessPhenotypeCode());
 
-        //返写治具编号使用次数 暂时默认治具使用次数为 1
-        if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getEamJigBarCode())){
-            String[] jigBarCodeArr=restapiSNDataTransferApiDto.getEamJigBarCode().split(",");
-            for (String item : jigBarCodeArr) {
-                if(StringUtils.isNotEmpty(item)) {
-                    ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = deviceInterFaceUtils.getJigBarCode(item);
-                    EamJigBarcodeDto eamJigBarcodeDto=eamJigBarcodeDtoList.getData().get(0);
-                    eamFeignApi.plusCurrentUsageTime(eamJigBarcodeDto.getJigBarcodeId(),1);
-                }
-            }
-        }
-
         String executeResult="";
         BaseExecuteResultDto baseExecuteResultDto= sfcFeignApi.snDataTransfer(restapiSNDataTransferApiDto).getData();
         executeResult= JsonUtils.objectToJson(baseExecuteResultDto);
