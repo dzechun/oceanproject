@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.materialapi.imes.service.ChkSnRoutingService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
@@ -29,7 +30,7 @@ public class ChkSnRoutingServiceImpl implements ChkSnRoutingService {
     @Resource
     private DeviceInterFaceUtils deviceInterFaceUtils;
     @Resource
-    private BarcodeUtils barcodeUtils;
+    private SFCFeignApi sfcFeignApi;
 
     @Override
     public String ChkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws Exception {
@@ -57,7 +58,7 @@ public class ChkSnRoutingServiceImpl implements ChkSnRoutingService {
 //        return pass+" 条码流程检查信息验证通过";
 
         String executeResult="";
-        BaseExecuteResultDto baseExecuteResultDto= BarcodeUtils.ChkSnRouting(restapiChkSNRoutingApiDto);
+        BaseExecuteResultDto baseExecuteResultDto= sfcFeignApi.chkSnRouting(restapiChkSNRoutingApiDto).getData();
         executeResult= JsonUtils.objectToJson(baseExecuteResultDto);
         return  executeResult;
     }

@@ -3,6 +3,7 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
@@ -13,9 +14,11 @@ import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.eam.EamFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SnDataTransferService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
@@ -36,15 +39,11 @@ import java.util.List;
 public class SnDataTransferServiceImpl implements SnDataTransferService {
 
     @Resource
-    private LogsUtils logsUtils;
-    @Resource
     private DeviceInterFaceUtils deviceInterFaceUtils;
     @Resource
-    private BarcodeUtils barcodeUtils;
-    @Resource
-    private BaseFeignApi baseFeignApi;
-    @Resource
     private EamFeignApi eamFeignApi;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
 
     @Override
     @LcnTransaction
@@ -69,10 +68,6 @@ public class SnDataTransferServiceImpl implements SnDataTransferService {
                 restapiSNDataTransferApiDto.getEamJigBarCode(),restapiSNDataTransferApiDto.getEquipmentCode(),
                 restapiSNDataTransferApiDto.getSectionCode(),restapiSNDataTransferApiDto.getUserCode(),
                 restapiSNDataTransferApiDto.getBadnessPhenotypeCode());
-        if (!check.equals("1")) {
-            logsUtils.addlog((byte) 0, (byte) 2, (long) 1002, check, restapiSNDataTransferApiDto.toString());
-            return check;
-        }
 
         //返写治具编号使用次数 暂时默认治具使用次数为 1
         if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getEamJigBarCode())){
@@ -86,37 +81,10 @@ public class SnDataTransferServiceImpl implements SnDataTransferService {
             }
         }
 
-        //过站
-        BaseOrganizationDto baseOrganizationDto=deviceInterFaceUtils.getOrId().getData().get(0);
-        Long orgId=baseOrganizationDto.getOrganizationId();
-        SysUser user=deviceInterFaceUtils.getSysUser(restapiSNDataTransferApiDto.getUserCode(),orgId).getData().get(0);
-        BaseProLine baseProLine=deviceInterFaceUtils.getProLine(restapiSNDataTransferApiDto.getProCode(),orgId).getData().get(0);
-        BaseProcess baseProcess=deviceInterFaceUtils.getProcess(restapiSNDataTransferApiDto.getProcessCode(),orgId).getData().get(0);
-        MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto=deviceInterFaceUtils.getWorkOrderBarcode(restapiSNDataTransferApiDto.getBarCode()).getData().get(0);
-        Long workOrderId=mesSfcWorkOrderBarcodeDto.getWorkOrderId();
-        MesPmWorkOrderDto mesPmWorkOrderDto=deviceInterFaceUtils.getWorkOrder(workOrderId).getData().get(0);
-        BaseStation baseStation=deviceInterFaceUtils.getStation(restapiSNDataTransferApiDto.getStationCode(),orgId).getData().get(0);
-
-        UpdateProcessDto updateProcessDto = UpdateProcessDto.builder()
-                .badnessPhenotypeCode("N/A")
-                .barCode(restapiSNDataTransferApiDto.getBarCode())
-                .equipmentId("N/A")
-                .operatorUserId(user.getUserId())
-                .proLineId(baseProLine.getProLineId())
-                .routeId(mesPmWorkOrderDto.getRouteId())
-                .nowProcessId(baseProcess.getProcessId())
-                .nowStationId(baseStation.getStationId())
-                .workOrderId(mesPmWorkOrderDto.getWorkOrderId())
-                .passCode("")
-                .passCodeType((byte) 1)
-                .build();
-
-        barcodeUtils.updateProcess(updateProcessDto);
-
-        //不良现象未处理
-
-        logsUtils.addlog((byte)1,(byte)2,(long)1002,null,null);
-        return pass+" 过站成功";
+        String executeResult="";
+        BaseExecuteResultDto baseExecuteResultDto= sfcFeignApi.snDataTransfer(restapiSNDataTransferApiDto).getData();
+        executeResult= JsonUtils.objectToJson(baseExecuteResultDto);
+        return  executeResult;
     }
 
 

@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.materialapi.imes.service.ChkLogUserInfoService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
@@ -28,9 +29,10 @@ import java.util.List;
 public class ChkLogUserInfoServiceImpl implements ChkLogUserInfoService {
 
     @Resource
-    private LogsUtils logsUtils;
-    @Resource
     private DeviceInterFaceUtils deviceInterFaceUtils;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
+
 
     @Override
     public String ChkLogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws Exception {
@@ -43,7 +45,7 @@ public class ChkLogUserInfoServiceImpl implements ChkLogUserInfoService {
 //        logsUtils.addlog((byte)1,(byte)2,(long)1002,null,null);
 //        return pass+" 登录信息验证通过";
         String executeResult="";
-        BaseExecuteResultDto baseExecuteResultDto= BarcodeUtils.ChkLogUserInfo(restapiChkLogUserInfoApiDto);
+        BaseExecuteResultDto baseExecuteResultDto= sfcFeignApi.chkLogUserInfo(restapiChkLogUserInfoApiDto).getData();
         executeResult= JsonUtils.objectToJson(baseExecuteResultDto);
         return  executeResult;
     }
