@@ -2,31 +2,15 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
-import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
-import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.dto.mes.sfc.UpdateProcessDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiSNDataTransferApiDto;
-import com.fantechs.common.base.general.entity.basic.BaseProLine;
-import com.fantechs.common.base.general.entity.basic.BaseProcess;
-import com.fantechs.common.base.general.entity.basic.BaseStation;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
-import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SnDataTransferService;
-import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
-import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
-import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
-import java.util.List;
 
 /**
  * @author Huangshuijun
@@ -39,13 +23,10 @@ import java.util.List;
 public class SnDataTransferServiceImpl implements SnDataTransferService {
 
     @Resource
-    private DeviceInterFaceUtils deviceInterFaceUtils;
-    @Resource
-    private EamFeignApi eamFeignApi;
-    @Resource
     private SFCFeignApi sfcFeignApi;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public String SnDataTransfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception {
         /*
@@ -58,16 +39,6 @@ public class SnDataTransferServiceImpl implements SnDataTransferService {
          * 6 返写治具编号使用次数
          * 7 记录条码过站时间、结果
          */
-        String pass="Pass";
-        if(StringUtils.isEmpty(restapiSNDataTransferApiDto)){
-            return "Fail 过站信息为空";
-        }
-
-        String check = deviceInterFaceUtils.checkParameter(restapiSNDataTransferApiDto.getProCode(),restapiSNDataTransferApiDto.getProcessCode(),
-                restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getPartBarcode(),
-                restapiSNDataTransferApiDto.getEamJigBarCode(),restapiSNDataTransferApiDto.getEquipmentCode(),
-                restapiSNDataTransferApiDto.getSectionCode(),restapiSNDataTransferApiDto.getUserCode(),
-                restapiSNDataTransferApiDto.getBadnessPhenotypeCode());
 
         String executeResult="";
         BaseExecuteResultDto baseExecuteResultDto= sfcFeignApi.snDataTransfer(restapiSNDataTransferApiDto).getData();

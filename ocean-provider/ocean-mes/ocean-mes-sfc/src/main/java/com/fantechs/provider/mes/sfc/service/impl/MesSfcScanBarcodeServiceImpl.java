@@ -15,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MesSfcScanBarcodeServiceImpl implements MesSfcScanBarcodeService {
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
     public BaseExecuteResultDto chkLogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws Exception {
 
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
@@ -35,8 +33,6 @@ public class MesSfcScanBarcodeServiceImpl implements MesSfcScanBarcodeService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
     public BaseExecuteResultDto chkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws Exception {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
