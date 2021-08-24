@@ -115,6 +115,9 @@ ouo.option3
   <if test="actualDespatchDateT!=null and actualDespatchDateT!='' and actualDespatchDateF!=null and actualDespatchDateF!=''">
     and date_format(ouo.actual_despatch_date,'%Y-%m-%d') BETWEEN #{actualDespatchDateT} AND #{actualDespatchDateF}
   </if>
+    <if test="otherOutOrderId!=null and otherOutOrderId!=''">
+      and ouo.other_out_order_id=#{otherOutOrderId}
+    </if>
 </where>
 order by ouo.create_time desc
   </select>
