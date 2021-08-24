@@ -160,4 +160,12 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
     public List<SysRoleDto> findByUserName(SearchSysRole searchSysRole) {
         return sysRoleMapper.findByUserName(searchSysRole);
     }
+
+    @Override
+    public List<SysUserRole> findUserRoleList(Long userId) {
+        Example example = new Example(SysUserRole.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userId",userId);
+        return sysUserRoleMapper.selectByExample(example);
+    }
 }

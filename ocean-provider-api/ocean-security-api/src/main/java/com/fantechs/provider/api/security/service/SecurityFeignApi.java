@@ -1,9 +1,7 @@
 package com.fantechs.provider.api.security.service;
 
 
-import com.fantechs.common.base.entity.security.SysApiLog;
-import com.fantechs.common.base.entity.security.SysSpecItem;
-import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.*;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -52,5 +51,15 @@ public interface SecurityFeignApi {
     @ApiOperation(value = "新增接口日志",notes = "新增接口日志(组织、创建人、创建时间已有)")
     @PostMapping("/sysApiLog/add")
     ResponseEntity add(@ApiParam(value = "必传",required = true) @RequestBody  SysApiLog sysApiLog);
+
+    @ApiOperation("获取用户角色信息")
+    @PostMapping("/sysRole/findUserRoleList")
+    ResponseEntity<List<SysUserRole>> findUserRoleList(@ApiParam(value = "必传：userId", required = true) @RequestParam @Validated @NotNull(message = "userId不能为空") Long userId);
+
+    @ApiOperation("获取授权信息")
+    @PostMapping("/authRole/getSysAuthRole")
+    ResponseEntity<SysAuthRole> getSysAuthRole(@ApiParam(value = "必传：roleId", required = true) @RequestParam @Validated @NotNull(message = "roleId不能为空") Long roleId, @ApiParam(value = "必传：menuId", required = true) @RequestParam @Validated @NotNull(message = "menuId不能为空") Long menuId);
+
+
 
 }

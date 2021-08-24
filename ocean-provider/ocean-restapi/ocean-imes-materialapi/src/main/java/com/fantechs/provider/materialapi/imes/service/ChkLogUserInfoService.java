@@ -15,6 +15,6 @@ import java.util.List;
 public interface ChkLogUserInfoService {
 
     @WebMethod
-    String ChkLogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws ParseException;
+    String ChkLogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws Exception;
 
 }

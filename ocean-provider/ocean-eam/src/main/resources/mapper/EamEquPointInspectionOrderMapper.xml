@@ -77,6 +77,9 @@
     left join ocean_v2.sys_user s on eepio.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON eepio.org_id = bo.organization_id
     <where>
+      <if test="equipmentBarcodeId != null">
+        and eepip.equipment_barcode_id = #{equipmentBarcodeId}
+      </if>
       <if test="equipmentCategoryId != null">
         and eepip.equipment_category_id = #{equipmentCategoryId}
       </if>

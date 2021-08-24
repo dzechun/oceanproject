@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigPointInspectionOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionProject;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -42,8 +43,6 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
     @Resource
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
-    private EamJigMapper eamJigMapper;
-    @Resource
     private EamJigPointInspectionProjectMapper eamJigPointInspectionProjectMapper;
 
     @Override
@@ -60,38 +59,45 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public EamJigPointInspectionOrderDto pdaCreateOrder(String jigBarcode) {
-        Example example = new Example(EamJigBarcode.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigBarcode",jigBarcode);
-        List<EamJigBarcode> eamJigBarcodes = eamJigBarcodeMapper.selectByExample(example);
-        if(StringUtils.isEmpty(eamJigBarcodes)){
+        //查治具条码信息
+        SearchEamJigBarcode searchEamJigBarcode = new SearchEamJigBarcode();
+        searchEamJigBarcode.setJigBarCode(jigBarcode);
+        List<EamJigBarcodeDto> eamJigBarcodeDtos = eamJigBarcodeMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigBarcode));
+        if(StringUtils.isEmpty(eamJigBarcodeDtos)){
             throw new BizErrorException("查不到此治具条码");
         }
+        EamJigBarcodeDto eamJigBarcodeDto = eamJigBarcodeDtos.get(0);
+        //修改治具状态为停用
+        eamJigBarcodeDto.setUsageStatus((byte)3);
+        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcodeDto);
 
-        EamJig eamJig = eamJigMapper.selectByPrimaryKey(eamJigBarcodes.get(0).getJigId());
 
+        //查治具对应的点检项目
         SearchEamJigPointInspectionProject searchEamJigPointInspectionProject = new SearchEamJigPointInspectionProject();
-        searchEamJigPointInspectionProject.setJigCategoryId(eamJig.getJigCategoryId());
+        searchEamJigPointInspectionProject.setJigCategoryId(eamJigBarcodeDto.getJigCategoryId());
         List<EamJigPointInspectionProjectDto> list = eamJigPointInspectionProjectMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigPointInspectionProject));
         if(StringUtils.isEmpty(list)){
             throw new BizErrorException("查不到该治具所属类别的点检项目");
         }
         EamJigPointInspectionProjectDto eamJigPointInspectionProjectDto = list.get(0);
 
+
         SearchEamJigPointInspectionOrder searchEamJigPointInspectionOrder1 = new SearchEamJigPointInspectionOrder();
-        searchEamJigPointInspectionOrder1.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
+        searchEamJigPointInspectionOrder1.setJigBarcodeId(eamJigBarcodeDto.getJigBarcodeId());
         searchEamJigPointInspectionOrder1.setOrderStatus((byte)1);
         List<EamJigPointInspectionOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigPointInspectionOrder1));
         if(StringUtils.isNotEmpty(orderDtos)){
             throw new BizErrorException("已存在该治具待点检状态的单据");
         }
 
+
+        //保存点检单信息
         EamJigPointInspectionOrder eamJigPointInspectionOrder = new EamJigPointInspectionOrder();
         List<EamJigPointInspectionOrderDetDto> eamJigPointInspectionOrderDetList = new ArrayList<>();
 
         eamJigPointInspectionOrder.setJigPointInspectionOrderCode(CodeUtils.getId("DJ-"));
-        eamJigPointInspectionOrder.setJigId(eamJig.getJigId());
-        eamJigPointInspectionOrder.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
+        eamJigPointInspectionOrder.setJigId(eamJigBarcodeDto.getJigId());
+        eamJigPointInspectionOrder.setJigBarcodeId(eamJigBarcodeDto.getJigBarcodeId());
         eamJigPointInspectionOrder.setJigPointInspectionProjectId(eamJigPointInspectionProjectDto.getJigPointInspectionProjectId());
         List<EamJigPointInspectionProjectItemDto> eamJigPointInspectionProjectItemList = eamJigPointInspectionProjectDto.getList();
         for (EamJigPointInspectionProjectItem eamJigPointInspectionProjectItem : eamJigPointInspectionProjectItemList){
@@ -108,6 +114,23 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         List<EamJigPointInspectionOrderDto> jigInspectionOrderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigPointInspectionOrder));
         return jigInspectionOrderDtos.get(0);
     }
+
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int pdaSubmit(EamJigPointInspectionOrder eamJigPointInspectionOrder) {
+        eamJigPointInspectionOrder.setOrderStatus((byte)2);
+        int i = this.update(eamJigPointInspectionOrder);
+
+        //修改该治具使用状态
+        EamJigBarcode eamJigBarcode = new EamJigBarcode();
+        eamJigBarcode.setJigBarcodeId(eamJigPointInspectionOrder.getJigBarcodeId());
+        eamJigBarcode.setUsageStatus((byte)2);
+        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
+
+        return i;
+    }
+
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)

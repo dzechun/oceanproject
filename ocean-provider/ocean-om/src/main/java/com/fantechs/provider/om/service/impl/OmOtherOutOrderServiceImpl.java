@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -67,6 +68,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         if(omOtherOutOrder.getOmOtherOutOrderDets().size()<1){
             throw new BizErrorException("请输入下发数量");
         }
+        List<OmOtherOutOrderDto> list = omOtherOutOrderMapper.findList(ControllerUtil.dynamicCondition("otherOutOrderId",omOtherOutOrder.getOtherOutOrderId()));
         int num = 0;
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = new ArrayList<>();
         int i=1;
@@ -98,13 +100,14 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             i++;
         }
         WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
-        wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("DBCK-"));
+        wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("QTCK-"));
         wmsOutDeliveryOrder.setMaterialOwnerId(omOtherOutOrder.getMaterialOwnerId());
         wmsOutDeliveryOrder.setSourceOrderId(omOtherOutOrder.getOtherOutOrderId());
         wmsOutDeliveryOrder.setRelatedOrderCode1(omOtherOutOrder.getOtherOutOrderCode());
         wmsOutDeliveryOrder.setOrderTypeId((long)7);
         wmsOutDeliveryOrder.setOrderStatus((byte)1);
         wmsOutDeliveryOrder.setOrderDate(new Date());
+        wmsOutDeliveryOrder.setConsignee(list.get(0).getConsigneeName());
         wmsOutDeliveryOrder.setLinkManName(omOtherOutOrder.getLinkManName());
         wmsOutDeliveryOrder.setLinkManPhone(omOtherOutOrder.getLinkManPhone());
         wmsOutDeliveryOrder.setEmailAddress(omOtherOutOrder.getEMailAddress());

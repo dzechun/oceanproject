@@ -9,7 +9,8 @@ class CodeGeneratorMain {
     private static final String MODEL_NAME = "ITest";
 
     private static final String[] TABLES = {
-            "wms_inner_ht_job_order", "wms_inner_ht_job_order_det", "wms_inner_ht_job_order_det_barcode"
+            "eam_equipment_standing_book", "eam_equipment_standing_book_attachment","eam_equipment_jig","eam_equipment_jig_list",
+            "eam_ht_equipment_standing_book","eam_ht_equipment_standing_book_attachment","eam_ht_equipment_jig","eam_ht_equipment_jig_list"
     };
 
     /**
@@ -27,9 +28,9 @@ class CodeGeneratorMain {
     public static void main(String[] args) {
         CodeGeneratorManager cgm = new CodeGeneratorManager();
 
-        cgm.genCodeWithSimpleName(TABLE);
+        //cgm.genCodeWithSimpleName(TABLE);
 
-//		cgm.genCodeWithDetailName(TABLES);
+		cgm.genCodeWithDetailName(TABLES);
 
 //		cgm.genCodeWithCustomName(TABLE, MODEL_NAME);
     }

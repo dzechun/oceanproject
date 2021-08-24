@@ -22,7 +22,7 @@ public class SearchMesPmWorkOrderBom extends BaseQuery implements Serializable {
     /**
      * 零件物料ID
      */
-    @ApiModelProperty(name="partMaterialId" ,value="工单ID")
+    @ApiModelProperty(name="partMaterialId" ,value="物料ID")
     private Long partMaterialId;
 
     /**
@@ -30,6 +30,12 @@ public class SearchMesPmWorkOrderBom extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="partMaterialCode" ,value="零件料号")
     private String partMaterialCode;
+
+    /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId" ,value="工序ID")
+    private Long processId;
 
     /**
      * 物料描述

@@ -75,6 +75,9 @@
       <if test="equipmentCategoryId != null">
         and ee.equipment_category_id = #{equipmentCategoryId}
       </if>
+      <if test="equipmentBarcodeId != null">
+        and eemo.equipment_barcode_id = #{equipmentBarcodeId}
+      </if>
       <if test="orderStatus != null">
         and eemo.order_status = #{orderStatus}
       </if>

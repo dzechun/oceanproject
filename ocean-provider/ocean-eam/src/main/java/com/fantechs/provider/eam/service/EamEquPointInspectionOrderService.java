@@ -44,4 +44,18 @@ public interface EamEquPointInspectionOrderService extends IService<EamEquPointI
      * @return
      */
     int batchDelete(String ids);
+
+    /**
+     * PDA创建点检单
+     * @param equipmentBarcode
+     * @return
+     */
+    EamEquPointInspectionOrderDto pdaCreateOrder(String equipmentBarcode);
+
+    /**
+     * PDA提交
+     * @param eamEquPointInspectionOrder
+     * @return
+     */
+    int pdaSubmit(EamEquPointInspectionOrder eamEquPointInspectionOrder);
 }

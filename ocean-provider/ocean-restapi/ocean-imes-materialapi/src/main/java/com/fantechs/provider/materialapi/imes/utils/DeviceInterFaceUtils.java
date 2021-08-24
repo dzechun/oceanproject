@@ -9,7 +9,6 @@ import com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
-import com.fantechs.common.base.general.dto.eam.EamJigReMaterialDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
@@ -17,7 +16,6 @@ import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigReMaterial;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
@@ -171,14 +169,14 @@ public class DeviceInterFaceUtils {
     /*
      * 获取治具绑定产品信息
      * */
-    public ResponseEntity<List<EamJigReMaterialDto>> getEamJigReMaterial(Long MaterialId,Long JigID){
-        ResponseEntity<List<EamJigReMaterialDto>> eamJigReMaterialDtoList=null;
-        SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
-        searchEamJigReMaterial.setMaterialId(MaterialId);
-        searchEamJigReMaterial.setJigId(JigID);
-        eamJigReMaterialDtoList = eamFeignApi.findList(searchEamJigReMaterial);
-        return eamJigReMaterialDtoList;
-    }
+//    public ResponseEntity<List<EamJigReMaterialDto>> getEamJigReMaterial(Long MaterialId,Long JigID){
+//        ResponseEntity<List<EamJigReMaterialDto>> eamJigReMaterialDtoList=null;
+//        SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
+//        searchEamJigReMaterial.setMaterialId(MaterialId);
+//        searchEamJigReMaterial.setJigId(JigID);
+//        eamJigReMaterialDtoList = eamFeignApi.findList(searchEamJigReMaterial);
+//        return eamJigReMaterialDtoList;
+//    }
     /*
      * 获取系统配置项信息
      * */
@@ -405,11 +403,11 @@ public class DeviceInterFaceUtils {
                         }
                         //判断治具编码与产品绑定关系
                         Long JidID=eamJigBarcodeDto.getJigId();
-                        ResponseEntity<List<EamJigReMaterialDto>> eamJigReMaterialDtoList = this.getEamJigReMaterial(MaterialId,JidID);
-                        if (StringUtils.isEmpty(eamJigReMaterialDtoList.getData())) {
-                            check = fail + " 请求失败,治具SN与产品SN没有绑定关系";
-                            return check;
-                        }
+//                        ResponseEntity<List<EamJigReMaterialDto>> eamJigReMaterialDtoList = this.getEamJigReMaterial(MaterialId,JidID);
+//                        if (StringUtils.isEmpty(eamJigReMaterialDtoList.getData())) {
+//                            check = fail + " 请求失败,治具SN与产品SN没有绑定关系";
+//                            return check;
+//                        }
                     }
                 }
             }

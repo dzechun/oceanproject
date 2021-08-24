@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 ;
@@ -66,6 +67,30 @@ public class EamEquipmentParamList extends ValidGroup implements Serializable {
     @Excel(name = "参考值", height = 20, width = 30,orderNum="") 
     @Column(name = "reference_value")
     private String referenceValue;
+
+    /**
+     * 地址位
+     */
+    @ApiModelProperty(name="addressLoca",value = "地址位")
+    @Excel(name = "地址位", height = 20, width = 30,orderNum="")
+    @Column(name = "address_loca")
+    private Integer addressLoca;
+
+    /**
+     * 最小阀值
+     */
+    @ApiModelProperty(name="minValue",value = "最小阀值")
+    @Excel(name = "最小阀值", height = 20, width = 30,orderNum="")
+    @Column(name = "min_value")
+    private BigDecimal minValue;
+
+    /**
+     * 最大阀值
+     */
+    @ApiModelProperty(name="maxValue",value = "最大阀值")
+    @Excel(name = "最大阀值", height = 20, width = 30,orderNum="")
+    @Column(name = "max_value")
+    private BigDecimal maxValue;
 
     /**
      * 状态(0无效，1有效)

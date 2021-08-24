@@ -124,7 +124,7 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
         if (idList.size() > 0) {
             criteria1.andNotIn("jigPointInspectionProjectItemId", idList);
         }
-        eamJigPointInspectionProjectMapper.deleteByExample(example1);
+        eamJigPointInspectionProjectItemMapper.deleteByExample(example1);
 
         //点检项目事项
         if(StringUtils.isNotEmpty(list)){
@@ -174,7 +174,7 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
             Example example1 = new Example(EamJigPointInspectionProjectItem.class);
             Example.Criteria criteria1 = example1.createCriteria();
             criteria1.andEqualTo("jigPointInspectionProjectId", id);
-            eamJigPointInspectionProjectMapper.deleteByExample(example1);
+            eamJigPointInspectionProjectItemMapper.deleteByExample(example1);
         }
 
         eamHtJigPointInspectionProjectMapper.insertList(htList);
@@ -204,7 +204,7 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
         Example.Criteria criteria2 = example.createCriteria();
         criteria2.andEqualTo("jigCategoryId",eamJigPointInspectionProject.getJigCategoryId());
         if (StringUtils.isNotEmpty(eamJigPointInspectionProject.getJigPointInspectionProjectId())){
-            criteria1.andNotEqualTo("jigPointInspectionProjectId",eamJigPointInspectionProject.getJigPointInspectionProjectId());
+            criteria2.andNotEqualTo("jigPointInspectionProjectId",eamJigPointInspectionProject.getJigPointInspectionProjectId());
         }
         EamJigPointInspectionProject jigPointInspectionProject2 = eamJigPointInspectionProjectMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(jigPointInspectionProject2)){

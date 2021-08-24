@@ -2,15 +2,18 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkLogUserInfoApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.materialapi.imes.service.ChkLogUserInfoService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
+import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.Resource;
@@ -30,15 +33,19 @@ public class ChkLogUserInfoServiceImpl implements ChkLogUserInfoService {
     private DeviceInterFaceUtils deviceInterFaceUtils;
 
     @Override
-    public String ChkLogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws ParseException {
-        String pass="Pass";
-        String check = check(restapiChkLogUserInfoApiDto);
-        if (!check.equals("1")) {
-            logsUtils.addlog((byte) 0, (byte) 2, (long) 1002, check, restapiChkLogUserInfoApiDto.toString());
-            return check;
-        }
-        logsUtils.addlog((byte)1,(byte)2,(long)1002,null,null);
-        return pass+" 登录信息验证通过";
+    public String ChkLogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws Exception {
+//        String pass="Pass";
+//        String check = check(restapiChkLogUserInfoApiDto);
+//        if (!check.equals("1")) {
+//            logsUtils.addlog((byte) 0, (byte) 2, (long) 1002, check, restapiChkLogUserInfoApiDto.toString());
+//            return check;
+//        }
+//        logsUtils.addlog((byte)1,(byte)2,(long)1002,null,null);
+//        return pass+" 登录信息验证通过";
+        String executeResult="";
+        BaseExecuteResultDto baseExecuteResultDto= BarcodeUtils.ChkLogUserInfo(restapiChkLogUserInfoApiDto);
+        executeResult= JsonUtils.objectToJson(baseExecuteResultDto);
+        return  executeResult;
     }
 
 

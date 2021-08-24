@@ -91,6 +91,9 @@
       <if test="partMaterialId!=null and partMaterialId!=''">
         and mpwob.part_material_id=#{partMaterialId}
       </if>
+      <if test="processId!=null and processId!=''">
+        and mpwob.process_id=#{processId}
+      </if>
       <if test="partMaterialCode!=null and partMaterialCode!=''">
         and bm.material_code like CONCAT('%', #{partMaterialCode}, '%')
       </if>

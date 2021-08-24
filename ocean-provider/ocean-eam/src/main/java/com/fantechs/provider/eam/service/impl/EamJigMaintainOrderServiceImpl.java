@@ -3,14 +3,13 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamJigMaintainOrderDetDto;
-import com.fantechs.common.base.general.dto.eam.EamJigMaintainOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamJigMaintainProjectDto;
-import com.fantechs.common.base.general.dto.eam.EamJigMaintainProjectItemDto;
+import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaintainOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaintainOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaintainProject;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -43,8 +42,6 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
     @Resource
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
-    private EamJigMapper eamJigMapper;
-    @Resource
     private EamJigMaintainProjectMapper eamJigMaintainProjectMapper;
     @Resource
     private EamHtJigMaintainOrderMapper eamHtJigMaintainOrderMapper;
@@ -63,53 +60,78 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public EamJigMaintainOrderDto pdaCreateOrder(String jigBarcode) {
-        Example example = new Example(EamJigBarcode.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigBarcode",jigBarcode);
-        List<EamJigBarcode> eamJigBarcodes = eamJigBarcodeMapper.selectByExample(example);
-        if(StringUtils.isEmpty(eamJigBarcodes)){
+        //查治具条码信息
+        SearchEamJigBarcode searchEamJigBarcode = new SearchEamJigBarcode();
+        searchEamJigBarcode.setJigBarCode(jigBarcode);
+        List<EamJigBarcodeDto> eamJigBarcodeDtos = eamJigBarcodeMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigBarcode));
+        if(StringUtils.isEmpty(eamJigBarcodeDtos)){
             throw new BizErrorException("查不到此治具条码");
         }
+        EamJigBarcodeDto eamJigBarcodeDto = eamJigBarcodeDtos.get(0);
+        //修改治具状态为停用
+        eamJigBarcodeDto.setUsageStatus((byte)3);
+        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcodeDto);
 
-        EamJig eamJig = eamJigMapper.selectByPrimaryKey(eamJigBarcodes.get(0).getJigId());
 
+        //查治具对应的保养项目
         SearchEamJigMaintainProject searchEamJigMaintainProject = new SearchEamJigMaintainProject();
-        searchEamJigMaintainProject.setJigCategoryId(eamJig.getJigCategoryId());
+        searchEamJigMaintainProject.setJigCategoryId(eamJigBarcodeDto.getJigCategoryId());
         List<EamJigMaintainProjectDto> list = eamJigMaintainProjectMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaintainProject));
         if(StringUtils.isEmpty(list)){
             throw new BizErrorException("查不到该治具所属类别的保养项目");
         }
         EamJigMaintainProjectDto eamJigMaintainProjectDto = list.get(0);
 
-        SearchEamJigMaintainOrder searchEamJigMaintainOrder1 = new SearchEamJigMaintainOrder();
-        searchEamJigMaintainOrder1.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
-        searchEamJigMaintainOrder1.setOrderStatus((byte)1);
-        List<EamJigMaintainOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaintainOrder1));
+        SearchEamJigMaintainOrder searchEamJigMaintainOrder = new SearchEamJigMaintainOrder();
+        searchEamJigMaintainOrder.setJigBarcodeId(eamJigBarcodeDto.getJigBarcodeId());
+        searchEamJigMaintainOrder.setOrderStatus((byte)1);
+        List<EamJigMaintainOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaintainOrder));
         if(StringUtils.isNotEmpty(orderDtos)){
             throw new BizErrorException("已存在该治具待保养状态的单据");
         }
 
-        EamJigMaintainOrder eamJigMaintainOrder = new EamJigMaintainOrder();
+
+        //保存保养单信息
+        EamJigMaintainOrderDto eamJigMaintainOrderDto = new EamJigMaintainOrderDto();
         List<EamJigMaintainOrderDetDto> eamJigMaintainOrderDetList = new ArrayList<>();
 
-        eamJigMaintainOrder.setJigMaintainOrderCode(CodeUtils.getId("BY-"));
-        eamJigMaintainOrder.setJigId(eamJig.getJigId());
-        eamJigMaintainOrder.setJigBarcodeId(eamJigBarcodes.get(0).getJigBarcodeId());
-        eamJigMaintainOrder.setJigMaintainProjectId(eamJigMaintainProjectDto.getJigMaintainProjectId());
+        eamJigMaintainOrderDto.setJigMaintainOrderCode(CodeUtils.getId("ZJBY-"));
+        eamJigMaintainOrderDto.setJigId(eamJigBarcodeDto.getJigId());
+        eamJigMaintainOrderDto.setJigBarcodeId(eamJigBarcodeDto.getJigBarcodeId());
+        eamJigMaintainOrderDto.setJigMaintainProjectId(eamJigMaintainProjectDto.getJigMaintainProjectId());
         List<EamJigMaintainProjectItemDto> eamJigMaintainProjectItemList = eamJigMaintainProjectDto.getList();
         for (EamJigMaintainProjectItem eamJigMaintainProjectItem : eamJigMaintainProjectItemList){
-            EamJigMaintainOrderDetDto eamJigMaintainOrderDet = new EamJigMaintainOrderDetDto();
-            eamJigMaintainOrderDet.setJigMaintainProjectItemId(eamJigMaintainProjectItem.getJigMaintainProjectItemId());
-            eamJigMaintainOrderDetList.add(eamJigMaintainOrderDet);
+            EamJigMaintainOrderDetDto eamJigMaintainOrderDetDto = new EamJigMaintainOrderDetDto();
+            eamJigMaintainOrderDetDto.setJigMaintainProjectItemId(eamJigMaintainProjectItem.getJigMaintainProjectItemId());
+            eamJigMaintainOrderDetList.add(eamJigMaintainOrderDetDto);
         }
-        eamJigMaintainOrder.setList(eamJigMaintainOrderDetList);
+        eamJigMaintainOrderDto.setList(eamJigMaintainOrderDetList);
 
-        this.save(eamJigMaintainOrder);
+        this.save(eamJigMaintainOrderDto);
 
-        SearchEamJigMaintainOrder searchEamJigMaintainOrder = new SearchEamJigMaintainOrder();
-        searchEamJigMaintainOrder.setJigMaintainOrderId(eamJigMaintainOrder.getJigMaintainOrderId());
-        List<EamJigMaintainOrderDto> jigMaintainOrderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaintainOrder));
-        return jigMaintainOrderDtos.get(0);
+
+        SearchEamJigMaintainOrder searchEamJigMaintainOrder1 = new SearchEamJigMaintainOrder();
+        searchEamJigMaintainOrder1.setJigMaintainOrderId(eamJigMaintainOrderDto.getJigMaintainOrderId());
+        List<EamJigMaintainOrderDto> eamJigMaintainOrderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaintainOrder1));
+        return eamJigMaintainOrderDtos.get(0);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int pdaSubmit(EamJigMaintainOrder eamJigMaintainOrder) {
+        eamJigMaintainOrder.setOrderStatus((byte)2);
+        int i = this.update(eamJigMaintainOrder);
+
+        //修改该治具保养信息
+        EamJigBarcode eamJigBarcode = new EamJigBarcode();
+        eamJigBarcode.setJigBarcodeId(eamJigMaintainOrder.getJigBarcodeId());
+        eamJigBarcode.setLastTimeMaintainTime(new Date());
+        eamJigBarcode.setCurrentMaintainTime(eamJigBarcode.getCurrentMaintainTime()==null?1:eamJigBarcode.getCurrentMaintainTime()+1);
+        eamJigBarcode.setCurrentMaintainUsageTime(0);
+        eamJigBarcode.setUsageStatus((byte)2);
+        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
+
+        return i;
     }
 
     @Override

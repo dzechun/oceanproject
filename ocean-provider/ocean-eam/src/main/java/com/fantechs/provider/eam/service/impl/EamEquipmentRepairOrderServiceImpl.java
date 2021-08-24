@@ -167,7 +167,22 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
         BeanUtils.copyProperties(entity,eamHtEquipmentRepairOrder);
         int i = eamHtEquipmentRepairOrderMapper.insert(eamHtEquipmentRepairOrder);
 
+        updateEquipmentStatus(entity);
+
         return i;
+    }
+
+    /**
+     * 修改该设备使用状态
+     * @param entity
+     */
+    public void updateEquipmentStatus(EamEquipmentRepairOrderDto entity) {
+        if(StringUtils.isNotEmpty(entity.getRepairUserId())) {
+            EamEquipmentBarcode eamEquipmentBarcode = new EamEquipmentBarcode();
+            eamEquipmentBarcode.setEquipmentBarcodeId(entity.getEquipmentBarcodeId());
+            eamEquipmentBarcode.setEquipmentStatus((byte) 5);
+            eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+        }
     }
 
     @Override
