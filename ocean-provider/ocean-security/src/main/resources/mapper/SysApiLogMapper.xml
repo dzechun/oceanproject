@@ -34,26 +34,26 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    cfd.api_log_id,
-    cfd.thirdparty_sys_name,
-    cfd.call_result,
-    cfd.call_type,
-    cfd.show_type,
-    cfd.api_module,
-    cfd.thirdparty_api_ip_port,
-    cfd.api_url,
-    cfd.consume_time,
-    cfd.status,
-    cfd.remark,
-    cfd.org_id,
-    cfd.request_time,
-    cfd.response_time,
-    cfd.create_user_id,
-    cfd.create_time,
-    cfd.modified_user_id,
-    cfd.modified_time,
-    cfd.response_data,
-    cfd.request_parameter
+    sal.api_log_id,
+    sal.thirdparty_sys_name,
+    sal.call_result,
+    sal.call_type,
+    sal.show_type,
+    sal.api_module,
+    sal.thirdparty_api_ip_port,
+    sal.api_url,
+    sal.consume_time,
+    sal.status,
+    sal.remark,
+    sal.org_id,
+    sal.request_time,
+    sal.response_time,
+    sal.create_user_id,
+    sal.create_time,
+    sal.modified_user_id,
+    sal.modified_time,
+    sal.response_data,
+    sal.request_parameter
   </sql>
 
   <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">

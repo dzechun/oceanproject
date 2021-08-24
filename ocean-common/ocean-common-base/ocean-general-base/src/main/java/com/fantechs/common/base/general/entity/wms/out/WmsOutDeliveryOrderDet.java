@@ -226,4 +226,22 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    /**
+     * 扩展字段1
+     */
+    @ApiModelProperty(name="option1",value = "扩展字段1")
+    private String option1;
+
+    /**
+     * 扩展字段2
+     */
+    @ApiModelProperty(name="option2",value = "扩展字段2")
+    private String option2;
+
+    /**
+     * 扩展字段3
+     */
+    @ApiModelProperty(name="option3",value = "扩展字段3")
+    private String option3;
+
 }

@@ -40,6 +40,18 @@ public class SysLoginByEquipmentServiceImpl  implements SysLoginByEquipmentServi
     @Override
     public ResponseEntity eamLogin(String username, String password,Long orgId,String mac ,String type) {
         ResponseEntity responseEntity = null;
+        //密码登录
+        if("1".equals(type)) {
+         //   if (StringUtils.isNotEmpty(sysRoleDtos)) {
+                responseEntity = securityFeignApi.login(username, password,orgId,null);
+         //   }
+            //刷卡登录
+        }else if("2".equals(type)){
+        //    if (StringUtils.isNotEmpty(sysRoleDtos)) {
+                responseEntity = securityFeignApi.login(username, "123456",orgId,type);
+        //    }
+        }
+
         //通过mac地址查询设备
         ResponseEntity<List<EamEquipmentDto>> list = eamFeignApi.findByMac(mac, orgId);
         if (StringUtils.isEmpty(list.getData())) {
@@ -50,23 +62,8 @@ public class SysLoginByEquipmentServiceImpl  implements SysLoginByEquipmentServi
         searchSysRole.setUserName(username);
         searchSysRole.setRoleName(list.getData().get(0).getProcessName());
         List<SysRoleDto> sysRoleDtos = sysRoleMapper.findByUserName(searchSysRole);
-
-    //    log.info("---username---"+username+","+"----orgId--"+orgId+",---type-"+type);
-        //密码登录
-        if("1".equals(type)) {
-            if (StringUtils.isNotEmpty(sysRoleDtos)) {
-                responseEntity = securityFeignApi.login(username, password,orgId,null);
-            } else {
-                return ControllerUtil.returnFail("登录错误，该用户无权限登录", 1);
-            }
-            //刷卡登录
-        }else if("2".equals(type)){
-            if (StringUtils.isNotEmpty(sysRoleDtos)) {
-
-                responseEntity = securityFeignApi.login(username, "123456",orgId,type);
-            } else {
-                return ControllerUtil.returnFail("登录错误，该用户无权限登录", 1);
-            }
+        if (StringUtils.isEmpty(sysRoleDtos)) {
+            return ControllerUtil.returnFail("角色无登录权限，请在系统角色中进行配置", 1);
         }
         return responseEntity;
     }
