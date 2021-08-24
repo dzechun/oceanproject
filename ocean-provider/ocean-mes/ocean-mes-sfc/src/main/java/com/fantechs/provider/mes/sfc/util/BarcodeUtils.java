@@ -1,6 +1,5 @@
 package com.fantechs.provider.mes.sfc.util;
 
-import com.ctc.wstx.sw.EncodingXmlWriter;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysAuthRole;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -8,14 +7,19 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.SysUserRole;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.*;
-import com.fantechs.common.base.general.dto.eam.*;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentMaterialDto;
+import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
+import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkLogUserInfoApiDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
 import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterialList;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaterial;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
@@ -33,7 +37,6 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.*;
-import org.apache.commons.lang3.Conversion;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -42,7 +45,6 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.*;
 
 
@@ -343,7 +345,7 @@ public class BarcodeUtils {
         }
         // 判断当前工序是否为产出工序，且是该条码在工单工序第一次过站，工单产出 +1
         if (dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId()) && mesSfcBarcodeProcessRecordDtoList.isEmpty()) {
-            mesPmWorkOrder.setOutputQty(mesPmWorkOrder.getOutputQty().add(BigDecimal.ONE));
+            mesPmWorkOrder.setOutputQty(BigDecimal.ONE.add(mesPmWorkOrder.getOutputQty()));
             if (mesPmWorkOrder.getOutputQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 0) {
                 // 产出数量等于工单数量，工单完工
                 mesPmWorkOrder.setWorkOrderStatus((byte) 6);
@@ -526,7 +528,7 @@ public class BarcodeUtils {
         searchBasePackageSpecification.setProcessId(processId);
         List<BasePackageSpecificationDto> packageSpecificationDtos = barcodeUtils.baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
         if (packageSpecificationDtos.isEmpty()) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "物料匹配的包装规格数据不存在");
         }
         List<BaseMaterialPackageDto> baseMaterialPackageDtos = packageSpecificationDtos.get(0).getBaseMaterialPackages();
         if(baseMaterialPackageDtos.size() <= 0){
