@@ -34,16 +34,25 @@
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto">
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="work_order_qty" jdbcType="VARCHAR" property="workOrderQty"/>
+    <result column="no_schedule_qty" jdbcType="VARCHAR" property="noScheduleQty"/>
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan"
           resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    mpwo.material_id,mpwo.work_order_qty AS 'workOrderQty',mpwo.production_qty,mpwo.output_qty,
-    mpwo.work_order_status,mpwo.pro_line_id,mpwo.scheduled_qty,bm.material_code AS materialCode,
-    bm.material_version AS materialVersion,bm.material_desc AS materialDesc,bpl.pro_name AS proName,
-    date_format(mpdp.plan_time, '%Y-%m-%d') AS planDate,mpwo.work_order_code as workOrderCode,
-    bpl.pro_name,bm.material_name,(mpwo.work_order_qty-mpdp.schedule_qty) AS 'noScheduleQty'
+    mpwo.material_id,mpwo.work_order_qty AS work_order_qty,mpwo.production_qty,mpwo.output_qty,
+    mpwo.work_order_status,mpwo.pro_line_id,mpwo.scheduled_qty,bpl.pro_name AS proName,
+    date_format(mpdp.plan_time, '%Y-%m-%d') AS planDate,mpwo.work_order_code as work_order_code,
+    bpl.pro_name as pro_name,bm.material_name as material_name,bm.material_code as material_code,bm.material_desc as material_desc,
+    bm.material_version as material_version,
+    (mpwo.work_order_qty-mpdp.schedule_qty) AS no_schedule_qty
     from mes_pm_daily_plan mpdp
     LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
     LEFT JOIN base_pro_line bpl ON  mpwo.pro_line_id =bpl.pro_line_id
