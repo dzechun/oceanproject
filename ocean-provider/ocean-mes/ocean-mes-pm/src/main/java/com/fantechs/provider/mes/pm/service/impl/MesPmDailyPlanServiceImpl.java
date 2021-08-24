@@ -45,7 +45,6 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             searchMesPmDailyPlan.setStartTime(searchMesPmDailyPlan.getPlanTime());
             searchMesPmDailyPlan.setEndTime(searchMesPmDailyPlan.getPlanTime());
         }
-        searchMesPmDailyPlan.setStatus((byte)1);
         return mesPmDailyPlanMapper.findList(searchMesPmDailyPlan);
     }
 
