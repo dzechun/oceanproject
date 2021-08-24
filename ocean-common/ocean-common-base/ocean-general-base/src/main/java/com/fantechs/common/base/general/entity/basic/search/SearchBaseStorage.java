@@ -48,6 +48,12 @@ public class SearchBaseStorage extends BaseQuery implements Serializable {
     private Long warehouseId;
 
     /**
+     * 仓库编码
+     */
+    @ApiModelProperty(name = "warehouseCode",value = "仓库编码")
+    private String warehouseCode;
+
+    /**
      * 仓库名称
      */
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")

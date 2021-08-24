@@ -1,8 +1,11 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
@@ -24,6 +27,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
@@ -68,6 +72,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     private RedisUtil redisUtil;
     @Resource
     InFeignApi inFeignApi;
+    @Resource
+    SecurityFeignApi securityFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -515,8 +521,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     /**
      * 生成完工入库单
-     * @param palletIds
-     * @param orgId
+     * @param palletIds 栈板集合
+     * @param orgId 组织
+     * @param mesSfcWorkOrderBarcodeList 条码集合
      */
     private void beforePalletAutoAsnOrder(List<Long> palletIds, Long orgId, List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodeList){
         Map<String, Object> map = new HashMap<>();
@@ -581,6 +588,21 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
             searchBaseStorage.setMinSurplusCanPutSalver(0);
             searchBaseStorage.setStorageType((byte) 2);
+            // 万宝项目-通过程序配置项判定物料匹配的仓库
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoWarehouse");
+            List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if(!itemList.isEmpty()){
+                String warehouseCode = null;
+                List<Map<String, String>> list = JSONArray.parseObject(itemList.get(0).getParaValue(), List.class);
+                for (Map<String, String> item : list){
+                    if(item.get("material").contains(barcodeDtos.get(0).getMaterialCode())){
+                        warehouseCode = item.get("warehouse");
+                        break;
+                    }
+                }
+                searchBaseStorage.setWarehouseCode(warehouseCode);
+            }
             ResponseEntity<List<BaseStorage>> baseStorages = baseFeignApi.findList(searchBaseStorage);
             if(StringUtils.isNotEmpty(baseStorages.getData())){
                 palletAutoAsnDto.setStorageId(baseStorages.getData().get(0).getStorageId());
