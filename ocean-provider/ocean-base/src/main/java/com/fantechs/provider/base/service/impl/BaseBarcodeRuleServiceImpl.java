@@ -61,7 +61,12 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
         if(StringUtils.isNotEmpty(baseBarcodeRules)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-
+        example.clear();
+        criteria.andEqualTo("labelCategoryId",baseBarcodeRule.getLabelCategoryId()).andEqualTo("barcodeRule",baseBarcodeRule.getBarcodeRule());
+        baseBarcodeRules = baseBarcodeRuleMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(baseBarcodeRules)){
+            throw new BizErrorException("同一类别无法设置同规则");
+        }
 
         baseBarcodeRule.setCreateUserId(currentUser.getUserId());
         baseBarcodeRule.setCreateTime(new Date());

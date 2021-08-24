@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamIssue;
+import com.fantechs.common.base.general.entity.eam.EamJig;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaterial;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
@@ -66,4 +67,9 @@ public interface EamFeignApi {
     @ApiOperation("查询设备绑定产品列表")
     @PostMapping("/eamEquipmentMaterial/findList")
     ResponseEntity<List<EamEquipmentMaterialDto>> findEquipmentMaterialDtoList(@ApiParam(value = "查询对象")@RequestBody SearchEamEquipmentMaterial searchEamEquipmentMaterial);
+
+    @ApiOperation("获取治具详情")
+    @PostMapping("/eamJig/detail")
+    ResponseEntity<EamJig> findEamJigDetail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
 }

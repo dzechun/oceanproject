@@ -50,4 +50,16 @@ public class SearchEsopWiRelease extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="proLineId",value = "产线ID")
     private Long proLineId;
+
+    /**
+     * 车间名称
+     */
+    @ApiModelProperty(name="workShopName",value = "车间名称")
+    private String workShopName;
+
+    /**
+     * 产线名称
+     */
+    @ApiModelProperty(name="proLineName",value = "产线名称")
+    private String proLineName;
 }

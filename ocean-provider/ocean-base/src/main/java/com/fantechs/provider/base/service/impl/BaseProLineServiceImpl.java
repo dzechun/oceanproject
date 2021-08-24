@@ -80,6 +80,7 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
         baseProLine.setModifiedUserId(currentUser.getUserId());
         baseProLine.setModifiedTime(new Date());
         baseProLine.setOrganizationId(currentUser.getOrganizationId());
+        baseProLine.setIsDelete((byte)1);
         baseProLineMapper.insertUseGeneratedKeys(baseProLine);
 
         //新增生产线历史信息
