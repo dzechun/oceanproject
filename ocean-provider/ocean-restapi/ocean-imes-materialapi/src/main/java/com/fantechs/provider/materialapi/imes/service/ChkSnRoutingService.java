@@ -14,6 +14,6 @@ import java.text.ParseException;
 public interface ChkSnRoutingService {
 
     @WebMethod
-    String ChkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws ParseException;
+    String ChkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws Exception;
 
 }
