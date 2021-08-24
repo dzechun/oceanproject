@@ -79,7 +79,7 @@
             <if test="orgId!=null">
                 and spl.org_id=#{orgId}
             </if>
-            and swo.is_delete = 1
+                and spl.is_delete = 1
         </where>
         order by spl.create_time desc
     </select>
