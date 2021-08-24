@@ -1,9 +1,6 @@
 package com.fantechs.provider.mes.sfc.util;
 
-import com.fantechs.common.base.entity.security.SysAuthRole;
-import com.fantechs.common.base.entity.security.SysSpecItem;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.SysUserRole;
+import com.fantechs.common.base.entity.security.*;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto;
@@ -37,6 +34,8 @@ import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -234,17 +233,6 @@ public class DeviceInterFaceUtils {
         return eamEquipmentDtoList;
     }
     /*
-     * 获取治具绑定产品信息
-     * */
-//    public ResponseEntity<List<EamJigReMaterialDto>> getEamJigReMaterial(Long MaterialId,Long JigID){
-//        ResponseEntity<List<EamJigReMaterialDto>> eamJigReMaterialDtoList=null;
-//        SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
-//        searchEamJigReMaterial.setMaterialId(MaterialId);
-//        searchEamJigReMaterial.setJigId(JigID);
-//        eamJigReMaterialDtoList = eamFeignApi.findList(searchEamJigReMaterial);
-//        return eamJigReMaterialDtoList;
-//    }
-    /*
      * 获取系统配置项信息
      * */
     public ResponseEntity<List<SysSpecItem>> getSysSpecItem(String specCode){
@@ -276,208 +264,18 @@ public class DeviceInterFaceUtils {
         return baseBadnessPhenotypeDtoList;
     }
 
-    /*
-    * 验证信息是否正确
-    *
-    */
-    public String checkParameter(String proCode,String processCode,String barcodeCode,String partBarcode,
-                        String eamJigBarCode,String equipmentCode, String sectionCode,String userCode,String badnessPhenotypeCode) {
-        String check = "1";
-        String fail="Fail";
-        Long orgId=null;
-        Long MaterialId=null;
-        /* String proCode;  产线编码
-           String processCode;   工序编码
-           String barcodeCode;  成品SN
-           String partBarcode;  半成品SN 部件条码
-           String eamJigBarCode;  治具SN
-           String equipmentCode; 设备编码
-           String sectionCode 工段
-           String userCode 员工编号
-           String badnessPhenotypeCode 不良现象代码
-         */
-
-        ResponseEntity<List<BaseOrganizationDto>> baseOrganizationDtoList=this.getOrId();
-        if(StringUtils.isEmpty(baseOrganizationDtoList.getData())){
-            check = fail+" 请求失败,未查询到对应组织";
-            return check;
-        }
-        //获取组织ID
-        orgId=baseOrganizationDtoList.getData().get(0).getOrganizationId();
-
-        if(StringUtils.isEmpty(proCode)){
-            check = fail+" 请求失败,产线编码不能为空";
-            return check;
-        }
-        else{
-            ResponseEntity<List<BaseProLine>> baseProLinelist=this.getProLine(proCode,orgId);
-            if(StringUtils.isEmpty(baseProLinelist.getData())){
-                check = fail+" 请求失败,产线编码不存在";
-                return check;
-            }
-        }
-        if(StringUtils.isEmpty(processCode)){
-            check = fail+" 请求失败,工序编码不能为空";
-            return check;
-        }
-        else {
-            ResponseEntity<List<BaseProcess>> baseProcesslist=this.getProcess(processCode,orgId);
-            if(StringUtils.isEmpty(baseProcesslist.getData())){
-                check = fail+" 请求失败,工序编码不存在";
-                return check;
-            }
-
-        }
-        if(StringUtils.isEmpty(barcodeCode)){
-            check = fail+" 请求失败,成品SN不能为空";
-            return check;
-        }
-        else{
-            List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList= this.getWorkOrderBarcode(barcodeCode);
-            if(StringUtils.isEmpty(mesSfcWorkOrderBarcodeDtoList)){
-                check = fail+" 请求失败,成品SN不存在";
-                return check;
-            }
-
-            //检查条码状态
-            if (mesSfcWorkOrderBarcodeDtoList.size() > 1) {
-                check = fail+" 请求失败,成品SN重复";
-                return check;
-            }
-            MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = mesSfcWorkOrderBarcodeDtoList.get(0);
-            if (mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == 2 || mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == 3) {
-                check = fail+" 请求失败,成品SN条码状态不正确";
-                return check;
-            }
-            //检查工段
-            if(StringUtils.isNotEmpty(sectionCode)){
-                ResponseEntity<List<BaseWorkshopSection>> baseWorkshopSectionList=this.getWorkshopSection(sectionCode,orgId);
-                if(StringUtils.isEmpty(baseWorkshopSectionList.getData())){
-                    check = fail+" 请求失败,工段编码信息不存在";
-                    return check;
-                }
-            }
-            //检查用户
-            if(StringUtils.isNotEmpty(userCode)){
-                ResponseEntity<List<SysUser>> sysUserList=this.getSysUser(userCode,orgId);
-                if(StringUtils.isEmpty(sysUserList.getData())){
-                    check = fail+" 请求失败,用户信息不存在";
-                    return check;
-                }
-            }
-            //检查不良现象
-            if(StringUtils.isNotEmpty(badnessPhenotypeCode)){
-                ResponseEntity<List<BaseBadnessPhenotypeDto>> baseBadnessPhenotypeDtoList=this.getBadnessPhenotype(badnessPhenotypeCode,orgId);
-                if(StringUtils.isEmpty(baseBadnessPhenotypeDtoList.getData())){
-                    check = fail+" 请求失败,不良现象信息不存在";
-                    return check;
-                }
-            }
-
-            //检查工单
-            Long workOrderId=mesSfcWorkOrderBarcodeDto.getWorkOrderId();
-            ResponseEntity<List<MesPmWorkOrderDto>> mesPmWorkOrderDtoList= this.getWorkOrder(workOrderId);
-            if(StringUtils.isEmpty(mesPmWorkOrderDtoList.getData())){
-                check = fail+" 请求失败,生产工单不存在";
-                return check;
-            }
-            MesPmWorkOrderDto mesPmWorkOrderDto=mesPmWorkOrderDtoList.getData().get(0);
-
-            if(StringUtils.isEmpty(mesPmWorkOrderDto.getRouteId())){
-                check = fail+" 请求失败,工单未设置工艺流程";
-                return check;
-            }
-            if (4 == mesPmWorkOrderDto.getWorkOrderStatus() || 5 == mesPmWorkOrderDto.getWorkOrderStatus()) {
-                check = fail+" 请求失败,工单状态已完成或已挂起";
-                return check;
-            }
-
-            /*
-             * 产前关键事项是否完成判断
-             * 1 获取配置项设置
-             * 2 根据配置项值判断
-             */
-            ResponseEntity<List<SysSpecItem>> sysSpecItemList= this.getSysSpecItem("WorkOrderIfNeedProductionKeyIssues");
-            if(StringUtils.isNotEmpty(sysSpecItemList.getData().get(0))){
-                SysSpecItem sysSpecItem=sysSpecItemList.getData().get(0);
-                if("1".equals(sysSpecItem.getParaValue())){
-                    ResponseEntity<List<MesPmProductionKeyIssuesOrder>> PmPKIOList= this.getPmPKIOList(mesPmWorkOrderDto.getWorkOrderCode());
-                    if(StringUtils.isEmpty(PmPKIOList.getData())){
-                        check = fail+" 请求失败,工单产前关键事项未完成";
-                        return check;
-                    }
-                    else{
-                        MesPmProductionKeyIssuesOrder mesPmProductionKeyIssuesOrder=PmPKIOList.getData().get(0);
-                        if(!"2".equals(mesPmProductionKeyIssuesOrder.getOrderStatus())){
-                            //产前关键事项确认状态 1 待确认 2 已确认
-                            check = fail+" 请求失败,工单产前关键事项未完成";
-                            return check;
-                        }
-                    }
-
-                }
-            }
-
-            //检查工序是否在工单的工艺路线工序中
-            Long routeId=mesPmWorkOrderDto.getRouteId();
-            ResponseEntity<List<BaseRouteProcess>> responseEntity=this.getBaseRouteProcess(routeId);
-            if(StringUtils.isEmpty(responseEntity.getData())){
-                check = fail+" 请求失败,生产工单工艺路线不存在";
-                return check;
-            }
-            List<BaseRouteProcess> routeProcessList=responseEntity.getData();
-            ResponseEntity<List<BaseProcess>> baseProcesslist=this.getProcess(processCode,orgId);
-            BaseProcess baseProcess=baseProcesslist.getData().get(0);
-            if(StringUtils.isNotEmpty(baseProcess.getProcessId())) {
-                Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
-                        .filter(i -> baseProcess.getProcessId().equals(i.getProcessId()))
-                        .findFirst();
-                if (!routeProcessOptional.isPresent()) {
-                    check = fail+" 请求失败,当前工序在生产工单工艺路线工序中不存在";
-                    return check;
-                }
-            }
-
-            MaterialId=mesPmWorkOrderDto.getMaterialId();
-
-        }
-
-        //治具SN判断//设备编码判断
-        //        if(StringUtils.isNotEmpty(equipmentCode)){
-        //            ResponseEntity<List<EamEquipmentDto>> eamEquipmentDtoList = this.getEamEquipment(equipmentCode);
-        //            if (StringUtils.isEmpty(eamEquipmentDtoList.getData())) {
-        //                check = fail + " 请求失败,设备编码不存在";
-        //                return check;
-        //            }
-        //        }
-        if(StringUtils.isNotEmpty(eamJigBarCode)){
-            String[] jigBarCodeA=eamJigBarCode.split(",");
-            for (String item : jigBarCodeA) {
-                if(StringUtils.isNotEmpty(item)) {
-                    ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = this.getJigBarCode(item);
-                    if (StringUtils.isEmpty(eamJigBarcodeDtoList.getData())) {
-                        check = fail + " 请求失败,治具SN不存在";
-                        return check;
-                    }
-                    else {
-                        //判断治具状态
-                        EamJigBarcodeDto eamJigBarcodeDto=eamJigBarcodeDtoList.getData().get(0);
-                        if (4 == eamJigBarcodeDto.getUsageStatus() || 5 == eamJigBarcodeDto.getUsageStatus()) {
-                            check = fail+" 请求失败,治具SN状态处于维修或报废";
-                            return check;
-                        }
-                        //判断治具编码与产品绑定关系
-                        Long JidID=eamJigBarcodeDto.getJigId();
-//                        ResponseEntity<List<EamJigReMaterialDto>> eamJigReMaterialDtoList = this.getEamJigReMaterial(MaterialId,JidID);
-//                        if (StringUtils.isEmpty(eamJigReMaterialDtoList.getData())) {
-//                            check = fail + " 请求失败,治具SN与产品SN没有绑定关系";
-//                            return check;
-//                        }
-                    }
-                }
-            }
-        }
-
-        return check;
+    public void  addLog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) throws Exception {
+        SysApiLog sysApiLog = new SysApiLog();
+        sysApiLog.setThirdpartySysName("雷赛设备过站接口");
+        sysApiLog.setCallResult(result);
+        sysApiLog.setCallType(type);
+        sysApiLog.setApiModule("ocean-materialapi");
+        sysApiLog.setOrgId(orgId);
+        sysApiLog.setRequestTime(new Date());
+        sysApiLog.setResponseTime(new Date());
+        sysApiLog.setResponseData(responseData);
+        sysApiLog.setRequestParameter(requestParameter);
+        securityFeignApi.add(sysApiLog);
     }
+
 }

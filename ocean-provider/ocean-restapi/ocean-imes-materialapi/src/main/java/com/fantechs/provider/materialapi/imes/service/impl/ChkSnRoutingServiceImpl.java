@@ -1,7 +1,9 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 
+import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.materialapi.imes.service.ChkSnRoutingService;
 import com.fantechs.provider.materialapi.imes.utils.DeviceInterFaceUtils;
@@ -30,7 +32,7 @@ public class ChkSnRoutingServiceImpl implements ChkSnRoutingService {
     private BarcodeUtils barcodeUtils;
 
     @Override
-    public String ChkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws ParseException {
+    public String ChkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws Exception {
         /*
         * 1 验证传参基础信息是否正确
         * 2 检查成品SN、半成品SN状态、流程是否正确
@@ -38,22 +40,26 @@ public class ChkSnRoutingServiceImpl implements ChkSnRoutingService {
         * 4 检查设备、治具是否可以在该产品生产
         * 5 检查产前、关键事项是否完成
         */
-        String pass="Pass";
 
-        if(StringUtils.isEmpty(restapiChkSNRoutingApiDto)){
-            return "Fail 条码流程检查信息为空";
-        }
+//        if(StringUtils.isEmpty(restapiChkSNRoutingApiDto)){
+//            return "Fail 条码流程检查信息为空";
+//        }
+//
+//        String check = deviceInterFaceUtils.checkParameter(restapiChkSNRoutingApiDto.getProCode(),restapiChkSNRoutingApiDto.getProcessCode(),
+//                restapiChkSNRoutingApiDto.getBarcodeCode(),restapiChkSNRoutingApiDto.getPartBarcode(),
+//                restapiChkSNRoutingApiDto.getEamJigBarCode(),restapiChkSNRoutingApiDto.getEquipmentCode(),
+//                "","","");
+//        if (!check.equals("1")) {
+//            logsUtils.addlog((byte) 0, (byte) 2, (long) 1002, check, restapiChkSNRoutingApiDto.toString());
+//            return check;
+//        }
+//        logsUtils.addlog((byte)1,(byte)2,(long)1002,null,null);
+//        return pass+" 条码流程检查信息验证通过";
 
-        String check = deviceInterFaceUtils.checkParameter(restapiChkSNRoutingApiDto.getProCode(),restapiChkSNRoutingApiDto.getProcessCode(),
-                restapiChkSNRoutingApiDto.getBarcodeCode(),restapiChkSNRoutingApiDto.getPartBarcode(),
-                restapiChkSNRoutingApiDto.getEamJigBarCode(),restapiChkSNRoutingApiDto.getEquipmentCode(),
-                "","","");
-        if (!check.equals("1")) {
-            logsUtils.addlog((byte) 0, (byte) 2, (long) 1002, check, restapiChkSNRoutingApiDto.toString());
-            return check;
-        }
-        logsUtils.addlog((byte)1,(byte)2,(long)1002,null,null);
-        return pass+" 条码流程检查信息验证通过";
+        String executeResult="";
+        BaseExecuteResultDto baseExecuteResultDto= BarcodeUtils.ChkSnRouting(restapiChkSNRoutingApiDto);
+        executeResult= JsonUtils.objectToJson(baseExecuteResultDto);
+        return  executeResult;
     }
 
 
