@@ -52,7 +52,7 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
 
     @Override
     @LcnTransaction
-    public int getWorkOrder(String proCode) {
+    public MesPmWorkOrder getWorkOrder(String proCode) {
         if (StringUtils.isEmpty(proCode)) throw new BizErrorException("产线id不能为空");
         String result = null;
         try {
@@ -62,13 +62,14 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
             CloseableHttpResponse response = null;
             Long orgId = baseUtils.getOrId();
             BaseMaterial material = null;
+            ResponseEntity<MesPmWorkOrder> mesPmWorkOrderResponse = null;
             try {
                 response = httpClient.execute(get);
                 if (response != null && response.getStatusLine().getStatusCode() == 200) {
                     HttpEntity entity = response.getEntity();
                     result = EntityUtils.toString(entity);
                     Map<String, Object> map = JsonUtils.jsonToMap(result);
-                    log.info("-----map----"+map);
+                    // log.info("-----map----"+map);
                     Map<String, Object> data = (Map<String, Object>) map.get("data");
                     //校验产品编码(新宝一级公司没有物料因此产品编码当做物料使用存入物料表)
                     if(StringUtils.isNotEmpty(data) && StringUtils.isNotEmpty(data.get("product_model"))){
@@ -109,15 +110,14 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
                         mesPmWorkOrder.setMaterialId(material.getMaterialId());
                         mesPmWorkOrder.setIsDelete((byte)1);
                         mesPmWorkOrder.setOrgId(orgId);
-                        pmFeignApi.saveByApi(mesPmWorkOrder);
-                    }else{
-                //        logsUtils.addlog((byte)2,(byte)1,orgId,result,proCode);
+                        mesPmWorkOrderResponse = pmFeignApi.saveByApi(mesPmWorkOrder);
                     }
-
-
                 }
-             //   logsUtils.addlog((byte)1,(byte)1,orgId,result,proCode);
-                return 1;
+                logsUtils.addlog((byte)1,(byte)1,orgId,result,proCode);
+                if(StringUtils.isNotEmpty(mesPmWorkOrderResponse))
+                    return mesPmWorkOrderResponse.getData();
+                else
+                    return null;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (ClientProtocolException e) {
@@ -140,12 +140,13 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    return 0;
+    return null;
     }
 
     @Override
     public int getAllWorkOrder(SearchBaseProLine searchBaseProLine) {
         searchBaseProLine.setOrgId(baseUtils.getOrId());
+        searchBaseProLine.setPageSize(5000);
         ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);
         if(StringUtils.isNotEmpty(list.getData())){
             for(BaseProLine baseProLine : list.getData()){
