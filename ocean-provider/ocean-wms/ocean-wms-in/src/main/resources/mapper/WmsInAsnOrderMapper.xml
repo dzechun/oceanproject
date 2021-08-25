@@ -182,4 +182,8 @@ order by wiao.create_time desc
   <select id="findLineNumber" resultType="java.lang.Integer">
     select count(*) From wms_in_asn_order_det where asn_order_id = #{asnOrderId}
   </select>
+
+  <select id="findDefaultStatus" resultType="java.lang.Long">
+    select inventory_status_id FROM base_inventory_status where warehouse_id=#{warehouseId} and inventory_status_name="待检"
+  </select>
 </mapper>
