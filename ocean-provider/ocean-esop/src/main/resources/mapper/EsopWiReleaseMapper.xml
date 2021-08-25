@@ -115,6 +115,12 @@
         <if test="proLineId!=null and proLineId!=''">
             and ewr.pro_line_id = #{proLineId}
         </if>
+        <if test="workShopName!=null and workShopName!=''">
+            and bws.work_shop_name  like CONCAT('%', #{workShopName}, '%')
+        </if>
+        <if test="proLineName!=null and proLineName!=''">
+            and bws.pro_line_name  like CONCAT('%', #{proLineName}, '%')
+        </if>
     </where>
   </select>
 

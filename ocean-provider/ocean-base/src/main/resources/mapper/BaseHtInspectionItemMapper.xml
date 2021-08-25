@@ -68,7 +68,7 @@
         and date_format(bhii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="orgId!=null">
-        and bhii.org_id=#{orgId}
+        and bhii.organization_id=#{orgId}
       </if>
     </where>
     order by bhii.create_time desc

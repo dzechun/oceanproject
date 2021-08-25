@@ -85,6 +85,9 @@
       <if test="orgId!=null">
         and bpp.org_id=#{orgId}
       </if>
+      <if test="ifCustomized!=null">
+        and bpp.if_customized=#{ifCustomized}
+      </if>
     </where>
     order by create_time desc
   </select>
