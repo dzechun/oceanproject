@@ -288,7 +288,7 @@ public class SocketServiceImpl implements SocketService {
 
     public int updateStatus(String ip, Byte bytes) {
         EamEquipment eamEquipment  = getEquipment(ip, null);
-        eamEquipment.setOnlineStatus(bytes);
+        //eamEquipment.setOnlineStatus(bytes);
         eamEquipmentMapper.updateByPrimaryKeySelective(eamEquipment);
         return 1;
     }

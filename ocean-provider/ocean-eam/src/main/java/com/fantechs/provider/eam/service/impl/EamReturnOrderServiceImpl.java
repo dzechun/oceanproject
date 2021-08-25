@@ -91,7 +91,7 @@ public class EamReturnOrderServiceImpl extends BaseService<EamReturnOrder> imple
                 //修改设备使用状态
                 EamEquipment eamEquipment = new EamEquipment();
                 eamEquipment.setEquipmentId(eamReturnOrderDet.getEquipmentId());
-                eamEquipment.setUsageStatus((byte)2);
+                //eamEquipment.setUsageStatus((byte)2);
                 eamEquipmentMapper.updateByPrimaryKeySelective(eamEquipment);
             }
             eamReturnOrderDetMapper.insertList(eamReturnOrderDets);

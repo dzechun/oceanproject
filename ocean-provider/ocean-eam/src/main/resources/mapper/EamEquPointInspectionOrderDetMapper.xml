@@ -26,6 +26,11 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="equ_point_inspection_project_item_name" jdbcType="VARCHAR" property="equPointInspectionProjectItemName"/>
+    <result column="equ_point_inspection_project_item_desc" jdbcType="VARCHAR" property="equPointInspectionProjectItemDesc"/>
+    <result column="judge_type" jdbcType="TINYINT" property="judgeType"/>
+    <result column="ration_floor" jdbcType="DECIMAL" property="rationFloor"/>
+    <result column="ration_upper_limit" jdbcType="DECIMAL" property="rationUpperLimit"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -48,10 +53,13 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
+    eepipi.equ_point_inspection_project_item_name,eepipi.equ_point_inspection_project_item_desc,
+    eepipi.judge_type,eepipi.ration_floor,eepipi.ration_upper_limit,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from eam_equ_point_inspection_order_det eepiod
+    left join fantech_imes_v2.eam_equ_point_inspection_project_item eepipi on eepiod.equ_point_inspection_project_item_id=eepipi.equ_point_inspection_project_item_id
     left join ocean_v2.sys_user u on eepiod.create_user_id=u.user_id
     left join ocean_v2.sys_user s on eepiod.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON eepiod.org_id = bo.organization_id
