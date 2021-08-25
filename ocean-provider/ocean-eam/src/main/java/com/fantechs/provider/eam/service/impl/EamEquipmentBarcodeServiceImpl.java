@@ -34,4 +34,14 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
 
         return eamEquipmentBarcodeMapper.findList(map);
     }
+
+    @Override
+    public int plusCurrentUsageTime(Long equipmentBarCodeId, Integer num) {
+        EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodeMapper.selectByPrimaryKey(equipmentBarCodeId);
+        if (StringUtils.isEmpty(eamEquipmentBarcode)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+        }
+        eamEquipmentBarcode.setCurrentUsageTime(eamEquipmentBarcode.getCurrentUsageTime()+num);
+        return eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+    }
 }

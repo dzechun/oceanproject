@@ -15,10 +15,8 @@ import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaterial;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentBarcode;
+import com.fantechs.common.base.general.entity.eam.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
@@ -201,6 +199,15 @@ public class DeviceInterFaceUtils {
         ResponseEntity<List<EamEquipmentMaterialDto>> eamEquipmentMaterialDtoList=null;
         eamEquipmentMaterialDtoList = eamFeignApi.findEquipmentMaterialDtoList(searchEamEquipmentMaterial);
         return eamEquipmentMaterialDtoList;
+    }
+
+    /*
+     *获取设备条码信息
+     */
+    public ResponseEntity<List<EamEquipmentBarcode>> findEamEquipmentBarCodeList(SearchEamEquipmentBarcode searchEamEquipmentBarcode){
+        ResponseEntity<List<EamEquipmentBarcode>> eamEquipmentBarcodeList=null;
+        eamEquipmentBarcodeList = eamFeignApi.findEamEquipmentBarCodeList(searchEamEquipmentBarcode);
+        return eamEquipmentBarcodeList;
     }
 
     /*

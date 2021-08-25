@@ -5,12 +5,10 @@ import com.fantechs.common.base.general.dto.eam.EamEquipmentMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentBarcode;
 import com.fantechs.common.base.general.entity.eam.EamIssue;
 import com.fantechs.common.base.general.entity.eam.EamJig;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaterial;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
+import com.fantechs.common.base.general.entity.eam.search.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.github.pagehelper.Page;
@@ -71,5 +69,14 @@ public interface EamFeignApi {
     @ApiOperation("获取治具详情")
     @PostMapping("/eamJig/detail")
     ResponseEntity<EamJig> findEamJigDetail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
+    @ApiOperation("查询设备条码列表")
+    @PostMapping("/eamEquipmentBarcode/findList")
+    ResponseEntity<List<EamEquipmentBarcode>> findEamEquipmentBarCodeList(@ApiParam(value = "查询对象")@RequestBody SearchEamEquipmentBarcode searchEamEquipmentBarcode);
+
+    @ApiOperation("设备增加使用次数")
+    @PostMapping("/eamEquipmentBarcode/plusCurrentUsageTime")
+    ResponseEntity plusEamEquiCurrentUsageTime(@ApiParam(value = "设备条码id", required = true) @RequestParam @NotNull(message = "设备条码id") Long equipmentBarCodeId,
+                                        @ApiParam(value = "设备使用次数", required = true) @RequestParam @NotNull(message = "设备使用次数不能为空") Integer num);
 
 }
