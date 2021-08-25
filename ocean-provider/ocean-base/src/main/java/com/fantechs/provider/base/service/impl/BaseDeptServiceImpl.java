@@ -11,6 +11,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.TreeTableUtil;
 import com.fantechs.provider.base.mapper.BaseDeptMapper;
 import com.fantechs.provider.base.mapper.BaseFactoryMapper;
 import com.fantechs.provider.base.mapper.BaseHtDeptMapper;
@@ -42,7 +43,9 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         map.put("orgId", user.getOrganizationId());
-        return baseDeptMapper.findList(map);
+        List<BaseDept> list = baseDeptMapper.findList(map);
+        list = TreeTableUtil.list2TreeList(list, "deptId", "parentId", "depts");
+        return list;
     }
 
     @Override

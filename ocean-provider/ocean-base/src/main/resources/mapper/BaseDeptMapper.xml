@@ -23,7 +23,7 @@
     <result column="factory_name" jdbcType="BIGINT" property="factoryName" />
     <result column="factory_code" jdbcType="BIGINT" property="factoryCode" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-    <collection property="depts" ofType="com.fantechs.common.base.general.entity.basic.BaseDept" select="com.fantechs.provider.base.mapper.BaseDeptMapper.findById" column="dept_id"/>
+<!--    <collection property="depts" ofType="com.fantechs.common.base.general.entity.basic.BaseDept" select="com.fantechs.provider.base.mapper.BaseDeptMapper.findById" column="dept_id"/>-->
   </resultMap>
 
   <sql id="Base_Column_List">
