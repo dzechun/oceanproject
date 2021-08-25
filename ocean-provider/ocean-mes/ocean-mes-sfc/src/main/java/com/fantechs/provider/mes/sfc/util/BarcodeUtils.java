@@ -689,17 +689,18 @@ public class BarcodeUtils {
 
                 //检查产品条码与半成品条码关系
                 baseExecuteResultDto=checkProHalfProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),
-                        restapiChkSNRoutingApiDto.getPartBarcode(),restapiChkSNRoutingApiDto.getProcessCode(),orgId);
+                        restapiChkSNRoutingApiDto.getPartBarcode(),updateProcessDto.getNowProcessId(),
+                        updateProcessDto.getWorkOrderId(),updateProcessDto.getMaterialId(),orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
 
                 //检查设备与产品绑定关系
-                baseExecuteResultDto=checkEquiProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),restapiChkSNRoutingApiDto.getEquipmentCode(),orgId);
+                baseExecuteResultDto=checkEquiProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),restapiChkSNRoutingApiDto.getEquipmentCode(),updateProcessDto.getMaterialId(),orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
 
                 //检查治具与产品绑定关系
-                baseExecuteResultDto=checkJigProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),restapiChkSNRoutingApiDto.getEamJigBarCode(),orgId);
+                baseExecuteResultDto=checkJigProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),restapiChkSNRoutingApiDto.getEamJigBarCode(),updateProcessDto.getMaterialId(),orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -758,7 +759,8 @@ public class BarcodeUtils {
 
             //检查产品条码与半成品条码关系
             baseExecuteResultDto=checkProHalfProRelation(restapiSNDataTransferApiDto.getBarCode(),
-                    restapiSNDataTransferApiDto.getPartBarcode(),restapiSNDataTransferApiDto.getProcessCode(),orgId);
+                    restapiSNDataTransferApiDto.getPartBarcode(), updateProcessDto.getNowProcessId(),
+                    updateProcessDto.getWorkOrderId(),updateProcessDto.getMaterialId(),orgId);
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -767,12 +769,12 @@ public class BarcodeUtils {
             Long partMaterialId=updateProcessDto1.getPartMaterialId();
 
             //检查设备与产品绑定关系
-            baseExecuteResultDto=checkEquiProRelation(restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getEquipmentCode(),orgId);
+            baseExecuteResultDto=checkEquiProRelation(restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getEquipmentCode(),updateProcessDto.getMaterialId(),orgId);
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
             //检查治具与产品绑定关系
-            baseExecuteResultDto=checkJigProRelation(restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getEamJigBarCode(),orgId);
+            baseExecuteResultDto=checkJigProRelation(restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getEamJigBarCode(),updateProcessDto.getMaterialId(),orgId);
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -971,13 +973,13 @@ public class BarcodeUtils {
     * orgId 组织ID
     */
 
-    public static BaseExecuteResultDto checkProHalfProRelation(String productionSn,String halfProductionSn,String processCode,Long orgId) throws Exception{
+    public static BaseExecuteResultDto checkProHalfProRelation(String productionSn,String halfProductionSn,Long processId,Long workOrderId,Long materialId,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
             //获取配置项检查成品条码与半成品条码关系  ProductIfCheckHalfProductionRelation
             String paraValue = getSysSpecItemValue("ProductIfCheckHalfProductionRelation");
             if ("1".equals(paraValue)) {
-                baseExecuteResultDto = checkProductionHalfProductionRelation(productionSn, halfProductionSn, processCode, orgId);
+                baseExecuteResultDto = checkProductionHalfProductionRelation(productionSn, halfProductionSn, processId, workOrderId,materialId,orgId);
                 if (baseExecuteResultDto.getIsSuccess() == false) {
                     throw new Exception(baseExecuteResultDto.getFailMsg());
                 }
@@ -992,7 +994,7 @@ public class BarcodeUtils {
         return baseExecuteResultDto;
     }
 
-    public static BaseExecuteResultDto checkProductionHalfProductionRelation(String productionSn,String halfProductionSn,String processCode,Long orgId) throws Exception{
+    public static BaseExecuteResultDto checkProductionHalfProductionRelation(String productionSn,String halfProductionSn,Long processId,Long workOrderId,Long materialId,Long orgId) throws Exception{
 
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         UpdateProcessDto updateProcessDto=new UpdateProcessDto();
@@ -1007,26 +1009,15 @@ public class BarcodeUtils {
             * 4.1 如果不存在 判断产品BOM中是否存在对应的半成品料号
             * 5 不存在半成品料号 报错
              */
-            String workOrderCode=null;
-            Long workOrderId=0L;
-            Long materialId=0L;//产品物料ID
+            String workOrderCode=null;//半成品工单编码
             Long partMaterialId=0L;//半成品物料ID
-            Long processId=0L;//工序ID
 
-            ResponseEntity<List<BaseProcess>> responseEntityPro=barcodeUtils.deviceInterFaceUtils.getProcess(processCode,orgId);
-            if(StringUtils.isEmpty(responseEntityPro))
-                throw new Exception("工序编码无效");
-            processId=responseEntityPro.getData().get(0).getProcessId();
-
+            //检查产品条码
             baseExecuteResultDto=checkBarcodeStatus(productionSn);
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
-            //产品工单ID
-            MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto=(MesSfcWorkOrderBarcodeDto)baseExecuteResultDto.getExecuteResult();
-            workOrderId=mesSfcWorkOrderBarcodeDto.getWorkOrderId();
-            materialId=mesSfcWorkOrderBarcodeDto.getMaterialId();
-
+            //检查半成品条码
             baseExecuteResultDto=checkBarcodeStatus(halfProductionSn);
             if(baseExecuteResultDto.getIsSuccess()==false) {
                 //获取配置项 工单在条码中的位置 WorkOrderPositionOnBarcode
@@ -1043,11 +1034,12 @@ public class BarcodeUtils {
                 workOrderCode = halfProductionSn.substring(beginIndex, endIndex);
             }
             else {
-                workOrderCode=baseExecuteResultDto.getExecuteResult().toString();
+                MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto=(MesSfcWorkOrderBarcodeDto)baseExecuteResultDto.getExecuteResult();
+                workOrderCode=mesSfcWorkOrderBarcodeDto.getWorkOrderCode();
             }
             if(StringUtils.isNotEmpty(workOrderCode)) {
                 ResponseEntity<List<MesPmWorkOrderDto>> responseEntity = barcodeUtils.deviceInterFaceUtils.getWorkOrder(workOrderCode);
-                if (StringUtils.isEmpty(responseEntity))
+                if (StringUtils.isEmpty(responseEntity.getData()))
                     throw new Exception("找不到半成品工单信息");
 
                 MesPmWorkOrderDto mesPmWorkOrderDto = responseEntity.getData().get(0);
@@ -1061,7 +1053,7 @@ public class BarcodeUtils {
                 searchMesPmWorkOrderBom.setPartMaterialId(partMaterialId);
                 searchMesPmWorkOrderBom.setProcessId(processId);
                 ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = barcodeUtils.deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
-                if (StringUtils.isEmpty(responseEntityBom)) {
+                if (StringUtils.isEmpty(responseEntityBom.getData())) {
                     //工单BOM找不到半成品信息
                     //通过配置项是否找产品BOM ProductBomCheckRelation
                     String paraValue = getSysSpecItemValue("ProductBomCheckRelation");
@@ -1070,7 +1062,7 @@ public class BarcodeUtils {
                         SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
                         searchBaseProductBom.setMaterialId(materialId);
                         ResponseEntity<List<BaseProductBomDto>> responseEntityPB = barcodeUtils.deviceInterFaceUtils.getProductBomList(searchBaseProductBom);
-                        if (StringUtils.isNotEmpty(responseEntityPB)) {
+                        if (StringUtils.isNotEmpty(responseEntityPB.getData())) {
                             List<BaseProductBomDetDto> baseProductBomDetDtos = responseEntityPB.getData().get(0).getBaseProductBomDetDtos();
                             Long finalProcessId = processId;
                             Long finalMaterialId = partMaterialId;
@@ -1078,7 +1070,7 @@ public class BarcodeUtils {
                                     .filter(i -> finalProcessId.equals(i.getProcessId()) && finalMaterialId.equals(i.getMaterialId()))
                                     .findFirst();
                             if (!productBomDetOptional.isPresent()) {
-                                throw new Exception("找不到成品条码与半成品条码的关系");
+                                throw new Exception("当前工序找不到成品条码与半成品条码的关系");
                             }
                         }
 
@@ -1138,13 +1130,13 @@ public class BarcodeUtils {
     * equipmentCode 设备编码
     * orgId 组织ID
     */
-    public static BaseExecuteResultDto checkEquiProRelation(String productionSn,String equipmentCode,Long orgId) throws Exception{
+    public static BaseExecuteResultDto checkEquiProRelation(String productionSn,String equipmentCode,Long materialId,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
             //获取配置项检查成品条码与半成品条码关系  EquipmentIfCheckProductionRelation
             String paraValue = getSysSpecItemValue("EquipmentIfCheckProductionRelation");
             if ("1".equals(paraValue)) {
-                baseExecuteResultDto = checkEquipmentProductionRelation(productionSn, equipmentCode, orgId);
+                baseExecuteResultDto = checkEquipmentProductionRelation(productionSn, equipmentCode, materialId,orgId);
                 if (baseExecuteResultDto.getIsSuccess() == false) {
                     throw new Exception(baseExecuteResultDto.getFailMsg());
                 }
@@ -1159,18 +1151,9 @@ public class BarcodeUtils {
         return baseExecuteResultDto;
     }
 
-    public static BaseExecuteResultDto checkEquipmentProductionRelation(String productionSn,String equipmentCode,Long orgId) throws Exception{
+    public static BaseExecuteResultDto checkEquipmentProductionRelation(String productionSn,String equipmentCode,Long materialId,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
-            Long materialId=0L;//产品物料ID
-
-            baseExecuteResultDto=checkBarcodeStatus(productionSn);
-            if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
-
-            //产品物料ID
-            MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto=(MesSfcWorkOrderBarcodeDto)baseExecuteResultDto.getExecuteResult();
-            materialId=mesSfcWorkOrderBarcodeDto.getMaterialId();
 
             //获取设备绑定产品信息
             SearchEamEquipmentMaterial searchEamEquipmentMaterial=new SearchEamEquipmentMaterial();
@@ -1206,13 +1189,13 @@ public class BarcodeUtils {
      * eamJigBarCode 治具条码
      * orgId 组织ID
      */
-    public static BaseExecuteResultDto checkJigProRelation(String productionSn,String eamJigBarCode,Long orgId) throws Exception{
+    public static BaseExecuteResultDto checkJigProRelation(String productionSn,String eamJigBarCode,Long materialId,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
             //获取配置项检查治具与产品条码关系  JigsIfCheckProductionRelation
             String paraValue = getSysSpecItemValue("JigsIfCheckProductionRelation");
             if ("1".equals(paraValue)) {
-                baseExecuteResultDto = checkJigProductRelation(productionSn, eamJigBarCode, orgId);
+                baseExecuteResultDto = checkJigProductRelation(productionSn, eamJigBarCode,materialId, orgId);
                 if (baseExecuteResultDto.getIsSuccess() == false) {
                     throw new Exception(baseExecuteResultDto.getFailMsg());
                 }
@@ -1227,17 +1210,9 @@ public class BarcodeUtils {
         return baseExecuteResultDto;
     }
 
-    public static BaseExecuteResultDto checkJigProductRelation(String productionSn,String eamJigBarCode,Long orgId) throws Exception{
+    public static BaseExecuteResultDto checkJigProductRelation(String productionSn,String eamJigBarCode,Long materialId,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
-            Long materialId=0L;//产品物料ID
-            baseExecuteResultDto=checkBarcodeStatus(productionSn);
-            if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
-
-            //产品物料ID
-            MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto=(MesSfcWorkOrderBarcodeDto)baseExecuteResultDto.getExecuteResult();
-            materialId=mesSfcWorkOrderBarcodeDto.getMaterialId();
 
             if(StringUtils.isNotEmpty(eamJigBarCode)){
                 String[] jigBarCodeA=eamJigBarCode.split(",");
