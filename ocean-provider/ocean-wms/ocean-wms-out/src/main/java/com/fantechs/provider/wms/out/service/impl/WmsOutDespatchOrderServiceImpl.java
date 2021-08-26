@@ -6,13 +6,17 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderReJoReDetDto;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
+import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrderReJoReDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -20,12 +24,14 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJo
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.*;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrder;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.qms.OMFeignApi;
+import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.*;
 import com.fantechs.provider.wms.out.service.WmsOutDespatchOrderService;
@@ -35,10 +41,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -61,6 +64,8 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
     private OMFeignApi omFeignApi;
     @Resource
     private WmsOutDeliveryOrderMapper wmsOutDeliveryOrderMapper;
+    @Resource
+    private InFeignApi inFeignApi;
 
     @Override
     public List<WmsOutDespatchOrderDto> findList(SearchWmsOutDespatchOrder searchWmsOutDespatchOrder) {
@@ -313,6 +318,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
      * @return
      */
     private int writeDeliveryOrderQty(WmsInnerJobOrderDto wmsInnerJobOrderDto,WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto){
+        SysUser sysUser = currentUser();
         WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectByPrimaryKey(wmsInnerJobOrderDetDto.getSourceDetId());
         if(StringUtils.isEmpty(wmsOutDeliveryOrderDet)){
             throw new BizErrorException("未匹配到关联的出库单");
@@ -346,6 +352,66 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 //调拨and其他出库反写数量
             case "2":
                 num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
+
+                //生成调拨入库单
+                WmsInAsnOrder wmsInAsnOrder = new WmsInAsnOrder();
+                List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
+                //获取调拨出库单
+                WmsOutDeliveryOrder res = wmsOutDeliveryOrderMapper.selectByPrimaryKey(wmsOutDeliveryOrder.getDeliveryOrderId());
+
+                //获取调拨订单调入仓库
+                Long warehouseId= wmsOutDespatchOrderMapper.findOmWarehouseId(res.getSourceOrderId());
+
+                //获取收货库位
+                Map<String,Object> map = new HashMap<>();
+                map.put("orgId",sysUser.getOrganizationId());
+                map.put("warehouseId",warehouseId);
+                map.put("storageType",2);
+                Long storageId = wmsOutDespatchOrderMapper.findStorageId(map);
+                if(StringUtils.isEmpty(storageId)){
+                    throw new BizErrorException("未获取到该仓库下的收货库位");
+                }
+                wmsInAsnOrder.setSourceOrderId(res.getSourceOrderId());
+                wmsInAsnOrder.setMaterialOwnerId(res.getMaterialOwnerId());
+                wmsInAsnOrder.setSupplierId(res.getSupplierId());
+                //调拨订单号
+                wmsInAsnOrder.setRelatedOrderCode1(res.getRelatedOrderCode1());
+                //调拨出库单号
+                wmsInAsnOrder.setRelatedOrderCode2(res.getDeliveryOrderCode());
+                wmsInAsnOrder.setCustomerOrderCode(res.getCustomerOrderCode());
+                wmsInAsnOrder.setOrderDate(res.getOrderDate());
+                wmsInAsnOrder.setWarehouseId(warehouseId);
+                wmsInAsnOrder.setStorageId(storageId);
+                wmsInAsnOrder.setPlanAgoDate(new Date());
+                wmsInAsnOrder.setLinkManName(res.getLinkManName());
+                wmsInAsnOrder.setLinkManPhone(res.getLinkManPhone());
+                wmsInAsnOrder.setFaxNumber(res.getFaxNumber());
+                wmsInAsnOrder.setEMailAddress(res.getEmailAddress());
+                SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
+                searchWmsOutDeliveryOrderDet.setDeliveryOrderId(res.getDeliveryOrderId());
+                int i = 0;
+                List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDets = wmsOutDeliveryOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrderDet));
+                for (WmsOutDeliveryOrderDetDto dets : wmsOutDeliveryOrderDets) {
+                    i++;
+                    WmsInAsnOrderDet wmsInAsnOrderDet = new WmsInAsnOrderDet();
+                    wmsInAsnOrderDet.setSourceOrderId(dets.getDeliveryOrderId());
+                    wmsInAsnOrderDet.setOrderDetId(dets.getDeliveryOrderDetId());
+                    wmsInAsnOrderDet.setWarehouseId(warehouseId);
+                    wmsInAsnOrderDet.setStorageId(storageId);
+                    wmsInAsnOrderDet.setLineNumber(i);
+                    wmsInAsnOrderDet.setInventoryStatusId(dets.getInventoryStatusId());
+                    wmsInAsnOrderDet.setMaterialId(dets.getMaterialId());
+                    wmsInAsnOrderDet.setPackingUnitName(dets.getPackingUnitName());
+                    wmsInAsnOrderDet.setPackingQty(dets.getPackingQty());
+                    wmsInAsnOrderDet.setBatchCode(dets.getBatchCode());
+                    wmsInAsnOrderDets.add(wmsInAsnOrderDet);
+                }
+                wmsInAsnOrder.setWmsInAsnOrderDetList(wmsInAsnOrderDets);
+                ResponseEntity rer = inFeignApi.save(wmsInAsnOrder);
+                if(rer.getCode()!=0){
+                    throw new BizErrorException(rer.getMessage());
+                }
+
                 break;
             case "7":
                 //其他出库

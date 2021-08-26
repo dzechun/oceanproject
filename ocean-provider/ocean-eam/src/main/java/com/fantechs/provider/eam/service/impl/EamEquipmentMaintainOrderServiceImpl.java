@@ -117,7 +117,7 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
 
         //保存保养单信息
         EamEquipmentMaintainOrder eamEquipmentMaintainOrder = new EamEquipmentMaintainOrder();
-        List<EamEquipmentMaintainOrderDet> eamEquipmentMaintainOrderDets = new ArrayList<>();
+        List<EamEquipmentMaintainOrderDetDto> eamEquipmentMaintainOrderDets = new ArrayList<>();
 
         eamEquipmentMaintainOrder.setEquipmentMaintainOrderCode(CodeUtils.getId("SBBY-"));
         eamEquipmentMaintainOrder.setEquipmentId(eamEquipmentBarcode.getEquipmentId());
@@ -125,9 +125,9 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
         eamEquipmentMaintainOrder.setEquipmentMaintainProjectId(eamEquipmentMaintainProjectDto.getEquipmentMaintainProjectId());
         List<EamEquipmentMaintainProjectItem> items = eamEquipmentMaintainProjectDto.getItems();
         for (EamEquipmentMaintainProjectItem eamEquipmentMaintainProjectItem : items){
-            EamEquipmentMaintainOrderDet eamEquipmentMaintainOrderDet = new EamEquipmentMaintainOrderDet();
-            eamEquipmentMaintainOrderDet.setEquipmentMaintainProjectItemId(eamEquipmentMaintainProjectItem.getEquipmentMaintainProjectItemId());
-            eamEquipmentMaintainOrderDets.add(eamEquipmentMaintainOrderDet);
+            EamEquipmentMaintainOrderDetDto eamEquipmentMaintainOrderDetDto = new EamEquipmentMaintainOrderDetDto();
+            eamEquipmentMaintainOrderDetDto.setEquipmentMaintainProjectItemId(eamEquipmentMaintainProjectItem.getEquipmentMaintainProjectItemId());
+            eamEquipmentMaintainOrderDets.add(eamEquipmentMaintainOrderDetDto);
         }
         eamEquipmentMaintainOrder.setOrderDets(eamEquipmentMaintainOrderDets);
 
@@ -167,7 +167,7 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
         // 新增保养单履历
         EamHtEquipmentMaintainOrder eamHtEquipmentMaintainOrder = new EamHtEquipmentMaintainOrder();
         BeanUtil.copyProperties(eamEquipmentMaintainOrder, eamHtEquipmentMaintainOrder);
-        eamHtEquipmentMaintainOrderMapper.insert(eamHtEquipmentMaintainOrder);
+        int i = eamHtEquipmentMaintainOrderMapper.insert(eamHtEquipmentMaintainOrder);
 
         if(!eamEquipmentMaintainOrder.getOrderDets().isEmpty()){
             List<EamEquipmentMaintainOrderDet> maintainOrderDets = eamEquipmentMaintainOrder.getOrderDets()
@@ -179,7 +179,7 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
             // 批量新增保养单事项及其履历
             eamEquipmentMaintainOrderDetService.batchSave(maintainOrderDets);
         }
-        return 0;
+        return i;
     }
 
     @Override
@@ -191,15 +191,26 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
         // 新增保养单履历
         EamHtEquipmentMaintainOrder eamHtEquipmentMaintainOrder = new EamHtEquipmentMaintainOrder();
         BeanUtil.copyProperties(eamEquipmentMaintainOrder, eamHtEquipmentMaintainOrder);
-        eamHtEquipmentMaintainOrderMapper.insert(eamHtEquipmentMaintainOrder);
+        int i = eamHtEquipmentMaintainOrderMapper.insert(eamHtEquipmentMaintainOrder);
 
         if(!eamEquipmentMaintainOrder.getOrderDets().isEmpty()){
             // 批量删除保养单明细
-            eamEquipmentMaintainOrderDetService.batchDelete(eamEquipmentMaintainOrder.getOrderDets());
+            List<EamEquipmentMaintainOrderDet> orderDets = eamEquipmentMaintainOrder.getOrderDets().stream().map(item -> {
+                EamEquipmentMaintainOrderDet orderDet = new EamEquipmentMaintainOrderDet();
+                BeanUtil.copyProperties(item, orderDet);
+                return orderDet;
+            }).collect(Collectors.toList());
+            eamEquipmentMaintainOrderDetService.batchDelete(orderDets);
             // 批量新增保养单明细及其履历
-            eamEquipmentMaintainOrderDetService.batchSave(eamEquipmentMaintainOrder.getOrderDets());
+            List<EamEquipmentMaintainOrderDet> maintainOrderDets = eamEquipmentMaintainOrder.getOrderDets()
+                    .stream()
+                    .map(item -> {
+                        item.setEquipmentMaintainOrderId(eamEquipmentMaintainOrder.getEquipmentMaintainOrderId());
+                        return item;
+                    }).collect(Collectors.toList());
+            eamEquipmentMaintainOrderDetService.batchSave(maintainOrderDets);
         }
-        return 0;
+        return i;
     }
 
     @Override

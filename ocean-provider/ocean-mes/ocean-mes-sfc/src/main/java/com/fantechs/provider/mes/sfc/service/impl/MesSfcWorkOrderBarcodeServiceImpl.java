@@ -263,21 +263,23 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             throw new BizErrorException(ErrorCodeEnum.OPT20012009);
         }
         List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodeList = new ArrayList<>();
+
+        //查询条码规则集合
+        LabelRuteDto labelRuteDto = record.getLabelRuteDto();
+        SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+        searchBaseBarcodeRuleSpec.setBarcodeRuleId(labelRuteDto.getBarcodeRuleId());
+        ResponseEntity<List<BaseBarcodeRuleSpec>> responseEntity= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(responseEntity.getMessage());
+        }
+        List<BaseBarcodeRuleSpec> list = responseEntity.getData();
+        if(list.size()<1){
+            throw new BizErrorException("请设置条码规则");
+        }
+
         for (Integer i = 0; i < record.getQty(); i++) {
             record.setWorkOrderBarcodeId(null);
-            //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId());
-            //查询条码规则集合
-            LabelRuteDto labelRuteDto = record.getLabelRuteDto();
-            SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
-            searchBaseBarcodeRuleSpec.setBarcodeRuleId(labelRuteDto.getBarcodeRuleId());
-            ResponseEntity<List<BaseBarcodeRuleSpec>> responseEntity= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
-            if(responseEntity.getCode()!=0){
-                throw new BizErrorException(responseEntity.getMessage());
-            }
-            List<BaseBarcodeRuleSpec> list = responseEntity.getData();
-            if(list.size()<1){
-                throw new BizErrorException("请设置条码规则");
-            }
+            //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId())
 
             String lastBarCode = null;
             boolean hasKey = redisUtil.hasKey(this.sub(list));

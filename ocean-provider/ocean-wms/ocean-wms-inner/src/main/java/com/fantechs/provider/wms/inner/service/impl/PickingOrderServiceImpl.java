@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -1058,6 +1059,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int autoOutOrder(Long outDeliveryOrderId) {
         SysUser sysUser = currentUser();
         //查询调拨出库对应的待发运拣货作业
@@ -1090,65 +1092,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         ResponseEntity rs = outFeignApi.forwarding(responseEntity.getData());
         if(rs.getCode()!=0){
             throw new BizErrorException(rs.getMessage());
-        }
-        //生成调拨入库单
-        WmsInAsnOrder wmsInAsnOrder = new WmsInAsnOrder();
-        List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
-        //获取调拨出库单
-        WmsOutDeliveryOrder res = outFeignApi.details(outDeliveryOrderId).getData();
-
-        //获取调拨订单调入仓库
-        Long warehouseId= wmsInnerJobOrderMapper.findOmWarehouseId(res.getSourceOrderId());
-
-        //获取收货库位
-        Map<String,Object> map = new HashMap<>();
-        map.put("orgId",sysUser.getOrganizationId());
-        map.put("warehouseId",warehouseId);
-        map.put("storageType",2);
-        Long storageId = wmsInnerJobOrderMapper.findStorageId(map);
-        if(StringUtils.isEmpty(storageId)){
-            throw new BizErrorException("未获取到该仓库下的收货库位");
-        }
-        wmsInAsnOrder.setSourceOrderId(res.getSourceOrderId());
-        wmsInAsnOrder.setMaterialOwnerId(res.getMaterialOwnerId());
-        wmsInAsnOrder.setSupplierId(res.getSupplierId());
-        wmsInAsnOrder.setWarehouseId(wmsOutDespatchOrder.getWarehouseId());
-        //调拨订单号
-        wmsInAsnOrder.setRelatedOrderCode1(res.getRelatedOrderCode1());
-        //调拨出库单号
-        wmsInAsnOrder.setRelatedOrderCode2(res.getDeliveryOrderCode());
-        wmsInAsnOrder.setCustomerOrderCode(res.getCustomerOrderCode());
-        wmsInAsnOrder.setOrderDate(res.getOrderDate());
-        wmsInAsnOrder.setWarehouseId(warehouseId);
-        wmsInAsnOrder.setStorageId(storageId);
-        wmsInAsnOrder.setPlanAgoDate(new Date());
-        wmsInAsnOrder.setLinkManName(res.getLinkManName());
-        wmsInAsnOrder.setLinkManPhone(res.getLinkManPhone());
-        wmsInAsnOrder.setFaxNumber(res.getFaxNumber());
-        wmsInAsnOrder.setEMailAddress(res.getEmailAddress());
-        SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
-        searchWmsOutDeliveryOrderDet.setDeliveryOrderId(res.getDeliveryOrderId());
-        int i = 0;
-        List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDets = outFeignApi.findList(searchWmsOutDeliveryOrderDet).getData();
-        for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDet : wmsOutDeliveryOrderDets) {
-            i++;
-            WmsInAsnOrderDet wmsInAsnOrderDet = new WmsInAsnOrderDet();
-            wmsInAsnOrderDet.setSourceOrderId(wmsOutDeliveryOrderDet.getDeliveryOrderId());
-            wmsInAsnOrderDet.setOrderDetId(wmsOutDeliveryOrderDet.getDeliveryOrderDetId());
-            wmsInAsnOrderDet.setWarehouseId(warehouseId);
-            wmsInAsnOrderDet.setStorageId(storageId);
-            wmsInAsnOrderDet.setLineNumber(i);
-            wmsInAsnOrderDet.setInventoryStatusId(wmsOutDeliveryOrderDet.getInventoryStatusId());
-            wmsInAsnOrderDet.setMaterialId(wmsOutDeliveryOrderDet.getMaterialId());
-            wmsInAsnOrderDet.setPackingUnitName(wmsOutDeliveryOrderDet.getPackingUnitName());
-            wmsInAsnOrderDet.setPackingQty(wmsOutDeliveryOrderDet.getPackingQty());
-            wmsInAsnOrderDet.setBatchCode(wmsOutDeliveryOrderDet.getBatchCode());
-            wmsInAsnOrderDets.add(wmsInAsnOrderDet);
-        }
-        wmsInAsnOrder.setWmsInAsnOrderDetList(wmsInAsnOrderDets);
-        ResponseEntity rer = inFeignApi.save(wmsInAsnOrder);
-        if(rer.getCode()!=0){
-            throw new BizErrorException(rer.getMessage());
         }
         return 1;
     }

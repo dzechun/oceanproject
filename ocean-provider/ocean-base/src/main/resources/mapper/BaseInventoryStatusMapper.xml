@@ -11,6 +11,7 @@
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
     <result column="if_can_store_issue" jdbcType="TINYINT" property="ifCanStoreIssue" />
+    <result column="if_default_status" jdbcType="TINYINT" property="ifDefaultStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -37,6 +38,7 @@
     bis.warehouse_id,
     bis.material_owner_id,
     bis.if_can_store_issue,
+    bis.if_default_status,
     bis.`status`,
     bis.remark,
     bis.org_id,
