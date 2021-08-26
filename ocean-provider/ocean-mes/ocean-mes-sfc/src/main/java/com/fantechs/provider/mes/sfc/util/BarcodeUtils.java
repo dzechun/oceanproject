@@ -1190,6 +1190,7 @@ public class BarcodeUtils {
             //获取设备绑定产品信息
             SearchEamEquipmentMaterial searchEamEquipmentMaterial=new SearchEamEquipmentMaterial();
             searchEamEquipmentMaterial.setEquipmentCode(equipmentCode);
+            searchEamEquipmentMaterial.setOrgId(orgId);
             ResponseEntity<List<EamEquipmentMaterialDto>> responseEntityDto=barcodeUtils.deviceInterFaceUtils.getEquipmentMaterialList(searchEamEquipmentMaterial);
             if(StringUtils.isEmpty(responseEntityDto.getData()))
                 throw new Exception("找不到设备与产品的绑定信息");

@@ -39,11 +39,13 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
 
     @Override
     public List<EamJigBarcodeDto> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
 
         return eamJigBarcodeMapper.findList(map);
     }
