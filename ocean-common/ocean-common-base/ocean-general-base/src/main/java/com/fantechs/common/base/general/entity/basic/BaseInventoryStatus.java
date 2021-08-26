@@ -59,6 +59,13 @@ public class BaseInventoryStatus extends ValidGroup implements Serializable {
     private Byte ifCanStoreIssue;
 
     /**
+     * 是否默认状态(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifDefaultStatus",value = "是否默认状态(0-否 1-是)")
+    @Column(name = "if_default_status")
+    private Byte ifDefaultStatus;
+
+    /**
      * 仓库ID
      */
     @ApiModelProperty(name="warehouseId",value = "仓库ID")
