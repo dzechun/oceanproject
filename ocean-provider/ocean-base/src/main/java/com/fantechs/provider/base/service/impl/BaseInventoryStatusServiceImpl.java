@@ -58,6 +58,9 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //相同的货主与仓库只能有一条默认的库存状态
+        ifRepeat(baseInventoryStatus);
+
         baseInventoryStatus.setCreateUserId(user.getUserId());
         baseInventoryStatus.setCreateTime(new Date());
         baseInventoryStatus.setModifiedUserId(user.getUserId());
@@ -81,6 +84,9 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        //相同的货主与仓库只能有一条默认的库存状态
+        ifRepeat(baseInventoryStatus);
+
         baseInventoryStatus.setModifiedTime(new Date());
         baseInventoryStatus.setModifiedUserId(user.getUserId());
         baseInventoryStatus.setOrgId(user.getOrganizationId());
@@ -91,6 +97,26 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
         baseHtInventoryStatusMapper.insert(baseHtInventoryStatus);
 
         return baseInventoryStatusMapper.updateByPrimaryKeySelective(baseInventoryStatus);
+    }
+
+
+    public void ifRepeat(BaseInventoryStatus baseInventoryStatus){
+        if(baseInventoryStatus.getIfDefaultStatus()==1) {
+            Example example = new Example(BaseInventoryStatus.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("materialOwnerId", baseInventoryStatus.getMaterialOwnerId())
+                    .andEqualTo("warehouseId", baseInventoryStatus.getWarehouseId())
+                    .andEqualTo("ifDefaultStatus", 1);
+
+            if (StringUtils.isNotEmpty(baseInventoryStatus.getInventoryStatusId())) {
+                criteria.andNotEqualTo("inventoryStatusId", baseInventoryStatus.getInventoryStatusId());
+            }
+            BaseInventoryStatus inventoryStatus = baseInventoryStatusMapper.selectOneByExample(example);
+
+            if (StringUtils.isNotEmpty(inventoryStatus)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "相同的货主与仓库只能有一条默认的库存状态");
+            }
+        }
     }
 
     @Override

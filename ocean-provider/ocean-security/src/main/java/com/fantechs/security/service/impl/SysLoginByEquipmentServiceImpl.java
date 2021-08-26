@@ -2,15 +2,14 @@ package com.fantechs.security.service.impl;
 
 import com.fantechs.common.base.dto.security.SysRoleDto;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
+import com.fantechs.common.base.general.dto.esop.EsopEquipmentDto;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.eam.EamFeignApi;
+import com.fantechs.provider.api.esop.EsopFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.security.mapper.SysRoleMapper;
 import com.fantechs.security.service.SysLoginByEquipmentService;
-import com.fantechs.security.service.SysUserService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,14 +26,12 @@ public class SysLoginByEquipmentServiceImpl  implements SysLoginByEquipmentServi
     private SecurityFeignApi securityFeignApi;
 
     @Resource
-    private SysUserService sysUserService;
-
-    @Resource
     private SysRoleMapper sysRoleMapper;
 
+/*    @Resource
+    private EamFeignApi eamFeignApi;*/
     @Resource
-    private EamFeignApi eamFeignApi;
-
+    private EsopFeignApi esopFeignApi;
 
 
     @Override
@@ -53,7 +50,7 @@ public class SysLoginByEquipmentServiceImpl  implements SysLoginByEquipmentServi
         }
 
         //通过mac地址查询设备
-        ResponseEntity<List<EamEquipmentDto>> list = eamFeignApi.findByMac(mac, orgId);
+        ResponseEntity<List<EsopEquipmentDto>> list = esopFeignApi.findByMac(mac, orgId);
         if (StringUtils.isEmpty(list.getData())) {
             return ControllerUtil.returnFail("登录错误，未查询到设备信息", 1);
         }

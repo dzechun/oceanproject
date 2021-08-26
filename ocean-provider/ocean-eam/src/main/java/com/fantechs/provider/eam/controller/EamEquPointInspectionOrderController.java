@@ -40,7 +40,7 @@ public class EamEquPointInspectionOrderController {
     @Resource
     private EamEquPointInspectionOrderService eamEquPointInspectionOrderService;
 
-    @ApiOperation("新建保养单")
+    @ApiOperation("新建点检单")
     @PostMapping("/pdaCreateOrder")
     public ResponseEntity<EamEquPointInspectionOrderDto> pdaCreateOrder(@ApiParam(value = "设备条码",required = true)@RequestParam  @NotBlank(message="设备条码不能为空") String equipmentBarcode) {
         EamEquPointInspectionOrderDto eamEquPointInspectionOrderDto = eamEquPointInspectionOrderService.pdaCreateOrder(equipmentBarcode);

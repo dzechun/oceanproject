@@ -26,6 +26,11 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="equipment_maintain_project_name" jdbcType="VARCHAR" property="equipmentMaintainProjectName"/>
+    <result column="equipment_maintain_project_desc" jdbcType="VARCHAR" property="equipmenMmaintainProjectDesc"/>
+    <result column="judge_type" jdbcType="TINYINT" property="judgeType"/>
+    <result column="ration_floor" jdbcType="DECIMAL" property="rationFloor"/>
+    <result column="ration_upper_limit" jdbcType="DECIMAL" property="rationUpperLimit"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -48,10 +53,13 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
+    eempi.equipment_maintain_project_name,eempi.equipment_maintain_project_desc,
+    eempi.judge_type,eempi.ration_floor,eempi.ration_upper_limit,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from eam_equipment_maintain_order_det eemod
+    left join fantech_imes_v2.eam_equipment_maintain_project_item eempi on eemod.equipment_maintain_project_item_id=eempi.equipment_maintain_project_item_id
     left join ocean_v2.sys_user u on eemod.create_user_id=u.user_id
     left join ocean_v2.sys_user s on eemod.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON eemod.org_id = bo.organization_id

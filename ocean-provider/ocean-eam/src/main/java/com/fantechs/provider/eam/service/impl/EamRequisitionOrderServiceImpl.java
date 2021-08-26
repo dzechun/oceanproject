@@ -90,7 +90,7 @@ public class EamRequisitionOrderServiceImpl extends BaseService<EamRequisitionOr
                 //修改设备使用状态
                 EamEquipment eamEquipment = new EamEquipment();
                 eamEquipment.setEquipmentId(eamRequisitionOrderDet.getEquipmentId());
-                eamEquipment.setUsageStatus((byte)1);
+                //eamEquipment.setUsageStatus((byte)1);
                 eamEquipmentMapper.updateByPrimaryKeySelective(eamEquipment);
             }
             eamRequisitionOrderDetMapper.insertList(eamRequisitionOrderDets);

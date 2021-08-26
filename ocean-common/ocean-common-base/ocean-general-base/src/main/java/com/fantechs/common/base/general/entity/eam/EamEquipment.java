@@ -295,18 +295,6 @@ public class EamEquipment extends ValidGroup implements Serializable {
     private BigDecimal yAxis;
 
     /**
-     * 使用状态(1-使用中 2-空闲)
-     */
-    @ApiModelProperty(name="usageStatus",value = "使用状态(1-使用中 2-空闲)")
-    private Byte usageStatus;
-
-    /**
-     * 线上状态(0-离线 1-在线)
-     */
-    @ApiModelProperty(name="onlineStatus",value = "线上状态(0-离线 1-在线 2-已登录 3-中心异常)")
-    private Byte onlineStatus;
-
-    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

@@ -293,6 +293,8 @@ public class SmtSolderPasteServiceImpl extends BaseService<SmtSolderPaste> imple
                     }
                     break;
                 case 6:
+                    //锡膏使用完成清除redis存储的配置文件
+                    redisUtil.del(DEFAULT_NAME+smtSolderPaste.getSolderPasteId().toString());
                     break;
                 case 7:
                     //回冰
