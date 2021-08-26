@@ -61,9 +61,9 @@ osro.option3
     (SELECT SUM(osrod.order_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_qty,
     (SELECT SUM(osrod.issue_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_issue_qty,
     (SELECT SUM(osrod.receiving_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_receiving_qty,
-    (SELECT SUM(bmt.volume) FROM base_material_tab bmt where bmt.material_id in (SELECT osrod.material_id FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id)) as total_volume,
-    (SELECT SUM(bmt.net_weight) FROM base_material_tab bmt where bmt.material_id in (SELECT osrod.material_id FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id)) as total_net_weight,
-    (SELECT SUM(bmt.gross_weight) FROM base_material_tab bmt where bmt.material_id in (SELECT osrod.material_id FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id)) as total_gross_weight
+    (SELECT SUM(bmt.volume * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as total_volume,
+    (SELECT SUM(bmt.net_weight * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as total_net_weight,
+    (SELECT SUM(bmt.gross_weight * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as total_gross_weight
 FROM om_sales_return_order osro
 LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = osro.material_owner_id
 left join ocean_v2.sys_user su on osro.create_user_id = su.user_id

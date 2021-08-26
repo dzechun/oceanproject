@@ -1,5 +1,6 @@
 package com.fantechs.provider.om.service;
 
+import com.fantechs.common.base.general.dto.om.OmHtOtherOutOrderDto;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
@@ -19,4 +20,6 @@ public interface OmOtherOutOrderService extends IService<OmOtherOutOrder> {
     int packageAutoOutOrder(OmOtherOutOrder omOtherOutOrder);
 
     int writeQty(OmOtherOutOrderDet omOtherOutOrderDet);
+
+    List<OmHtOtherOutOrderDto> findHtList(Map<String ,Object> map);
 }

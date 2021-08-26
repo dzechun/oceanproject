@@ -1,5 +1,6 @@
 package com.fantechs.provider.om.service;
 
+import com.fantechs.common.base.general.dto.om.OmHtTransferOrderDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import com.fantechs.common.base.general.entity.om.OmTransferOrderDet;
@@ -24,4 +25,6 @@ public interface OmTransferOrderService extends IService<OmTransferOrder> {
     int packageAutoOutOrder(String ids);
 
     int updateStatus(OmTransferOrder omTransferOrder);
+
+    List<OmHtTransferOrderDto> findHtList(Map<String,Object> map);
 }

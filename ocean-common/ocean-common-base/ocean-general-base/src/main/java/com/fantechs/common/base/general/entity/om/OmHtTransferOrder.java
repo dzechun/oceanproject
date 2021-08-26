@@ -1,30 +1,36 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
-import lombok.Data;
 
 /**
- * 调拨订单
- * om_transfer_order
- * @author mr.lei
- * @date 2021-06-15 10:14:56
+ * @Author mr.lei
+ * @Date 2021/8/26
  */
 @Data
-@Table(name = "om_transfer_order")
-public class OmTransferOrder extends ValidGroup implements Serializable {
+@Table(name = "om_ht_transfer_order")
+public class OmHtTransferOrder extends ValidGroup implements Serializable {
+
+    @ApiModelProperty(name="htTransferOrderId",value = "调拨订单ID")
+    @Id
+    @Column(name = "ht_transfer_order_id")
+    private Long htTransferOrderId;
+
     /**
      * 调拨订单ID
      */
     @ApiModelProperty(name="transferOrderId",value = "调拨订单ID")
-    @Id
     @Column(name = "transfer_order_id")
     private Long transferOrderId;
 
@@ -101,7 +107,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="")
     private Byte status;
 
     /**
@@ -123,7 +129,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
+    @Excel(name = "组织id", height = 20, width = 30,orderNum="")
     @Column(name = "org_id")
     private Long orgId;
 
@@ -183,10 +189,4 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
     private String option3;
-
-    @Transient
-    @ApiModelProperty("明细")
-    private List<OmTransferOrderDet> omTransferOrderDets;
-
-    private static final long serialVersionUID = 1L;
 }

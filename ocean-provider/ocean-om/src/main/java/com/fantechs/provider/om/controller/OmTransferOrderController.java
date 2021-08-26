@@ -2,6 +2,7 @@ package com.fantechs.provider.om.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.om.OmHtTransferOrderDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import com.fantechs.common.base.general.entity.om.OmTransferOrderDet;
@@ -94,5 +95,13 @@ public class OmTransferOrderController {
     @PostMapping("/updateStatus")
     public ResponseEntity updateStatus(@RequestBody OmTransferOrder omTransferOrder){
         return ControllerUtil.returnCRUD(omTransferOrderService.updateStatus(omTransferOrder));
+    }
+
+    @ApiOperation("履历")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<OmHtTransferOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmTransferOrder searchOmTransferOrder) {
+        Page<Object> page = PageHelper.startPage(searchOmTransferOrder.getStartPage(),searchOmTransferOrder.getPageSize());
+        List<OmHtTransferOrderDto> list = omTransferOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchOmTransferOrder));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }

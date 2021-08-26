@@ -5,6 +5,7 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInHtAsnOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
@@ -16,6 +17,8 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
+import com.fantechs.common.base.general.entity.wms.in.WmsInHtAsnOrder;
+import com.fantechs.common.base.general.entity.wms.in.WmsInHtAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
@@ -38,6 +41,8 @@ import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderMapper;
+import com.fantechs.provider.wms.in.mapper.WmsInHtAsnOrderDetMapper;
+import com.fantechs.provider.wms.in.mapper.WmsInHtAsnOrderMapper;
 import com.fantechs.provider.wms.in.service.WmsInAsnOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -83,6 +88,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     DataSourceTransactionManager dataSourceTransactionManager;
     @Autowired
     TransactionDefinition transactionDefinition;
+    @Resource
+    private WmsInHtAsnOrderMapper wmsInHtAsnOrderMapper;
+    @Resource
+    private WmsInHtAsnOrderDetMapper wmsInHtAsnOrderDetMapper;
 
     @Override
     public List<WmsInAsnOrderDto> findList(SearchWmsInAsnOrder searchWmsInAsnOrder) {
@@ -131,12 +140,16 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     throw new BizErrorException("收货失败");
                 }
             }
+            wmsInAsnOrder.setWmsInAsnOrderDetList(list);
             wmsInAsnOrder.setStartReceivingDate(new Date());
             wmsInAsnOrder.setEndReceivingDate(new Date());
             wmsInAsnOrder.setModifiedTime(new Date());
             wmsInAsnOrder.setModifiedUserId(sysUser.getUserId());
             wmsInAsnOrder.setOrderStatus((byte)3);
             num+=wmsInAsnOrderMapper.updateByPrimaryKeySelective(wmsInAsnOrder);
+
+            //添加履历
+            this.addHt(wmsInAsnOrder);
         }
         return num;
     }
@@ -557,6 +570,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInAsnOrderDet.setOrgId(sysUser.getOrganizationId());
             wmsInAsnOrderDetMapper.insert(wmsInAsnOrderDet);
         }
+
+        this.addHt(record);
         return num;
     }
 
@@ -597,6 +612,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInAsnOrderDetMapper.insert(wmsInAsnOrderDet);
         }
+        this.addHt(entity);
         return num;
     }
 
@@ -932,5 +948,35 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         return user;
+    }
+
+    /**
+     * 履历查询
+     * @param map
+     * @return
+     */
+    @Override
+    public List<WmsInHtAsnOrderDto> findHtList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId",sysUser.getOrganizationId());
+        return wmsInHtAsnOrderMapper.findHtList(map);
+    }
+
+    /**
+     * 添加履历记录
+     * @param wmsInAsnOrder
+     * @return
+     */
+    private void addHt(WmsInAsnOrder wmsInAsnOrder){
+        WmsInHtAsnOrder wmsInHtAsnOrder = new WmsInHtAsnOrder();
+        BeanUtil.copyProperties(wmsInAsnOrder,wmsInHtAsnOrder);
+        wmsInHtAsnOrderMapper.insertUseGeneratedKeys(wmsInHtAsnOrder);
+        if(StringUtils.isNotEmpty(wmsInAsnOrder.getWmsInAsnOrderDetList()));
+        for (WmsInAsnOrderDet wmsInAsnOrderDet : wmsInAsnOrder.getWmsInAsnOrderDetList()) {
+            WmsInHtAsnOrderDet wmsInHtAsnOrderDet = new WmsInHtAsnOrderDet();
+            BeanUtil.copyProperties(wmsInAsnOrderDet,wmsInHtAsnOrderDet);
+            wmsInHtAsnOrderDet.setHtAsnOrderDetId(wmsInHtAsnOrder.getHtAsnOrderId());
+            wmsInHtAsnOrderDetMapper.insertSelective(wmsInHtAsnOrderDet);
+        }
     }
 }
