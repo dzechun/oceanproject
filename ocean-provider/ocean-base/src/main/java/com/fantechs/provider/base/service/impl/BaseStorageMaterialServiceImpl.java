@@ -47,11 +47,16 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        ifRepeat(baseStorageMaterial);
+
         baseStorageMaterial.setCreateUserId(currentUser.getUserId());
         baseStorageMaterial.setCreateTime(new Date());
         baseStorageMaterial.setModifiedUserId(currentUser.getUserId());
         baseStorageMaterial.setModifiedTime(new Date());
         baseStorageMaterial.setOrganizationId(currentUser.getOrganizationId());
+        baseStorageMaterial.setStatus(StringUtils.isEmpty(baseStorageMaterial.getStatus())?1: baseStorageMaterial.getStatus());
+        baseStorageMaterial.setPutawayTactics(StringUtils.isEmpty(baseStorageMaterial.getPutawayTactics())?0:baseStorageMaterial.getPutawayTactics());
+        baseStorageMaterial.setReplenishTactics(StringUtils.isEmpty(baseStorageMaterial.getReplenishTactics())?0:baseStorageMaterial.getReplenishTactics());
         baseStorageMaterialMapper.insertUseGeneratedKeys(baseStorageMaterial);
 
         //新增储位物料历史信息
@@ -98,9 +103,10 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        ifRepeat(baseStorageMaterial);
+
         baseStorageMaterial.setModifiedUserId(currentUser.getUserId());
         baseStorageMaterial.setModifiedTime(new Date());
-        baseStorageMaterial.setOrganizationId(currentUser.getOrganizationId());
         int i = baseStorageMaterialMapper.updateByPrimaryKeySelective(baseStorageMaterial);
 
         //新增储位物料历史信息
@@ -110,6 +116,21 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
         return i;
     }
 
+    public void ifRepeat(BaseStorageMaterial baseStorageMaterial){
+        Example example = new Example(BaseStorageMaterial.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("storageId",baseStorageMaterial.getStorageId())
+                .andEqualTo("materialId",baseStorageMaterial.getMaterialId())
+                .andEqualTo("materialOwnerId",baseStorageMaterial.getMaterialOwnerId());
+        if(StringUtils.isNotEmpty(baseStorageMaterial.getStorageMaterialId())){
+            criteria.andNotEqualTo("storageMaterialId",baseStorageMaterial.getStorageMaterialId());
+        }
+        List<BaseStorageMaterial> baseStorageMaterials = baseStorageMaterialMapper.selectByExample(example);
+
+        if(StringUtils.isNotEmpty(baseStorageMaterials)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"已存在货主、库位、物料完全一致的数据");
+        }
+    }
 
     @Override
     public List<BaseStorageMaterial> findList(Map<String, Object> map) {
@@ -184,6 +205,18 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
             }
             baseStorageMaterialImport.setMaterialOwnerId(baseMaterialOwner.getMaterialOwnerId());
 
+            //不能插入货主、库位、物料完全一致的数据
+            Example example = new Example(BaseStorageMaterial.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("storageId",baseStorageMaterialImport.getStorageId())
+                    .andEqualTo("materialId",baseStorageMaterialImport.getMaterialId())
+                    .andEqualTo("materialOwnerId",baseStorageMaterialImport.getMaterialOwnerId());
+            List<BaseStorageMaterial> baseStorageMaterials = baseStorageMaterialMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(baseStorageMaterials)){
+                fail.add(i+4);
+                continue;
+            }
+
             storageMaterialImports.add(baseStorageMaterialImport);
         }
 
@@ -197,8 +230,10 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
                 baseStorageMaterial.setModifiedTime(new Date());
                 baseStorageMaterial.setModifiedUserId(currentUser.getUserId());
                 baseStorageMaterial.setOrganizationId(currentUser.getOrganizationId());
-                baseStorageMaterial.setPutawayTactics(baseStorageMaterialImport.getPutawayTactics().byteValue());
-                baseStorageMaterial.setReplenishTactics(baseStorageMaterialImport.getReplenishTactics().byteValue());
+                baseStorageMaterial.setPutawayTactics(StringUtils.isEmpty(baseStorageMaterialImport.getPutawayTactics())?
+                        (byte)0 : baseStorageMaterialImport.getPutawayTactics().byteValue());
+                baseStorageMaterial.setReplenishTactics(StringUtils.isEmpty(baseStorageMaterialImport.getReplenishTactics())?
+                        (byte)0 : baseStorageMaterialImport.getReplenishTactics().byteValue());
                 list.add(baseStorageMaterial);
             }
         }

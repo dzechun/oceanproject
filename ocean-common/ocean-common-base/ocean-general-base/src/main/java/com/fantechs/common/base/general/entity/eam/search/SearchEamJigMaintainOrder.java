@@ -30,7 +30,7 @@ public class SearchEamJigMaintainOrder extends BaseQuery implements Serializable
     /**
      * 治具条码
      */
-    @ApiModelProperty(name="jigBarcode",value = "治具保养单号")
+    @ApiModelProperty(name="jigBarcode",value = "治具条码")
     private String jigBarcode;
 
     /**

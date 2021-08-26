@@ -7,10 +7,10 @@
         <artifactId>ocean-provider</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>com.fantechs.provider.eam</groupId>
+    <groupId>com.fantechs.provider.daq</groupId>
     <artifactId>ocean-daq</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean-eam</name>
+    <name>ocean-daq</name>
     <description>Demo project for Spring Boot</description>
 
     <dependencies>

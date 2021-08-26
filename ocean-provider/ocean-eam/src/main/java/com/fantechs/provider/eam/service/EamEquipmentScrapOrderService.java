@@ -17,4 +17,6 @@ public interface EamEquipmentScrapOrderService extends IService<EamEquipmentScra
     int save(EamEquipmentScrapOrderDto record);
 
     int update(EamEquipmentScrapOrderDto entity);
+
+    int autoCreateOrder();
 }

@@ -52,7 +52,6 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    eec.equipment_category_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
