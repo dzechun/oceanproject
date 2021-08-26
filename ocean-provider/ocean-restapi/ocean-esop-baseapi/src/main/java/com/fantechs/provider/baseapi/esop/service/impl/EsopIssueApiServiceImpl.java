@@ -4,13 +4,13 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.eam.EamIssue;
+import com.fantechs.common.base.general.entity.esop.EsopIssue;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.SkipHttpsUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.eam.EamFeignApi;
+import com.fantechs.provider.api.esop.EsopFeignApi;
 import com.fantechs.provider.baseapi.esop.service.EsopIssueApiService;
 import com.fantechs.provider.baseapi.esop.util.BaseUtils;
 import com.fantechs.provider.baseapi.esop.util.LogsUtils;
@@ -42,7 +42,7 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
     @Resource
     private BaseUtils baseUtils;
     @Resource
-    private EamFeignApi eamFeignApi;
+    private EsopFeignApi esopFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
 
@@ -73,9 +73,9 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
                     Map<String, Object> map = JsonUtils.jsonToMap(result);
                     Map<String, Object> data = (Map<String, Object>) map.get("data");
                     List<Map<String,Object>> list = (List<Map<String,Object>>) data.get("data");
-                    List<EamIssue> eamIssues = new ArrayList<>();
+                    List<EsopIssue> esopIssues = new ArrayList<>();
                     for(int i=0;i<list.size();i++){
-                        EamIssue issue = new EamIssue();
+                        EsopIssue issue = new EsopIssue();
                         issue.setIssueName((String)list.get(i).get("defect_name"));
                         issue.setRemark((String)list.get(i).get("num"));
                         issue.setMaterialId(baseMaterials.getData().get(0).getMaterialId());
@@ -83,11 +83,11 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
                         issue.setModifiedTime(new Date());
                         issue.setOrgId(baseUtils.getOrId());
                         issue.setStatus((byte)1);
-                        eamIssues.add(issue);
+                        esopIssues.add(issue);
                     }
-                   eamFeignApi.batchAdd(eamIssues);
+                    esopFeignApi.batchAdd(esopIssues);
                 }
-              //  logsUtils.addlog((byte)1,(byte)1,orgId,result,materialCode);
+                logsUtils.addlog((byte)1,(byte)1,orgId,result,materialCode);
                 return 1;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -106,7 +106,6 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
                 }
 
             }
-
 
         } catch (Exception e) {
             e.printStackTrace();
