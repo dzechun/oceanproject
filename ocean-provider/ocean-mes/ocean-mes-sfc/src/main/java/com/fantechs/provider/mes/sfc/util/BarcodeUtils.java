@@ -30,6 +30,7 @@ import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMate
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -862,6 +863,7 @@ public class BarcodeUtils {
             if(StringUtils.isNotEmpty(equipmentBarCode)) {
                 SearchEamEquipmentBarcode searchEamEquipmentBarcode = new SearchEamEquipmentBarcode();
                 searchEamEquipmentBarcode.setEquipmentBarCode(equipmentBarCode);
+                searchEamEquipmentBarcode.setOrgId(orgId);
                 ResponseEntity<List<EamEquipmentBarcode>> responseEntityEquiBarCode = barcodeUtils.deviceInterFaceUtils.findEamEquipmentBarCodeList(searchEamEquipmentBarcode);
                 if(StringUtils.isEmpty(responseEntityEquiBarCode.getData())){
                     throw new Exception("设备条码信息不存在-->"+equipmentBarCode);
@@ -1062,12 +1064,18 @@ public class BarcodeUtils {
                 workOrderCode=mesSfcWorkOrderBarcodeDto.getWorkOrderCode();
             }
             if(StringUtils.isNotEmpty(workOrderCode)) {
-                ResponseEntity<List<MesPmWorkOrderDto>> responseEntity = barcodeUtils.deviceInterFaceUtils.getWorkOrder(workOrderCode);
-                if (StringUtils.isEmpty(responseEntity.getData()))
+                SearchMesPmWorkOrder searchMesPmWorkOrder=new SearchMesPmWorkOrder();
+                searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+                searchMesPmWorkOrder.setOrgId(orgId);
+                searchMesPmWorkOrder.setCodeQueryMark(1);
+                ResponseEntity<List<MesPmWorkOrderDto>> responseEntityWorkOrderList = barcodeUtils.deviceInterFaceUtils.getWorkOrderList(searchMesPmWorkOrder);
+                if (StringUtils.isEmpty(responseEntityWorkOrderList.getData()))
                     throw new Exception("找不到半成品工单信息");
 
-                MesPmWorkOrderDto mesPmWorkOrderDto = responseEntity.getData().get(0);
+                MesPmWorkOrderDto mesPmWorkOrderDto = responseEntityWorkOrderList.getData().get(0);
                 partMaterialId = mesPmWorkOrderDto.getMaterialId();
+
+                //partMaterialId=63249L;
 
                 //设置半成品物料ID
                 updateProcessDto.setPartMaterialId(partMaterialId);
@@ -1182,6 +1190,7 @@ public class BarcodeUtils {
             //获取设备绑定产品信息
             SearchEamEquipmentMaterial searchEamEquipmentMaterial=new SearchEamEquipmentMaterial();
             searchEamEquipmentMaterial.setEquipmentCode(equipmentCode);
+            searchEamEquipmentMaterial.setOrgId(orgId);
             ResponseEntity<List<EamEquipmentMaterialDto>> responseEntityDto=barcodeUtils.deviceInterFaceUtils.getEquipmentMaterialList(searchEamEquipmentMaterial);
             if(StringUtils.isEmpty(responseEntityDto.getData()))
                 throw new Exception("找不到设备与产品的绑定信息");

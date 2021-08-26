@@ -2,12 +2,16 @@ package com.fantechs.common.base.general.entity.mes.pm.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SearchMesPmWorkOrder extends BaseQuery implements Serializable {
     private static final long serialVersionUID = -2565635736485077385L;
 
