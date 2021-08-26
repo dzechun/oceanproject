@@ -15,7 +15,7 @@ public class RestapiSNDataTransferApiDto implements Serializable {
     protected String stationCode;   //工位编码
     protected String processCode;   //工序编码
     protected String userCode; //员工编号
-    protected String equipmentCode; //设备SN
+    protected String equipmentBarCode; //设备SN
     protected String eamJigBarCode; //治具SN 001,002,003,004,006
     protected String opResult; //作业结果
     protected String badnessPhenotypeCode; //不良现象代码

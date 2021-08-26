@@ -64,7 +64,7 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
         // 新增保养项目履历
         EamHtEquipmentMaintainProject eamHtEquipmentMaintainProject = new EamHtEquipmentMaintainProject();
         BeanUtil.copyProperties(eamEquipmentMaintainProject, eamHtEquipmentMaintainProject);
-        eamHtEquipmentMaintainProjectMapper.insert(eamHtEquipmentMaintainProject);
+        int i = eamHtEquipmentMaintainProjectMapper.insert(eamHtEquipmentMaintainProject);
 
         if(!eamEquipmentMaintainProject.getItems().isEmpty()){
             List<EamEquipmentMaintainProjectItem> maintainProjectItems = eamEquipmentMaintainProject.getItems()
@@ -76,7 +76,7 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
             // 批量新增保养项目事项及其履历
             eamEquipmentMaintainProjectItemService.batchSave(maintainProjectItems);
         }
-        return 0;
+        return i;
     }
 
     @Override
@@ -88,15 +88,21 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
         // 新增保养项目履历
         EamHtEquipmentMaintainProject eamHtEquipmentMaintainProject = new EamHtEquipmentMaintainProject();
         BeanUtil.copyProperties(eamEquipmentMaintainProject, eamHtEquipmentMaintainProject);
-        eamHtEquipmentMaintainProjectMapper.insert(eamHtEquipmentMaintainProject);
+        int i = eamHtEquipmentMaintainProjectMapper.insert(eamHtEquipmentMaintainProject);
 
         if(!eamEquipmentMaintainProject.getItems().isEmpty()){
             // 批量删除保养项目事项
             eamEquipmentMaintainProjectItemService.batchDelete(eamEquipmentMaintainProject.getItems());
             // 批量新增保养项目事项及其履历
-            eamEquipmentMaintainProjectItemService.batchSave(eamEquipmentMaintainProject.getItems());
+            List<EamEquipmentMaintainProjectItem> maintainProjectItems = eamEquipmentMaintainProject.getItems()
+                    .stream()
+                    .map(item -> {
+                        item.setEquipmentMaintainProjectId(eamEquipmentMaintainProject.getEquipmentMaintainProjectId());
+                        return item;
+                    }).collect(Collectors.toList());
+            eamEquipmentMaintainProjectItemService.batchSave(maintainProjectItems);
         }
-        return 0;
+        return i;
     }
 
     @Override

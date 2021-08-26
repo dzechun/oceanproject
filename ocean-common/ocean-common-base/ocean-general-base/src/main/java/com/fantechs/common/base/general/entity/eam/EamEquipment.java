@@ -13,7 +13,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 ;
 ;
@@ -191,11 +193,19 @@ public class EamEquipment extends ValidGroup implements Serializable {
     private String equipmentIp;
 
     /**
+     * 设备管理员用户ID
+     */
+    @ApiModelProperty(name="equipmentMgtUserId",value = "设备管理员用户ID")
+    @Column(name = "equipment_mgt_user_id")
+    private Long equipmentMgtUserId;
+
+    /**
      * MAC地址
      */
     @ApiModelProperty(name="equipmentMacAddress",value = "MAC地址")
     @Column(name = "equipment_mac_address")
     private String equipmentMacAddress;
+
     /**
      * 出厂日期
      */
@@ -206,22 +216,36 @@ public class EamEquipment extends ValidGroup implements Serializable {
     private Date releaseDate;
 
     /**
-     * 上次保养时间
+     * 保养周期(天)
      */
-    @ApiModelProperty(name="lastTimeMaintainTime",value = "上次保养时间")
-    @Excel(name = "上次保养时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm")
-    @JSONField(format ="yyyy-MM-dd HH:mm")
-    @Column(name = "last_time_maintain_time")
-    private Date lastTimeMaintainTime;
+    @ApiModelProperty(name="maintainCycle",value = "保养周期(天)")
+    @Excel(name = "保养周期(天)", height = 20, width = 30,orderNum="9")
+    @Column(name = "maintain_cycle")
+    private Integer maintainCycle;
 
     /**
-     * 下次保养时间
+     * 保养警告天数
      */
-    @ApiModelProperty(name="nextTimeMaintainTime",value = "下次保养时间")
-    @Excel(name = "下次保养时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm")
-    @JSONField(format ="yyyy-MM-dd HH:mm")
-    @Column(name = "next_time_maintain_time")
-    private Date nextTimeMaintainTime;
+    @ApiModelProperty(name="maintainWarningDays",value = "保养警告天数")
+    @Excel(name = "保养警告天数", height = 20, width = 30,orderNum="9")
+    @Column(name = "maintain_warning_days")
+    private Integer maintainWarningDays;
+
+    /**
+     * 保养最大使用次数
+     */
+    @ApiModelProperty(name="maintainMaxUsageTime",value = "保养最大使用次数")
+    @Excel(name = "保养最大使用次数", height = 20, width = 30,orderNum="9")
+    @Column(name = "maintain_max_usage_time")
+    private Integer maintainMaxUsageTime;
+
+    /**
+     * 保养警告次数
+     */
+    @ApiModelProperty(name="maintainWarningTime",value = "保养警告次数")
+    @Excel(name = "保养警告次数", height = 20, width = 30,orderNum="9")
+    @Column(name = "maintain_warning_time")
+    private Integer maintainWarningTime;
 
     /**
      * 生命周期(天)
@@ -229,14 +253,6 @@ public class EamEquipment extends ValidGroup implements Serializable {
     @ApiModelProperty(name="lifecycle",value = "生命周期(天)")
     @Excel(name = "生命周期(天)", height = 20, width = 30,orderNum="12")
     private BigDecimal lifecycle;
-
-    /**
-     * 当前使用次数
-     */
-    @ApiModelProperty(name="currentUsageTimes",value = "当前使用次数")
-    @Excel(name = "当前使用次数", height = 20, width = 30,orderNum="13")
-    @Column(name = "current_usage_times")
-    private Integer currentUsageTimes;
 
     /**
      * 最大使用次数
@@ -247,19 +263,28 @@ public class EamEquipment extends ValidGroup implements Serializable {
     private Integer maxUsageTimes;
 
     /**
-     * 使用状态(1-使用中 2-空闲)
+     * 警告次数
      */
-    @ApiModelProperty(name="usageStatus",value = "使用状态(1-使用中 2-空闲)")
-    @Excel(name = "使用状态(1-使用中 2-空闲)", height = 20, width = 30,orderNum="15",replace = {"使用中_1", "空闲_2"})
-    @Column(name = "usage_status")
-    private Byte usageStatus;
+    @ApiModelProperty(name="warningTime",value = "警告次数")
+    @Excel(name = "警告次数", height = 20, width = 30,orderNum="14")
+    @Column(name = "warning_time")
+    private Integer warningTime;
 
     /**
-     * 线上状态(0-离线 1-在线)
+     * 最大使用天数
      */
-    @ApiModelProperty(name="onlineStatus",value = "线上状态(0-离线 1-在线 2-已登录 3-中心异常)")
-    @Column(name = "online_status")
-    private Byte onlineStatus;
+    @ApiModelProperty(name="maxUsageDays",value = "最大使用天数")
+    @Excel(name = "最大使用天数", height = 20, width = 30,orderNum="14")
+    @Column(name = "max_usage_days")
+    private Integer maxUsageDays;
+
+    /**
+     * 警告天数
+     */
+    @ApiModelProperty(name="warningDays",value = "警告天数")
+    @Excel(name = "警告天数", height = 20, width = 30,orderNum="14")
+    @Column(name = "warning_days")
+    private Integer warningDays;
 
     @ApiModelProperty(name="xAxis",value = "X坐标")
     @Column(name = "x_axis")
@@ -268,7 +293,6 @@ public class EamEquipment extends ValidGroup implements Serializable {
     @ApiModelProperty(name="yAxis",value = "Y坐标")
     @Column(name = "y_axis")
     private BigDecimal yAxis;
-
 
     /**
      * 状态(0无效，1有效)
@@ -320,6 +344,25 @@ public class EamEquipment extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+
+    /**
+     * 条码信息
+     */
+    @ApiModelProperty(name="eamEquipmentBarcodeList",value = "条码信息")
+    private List<EamEquipmentBarcode> eamEquipmentBarcodeList = new ArrayList<>();
+
+    /**
+     * 附件信息
+     */
+    @ApiModelProperty(name="eamEquipmentAttachmentList",value = "附件信息")
+    private List<EamEquipmentAttachment> eamEquipmentAttachmentList = new ArrayList<>();
+
+    /**
+     * 备用件信息
+     */
+    @ApiModelProperty(name="eamEquipmentBackupList",value = "备用件信息")
+    private List<EamEquipmentBackup> eamEquipmentBackupList = new ArrayList<>();
 
     private String option1;
 

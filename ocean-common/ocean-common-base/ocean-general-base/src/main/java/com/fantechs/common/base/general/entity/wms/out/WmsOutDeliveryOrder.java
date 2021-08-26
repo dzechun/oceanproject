@@ -236,7 +236,7 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="auditStatus",value = "审核状态(0-未审核 1-已审核)")
     @Excel(name = "审核状态(0-未审核 1-已审核)", height = 20, width = 30,orderNum="19")
-    @Column(name = "order_status")
+    @Column(name = "audit_status")
     private Byte auditStatus;
 
     /**

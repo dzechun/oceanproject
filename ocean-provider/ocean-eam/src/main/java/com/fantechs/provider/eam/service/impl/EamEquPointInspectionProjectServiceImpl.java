@@ -56,7 +56,7 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquPointInspectionProject eamEquPointInspectionProject) {
         // 新增点检项目
         eamEquPointInspectionProjectMapper.insertUseGeneratedKeys(eamEquPointInspectionProject);
@@ -64,7 +64,7 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
         // 新增点检项目履历
         EamHtEquPointInspectionProject eamHtEquPointInspectionProject = new EamHtEquPointInspectionProject();
         BeanUtil.copyProperties(eamEquPointInspectionProject, eamHtEquPointInspectionProject);
-        eamHtEquPointInspectionProjectMapper.insert(eamHtEquPointInspectionProject);
+        int i = eamHtEquPointInspectionProjectMapper.insert(eamHtEquPointInspectionProject);
 
         if(!eamEquPointInspectionProject.getItems().isEmpty()){
             List<EamEquPointInspectionProjectItem> projectItems = eamEquPointInspectionProject.getItems()
@@ -76,11 +76,12 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
             // 批量新增点检项目事项及其履历
             eamEquPointInspectionProjectItemService.batchSave(projectItems);
         }
-        return 0;
+
+        return i;
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquPointInspectionProject eamEquPointInspectionProject) {
         // 修改点检项目
         eamEquPointInspectionProjectMapper.updateByPrimaryKey(eamEquPointInspectionProject);
@@ -88,25 +89,32 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
         // 新增点检项目履历
         EamHtEquPointInspectionProject eamHtEquPointInspectionProject = new EamHtEquPointInspectionProject();
         BeanUtil.copyProperties(eamEquPointInspectionProject, eamHtEquPointInspectionProject);
-        eamHtEquPointInspectionProjectMapper.insert(eamHtEquPointInspectionProject);
+        int i = eamHtEquPointInspectionProjectMapper.insert(eamHtEquPointInspectionProject);
 
         if(!eamEquPointInspectionProject.getItems().isEmpty()){
             // 批量删除点检项目事项
             eamEquPointInspectionProjectItemService.batchDelete(eamEquPointInspectionProject.getItems());
             // 批量新增点检项目事项及其履历
-            eamEquPointInspectionProjectItemService.batchSave(eamEquPointInspectionProject.getItems());
+            List<EamEquPointInspectionProjectItem> projectItems = eamEquPointInspectionProject.getItems()
+                    .stream()
+                    .map(item -> {
+                        item.setEquPointInspectionProjectId(eamEquPointInspectionProject.getEquPointInspectionProjectId());
+                        return item;
+                    }).collect(Collectors.toList());
+            eamEquPointInspectionProjectItemService.batchSave(projectItems);
         }
-        return 0;
+        return i;
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int updateStatus(EamEquPointInspectionProject eamEquPointInspectionProject) {
         // 修改点检项目
         return eamEquPointInspectionProjectMapper.updateByPrimaryKeySelective(eamEquPointInspectionProject);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids){
         // 查询点检事项集合
         HashMap<String, Object> map = new HashMap<>();

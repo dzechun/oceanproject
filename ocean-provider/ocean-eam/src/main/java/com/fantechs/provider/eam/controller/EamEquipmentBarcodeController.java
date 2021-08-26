@@ -68,5 +68,16 @@ public class EamEquipmentBarcodeController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    /*
+     * 2021/08/25
+     * huangshuijun
+     */
+    @ApiOperation("增加设备条码使用次数")
+    @PostMapping("/plusCurrentUsageTime")
+    public ResponseEntity plusCurrentUsageTime(@ApiParam(value = "设备条码id", required = true) @RequestParam @NotNull(message = "设备条码id")Long equipmentBarCodeId,
+                                               @ApiParam(value = "设备使用次数", required = true) @RequestParam @NotNull(message = "设备使用次数不能为空") Integer num) {
+        return ControllerUtil.returnCRUD(eamEquipmentBarcodeService.plusCurrentUsageTime(equipmentBarCodeId,num));
+    }
+
 
 }

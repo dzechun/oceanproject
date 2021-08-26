@@ -4,18 +4,12 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
-import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipment;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
@@ -23,7 +17,6 @@ import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarc
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
@@ -48,8 +41,6 @@ public class DeviceInterFaceUtils {
     private SFCFeignApi sfcFeignApi;
     @Resource
     private PMFeignApi pmFeignApi;
-    @Resource
-    private EamFeignApi eamFeignApi;
 
     /*
      * 获取组织ID
@@ -146,37 +137,7 @@ public class DeviceInterFaceUtils {
         mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder);
         return mesPmWorkOrderDtoList;
     }
-    /*
-     * 获取治具条码信息
-     * */
-    public ResponseEntity<List<EamJigBarcodeDto>> getJigBarCode(String jigBarCode){
-        ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList=null;
-        SearchEamJigBarcode searchEamJigBarcode = new SearchEamJigBarcode();
-        searchEamJigBarcode.setJigBarCode(jigBarCode);
-        eamJigBarcodeDtoList = eamFeignApi.findList(searchEamJigBarcode);
-        return eamJigBarcodeDtoList;
-    }
-    /*
-     * 获取设备信息
-     * */
-    public ResponseEntity<List<EamEquipmentDto>> getEamEquipment(String equipmentCode){
-        ResponseEntity<List<EamEquipmentDto>> eamEquipmentDtoList=null;
-        SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
-        searchEamEquipment.setEquipmentCode(equipmentCode);
-        eamEquipmentDtoList = eamFeignApi.findList(searchEamEquipment);
-        return eamEquipmentDtoList;
-    }
-    /*
-     * 获取治具绑定产品信息
-     * */
-//    public ResponseEntity<List<EamJigReMaterialDto>> getEamJigReMaterial(Long MaterialId,Long JigID){
-//        ResponseEntity<List<EamJigReMaterialDto>> eamJigReMaterialDtoList=null;
-//        SearchEamJigReMaterial searchEamJigReMaterial = new SearchEamJigReMaterial();
-//        searchEamJigReMaterial.setMaterialId(MaterialId);
-//        searchEamJigReMaterial.setJigId(JigID);
-//        eamJigReMaterialDtoList = eamFeignApi.findList(searchEamJigReMaterial);
-//        return eamJigReMaterialDtoList;
-//    }
+
     /*
      * 获取系统配置项信息
      * */
@@ -375,42 +336,6 @@ public class DeviceInterFaceUtils {
 
             MaterialId=mesPmWorkOrderDto.getMaterialId();
 
-        }
-        //设备编码判断
-        if(StringUtils.isNotEmpty(equipmentCode)){
-            ResponseEntity<List<EamEquipmentDto>> eamEquipmentDtoList = this.getEamEquipment(equipmentCode);
-            if (StringUtils.isEmpty(eamEquipmentDtoList.getData())) {
-                check = fail + " 请求失败,设备编码不存在";
-                return check;
-            }
-        }
-        //治具SN判断
-        if(StringUtils.isNotEmpty(eamJigBarCode)){
-            String[] jigBarCodeA=eamJigBarCode.split(",");
-            for (String item : jigBarCodeA) {
-                if(StringUtils.isNotEmpty(item)) {
-                    ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = this.getJigBarCode(item);
-                    if (StringUtils.isEmpty(eamJigBarcodeDtoList.getData())) {
-                        check = fail + " 请求失败,治具SN不存在";
-                        return check;
-                    }
-                    else {
-                        //判断治具状态
-                        EamJigBarcodeDto eamJigBarcodeDto=eamJigBarcodeDtoList.getData().get(0);
-                        if (4 == eamJigBarcodeDto.getUsageStatus() || 5 == eamJigBarcodeDto.getUsageStatus()) {
-                            check = fail+" 请求失败,治具SN状态处于维修或报废";
-                            return check;
-                        }
-                        //判断治具编码与产品绑定关系
-                        Long JidID=eamJigBarcodeDto.getJigId();
-//                        ResponseEntity<List<EamJigReMaterialDto>> eamJigReMaterialDtoList = this.getEamJigReMaterial(MaterialId,JidID);
-//                        if (StringUtils.isEmpty(eamJigReMaterialDtoList.getData())) {
-//                            check = fail + " 请求失败,治具SN与产品SN没有绑定关系";
-//                            return check;
-//                        }
-                    }
-                }
-            }
         }
 
         return check;

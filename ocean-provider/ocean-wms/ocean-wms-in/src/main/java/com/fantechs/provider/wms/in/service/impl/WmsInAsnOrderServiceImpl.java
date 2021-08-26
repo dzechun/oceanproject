@@ -20,6 +20,7 @@ import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
@@ -705,7 +706,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wms);
                 }else{
                     wms = palletAutoAsnDto;
-                    wms.setInventoryStatusId(Long.parseLong("107"));
+                    Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("warehouseId",wms.getWarehouseId()));
+                    wms.setInventoryStatusId(statusId);
                     wms.setAsnOrderId(asnOrderId);
                     wms.setCreateTime(new Date());
                     wms.setCreateUserId(sysUser.getUserId());
@@ -751,7 +753,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 }
                 WmsInAsnOrderDet wmsInAsnOrderDet = new WmsInAsnOrderDet();
                 BeanUtil.copyProperties(palletAutoAsnDto,wmsInAsnOrderDet);
-                wmsInAsnOrderDet.setInventoryStatusId(Long.parseLong("107"));
+                Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("warehouseId",wmsInAsnOrderDet.getWarehouseId()));
+                wmsInAsnOrderDet.setInventoryStatusId(statusId);
                 wmsInAsnOrderDet.setAsnOrderId(wmsInAsnOrder.getAsnOrderId());
                 wmsInAsnOrderDet.setCreateTime(new Date());
                 wmsInAsnOrderDet.setCreateUserId(sysUser.getUserId());
