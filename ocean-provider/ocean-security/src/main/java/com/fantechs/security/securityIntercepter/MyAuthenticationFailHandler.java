@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.security.filter.CustomWebAuthenticationDetails;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -21,10 +20,10 @@ public class MyAuthenticationFailHandler implements AuthenticationFailureHandler
         httpServletResponse.setContentType("application/json;charset=utf-8");
         PrintWriter writer = httpServletResponse.getWriter();
         String message = e.getMessage();
-        ResponseEntity<Object> responseEntity = ControllerUtil.returnFail(message.contains("权限")? ErrorCodeEnum.GL99990401.getMsg(): ErrorCodeEnum.UAC10011016.getMsg(),
+        ResponseEntity<Object> responseEntity = ControllerUtil.returnFail(
+                message.contains("权限")? ErrorCodeEnum.GL99990401.getMsg(): (message.contains("组织")? message: ErrorCodeEnum.UAC10011016.getMsg()),
                 message.contains("权限")? ErrorCodeEnum.GL99990401.getCode(): ErrorCodeEnum.UAC10011016.getCode());
         writer.write(JSONObject.toJSONString(responseEntity));
-        CustomWebAuthenticationDetails.pass = true;
         writer.flush();
         writer.close();
     }

@@ -65,7 +65,7 @@ osro.option2,
 osro.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_sales_return_order osro
+    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_ht_sales_return_order osro
     LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = osro.material_owner_id
     left join ocean_v2.sys_user su on osro.create_user_id = su.user_id
     left join ocean_v2.sys_user sus on osro.modified_user_id = sus.user_id

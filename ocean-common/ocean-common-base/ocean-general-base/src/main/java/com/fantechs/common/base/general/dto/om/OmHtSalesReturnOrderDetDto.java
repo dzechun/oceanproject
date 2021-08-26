@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.dto.om;
 
 import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrder;
+import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
  * @Date 2021/6/21
  */
 @Data
-public class OmHtSalesReturnOrderDetDto extends OmHtSalesReturnOrder implements Serializable {
+public class OmHtSalesReturnOrderDetDto extends OmHtSalesReturnOrderDet implements Serializable {
 
     /**
             * 销售订单号

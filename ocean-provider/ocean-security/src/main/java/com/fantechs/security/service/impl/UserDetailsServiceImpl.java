@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,9 +45,9 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService {
     protected static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    @Autowired
+    @Resource
     private SysUserMapper sysUserMapper;
-    @Autowired
+    @Resource
     private SysRoleMapper sysRoleMapper;
     @Resource
     private SysOrganizationUserMapper sysOrganizationUserMapper;
@@ -78,24 +77,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new BizErrorException(ErrorCodeEnum.GL99990401);
         }
 
-        Example specExample1 = new Example(SysSpecItem.class);
-        specExample1.createCriteria().andEqualTo("specCode","isOrg");
-        SysSpecItem sysSpecItem = sysSpecItemMapper.selectOneByExample(specExample1);
+        Example specExample = new Example(SysSpecItem.class);
+        specExample.createCriteria().andEqualTo("specCode","isOrg");
+        SysSpecItem sysSpecItem = sysSpecItemMapper.selectOneByExample(specExample);
         String paraValue = sysSpecItem.getParaValue();
         if(Integer.valueOf(paraValue) == 1 && StringUtils.isNotEmpty(CustomWebAuthenticationDetails.ORGANIZATIONID)){
-            Example example1 = new Example(SysOrganizationUser.class);
-            example1.createCriteria().andEqualTo("userId",user.getUserId());
-            List<SysOrganizationUser> sysOrganizationUsers = sysOrganizationUserMapper.selectByExample(example1);
-            boolean b = false;
-            for (SysOrganizationUser sysOrganizationUser : sysOrganizationUsers) {
-                if (sysOrganizationUser.getOrganizationId().equals(new Long(CustomWebAuthenticationDetails.ORGANIZATIONID))){
-                    b = true;
-                }
-            }
-            if (b){
+            SysOrganizationUser searchOrganizationUser =  new SysOrganizationUser();
+            searchOrganizationUser.setUserId(user.getUserId());
+            searchOrganizationUser.setOrganizationId(new Long(CustomWebAuthenticationDetails.ORGANIZATIONID));
+            SysOrganizationUser sysOrganizationUsers = sysOrganizationUserMapper.selectOne(searchOrganizationUser);
+            if(StringUtils.isNotEmpty(sysOrganizationUsers)){
                 user.setOrganizationId(new Long(CustomWebAuthenticationDetails.ORGANIZATIONID));
             }else{
-                CustomWebAuthenticationDetails.pass =false;
                 throw new BizErrorException("组织错误");
             }
         }else{
