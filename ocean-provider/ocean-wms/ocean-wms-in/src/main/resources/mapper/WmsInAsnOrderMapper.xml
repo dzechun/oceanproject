@@ -184,6 +184,6 @@ order by wiao.create_time desc
   </select>
 
   <select id="findDefaultStatus" resultType="java.lang.Long">
-    select inventory_status_id FROM base_inventory_status where warehouse_id=#{warehouseId} and inventory_status_name="待检"
+    select inventory_status_id FROM base_inventory_status where warehouse_id=#{warehouseId} and if_default_status=1
   </select>
 </mapper>
