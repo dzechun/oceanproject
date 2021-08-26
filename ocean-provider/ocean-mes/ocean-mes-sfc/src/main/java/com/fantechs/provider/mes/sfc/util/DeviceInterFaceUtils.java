@@ -172,6 +172,7 @@ public class DeviceInterFaceUtils {
         ResponseEntity<List<MesPmWorkOrderDto>> mesPmWorkOrderDtoList=null;
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+        searchMesPmWorkOrder.setCodeQueryMark(1);
         mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder);
         return mesPmWorkOrderDtoList;
     }

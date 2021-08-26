@@ -79,7 +79,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             }
         }).and().cors().and()
                 .formLogin()
-                .loginPage("/tologin")
+//                .loginPage("/tologin")
                 .loginProcessingUrl("/login")
                 .authenticationDetailsSource(customAuthenticationDetailsSource)
                 .successHandler(myAuthenticationSuccessHandler)//可以配置登录成功的提示
