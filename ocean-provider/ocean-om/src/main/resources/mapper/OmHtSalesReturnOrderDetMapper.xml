@@ -66,7 +66,7 @@ osrod.modified_time
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT <include refid="Base_Column_List"/>,oso.sales_order_code,bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
     su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
-    FROM om_sales_return_order_det osrod
+    FROM om_ht_sales_return_order_det osrod
     LEFT JOIN om_sales_order oso ON oso.sales_order_id = osrod.sales_order_id
     LEFT JOIN base_warehouse bw ON bw.warehouse_id = osrod.warehouse_id
     LEFT JOIN base_material bm ON osrod.material_id = bm.material_id
