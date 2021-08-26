@@ -155,24 +155,12 @@ public class DeviceInterFaceUtils {
         mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
         return mesSfcWorkOrderBarcodeDtoList;
     }
-    /*
-     * 获取工单信息
-     * */
-    public ResponseEntity<List<MesPmWorkOrderDto>> getWorkOrder(Long workOrderId){
-        ResponseEntity<List<MesPmWorkOrderDto>> mesPmWorkOrderDtoList=null;
-        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-        searchMesPmWorkOrder.setWorkOrderId(workOrderId);
-        mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder);
-        return mesPmWorkOrderDtoList;
-    }
+
     /*
     *获取工单信息
     */
-    public ResponseEntity<List<MesPmWorkOrderDto>> getWorkOrder(String workOrderCode){
+    public ResponseEntity<List<MesPmWorkOrderDto>> getWorkOrderList(SearchMesPmWorkOrder searchMesPmWorkOrder){
         ResponseEntity<List<MesPmWorkOrderDto>> mesPmWorkOrderDtoList=null;
-        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-        searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
-        searchMesPmWorkOrder.setCodeQueryMark(1);
         mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder);
         return mesPmWorkOrderDtoList;
     }

@@ -165,8 +165,10 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
     @Override
     public List<MesPmWorkOrderDto> findList(SearchMesPmWorkOrder searchMesPmWorkOrder) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        searchMesPmWorkOrder.setOrgId(user.getOrganizationId());
+        if(StringUtils.isEmpty(searchMesPmWorkOrder.getOrgId())) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            searchMesPmWorkOrder.setOrgId(user.getOrganizationId());
+        }
         return mesPmWorkOrderMapper.findList(searchMesPmWorkOrder);
     }
 
