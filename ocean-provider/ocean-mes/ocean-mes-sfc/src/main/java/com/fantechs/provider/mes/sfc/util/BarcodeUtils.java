@@ -28,6 +28,7 @@ import com.fantechs.common.base.general.entity.eam.EamJig;
 import com.fantechs.common.base.general.entity.eam.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
@@ -706,7 +707,7 @@ public class BarcodeUtils {
                     throw new Exception(baseExecuteResultDto.getFailMsg());
 
                 //产前关键事项是否已完成
-                baseExecuteResultDto=checkPmProKeyIssues(updateProcessDto.getWorkOrderCode());
+                baseExecuteResultDto=checkPmProKeyIssues(updateProcessDto.getWorkOrderCode(),orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -780,7 +781,7 @@ public class BarcodeUtils {
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
             //产前关键事项是否已完成
-            baseExecuteResultDto=checkPmProKeyIssues(updateProcessDto.getWorkOrderCode());
+            baseExecuteResultDto=checkPmProKeyIssues(updateProcessDto.getWorkOrderCode(),orgId);
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -842,10 +843,7 @@ public class BarcodeUtils {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         UpdateProcessDto updateProcessDto=new UpdateProcessDto();
         try{
-            String check = "1";
-            String fail="Fail";
             Long orgId=null;
-            Long MaterialId=null;
 
             ResponseEntity<List<BaseOrganizationDto>> baseOrganizationDtoList=barcodeUtils.deviceInterFaceUtils.getOrId();
             if(StringUtils.isEmpty(baseOrganizationDtoList.getData())){
@@ -1321,13 +1319,13 @@ public class BarcodeUtils {
      * 产前关键事项是否已完成
      * workOrderCode 工单编码
      */
-    public static BaseExecuteResultDto checkPmProKeyIssues(String workOrderCode) throws Exception{
+    public static BaseExecuteResultDto checkPmProKeyIssues(String workOrderCode,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
             //获取配置项产前关键事项是否已完成  WorkOrderIfNeedProductionKeyIssues
             String paraValue = getSysSpecItemValue("WorkOrderIfNeedProductionKeyIssues");
             if ("1".equals(paraValue)) {
-                baseExecuteResultDto = checkPmProductionKeyIssues(workOrderCode);
+                baseExecuteResultDto = checkPmProductionKeyIssues(workOrderCode,orgId);
                 if (baseExecuteResultDto.getIsSuccess() == false) {
                     throw new Exception(baseExecuteResultDto.getFailMsg());
                 }
@@ -1344,10 +1342,13 @@ public class BarcodeUtils {
         return baseExecuteResultDto;
     }
 
-    public static BaseExecuteResultDto checkPmProductionKeyIssues(String workOrderCode) throws Exception{
+    public static BaseExecuteResultDto checkPmProductionKeyIssues(String workOrderCode,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
-            ResponseEntity<List<MesPmProductionKeyIssuesOrder>> PmPKIOList = barcodeUtils.deviceInterFaceUtils.getPmPKIOList(workOrderCode);
+            SearchMesPmProductionKeyIssuesOrder searchMesPmProductionKeyIssuesOrder=new SearchMesPmProductionKeyIssuesOrder();
+            searchMesPmProductionKeyIssuesOrder.setWorkOrderCode(workOrderCode);
+            searchMesPmProductionKeyIssuesOrder.setOrgId(orgId);
+            ResponseEntity<List<MesPmProductionKeyIssuesOrder>> PmPKIOList = barcodeUtils.deviceInterFaceUtils.getPmPKIOList(searchMesPmProductionKeyIssuesOrder);
             if (StringUtils.isEmpty(PmPKIOList.getData())) {
                 throw new Exception("工单产前关键事项未完成");
             }

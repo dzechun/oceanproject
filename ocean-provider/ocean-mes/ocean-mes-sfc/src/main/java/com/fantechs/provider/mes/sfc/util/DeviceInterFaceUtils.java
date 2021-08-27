@@ -237,10 +237,8 @@ public class DeviceInterFaceUtils {
     /*
      * 获取工单产前关键事项
      * */
-    public ResponseEntity<List<MesPmProductionKeyIssuesOrder>> getPmPKIOList(String WorkOrderCode){
+    public ResponseEntity<List<MesPmProductionKeyIssuesOrder>> getPmPKIOList(SearchMesPmProductionKeyIssuesOrder searchMesPmProductionKeyIssuesOrder){
         ResponseEntity<List<MesPmProductionKeyIssuesOrder>> mesPmProductionKeyIssuesOrderList=null;
-        SearchMesPmProductionKeyIssuesOrder searchMesPmProductionKeyIssuesOrder = new SearchMesPmProductionKeyIssuesOrder();
-        searchMesPmProductionKeyIssuesOrder.setWorkOrderCode(WorkOrderCode);
         mesPmProductionKeyIssuesOrderList = pmFeignApi.findPmPKIOList(searchMesPmProductionKeyIssuesOrder);
         return mesPmProductionKeyIssuesOrderList;
     }
