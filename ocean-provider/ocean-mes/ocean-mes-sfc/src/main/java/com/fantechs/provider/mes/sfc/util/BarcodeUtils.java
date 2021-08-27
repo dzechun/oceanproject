@@ -25,11 +25,10 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom
 import com.fantechs.common.base.general.entity.eam.EamEquipmentBarcode;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterialList;
 import com.fantechs.common.base.general.entity.eam.EamJig;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentBarcode;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaterial;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
+import com.fantechs.common.base.general.entity.eam.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
@@ -698,7 +697,7 @@ public class BarcodeUtils {
                     throw new Exception(baseExecuteResultDto.getFailMsg());
 
                 //检查设备与产品绑定关系
-                baseExecuteResultDto=checkEquiProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),restapiChkSNRoutingApiDto.getEquipmentBarCode(),updateProcessDto.getMaterialId(),orgId);
+                baseExecuteResultDto=checkEquiProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),updateProcessDto.getEquipmentCode(),updateProcessDto.getMaterialId(),orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -708,7 +707,7 @@ public class BarcodeUtils {
                     throw new Exception(baseExecuteResultDto.getFailMsg());
 
                 //产前关键事项是否已完成
-                baseExecuteResultDto=checkPmProKeyIssues(updateProcessDto.getWorkOrderCode());
+                baseExecuteResultDto=checkPmProKeyIssues(updateProcessDto.getWorkOrderCode(),orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -772,7 +771,7 @@ public class BarcodeUtils {
             Long partMaterialId=updateProcessDto1.getPartMaterialId();
 
             //检查设备与产品绑定关系
-            baseExecuteResultDto=checkEquiProRelation(restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getEquipmentBarCode(),updateProcessDto.getMaterialId(),orgId);
+            baseExecuteResultDto=checkEquiProRelation(restapiSNDataTransferApiDto.getBarCode(),updateProcessDto.getEquipmentCode(),updateProcessDto.getMaterialId(),orgId);
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -782,7 +781,7 @@ public class BarcodeUtils {
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
             //产前关键事项是否已完成
-            baseExecuteResultDto=checkPmProKeyIssues(updateProcessDto.getWorkOrderCode());
+            baseExecuteResultDto=checkPmProKeyIssues(updateProcessDto.getWorkOrderCode(),orgId);
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -802,12 +801,12 @@ public class BarcodeUtils {
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
             //返写治具条码使用次数 暂时默认治具使用次数为 1
-            baseExecuteResultDto=upJigBarcodeUseTimes(restapiSNDataTransferApiDto.getEamJigBarCode());
+            baseExecuteResultDto=upJigBarcodeUseTimes(restapiSNDataTransferApiDto.getEamJigBarCode(),orgId);
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
             //返写设备条码使用次数 暂时默认次数为1
-            baseExecuteResultDto=upEquipmentBarCodeUseTimes(updateProcessDto.getEquipmentId());
+            baseExecuteResultDto=upEquipmentBarCodeUseTimes(updateProcessDto.getEquipmentBarcodeId());
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -844,10 +843,7 @@ public class BarcodeUtils {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         UpdateProcessDto updateProcessDto=new UpdateProcessDto();
         try{
-            String check = "1";
-            String fail="Fail";
             Long orgId=null;
-            Long MaterialId=null;
 
             ResponseEntity<List<BaseOrganizationDto>> baseOrganizationDtoList=barcodeUtils.deviceInterFaceUtils.getOrId();
             if(StringUtils.isEmpty(baseOrganizationDtoList.getData())){
@@ -862,8 +858,9 @@ public class BarcodeUtils {
             //设备条码判断
             if(StringUtils.isNotEmpty(equipmentBarCode)) {
                 SearchEamEquipmentBarcode searchEamEquipmentBarcode = new SearchEamEquipmentBarcode();
-                searchEamEquipmentBarcode.setEquipmentBarCode(equipmentBarCode);
+                searchEamEquipmentBarcode.setEquipmentBarcode(equipmentBarCode);
                 searchEamEquipmentBarcode.setOrgId(orgId);
+
                 ResponseEntity<List<EamEquipmentBarcode>> responseEntityEquiBarCode = barcodeUtils.deviceInterFaceUtils.findEamEquipmentBarCodeList(searchEamEquipmentBarcode);
                 if(StringUtils.isEmpty(responseEntityEquiBarCode.getData())){
                     throw new Exception("设备条码信息不存在-->"+equipmentBarCode);
@@ -871,7 +868,12 @@ public class BarcodeUtils {
 
                 EamEquipmentBarcode eamEquipmentBarcode=responseEntityEquiBarCode.getData().get(0);
 
-                ResponseEntity<List<EamEquipmentDto>> eamEquipmentDtoList = barcodeUtils.deviceInterFaceUtils.getEamEquipment(eamEquipmentBarcode.getEquipmentCode());
+                SearchEamEquipment searchEamEquipment=new SearchEamEquipment();
+                searchEamEquipment.setEquipmentCode(eamEquipmentBarcode.getEquipmentCode());
+                searchEamEquipment.setOrgId(orgId);
+                searchEamEquipment.setCodeQueryMark(1);
+
+                ResponseEntity<List<EamEquipmentDto>> eamEquipmentDtoList = barcodeUtils.deviceInterFaceUtils.getEamEquipment(searchEamEquipment);
                 if (StringUtils.isEmpty(eamEquipmentDtoList.getData())) {
                     throw new Exception("设备编码不存在-->"+eamEquipmentBarcode.getEquipmentBarcode());
                 }
@@ -886,7 +888,10 @@ public class BarcodeUtils {
                     throw new Exception("该设备条码已达到最大使用天数-->"+equipmentBarCode);
 
                 //设置设备条码ID
-                updateProcessDto.setEquipmentId(eamEquipmentBarcode.getEquipmentBarcodeId().toString());
+                updateProcessDto.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
+
+                //设置设备编码
+                updateProcessDto.setEquipmentCode(eamEquipmentDto.getEquipmentCode());
 
             }
 
@@ -1251,7 +1256,10 @@ public class BarcodeUtils {
                 String[] jigBarCodeA=eamJigBarCode.split(",");
                 for (String item : jigBarCodeA) {
                     if(StringUtils.isNotEmpty(item)) {
-                        ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getJigBarCode(item);
+                        SearchEamJigBarcode searchEamJigBarcode=new SearchEamJigBarcode();
+                        searchEamJigBarcode.setJigBarcode(item);
+                        searchEamJigBarcode.setOrgId(orgId);
+                        ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getJigBarCode(searchEamJigBarcode);
                         if (StringUtils.isEmpty(eamJigBarcodeDtoList.getData())) {
                             throw new Exception("治具条码信息不存在-->"+item);
                         }
@@ -1267,6 +1275,7 @@ public class BarcodeUtils {
                             SearchEamJigMaterial searchEamJigMaterial = new SearchEamJigMaterial();
                             searchEamJigMaterial.setJigId(jigID);
                             searchEamJigMaterial.setMaterialId(materialId);
+                            searchEamJigMaterial.setOrgId(orgId);
                             ResponseEntity<List<EamJigMaterialDto>> eamJigReMaterialDtoList = barcodeUtils.deviceInterFaceUtils.getJigMaterialDtoList(searchEamJigMaterial);
                             if (StringUtils.isEmpty(eamJigReMaterialDtoList.getData())) {
                                 throw new Exception("找不到治具条码-->" + item+" 与产品条码的绑定关系");
@@ -1310,13 +1319,13 @@ public class BarcodeUtils {
      * 产前关键事项是否已完成
      * workOrderCode 工单编码
      */
-    public static BaseExecuteResultDto checkPmProKeyIssues(String workOrderCode) throws Exception{
+    public static BaseExecuteResultDto checkPmProKeyIssues(String workOrderCode,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
             //获取配置项产前关键事项是否已完成  WorkOrderIfNeedProductionKeyIssues
             String paraValue = getSysSpecItemValue("WorkOrderIfNeedProductionKeyIssues");
             if ("1".equals(paraValue)) {
-                baseExecuteResultDto = checkPmProductionKeyIssues(workOrderCode);
+                baseExecuteResultDto = checkPmProductionKeyIssues(workOrderCode,orgId);
                 if (baseExecuteResultDto.getIsSuccess() == false) {
                     throw new Exception(baseExecuteResultDto.getFailMsg());
                 }
@@ -1333,10 +1342,13 @@ public class BarcodeUtils {
         return baseExecuteResultDto;
     }
 
-    public static BaseExecuteResultDto checkPmProductionKeyIssues(String workOrderCode) throws Exception{
+    public static BaseExecuteResultDto checkPmProductionKeyIssues(String workOrderCode,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
-            ResponseEntity<List<MesPmProductionKeyIssuesOrder>> PmPKIOList = barcodeUtils.deviceInterFaceUtils.getPmPKIOList(workOrderCode);
+            SearchMesPmProductionKeyIssuesOrder searchMesPmProductionKeyIssuesOrder=new SearchMesPmProductionKeyIssuesOrder();
+            searchMesPmProductionKeyIssuesOrder.setWorkOrderCode(workOrderCode);
+            searchMesPmProductionKeyIssuesOrder.setOrgId(orgId);
+            ResponseEntity<List<MesPmProductionKeyIssuesOrder>> PmPKIOList = barcodeUtils.deviceInterFaceUtils.getPmPKIOList(searchMesPmProductionKeyIssuesOrder);
             if (StringUtils.isEmpty(PmPKIOList.getData())) {
                 throw new Exception("工单产前关键事项未完成");
             }
@@ -1472,7 +1484,7 @@ public class BarcodeUtils {
      * 回写治具使用次数
      * jigBarCode 治具条码
      */
-    public static BaseExecuteResultDto upJigBarcodeUseTimes(String jigBarCode) throws Exception{
+    public static BaseExecuteResultDto upJigBarcodeUseTimes(String jigBarCode,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
             //获取配置项检查治具与产品关系  JigsIfCheckProductionRelation
@@ -1482,7 +1494,10 @@ public class BarcodeUtils {
                     String[] jigBarCodeArr=jigBarCode.split(",");
                     for (String item : jigBarCodeArr) {
                         if(StringUtils.isNotEmpty(item)) {
-                            ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getJigBarCode(item);
+                            SearchEamJigBarcode searchEamJigBarcode=new SearchEamJigBarcode();
+                            searchEamJigBarcode.setJigBarcode(item);
+                            searchEamJigBarcode.setOrgId(orgId);
+                            ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getJigBarCode(searchEamJigBarcode);
                             EamJigBarcodeDto eamJigBarcodeDto=eamJigBarcodeDtoList.getData().get(0);
                             barcodeUtils.eamFeignApi.plusCurrentUsageTime(eamJigBarcodeDto.getJigBarcodeId(),1);
                         }
@@ -1505,14 +1520,14 @@ public class BarcodeUtils {
      * 回写设备使用次数
      * equipmentBarCodeId 设备条码ID
      */
-    public static BaseExecuteResultDto upEquipmentBarCodeUseTimes(String equipmentBarCodeId) throws Exception{
+    public static BaseExecuteResultDto upEquipmentBarCodeUseTimes(Long equipmentBarCodeId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
             //获取配置项检查设备与产品关系  EquipmentIfCheckProductionRelation
             String paraValue = getSysSpecItemValue("EquipmentIfCheckProductionRelation");
             if ("1".equals(paraValue)) {
                 if(StringUtils.isNotEmpty(equipmentBarCodeId)){
-                    barcodeUtils.eamFeignApi.plusEamEquiCurrentUsageTime(Long.parseLong(equipmentBarCodeId),1);
+                    barcodeUtils.eamFeignApi.plusEamEquiCurrentUsageTime(equipmentBarCodeId,1);
                 }
             }
 
