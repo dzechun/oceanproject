@@ -211,20 +211,16 @@ public class DeviceInterFaceUtils {
     /*
      * 获取治具条码信息
      * */
-    public ResponseEntity<List<EamJigBarcodeDto>> getJigBarCode(String jigBarCode){
+    public ResponseEntity<List<EamJigBarcodeDto>> getJigBarCode(SearchEamJigBarcode searchEamJigBarcode){
         ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList=null;
-        SearchEamJigBarcode searchEamJigBarcode = new SearchEamJigBarcode();
-        searchEamJigBarcode.setJigBarCode(jigBarCode);
         eamJigBarcodeDtoList = eamFeignApi.findList(searchEamJigBarcode);
         return eamJigBarcodeDtoList;
     }
     /*
      * 获取设备信息
      * */
-    public ResponseEntity<List<EamEquipmentDto>> getEamEquipment(String equipmentCode){
+    public ResponseEntity<List<EamEquipmentDto>> getEamEquipment(SearchEamEquipment searchEamEquipment){
         ResponseEntity<List<EamEquipmentDto>> eamEquipmentDtoList=null;
-        SearchEamEquipment searchEamEquipment = new SearchEamEquipment();
-        searchEamEquipment.setEquipmentCode(equipmentCode);
         eamEquipmentDtoList = eamFeignApi.findList(searchEamEquipment);
         return eamEquipmentDtoList;
     }
