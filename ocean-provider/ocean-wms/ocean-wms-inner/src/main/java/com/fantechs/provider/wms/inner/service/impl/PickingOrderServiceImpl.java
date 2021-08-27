@@ -37,6 +37,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.PickingOrderService;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
+import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import com.fantechs.provider.wms.inner.util.OutInventoryRule;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -801,6 +802,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }else {
             throw new BizErrorException("库存分配失败");
         }
+
+        //添加库存日志
+        InventoryLogUtil.addLog(wmsInnerJobOrder,wmsInnerJobOrderDet,(byte)4,(byte)2);
         return num;
     }
 
