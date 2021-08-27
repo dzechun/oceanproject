@@ -74,6 +74,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             wmsOutDeliveryOrderDto.setTotalPackingQty(packingSum);
             BigDecimal pickingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPickingQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
             wmsOutDeliveryOrderDto.setTotalPickingQty(pickingSum);
+            BigDecimal dispatchQty = list.stream().map(WmsOutDeliveryOrderDetDto::getDispatchQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
+            wmsOutDeliveryOrderDto.setTotalDispatchQty(dispatchQty);
             //修改单据状态
             this.updateOrderStatus(wmsOutDeliveryOrderDto);
         }

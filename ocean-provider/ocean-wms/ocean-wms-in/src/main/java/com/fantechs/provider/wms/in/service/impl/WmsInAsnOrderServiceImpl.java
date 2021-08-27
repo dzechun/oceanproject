@@ -975,7 +975,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         for (WmsInAsnOrderDet wmsInAsnOrderDet : wmsInAsnOrder.getWmsInAsnOrderDetList()) {
             WmsInHtAsnOrderDet wmsInHtAsnOrderDet = new WmsInHtAsnOrderDet();
             BeanUtil.copyProperties(wmsInAsnOrderDet,wmsInHtAsnOrderDet);
-            wmsInHtAsnOrderDet.setHtAsnOrderDetId(wmsInHtAsnOrder.getHtAsnOrderId());
             wmsInHtAsnOrderDetMapper.insertSelective(wmsInHtAsnOrderDet);
         }
     }

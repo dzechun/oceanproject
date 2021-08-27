@@ -42,6 +42,13 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
     private BigDecimal totalPickingQty;
 
     /**
+     * 发货数量
+     */
+    @ApiModelProperty(name="totalDispatchQty",value = "发货数量")
+    //@Excel(name = "发货数量", height = 20, width = 30,orderNum="5")
+    private BigDecimal totalDispatchQty;
+
+    /**
      * 组织代码
      */
     @ApiModelProperty(name="organizationCode",value = "组织代码")

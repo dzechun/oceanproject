@@ -30,7 +30,6 @@ public class WmsInHtAsnOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="asnOrderDetId",value = "ASN单明细ID")
     @Excel(name = "ASN单明细ID", height = 20, width = 30,orderNum="")
-    @Id
     @Column(name = "asn_order_det_id")
     private Long asnOrderDetId;
 
