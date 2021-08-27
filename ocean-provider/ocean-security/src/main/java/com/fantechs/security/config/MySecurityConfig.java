@@ -49,7 +49,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             "/tologin","/meslogin","/pda/login","/eamlogin",
             "/index.html", "/static/**", "/favicon.ico",
             "/swagger-ui.html", "/swagger-resources/**", "/images/**", "/webjars/**", "/v2/api-docs", "/configuration/ui", "/configuration/security"
-            ,"null/swagger-resources/**","/sysSpecItem/findList","/sysSpecItem/detail","/clientGetToken"
+            ,"null/swagger-resources/**","/sysSpecItem/findList","/sysSpecItem/detail","/clientGetToken","/sysCustomFormDet/findList","/sysCustomForm/findList"
     };
 
 
