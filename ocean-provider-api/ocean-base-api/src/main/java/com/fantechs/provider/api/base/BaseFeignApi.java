@@ -464,4 +464,8 @@ public interface BaseFeignApi {
     @ApiOperation("增加物料信息")
     @PostMapping("/baseMaterial/saveApi")
     ResponseEntity<BaseMaterial> saveByApi(@ApiParam(value = "必传：materialCode",required = true)@RequestBody @Validated BaseMaterial baseMaterial);
+
+    @ApiOperation("用户绑定供应商列表")
+    @PostMapping("/baseSupplierReUser/findList")
+    ResponseEntity<List<BaseSupplierReUser>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSupplierReUser searchBaseSupplierReUser);
 }
