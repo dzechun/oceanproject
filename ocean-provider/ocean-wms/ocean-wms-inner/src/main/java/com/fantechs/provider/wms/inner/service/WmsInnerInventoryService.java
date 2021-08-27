@@ -30,4 +30,6 @@ public interface WmsInnerInventoryService extends IService<WmsInnerInventory> {
     int insertSelective(WmsInnerInventory wmsInnerInventory);
 
     int batchUpdate(List<WmsInnerInventory> list);
+
+    List<WmsInnerInventoryDto> findInvStorage(Map<String ,Object> map);
 }

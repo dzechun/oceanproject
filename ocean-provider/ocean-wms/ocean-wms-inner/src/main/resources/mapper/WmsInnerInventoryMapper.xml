@@ -112,6 +112,9 @@ wii.storage_id,
     LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wii.inventory_status_id
     <where>
       and wii.packing_qty > 0
+      <if test="isStorage!=null and isStorage!='' and isStorage==1">
+        and wii.lock_status=0 and wii.stock_lock=0 and wii.qc_lock=0 and wii.job_status=1
+      </if>
       <if test="storageType!=null and storageType != ''">
         and bs.storage_type = #{storageType}
       </if>

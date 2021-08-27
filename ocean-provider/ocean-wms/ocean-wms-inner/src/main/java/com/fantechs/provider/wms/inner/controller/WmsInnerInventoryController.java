@@ -4,6 +4,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.history.WmsHtInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchFindInvStorage;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -132,5 +133,13 @@ public class WmsInnerInventoryController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @PostMapping("/findInvStorage")
+    @ApiOperation("拣货查询库存库位列表")
+    public ResponseEntity<List<WmsInnerInventoryDto>> findInvStorage(@RequestBody SearchFindInvStorage searchFindInvStorage){
+        Page<Object> page = PageHelper.startPage(searchFindInvStorage.getStartPage(),searchFindInvStorage.getPageSize());
+        List<WmsInnerInventoryDto> list = wmsInnerInventoryService.findInvStorage(ControllerUtil.dynamicConditionByEntity(searchFindInvStorage));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }

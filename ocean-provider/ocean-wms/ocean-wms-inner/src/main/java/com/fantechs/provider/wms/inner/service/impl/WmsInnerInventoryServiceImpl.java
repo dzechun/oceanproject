@@ -194,6 +194,12 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     }
 
     @Override
+    public List<WmsInnerInventoryDto> findInvStorage(Map<String, Object> map) {
+        map.put("isStorage","1");
+        return wmsInnerInventoryMapper.findList(map);
+    }
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(WmsInnerInventory record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
