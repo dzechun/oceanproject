@@ -10,6 +10,18 @@ import java.io.Serializable;
 public class SearchEamEquipmentStandingBook extends BaseQuery implements Serializable {
 
     /**
+     * 资产条码
+     */
+    @ApiModelProperty(name="assetCode",value = "资产条码")
+    private String assetCode;
+
+    /**
+     * 设备条码
+     */
+    @ApiModelProperty(name="equipmentBarcode",value = "设备条码")
+    private String equipmentBarcode;
+
+    /**
      * 设备编码
      */
     @ApiModelProperty(name="equipmentCode",value = "设备编码")
