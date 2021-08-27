@@ -1259,7 +1259,7 @@ public class BarcodeUtils {
                 for (String item : jigBarCodeA) {
                     if(StringUtils.isNotEmpty(item)) {
                         SearchEamJigBarcode searchEamJigBarcode=new SearchEamJigBarcode();
-                        searchEamJigBarcode.setJigBarCode(item);
+                        searchEamJigBarcode.setJigBarcode(item);
                         searchEamJigBarcode.setOrgId(orgId);
                         ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getJigBarCode(searchEamJigBarcode);
                         if (StringUtils.isEmpty(eamJigBarcodeDtoList.getData())) {
@@ -1494,7 +1494,7 @@ public class BarcodeUtils {
                     for (String item : jigBarCodeArr) {
                         if(StringUtils.isNotEmpty(item)) {
                             SearchEamJigBarcode searchEamJigBarcode=new SearchEamJigBarcode();
-                            searchEamJigBarcode.setJigBarCode(item);
+                            searchEamJigBarcode.setJigBarcode(item);
                             searchEamJigBarcode.setOrgId(orgId);
                             ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getJigBarCode(searchEamJigBarcode);
                             EamJigBarcodeDto eamJigBarcodeDto=eamJigBarcodeDtoList.getData().get(0);
