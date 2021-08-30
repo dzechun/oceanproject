@@ -92,6 +92,9 @@
       <if test="status!=null">
         and spos.status = #{status}
       </if>
+      <if test="packingOrderId!=null">
+        and spos.packing_order_id=#{packingOrderId}
+      </if>
       <if test="orgId!=null">
         and spos.org_id=#{orgId}
       </if>

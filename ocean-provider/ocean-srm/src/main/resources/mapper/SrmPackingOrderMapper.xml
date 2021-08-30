@@ -74,6 +74,30 @@
       <if test="supplierName != null and supplierName!=''">
         and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
       </if>
+      <if test="packingOrderCode != null and packingOrderCode!=''">
+        and spo.packing_order_code = #{packingOrderCode}
+      </if>
+      <if test="despatchBatch != null and despatchBatch!=''">
+        and spo.despatch_batch = #{despatchBatch}
+      </if>
+      <if test="orderStatus != null and orderStatus!=''">
+        and spo.order_status = #{orderStatus}
+      </if>
+      <if test="orderTime != null">
+        and SUBSTRING(spo.order_time,1,10) = SUBSTRING(#{orderTime},1,10)
+      </if>
+      <if test="leaveFactoryTime != null">
+        and SUBSTRING(spo.leave_factory_time,1,10) = SUBSTRING(#{leaveFactoryTime},1,10)
+      </if>
+      <if test="leavePortTime != null">
+        and SUBSTRING(spo.leave_port_time,1,10) = SUBSTRING(#{leavePortTime},1,10)
+      </if>
+      <if test="arrivalPortTime != null">
+        and SUBSTRING(spo.arrival_port_time,1,10) = SUBSTRING(#{arrivalPortTime},1,10)
+      </if>
+      <if test="arrivalTime != null">
+        and SUBSTRING(spo.arrival_time,1,10) = SUBSTRING(#{arrivalTime},1,10)
+      </if>
       <if test="status!=null">
         and spo.status = #{status}
       </if>

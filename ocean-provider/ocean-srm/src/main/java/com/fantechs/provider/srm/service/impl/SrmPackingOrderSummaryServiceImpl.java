@@ -76,7 +76,7 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
 
         getMaterial(srmPackingOrderSummaryDto,user);
 
-        SrmPackingOrder srmPackingOrder = getSrmPackingOrder(user.getOrganizationId(), srmPackingOrderSummaryDto.getCartonCode());
+        SrmPackingOrder srmPackingOrder = getSrmPackingOrder(user.getOrganizationId(), null,srmPackingOrderSummaryDto.getPackingOrderId());
         if(StringUtils.isNotEmpty(srmPackingOrder)){
             srmPackingOrderSummaryDto.setPackingOrderSummaryId(srmPackingOrder.getPackingOrderId());
         }else{
@@ -99,7 +99,7 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
         SysUser user = getUser();
         int fail =0;
         for(SrmPackingOrderSummaryDto dto : srmPackingOrderSummaryDtos) {
-            Example example = new Example(SrmPackingOrderSummary.class);
+          /*  Example example = new Example(SrmPackingOrderSummary.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("orgId", dto.getOrgId());
             criteria.andEqualTo("cartonCode", dto.getCartonCode());
@@ -107,9 +107,9 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
             if(StringUtils.isNotEmpty(OldSrmPackingOrderSummary)){
                 fail = fail+1;
                 continue;
-            }
+            }*/
 
-            SrmPackingOrder srmPackingOrder = getSrmPackingOrder(user.getOrganizationId(), dto.getCartonCode());
+            SrmPackingOrder srmPackingOrder = getSrmPackingOrder(user.getOrganizationId(), null,dto.getPackingOrderId());
             if(StringUtils.isNotEmpty(srmPackingOrder)){
                 dto.setPackingOrderId(srmPackingOrder.getPackingOrderId());
             }else{
@@ -216,7 +216,7 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
             }
 
 
-            SrmPackingOrder srmPackingOrder = getSrmPackingOrder(user.getOrganizationId(), packingOrderCode);
+            SrmPackingOrder srmPackingOrder = getSrmPackingOrder(user.getOrganizationId(), packingOrderCode,null);
             if(StringUtils.isNotEmpty(srmPackingOrder)){
                 dto.setPackingOrderSummaryId(srmPackingOrder.getPackingOrderId());
             }else{
@@ -296,11 +296,14 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
         }
     }
 
-    public SrmPackingOrder getSrmPackingOrder(Long userId, String code){
+    public SrmPackingOrder getSrmPackingOrder(Long userId, String code, Long id){
         Example example = new Example(SrmPackingOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", userId);
-        criteria.andEqualTo("packingOrderCode", code);
+        if(StringUtils.isNotEmpty(code))
+            criteria.andEqualTo("packingOrderCode", code);
+        if(StringUtils.isNotEmpty(id))
+            criteria.andEqualTo("packingOrderId", id);
         SrmPackingOrder srmPackingOrder = srmPackingOrderMapper.selectOneByExample(example);
         return srmPackingOrder;
     }

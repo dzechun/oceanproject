@@ -100,16 +100,9 @@ public class SrmPackingOrderSummaryDetServiceImpl extends BaseService<SrmPacking
 
             getMaterial(det,user);
 
-            SrmPackingOrderSummary srmPackingOrderSummary = getSrmPackingOrderSummary(user.getOrganizationId(), det.getCartonCode());
-            if(StringUtils.isNotEmpty(srmPackingOrderSummary)){
-                det.setPackingOrderSummaryId(srmPackingOrderSummary.getPackingOrderSummaryId());
-            }else{
-                fail = fail+1;
-               continue;
-            }
-
-            if (StringUtils.isNotEmpty(det.getPackingOrderSummaryDetId())) {
+            if(StringUtils.isNotEmpty(det.getPackingOrderSummaryDetId())){
                 srmPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(det);
+               continue;
             }else{
                 det.setCreateTime(new Date());
                 det.setCreateUserId(user.getUserId());
