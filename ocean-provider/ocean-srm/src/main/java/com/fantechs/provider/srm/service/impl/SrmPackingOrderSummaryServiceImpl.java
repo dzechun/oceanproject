@@ -3,14 +3,11 @@ package com.fantechs.provider.srm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.imports.BaseFactoryImport;
 import com.fantechs.common.base.general.dto.srm.SrmPackingOrderSummaryDto;
 import com.fantechs.common.base.general.dto.srm.imports.SrmPackingOrderSummaryImport;
-import com.fantechs.common.base.general.entity.basic.BaseFactory;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtFactory;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
@@ -176,16 +173,6 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
                 continue;
             }
 
-            //判断编码是否重复
-            Example example = new Example(SrmPackingOrderSummary.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", user.getOrganizationId());
-            criteria.andEqualTo("cartonCode",cartonCode);
-            if (StringUtils.isNotEmpty(srmPackingOrderSummaryMapper.selectOneByExample(example))){
-                fail.add(i+4);
-                continue;
-            }
-
             //判断集合中是否已经存在同样的数据
             boolean tag = false;
             if (StringUtils.isNotEmpty(list)){
@@ -218,8 +205,19 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
 
             SrmPackingOrder srmPackingOrder = getSrmPackingOrder(user.getOrganizationId(), packingOrderCode,null);
             if(StringUtils.isNotEmpty(srmPackingOrder)){
-                dto.setPackingOrderSummaryId(srmPackingOrder.getPackingOrderId());
+                dto.setPackingOrderId(srmPackingOrder.getPackingOrderId());
             }else{
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(SrmPackingOrderSummary.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", user.getOrganizationId());
+            criteria.andEqualTo("cartonCode",cartonCode);
+            criteria.andEqualTo("packingOrderId",dto.getPackingOrderId());
+            if (StringUtils.isNotEmpty(srmPackingOrderSummaryMapper.selectOneByExample(example))){
                 fail.add(i+4);
                 continue;
             }
