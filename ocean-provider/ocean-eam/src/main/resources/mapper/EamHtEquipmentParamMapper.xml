@@ -7,7 +7,7 @@
     -->
     <id column="ht_equipment_param_id" jdbcType="BIGINT" property="htEquipmentParamId" />
     <result column="equipment_param_id" jdbcType="BIGINT" property="equipmentParamId" />
-    <result column="equipment_id" jdbcType="BIGINT" property="equipmentId" />
+    <result column="equipment_category_id" jdbcType="BIGINT" property="equipmentCategoryId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -22,16 +22,13 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode" />
-    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName" />
-    <result column="equipment_desc" jdbcType="VARCHAR" property="equipmentDesc" />
-    <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel" />
+    <result column="equipment_category_name" jdbcType="VARCHAR" property="equipmentCategoryName" />
   </resultMap>
 
   <sql id="Base_Column_List">
     ehep.ht_equipment_param_id,
     ehep.equipment_param_id,
-    ehep.equipment_id,
+    ehep.equipment_category_id,
     ehep.`status`,
     ehep.remark,
     ehep.org_id,
@@ -46,27 +43,18 @@
 
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    ee.equipment_code,ee.equipment_name,ee.equipment_desc,ee.equipment_model,
+    eec.equipment_category_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.eam_ht_equipment_param ehep
-    left join fantech_imes_v2.eam_equipment ee on ehep.equipment_id=ee.equipment_id
+    left join fantech_imes_v2.eam_equipment_category eec on ehep.equipment_category_id=eec.equipment_category_id
     left join ocean_v2.sys_user u on ehep.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ehep.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ehep.org_id = bo.organization_id
     <where>
-      <if test="equipmentCode != null and equipmentCode!=''">
-        and ee.equipment_code like CONCAT('%', #{equipmentCode}, '%')
-      </if>
-      <if test="equipmentName != null and equipmentName!=''">
-        and ee.equipment_name like CONCAT('%', #{equipmentName}, '%')
-      </if>
-      <if test="equipmentDesc != null and equipmentDesc!=''">
-        and ee.equipment_desc like CONCAT('%', #{equipmentDesc}, '%')
-      </if>
-      <if test="equipmentModel != null and equipmentModel!=''">
-        and ee.equipment_model like CONCAT('%', #{equipmentModel}, '%')
+      <if test="equipmentCategoryName != null and equipmentCategoryName!=''">
+        and eec.equipment_category_name like CONCAT('%', #{equipmentCategoryName}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ehep.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

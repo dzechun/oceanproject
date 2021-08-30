@@ -58,7 +58,7 @@ public class EamJigBarcode extends ValidGroup implements Serializable {
     private String assetCode;
 
     /**
-     * 当前使用次数
+     * 当前使用次数 currentUsageTime
      */
     @ApiModelProperty(name="currentUsageTime",value = "当前使用次数")
     @Excel(name = "当前使用次数", height = 20, width = 30,orderNum="3")

@@ -77,9 +77,9 @@ ouo.option3
     (SELECT SUM(ouod.order_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_qty,
     (SELECT SUM(ouod.issue_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_issue_qty,
     (SELECT SUM(ouod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_dispatch_qty,
-    (SELECT IFNULL(SUM(bmb.volume),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_volume,
-    (SELECT IFNULL(SUM(bmb.net_weight),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_net_weight,
-    (SELECT IFNULL(SUM(bmb.gross_weight),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_gross_weight
+    (SELECT IFNULL(SUM(bmb.volume*ouod.order_qty),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_volume,
+    (SELECT IFNULL(SUM(bmb.net_weight*ouod.order_qty),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_net_weight,
+    (SELECT IFNULL(SUM(bmb.gross_weight*ouod.order_qty),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_gross_weight
     FROM om_other_out_order ouo
     LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = ouo.material_owner_id
     LEFT JOIN base_supplier bs ON  ouo.customer_id = bs.supplier_id

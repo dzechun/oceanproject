@@ -168,9 +168,9 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         List<EamEquipmentBarcode> eamEquipmentBarcodeList = entity.getEamEquipmentBarcodeList();
         if(StringUtils.isNotEmpty(eamEquipmentBarcodeList)) {
             for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodeList) {
-                if (StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentId())) {
+                if (StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentBarcodeId())) {
                     eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
-                    equipmentBarcodeIdList.add(eamEquipmentBarcode.getEquipmentId());
+                    equipmentBarcodeIdList.add(eamEquipmentBarcode.getEquipmentBarcodeId());
                 }
             }
         }
@@ -189,7 +189,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             this.barcodeIfRepeat(eamEquipmentBarcodeList);
 
             for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodeList){
-                if(equipmentBarcodeIdList.contains(eamEquipmentBarcode.getEquipmentId())){
+                if(equipmentBarcodeIdList.contains(eamEquipmentBarcode.getEquipmentBarcodeId())){
                     continue;
                 }
                 eamEquipmentBarcode.setEquipmentId(entity.getEquipmentId());

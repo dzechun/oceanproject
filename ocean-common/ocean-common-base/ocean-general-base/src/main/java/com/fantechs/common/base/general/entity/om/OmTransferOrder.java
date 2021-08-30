@@ -24,7 +24,6 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 调拨订单ID
      */
     @ApiModelProperty(name="transferOrderId",value = "调拨订单ID")
-    @Excel(name = "调拨订单ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "transfer_order_id")
     private Long transferOrderId;
@@ -33,7 +32,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 调拨订单号
      */
     @ApiModelProperty(name="transferOrderCode",value = "调拨订单号")
-    @Excel(name = "调拨订单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "调拨订单号", height = 20, width = 30,orderNum="1")
     @Column(name = "transfer_order_code")
     private String transferOrderCode;
 
@@ -41,7 +40,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 相关单号
      */
     @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
-    @Excel(name = "相关单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "相关单号", height = 20, width = 30,orderNum="2")
     @Column(name = "related_order_code")
     private String relatedOrderCode;
 
@@ -49,7 +48,6 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 货主ID
      */
     @ApiModelProperty(name="materialOwnerId",value = "货主ID")
-    @Excel(name = "货主ID", height = 20, width = 30,orderNum="") 
     @Column(name = "material_owner_id")
     private Long materialOwnerId;
 
@@ -57,7 +55,6 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 调出仓库ID
      */
     @ApiModelProperty(name="outWarehouseId",value = "调出仓库ID")
-    @Excel(name = "调出仓库ID", height = 20, width = 30,orderNum="") 
     @Column(name = "out_warehouse_id")
     private Long outWarehouseId;
 
@@ -65,7 +62,6 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 调入仓库ID
      */
     @ApiModelProperty(name="inWarehouseId",value = "调入仓库ID")
-    @Excel(name = "调入仓库ID", height = 20, width = 30,orderNum="") 
     @Column(name = "in_warehouse_id")
     private Long inWarehouseId;
 
@@ -74,7 +70,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="totalVolume",value = "订单总体积")
-    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="")
+    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="7")
     private BigDecimal totalVolume;
 
     /**
@@ -82,7 +78,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="totalNetWeight",value = "订单总净重")
-    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="")
+    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="8")
     private BigDecimal totalNetWeight;
 
     /**
@@ -90,14 +86,14 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="totalGrossWeight",value = "订单总毛重")
-    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="")
+    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="9")
     private BigDecimal totalGrossWeight;
 
     /**
      * 订单状态(1-打开 2-已下发 3-完成)
      */
     @ApiModelProperty(name="orderStatus",value = "订单状态(1-打开 2-已下发 3-完成)")
-    @Excel(name = "订单状态(1-打开 2-已下发 3-完成)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "订单状态(1-打开 2-已下发 3-完成)", height = 20, width = 30,orderNum="10")
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -112,7 +108,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "订单日期", height = 20, width = 30,orderNum="11")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -120,7 +116,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备注", height = 20, width = 30,orderNum="12")
     private String remark;
 
     /**
@@ -135,7 +131,6 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -143,7 +138,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -152,7 +147,6 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -160,7 +154,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="16",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -169,7 +163,6 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -177,21 +170,18 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 扩展字段1
      */
     @ApiModelProperty(name="option1",value = "扩展字段1")
-    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="") 
     private String option1;
 
     /**
      * 扩展字段2
      */
     @ApiModelProperty(name="option2",value = "扩展字段2")
-    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="") 
     private String option2;
 
     /**
      * 扩展字段3
      */
     @ApiModelProperty(name="option3",value = "扩展字段3")
-    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="") 
     private String option3;
 
     @Transient

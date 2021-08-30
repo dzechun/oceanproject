@@ -62,7 +62,7 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
     public EamJigMaintainOrderDto pdaCreateOrder(String jigBarcode) {
         //查治具条码信息
         SearchEamJigBarcode searchEamJigBarcode = new SearchEamJigBarcode();
-        searchEamJigBarcode.setJigBarCode(jigBarcode);
+        searchEamJigBarcode.setJigBarcode(jigBarcode);
         List<EamJigBarcodeDto> eamJigBarcodeDtos = eamJigBarcodeMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigBarcode));
         if(StringUtils.isEmpty(eamJigBarcodeDtos)){
             throw new BizErrorException("查不到此治具条码");

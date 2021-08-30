@@ -1,9 +1,11 @@
 package com.fantechs.provider.om.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.om.OmHtOtherOutOrderDto;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.om.*;
@@ -19,6 +21,8 @@ import com.fantechs.provider.om.mapper.OmOtherOutOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmOtherOutOrderMapper;
 import com.fantechs.provider.om.mapper.OmSalesReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
+import com.fantechs.provider.om.mapper.ht.OmHtOtherOutOrderDetMapper;
+import com.fantechs.provider.om.mapper.ht.OmHtOtherOutOrderMapper;
 import com.fantechs.provider.om.service.OmOtherOutOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +49,10 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     private OmTransferOrderMapper omTransferOrderMapper;
     @Resource
     private OmSalesReturnOrderDetMapper omSalesReturnOrderDetMapper;
+    @Resource
+    private OmHtOtherOutOrderMapper omHtOtherOutOrderMapper;
+    @Resource
+    private OmHtOtherOutOrderDetMapper omHtOtherOutOrderDetMapper;
 
     @Override
     public List<OmOtherOutOrderDto> findList(Map<String, Object> map) {
@@ -114,12 +122,16 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         wmsOutDeliveryOrder.setFaxNumber(omOtherOutOrder.getFaxNumber());
         wmsOutDeliveryOrder.setDetailedAddress(omOtherOutOrder.getAddress());
         wmsOutDeliveryOrder.setOrgId(sysUser.getOrganizationId());
+        wmsOutDeliveryOrder.setPlanDespatchDate(omOtherOutOrder.getPlanArriveDate());
+        wmsOutDeliveryOrder.setDemandArriveDate(omOtherOutOrder.getReqArriveDate());
         wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetDtos);
         ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryOrder);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
         }
         num+=this.updateStatus(omOtherOutOrder);
+
+        this.addHt(omOtherOutOrder,omOtherOutOrder.getOmOtherOutOrderDets());
         return num;
     }
 
@@ -143,6 +155,8 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             omOtherOutOrder.setOrderStatus((byte)2);
         }
         num+=omOtherOutOrderMapper.updateByPrimaryKeySelective(omOtherOutOrder);
+
+        this.addHt(omOtherOutOrder,omOtherOutOrder.getOmOtherOutOrderDets());
         return num;
     }
 
@@ -169,8 +183,16 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         if(total.compareTo(omOtherOutOrder.getTotalQty())==0){
             omOtherOutOrder.setOrderStatus((byte)4);
         }
+        omOtherOutOrder.setActualDespatchDate(new Date());
         num+=omOtherOutOrderMapper.updateByPrimaryKeySelective(omOtherOutOrder);
         return num;
+    }
+
+    @Override
+    public List<OmHtOtherOutOrderDto> findHtList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId",sysUser.getOrganizationId());
+        return omHtOtherOutOrderMapper.findHtList(map);
     }
 
     @Override
@@ -194,6 +216,8 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             omOtherOutOrderDet.setOrgId(sysUser.getOrganizationId());
             num+=omOtherOutOrderDetMapper.insertSelective(omOtherOutOrderDet);
         }
+
+        this.addHt(record,record.getOmOtherOutOrderDets());
         return num;
     }
 
@@ -219,6 +243,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             omOtherOutOrderDet.setOrgId(sysUser.getOrganizationId());
             num+=omOtherOutOrderDetMapper.insertSelective(omOtherOutOrderDet);
         }
+        this.addHt(entity,entity.getOmOtherOutOrderDets());
         return num;
     }
 
@@ -237,6 +262,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             Example example = new Example(OmOtherOutOrderDet.class);
             example.createCriteria().andEqualTo("otherOutOrderId",omOtherOutOrder.getOtherOutOrderId());
             omOtherOutOrderDetMapper.deleteByExample(example);
+            this.addHt(omOtherOutOrder,null);
         }
         return omOtherOutOrderMapper.deleteByIds(ids);
     }
@@ -247,5 +273,27 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         return sysUser;
+    }
+
+
+    /**
+     * 添加历史记录
+     * @return
+     */
+    private int addHt(OmOtherOutOrder omOtherOutOrder,List<OmOtherOutOrderDet> omOtherOutOrderDets){
+        int num = 0;
+        if(StringUtils.isNotEmpty(omOtherOutOrder)){
+            OmHtOtherOutOrder omHtOtherOutOrder = new OmHtOtherOutOrder();
+            BeanUtil.copyProperties(omOtherOutOrder,omHtOtherOutOrder);
+            num+=omHtOtherOutOrderMapper.insertSelective(omHtOtherOutOrder);
+        }
+        if(StringUtils.isNotEmpty(omOtherOutOrderDets)){
+            for (OmOtherOutOrderDet omOtherOutOrderDet : omOtherOutOrderDets) {
+                OmHtOtherOutOrderDet omHtOtherOutOrderDet = new OmHtOtherOutOrderDet();
+                BeanUtil.copyProperties(omOtherOutOrderDet,omHtOtherOutOrderDet);
+                num+=omHtOtherOutOrderDetMapper.insertSelective(omHtOtherOutOrderDet);
+            }
+        }
+        return num;
     }
 }

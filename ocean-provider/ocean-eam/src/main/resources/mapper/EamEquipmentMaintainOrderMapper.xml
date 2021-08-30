@@ -25,6 +25,11 @@
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainOrderDto">
     <result column="equipment_category_name" jdbcType="VARCHAR" property="equipmentCategoryName"/>
+    <result column="equipment_barcode" jdbcType="VARCHAR" property="equipmentBarcode"/>
+    <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
+    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
+    <result column="equipment_maintain_project_code" jdbcType="VARCHAR" property="equipmentMaintainProjectCode"/>
+    <result column="equipment_maintain_project_name" jdbcType="VARCHAR" property="equipmentMaintainProjectName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>

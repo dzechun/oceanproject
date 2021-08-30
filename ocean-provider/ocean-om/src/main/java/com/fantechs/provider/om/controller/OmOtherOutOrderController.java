@@ -1,6 +1,7 @@
 package com.fantechs.provider.om.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.om.OmHtOtherOutOrderDto;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
@@ -72,13 +73,13 @@ public class OmOtherOutOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-//    @ApiOperation("历史列表")
-//    @PostMapping("/findHtList")
-//    public ResponseEntity<List<OmOtherOutOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmOtherOutOrder searchOmOtherOutOrder) {
-//        Page<Object> page = PageHelper.startPage(searchOmOtherOutOrder.getStartPage(),searchOmOtherOutOrder.getPageSize());
-//        List<OmOtherOutOrder> list = omOtherOutOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchOmOtherOutOrder));
-//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-//    }
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<OmHtOtherOutOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmOtherOutOrder searchOmOtherOutOrder) {
+        Page<Object> page = PageHelper.startPage(searchOmOtherOutOrder.getStartPage(),searchOmOtherOutOrder.getPageSize());
+        List<OmHtOtherOutOrderDto> list = omOtherOutOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchOmOtherOutOrder));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")

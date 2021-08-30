@@ -4,8 +4,13 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessPhenotypeImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWorkingAreaImport;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessPhenotype;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
+import com.fantechs.common.base.general.entity.basic.BaseWorkingArea;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessPhenotype;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkingArea;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -14,13 +19,11 @@ import com.fantechs.provider.base.mapper.BaseHtBadnessPhenotypeMapper;
 import com.fantechs.provider.base.service.BaseBadnessPhenotypeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -129,6 +132,91 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
         if (StringUtils.isNotEmpty(baseBadnessPhenotype)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseBadnessPhenotypeImport> baseBadnessPhenotypeImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<BaseBadnessPhenotype> list = new LinkedList<>();
+        LinkedList<BaseHtBadnessPhenotype> htList = new LinkedList<>();
+        LinkedList<BaseBadnessPhenotypeImport> badnessPhenotypeImports = new LinkedList<>();
+
+        for (int i = 0; i < baseBadnessPhenotypeImports.size(); i++) {
+            BaseBadnessPhenotypeImport baseBadnessPhenotypeImport = baseBadnessPhenotypeImports.get(i);
+            String badnessPhenotypeCode = baseBadnessPhenotypeImport.getBadnessPhenotypeCode();
+
+
+            if (StringUtils.isEmpty(
+                    badnessPhenotypeCode
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(BaseBadnessPhenotype.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("badnessPhenotypeCode",badnessPhenotypeCode);
+            if (StringUtils.isNotEmpty(baseBadnessPhenotypeMapper.selectOneByExample(example))){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断集合中是否存在该条数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(badnessPhenotypeImports)){
+                for (BaseBadnessPhenotypeImport badnessPhenotypeImport: badnessPhenotypeImports) {
+                    if (badnessPhenotypeCode.equals(badnessPhenotypeImport.getBadnessPhenotypeCode())){
+                        tag = true;
+                        break;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
+
+            badnessPhenotypeImports.add(baseBadnessPhenotypeImport);
+        }
+
+        if (StringUtils.isNotEmpty(badnessPhenotypeImports)){
+
+            for (BaseBadnessPhenotypeImport baseBadnessPhenotypeImport : badnessPhenotypeImports) {
+                BaseBadnessPhenotype baseBadnessPhenotype = new BaseBadnessPhenotype();
+                BeanUtils.copyProperties(baseBadnessPhenotypeImport,baseBadnessPhenotype);
+                baseBadnessPhenotype.setCreateTime(new Date());
+                baseBadnessPhenotype.setCreateUserId(currentUser.getUserId());
+                baseBadnessPhenotype.setModifiedTime(new Date());
+                baseBadnessPhenotype.setModifiedUserId(currentUser.getUserId());
+                baseBadnessPhenotype.setOrgId(currentUser.getOrganizationId());
+                baseBadnessPhenotype.setStatus((byte)1);
+                list.add(baseBadnessPhenotype);
+            }
+            success = baseBadnessPhenotypeMapper.insertList(list);
+
+            if(StringUtils.isNotEmpty(list)){
+                for (BaseBadnessPhenotype baseBadnessPhenotype : list) {
+                    BaseHtBadnessPhenotype baseHtBadnessPhenotype = new BaseHtBadnessPhenotype();
+                    BeanUtils.copyProperties(baseBadnessPhenotype, baseHtBadnessPhenotype);
+                    htList.add(baseHtBadnessPhenotype);
+                }
+                baseHtBadnessPhenotypeMapper.insertList(htList);
+            }
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 
 }

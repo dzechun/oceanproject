@@ -40,6 +40,12 @@ public class EamEquipmentScrapOrderController {
     @Resource
     private EamHtEquipmentScrapOrderService eamHtEquipmentScrapOrderService;
 
+    @ApiOperation(value = "自动生成报废单",notes = "自动生成报废单")
+    @PostMapping("/autoCreateOrder")
+    public ResponseEntity autoCreateOrder() {
+        return ControllerUtil.returnCRUD(eamEquipmentScrapOrderService.autoCreateOrder());
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EamEquipmentScrapOrderDto eamEquipmentScrapOrderDto) {

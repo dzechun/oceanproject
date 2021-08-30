@@ -196,7 +196,7 @@ public class ElectronicTagReceiver {
                             searchPtlJobOrder.setNotOrderStatus((byte) 3);
                             searchPtlJobOrder.setType(1);
                             List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
-                            if (ptlJobOrderDtoList.size() == 1 && false) {
+                            if (ptlJobOrderDtoList.size() == 1) {
                                 PtlJobOrderDto ptlJobOrderDto = ptlJobOrderDtoList.get(0);
                                 PtlJobOrderDTO ptlJobOrderDTO = new PtlJobOrderDTO();
                                 ptlJobOrderDTO.setCustomerNo(ptlJobOrderDto.getRelatedOrderCode());

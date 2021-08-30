@@ -1,15 +1,16 @@
 package com.fantechs.provider.om.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.om.OmHtTransferOrderDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
-import com.fantechs.common.base.general.entity.om.OmTransferOrder;
-import com.fantechs.common.base.general.entity.om.OmTransferOrderDet;
+import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -21,6 +22,9 @@ import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmSalesReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmTransferOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
+import com.fantechs.provider.om.mapper.ht.OmHtOtherOutOrderDetMapper;
+import com.fantechs.provider.om.mapper.ht.OmHtTransferOrderDetMapper;
+import com.fantechs.provider.om.mapper.ht.OmHtTransferOrderMapper;
 import com.fantechs.provider.om.service.OmTransferOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +51,10 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     private BaseFeignApi baseFeignApi;
     @Resource
     private OmSalesReturnOrderDetMapper omSalesReturnOrderDetMapper;
+    @Resource
+    private OmHtTransferOrderMapper omHtTransferOrderMapper;
+    @Resource
+    private OmHtTransferOrderDetMapper omHtTransferOrderDetMapper;
 
     @Override
     public List<OmTransferOrderDto> findList(Map<String, Object> map) {
@@ -195,6 +203,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             omTransferOrderDet.setOrgId(sysUser.getOrganizationId());
             num+=omTransferOrderDetMapper.insertSelective(omTransferOrderDet);
         }
+        this.addHt(record,record.getOmTransferOrderDets());
         return num;
     }
 
@@ -223,6 +232,8 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
         }
         int num = omTransferOrderDetMapper.insertList(entity.getOmTransferOrderDets());
         num+=omTransferOrderMapper.updateByPrimaryKeySelective(entity);
+
+        this.addHt(entity,entity.getOmTransferOrderDets());
         return num;
     }
 
@@ -240,6 +251,8 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             Example example = new Example(OmTransferOrderDet.class);
             example.createCriteria().andEqualTo("transferOrderId",omTransferOrder.getTransferOrderId());
             omTransferOrderDetMapper.deleteByExample(example);
+
+            this.addHt(omTransferOrder,null);
         }
         return omTransferOrderMapper.deleteByIds(ids);
     }
@@ -258,11 +271,40 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
         return omTransferOrderMapper.updateByPrimaryKeySelective(omTransferOrder);
     }
 
+    @Override
+    public List<OmHtTransferOrderDto> findHtList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId",sysUser.getOrganizationId());
+        return omHtTransferOrderMapper.findHtList(map);
+    }
+
     private SysUser currentUser(){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(sysUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         return sysUser;
+    }
+
+
+    /**
+     * 添加历史记录
+     * @return
+     */
+    private int addHt(OmTransferOrder omTransferOrder, List<OmTransferOrderDet> omTransferOrderDets){
+        int num = 0;
+        if(StringUtils.isNotEmpty(omTransferOrder)){
+            OmHtTransferOrder omHtTransferOrder = new OmHtTransferOrder();
+            BeanUtil.copyProperties(omTransferOrder,omHtTransferOrder);
+            num+=omHtTransferOrderMapper.insertSelective(omHtTransferOrder);
+        }
+        if(StringUtils.isNotEmpty(omTransferOrderDets)){
+            for (OmTransferOrderDet omTransferOrderDet : omTransferOrderDets) {
+                OmHtTransferOrderDet omHtTransferOrderDet = new OmHtTransferOrderDet();
+                BeanUtil.copyProperties(omTransferOrderDet,omHtTransferOrderDet);
+                num+=omHtTransferOrderDetMapper.insertSelective(omHtTransferOrderDet);
+            }
+        }
+        return num;
     }
 }

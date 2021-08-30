@@ -4,6 +4,7 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
@@ -13,13 +14,10 @@ import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrderReJoReDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.*;
@@ -147,6 +145,25 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     if(responseEntity.getCode()!=0){
                         throw new BizErrorException("发运失败");
                     }
+
+                    //添加库存日志
+                    WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
+                    wmsInnerInventoryLog.setAsnCode(wmsInnerJobOrder.getRelatedOrderCode());
+                    wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                    //发运
+                    wmsInnerInventoryLog.setJobOrderType((byte)8);
+                    wmsInnerInventoryLog.setAddOrSubtract((byte)2);
+                    wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDetDto.getInStorageId());
+                    wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrderDetDto.getWarehouseId());
+                    wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDetDto.getMaterialId());
+                    wmsInnerInventoryLog.setProductionDate(wmsInnerJobOrderDetDto.getProductionDate());
+                    wmsInnerInventoryLog.setExpiredDate(wmsInnerJobOrderDetDto.getExpiredDate());
+                    wmsInnerInventoryLog.setBatchCode(wmsInnerJobOrderDetDto.getBatchCode());
+                    wmsInnerInventoryLog.setPalletCode(wmsInnerJobOrderDetDto.getPalletCode());
+                    wmsInnerInventoryLog.setInventoryStatusId(wmsInnerJobOrderDetDto.getInventoryStatusId());
+                    wmsInnerInventoryLog.setChangeQty(wmsInnerJobOrderDetDto.getActualQty());
+                    wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerJobOrder.getMaterialOwnerId());
+                    innerFeignApi.add(wmsInnerInventoryLog);
                 }
             }
             wmsOutDespatchOrder.setOrderStatus((byte)4);

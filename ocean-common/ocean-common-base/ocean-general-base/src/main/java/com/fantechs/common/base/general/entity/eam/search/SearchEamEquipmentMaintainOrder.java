@@ -26,4 +26,10 @@ public class SearchEamEquipmentMaintainOrder extends BaseQuery implements Serial
      */
     @ApiModelProperty(name="orderStatus",value = "单据状态(1-待保养 2-已保养)")
     private Byte orderStatus;
+
+    /**
+     * 设备保养单号
+     */
+    @ApiModelProperty(name="equipmentMaintainOrderCode",value = "设备保养单号")
+    private String equipmentMaintainOrderCode;
 }

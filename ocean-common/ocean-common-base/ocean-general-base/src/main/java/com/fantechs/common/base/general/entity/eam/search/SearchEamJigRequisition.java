@@ -22,6 +22,12 @@ public class SearchEamJigRequisition extends BaseQuery implements Serializable {
     private String workOrderCode;
 
     /**
+     * 治具条码id
+     */
+    @ApiModelProperty(name="jigBarcodeId",value = "治具条码id")
+    private Long jigBarcodeId;
+
+    /**
      * 治具条码
      */
     @ApiModelProperty(name="jigBarcode",value = "治具条码")

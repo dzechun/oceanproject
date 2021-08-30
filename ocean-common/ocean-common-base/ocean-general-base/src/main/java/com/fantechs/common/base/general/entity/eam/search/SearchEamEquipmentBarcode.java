@@ -13,8 +13,8 @@ public class SearchEamEquipmentBarcode extends BaseQuery implements Serializable
     /**
      * 设备条码
      */
-    @ApiModelProperty(name="equipmentBarCode",value = "设备条码")
-    private String equipmentBarCode;
+    @ApiModelProperty(name="equipmentBarcode",value = "设备条码")
+    private String equipmentBarcode;
 
     /**
      * 资产条码

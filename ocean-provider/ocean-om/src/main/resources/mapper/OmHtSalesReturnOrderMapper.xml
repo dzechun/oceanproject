@@ -65,7 +65,14 @@ osro.option2,
 osro.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_sales_return_order osro
+    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+    (SELECT SUM(osrod.order_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_qty,
+    (SELECT SUM(osrod.issue_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_issue_qty,
+    (SELECT SUM(osrod.receiving_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_receiving_qty,
+    (SELECT SUM(bmt.volume * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as total_volume,
+    (SELECT SUM(bmt.net_weight * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as total_net_weight,
+    (SELECT SUM(bmt.gross_weight * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as total_gross_weight
+    FROM om_ht_sales_return_order osro
     LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = osro.material_owner_id
     left join ocean_v2.sys_user su on osro.create_user_id = su.user_id
     left join ocean_v2.sys_user sus on osro.modified_user_id = sus.user_id
@@ -87,5 +94,6 @@ osro.option3
         and date_format(osro.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
+    order by osro.create_time desc
   </select>
 </mapper>

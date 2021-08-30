@@ -36,6 +36,12 @@ public class SearchSysUser extends BaseQuery implements Serializable {
     private Long organizationId;
 
     /**
+     * 供应商ID
+     */
+    @ApiModelProperty(name="supplierId" ,value="供应商ID")
+    private Long supplierId;
+
+    /**
      * 角色ID
      */
     @ApiModelProperty(name="searchType" ,value="绑定状态 0-未绑定 1-绑定")

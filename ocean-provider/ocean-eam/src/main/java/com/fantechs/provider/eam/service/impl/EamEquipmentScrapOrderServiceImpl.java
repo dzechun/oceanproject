@@ -3,22 +3,15 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentScrapOrderDetDto;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentScrapOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamJigScrapOrderDetDto;
-import com.fantechs.common.base.general.dto.eam.EamJigScrapOrderDto;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentScrapOrder;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentScrapOrderDet;
-import com.fantechs.common.base.general.entity.eam.EamJigScrapOrder;
-import com.fantechs.common.base.general.entity.eam.EamJigScrapOrderDet;
+import com.fantechs.common.base.general.dto.eam.*;
+import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentScrapOrder;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigScrapOrder;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.eam.mapper.EamEquipmentScrapOrderDetMapper;
-import com.fantechs.provider.eam.mapper.EamEquipmentScrapOrderMapper;
-import com.fantechs.provider.eam.mapper.EamHtEquipmentScrapOrderMapper;
+import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamEquipmentScrapOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -26,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -44,6 +34,10 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
     private EamEquipmentScrapOrderDetMapper eamEquipmentScrapOrderDetMapper;
     @Resource
     private EamHtEquipmentScrapOrderMapper eamHtEquipmentScrapOrderMapper;
+    @Resource
+    private EamEquipmentBarcodeMapper eamEquipmentBarcodeMapper;
+    @Resource
+    private EamEquipmentMapper eamEquipmentMapper;
 
     @Override
     public List<EamEquipmentScrapOrderDto> findList(Map<String, Object> map) {
@@ -54,6 +48,52 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
         map.put("orgId", user.getOrganizationId());
         
         return eamEquipmentScrapOrderMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int autoCreateOrder() {
+        int sum = 0;
+
+        Map<String, Object> map = new HashMap<>();
+        List<EamEquipmentBarcode> list = eamEquipmentBarcodeMapper.findList(map);
+        for (EamEquipmentBarcode eamEquipmentBarcode : list){
+            boolean tag = false;
+            EamEquipment eamEquipment = eamEquipmentMapper.selectByPrimaryKey(eamEquipmentBarcode.getEquipmentId());
+
+            //设备当前使用次数(当前使用天数)大于等于该设备最大使用次数(最大使用天数)时创建报废单
+            if(StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageTime(),eamEquipment.getMaxUsageTimes())){
+                if(eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTimes())==0
+                        ||eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTimes())==1){
+                    tag = true;
+                }
+            }
+
+            if(StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageDays(),eamEquipment.getMaxUsageDays())) {
+                if (eamEquipmentBarcode.getCurrentUsageDays().compareTo(eamEquipment.getMaxUsageDays()) == 0
+                        || eamEquipmentBarcode.getCurrentUsageDays().compareTo(eamEquipment.getMaxUsageDays()) == 1) {
+                    tag = true;
+                }
+            }
+
+            //创建单据
+            if(tag){
+                EamEquipmentScrapOrderDto eamEquipmentScrapOrderDto = new EamEquipmentScrapOrderDto();
+                EamEquipmentScrapOrderDetDto eamEquipmentScrapOrderDetDto = new EamEquipmentScrapOrderDetDto();
+                List<EamEquipmentScrapOrderDetDto> eamEquipmentScrapOrderDetDtos = new ArrayList<>();
+
+                eamEquipmentScrapOrderDetDto.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
+                eamEquipmentScrapOrderDetDtos.add(eamEquipmentScrapOrderDetDto);
+
+                eamEquipmentScrapOrderDto.setEquipmentScrapOrderCode(CodeUtils.getId("SBBF-"));
+                eamEquipmentScrapOrderDto.setOrderStatus((byte)1);
+                eamEquipmentScrapOrderDto.setList(eamEquipmentScrapOrderDetDtos);
+
+                sum += this.save(eamEquipmentScrapOrderDto);
+            }
+        }
+
+        return sum;
     }
 
     @Override

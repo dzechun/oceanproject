@@ -296,12 +296,25 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         List<PtlJobOrderDet> list = new LinkedList<>();
         List<RabbitMQDTO> rabbitMQDTOList = new LinkedList<>();
         List<Long> clientIdList = new LinkedList<>();
+        List<String> cancelRelatedOrderList = new LinkedList<>();
         for (PtlJobOrderDTO ptlJobOrderDTO : ptlJobOrderDTOList) {
+            if (cancelRelatedOrderList.contains(ptlJobOrderDTO.getCustomerNo())) {
+                continue;
+            }
             SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
             searchPtlJobOrder.setJobOrderCode(ptlJobOrderDTO.getTaskNo());
             searchPtlJobOrder.setType(1);
             List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
             if (StringUtils.isNotEmpty(ptlJobOrderDtoList)) {
+                List<String> cancelJobOrderList = new LinkedList<>();
+                for (PtlJobOrderDto ptlJobOrderDto : ptlJobOrderDtoList) {
+                    if (ptlJobOrderDto.getOrderStatus() == 5 && ptlJobOrderDto.getPickBackStatus() == 0) {
+                        cancelJobOrderList.add(ptlJobOrderDto.getJobOrderCode());
+                        if (!cancelRelatedOrderList.contains(ptlJobOrderDTO.getCustomerNo())) {
+                            cancelRelatedOrderList.add(ptlJobOrderDTO.getCustomerNo());
+                        }
+                    }
+                }
                 continue;
 //                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "重复分拣单");
             }
@@ -443,7 +456,11 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
         ResponseEntityDTO responseEntityDTO = new ResponseEntityDTO();
         responseEntityDTO.setCode(ptlJobOrderDTOList.get(0).getCustomerNo());
-        responseEntityDTO.setMessage("保存成功");
+        if (cancelRelatedOrderList.isEmpty()) {
+            responseEntityDTO.setMessage("保存成功");
+        } else {
+            responseEntityDTO.setMessage("拣货单：" + cancelRelatedOrderList.toString() + "已取消，但存在未退拣任务，请先进行退拣后再下发该单据。其他单据已正常接收完成！");
+        }
         responseEntityDTO.setSuccess("s");
 
         return responseEntityDTO;

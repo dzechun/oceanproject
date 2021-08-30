@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.in.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInHtAsnOrderDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
@@ -123,5 +124,13 @@ public class WmsInAsnOrderController {
     @PostMapping("/palletAutoAsnOrder")
     public ResponseEntity palletAutoAsnOrder(@RequestBody PalletAutoAsnDto palletAutoAsnDto){
         return ControllerUtil.returnCRUD(wmsInAsnOrderService.palletAutoAsnOrder(palletAutoAsnDto));
+    }
+
+    @ApiOperation("履历")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<WmsInHtAsnOrderDto>> findHtList(@RequestBody SearchWmsInAsnOrder searchWmsInAsnOrder){
+        Page<Object> page = PageHelper.startPage(searchWmsInAsnOrder.getStartPage(),searchWmsInAsnOrder.getPageSize());
+        List<WmsInHtAsnOrderDto> list = wmsInAsnOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsInAsnOrder));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }

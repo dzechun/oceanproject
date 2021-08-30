@@ -22,6 +22,7 @@ public class OmTransferOrderDto extends OmTransferOrder implements Serializable 
      */
     @Transient
     @ApiModelProperty(name="totalQty",value = "订单总数量")
+    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="6")
     private BigDecimal totalQty;
 
     /**
@@ -29,6 +30,7 @@ public class OmTransferOrderDto extends OmTransferOrder implements Serializable 
      */
     @Transient
     @ApiModelProperty(name = "materialOwnerName",value = "货主")
+    @Excel(name = "货主", height = 20, width = 30,orderNum="3")
     private String materialOwnerName;
 
     /**
@@ -36,6 +38,7 @@ public class OmTransferOrderDto extends OmTransferOrder implements Serializable 
      */
     @Transient
     @ApiModelProperty(name = "outWarehouseName",value = "调出仓库")
+    @Excel(name = "调出仓库", height = 20, width = 30,orderNum="4")
     private String outWarehouseName;
 
     /**
@@ -43,6 +46,7 @@ public class OmTransferOrderDto extends OmTransferOrder implements Serializable 
      */
     @Transient
     @ApiModelProperty(name = "inWarehouseName",value = "调入仓库")
+    @Excel(name = "调入仓库", height = 20, width = 30,orderNum="5")
     private String inWarehouseName;
 
     /**
@@ -78,6 +82,7 @@ public class OmTransferOrderDto extends OmTransferOrder implements Serializable 
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建名称")
+    @Excel(name = "创建名称", height = 20, width = 30,orderNum="13")
     private String createUserName;
 
     /**
@@ -85,6 +90,7 @@ public class OmTransferOrderDto extends OmTransferOrder implements Serializable 
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改人")
+    @Excel(name = "修改人", height = 20, width = 30,orderNum="15")
     private String modifiedUserName;
 
     /**
@@ -92,5 +98,6 @@ public class OmTransferOrderDto extends OmTransferOrder implements Serializable 
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织")
+    @Excel(name = "修改人", height = 20, width = 30,orderNum="17")
     private String organizationName;
 }

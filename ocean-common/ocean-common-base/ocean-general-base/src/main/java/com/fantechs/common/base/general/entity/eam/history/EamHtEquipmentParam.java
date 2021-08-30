@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -43,32 +44,30 @@ public class EamHtEquipmentParam extends ValidGroup implements Serializable {
     private Long equipmentParamId;
 
     /**
-     * 设备信息ID
+     * 设备类别ID
      */
-    @ApiModelProperty(name="equipmentId",value = "设备信息ID")
-    @Excel(name = "设备信息ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "equipment_id")
-    private Long equipmentId;
+    @ApiModelProperty(name="equipmentCategoryId",value = "设备类别ID")
+    @Column(name = "equipment_category_id")
+    @NotNull(message = "设备类别不能为空")
+    private Long equipmentCategoryId;
 
     /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="5",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -76,7 +75,6 @@ public class EamHtEquipmentParam extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -84,7 +82,7 @@ public class EamHtEquipmentParam extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="7",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -93,7 +91,6 @@ public class EamHtEquipmentParam extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -101,7 +98,7 @@ public class EamHtEquipmentParam extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -130,36 +127,12 @@ public class EamHtEquipmentParam extends ValidGroup implements Serializable {
     private String organizationName;
 
     /**
-     * 设备编码
+     * 设备类别名称
      */
-    @ApiModelProperty(name="equipmentCode",value = "设备编码")
-    @Excel(name = "设备编码", height = 20, width = 30,orderNum="1")
+    @ApiModelProperty(name="equipmentCategoryName",value = "设备类别名称")
+    @Excel(name = "设备类别名称", height = 20, width = 30,orderNum="1")
     @Transient
-    private String equipmentCode;
-
-    /**
-     * 设备名称
-     */
-    @ApiModelProperty(name="equipmentName",value = "设备名称")
-    @Excel(name = "设备名称", height = 20, width = 30,orderNum="2")
-    @Transient
-    private String equipmentName;
-
-    /**
-     * 设备描述
-     */
-    @ApiModelProperty(name="equipmentDesc",value = "设备描述")
-    @Excel(name = "设备描述", height = 20, width = 30,orderNum="3")
-    @Transient
-    private String equipmentDesc;
-
-    /**
-     * 设备型号
-     */
-    @ApiModelProperty(name="equipmentModel",value = "设备型号")
-    @Excel(name = "设备型号", height = 20, width = 30,orderNum="4")
-    @Transient
-    private String equipmentModel;
+    private String equipmentCategoryName;
 
     private String option1;
 

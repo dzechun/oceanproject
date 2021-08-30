@@ -161,7 +161,15 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquPointInspectionOrder eamEquPointInspectionOrder) {
+        SysUser user = getUser();
+
         // 新增点检单
+        eamEquPointInspectionOrder.setCreateUserId(user.getUserId());
+        eamEquPointInspectionOrder.setCreateTime(new Date());
+        eamEquPointInspectionOrder.setModifiedUserId(user.getUserId());
+        eamEquPointInspectionOrder.setModifiedTime(new Date());
+        eamEquPointInspectionOrder.setOrgId(user.getOrganizationId());
+        eamEquPointInspectionOrder.setStatus(StringUtils.isEmpty(eamEquPointInspectionOrder.getStatus())?1: eamEquPointInspectionOrder.getStatus());
         eamEquPointInspectionOrderMapper.insertUseGeneratedKeys(eamEquPointInspectionOrder);
 
         // 新增点检单履历
@@ -174,9 +182,15 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
                     .stream()
                     .map(item -> {
                         item.setEquPointInspectionOrderId(eamEquPointInspectionOrder.getEquPointInspectionOrderId());
+                        item.setCreateUserId(user.getUserId());
+                        item.setCreateTime(new Date());
+                        item.setModifiedUserId(user.getUserId());
+                        item.setModifiedTime(new Date());
+                        item.setStatus(StringUtils.isEmpty(item.getStatus())?1: item.getStatus());
+                        item.setOrgId(user.getOrganizationId());
                         return item;
                     }).collect(Collectors.toList());
-            // 批量新增点检单事项及其履历
+            // 批量新增点检单明细及其履历
             eamEquPointInspectionOrderDetService.batchSave(inspectionOrderDets);
         }
         return i;
@@ -185,40 +199,24 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquPointInspectionOrder eamEquPointInspectionOrder) {
+        SysUser user = getUser();
+
         // 修改点检单
-        eamEquPointInspectionOrderMapper.updateByPrimaryKey(eamEquPointInspectionOrder);
+        eamEquPointInspectionOrder.setModifiedUserId(user.getUserId());
+        eamEquPointInspectionOrder.setModifiedTime(new Date());
+        eamEquPointInspectionOrderMapper.updateByPrimaryKeySelective(eamEquPointInspectionOrder);
 
         // 新增点检单履历
         EamHtEquPointInspectionOrder eamHtEquPointInspectionOrder = new EamHtEquPointInspectionOrder();
         BeanUtil.copyProperties(eamEquPointInspectionOrder, eamHtEquPointInspectionOrder);
         int i = eamHtEquPointInspectionOrderMapper.insert(eamHtEquPointInspectionOrder);
 
-        if(!eamEquPointInspectionOrder.getOrderDets().isEmpty()){
-            // 批量删除点检单明细
-            List<EamEquPointInspectionOrderDet> orderDets = eamEquPointInspectionOrder.getOrderDets().stream().map(item -> {
-                EamEquPointInspectionOrderDet orderDet = new EamEquPointInspectionOrderDet();
-                BeanUtil.copyProperties(item, orderDet);
-                return orderDet;
-            }).collect(Collectors.toList());
-            eamEquPointInspectionOrderDetService.batchDelete(orderDets);
-            // 批量新增点检单明细及其履历
-            List<EamEquPointInspectionOrderDet> inspectionOrderDets = eamEquPointInspectionOrder.getOrderDets()
-                    .stream()
-                    .map(item -> {
-                        item.setEquPointInspectionOrderId(eamEquPointInspectionOrder.getEquPointInspectionOrderId());
-                        return item;
-                    }).collect(Collectors.toList());
-            eamEquPointInspectionOrderDetService.batchSave(inspectionOrderDets);
-        }
-        return i;
-    }
 
-    @Override
-    @Transactional(rollbackFor = RuntimeException.class)
-    public int batchDelete(String ids){
-        // 查询点检事项集合
+        // 批量删除点检单明细
         HashMap<String, Object> map = new HashMap<>();
-        map.put("orderIds", ids);
+        List<Long> idList = new ArrayList<>();
+        idList.add(eamEquPointInspectionOrder.getEquPointInspectionOrderId());
+        map.put("orderIds", idList);
         List<EamEquPointInspectionOrderDetDto> list = eamEquPointInspectionOrderDetService.findList(map);
         if(!list.isEmpty()){
             List<EamEquPointInspectionOrderDet> projectItems = list.stream().map(item -> {
@@ -226,11 +224,46 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
                 BeanUtil.copyProperties(item, orderDet);
                 return orderDet;
             }).collect(Collectors.toList());
-            // 批量删除点检项目事项
             eamEquPointInspectionOrderDetService.batchDelete(projectItems);
         }
-        // 批量删除点检项目
-        return this.batchDelete(ids);
+
+        // 批量新增点检单明细及其履历
+        List<EamEquPointInspectionOrderDet> inspectionOrderDets = eamEquPointInspectionOrder.getOrderDets()
+                .stream()
+                .map(item -> {
+                    item.setEquPointInspectionOrderId(eamEquPointInspectionOrder.getEquPointInspectionOrderId());
+                    item.setCreateUserId(user.getUserId());
+                    item.setCreateTime(new Date());
+                    item.setModifiedUserId(user.getUserId());
+                    item.setModifiedTime(new Date());
+                    item.setStatus(StringUtils.isEmpty(item.getStatus())?1: item.getStatus());
+                    item.setOrgId(user.getOrganizationId());
+                    return item;
+                }).collect(Collectors.toList());
+        eamEquPointInspectionOrderDetService.batchSave(inspectionOrderDets);
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchDelete(String ids){
+        // 查询点检单明细集合
+        HashMap<String, Object> map = new HashMap<>();
+        List<String> idList = Arrays.asList(ids.split(","));
+        map.put("orderIds", idList);
+        List<EamEquPointInspectionOrderDetDto> list = eamEquPointInspectionOrderDetService.findList(map);
+        if(!list.isEmpty()){
+            List<EamEquPointInspectionOrderDet> projectItems = list.stream().map(item -> {
+                EamEquPointInspectionOrderDet orderDet = new EamEquPointInspectionOrderDet();
+                BeanUtil.copyProperties(item, orderDet);
+                return orderDet;
+            }).collect(Collectors.toList());
+            // 批量删除点检单明细
+            eamEquPointInspectionOrderDetService.batchDelete(projectItems);
+        }
+        // 批量删除点检单
+        return eamEquPointInspectionOrderMapper.deleteByIds(ids);
     }
 
     private SysUser getUser(){

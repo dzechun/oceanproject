@@ -161,7 +161,15 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
     @Override
     @Transactional
     public int save(EamEquipmentMaintainOrder eamEquipmentMaintainOrder) {
+        SysUser user = getUser();
+
         // 新增保养单
+        eamEquipmentMaintainOrder.setCreateUserId(user.getUserId());
+        eamEquipmentMaintainOrder.setCreateTime(new Date());
+        eamEquipmentMaintainOrder.setModifiedUserId(user.getUserId());
+        eamEquipmentMaintainOrder.setModifiedTime(new Date());
+        eamEquipmentMaintainOrder.setOrgId(user.getOrganizationId());
+        eamEquipmentMaintainOrder.setStatus(StringUtils.isEmpty(eamEquipmentMaintainOrder.getStatus())?1: eamEquipmentMaintainOrder.getStatus());
         eamEquipmentMaintainOrderMapper.insertUseGeneratedKeys(eamEquipmentMaintainOrder);
 
         // 新增保养单履历
@@ -174,9 +182,15 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
                     .stream()
                     .map(item -> {
                         item.setEquipmentMaintainOrderId(eamEquipmentMaintainOrder.getEquipmentMaintainOrderId());
+                        item.setCreateUserId(user.getUserId());
+                        item.setCreateTime(new Date());
+                        item.setModifiedUserId(user.getUserId());
+                        item.setModifiedTime(new Date());
+                        item.setStatus(StringUtils.isEmpty(item.getStatus())?1: item.getStatus());
+                        item.setOrgId(user.getOrganizationId());
                         return item;
                     }).collect(Collectors.toList());
-            // 批量新增保养单事项及其履历
+            // 批量新增保养单明细及其履历
             eamEquipmentMaintainOrderDetService.batchSave(maintainOrderDets);
         }
         return i;
@@ -185,40 +199,24 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
     @Override
     @Transactional
     public int update(EamEquipmentMaintainOrder eamEquipmentMaintainOrder) {
+        SysUser user = getUser();
+
         // 修改保养单
-        eamEquipmentMaintainOrderMapper.updateByPrimaryKey(eamEquipmentMaintainOrder);
+        eamEquipmentMaintainOrder.setModifiedUserId(user.getUserId());
+        eamEquipmentMaintainOrder.setModifiedTime(new Date());
+        eamEquipmentMaintainOrderMapper.updateByPrimaryKeySelective(eamEquipmentMaintainOrder);
 
         // 新增保养单履历
         EamHtEquipmentMaintainOrder eamHtEquipmentMaintainOrder = new EamHtEquipmentMaintainOrder();
         BeanUtil.copyProperties(eamEquipmentMaintainOrder, eamHtEquipmentMaintainOrder);
         int i = eamHtEquipmentMaintainOrderMapper.insert(eamHtEquipmentMaintainOrder);
 
-        if(!eamEquipmentMaintainOrder.getOrderDets().isEmpty()){
-            // 批量删除保养单明细
-            List<EamEquipmentMaintainOrderDet> orderDets = eamEquipmentMaintainOrder.getOrderDets().stream().map(item -> {
-                EamEquipmentMaintainOrderDet orderDet = new EamEquipmentMaintainOrderDet();
-                BeanUtil.copyProperties(item, orderDet);
-                return orderDet;
-            }).collect(Collectors.toList());
-            eamEquipmentMaintainOrderDetService.batchDelete(orderDets);
-            // 批量新增保养单明细及其履历
-            List<EamEquipmentMaintainOrderDet> maintainOrderDets = eamEquipmentMaintainOrder.getOrderDets()
-                    .stream()
-                    .map(item -> {
-                        item.setEquipmentMaintainOrderId(eamEquipmentMaintainOrder.getEquipmentMaintainOrderId());
-                        return item;
-                    }).collect(Collectors.toList());
-            eamEquipmentMaintainOrderDetService.batchSave(maintainOrderDets);
-        }
-        return i;
-    }
 
-    @Override
-    @Transactional
-    public int batchDelete(String ids){
-        // 查询保养事项集合
+        // 批量删除保养单明细
         HashMap<String, Object> map = new HashMap<>();
-        map.put("orderIds", ids);
+        List<Long> idList = new ArrayList<>();
+        idList.add(eamEquipmentMaintainOrder.getEquipmentMaintainOrderId());
+        map.put("orderIds", idList);
         List<EamEquipmentMaintainOrderDetDto> list = eamEquipmentMaintainOrderDetService.findList(map);
         if(!list.isEmpty()){
             List<EamEquipmentMaintainOrderDet> projectItems = list.stream().map(item -> {
@@ -226,11 +224,46 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
                 BeanUtil.copyProperties(item, orderDet);
                 return orderDet;
             }).collect(Collectors.toList());
-            // 批量删除保养项目事项
             eamEquipmentMaintainOrderDetService.batchDelete(projectItems);
         }
-        // 批量删除保养项目
-        return this.batchDelete(ids);
+
+        // 批量新增保养单明细及其履历
+        List<EamEquipmentMaintainOrderDet> maintainOrderDets = eamEquipmentMaintainOrder.getOrderDets()
+                .stream()
+                .map(item -> {
+                    item.setEquipmentMaintainOrderId(eamEquipmentMaintainOrder.getEquipmentMaintainOrderId());
+                    item.setCreateUserId(user.getUserId());
+                    item.setCreateTime(new Date());
+                    item.setModifiedUserId(user.getUserId());
+                    item.setModifiedTime(new Date());
+                    item.setStatus(StringUtils.isEmpty(item.getStatus())?1: item.getStatus());
+                    item.setOrgId(user.getOrganizationId());
+                    return item;
+                }).collect(Collectors.toList());
+        eamEquipmentMaintainOrderDetService.batchSave(maintainOrderDets);
+
+        return i;
+    }
+
+    @Override
+    @Transactional
+    public int batchDelete(String ids){
+        // 查询保养单明细
+        HashMap<String, Object> map = new HashMap<>();
+        List<String> idList = Arrays.asList(ids.split(","));
+        map.put("orderIds", idList);
+        List<EamEquipmentMaintainOrderDetDto> list = eamEquipmentMaintainOrderDetService.findList(map);
+        if(!list.isEmpty()){
+            List<EamEquipmentMaintainOrderDet> projectItems = list.stream().map(item -> {
+                EamEquipmentMaintainOrderDet orderDet = new EamEquipmentMaintainOrderDet();
+                BeanUtil.copyProperties(item, orderDet);
+                return orderDet;
+            }).collect(Collectors.toList());
+            // 批量删除保养单明细
+            eamEquipmentMaintainOrderDetService.batchDelete(projectItems);
+        }
+        // 批量删除保养单
+        return eamEquipmentMaintainOrderMapper.deleteByIds(ids);
     }
 
     private SysUser getUser(){

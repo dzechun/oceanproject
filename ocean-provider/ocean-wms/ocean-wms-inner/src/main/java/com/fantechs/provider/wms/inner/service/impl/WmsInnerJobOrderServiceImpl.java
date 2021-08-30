@@ -73,8 +73,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     WmsInnerInventoryService wmsInnerInventoryService;
     @Resource
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
-    @Resource
-    InventoryLogUtil inventoryLogUtil;
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
@@ -203,13 +201,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     //分配库存
                     num += this.updateInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto);
                 }
-//                storageId = storageId == null ? wmsInPutawayOrderMapper.SelectStorage() : storageId;
-//                if (StringUtils.isEmpty(storageId)) {
-//                    throw new BizErrorException("未查询到推荐库位");
-//                }
-
-                //库位容量减1
-//                baseFeignApi.minusSurplusCanPutSalver(wms.getInStorageId(), 1);
             }
             //待激活
             SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
@@ -889,11 +880,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //获取完工入库单单号
         String asnOrderCode = wmsInPutawayOrderMapper.findAsnCode(asnOrderId);
         Example example = new Example(WmsInnerInventoryDet.class);
-//        //获取绑定上架单的栈板码
-//        String barCode = wmsInPutawayOrderDetMapper.findPalletCode(wmsInnerJobOrderDet.getJobOrderId());
-//        if(StringUtils.isEmpty(barCode)){
-//            throw new BizErrorException("获取栈板信息失败");
-//        }
         example.createCriteria().andEqualTo("asnCode", asnOrderCode).andEqualTo("storageId", wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId", wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcode", barcode).andEqualTo("barcodeStatus",2);
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
         if (StringUtils.isEmpty(wmsInnerInventoryDet)) {
@@ -1136,7 +1122,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         record.setIsDelete((byte) 1);
         record.setOrderStatus((byte) 1);
         record.setPlanQty(record.getWmsInPutawayOrderDets().stream().map(WmsInnerJobOrderDet::getPlanQty).reduce(BigDecimal.ZERO, BigDecimal::add));
-//        record.setActualQty(record.getWmsInPutawayOrderDets().stream().map(WmsInnerJobOrderDet::getActualQty).reduce(BigDecimal.ZERO, BigDecimal::add));
         int num = wmsInPutawayOrderMapper.insertUseGeneratedKeys(record);
         for (WmsInnerJobOrderDet wmsInPutawayOrderDet : record.getWmsInPutawayOrderDets()) {
             wmsInPutawayOrderDet.setJobOrderId(record.getJobOrderId());
@@ -1458,12 +1443,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         InventoryLogUtil.addLog(wmsInnerJobOrder,newDto,(byte)2,(byte)1);
         return num;
     }
-//    private void checkBarCode(){
-//        //1、判断是否展板自动收货还是PDA收货
-//        //2、栈板自动收货匹配栈板条码还是成品条码
-//        //一个成品条码数量为1、一个栈板返回栈板数量
-//        //如果收到收货直接匹配库存明细
-//    }
 
     /**
      * 获取当前登录用户

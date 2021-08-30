@@ -44,6 +44,22 @@ public class EamEquipmentMaintainOrderDto extends EamEquipmentMaintainOrder impl
     private String equipmentBarcode;
 
     /**
+     * 设备保养项目编码
+     */
+    @Transient
+    @ApiModelProperty(name="equipmentMaintainProjectCode",value = "设备保养项目编码")
+    @Excel(name = "设备保养项目编码", height = 20, width = 30,orderNum="")
+    private String equipmentMaintainProjectCode;
+
+    /**
+     * 设备保养项目名称
+     */
+    @Transient
+    @ApiModelProperty(name="equipmentMaintainProjectName",value = "设备保养项目名称")
+    @Excel(name = "设备保养项目名称", height = 20, width = 30,orderNum="")
+    private String equipmentMaintainProjectName;
+
+    /**
      * 创建用户名称
      */
     @Transient
