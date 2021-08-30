@@ -77,10 +77,10 @@ public class SrmPackingOrderSummaryDetImport implements Serializable {
     private String rawMaterialCode;
 
     /**
-     * 供应商名称
+     * 供货商名称
      */
-    @ApiModelProperty(name="supplierName",value = "供应商名称")
-    @Excel(name = "供应商名称", height = 20, width = 30)
+    @ApiModelProperty(name="supplierName",value = "供货商名称")
+    @Excel(name = "供货商名称", height = 20, width = 30)
     private String supplierName;
 
     /**
