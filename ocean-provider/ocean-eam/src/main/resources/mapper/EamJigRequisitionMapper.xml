@@ -87,11 +87,14 @@
       <if test="ifExceptReturn != null and ifExceptReturn == 1">
         and ejret.jig_return_id IS NULL
       </if>
+      <if test="jigBarcodeId != null">
+        and ejr.jig_barcode_id = #{jigBarcodeId}
+      </if>
       <if test="jigId != null">
-        and wo.jig_id = #{jigId}
+        and ejr.jig_id = #{jigId}
       </if>
       <if test="workOrderId != null">
-        and wo.work_order_id = #{workOrderId}
+        and ejr.work_order_id = #{workOrderId}
       </if>
       <if test="workOrderCode != null and workOrderCode!=''">
         and wo.work_order_code like CONCAT('%', #{workOrderCode}, '%')

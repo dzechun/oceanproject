@@ -8,6 +8,7 @@
     <id column="equipment_material_list_id" jdbcType="BIGINT" property="equipmentMaterialListId" />
     <result column="equipment_material_id" jdbcType="BIGINT" property="equipmentMaterialId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="usage_qty" jdbcType="INTEGER" property="usageQty" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -34,6 +35,7 @@
     eeml.equipment_material_list_id,
     eeml.equipment_material_id,
     eeml.material_id,
+    eeml.usage_qty,
     eeml.`status`,
     eeml.remark,
     eeml.org_id,

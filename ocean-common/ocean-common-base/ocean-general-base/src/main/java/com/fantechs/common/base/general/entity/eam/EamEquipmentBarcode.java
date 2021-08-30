@@ -200,6 +200,20 @@ public class EamEquipmentBarcode extends ValidGroup implements Serializable {
     @Transient
     private String equipmentModel;
 
+    /**
+     * 设备类别
+     */
+    @Transient
+    @ApiModelProperty(name = "equipmentCategoryName",value = "设备类别")
+    private String equipmentCategoryName;
+
+    /**
+     * 设备类别ID
+     */
+    @Transient
+    @ApiModelProperty(name = "equipmentCategoryId",value = "设备类别ID")
+    private Long equipmentCategoryId;
+
     private String option1;
 
     private String option2;

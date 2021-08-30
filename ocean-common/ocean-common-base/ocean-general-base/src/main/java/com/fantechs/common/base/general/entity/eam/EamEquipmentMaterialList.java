@@ -53,6 +53,14 @@ public class EamEquipmentMaterialList extends ValidGroup implements Serializable
     private Long materialId;
 
     /**
+     * 使用数量
+     */
+    @ApiModelProperty(name="usageQty",value = "使用数量")
+    @Column(name = "usage_qty")
+    @NotNull(message = "使用数量不能为空")
+    private Integer usageQty;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

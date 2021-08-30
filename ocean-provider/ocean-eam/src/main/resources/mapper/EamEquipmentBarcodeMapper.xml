@@ -31,6 +31,8 @@
     <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName" />
     <result column="equipment_desc" jdbcType="VARCHAR" property="equipmentDesc" />
     <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel" />
+    <result column="equipment_category_name" jdbcType="VARCHAR" property="equipmentCategoryName"/>
+    <result column="equipment_category_id" jdbcType="BIGINT" property="equipmentCategoryId"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -58,6 +60,7 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
     ee.equipment_code,ee.equipment_name,ee.equipment_desc,ee.equipment_model,
+    eec.equipment_category_name,eec.equipment_category_id,
     DATEDIFF(NOW(),eeb.create_time) as current_usage_days,
     DATEDIFF(NOW(),eeb.last_time_maintain_time) as current_maintain_usage_days,
     u.user_name as create_user_name,
@@ -65,6 +68,7 @@
     bo.organization_name
     from fantech_imes_v2.eam_equipment_barcode eeb
     left join fantech_imes_v2.eam_equipment ee on eeb.equipment_id=ee.equipment_id
+    left join fantech_imes_v2.eam_equipment_category eec on ee.equipment_category_id=eec.equipment_category_id
     left join ocean_v2.sys_user u on eeb.create_user_id=u.user_id
     left join ocean_v2.sys_user s on eeb.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON eeb.org_id = bo.organization_id
