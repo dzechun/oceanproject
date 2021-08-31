@@ -21,6 +21,14 @@ public class BaseMaterialSupplierDto extends BaseMaterialSupplier implements Ser
     @ApiModelProperty(name="materialCode" ,value="物料编码")
     @Excel(name = "物料编码", height = 20, width = 30,orderNum = "1")
     private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @Transient
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
+
     /**
      * 物料版本
      */

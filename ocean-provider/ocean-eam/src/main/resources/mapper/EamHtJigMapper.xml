@@ -110,7 +110,7 @@
     left join fantech_imes_v2.base_organization bo ON ehj.org_id = bo.organization_id
     <where>
       <if test="jigCode != null and jigCode!=''">
-        and ehj.jigCode like CONCAT('%', #{jigCode}, '%')
+        and ehj.jig_code like CONCAT('%', #{jigCode}, '%')
       </if>
       <if test="jigName != null and jigName!=''">
         and ehj.jig_name like CONCAT('%', #{jigName}, '%')
