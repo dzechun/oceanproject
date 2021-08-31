@@ -29,7 +29,7 @@ public class SrmPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 装箱汇总明细ID
      */
     @ApiModelProperty(name="packingOrderSummaryDetId",value = "装箱汇总明细ID")
-    @Excel(name = "装箱汇总明细ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "装箱汇总明细ID", height = 20, width = 30,orderNum="")
     @Id
     @Column(name = "packing_order_summary_det_id")
     private Long packingOrderSummaryDetId;

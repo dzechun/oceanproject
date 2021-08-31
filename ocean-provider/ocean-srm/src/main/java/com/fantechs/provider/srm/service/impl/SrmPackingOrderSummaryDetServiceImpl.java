@@ -181,7 +181,7 @@ public class SrmPackingOrderSummaryDetServiceImpl extends BaseService<SrmPacking
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SrmPackingOrderSummaryDetImport> srmPackingOrderSummaryDetImports) {
+    public Map<String, Object> importExcel(List<SrmPackingOrderSummaryDetImport> srmPackingOrderSummaryDetImports,Long packingOrderSummaryId) {
         SysUser user = getUser();
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
@@ -196,7 +196,7 @@ public class SrmPackingOrderSummaryDetServiceImpl extends BaseService<SrmPacking
             if (StringUtils.isEmpty(
                     cartonCode,supplierName
             )){
-                fail.add(i+4);
+                fail.add(i+2);
                 continue;
             }
 
@@ -210,17 +210,11 @@ public class SrmPackingOrderSummaryDetServiceImpl extends BaseService<SrmPacking
             if(StringUtils.isNotEmpty(baseSuppliers.getData())) {
                 dto.setSupplierId(baseSuppliers.getData().get(0).getSupplierId());
             }else {
-                fail.add(i+4);
+                fail.add(i+2);
                 continue;
             }
 
-            SrmPackingOrderSummary srmPackingOrderSummary = getSrmPackingOrderSummary(user.getOrganizationId(), cartonCode);
-            if(StringUtils.isNotEmpty(srmPackingOrderSummary)){
-                dto.setPackingOrderSummaryId(srmPackingOrderSummary.getPackingOrderSummaryId());
-            }else{
-                fail.add(i+4);
-                continue;
-            }
+            dto.setPackingOrderSummaryId(packingOrderSummaryId);
 
             dto.setCreateTime(new Date());
             dto.setCreateUserId(user.getUserId());

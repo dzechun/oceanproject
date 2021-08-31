@@ -153,7 +153,7 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SrmPackingOrderSummaryImport> srmPackingOrderSummaryImports) {
+    public Map<String, Object> importExcel(List<SrmPackingOrderSummaryImport> srmPackingOrderSummaryImports,Long packingOrderId) {
         SysUser user = getUser();
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
@@ -165,11 +165,11 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
 
             String cartonCode = srmPackingOrderSummaryImport.getCartonCode();
             String supplierName = srmPackingOrderSummaryImport.getSupplierName();
-            String packingOrderCode = srmPackingOrderSummaryImport.getPackingOrderCode();
+
             if (StringUtils.isEmpty(
-                    cartonCode,supplierName,packingOrderCode
+                    cartonCode,supplierName
             )){
-                fail.add(i+4);
+                fail.add(i+2);
                 continue;
             }
 
@@ -183,7 +183,7 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
                 }
             }
             if (tag){
-                fail.add(i+4);
+                fail.add(i+2);
                 continue;
             }
 
@@ -198,18 +198,12 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
             if(StringUtils.isNotEmpty(baseSuppliers.getData())) {
                 dto.setSupplierId(baseSuppliers.getData().get(0).getSupplierId());
             }else {
-                fail.add(i+4);
+                fail.add(i+2);
                 continue;
             }
 
-
-            SrmPackingOrder srmPackingOrder = getSrmPackingOrder(user.getOrganizationId(), packingOrderCode,null);
-            if(StringUtils.isNotEmpty(srmPackingOrder)){
-                dto.setPackingOrderId(srmPackingOrder.getPackingOrderId());
-            }else{
-                fail.add(i+4);
-                continue;
-            }
+            //装箱单id
+            dto.setPackingOrderId(packingOrderId);
 
             //判断编码是否重复
             Example example = new Example(SrmPackingOrderSummary.class);
@@ -218,7 +212,7 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
             criteria.andEqualTo("cartonCode",cartonCode);
             criteria.andEqualTo("packingOrderId",dto.getPackingOrderId());
             if (StringUtils.isNotEmpty(srmPackingOrderSummaryMapper.selectOneByExample(example))){
-                fail.add(i+4);
+                fail.add(i+2);
                 continue;
             }
 
