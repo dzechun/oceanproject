@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchPtlJobOrderDet extends BaseQuery implements Serializable {
@@ -50,4 +51,7 @@ public class SearchPtlJobOrderDet extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="orgId",value = "组织id")
     private Long orgId;
+
+    @ApiModelProperty(name="jobOrderIdList",value = "作业单ID列表")
+    private List<Long> jobOrderIdList;
 }

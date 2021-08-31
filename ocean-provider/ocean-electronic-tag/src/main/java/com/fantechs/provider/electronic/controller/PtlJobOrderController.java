@@ -1,6 +1,7 @@
 package com.fantechs.provider.electronic.controller;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.electronic.dto.PtlJobOrderDetDto;
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDto;
 import com.fantechs.common.base.electronic.entity.PtlJobOrder;
 import com.fantechs.common.base.electronic.entity.search.SearchPtlJobOrder;
@@ -24,7 +25,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -88,10 +91,14 @@ public class PtlJobOrderController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchPtlJobOrder searchPtlJobOrder){
-    List<PtlJobOrderDto> list = ptlJobOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchPtlJobOrder));
+        searchPtlJobOrder.setType(1);
+        Map<String, Object> map = ptlJobOrderService.export(ControllerUtil.dynamicConditionByEntity(searchPtlJobOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "PtlJobOrder信息", PtlJobOrderDto.class, "PtlJobOrder.xls", response);
+        List<Class<?>> clzList = new LinkedList<>();
+        clzList.add(PtlJobOrderDto.class);
+        clzList.add(PtlJobOrderDetDto.class);
+        EasyPoiUtils.exportExcelSheetList(map, clzList, "电子标签作业任务信息.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

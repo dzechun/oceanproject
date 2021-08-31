@@ -15,4 +15,6 @@ public interface PtlJobOrderService extends IService<PtlJobOrder> {
     List<PtlJobOrderDto> findList(Map<String, Object> map);
 
     int updateByRelatedOrderCode(PtlJobOrder ptlJobOrder) throws Exception;
+
+    Map<String, Object> export(Map<String, Object> map);
 }
