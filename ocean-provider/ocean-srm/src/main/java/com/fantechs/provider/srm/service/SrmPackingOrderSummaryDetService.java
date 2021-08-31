@@ -20,5 +20,5 @@ public interface SrmPackingOrderSummaryDetService extends IService<SrmPackingOrd
 
     int save(SrmPackingOrderSummaryDetDto srmPackingOrderSummaryDetDto);
 
-    Map<String, Object> importExcel(List<SrmPackingOrderSummaryDetImport> srmPackingOrderSummaryDetImports);
+    Map<String, Object> importExcel(List<SrmPackingOrderSummaryDetImport> srmPackingOrderSummaryDetImports,Long packingOrderSummaryId);
 }
