@@ -1018,6 +1018,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             if (StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())) {
                 ws.setWorkStartTime(new Date());
+                ws.setWorkEndtTime(new Date());
             }
             num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
         }

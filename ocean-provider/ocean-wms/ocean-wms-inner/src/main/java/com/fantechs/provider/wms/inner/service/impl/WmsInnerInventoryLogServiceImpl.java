@@ -62,10 +62,18 @@ public class WmsInnerInventoryLogServiceImpl extends BaseService<WmsInnerInvento
         if(StringUtils.isEmpty(record.getInitialQty())){
             record.setInitialQty(BigDecimal.ZERO);
         }
+        if(StringUtils.isEmpty(record.getChangeQty())){
+            record.setChangeQty(BigDecimal.ZERO);
+        }
         if(record.getAddOrSubtract()==1){
+            if(StringUtils.isEmpty(record.getInitialQty())){
+                record.setInitialQty(BigDecimal.ZERO);
+            }
             record.setFinalQty(record.getInitialQty().add(record.getChangeQty()));
         }else{
-            record.setFinalQty(record.getInitialQty().subtract(record.getChangeQty()));
+            if(StringUtils.isNotEmpty(record.getInitialQty())){
+                record.setFinalQty(record.getInitialQty().subtract(record.getChangeQty()));
+            }
         }
 
         return super.save(record);
