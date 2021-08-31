@@ -77,10 +77,10 @@
         and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
       </if>
       <if test="packingOrderCode != null and packingOrderCode!=''">
-        and spo.packing_order_code = #{packingOrderCode}
+        and spo.packing_order_code like CONCAT('%',  #{packingOrderCode}, '%')
       </if>
       <if test="despatchBatch != null and despatchBatch!=''">
-        and spo.despatch_batch = #{despatchBatch}
+        and spo.despatch_batch like CONCAT('%', #{despatchBatch}, '%')
       </if>
       <if test="orderStatus != null and orderStatus!=''">
         and spo.order_status = #{orderStatus}

@@ -188,6 +188,9 @@ public class SrmPackingOrderSummaryDetServiceImpl extends BaseService<SrmPacking
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<SrmPackingOrderSummaryDet> list = new LinkedList<>();
         LinkedList<SrmHtPackingOrderSummaryDet> htList = new LinkedList<>();
+
+        SrmPackingOrderSummary srmPackingOrderSummary = srmPackingOrderSummaryMapper.selectByPrimaryKey(packingOrderSummaryId);
+
         for (int i = 0; i < srmPackingOrderSummaryDetImports.size(); i++) {
             SrmPackingOrderSummaryDetImport srmPackingOrderSummaryDetImport = srmPackingOrderSummaryDetImports.get(i);
 
@@ -196,6 +199,12 @@ public class SrmPackingOrderSummaryDetServiceImpl extends BaseService<SrmPacking
             if (StringUtils.isEmpty(
                     cartonCode,supplierName
             )){
+                fail.add(i+2);
+                continue;
+            }
+
+            //装箱汇总明细的包装箱号需与装箱汇总的包装箱号一致
+            if (!cartonCode.equals(srmPackingOrderSummary.getCartonCode())){
                 fail.add(i+2);
                 continue;
             }

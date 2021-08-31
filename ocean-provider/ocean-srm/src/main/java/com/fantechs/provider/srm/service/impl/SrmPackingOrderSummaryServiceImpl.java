@@ -13,6 +13,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.srm.SrmPackingOrder;
 import com.fantechs.common.base.general.entity.srm.SrmPackingOrderSummary;
+import com.fantechs.common.base.general.entity.srm.SrmPackingOrderSummaryDet;
+import com.fantechs.common.base.general.entity.srm.history.SrmHtPackingOrder;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtPackingOrderSummary;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -21,6 +23,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.srm.mapper.SrmHtPackingOrderSummaryMapper;
 import com.fantechs.provider.srm.mapper.SrmPackingOrderMapper;
+import com.fantechs.provider.srm.mapper.SrmPackingOrderSummaryDetMapper;
 import com.fantechs.provider.srm.mapper.SrmPackingOrderSummaryMapper;
 import com.fantechs.provider.srm.service.SrmPackingOrderSummaryService;
 import org.springframework.beans.BeanUtils;
@@ -46,6 +49,8 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
     private BaseFeignApi baseFeignApi;
     @Resource
     private SrmPackingOrderMapper srmPackingOrderMapper;
+    @Resource
+    private SrmPackingOrderSummaryDetMapper srmPackingOrderSummaryDetMapper;
 
 
     @Override
@@ -149,7 +154,34 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
 
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchDelete(String ids) {
+        SysUser user = getUser();
 
+        List<SrmHtPackingOrderSummary> htList = new ArrayList<>();
+        String[] split = ids.split(",");
+        for (String id : split){
+            SrmPackingOrderSummary srmPackingOrderSummary = srmPackingOrderSummaryMapper.selectByPrimaryKey(id);
+            if (StringUtils.isEmpty(srmPackingOrderSummary)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+
+            //新增履历信息
+            SrmHtPackingOrderSummary srmHtPackingOrderSummary = new SrmHtPackingOrderSummary();
+            BeanUtils.copyProperties(srmPackingOrderSummary, srmHtPackingOrderSummary);
+            htList.add(srmHtPackingOrderSummary);
+
+            Example example = new Example(SrmPackingOrderSummaryDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("packingOrderSummaryId",id);
+            srmPackingOrderSummaryDetMapper.deleteByExample(example);
+        }
+
+        srmHtPackingOrderSummaryMapper.insertList(htList);
+
+        return srmPackingOrderSummaryMapper.deleteByIds(ids);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
