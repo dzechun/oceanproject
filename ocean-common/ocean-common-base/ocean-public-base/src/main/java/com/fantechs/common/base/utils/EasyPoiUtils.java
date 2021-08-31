@@ -143,4 +143,42 @@ public final class EasyPoiUtils {
         workbook.write(response.getOutputStream());
     }
 
+
+
+    /**
+     * 导出多个Sheet
+     * @param map：多个Sheet数据集合
+     * @param clzList：每个Sheet对应的实体类
+     * @param fileName：导出的文件名称
+     * @param response：响应对象
+     */
+    public static<T> void exportExcelSheetList(Map<String, Object> map,List<Class<?>> clzList, String fileName, HttpServletResponse response) throws IOException {
+        Set<String> sheetNames = map.keySet();
+        List<Map<String, Object>> sheetsList = new ArrayList<>();
+
+        int i = 0;
+        for (String sheetName : sheetNames) {
+            ExportParams reportWorkExportParams = new ExportParams();
+            reportWorkExportParams.setSheetName(sheetName);
+            reportWorkExportParams.setTitle(sheetName);
+            // 创建sheet1使用得map
+            Map<String, Object> exportMap = new HashMap<>();
+            // title的参数为ExportParams类型，目前仅仅在ExportParams中设置了sheetName
+            exportMap.put("title", reportWorkExportParams);
+            // 模版导出对应得实体类型
+            exportMap.put("entity", clzList.get(i));
+            // sheet中要填充得数据
+            exportMap.put("data", map.get(sheetName));
+            sheetsList.add(exportMap);
+            i++;
+        }
+
+        // 执行方法
+        Workbook workbook = ExcelExportUtil.exportExcel(sheetsList, ExcelType.HSSF);
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("content-Type", "application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+        workbook.write(response.getOutputStream());
+    }
+
 }
