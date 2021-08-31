@@ -206,10 +206,10 @@ wii.storage_id,
         and wii.job_order_det_id = #{jobOrderDetId}
       </if>
     </where>
-    order by wii.create_time desc
     <if test="isStorage!=null and isStorage!='' and isStorage==1">
-        group by wii.storage_id
+      group by wii.storage_id
     </if>
+    order by wii.create_time desc
   </select>
 
   <update id="batchUpdate" parameterType="java.util.List">
