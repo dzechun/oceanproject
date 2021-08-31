@@ -33,7 +33,7 @@ public class TreeTableUtil {
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             }
-            if (StringUtils.isEmpty(parentId)) {
+            if ("-1".equals(parentId)) {
                 rootNodeList.add(0, t);
             }
         }

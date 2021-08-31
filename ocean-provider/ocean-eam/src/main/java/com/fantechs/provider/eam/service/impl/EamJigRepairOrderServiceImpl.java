@@ -103,6 +103,7 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
         }
 
         record.setJigRepairOrderCode(CodeUtils.getId("ZJWX-"));
+        record.setRequestForRepairTime(new Date());
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
@@ -142,6 +143,7 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        entity.setRepairTime(new Date());
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
         eamJigRepairOrderMapper.updateByPrimaryKeySelective(entity);
@@ -182,6 +184,9 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
      */
     public void updateJigUsageStatus(EamJigRepairOrder entity) {
         if(StringUtils.isNotEmpty(entity.getRepairUserId())) {
+            entity.setOrderStatus((byte)3);
+            eamJigRepairOrderMapper.updateByPrimaryKeySelective(entity);
+
             EamJigBarcode eamJigBarcode = new EamJigBarcode();
             eamJigBarcode.setJigBarcodeId(entity.getJigBarcodeId());
             eamJigBarcode.setUsageStatus((byte) 2);

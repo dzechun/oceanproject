@@ -3,10 +3,7 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamJigDto;
-import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
-import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamJigReturnDto;
+import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.EamJigRequisition;
@@ -87,6 +84,11 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
                 continue;
             }
 
+            if(StringUtils.isEmpty(eamJigReturn.getJigRequisitionId())) {
+                EamJigRequisition eamJigRequisition = getRequisitionRecord(eamJigReturn);
+                eamJigReturn.setJigRequisitionId(eamJigRequisition.getJigRequisitionId());
+            }
+
             eamJigReturn.setCreateUserId(user.getUserId());
             eamJigReturn.setCreateTime(new Date());
             eamJigReturn.setModifiedUserId(user.getUserId());
@@ -113,6 +115,17 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
         }
 
         return eamHtJigReturnMapper.insertList(htList);
+    }
+
+    public EamJigRequisition getRequisitionRecord(EamJigReturn eamJigReturn){
+        SearchEamJigRequisition searchEamJigRequisition = new SearchEamJigRequisition();
+        searchEamJigRequisition.setWorkOrderId(eamJigReturn.getWorkOrderId());
+        searchEamJigRequisition.setJigId(eamJigReturn.getJigId());
+        searchEamJigRequisition.setJigBarcodeId(eamJigReturn.getJigBarcodeId());
+        searchEamJigRequisition.setIfExceptReturn(1);
+        List<EamJigRequisitionDto> list = eamJigRequisitionMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
+
+        return list.get(0);
     }
 
     /**

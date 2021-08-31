@@ -47,7 +47,7 @@
     from fantech_imes_v2.base_ht_supplier_re_user bhsru
     left join ocean_v2.sys_user u on bhsru.create_user_id=u.user_id
     left join ocean_v2.sys_user s on bhsru.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bhsru.org_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bhsru.organization_id = bo.organization_id
     <where>
       <if test="userId != null">
         and bhsru.user_id  = #{userId}

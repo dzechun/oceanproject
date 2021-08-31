@@ -74,6 +74,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             wmsOutDeliveryOrderDto.setTotalPackingQty(packingSum);
             BigDecimal pickingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPickingQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
             wmsOutDeliveryOrderDto.setTotalPickingQty(pickingSum);
+            BigDecimal dispatchQty = list.stream().map(WmsOutDeliveryOrderDetDto::getDispatchQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
+            wmsOutDeliveryOrderDto.setTotalDispatchQty(dispatchQty);
             //修改单据状态
             this.updateOrderStatus(wmsOutDeliveryOrderDto);
         }
@@ -350,6 +352,9 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
         WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
+        if(wmsOutDeliveryOrderDto.getOrderTypeId().equals(1L) && wmsOutDeliveryOrderDto.getAuditStatus() != (byte) 1){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011023, "此销售出库单尚未审核，不允许创建作业单！");
+        }
 
         SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
         searchWmsOutDeliveryOrderDet.setDeliveryOrderId(id);

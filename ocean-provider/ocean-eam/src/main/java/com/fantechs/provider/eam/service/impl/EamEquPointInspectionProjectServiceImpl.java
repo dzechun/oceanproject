@@ -64,6 +64,9 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquPointInspectionProject eamEquPointInspectionProject) {
         SysUser user = getUser();
+
+        codeIfRepeat(eamEquPointInspectionProject);
+
         // 新增点检项目
         eamEquPointInspectionProject.setCreateUserId(user.getUserId());
         eamEquPointInspectionProject.setCreateTime(new Date());
@@ -100,6 +103,9 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquPointInspectionProject eamEquPointInspectionProject) {
         SysUser user = getUser();
+
+        codeIfRepeat(eamEquPointInspectionProject);
+
         // 修改点检项目
         eamEquPointInspectionProject.setModifiedUserId(user.getUserId());
         eamEquPointInspectionProject.setModifiedTime(new Date());

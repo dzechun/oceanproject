@@ -4,19 +4,24 @@ package com.fantechs.provider.base.service.impl;
 import cn.hutool.core.date.DateTime;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaReWDto;
-import com.fantechs.common.base.general.entity.basic.BaseWorker;
-import com.fantechs.common.base.general.entity.basic.BaseWorkingAreaReW;
+import com.fantechs.common.base.general.dto.basic.imports.BaseStaffImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWorkerImport;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtStaff;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorker;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.mapper.BaseHtWorkerMapper;
-import com.fantechs.provider.base.mapper.BaseWorkerMapper;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseHtWorkerService;
 import com.fantechs.provider.base.service.BaseWorkerService;
 import com.fantechs.provider.base.service.BaseWorkingAreaReWService;
@@ -24,9 +29,11 @@ import javafx.beans.binding.ObjectExpression;
 import org.omg.CORBA.Current;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -42,6 +49,14 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
     private BaseHtWorkerService baseHtWorkerService;
     @Resource
     private BaseWorkingAreaReWService baseWorkingAreaReWService;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private BaseWarehouseMapper baseWarehouseMapper;
+    @Resource
+    private BaseWorkingAreaMapper baseWorkingAreaMapper;
+    @Resource
+    private BaseWorkingAreaReWMapper baseWorkingAreaReWMapper;
 
     @Override
     public int saveDto(BaseWorkerDto baseWorkerDto) {
@@ -219,6 +234,118 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
         baseHtWorker.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
         baseHtWorker.setModifiedUserId(currentUserInfo.getUserId());
         baseHtWorkerService.save(baseHtWorker);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseWorkerImport> baseWorkerImports) {
+
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+
+        List<BaseWorkerImport> baseWorkerImportList = new ArrayList<>();//保存合格工作人员数据
+
+        for (int i = 0; i < baseWorkerImports.size(); i++) {
+            BaseWorkerImport baseWorkerImport = baseWorkerImports.get(i);
+            String userCode = baseWorkerImport.getUserCode();
+            String workingAreaCode = baseWorkerImport.getWorkingAreaCode();
+
+
+            //判断必传字段
+            if (StringUtils.isEmpty(
+                    userCode,workingAreaCode
+            )) {
+                fail.add(i + 4);
+                continue;
+            }
+
+
+            //判断用户信息是否存在
+            SearchSysUser searchSysUser = new SearchSysUser();
+            searchSysUser.setUserCode(userCode);
+            List<SysUser> sysUsers = securityFeignApi.selectUsers(searchSysUser).getData();
+            if (StringUtils.isEmpty(sysUsers)){
+                fail.add(i + 4);
+                continue;
+            }
+            baseWorkerImport.setUserId(sysUsers.get(0).getUserId());
+
+
+            if (StringUtils.isNotEmpty(baseWorkerImport.getWarehouseCode())){
+                //判断仓库信息是否存在
+                Example example2 = new Example(BaseWarehouse.class);
+                Example.Criteria criteria2 = example2.createCriteria();
+                criteria2.andEqualTo("organizationId", currentUser.getOrganizationId())
+                         .andEqualTo("warehouseCode",baseWorkerImport.getWarehouseCode());
+                BaseWarehouse baseWarehouse = baseWarehouseMapper.selectOneByExample(example2);
+                if (StringUtils.isEmpty(baseWarehouse)){
+                    fail.add(i + 4);
+                    continue;
+                }
+                baseWorkerImport.setWarehouseId(baseWarehouse.getWarehouseId());
+            }
+
+            //判断工作区信息是否存在
+            Example example1 = new Example(BaseWorkingArea.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId())
+                    .andEqualTo("workingAreaCode",workingAreaCode);
+            BaseWorkingArea baseWorkingArea = baseWorkingAreaMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(baseWorkingArea)){
+                fail.add(i + 4);
+                continue;
+            }
+            baseWorkerImport.setWorkingAreaId(baseWorkingArea.getWorkingAreaId());
+
+            baseWorkerImportList.add(baseWorkerImport);
+        }
+
+        //对合格数据进行分组
+        HashMap<String, List<BaseWorkerImport>> map = baseWorkerImportList.stream().collect(Collectors.groupingBy(BaseWorkerImport::getUserCode, HashMap::new, Collectors.toList()));
+        Set<String> codeList = map.keySet();
+        for (String code : codeList) {
+            List<BaseWorkerImport> baseWorkerImports1 = map.get(code);
+
+            //新增工作人员信息
+            BaseWorker baseWorker = new BaseWorker();
+            org.springframework.beans.BeanUtils.copyProperties(baseWorkerImports1.get(0), baseWorker);
+            baseWorker.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
+            baseWorker.setCreateUserId(currentUser.getUserId());
+            baseWorker.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
+            baseWorker.setModifiedUserId(currentUser.getUserId());
+            baseWorker.setStatus((byte) 1);
+            baseWorker.setOrgId(currentUser.getOrganizationId());
+            baseWorkerMapper.insertUseGeneratedKeys(baseWorker);
+
+            //新增工作人员履历
+            BaseHtWorker baseHtWorker = new BaseHtWorker();
+            org.springframework.beans.BeanUtils.copyProperties(baseWorker, baseHtWorker);
+            baseHtWorkerService.save(baseHtWorker);
+
+            for (BaseWorkerImport baseWorkerImport : baseWorkerImports1) {
+                //新增工作区工作人员关系
+                BaseWorkingAreaReW baseWorkingAreaReW = new BaseWorkingAreaReW();
+                org.springframework.beans.BeanUtils.copyProperties(baseWorkerImport,baseWorkingAreaReW);
+                baseWorkingAreaReW.setWorkerId(baseWorker.getWorkerId());
+                baseWorkingAreaReW.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
+                baseWorkingAreaReW.setCreateUserId(currentUser.getUserId());
+                baseWorkingAreaReW.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
+                baseWorkingAreaReW.setModifiedUserId(currentUser.getUserId());
+                baseWorkingAreaReW.setStatus((byte) 1);
+                baseWorkingAreaReW.setOrgId(currentUser.getOrganizationId());
+                success += baseWorkingAreaReWMapper.insertSelective(baseWorkingAreaReW);
+            }
+        }
+
+        resultMap.put("操作成功总数", success);
+        resultMap.put("操作失败行", fail);
+        return resultMap;
     }
 
 }

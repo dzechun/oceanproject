@@ -99,6 +99,7 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
         }
 
         record.setEquipmentRepairOrderCode(CodeUtils.getId("SBWX-"));
+        record.setRequestForRepairTime(new Date());
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
@@ -138,6 +139,7 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        entity.setRepairTime(new Date());
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
         eamEquipmentRepairOrderMapper.updateByPrimaryKeySelective(entity);
@@ -178,6 +180,9 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
      */
     public void updateEquipmentStatus(EamEquipmentRepairOrderDto entity) {
         if(StringUtils.isNotEmpty(entity.getRepairUserId())) {
+            entity.setOrderStatus((byte)3);
+            eamEquipmentRepairOrderMapper.updateByPrimaryKeySelective(entity);
+
             EamEquipmentBarcode eamEquipmentBarcode = new EamEquipmentBarcode();
             eamEquipmentBarcode.setEquipmentBarcodeId(entity.getEquipmentBarcodeId());
             eamEquipmentBarcode.setEquipmentStatus((byte) 5);

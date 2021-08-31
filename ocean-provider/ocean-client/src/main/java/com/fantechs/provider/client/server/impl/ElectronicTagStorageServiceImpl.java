@@ -296,12 +296,25 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         List<PtlJobOrderDet> list = new LinkedList<>();
         List<RabbitMQDTO> rabbitMQDTOList = new LinkedList<>();
         List<Long> clientIdList = new LinkedList<>();
+        List<String> cancelRelatedOrderList = new LinkedList<>();
         for (PtlJobOrderDTO ptlJobOrderDTO : ptlJobOrderDTOList) {
+            if (cancelRelatedOrderList.contains(ptlJobOrderDTO.getCustomerNo())) {
+                continue;
+            }
             SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
             searchPtlJobOrder.setJobOrderCode(ptlJobOrderDTO.getTaskNo());
             searchPtlJobOrder.setType(1);
             List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
             if (StringUtils.isNotEmpty(ptlJobOrderDtoList)) {
+                List<String> cancelJobOrderList = new LinkedList<>();
+                for (PtlJobOrderDto ptlJobOrderDto : ptlJobOrderDtoList) {
+                    if (ptlJobOrderDto.getOrderStatus() == 5 && ptlJobOrderDto.getPickBackStatus() == 0) {
+                        cancelJobOrderList.add(ptlJobOrderDto.getJobOrderCode());
+                        if (!cancelRelatedOrderList.contains(ptlJobOrderDTO.getCustomerNo())) {
+                            cancelRelatedOrderList.add(ptlJobOrderDTO.getCustomerNo());
+                        }
+                    }
+                }
                 continue;
 //                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "重复分拣单");
             }
@@ -443,7 +456,11 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
         ResponseEntityDTO responseEntityDTO = new ResponseEntityDTO();
         responseEntityDTO.setCode(ptlJobOrderDTOList.get(0).getCustomerNo());
-        responseEntityDTO.setMessage("保存成功");
+        if (cancelRelatedOrderList.isEmpty()) {
+            responseEntityDTO.setMessage("保存成功");
+        } else {
+            responseEntityDTO.setMessage("拣货单：" + cancelRelatedOrderList.toString() + "已取消，但存在未退拣任务，请先进行退拣后再下发该单据。其他单据已正常接收完成！");
+        }
         responseEntityDTO.setSuccess("s");
 
         return responseEntityDTO;
@@ -658,102 +675,91 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
         String[] jobOrderIds = ids.split(",");
         List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = new LinkedList<>();
-        String queueName = RabbitConfig.TOPIC_QUEUE_PRINT;
-        for (String jobOrderId : jobOrderIds) {
-            PtlJobOrder ptlJobOrder = electronicTagFeignApi.ptlJobOrderDetail(Long.valueOf(jobOrderId)).getData();
+
+        SearchPtlJobOrderDet searchPtlJobOrderDet1 = new SearchPtlJobOrderDet();
+        searchPtlJobOrderDet1.setJobOrderId(Long.valueOf(jobOrderIds[0]));
+        List<PtlJobOrderDetDto> ptlJobOrderDetDtoList1 = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet1).getData();
+        String lockKey = ptlJobOrderDetDtoList1.get(0).getWarehouseAreaCode() + "_lock";
+        String lockValue = "";
+        try {
+            if (redisUtil.lock(lockKey)) {
+                lockValue = String.valueOf(redisUtil.get(lockKey));
+                log.info("=====================获取到:" + lockKey + "--->redisKEY, " + lockValue + "--->redisVALUE");
+            } else {
+                throw new Exception("正在处理电子标签任务，请稍后再试！");
+            }
+            String queueName = RabbitConfig.TOPIC_QUEUE_PRINT;
+            for (String jobOrderId : jobOrderIds) {
+                PtlJobOrder ptlJobOrder = electronicTagFeignApi.ptlJobOrderDetail(Long.valueOf(jobOrderId)).getData();
 //        if (ptlJobOrder.getIfAlreadyPrint() == 1) {
 //            throw new Exception("该任务单已打印过标签，请不要重复操作");
 //        }
-            String vehicleCode = "";
-            if (StringUtils.isNotEmpty(ptlJobOrder.getVehicleId())) {
-                TemVehicle temVehicle = temVehicleFeignApi.detail(ptlJobOrder.getVehicleId()).getData();
-                vehicleCode = temVehicle.getVehicleCode();
-            } else if (StringUtils.isNotEmpty(redisUtil.get(ptlJobOrder.getRelatedOrderCode()))) {
-                vehicleCode = redisUtil.get(ptlJobOrder.getRelatedOrderCode()).toString();
-            }
-            if (StringUtils.isEmpty(vehicleCode)) {
-                SearchTemVehicle searchTemVehicle = new SearchTemVehicle();
-                searchTemVehicle.setVehicleStatus((byte) 1);
-                searchTemVehicle.setStartPage(1);
-                searchTemVehicle.setPageSize(9999);
-                List<TemVehicleDto> temVehicleDtoList = temVehicleFeignApi.findList(searchTemVehicle).getData();
-                for (TemVehicleDto temVehicleDto : temVehicleDtoList) {
-                    if (StringUtils.isNotEmpty(redisUtil.get(temVehicleDto.getVehicleCode() + "_count"))) {
-                        temVehicleDto.setCount(Long.valueOf(redisUtil.get(temVehicleDto.getVehicleCode() + "_count").toString()));
-                    } else {
-                        temVehicleDto.setCount(Long.valueOf(0));
+                String vehicleCode = "";
+                if (StringUtils.isNotEmpty(ptlJobOrder.getVehicleId())) {
+                    TemVehicle temVehicle = temVehicleFeignApi.detail(ptlJobOrder.getVehicleId()).getData();
+                    vehicleCode = temVehicle.getVehicleCode();
+                } else if (StringUtils.isNotEmpty(redisUtil.get(ptlJobOrder.getRelatedOrderCode()))) {
+                    vehicleCode = redisUtil.get(ptlJobOrder.getRelatedOrderCode()).toString();
+                }
+                if (StringUtils.isEmpty(vehicleCode)) {
+                    SearchTemVehicle searchTemVehicle = new SearchTemVehicle();
+                    searchTemVehicle.setVehicleStatus((byte) 1);
+                    searchTemVehicle.setStartPage(1);
+                    searchTemVehicle.setPageSize(9999);
+                    List<TemVehicleDto> temVehicleDtoList = temVehicleFeignApi.findList(searchTemVehicle).getData();
+                    for (TemVehicleDto temVehicleDto : temVehicleDtoList) {
+                        if (StringUtils.isNotEmpty(redisUtil.get(temVehicleDto.getVehicleCode() + "_count"))) {
+                            temVehicleDto.setCount(Long.valueOf(redisUtil.get(temVehicleDto.getVehicleCode() + "_count").toString()));
+                        } else {
+                            temVehicleDto.setCount(Long.valueOf(0));
+                        }
+                    }
+                    temVehicleDtoList.sort(Comparator.comparing(TemVehicleDto::getCount));
+                    for (TemVehicleDto temVehicleDto : temVehicleDtoList) {
+                        if (!"JH-FAST".equals(temVehicleDto.getVehicleCode()) && StringUtils.isEmpty(redisUtil.get(temVehicleDto.getVehicleCode()))) {
+                            vehicleCode = temVehicleDto.getVehicleCode();
+                            redisUtil.set(temVehicleDto.getVehicleCode(), 1, 5);
+                            log.info("开始打印，redis锁定集货位：" + vehicleCode);
+                            redisUtil.set(ptlJobOrder.getRelatedOrderCode(), temVehicleDto.getVehicleCode(), 5);
+                            log.info("开始打印，redis锁定拣货单：" + ptlJobOrder.getRelatedOrderCode());
+
+                            TemVehicle temVehicle = new TemVehicle();
+                            temVehicle.setVehicleId(temVehicleDto.getVehicleId());
+                            temVehicle.setVehicleStatus((byte) 3);
+                            temVehicle.setModifiedTime(new Date());
+                            temVehicle.setModifiedUserId(currentUser.getUserId());
+                            temVehicleFeignApi.update(temVehicle);
+
+                            PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
+                            ptlJobOrderUpdate.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
+                            ptlJobOrderUpdate.setVehicleId(temVehicleDto.getVehicleId());
+                            ptlJobOrderUpdate.setModifiedTime(new Date());
+                            ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
+                            electronicTagFeignApi.updateByRelatedOrderCode(ptlJobOrderUpdate);
+                            break;
+                        }
+                    }
+                    if (StringUtils.isEmpty(temVehicleDtoList, vehicleCode)) {
+                        throw new Exception("空闲集货位不足，请稍后再操作");
                     }
                 }
-                temVehicleDtoList.sort(Comparator.comparing(TemVehicleDto::getCount));
-                for (TemVehicleDto temVehicleDto : temVehicleDtoList) {
-                    if (!"JH-FAST".equals(temVehicleDto.getVehicleCode()) && StringUtils.isEmpty(redisUtil.get(temVehicleDto.getVehicleCode()))) {
-                        vehicleCode = temVehicleDto.getVehicleCode();
-                        redisUtil.set(temVehicleDto.getVehicleCode(), 1, 5);
-                        log.info("开始打印，redis锁定集货位：" + vehicleCode);
-                        redisUtil.set(ptlJobOrder.getRelatedOrderCode(), temVehicleDto.getVehicleCode(), 5);
-                        log.info("开始打印，redis锁定拣货单：" + ptlJobOrder.getRelatedOrderCode());
-
-                        TemVehicle temVehicle = new TemVehicle();
-                        temVehicle.setVehicleId(temVehicleDto.getVehicleId());
-                        temVehicle.setVehicleStatus((byte) 3);
-                        temVehicle.setModifiedTime(new Date());
-                        temVehicle.setModifiedUserId(currentUser.getUserId());
-                        temVehicleFeignApi.update(temVehicle);
-
-                        PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
-                        ptlJobOrderUpdate.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
-                        ptlJobOrderUpdate.setVehicleId(temVehicleDto.getVehicleId());
-                        ptlJobOrderUpdate.setModifiedTime(new Date());
-                        ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
-                        electronicTagFeignApi.updateByRelatedOrderCode(ptlJobOrderUpdate);
-                        break;
-                    }
-                }
-                if (StringUtils.isEmpty(temVehicleDtoList, vehicleCode)) {
-                    throw new Exception("空闲集货位不足，请稍后再操作");
-                }
-            }
-            SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
-            searchPtlJobOrderDet.setJobOrderId(Long.valueOf(jobOrderId));
-            searchPtlJobOrderDet.setStartPage(1);
-            searchPtlJobOrderDet.setPageSize(9999);
-            List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
-            Boolean scatteredBoolean = true;
-            for (PtlJobOrderDetDto ptlJobOrderDetDto : ptlJobOrderDetDtoList) {
-                queueName = ptlJobOrderDetDto.getQueueName() + ".print";
-                if (ptlJobOrderDetDto.getWholeOrScattered() == 1) {
+                SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
+                searchPtlJobOrderDet.setJobOrderId(Long.valueOf(jobOrderId));
+                searchPtlJobOrderDet.setStartPage(1);
+                searchPtlJobOrderDet.setPageSize(9999);
+                List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
+                Boolean scatteredBoolean = true;
+                for (PtlJobOrderDetDto ptlJobOrderDetDto : ptlJobOrderDetDtoList) {
+                    queueName = ptlJobOrderDetDto.getQueueName() + ".print";
+                    if (ptlJobOrderDetDto.getWholeOrScattered() == 1) {
 
 //                int i = 1;
 //                int cartonNum = ptlJobOrderDetDto.getWholeQty().intValue();
 //                while (cartonNum > 0) {
-                    PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
-                    ptlJobOrderDetPrintDTO.setJobOrderId(ptlJobOrderDetDto.getJobOrderId());
-                    ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getRelatedOrderCode());
-//                    ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
-                    ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
-                    ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
-                    ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
-                    ptlJobOrderDetPrintDTO.setSpec(ptlJobOrderDetDto.getSpec());
-                    ptlJobOrderDetPrintDTO.setWarehouseAreaCode(ptlJobOrderDetDto.getWarehouseAreaCode());
-                    ptlJobOrderDetPrintDTO.setStorageCode(ptlJobOrderDetDto.getStorageCode());
-                    ptlJobOrderDetPrintDTO.setWorkerUserName(sysUser.getNickName());
-                    ptlJobOrderDetPrintDTO.setWholeOrScattered(ptlJobOrderDetDto.getWholeOrScattered());
-//                    ptlJobOrderDetPrintDTO.setCartonCode(i + "-" + ptlJobOrderDetDto.getWholeQty().intValue());
-                    ptlJobOrderDetPrintDTO.setCartonCode(" ");
-                    ptlJobOrderDetPrintDTO.setVehicleCode(vehicleCode + "(" + ptlJobOrder.getRemark() + ")");
-                    ptlJobOrderDetPrintDTO.setQueueName(queueName);
-                    ptlJobOrderDetPrintDTOList.add(ptlJobOrderDetPrintDTO);
-
-//                    cartonNum--;
-//                    i++;
-//                }
-                }
-                if (scatteredBoolean && StringUtils.isNotEmpty(ptlJobOrderDetDto.getScatteredQty())) {
-                    if (ptlJobOrderDetDto.getScatteredQty().compareTo(BigDecimal.ZERO) == 1) {
                         PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
                         ptlJobOrderDetPrintDTO.setJobOrderId(ptlJobOrderDetDto.getJobOrderId());
                         ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getRelatedOrderCode());
-//                        ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
+//                    ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
                         ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
                         ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
                         ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
@@ -761,35 +767,65 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                         ptlJobOrderDetPrintDTO.setWarehouseAreaCode(ptlJobOrderDetDto.getWarehouseAreaCode());
                         ptlJobOrderDetPrintDTO.setStorageCode(ptlJobOrderDetDto.getStorageCode());
                         ptlJobOrderDetPrintDTO.setWorkerUserName(sysUser.getNickName());
-                        ptlJobOrderDetPrintDTO.setWholeOrScattered((byte) 0);
+                        ptlJobOrderDetPrintDTO.setWholeOrScattered(ptlJobOrderDetDto.getWholeOrScattered());
+//                    ptlJobOrderDetPrintDTO.setCartonCode(i + "-" + ptlJobOrderDetDto.getWholeQty().intValue());
+                        ptlJobOrderDetPrintDTO.setCartonCode(" ");
                         ptlJobOrderDetPrintDTO.setVehicleCode(vehicleCode + "(" + ptlJobOrder.getRemark() + ")");
                         ptlJobOrderDetPrintDTO.setQueueName(queueName);
                         ptlJobOrderDetPrintDTOList.add(ptlJobOrderDetPrintDTO);
 
-                        scatteredBoolean = false;
+//                    cartonNum--;
+//                    i++;
+//                }
+                    }
+                    if (scatteredBoolean && StringUtils.isNotEmpty(ptlJobOrderDetDto.getScatteredQty())) {
+                        if (ptlJobOrderDetDto.getScatteredQty().compareTo(BigDecimal.ZERO) == 1) {
+                            PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
+                            ptlJobOrderDetPrintDTO.setJobOrderId(ptlJobOrderDetDto.getJobOrderId());
+                            ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getRelatedOrderCode());
+//                        ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
+                            ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
+                            ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
+                            ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
+                            ptlJobOrderDetPrintDTO.setSpec(ptlJobOrderDetDto.getSpec());
+                            ptlJobOrderDetPrintDTO.setWarehouseAreaCode(ptlJobOrderDetDto.getWarehouseAreaCode());
+                            ptlJobOrderDetPrintDTO.setStorageCode(ptlJobOrderDetDto.getStorageCode());
+                            ptlJobOrderDetPrintDTO.setWorkerUserName(sysUser.getNickName());
+                            ptlJobOrderDetPrintDTO.setWholeOrScattered((byte) 0);
+                            ptlJobOrderDetPrintDTO.setVehicleCode(vehicleCode + "(" + ptlJobOrder.getRemark() + ")");
+                            ptlJobOrderDetPrintDTO.setQueueName(queueName);
+                            ptlJobOrderDetPrintDTOList.add(ptlJobOrderDetPrintDTO);
+
+                            scatteredBoolean = false;
+                        }
                     }
                 }
+
+                PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
+                ptlJobOrderUpdate.setJobOrderId(ptlJobOrder.getJobOrderId());
+                ptlJobOrderUpdate.setIfAlreadyPrint((byte) 1);
+                ptlJobOrderUpdate.setWorkerUserId(workUserId);
+                ptlJobOrderUpdate.setWorkerUserName(sysUser.getNickName());
+                ptlJobOrderUpdate.setModifiedTime(new Date());
+                ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
+                electronicTagFeignApi.updatePtlJobOrder(ptlJobOrderUpdate);
             }
 
-            PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
-            ptlJobOrderUpdate.setJobOrderId(ptlJobOrder.getJobOrderId());
-            ptlJobOrderUpdate.setIfAlreadyPrint((byte) 1);
-            ptlJobOrderUpdate.setWorkerUserId(workUserId);
-            ptlJobOrderUpdate.setWorkerUserName(sysUser.getNickName());
-            ptlJobOrderUpdate.setModifiedTime(new Date());
-            ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
-            electronicTagFeignApi.updatePtlJobOrder(ptlJobOrderUpdate);
-        }
-
-        if (type == 0) {
-            MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
-            mQResponseEntity.setCode(1101);
-            mQResponseEntity.setData(ptlJobOrderDetPrintDTOList);
-            log.info("===========开始发送消息给打印客户端===============");
-            fanoutSender.send(queueName, JSONObject.toJSONString(mQResponseEntity));
-            log.info("===========队列名称:" + queueName);
-            log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
-            log.info("===========发送消息给打印客户端打印整、零标签完成===============");
+            if (type == 0) {
+                MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
+                mQResponseEntity.setCode(1101);
+                mQResponseEntity.setData(ptlJobOrderDetPrintDTOList);
+                log.info("===========开始发送消息给打印客户端===============");
+                fanoutSender.send(queueName, JSONObject.toJSONString(mQResponseEntity));
+                log.info("===========队列名称:" + queueName);
+                log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
+                log.info("===========发送消息给打印客户端打印整、零标签完成===============");
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            redisUtil.unlock(lockKey, lockValue);
+            log.info("=====================释放了:" + lockKey + "--->redisKEY");
         }
 
         return ptlJobOrderDetPrintDTOList;

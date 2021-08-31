@@ -11,6 +11,7 @@ spring:
 #    username: ptl
 #    password: hZoBFfwGfV2r0kh1
     url: jdbc:mysql://10.10.20.69:3306/fantech_imes_v2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+#    url: jdbc:mysql://10.10.20.169:3306/fantech_imes_v2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
     username: root
     password: bama123.
     type: com.alibaba.druid.pool.DruidDataSource
@@ -32,6 +33,7 @@ spring:
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
   redis:
     host: 10.10.20.62
+#    host: 10.10.20.162
 #    host: 10.10.200.33
     port: 6379
     password: 'qwe!@#'

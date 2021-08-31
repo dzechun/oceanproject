@@ -787,16 +787,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 }
                 //新增库存明细
                 res = this.addInventoryDet(palletAutoAsnDto.getBarCodeList(),wmsInAsnOrder.getAsnCode(),wmsInAsnOrderDet);
-
-                //手动提交事务
-                dataSourceTransactionManager.commit(transactionStatus);
-
-                //新增上级作业单
-                res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
                 //设置新redis 时效为24小时
                 redisUtil.set("pallet_id",wmsInAsnOrder.getAsnOrderId());
                 redisUtil.expire("pallet_id",getRemainSecondsOneDay(new Date()));
-
+                //手动提交事务
+                dataSourceTransactionManager.commit(transactionStatus);
+                //新增上级作业单
+                res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
                 return 1;
             }
         }catch (Exception e){
@@ -975,7 +972,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         for (WmsInAsnOrderDet wmsInAsnOrderDet : wmsInAsnOrder.getWmsInAsnOrderDetList()) {
             WmsInHtAsnOrderDet wmsInHtAsnOrderDet = new WmsInHtAsnOrderDet();
             BeanUtil.copyProperties(wmsInAsnOrderDet,wmsInHtAsnOrderDet);
-            wmsInHtAsnOrderDet.setHtAsnOrderDetId(wmsInHtAsnOrder.getHtAsnOrderId());
             wmsInHtAsnOrderDetMapper.insertSelective(wmsInHtAsnOrderDet);
         }
     }

@@ -28,14 +28,15 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-
     <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode"/>
     <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
     <result column="equipment_desc" jdbcType="VARCHAR" property="equipmentDesc"/>
     <result column="equipment_model" jdbcType="VARCHAR" property="equipmentModel"/>
-    <result column="property_code_category" jdbcType="VARCHAR" property="propertyCodeCategory"/>
-    <result column="equipment_category_desc" jdbcType="VARCHAR" property="equipmentCategoryDesc"/>
-
+    <result column="equipment_category_name" jdbcType="VARCHAR" property="equipmentCategoryName"/>
+      <result column="asset_code" jdbcType="VARCHAR" property="assetCode"/>
+      <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+      <result column="equipment_status" jdbcType="VARCHAR" property="equipmentStatus"/>
+      <result column="equipment_barcode" jdbcType="VARCHAR" property="equipmentBarcode"/>
     <collection property="eamEquipmentStandingBookAttachments" ofType="com.fantechs.common.base.general.entity.eam.EamEquipmentStandingBookAttachment"
                 column="{equipmentStandingBookId=equipment_standing_book_id}" select="com.fantechs.provider.eam.mapper.EamEquipmentStandingBookAttachmentMapper.findList">
     </collection>
@@ -62,11 +63,16 @@
     </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
-
     SELECT<include refid="BaseColumnList"/>,
+    eeb.asset_code,eeb.equipment_status,ee.equipment_code,ee.equipment_name,ee.equipment_desc,ee.equipment_model,
+    eec.equipment_category_name,eeb.equipment_barcode,bd.dept_name,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,bo.organization_name AS organization_name
     FROM eam_equipment_standing_book eesb
+    left join fantech_imes_v2.eam_equipment_barcode eeb on eesb.equipment_barcode_id=eeb.equipment_barcode_id
+    left join fantech_imes_v2.eam_equipment ee on eeb.equipment_id=ee.equipment_id
+    left join fantech_imes_v2.eam_equipment_category eec on ee.equipment_category_id=eec.equipment_category_id
+    left join fantech_imes_v2.base_dept bd on eesb.dept_id=bd.dept_id
     LEFT JOIN ocean_v2.sys_user su ON eesb.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON eesb.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON eesb.org_id = bo.organization_id
@@ -75,13 +81,19 @@
         and eesb.org_id = #{orgId}
       </if>
       <if test="equipmentCode!=null and equipmentCode!=''">
-        and eesb.equipment_code = #{equipmentCode}
+        and ee.equipment_code like CONCAT('%', #{equipmentCode}, '%')
       </if>
       <if test="equipmentName!=null and equipmentName!=''">
-        and eesb.equipment_name = #{equipmentName}
+        and ee.equipment_name  like CONCAT('%', #{equipmentName}, '%')
       </if>
-
+        <if test="assetCode!=null and assetCode!=''">
+            and eeb.asset_code  like CONCAT('%', #{assetCode}, '%')
+        </if>
+        <if test="equipmentBarcode!=null and equipmentBarcode!=''">
+            and eeb.equipment_barcode  like CONCAT('%', #{equipmentBarcode}, '%')
+        </if>
     </where>
+      order by eesb.create_time desc
   </select>
 
 </mapper>
