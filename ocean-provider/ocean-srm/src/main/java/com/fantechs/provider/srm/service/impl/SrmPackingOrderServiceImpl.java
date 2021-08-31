@@ -14,6 +14,7 @@ import com.fantechs.provider.srm.mapper.SrmPackingOrderMapper;
 import com.fantechs.provider.srm.service.SrmPackingOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -40,7 +41,8 @@ public class SrmPackingOrderServiceImpl extends BaseService<SrmPackingOrder> imp
     }
 
 
-
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(SrmPackingOrder srmPackingOrder) {
         SysUser user = getUser();
         srmPackingOrder.setCreateTime(new Date());

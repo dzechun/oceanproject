@@ -18,12 +18,12 @@ import java.util.Date;
 
 /**
  * 装箱汇总明细
- * srm_packing_order_summary_det
+ * eng_packing_order_summary_det
  * @author 81947
  * @date 2021-08-27 09:05:45
  */
 @Data
-@Table(name = "srm_packing_order_summary_det")
+@Table(name = "eng_packing_order_summary_det")
 public class SrmPackingOrderSummaryDet extends ValidGroup implements Serializable {
     /**
      * 装箱汇总明细ID
