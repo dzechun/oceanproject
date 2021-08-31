@@ -4,7 +4,6 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -117,5 +116,12 @@ public class SrmPackingOrderSummaryImport implements Serializable {
     @ApiModelProperty(name="packingOrderCode",value = "装箱单号")
     @Excel(name = "装箱单号", height = 20, width = 30)
     private String packingOrderCode;
+
+    /**
+     * 包装方式
+     */
+    @ApiModelProperty(name="packingType",value = "包装方式")
+    @Excel(name = "包装方式", height = 20, width = 30,orderNum="8")
+    private String packingType;
 
 }
