@@ -79,6 +79,7 @@ public class EamJig extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="jigCategoryId",value = "治具类别ID")
     @Column(name = "jig_category_id")
+    @NotNull(message = "治具类别不能为空")
     private Long jigCategoryId;
 
     /**

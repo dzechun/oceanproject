@@ -62,7 +62,7 @@
     select <include refid="Base_Column_List"></include>,
     su.user_name as audit_user_name,u.user_name as create_user_name,
     s.user_name as modified_user_name,bo.organization_name
-    from srm_ht_packing_order shpo
+    from eng_ht_packing_order shpo
     left join ocean_v2.sys_user su on shpo.audit_user_id=su.user_id
     left join ocean_v2.sys_user u on shpo.create_user_id=u.user_id
     left join ocean_v2.sys_user s on shpo.modified_user_id=s.user_id
