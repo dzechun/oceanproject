@@ -56,6 +56,7 @@ public class SapCustomerApiServiceImpl implements SapCustomerApiService {
                 baseSupplier.setStatus((byte)1);
                 baseSupplier.setSupplierType((byte)2);
                 baseSupplier.setOrganizationId(orgId);
+                baseSupplier.setIsDelete((byte)1);
                 baseFeignApi.saveByApi(baseSupplier);
             }
             logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());

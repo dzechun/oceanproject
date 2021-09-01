@@ -81,6 +81,8 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                      subBomDet.setProductBomId(parentBomData.getProductBomId());
                      subBomDet.setMaterialId(baseMaterial.getMaterialId());
                      subBomDet.setIfHaveLowerLevel((byte)1);
+                     subBomDet.setIsDelete((byte)1);
+                     subBomDet.setStatus((byte)1);
                      baseFeignApi.addOrUpdate(subBomDet);
                  }
                 if(StringUtils.isEmpty(bomData))  throw new BizErrorException("保存失败");
@@ -94,6 +96,8 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                         baseProductBomDet.setBaseQty(new BigDecimal(bom.getBMENG().trim()));
                         baseProductBomDet.setRemark(bom.getMAKTXZ());
                         baseProductBomDet.setIfHaveLowerLevel((byte)0);
+                        baseProductBomDet.setIsDelete((byte)1);
+                        baseProductBomDet.setStatus((byte)1);
                         baseFeignApi.addOrUpdate(baseProductBomDet);
                     }
                 }

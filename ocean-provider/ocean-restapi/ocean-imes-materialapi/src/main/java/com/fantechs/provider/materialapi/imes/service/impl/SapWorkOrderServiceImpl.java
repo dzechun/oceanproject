@@ -74,6 +74,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 //目前还未同步产线
                 //mesPmWorkOrder.setProLineId(getProLine(restapiWorkOrderApiDto.getFEVOR()));
                 mesPmWorkOrder.setOrgId(orgId);
+                mesPmWorkOrder.setIsDelete((byte)1);
                 ResponseEntity<MesPmWorkOrder> mesPmWorkOrderResponseEntity = pmFeignApi.saveByApi(mesPmWorkOrder);
                 orderMap.put(restapiWorkOrderApiDto.getAUFNR(),mesPmWorkOrderResponseEntity.getData().getWorkOrderId());
             }
@@ -88,6 +89,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 bom.setWorkOrderId(orderMap.get(restapiWorkOrderApiDto.getAUFNR()));
                 bom.setPartMaterialId(baseUtils.getBaseMaterial(restapiWorkOrderApiDto.getZJMATNR()).getMaterialId());
                 bom.setOrgId(orgId);
+                bom.setIsDelete((byte)1);
                 mesPmWorkOrderBomList.add(bom);
                 bomMap.put(restapiWorkOrderApiDto.getRSPOS(),restapiWorkOrderApiDto.getZJMATNR());
             }
