@@ -52,6 +52,9 @@
       <if test="barcodeRuleId!=null and barcodeRuleId!=''">
         and sbr.barcode_rule_id = #{barcodeRuleId}
       </if>
+      <if test="labelCategoryId!=null and labelCategoryId!=''">
+        and sbr.barcode_rule_category_id = #{labelCategoryId}
+      </if>
       <if test="barcodeRuleName!=null and barcodeRuleName!=''">
         and sbr.barcode_rule_name like CONCAT('%', #{barcodeRuleName}, '%')
       </if>
