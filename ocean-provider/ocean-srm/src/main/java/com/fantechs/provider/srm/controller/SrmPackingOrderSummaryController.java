@@ -115,12 +115,12 @@ public class SrmPackingOrderSummaryController {
      */
     @PostMapping(value = "/import")
     @ApiOperation(value = "从excel导入装箱清单信息",notes = "从excel导入装箱清单信息")
-    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
-                                      @RequestPart(value="file") MultipartFile file){
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file,
+                                      @ApiParam(value = "装箱单ID",required = true)@RequestParam  @NotNull(message="装箱单ID不能为空") Long packingOrderId){
         try {
             // 导入操作
             List<SrmPackingOrderSummaryImport> srmPackingOrderSummaryImports = EasyPoiUtils.importExcel(file, 0, 1, SrmPackingOrderSummaryImport.class);
-            Map<String, Object> resultMap = srmPackingOrderSummaryService.importExcel(srmPackingOrderSummaryImports);
+            Map<String, Object> resultMap = srmPackingOrderSummaryService.importExcel(srmPackingOrderSummaryImports,packingOrderId);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
         }catch (RuntimeException e) {
             e.printStackTrace();

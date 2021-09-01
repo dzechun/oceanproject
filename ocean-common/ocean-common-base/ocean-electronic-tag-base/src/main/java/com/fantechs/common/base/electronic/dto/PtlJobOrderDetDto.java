@@ -1,5 +1,6 @@
 package com.fantechs.common.base.electronic.dto;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.electronic.entity.PtlJobOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,9 +11,11 @@ import java.io.Serializable;
 public class PtlJobOrderDetDto extends PtlJobOrderDet implements Serializable {
 
     @ApiModelProperty(name="jobOrderCode",value = "任务单号")
+    @Excel(name = "任务单号", height = 20, width = 30,orderNum="1")
     private String jobOrderCode;
 
     @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
+    @Excel(name = "拣货单号", height = 20, width = 30,orderNum="2")
     private String relatedOrderCode;
 
     @ApiModelProperty(name="relatedOrderCode",value = "发货单号")

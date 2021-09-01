@@ -18,6 +18,7 @@
     <modules>
         <module>ocean-imes-restapi</module>
         <module>ocean-imes-materialapi</module>
+        <module>ocean-chinafivering-api</module>
     </modules>
 
 </project>

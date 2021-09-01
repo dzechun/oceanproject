@@ -3,19 +3,18 @@ package com.fantechs.provider.srm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.imports.BaseFactoryImport;
 import com.fantechs.common.base.general.dto.srm.SrmPackingOrderSummaryDto;
 import com.fantechs.common.base.general.dto.srm.imports.SrmPackingOrderSummaryImport;
-import com.fantechs.common.base.general.entity.basic.BaseFactory;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtFactory;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.srm.SrmPackingOrder;
 import com.fantechs.common.base.general.entity.srm.SrmPackingOrderSummary;
+import com.fantechs.common.base.general.entity.srm.SrmPackingOrderSummaryDet;
+import com.fantechs.common.base.general.entity.srm.history.SrmHtPackingOrder;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtPackingOrderSummary;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -24,6 +23,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.srm.mapper.SrmHtPackingOrderSummaryMapper;
 import com.fantechs.provider.srm.mapper.SrmPackingOrderMapper;
+import com.fantechs.provider.srm.mapper.SrmPackingOrderSummaryDetMapper;
 import com.fantechs.provider.srm.mapper.SrmPackingOrderSummaryMapper;
 import com.fantechs.provider.srm.service.SrmPackingOrderSummaryService;
 import org.springframework.beans.BeanUtils;
@@ -49,6 +49,8 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
     private BaseFeignApi baseFeignApi;
     @Resource
     private SrmPackingOrderMapper srmPackingOrderMapper;
+    @Resource
+    private SrmPackingOrderSummaryDetMapper srmPackingOrderSummaryDetMapper;
 
 
     @Override
@@ -152,11 +154,38 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
 
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchDelete(String ids) {
+        SysUser user = getUser();
 
+        List<SrmHtPackingOrderSummary> htList = new ArrayList<>();
+        String[] split = ids.split(",");
+        for (String id : split){
+            SrmPackingOrderSummary srmPackingOrderSummary = srmPackingOrderSummaryMapper.selectByPrimaryKey(id);
+            if (StringUtils.isEmpty(srmPackingOrderSummary)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+
+            //新增履历信息
+            SrmHtPackingOrderSummary srmHtPackingOrderSummary = new SrmHtPackingOrderSummary();
+            BeanUtils.copyProperties(srmPackingOrderSummary, srmHtPackingOrderSummary);
+            htList.add(srmHtPackingOrderSummary);
+
+            Example example = new Example(SrmPackingOrderSummaryDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("packingOrderSummaryId",id);
+            srmPackingOrderSummaryDetMapper.deleteByExample(example);
+        }
+
+        srmHtPackingOrderSummaryMapper.insertList(htList);
+
+        return srmPackingOrderSummaryMapper.deleteByIds(ids);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<SrmPackingOrderSummaryImport> srmPackingOrderSummaryImports) {
+    public Map<String, Object> importExcel(List<SrmPackingOrderSummaryImport> srmPackingOrderSummaryImports,Long packingOrderId) {
         SysUser user = getUser();
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
@@ -168,21 +197,11 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
 
             String cartonCode = srmPackingOrderSummaryImport.getCartonCode();
             String supplierName = srmPackingOrderSummaryImport.getSupplierName();
-            String packingOrderCode = srmPackingOrderSummaryImport.getPackingOrderCode();
-            if (StringUtils.isEmpty(
-                    cartonCode,supplierName,packingOrderCode
-            )){
-                fail.add(i+4);
-                continue;
-            }
 
-            //判断编码是否重复
-            Example example = new Example(SrmPackingOrderSummary.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", user.getOrganizationId());
-            criteria.andEqualTo("cartonCode",cartonCode);
-            if (StringUtils.isNotEmpty(srmPackingOrderSummaryMapper.selectOneByExample(example))){
-                fail.add(i+4);
+            if (StringUtils.isEmpty(
+                    cartonCode,supplierName
+            )){
+                fail.add(i+2);
                 continue;
             }
 
@@ -196,7 +215,7 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
                 }
             }
             if (tag){
-                fail.add(i+4);
+                fail.add(i+2);
                 continue;
             }
 
@@ -211,16 +230,21 @@ public class SrmPackingOrderSummaryServiceImpl extends BaseService<SrmPackingOrd
             if(StringUtils.isNotEmpty(baseSuppliers.getData())) {
                 dto.setSupplierId(baseSuppliers.getData().get(0).getSupplierId());
             }else {
-                fail.add(i+4);
+                fail.add(i+2);
                 continue;
             }
 
+            //装箱单id
+            dto.setPackingOrderId(packingOrderId);
 
-            SrmPackingOrder srmPackingOrder = getSrmPackingOrder(user.getOrganizationId(), packingOrderCode,null);
-            if(StringUtils.isNotEmpty(srmPackingOrder)){
-                dto.setPackingOrderSummaryId(srmPackingOrder.getPackingOrderId());
-            }else{
-                fail.add(i+4);
+            //判断编码是否重复
+            Example example = new Example(SrmPackingOrderSummary.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", user.getOrganizationId());
+            criteria.andEqualTo("cartonCode",cartonCode);
+            criteria.andEqualTo("packingOrderId",dto.getPackingOrderId());
+            if (StringUtils.isNotEmpty(srmPackingOrderSummaryMapper.selectOneByExample(example))){
+                fail.add(i+2);
                 continue;
             }
 

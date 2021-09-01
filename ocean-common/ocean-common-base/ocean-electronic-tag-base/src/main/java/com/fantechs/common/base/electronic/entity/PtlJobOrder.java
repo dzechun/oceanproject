@@ -22,7 +22,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 作业单ID
      */
     @ApiModelProperty(name="jobOrderId",value = "作业单ID")
-    @Excel(name = "作业单ID", height = 20, width = 30,orderNum="") 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "JDBC")
     @Column(name = "job_order_id")
@@ -32,7 +31,7 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 作业单号
      */
     @ApiModelProperty(name="jobOrderCode",value = "任务单号")
-    @Excel(name = "任务单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "任务单号", height = 20, width = 30,orderNum="1")
     @Column(name = "job_order_code")
     private String jobOrderCode;
 
@@ -40,7 +39,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 作业类型(1-上架 2-分拣)
      */
     @ApiModelProperty(name="jobOrderType",value = "作业类型(1-上架 2-分拣)")
-    @Excel(name = "作业类型(1-上架 2-分拣)", height = 20, width = 30,orderNum="") 
     @Column(name = "job_order_type")
     private Byte jobOrderType;
 
@@ -48,7 +46,7 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 相关单号
      */
     @ApiModelProperty(name="relatedOrderCode",value = "拣货单号")
-    @Excel(name = "拣货单号", height = 20, width = 30,orderNum="")
+    @Excel(name = "拣货单号", height = 20, width = 30,orderNum="2")
     @Column(name = "related_order_code")
     private String relatedOrderCode;
 
@@ -56,7 +54,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 发货单号
      */
     @ApiModelProperty(name="despatchOrderCode",value = "发货单号")
-    @Excel(name = "发货单号", height = 20, width = 30,orderNum="")
     @Column(name = "despatch_order_code")
     private String despatchOrderCode;
 
@@ -64,7 +61,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 仓库ID
      */
     @ApiModelProperty(name="warehouseId",value = "仓库ID")
-    @Excel(name = "仓库ID", height = 20, width = 30,orderNum="") 
     @Column(name = "warehouse_id")
     private Long warehouseId;
 
@@ -72,7 +68,7 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 仓库名称
      */
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
-    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="5")
     @Column(name = "warehouse_name")
     private String warehouseName;
 
@@ -80,7 +76,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 周转工具ID
      */
     @ApiModelProperty(name="vehicleId",value = "周转工具ID")
-    @Excel(name = "周转工具ID", height = 20, width = 30,orderNum="")
     @Column(name = "vehicle_id")
     private Long vehicleId;
 
@@ -88,15 +83,14 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 作业人员ID
      */
     @ApiModelProperty(name="workerUserId",value = "作业人员ID")
-    @Excel(name = "作业人员ID", height = 20, width = 30,orderNum="") 
     @Column(name = "worker_user_id")
     private Long workerUserId;
 
     /**
      * 作业人员名称
      */
-    @ApiModelProperty(name="workerUserName",value = "作业人员名称")
-    @Excel(name = "作业人员名称", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="workerUserName",value = "作业人员")
+    @Excel(name = "作业人员", height = 20, width = 30,orderNum="6")
     @Column(name = "worker_user_name")
     private String workerUserName;
 
@@ -104,7 +98,7 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 单据状态(1-待激活、2-已激活、3-完成、4-异常)
      */
     @ApiModelProperty(name="orderStatus",value = "单据状态(1-待激活、2-已激活、3-完成、4-挂起 5-已取消 6-已复核)")
-    @Excel(name = "单据状态(1-待激活、2-已激活、3-完成、4-挂起 5-已取消 6-已复核)", height = 20, width = 30,orderNum="")
+    @Excel(name = "单据状态(1-待激活、2-已激活、3-完成、4-挂起 5-已取消 6-已复核)", height = 20, width = 30,orderNum="7")
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -112,7 +106,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 退拣状态(0-未退拣 1-已退拣)
      */
     @ApiModelProperty(name="pickBackStatus",value = "退拣状态(0-未退拣 1-已退拣)")
-    @Excel(name = "退拣状态(0-未退拣 1-已退拣)", height = 20, width = 30,orderNum="")
     @Column(name = "pick_back_status")
     private Byte pickBackStatus;
 
@@ -120,7 +113,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 是否已打印条码(0-否 1-是)
      */
     @ApiModelProperty(name="ifAlreadyPrint",value = "是否已打印条码(0-否 1-是)")
-    @Excel(name = "是否已打印条码(0-否 1-是)", height = 20, width = 30,orderNum="") 
     @Column(name = "if_already_print")
     private Byte ifAlreadyPrint;
 
@@ -128,21 +120,19 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
      * 备注
      */
-    @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="remark",value = "区域")
+    @Excel(name = "区域", height = 20, width = 30,orderNum="4")
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -150,7 +140,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -158,7 +147,7 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -167,7 +156,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -175,7 +163,7 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -184,7 +172,6 @@ public class PtlJobOrder extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 

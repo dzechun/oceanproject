@@ -75,7 +75,7 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from srm_packing_order_summary_det sposd
+    from eng_packing_order_summary_det sposd
     left join base_material bm on sposd.material_id=bm.material_id
     left join ocean_v2.sys_user u on sposd.create_user_id=u.user_id
     left join ocean_v2.sys_user s on sposd.modified_user_id=s.user_id

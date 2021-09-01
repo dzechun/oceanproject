@@ -1018,6 +1018,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             if (StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())) {
                 ws.setWorkStartTime(new Date());
+                ws.setWorkEndtTime(new Date());
             }
             num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
         }
@@ -1135,11 +1136,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wmsInPutawayOrderDet);
             if (record.getJobOrderType() == (byte) 3) {
-                WmsInAsnOrderDto wmsInAsnOrderDto = inFeignApi.findList(SearchWmsInAsnOrder.builder()
-                        .asnOrderId(record.getSourceOrderId())
-                        .build()).getData().get(0);
+//                WmsInAsnOrderDto wmsInAsnOrderDto = inFeignApi.findList(SearchWmsInAsnOrder.builder()
+//                        .asnOrderId(record.getSourceOrderId())
+//                        .build()).getData().get(0);
                 Example example = new Example(WmsInnerInventory.class);
-                example.createCriteria().andEqualTo("relevanceOrderCode", wmsInAsnOrderDto.getAsnCode())
+                example.createCriteria().andEqualTo("relevanceOrderCode", record.getRelatedOrderCode())
                         .andEqualTo("materialId", wmsInPutawayOrderDet.getMaterialId())
                         .andEqualTo("batchCode", wmsInPutawayOrderDet.getBatchCode())
                         .andEqualTo("warehouseId", record.getWarehouseId())

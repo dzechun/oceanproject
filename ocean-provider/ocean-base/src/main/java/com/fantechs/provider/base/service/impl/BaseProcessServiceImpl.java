@@ -54,12 +54,20 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
 
         Example example = new Example(BaseProcess.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
-        criteria.andEqualTo("processCode", baseProcess.getProcessCode())
-                .orEqualTo("processName", baseProcess.getProcessName());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId())
+                .andEqualTo("processCode", baseProcess.getProcessCode());
         List<BaseProcess> baseProcesses = baseProcessMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseProcesses)) {
-            throw new BizErrorException("工序名称或编码重复");
+            throw new BizErrorException("工序编码重复");
+        }
+
+        example.clear();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("organizationId", currentUser.getOrganizationId())
+                 .andEqualTo("processName", baseProcess.getProcessName());
+        List<BaseProcess> baseProcesses1 = baseProcessMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(baseProcesses1)) {
+            throw new BizErrorException("工序名称重复");
         }
 
         baseProcess.setCreateUserId(currentUser.getUserId());
@@ -134,14 +142,22 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
 
         Example example = new Example(BaseProcess.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
-        criteria.andEqualTo("processCode", baseProcess.getProcessCode())
-                .orEqualTo("processName", baseProcess.getProcessName());
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId())
+                .andEqualTo("processCode", baseProcess.getProcessCode())
+                .andNotEqualTo("processId",baseProcess.getProcessId());
+        List<BaseProcess> baseProcesses = baseProcessMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(baseProcesses)) {
+            throw new BizErrorException("工序编码重复");
+        }
 
-        BaseProcess process = baseProcessMapper.selectOneByExample(example);
-
-        if (StringUtils.isNotEmpty(process) && !process.getProcessId().equals(baseProcess.getProcessId())) {
-            throw new BizErrorException("工序名称或编码重复");
+        example.clear();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("organizationId", currentUser.getOrganizationId())
+                .andEqualTo("processName", baseProcess.getProcessName())
+                .andNotEqualTo("processId",baseProcess.getProcessId());
+        List<BaseProcess> baseProcesses1 = baseProcessMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(baseProcesses1)) {
+            throw new BizErrorException("工序名称重复");
         }
 
         baseProcess.setModifiedUserId(currentUser.getUserId());

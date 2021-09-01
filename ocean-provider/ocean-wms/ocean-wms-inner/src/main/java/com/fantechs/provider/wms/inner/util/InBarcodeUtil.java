@@ -130,7 +130,7 @@ public class InBarcodeUtil {
         String asnOrderCode = inBarcodeUtil.wmsInnerJobOrderMapper.findAsnCode(asnOrderId);
         //查询库存明细是否存在改条码
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode).andEqualTo("relatedOrderCode",asnOrderCode);
+        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode).andEqualTo("asnCode",asnOrderCode);
         List<WmsInnerInventoryDet> list = inBarcodeUtil.wmsInnerInventoryDetMapper.selectByExample(example);
         if(list.size()<1){
             throw new BizErrorException("条码不存在");
