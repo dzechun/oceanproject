@@ -81,7 +81,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
             if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
                 List<SysMenuInListDTO> menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
                         "parentId", "0",
-                        "menuType", menuType + ""
+                        "menuType", 1 + ""
                 ), null);
                 redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(menuList));
             }
