@@ -136,8 +136,17 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("badnessCauseCode", baseBadnessCause.getBadnessCauseCode());
         criteria.andEqualTo("orgId", baseBadnessCause.getOrgId());
-        baseBadnessCauseMapper.deleteByExample(example);
-        baseBadnessCause.setCreateTime(new Date());
-        return  baseBadnessCauseMapper.insertSelective(baseBadnessCause);
+       // baseBadnessCauseMapper.deleteByExample(example);
+        BaseBadnessCause cause = baseBadnessCauseMapper.selectOneByExample(example);
+        int i = 0;
+        if(StringUtils.isEmpty(cause)){
+            baseBadnessCause.setCreateTime(new Date());
+            i =  baseBadnessCauseMapper.insertSelective(baseBadnessCause);
+        }else{
+            baseBadnessCause.setBadnessCauseId(cause.getBadnessCauseId());
+            i =  baseBadnessCauseMapper.updateByPrimaryKeySelective(baseBadnessCause);
+        }
+        return  i;
     }
+
 }
