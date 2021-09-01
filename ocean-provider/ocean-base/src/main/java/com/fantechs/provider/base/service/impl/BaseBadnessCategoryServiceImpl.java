@@ -139,11 +139,15 @@ public class BaseBadnessCategoryServiceImpl extends BaseService<BaseBadnessCateg
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("badnessCategoryCode", baseBadnessCategory.getBadnessCategoryCode());
         criteria.andEqualTo("orgId", baseBadnessCategory.getOrgId());
-        baseBadnessCategoryMapper.deleteByExample(example);
+        BaseBadnessCategory badnessCategory = baseBadnessCategoryMapper.selectOneByExample(example);
         example.clear();
-
-        baseBadnessCategory.setCreateTime(new Date());
-        baseBadnessCategoryMapper.insertUseGeneratedKeys(baseBadnessCategory);
+        if(StringUtils.isEmpty(badnessCategory)){
+            baseBadnessCategory.setCreateTime(new Date());
+            baseBadnessCategoryMapper.insertUseGeneratedKeys(baseBadnessCategory);
+        }else{
+            baseBadnessCategory.setBadnessCategoryId(badnessCategory.getBadnessCategoryId());
+            baseBadnessCategoryMapper.updateByPrimaryKeySelective(baseBadnessCategory);
+        }
         return baseBadnessCategory;
     }
 
