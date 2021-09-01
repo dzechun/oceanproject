@@ -123,7 +123,7 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
         if(StringUtils.isNotEmpty(items)) {
             for (EamEquipmentMaintainProjectItem eamEquipmentMaintainProjectItem : items) {
                 if (StringUtils.isNotEmpty(eamEquipmentMaintainProjectItem.getEquipmentMaintainProjectItemId())) {
-                    eamEquipmentMaintainProjectItemMapper.updateByPrimaryKeySelective(eamEquipmentMaintainProjectItem);
+                    eamEquipmentMaintainProjectItemMapper.updateByPrimaryKey(eamEquipmentMaintainProjectItem);
                     idList.add(eamEquipmentMaintainProjectItem.getEquipmentMaintainProjectItemId());
                 }
             }

@@ -111,7 +111,7 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
         if(StringUtils.isNotEmpty(list)) {
             for (EamJigMaintainProjectItemDto eamJigMaintainProjectItemDto : list) {
                 if (StringUtils.isNotEmpty(eamJigMaintainProjectItemDto.getJigMaintainProjectItemId())) {
-                    eamJigMaintainProjectItemMapper.updateByPrimaryKeySelective(eamJigMaintainProjectItemDto);
+                    eamJigMaintainProjectItemMapper.updateByPrimaryKey(eamJigMaintainProjectItemDto);
                     idList.add(eamJigMaintainProjectItemDto.getJigMaintainProjectItemId());
                 }
             }

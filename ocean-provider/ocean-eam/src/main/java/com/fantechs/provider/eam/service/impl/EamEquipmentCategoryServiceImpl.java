@@ -63,13 +63,7 @@ public class EamEquipmentCategoryServiceImpl extends BaseService<EamEquipmentCat
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(EamEquipmentCategory.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentCategoryCode", record.getEquipmentCategoryCode());
-        EamEquipmentCategory eamEquipmentCategory = eamEquipmentCategoryMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamEquipmentCategory)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
+        this.ifRepeat(record);
 
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
@@ -94,14 +88,7 @@ public class EamEquipmentCategoryServiceImpl extends BaseService<EamEquipmentCat
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(EamEquipmentCategory.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentCategoryCode", entity.getEquipmentCategoryCode())
-                .andNotEqualTo("equipmentCategoryId",entity.getEquipmentCategoryId());
-        EamEquipmentCategory eamEquipmentCategory = eamEquipmentCategoryMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamEquipmentCategory)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
+        this.ifRepeat(entity);
 
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
@@ -111,6 +98,31 @@ public class EamEquipmentCategoryServiceImpl extends BaseService<EamEquipmentCat
         eamHtEquipmentCategoryMapper.insert(eamHtEquipmentCategory);
 
         return eamEquipmentCategoryMapper.updateByPrimaryKeySelective(entity);
+    }
+
+    public void ifRepeat(EamEquipmentCategory eamEquipmentCategory){
+        Example example = new Example(EamEquipmentCategory.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("equipmentCategoryCode", eamEquipmentCategory.getEquipmentCategoryCode());
+        if(StringUtils.isNotEmpty(eamEquipmentCategory.getEquipmentCategoryId())){
+            criteria.andNotEqualTo("equipmentCategoryId",eamEquipmentCategory.getEquipmentCategoryId());
+        }
+        EamEquipmentCategory equipmentCategory = eamEquipmentCategoryMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(equipmentCategory)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        example.clear();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("equipmentCategoryName", eamEquipmentCategory.getEquipmentCategoryName());
+        if(StringUtils.isNotEmpty(eamEquipmentCategory.getEquipmentCategoryId())){
+            criteria1.andNotEqualTo("equipmentCategoryId",eamEquipmentCategory.getEquipmentCategoryId());
+        }
+        EamEquipmentCategory equipmentCategory1 = eamEquipmentCategoryMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(equipmentCategory1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"名称重复");
+        }
+
     }
 
     @Override

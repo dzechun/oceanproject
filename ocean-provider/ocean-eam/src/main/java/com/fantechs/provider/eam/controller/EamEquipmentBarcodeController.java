@@ -79,5 +79,9 @@ public class EamEquipmentBarcodeController {
         return ControllerUtil.returnCRUD(eamEquipmentBarcodeService.plusCurrentUsageTime(equipmentBarCodeId,num));
     }
 
-
+    @ApiOperation(value = "发送设备预警信息",notes = "发送设备预警信息")
+    @PostMapping("/equipmentWarning")
+    public ResponseEntity equipmentWarning() {
+        return ControllerUtil.returnCRUD(eamEquipmentBarcodeService.equipmentWarning());
+    }
 }

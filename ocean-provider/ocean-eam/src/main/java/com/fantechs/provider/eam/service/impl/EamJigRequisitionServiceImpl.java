@@ -5,12 +5,14 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRequisition;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRequisition;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
@@ -161,17 +163,28 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     @Override
     public EamJigBarcode checkJigBarcode(String jigBarcode,Long jigId){
 
-        Example example = new Example(EamJigBarcode.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigBarcode",jigBarcode);
-        EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectOneByExample(example);
-        if(StringUtils.isEmpty(eamJigBarcode)){
+        SearchEamJigBarcode searchEamJigBarcode = new SearchEamJigBarcode();
+        searchEamJigBarcode.setJigBarcode(jigBarcode);
+        List<EamJigBarcodeDto> barcodeDtos = eamJigBarcodeMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigBarcode));
+        if(StringUtils.isEmpty(barcodeDtos)){
             throw new BizErrorException("查无此治具条码");
         }
+        EamJigBarcodeDto eamJigBarcode = barcodeDtos.get(0);
 
-        EamJig eamJig = eamJigMapper.selectByPrimaryKey(eamJigBarcode.getJigId());
-        if(eamJigBarcode.getCurrentUsageTime()!=null && eamJigBarcode.getCurrentUsageTime().intValue() >= eamJig.getMaxUsageTime().intValue()){
-            throw new BizErrorException("该治具已使用次数已达到治具最大使用次数");
+        //治具达到最大次数（天数）是否能继续使用
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("IsJigCanContinueUse");
+        List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(Integer.parseInt(sysSpecItemList.get(0).getParaValue()) == 0) {
+            EamJig eamJig = eamJigMapper.selectByPrimaryKey(eamJigBarcode.getJigId());
+            if (StringUtils.isNotEmpty(eamJigBarcode.getCurrentUsageTime(),eamJig.getMaxUsageTime()) && eamJig.getMaxUsageTime()!=0
+                    && eamJigBarcode.getCurrentUsageTime().intValue() >= eamJig.getMaxUsageTime().intValue()) {
+                throw new BizErrorException("该治具已使用次数已达到治具最大使用次数");
+            }
+            if (StringUtils.isNotEmpty(eamJigBarcode.getCurrentUsageDays(),eamJig.getMaxUsageDays()) && eamJig.getMaxUsageDays()!=0
+                    && eamJigBarcode.getCurrentUsageDays().intValue() >= eamJig.getMaxUsageDays().intValue()) {
+                throw new BizErrorException("该治具已使用天数已达到治具最大使用天数");
+            }
         }
 
         if(!jigId.equals(eamJigBarcode.getJigId())){

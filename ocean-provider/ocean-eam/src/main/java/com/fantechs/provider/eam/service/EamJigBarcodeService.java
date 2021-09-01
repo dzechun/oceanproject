@@ -17,4 +17,6 @@ public interface EamJigBarcodeService extends IService<EamJigBarcode> {
 
     //增加治具当前使用次数
     int plusCurrentUsageTime(Long jigBarcodeId, Integer num);
+
+    int jigWarning();
 }
