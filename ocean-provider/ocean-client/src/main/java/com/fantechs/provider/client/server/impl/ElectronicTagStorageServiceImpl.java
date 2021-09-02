@@ -359,7 +359,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
                 searchBaseMaterial.setMaterialCode(ptlJobOrderDetDTO.getGoodsCode());
                 searchBaseMaterial.setCodeQueryMark(1);
-                List<BaseMaterial> baseMaterials = baseFeignApi.findSmtMaterialList(searchBaseMaterial).getData();
+                List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
                 if (StringUtils.isEmpty(baseMaterials)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息：" + ptlJobOrderDetDTO.getGoodsCode());
                 }

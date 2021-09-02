@@ -129,6 +129,9 @@
       <if test="jigId!=null">
         and ejm.jig_id = #{jigId}
       </if>
+      <if test="orgId!=null">
+        and ejm.org_id=#{orgId}
+      </if>
     </where>
     order by ejm.create_time desc
   </select>

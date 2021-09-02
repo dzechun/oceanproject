@@ -79,10 +79,6 @@ public interface BaseFeignApi {
     @PostMapping("/baseStorage/detail")
     ResponseEntity<BaseStorage> detail(@ApiParam(value = "id", required = true) @RequestParam(value = "id") Long id);
 
-    @ApiOperation(value = "获取物料信息", notes = "获取物料信息")
-    @PostMapping(value = "/baseMaterial/findList")
-    ResponseEntity<List<BaseMaterial>> findSmtMaterialList(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterial searchBaseMaterial);
-
     @ApiOperation("根据条件查询物料对应储位信息列表")
     @PostMapping("/baseStorageMaterial/findList")
     ResponseEntity<List<BaseStorageMaterial>> findStorageMaterialList(@ApiParam(value = "查询对象") @RequestBody SearchBaseStorageMaterial searchBaseStorageMaterial);
@@ -456,6 +452,10 @@ public interface BaseFeignApi {
     @ApiOperation("新增产品型号")
     @PostMapping("/baseProductModel/add")
     ResponseEntity add(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody BaseProductModel baseProductModel);
+
+    @ApiOperation("新增产品型号并返回对象")
+    @PostMapping("/baseProductModel/addForReturn")
+    ResponseEntity<BaseProductModel> addForReturn(@ApiParam(value = "必传：productModelCode、productModelName",required = true) @RequestBody BaseProductModel baseProductModel);
 
     @ApiOperation("批量新增物料信息")
     @PostMapping("/baseMaterial/add")

@@ -27,10 +27,10 @@ public class SrmPackingOrderSummaryImport implements Serializable {
 
 
     /**
-     * 装置码
+     * 装置号
      */
-    @ApiModelProperty(name="deviceCode",value = "装置码")
-    @Excel(name = "装置码", height = 20, width = 30)
+    @ApiModelProperty(name="deviceCode",value = "装置号")
+    @Excel(name = "装置号", height = 20, width = 30)
     private String deviceCode;
 
     /**

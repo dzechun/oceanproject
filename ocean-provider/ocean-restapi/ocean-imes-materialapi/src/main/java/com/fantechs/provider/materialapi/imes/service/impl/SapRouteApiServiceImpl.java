@@ -62,6 +62,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             baseRoute.setRouteCode(baseMaterial.getMaterialCode());
             baseRoute.setRouteType(1);
             baseRoute.setStatus(1);
+            baseRoute.setIsDelete((byte)1);
             baseRoute.setOrganizationId(orgId);
             baseFeignApi.addOrUpdate(baseRoute);
 
@@ -72,6 +73,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             baseProductProcessRoute.setRouteId(baseRoute.getRouteId());
             baseProductProcessRoute.setStatus(1);
             baseProductProcessRoute.setOrganizationId(orgId);
+            baseProductProcessRoute.setIsDelete((byte)1);
             baseFeignApi.addOrUpdate(baseProductProcessRoute);
 
 
@@ -82,6 +84,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             baseWorkshopSection.setSectionDesc(res.getPROCESS().get(0).getKTEXT());
             baseWorkshopSection.setStatus((byte)1);
             baseWorkshopSection.setOrganizationId(orgId);
+            baseWorkshopSection.setIsDelete((byte)1);
             ResponseEntity<BaseWorkshopSection> baseWorkshopSectionResponseEntity = baseFeignApi.addOrUpdate(baseWorkshopSection);
 
             //保存工序类别
@@ -91,6 +94,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             baseProcessCategory.setProcessCategoryCode(res.getPROCESS().get(0).getKTEXT());
             baseProcessCategory.setStatus((byte)1);
             baseProcessCategory.setOrganizationId(orgId);
+            baseProcessCategory.setIsDelete((byte)1);
             ResponseEntity<BaseProcessCategory> baseProcessCategoryResponseEntity = baseFeignApi.addOrUpdate(baseProcessCategory);
 
             //保存工序
@@ -103,6 +107,8 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
                 baseProcess.setSectionCode(baseWorkshopSectionResponseEntity.getData().getSectionCode());
                 baseProcess.setOrganizationId(orgId);
                 baseProcess.setProcessCategoryId(baseProcessCategoryResponseEntity.getData().getProcessCategoryId());
+                baseProcess.setStatus(1);
+                baseProcess.setIsDelete((byte)1);
                 baseFeignApi.addOrUpdate(baseProcess);
             }
             logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());

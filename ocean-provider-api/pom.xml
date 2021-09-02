@@ -29,6 +29,7 @@
         <module>ocean-bcm-api</module>
         <module>ocean-tem-api</module>
         <module>ocean-eam-api</module>
+        <module>ocean-guest-api</module>
     </modules>
 
 </project>

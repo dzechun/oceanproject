@@ -41,6 +41,7 @@ public class EamEquipmentCategory extends ValidGroup implements Serializable {
     @ApiModelProperty(name="equipmentCategoryCode",value = "周转工具编码")
     @Excel(name = "周转工具编码", height = 20, width = 30,orderNum="1")
     @Column(name = "equipment_category_code")
+    @NotBlank(message = "设备类别编码不能为空")
     private String equipmentCategoryCode;
 
     /**
@@ -49,6 +50,7 @@ public class EamEquipmentCategory extends ValidGroup implements Serializable {
     @ApiModelProperty(name="equipmentCategoryName",value = "设备类别名称")
     @Excel(name = "设备类别名称", height = 20, width = 30,orderNum="1")
     @Column(name = "equipment_category_name")
+    @NotBlank(message = "设备类别名称不能为空")
     private String equipmentCategoryName;
 
     /**
