@@ -49,7 +49,8 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             "/tologin","/meslogin","/pda/login","/eamlogin",
             "/index.html", "/static/**", "/favicon.ico",
             "/swagger-ui.html", "/swagger-resources/**", "/images/**", "/webjars/**", "/v2/api-docs", "/configuration/ui", "/configuration/security"
-            ,"null/swagger-resources/**","/sysSpecItem/findList","/sysSpecItem/detail","/clientGetToken","/sysCustomFormDet/findList","/sysCustomForm/findList"
+            ,"null/swagger-resources/**","/sysSpecItem/findList","/sysSpecItem/detail","/clientGetToken"
+            ,"/sysCustomFormDet/findList","/sysCustomForm/findList"
     };
 
 
@@ -79,7 +80,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             }
         }).and().cors().and()
                 .formLogin()
-//                .loginPage("/tologin")
+                .loginPage("/tologin")
                 .loginProcessingUrl("/login")
                 .authenticationDetailsSource(customAuthenticationDetailsSource)
                 .successHandler(myAuthenticationSuccessHandler)//可以配置登录成功的提示
