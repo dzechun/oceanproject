@@ -19,7 +19,7 @@ public interface ImportDataService {
      * 中国五环-材料信息接口
      * @return
      */
-    String getPartNoInfo(String projectID) throws Exception;
+    BaseExecuteResultDto getPartNoInfo(String projectID) throws Exception;
 
     /**
      * 中国五环-货架信息接口
@@ -43,6 +43,6 @@ public interface ImportDataService {
      * 中国五环-请购单信息接口
      * @return
      */
-    String getReqDetails(String projectID) throws Exception;
+    BaseExecuteResultDto getReqDetails(String projectID) throws Exception;
 
 }

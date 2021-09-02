@@ -1,8 +1,10 @@
 package com.fantechs.provider.chinafiveringapi.api.service.impl;
 
+import com.ctc.wstx.sw.EncodingXmlWriter;
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
+import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -72,7 +74,9 @@ public class ImportDataServiceImpl implements ImportDataService {
                 engFeignApi.saveByApi(engContractQtyOrder);
             }
 
+            baseExecuteResultDto.setExecuteResult("");
             baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
 
         }catch (Exception ex){
             baseExecuteResultDto.setIsSuccess(false);
@@ -92,12 +96,45 @@ public class ImportDataServiceImpl implements ImportDataService {
     }
 
     @Override
-    public String getPartNoInfo(String projectID) throws Exception{
+    public BaseExecuteResultDto getPartNoInfo(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
-        baseExecuteResultDto= callWebService(address,"getPartNoInfo",projectID);
-        if(baseExecuteResultDto.getIsSuccess()==false)
-            throw new Exception(baseExecuteResultDto.getFailMsg());
-        return baseExecuteResultDto.getExecuteResult().toString();
+        try {
+            baseExecuteResultDto = callWebService(address, "getPartNoInfo", projectID);
+            if (baseExecuteResultDto.getIsSuccess() == false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            //转换为实体类集合
+            String strResult=baseExecuteResultDto.getExecuteResult().toString();
+            String s0=strResult.replaceAll("材料用途","materialPurpose");
+            String s1=s0.replaceAll("合同号","contractCode");
+            String s2=s1.replaceAll("材料编码","materialCode");
+            String s3=s2.replaceAll("位号","locationNum");
+            String s4=s3.replaceAll("采购量","purQty");
+            String s5=s4.replaceAll("备注","remark");
+            String s6=s5.replaceAll("装置号","deviceCode");
+            String s7=s6.replaceAll("主项号","dominantTermCode");
+            String s8=s7.replaceAll("PPGUID","option1");
+            String s9=s8.replaceAll("PSGUID","option2");
+            String s10=s9.replaceAll("RDGUID","option3");
+
+            //同步到数据库
+            int indexb=s10.indexOf("[");
+            int indexe=s10.lastIndexOf("]");
+            String str=s10.substring(indexb,indexe+1);
+            List<EngContractQtyOrder> listPO= BeanUtils.jsonToListObject(str,EngContractQtyOrder.class);
+            for (EngContractQtyOrder engContractQtyOrder : listPO) {
+                engContractQtyOrder.setOrgId(1004L);
+                engFeignApi.saveByApi(engContractQtyOrder);
+            }
+
+            //baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+        return baseExecuteResultDto;
     }
 
     @Override
@@ -152,12 +189,52 @@ public class ImportDataServiceImpl implements ImportDataService {
     }
 
     @Override
-    public String getReqDetails(String projectID) throws Exception{
+    public BaseExecuteResultDto getReqDetails(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
-        baseExecuteResultDto= callWebService(address,"getReqDetails",projectID);
-        if(baseExecuteResultDto.getIsSuccess()==false)
-            throw new Exception(baseExecuteResultDto.getFailMsg());
-        return baseExecuteResultDto.getExecuteResult().toString();
+        try{
+            baseExecuteResultDto= callWebService(address,"getReqDetails",projectID);
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            //转换为实体类集合
+            String strResult=baseExecuteResultDto.getExecuteResult().toString();
+            String s0=strResult.replaceAll("请购单号","purchaseReqOrderCode");
+            String s1=s0.replaceAll("请购单名称","purchaseReqOrderName");
+            String s2=s1.replaceAll("专业名称","remark");
+            String s3=s2.replaceAll("材料等级","materialGrade");
+            String s4=s3.replaceAll("材料编码","materialCode");
+            String s5=s4.replaceAll("位号","locationNum");
+            String s6=s5.replaceAll("设计量","designQty");
+            String s7=s6.replaceAll("余量","surplusQty");
+            String s8=s7.replaceAll("请购量","purchaseReqQty");
+            String s9=s8.replaceAll("请购说明","purchaseReqExplain");
+            String s10=s9.replaceAll("装置号","deviceCode");
+            String s11=s10.replaceAll("主项号","dominantTermCode");
+            String s12=s11.replaceAll("材料用途","materialPurpose");
+            String s13=s12.replaceAll("采购说明","purchaseExplain");
+            String s14=s13.replaceAll("RSGUID","option2");
+            String s15=s14.replaceAll("RDGUID","option3");
+
+            //同步到数据库
+            int indexb=s15.indexOf("[");
+            int indexe=s15.lastIndexOf("]");
+            String str=s15.substring(indexb,indexe+1);
+            List<EngPurchaseReqOrder> listPO= BeanUtils.jsonToListObject(str,EngPurchaseReqOrder.class);
+            for (EngPurchaseReqOrder engPurchaseReqOrder : listPO) {
+                engPurchaseReqOrder.setOrgId(1004L);
+                engFeignApi.saveByApi(engPurchaseReqOrder);
+            }
+
+            baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
     }
 
     private  String actionBySOAP(String method,String projectID){
