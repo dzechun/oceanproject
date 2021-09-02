@@ -5,6 +5,9 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.provider.mes.sfc.config.RabbitConfig;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,5 +59,22 @@ public class RabbitProducer {
         ibytes[0]=(byte)1;
         System.arraycopy(bytes,0,ibytes,1,bytes.length);
         this.rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_NAME_FILE,ibytes);
+    }
+
+    /**
+     * 第一位1表示打印标签 发送打印字节
+     * @param printDto
+     */
+    public void sendPrint(PrintDto printDto,String id){
+        String json = JSONObject.toJSONString(printDto);
+        byte[] bytes = json.getBytes();
+        byte[] ibytes = new byte[1+bytes.length];
+        ibytes[0]=(byte)1;
+        System.arraycopy(bytes,0,ibytes,1,bytes.length);
+        Message message = MessageBuilder.withBody(ibytes)
+                .setContentType(MessageProperties.CONTENT_TYPE_JSON)
+                .setContentEncoding("utf-8")
+                .setMessageId(id).build();
+        this.rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_NAME_FILE,message);
     }
 }

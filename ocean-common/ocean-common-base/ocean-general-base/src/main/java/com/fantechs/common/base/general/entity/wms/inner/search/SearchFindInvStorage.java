@@ -18,6 +18,6 @@ public class SearchFindInvStorage extends BaseQuery implements Serializable {
     @ApiModelProperty(name = "materialId",value = "物料id")
     private Long materialId;
 
-    @ApiModelProperty(name = "warehouseId",value = "批次")
+    @ApiModelProperty(name = "batchCode",value = "批次")
     private String batchCode;
 }

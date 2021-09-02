@@ -55,11 +55,18 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     private Long materialOwnerId;
 
     /**
-     * 客户ID
+     * 供应商id
      */
     @ApiModelProperty(name="supplierId",value = "客户ID")
     @Column(name = "supplier_id")
     private Long supplierId;
+
+    /**
+     * 客户id
+     */
+    @ApiModelProperty(name = "customerId",value = "客户ID")
+    @Column(name = "customer_id")
+    private Long customerId;
 
     /**
      * 物流商ID

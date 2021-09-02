@@ -24,6 +24,14 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
     private String storageCode;
 
     @Transient
+    @ApiModelProperty(name = "supplierName",value = "供应商名称")
+    private String supplierName;
+
+    @Transient
+    @ApiModelProperty(name = "customerName",value = "客户名称")
+    private String customerName;
+
+    @Transient
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
     private String warehouseName;
 
