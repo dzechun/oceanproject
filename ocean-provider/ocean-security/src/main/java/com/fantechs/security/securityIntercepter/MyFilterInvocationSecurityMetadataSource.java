@@ -39,6 +39,8 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
         FilterInvocation filterInvocation = (FilterInvocation) o;
         HttpServletRequest httpRequest = filterInvocation.getHttpRequest();
+
+
         String token = httpRequest.getHeader("token");
         if (StringUtils.isNotEmpty(token)){
             SysUser user = TokenUtil.load(token);
