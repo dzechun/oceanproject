@@ -2,20 +2,24 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
+import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBarcodeRule;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.base.mapper.BaseBarcodeRuleMapper;
 import com.fantechs.provider.base.mapper.BaseBarcodeRuleSpecMapper;
 import com.fantechs.provider.base.mapper.BaseHtBarcodeRuleMapper;
+import com.fantechs.provider.base.mapper.BaseLabelCategoryMapper;
 import com.fantechs.provider.base.service.BaseBarcodeRuleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -23,10 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +44,11 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
     private BaseHtBarcodeRuleMapper baseHtBarcodeRuleMapper;
     @Resource
     private BaseBarcodeRuleSpecMapper baseBarcodeRuleSpecMapper;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private BaseLabelCategoryMapper baseLabelCategoryMapper;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -183,6 +189,27 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
             BaseBarcodeRule baseBarcodeRule1 = baseBarcodeRuleMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(baseBarcodeRule1)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+            }
+
+            example.clear();
+
+            //每个组织只能有一个默认规则
+            SearchSysSpecItem lableItem = new SearchSysSpecItem();
+            lableItem.setSpecCode("BaseLabel");
+            ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(lableItem);
+            Map<String,Object> map = new HashMap();
+            map.put("labelCategoryCode",specItemList.getData().get(0).getParaValue());
+            map.put("codeQueryMark",(byte)1);
+            map.put("orgId",currentUser.getOrganizationId());
+            List<BaseLabelCategoryDto> baseLabelCategoryDtos = baseLabelCategoryMapper.findList(map);
+            if(StringUtils.isNotEmpty(baseLabelCategoryDtos)) {
+                Map<String,Object> map1 = new HashMap();
+                map1.put("labelCategoryId",baseLabelCategoryDtos.get(0).getLabelCategoryId());
+                List<BaseBarcodeRuleDto> barcodeRulList = baseBarcodeRuleMapper.findList(map1);
+                //  baseLabelCategoryDtos.get(0).getLabelCategoryId()
+                if (StringUtils.isNotEmpty(barcodeRulList) && baseBarcodeRule.getLabelCategoryId().equals(barcodeRulList.get(0).getLabelCategoryId())) {
+                    throw new BizErrorException("每个组织只能有一个默认规则");
+                }
             }
 
             baseBarcodeRule.setCreateTime(new Date());
@@ -340,4 +367,5 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
         String spec = matcher.replaceAll("");
         return spec;
     }
+
 }

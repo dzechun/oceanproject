@@ -74,9 +74,9 @@
       <if test="factoryId!=null and factoryId!=''">
         and sd.factory_id=#{factoryId}
       </if>
-      <if test="parentId!=null and parentId!=''">
-        and sd.parent_id=#{parentId}
-      </if>
+<!--      <if test="parentId!=null and parentId!=''">-->
+<!--        and sd.parent_id=#{parentId}-->
+<!--      </if>-->
       <if test="status!=null">
         and sd.status=#{status}
       </if>

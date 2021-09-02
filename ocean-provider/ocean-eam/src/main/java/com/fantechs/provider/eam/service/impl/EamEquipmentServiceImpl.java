@@ -112,6 +112,8 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                 eamEquipmentBarcode.setEquipmentStatus((byte)5);
             }
             eamEquipmentBarcodeMapper.insertList(eamEquipmentBarcodeList);
+        }else {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"请至少填一项条码信息");
         }
 
         //附件列表

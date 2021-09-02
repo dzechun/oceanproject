@@ -84,6 +84,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             purchaseOrderDet.setStatus((byte)1);
             purchaseOrderDet.setWarehouseId(getWarehouse(purchaseOrderApiDto.getLGORT(),orgId));
             purchaseOrderDet.setFactoryId(getFactory(purchaseOrderApiDto.getWERKS(),orgId));
+            purchaseOrderDet.setIsDelete((byte)1);
             omPurchaseOrderDetList.add(purchaseOrderDet);
         }
         oMFeignApi.saveByApi(omPurchaseOrderDetList);

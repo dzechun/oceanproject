@@ -1,7 +1,9 @@
 package com.fantechs.provider.eam.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.entity.eam.*;
@@ -11,6 +13,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamEquipmentScrapOrderService;
 import org.springframework.beans.BeanUtils;
@@ -38,6 +41,8 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
     private EamEquipmentBarcodeMapper eamEquipmentBarcodeMapper;
     @Resource
     private EamEquipmentMapper eamEquipmentMapper;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<EamEquipmentScrapOrderDto> findList(Map<String, Object> map) {
@@ -55,41 +60,50 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
     public int autoCreateOrder() {
         int sum = 0;
 
-        Map<String, Object> map = new HashMap<>();
-        List<EamEquipmentBarcode> list = eamEquipmentBarcodeMapper.findList(map);
-        for (EamEquipmentBarcode eamEquipmentBarcode : list){
-            boolean tag = false;
-            EamEquipment eamEquipment = eamEquipmentMapper.selectByPrimaryKey(eamEquipmentBarcode.getEquipmentId());
+        //设备达到最大次数或天数是否可以继续使用
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("IsEquipmentCanContinueUse");
+        List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(Integer.parseInt(sysSpecItemList.get(0).getParaValue()) == 0) {
 
-            //设备当前使用次数(当前使用天数)大于等于该设备最大使用次数(最大使用天数)时创建报废单
-            if(StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageTime(),eamEquipment.getMaxUsageTimes())){
-                if(eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTimes())==0
-                        ||eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTimes())==1){
-                    tag = true;
+            Map<String, Object> map = new HashMap<>();
+            List<EamEquipmentBarcode> list = eamEquipmentBarcodeMapper.findList(map);
+            for (EamEquipmentBarcode eamEquipmentBarcode : list) {
+                boolean tag = false;
+                EamEquipment eamEquipment = eamEquipmentMapper.selectByPrimaryKey(eamEquipmentBarcode.getEquipmentId());
+
+                //设备当前使用次数(当前使用天数)大于等于该设备最大使用次数(最大使用天数)时创建报废单
+                if (StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageTime(), eamEquipment.getMaxUsageTimes())
+                        && eamEquipment.getMaxUsageTimes() != 0) {
+                    if (eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTimes()) == 0
+                            || eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTimes()) == 1) {
+                        tag = true;
+                    }
                 }
-            }
 
-            if(StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageDays(),eamEquipment.getMaxUsageDays())) {
-                if (eamEquipmentBarcode.getCurrentUsageDays().compareTo(eamEquipment.getMaxUsageDays()) == 0
-                        || eamEquipmentBarcode.getCurrentUsageDays().compareTo(eamEquipment.getMaxUsageDays()) == 1) {
-                    tag = true;
+                if (StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageDays(), eamEquipment.getMaxUsageDays())
+                        && eamEquipment.getMaxUsageDays() != 0) {
+                    if (eamEquipmentBarcode.getCurrentUsageDays().compareTo(eamEquipment.getMaxUsageDays()) == 0
+                            || eamEquipmentBarcode.getCurrentUsageDays().compareTo(eamEquipment.getMaxUsageDays()) == 1) {
+                        tag = true;
+                    }
                 }
-            }
 
-            //创建单据
-            if(tag){
-                EamEquipmentScrapOrderDto eamEquipmentScrapOrderDto = new EamEquipmentScrapOrderDto();
-                EamEquipmentScrapOrderDetDto eamEquipmentScrapOrderDetDto = new EamEquipmentScrapOrderDetDto();
-                List<EamEquipmentScrapOrderDetDto> eamEquipmentScrapOrderDetDtos = new ArrayList<>();
+                //创建单据
+                if (tag) {
+                    EamEquipmentScrapOrderDto eamEquipmentScrapOrderDto = new EamEquipmentScrapOrderDto();
+                    EamEquipmentScrapOrderDetDto eamEquipmentScrapOrderDetDto = new EamEquipmentScrapOrderDetDto();
+                    List<EamEquipmentScrapOrderDetDto> eamEquipmentScrapOrderDetDtos = new ArrayList<>();
 
-                eamEquipmentScrapOrderDetDto.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
-                eamEquipmentScrapOrderDetDtos.add(eamEquipmentScrapOrderDetDto);
+                    eamEquipmentScrapOrderDetDto.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
+                    eamEquipmentScrapOrderDetDtos.add(eamEquipmentScrapOrderDetDto);
 
-                eamEquipmentScrapOrderDto.setEquipmentScrapOrderCode(CodeUtils.getId("SBBF-"));
-                eamEquipmentScrapOrderDto.setOrderStatus((byte)1);
-                eamEquipmentScrapOrderDto.setList(eamEquipmentScrapOrderDetDtos);
+                    eamEquipmentScrapOrderDto.setEquipmentScrapOrderCode(CodeUtils.getId("SBBF-"));
+                    eamEquipmentScrapOrderDto.setOrderStatus((byte) 1);
+                    eamEquipmentScrapOrderDto.setList(eamEquipmentScrapOrderDetDtos);
 
-                sum += this.save(eamEquipmentScrapOrderDto);
+                    sum += this.save(eamEquipmentScrapOrderDto);
+                }
             }
         }
 
