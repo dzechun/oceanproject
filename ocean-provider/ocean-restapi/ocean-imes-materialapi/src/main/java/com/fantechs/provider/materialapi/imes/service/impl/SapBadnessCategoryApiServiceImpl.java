@@ -64,6 +64,7 @@ public class SapBadnessCategoryApiServiceImpl implements SapBadnessCategoryApiSe
             baseBadnessCategory.setBadnessCategoryDesc(searchSapBadnessCategoryApi.getCatalogue());
             baseBadnessCategory.setOrgId(orgId);
             baseBadnessCategory.setStatus((byte)1);
+            baseBadnessCategory.setIsDelete((byte)1);
             ResponseEntity<BaseBadnessCategory> baseBadnessCategoryResponseEntity = baseFeignApi.saveByApi(baseBadnessCategory);
 
             //保存产品工艺路线

@@ -34,4 +34,10 @@ public class SapCustomerApiController {
     public ResponseEntity getSupplier(@ApiParam(value = "查询对象")@RequestBody SearchSapSupplierApi searchSapSupplierApi) throws ParseException {
         return ControllerUtil.returnCRUD(sapCustomerApiService.getCustomer(searchSapSupplierApi));
     }
+
+    @ApiOperation(value = "请求雷赛全部客户信息",notes = "请求雷赛全部客户信息")
+    @PostMapping("/getCustomers")
+    public ResponseEntity getSuppliers() {
+        return ControllerUtil.returnCRUD(sapCustomerApiService.getCustomers());
+    }
 }

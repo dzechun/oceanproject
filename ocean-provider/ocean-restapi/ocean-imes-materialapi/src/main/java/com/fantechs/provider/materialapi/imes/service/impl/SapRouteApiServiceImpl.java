@@ -52,7 +52,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE()) ){
             if(StringUtils.isEmpty(res.getPROCESS())) throw new BizErrorException("请求结果为空");
             //保存或更新工艺路线
-            BaseMaterial baseMaterial = baseUtils.getBaseMaterial(baseUtils.removeZero(searchSapRouteApi.getMaterialCode()));
+           /* BaseMaterial baseMaterial = baseUtils.getBaseMaterial(baseUtils.removeZero(searchSapRouteApi.getMaterialCode()));
             if(StringUtils.isEmpty(baseMaterial)) throw new BizErrorException("未查询到对应的物料信息");
 
             //保存工艺路线
@@ -62,6 +62,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             baseRoute.setRouteCode(baseMaterial.getMaterialCode());
             baseRoute.setRouteType(1);
             baseRoute.setStatus(1);
+            baseRoute.setIsDelete((byte)1);
             baseRoute.setOrganizationId(orgId);
             baseFeignApi.addOrUpdate(baseRoute);
 
@@ -72,25 +73,28 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             baseProductProcessRoute.setRouteId(baseRoute.getRouteId());
             baseProductProcessRoute.setStatus(1);
             baseProductProcessRoute.setOrganizationId(orgId);
-            baseFeignApi.addOrUpdate(baseProductProcessRoute);
+            baseProductProcessRoute.setIsDelete((byte)1);
+            baseFeignApi.addOrUpdate(baseProductProcessRoute);*/
 
 
             //保存工段
             BaseWorkshopSection baseWorkshopSection = new BaseWorkshopSection();
-            baseWorkshopSection.setSectionCode(baseMaterial.getMaterialCode());
-            baseWorkshopSection.setSectionName(res.getPROCESS().get(0).getKTEXT());
-            baseWorkshopSection.setSectionDesc(res.getPROCESS().get(0).getKTEXT());
+            baseWorkshopSection.setSectionCode(res.getPROCESS().get(0).getARBPL());
+            baseWorkshopSection.setSectionName(res.getPROCESS().get(0).getLTXA1());
+            baseWorkshopSection.setSectionDesc(res.getPROCESS().get(0).getLTXA1());
             baseWorkshopSection.setStatus((byte)1);
             baseWorkshopSection.setOrganizationId(orgId);
-            ResponseEntity<BaseWorkshopSection> baseWorkshopSectionResponseEntity = baseFeignApi.addOrUpdate(baseWorkshopSection);
+            baseWorkshopSection.setIsDelete((byte)1);
+            baseFeignApi.addOrUpdate(baseWorkshopSection);
 
             //保存工序类别
-            BaseProcessCategory baseProcessCategory = new BaseProcessCategory();
+       /*     BaseProcessCategory baseProcessCategory = new BaseProcessCategory();
             baseProcessCategory.setProcessCategoryName(res.getPROCESS().get(0).getKTEXT());
             baseProcessCategory.setProcessCategoryDesc(res.getPROCESS().get(0).getKTEXT());
             baseProcessCategory.setProcessCategoryCode(res.getPROCESS().get(0).getKTEXT());
             baseProcessCategory.setStatus((byte)1);
             baseProcessCategory.setOrganizationId(orgId);
+            baseProcessCategory.setIsDelete((byte)1);
             ResponseEntity<BaseProcessCategory> baseProcessCategoryResponseEntity = baseFeignApi.addOrUpdate(baseProcessCategory);
 
             //保存工序
@@ -103,8 +107,10 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
                 baseProcess.setSectionCode(baseWorkshopSectionResponseEntity.getData().getSectionCode());
                 baseProcess.setOrganizationId(orgId);
                 baseProcess.setProcessCategoryId(baseProcessCategoryResponseEntity.getData().getProcessCategoryId());
+                baseProcess.setStatus(1);
+                baseProcess.setIsDelete((byte)1);
                 baseFeignApi.addOrUpdate(baseProcess);
-            }
+            }*/
             logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
             return 1;
         }else{

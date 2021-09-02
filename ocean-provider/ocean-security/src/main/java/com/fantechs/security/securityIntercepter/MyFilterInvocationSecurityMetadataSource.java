@@ -39,6 +39,8 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
         FilterInvocation filterInvocation = (FilterInvocation) o;
         HttpServletRequest httpRequest = filterInvocation.getHttpRequest();
+
+
         String token = httpRequest.getHeader("token");
         if (StringUtils.isNotEmpty(token)){
             SysUser user = TokenUtil.load(token);
@@ -57,8 +59,8 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
             return SecurityConfig.createList("ROLE_guest");
         }
 
-        //如果当前链接并没有匹配到任何权限，那就赋予一个最基本的权限，游客
-        return SecurityConfig.createList("ROLE_guest");
+        //如果当前链接并没有匹配到任何权限
+        return SecurityConfig.createList("ROLE_LOGIN");
     }
 
     public Collection<ConfigAttribute> getAllConfigAttributes() {

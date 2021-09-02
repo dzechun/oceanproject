@@ -18,13 +18,13 @@ public class OceanSecurityApplication {
         SpringApplication.run(OceanSecurityApplication.class, args);
     }
 
-/*    @Bean
-    public HttpMessageConverters fastJsonHttpMessageConverters() {
-        FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
-        FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
-        fastConverter.setFastJsonConfig(fastJsonConfig);
-        HttpMessageConverter<?> converter = fastConverter;
-        return new HttpMessageConverters(converter);
-    }*/
+//    @Bean
+//    public HttpMessageConverters fastJsonHttpMessageConverters() {
+//        FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
+//        FastJsonConfig fastJsonConfig = new FastJsonConfig();
+//        fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
+//        fastConverter.setFastJsonConfig(fastJsonConfig);
+//        HttpMessageConverter<?> converter = fastConverter;
+//        return new HttpMessageConverters(converter);
+//    }
 }

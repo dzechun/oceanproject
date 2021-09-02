@@ -9,8 +9,7 @@ class CodeGeneratorMain {
     private static final String MODEL_NAME = "ITest";
 
     private static final String[] TABLES = {
-            "eam_equipment_standing_book", "eam_equipment_standing_book_attachment","eam_equipment_jig","eam_equipment_jig_list",
-            "eam_ht_equipment_standing_book","eam_ht_equipment_standing_book_attachment","eam_ht_equipment_jig","eam_ht_equipment_jig_list"
+            "eng_contract_qty_order"
     };
 
     /**

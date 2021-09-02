@@ -2,8 +2,12 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.dto.restapi.*;
+import com.fantechs.common.base.general.entity.basic.BaseFactory;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapSupplierApiService;
@@ -16,6 +20,7 @@ import com.fantechs.provider.materialapi.imes.utils.supplierApi.SIMESSUPPLIERQUE
 import javax.annotation.Resource;
 import java.net.Authenticator;
 import java.text.ParseException;
+import java.util.List;
 
 
 @org.springframework.stereotype.Service
@@ -53,6 +58,7 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
                 baseSupplier.setSupplierDesc(supplier.getNAME1());
                 baseSupplier.setStatus((byte)1);
                 baseSupplier.setSupplierType((byte)1);
+                baseSupplier.setIsDelete((byte)1);
                 baseFeignApi.saveByApi(baseSupplier);
             }
             logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
@@ -61,6 +67,26 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
             logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
+    }
+
+    @Override
+    public int getSuppliers(){
+        SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
+        searchBaseFactory.setOrgId(baseUtils.getOrId());
+        ResponseEntity<List<BaseFactoryDto>> factoryList = baseFeignApi.findFactoryList(searchBaseFactory);
+        int i = 0;
+        if(StringUtils.isNotEmpty(factoryList.getData())){
+            for(BaseFactory factory : factoryList.getData()){
+                SearchSapSupplierApi searchSapSupplierApi = new SearchSapSupplierApi();
+                searchSapSupplierApi.setWerks(factory.getFactoryCode());
+                try {
+                    i = this.getSupplier(searchSapSupplierApi);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return i;
     }
 }
 

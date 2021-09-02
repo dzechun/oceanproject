@@ -7,31 +7,31 @@ public interface ImportDataService {
      * 中国五环-合同量单接口
      * @return
      */
-    String getPoDetails(String projectID) throws Exception;
+    BaseExecuteResultDto getPoDetails(String projectID) throws Exception;
 
     /**
      * 中国五环-领料单接口
      * @return
      */
-    String getIssueDetails(String projectID) throws Exception;
+    BaseExecuteResultDto getIssueDetails(String projectID) throws Exception;
 
     /**
      * 中国五环-材料信息接口
      * @return
      */
-    String getPartNoInfo(String projectID) throws Exception;
+    BaseExecuteResultDto getPartNoInfo(String projectID) throws Exception;
 
     /**
-     * 中国五环-货架信息接口
+     * 中国五环-货架信息接口 库位
      * @return
      */
-    String getShelvesNo(String projectID) throws Exception;
+    BaseExecuteResultDto getShelvesNo(String projectID) throws Exception;
 
     /**
-     * 中国五环-施工单位信息接口
+     * 中国五环-施工单位信息接口 客户
      * @return
      */
-    String getSubcontractor(String projectID) throws Exception;
+    BaseExecuteResultDto getSubcontractor(String projectID) throws Exception;
 
     /**
      * 中国五环-供应商信息接口
@@ -43,6 +43,6 @@ public interface ImportDataService {
      * 中国五环-请购单信息接口
      * @return
      */
-    String getReqDetails(String projectID) throws Exception;
+    BaseExecuteResultDto getReqDetails(String projectID) throws Exception;
 
 }
