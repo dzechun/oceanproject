@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.basic.JobRuleDto;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseFactoryImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
+import com.fantechs.common.base.general.entity.basic.BaseCustomer;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
@@ -170,5 +171,11 @@ public class BaseStorageController {
     public ResponseEntity<List<StorageRuleDto>> JobRule(@RequestBody JobRuleDto jobRuleDto){
         List<StorageRuleDto> list = StorageDistributionRuleUtils.JobMainRule(jobRuleDto.getPackageQty(), jobRuleDto.getWarehouseId(),jobRuleDto.getMaterialId(),StringUtils.isEmpty(jobRuleDto.getBatchCode())?null:jobRuleDto.getBatchCode(),StringUtils.isEmpty(jobRuleDto.getProDate())?null:jobRuleDto.getProDate());
         return ControllerUtil.returnDataSuccess(list,list.size());
+    }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/saveByApi")
+    public ResponseEntity saveByApi(@ApiParam(value = "必传：storageCode",required = true)@RequestBody @Validated BaseStorage baseStorage) {
+        return ControllerUtil.returnCRUD(baseStorageService.saveByApi(baseStorage));
     }
 }

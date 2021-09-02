@@ -15,4 +15,6 @@ import java.util.Map;
 public interface BaseCustomerService extends IService<BaseCustomer> {
 
     List<BaseCustomer> findList(Map<String, Object> map);
+
+    int saveByApi(BaseCustomer baseCustomer);
 }

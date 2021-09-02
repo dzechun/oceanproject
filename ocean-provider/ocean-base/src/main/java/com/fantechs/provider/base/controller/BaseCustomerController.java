@@ -2,6 +2,7 @@ package com.fantechs.provider.base.controller;
 
 
 import com.fantechs.common.base.general.entity.basic.BaseCustomer;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseCustomer;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -81,5 +82,11 @@ public class BaseCustomerController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/saveByApi")
+    public ResponseEntity saveByApi(@ApiParam(value = "必传：customer_code",required = true)@RequestBody @Validated BaseCustomer baseCustomer) {
+        return ControllerUtil.returnCRUD(baseCustomerService.saveByApi(baseCustomer));
     }
 }
