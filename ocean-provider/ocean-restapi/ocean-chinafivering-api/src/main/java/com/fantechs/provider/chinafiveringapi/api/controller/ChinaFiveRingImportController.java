@@ -37,8 +37,9 @@ public class ChinaFiveRingImportController {
     @ApiOperation("获取领料单")
     @PostMapping("/getIssueDetails")
     public ResponseEntity<String> getIssueDetails(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
-        String  result = importDataService.getIssueDetails(projectID);
-        return  ControllerUtil.returnDataSuccess(result, StringUtils.isEmpty(result)?0:1);
+        BaseExecuteResultDto result = importDataService.getIssueDetails(projectID);
+        String strResult= JsonUtils.objectToJson(result);
+        return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
     }
 
     @ApiOperation("获取材料信息")
@@ -52,15 +53,17 @@ public class ChinaFiveRingImportController {
     @ApiOperation("获取货架信息")
     @PostMapping("/getShelvesNo")
     public ResponseEntity<String> getShelvesNo(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
-        String  result = importDataService.getShelvesNo(projectID);
-        return  ControllerUtil.returnDataSuccess(result, StringUtils.isEmpty(result)?0:1);
+        BaseExecuteResultDto result = importDataService.getShelvesNo(projectID);
+        String strResult= JsonUtils.objectToJson(result);
+        return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
     }
 
     @ApiOperation("获取施工单位信息")
     @PostMapping("/getSubcontractor")
     public ResponseEntity<String> getSubcontractor(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
-        String  result = importDataService.getSubcontractor(projectID);
-        return  ControllerUtil.returnDataSuccess(result, StringUtils.isEmpty(result)?0:1);
+        BaseExecuteResultDto result = importDataService.getSubcontractor(projectID);
+        String strResult= JsonUtils.objectToJson(result);
+        return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
     }
 
     @ApiOperation("获取供应商信息")
