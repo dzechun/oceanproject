@@ -9,4 +9,6 @@ import java.text.ParseException;
 public interface SapCustomerApiService {
 
     int getCustomer(SearchSapSupplierApi searchSapSupplierApi) throws ParseException;
+
+    int getCustomers();
 }
