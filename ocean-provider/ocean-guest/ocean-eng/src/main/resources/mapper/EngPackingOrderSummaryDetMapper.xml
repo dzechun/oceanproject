@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.eng.mapper.EngPackingOrderSummaryDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="packing_order_summary_det_id" jdbcType="BIGINT" property="packingOrderSummaryDetId" />
+    <result column="packing_order_summary_id" jdbcType="BIGINT" property="packingOrderSummaryId" />
+    <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
+    <result column="inner_carton_code" jdbcType="VARCHAR" property="innerCartonCode" />
+    <result column="location_num" jdbcType="VARCHAR" property="locationNum" />
+    <result column="device_code" jdbcType="VARCHAR" property="deviceCode" />
+    <result column="dominant_term_code" jdbcType="VARCHAR" property="dominantTermCode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="despatch_batch" jdbcType="BIGINT" property="despatchBatch" />
+    <result column="spec" jdbcType="BIGINT" property="spec" />
+    <result column="drawing_number" jdbcType="VARCHAR" property="drawingNumber" />
+    <result column="part_number" jdbcType="VARCHAR" property="partNumber" />
+    <result column="qty" jdbcType="DECIMAL" property="qty" />
+    <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
+    <result column="raw_material_code" jdbcType="VARCHAR" property="rawMaterialCode" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    sposd.packing_order_summary_det_id,
+    sposd.packing_order_summary_id,
+    sposd.carton_code,
+    sposd.despatch_batch,
+    sposd.spec,
+    sposd.inner_carton_code,
+    sposd.location_num,
+    sposd.device_code,
+    sposd.material_id,
+    sposd.supplier_id,
+    sposd.drawing_number,
+    sposd.part_number,
+    sposd.qty,
+    sposd.unit_name,
+    sposd.raw_material_code,
+    sposd.`status`,
+    sposd.remark,
+    sposd.org_id,
+    sposd.create_user_id,
+    sposd.create_time,
+    sposd.modified_user_id,
+    sposd.modified_time,
+    sposd.option1,
+    sposd.option2,
+    sposd.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,
+    bm.material_name as material_name,bm.material_code as material_code,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from eng_packing_order_summary_det sposd
+    left join base_material bm on sposd.material_id=bm.material_id
+    left join ocean_v2.sys_user u on sposd.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on sposd.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON sposd.org_id = bo.organization_id
+    <where>
+
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(sposd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="status!=null">
+        and sposd.status = #{status}
+      </if>
+      <if test="packingOrderSummaryId!=null">
+        and sposd.packing_order_summary_id=#{packingOrderSummaryId}
+      </if>
+      <if test="orgId!=null">
+        and sposd.org_id=#{orgId}
+      </if>
+    </where>
+    order by sposd.create_time desc
+  </select>
+
+</mapper>

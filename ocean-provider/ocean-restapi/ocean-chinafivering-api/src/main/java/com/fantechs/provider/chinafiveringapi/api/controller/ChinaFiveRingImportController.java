@@ -44,8 +44,9 @@ public class ChinaFiveRingImportController {
     @ApiOperation("获取材料信息")
     @PostMapping("/getPartNoInfo")
     public ResponseEntity<String> getPartNoInfo(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
-        String  result = importDataService.getPartNoInfo(projectID);
-        return  ControllerUtil.returnDataSuccess(result, StringUtils.isEmpty(result)?0:1);
+        BaseExecuteResultDto result = importDataService.getPartNoInfo(projectID);
+        String strResult= JsonUtils.objectToJson(result);
+        return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
     }
 
     @ApiOperation("获取货架信息")
@@ -73,8 +74,9 @@ public class ChinaFiveRingImportController {
     @ApiOperation("获取请购单信息")
     @PostMapping("/getReqDetails")
     public ResponseEntity<String> getReqDetails(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
-        String  result = importDataService.getReqDetails(projectID);
-        return  ControllerUtil.returnDataSuccess(result, StringUtils.isEmpty(result)?0:1);
+        BaseExecuteResultDto result = importDataService.getReqDetails(projectID);
+        String strResult= JsonUtils.objectToJson(result);
+        return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
     }
 
 }
