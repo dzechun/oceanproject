@@ -7,7 +7,7 @@ public interface ImportDataService {
      * 中国五环-合同量单接口
      * @return
      */
-    String getPoDetails(String projectID) throws Exception;
+    BaseExecuteResultDto getPoDetails(String projectID) throws Exception;
 
     /**
      * 中国五环-领料单接口

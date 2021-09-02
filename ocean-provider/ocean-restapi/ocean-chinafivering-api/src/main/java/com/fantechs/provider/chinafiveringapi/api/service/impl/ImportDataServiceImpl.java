@@ -1,12 +1,12 @@
 package com.fantechs.provider.chinafiveringapi.api.service.impl;
 
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
-import com.fantechs.common.base.general.dto.restapi.RestapiPoApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.utils.BeanUtils;
-import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.chinafiveringapi.api.service.ImportDataService;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +26,11 @@ public class ImportDataServiceImpl implements ImportDataService {
 
     @Resource
     BaseFeignApi baseFeignApi;
+    @Resource
+    EngFeignApi engFeignApi;
 
     @Override
-    public String getPoDetails(String projectID) throws Exception {
+    public BaseExecuteResultDto getPoDetails(String projectID) throws Exception {
 //        WebService1HttpGet webService1HttpGet=null;
 //        // 代理工厂
 //        JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
@@ -41,28 +43,43 @@ public class ImportDataServiceImpl implements ImportDataService {
 //        return webService1HttpGet.getPoDetails(projectID.toString());
 
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
-        baseExecuteResultDto= callWebService(address,"getPoDetails",projectID);
-        if(baseExecuteResultDto.getIsSuccess()==false)
-            throw new Exception(baseExecuteResultDto.getFailMsg());
+        try {
+            baseExecuteResultDto= callWebService(address,"getPoDetails",projectID);
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
 
-        //转换为实体类集合
-        String strResult=baseExecuteResultDto.getExecuteResult().toString();
-        String s0=strResult.replaceAll("材料用途","material_use");
-        String s1=s0.replaceAll("合同号","po_no");
-        String s2=s1.replaceAll("材料编码","material_code");
-        String s3=s2.replaceAll("位号","position_no");
-        String s4=s3.replaceAll("采购量","ch_qty");
-        String s5=s4.replaceAll("备注","ch_remk");
-        String s6=s5.replaceAll("装置号","zz_no");
-        String s7=s6.replaceAll("主项号","ch_seq");
+            //转换为实体类集合
+            String strResult=baseExecuteResultDto.getExecuteResult().toString();
+            String s0=strResult.replaceAll("材料用途","materialPurpose");
+            String s1=s0.replaceAll("合同号","contractCode");
+            String s2=s1.replaceAll("材料编码","materialCode");
+            String s3=s2.replaceAll("位号","locationNum");
+            String s4=s3.replaceAll("采购量","purQty");
+            String s5=s4.replaceAll("备注","remark");
+            String s6=s5.replaceAll("装置号","deviceCode");
+            String s7=s6.replaceAll("主项号","dominantTermCode");
+            String s8=s7.replaceAll("PPGUID","option1");
+            String s9=s8.replaceAll("PSGUID","option2");
+            String s10=s9.replaceAll("RDGUID","option3");
 
-        int indexb=s7.indexOf("[");
-        int indexe=s7.lastIndexOf("]");
-        String str=s7.substring(indexb,indexe+1);
-        List<RestapiPoApiDto> listPO= JsonUtils.jsonToList(str,RestapiPoApiDto.class);
+            //同步到数据库
+            int indexb=s10.indexOf("[");
+            int indexe=s10.lastIndexOf("]");
+            String str=s10.substring(indexb,indexe+1);
+            List<EngContractQtyOrder> listPO= BeanUtils.jsonToListObject(str,EngContractQtyOrder.class);
+            for (EngContractQtyOrder engContractQtyOrder : listPO) {
+                engContractQtyOrder.setOrgId(1004L);
+                engFeignApi.saveByApi(engContractQtyOrder);
+            }
 
-        return baseExecuteResultDto.getExecuteResult().toString();
+            baseExecuteResultDto.setIsSuccess(true);
 
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
     }
 
     @Override

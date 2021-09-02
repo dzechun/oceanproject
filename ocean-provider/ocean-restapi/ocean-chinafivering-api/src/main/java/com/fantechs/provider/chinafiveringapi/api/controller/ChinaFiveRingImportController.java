@@ -29,8 +29,9 @@ public class ChinaFiveRingImportController {
     @ApiOperation("获取合同量单")
     @PostMapping("/getPoDetails")
     public ResponseEntity<String> getPoDetails(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
-        String  result = importDataService.getPoDetails(projectID);
-        return  ControllerUtil.returnDataSuccess(result, StringUtils.isEmpty(result)?0:1);
+        BaseExecuteResultDto result = importDataService.getPoDetails(projectID);
+        String strResult= JsonUtils.objectToJson(result);
+        return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
     }
 
     @ApiOperation("获取领料单")
