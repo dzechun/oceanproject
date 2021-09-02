@@ -3,9 +3,11 @@ package com.fantechs.security.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysUserDto;
+import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.security.mapper.SysRoleMapper;
 import com.fantechs.security.mapper.SysUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @Auther: bingo.ren
@@ -37,6 +40,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Resource
     private SysUserMapper sysUserMapper;
+    @Resource
+    private SysRoleMapper sysRoleMapper;
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         Example example = new Example(SysUser.class);
@@ -49,6 +54,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         SysUserDto userDto  = new SysUserDto();
         BeanUtils.copyProperties(user,userDto);
+        List<SysRole> rolesByUserId= sysRoleMapper.findRolesByUserId(userDto.getUserId());
+        if(StringUtils.isEmpty(rolesByUserId)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990401);
+        }
+        userDto.setRoles(rolesByUserId);
         return userDto;
     }
 

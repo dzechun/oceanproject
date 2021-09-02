@@ -1,15 +1,11 @@
 package com.fantechs.security.securityIntercepter;
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysOrganizationUser;
-import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysSpecItem;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.filter.CustomWebAuthenticationDetails;
 import com.fantechs.security.mapper.SysOrganizationUserMapper;
-import com.fantechs.security.mapper.SysRoleMapper;
 import com.fantechs.security.mapper.SysSpecItemMapper;
 import com.fantechs.security.mapper.SysUserMapper;
 import com.fantechs.security.service.impl.UserDetailsServiceImpl;
@@ -41,8 +37,6 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
     private SysSpecItemMapper sysSpecItemMapper;
     @Resource
     private SysUserMapper sysUserMapper;
-    @Resource
-    private SysRoleMapper sysRoleMapper;
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 
@@ -77,13 +71,6 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
                 throw new BadCredentialsException("密码错误");
             }
          }
-
-
-        List<SysRole> rolesByUserId= sysRoleMapper.findRolesByUserId(userDto.getUserId());
-        if(StringUtils.isEmpty(rolesByUserId)){
-            throw new BizErrorException(ErrorCodeEnum.GL99990401);
-        }
-        userDto.setRoles(rolesByUserId);
         Example specExample = new Example(SysSpecItem.class);
         specExample.createCriteria().andEqualTo("specCode","isOrg");
         SysSpecItem sysSpecItem = sysSpecItemMapper.selectOneByExample(specExample);

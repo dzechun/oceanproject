@@ -59,8 +59,8 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
             return SecurityConfig.createList("ROLE_guest");
         }
 
-        //如果当前链接并没有匹配到任何权限，那就赋予一个最基本的权限，游客
-        return SecurityConfig.createList("ROLE_guest");
+        //如果当前链接并没有匹配到任何权限
+        return SecurityConfig.createList("ROLE_LOGIN");
     }
 
     public Collection<ConfigAttribute> getAllConfigAttributes() {
