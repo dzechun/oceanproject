@@ -9,31 +9,97 @@ import java.util.Date;
 import javax.persistence.*;
 import lombok.Data;
 
+import javax.persistence.Table;
+
 /**
- * 合同量单
- * eng_contract_qty_order
+ * 请购单
+ * eng_purchase_req_order
  * @author Dylan
- * @date 2021-09-01 17:34:57
+ * @date 2021-09-02 11:17:46
  */
 @Data
-@Table(name = "eng_contract_qty_order")
-public class EngContractQtyOrder extends ValidGroup implements Serializable {
+@Table(name = "eng_purchase_req_order")
+public class EngPurchaseReqOrder extends ValidGroup implements Serializable {
     /**
-     * 合同量单ID
+     * 请购单ID
      */
-    @ApiModelProperty(name="contractQtyOrderId",value = "合同量单ID")
-    @Excel(name = "合同量单ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="purchaseReqOrderId",value = "请购单ID")
+    @Excel(name = "请购单ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "contract_qty_order_id")
-    private Long contractQtyOrderId;
+    @Column(name = "purchase_req_order_id")
+    private Long purchaseReqOrderId;
 
     /**
-     * 合同号
+     * 请购单号
      */
-    @ApiModelProperty(name="contractCode",value = "合同号")
-    @Excel(name = "合同号", height = 20, width = 30,orderNum="") 
-    @Column(name = "contract_code")
-    private String contractCode;
+    @ApiModelProperty(name="purchaseReqOrderCode",value = "请购单号")
+    @Excel(name = "请购单号", height = 20, width = 30,orderNum="") 
+    @Column(name = "purchase_req_order_code")
+    private String purchaseReqOrderCode;
+
+    /**
+     * 请购单名称
+     */
+    @ApiModelProperty(name="purchaseReqOrderName",value = "请购单名称")
+    @Excel(name = "请购单名称", height = 20, width = 30,orderNum="") 
+    @Column(name = "purchase_req_order_name")
+    private String purchaseReqOrderName;
+
+    /**
+     * 材料等级
+     */
+    @ApiModelProperty(name="materialGrade",value = "材料等级")
+    @Excel(name = "材料等级", height = 20, width = 30,orderNum="") 
+    @Column(name = "material_grade")
+    private String materialGrade;
+
+    /**
+     * 材料编码
+     */
+    @ApiModelProperty(name="materialCode",value = "材料编码")
+    @Excel(name = "材料编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "material_code")
+    private String materialCode;
+
+    /**
+     * 位号
+     */
+    @ApiModelProperty(name="locationNum",value = "位号")
+    @Excel(name = "位号", height = 20, width = 30,orderNum="") 
+    @Column(name = "location_num")
+    private String locationNum;
+
+    /**
+     * 设计量
+     */
+    @ApiModelProperty(name="designQty",value = "设计量")
+    @Excel(name = "设计量", height = 20, width = 30,orderNum="") 
+    @Column(name = "design_qty")
+    private String designQty;
+
+    /**
+     * 余量
+     */
+    @ApiModelProperty(name="surplusQty",value = "余量")
+    @Excel(name = "余量", height = 20, width = 30,orderNum="") 
+    @Column(name = "surplus_qty")
+    private String surplusQty;
+
+    /**
+     * 请购量
+     */
+    @ApiModelProperty(name="purchaseReqQty",value = "请购量")
+    @Excel(name = "请购量", height = 20, width = 30,orderNum="") 
+    @Column(name = "purchase_req_qty")
+    private String purchaseReqQty;
+
+    /**
+     * 请购说明
+     */
+    @ApiModelProperty(name="purchaseReqExplain",value = "请购说明")
+    @Excel(name = "请购说明", height = 20, width = 30,orderNum="") 
+    @Column(name = "purchase_req_explain")
+    private String purchaseReqExplain;
 
     /**
      * 装置码
@@ -52,22 +118,6 @@ public class EngContractQtyOrder extends ValidGroup implements Serializable {
     private String dominantTermCode;
 
     /**
-     * 位号
-     */
-    @ApiModelProperty(name="locationNum",value = "位号")
-    @Excel(name = "位号", height = 20, width = 30,orderNum="") 
-    @Column(name = "location_num")
-    private String locationNum;
-
-    /**
-     * 材料编码
-     */
-    @ApiModelProperty(name="materialCode",value = "材料编码")
-    @Excel(name = "材料编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "material_code")
-    private String materialCode;
-
-    /**
      * 材料用途
      */
     @ApiModelProperty(name="materialPurpose",value = "材料用途")
@@ -76,20 +126,12 @@ public class EngContractQtyOrder extends ValidGroup implements Serializable {
     private String materialPurpose;
 
     /**
-     * 采购数
+     * 采购说明
      */
-    @ApiModelProperty(name="purQty",value = "采购数")
-    @Excel(name = "采购数", height = 20, width = 30,orderNum="") 
-    @Column(name = "pur_qty")
-    private String purQty;
-
-    /**
-     * 专业编码
-     */
-    @ApiModelProperty(name="professionCode",value = "专业编码")
-    @Excel(name = "专业编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "profession_code")
-    private String professionCode;
+    @ApiModelProperty(name="purchaseExplain",value = "采购说明")
+    @Excel(name = "采购说明", height = 20, width = 30,orderNum="") 
+    @Column(name = "purchase_explain")
+    private String purchaseExplain;
 
     /**
      * 状态(0无效，1有效)
