@@ -3,16 +3,9 @@ package com.fantechs.security.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysUserDto;
-import com.fantechs.common.base.entity.security.SysOrganizationUser;
-import com.fantechs.common.base.entity.security.SysRole;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.security.filter.CustomWebAuthenticationDetails;
-import com.fantechs.security.mapper.SysOrganizationUserMapper;
-import com.fantechs.security.mapper.SysRoleMapper;
-import com.fantechs.security.mapper.SysSpecItemMapper;
 import com.fantechs.security.mapper.SysUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -23,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -31,8 +23,6 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @Auther: bingo.ren
@@ -47,13 +37,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Resource
     private SysUserMapper sysUserMapper;
-    @Resource
-    private SysRoleMapper sysRoleMapper;
-    @Resource
-    private SysOrganizationUserMapper sysOrganizationUserMapper;
-    @Resource
-    private SysSpecItemMapper sysSpecItemMapper;
-
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         Example example = new Example(SysUser.class);
@@ -61,51 +44,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         criteria.andEqualTo("status",1).andEqualTo("userName"
                 , s).orEqualTo("userCode",s);
         SysUser user = sysUserMapper.selectOneByExample(example);
-
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011011,s);
         }
-
-
-        List<SysRole> rolesByUserId=new LinkedList<>();
-        try{
-            rolesByUserId = sysRoleMapper.findRolesByUserId(user.getUserId());
-        }catch (Exception e){
-            log.error(e.getMessage());
-        }
-        if(StringUtils.isEmpty(rolesByUserId)){
-            throw new BizErrorException(ErrorCodeEnum.GL99990401);
-        }
-
-        Example specExample = new Example(SysSpecItem.class);
-        specExample.createCriteria().andEqualTo("specCode","isOrg");
-        SysSpecItem sysSpecItem = sysSpecItemMapper.selectOneByExample(specExample);
-        String paraValue = sysSpecItem.getParaValue();
-        if(Integer.valueOf(paraValue) == 1 && StringUtils.isNotEmpty(CustomWebAuthenticationDetails.ORGANIZATIONID)){
-            SysOrganizationUser searchOrganizationUser =  new SysOrganizationUser();
-            searchOrganizationUser.setUserId(user.getUserId());
-            searchOrganizationUser.setOrganizationId(new Long(CustomWebAuthenticationDetails.ORGANIZATIONID));
-            SysOrganizationUser sysOrganizationUsers = sysOrganizationUserMapper.selectOne(searchOrganizationUser);
-            if(StringUtils.isNotEmpty(sysOrganizationUsers)){
-                user.setOrganizationId(new Long(CustomWebAuthenticationDetails.ORGANIZATIONID));
-            }else{
-                throw new BizErrorException("组织错误");
-            }
-        }else{
-            List<Long> organizationList = sysUserMapper.findOrganizationList(user.getUserId());
-            if (StringUtils.isNotEmpty(organizationList)){
-                user.setOrganizationId(organizationList.get(0));
-            }
-        }
-
         SysUserDto userDto  = new SysUserDto();
         BeanUtils.copyProperties(user,userDto);
-        userDto.setRoles(rolesByUserId);
-        //新宝刷卡登录（免密）
-        if(StringUtils.isNotEmpty(CustomWebAuthenticationDetails.TYPE) && "2".equals(CustomWebAuthenticationDetails.TYPE)){
-            logger.info("--------刷卡登录----------");
-            userDto.setPassword(new BCryptPasswordEncoder().encode("123456"));
-        }
         return userDto;
     }
 
