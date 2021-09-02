@@ -69,17 +69,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
         //配置userService需要实体类实现UserDetail接口供security使用实体信息
         //userService接口实现UserDetailService接口，重写方法
         auth.authenticationProvider(customAuthenticationProvider);
-        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder(){
-              @Override
-              public String encode(CharSequence charSequence) {
-                                 return charSequence.toString();
-                             }
-
-                      @Override
-              public boolean matches(CharSequence charSequence, String s) {
-                                 return s.equals(charSequence.toString());
-                             }
-          });
+        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
     //第二步配置动态权限过滤器
     @Override
