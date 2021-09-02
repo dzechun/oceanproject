@@ -468,4 +468,14 @@ public interface BaseFeignApi {
     @ApiOperation("用户绑定供应商列表")
     @PostMapping("/baseSupplierReUser/findList")
     ResponseEntity<List<BaseSupplierReUser>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSupplierReUser searchBaseSupplierReUser);
+
+    @ApiOperation("增加客户信息")
+    @PostMapping("/baseCustomer/saveByApi")
+    ResponseEntity saveByApi(@ApiParam(value = "必传：customer_code",required = true)@RequestBody @Validated BaseCustomer baseCustomer);
+
+    @ApiOperation("增加库位信息")
+    @PostMapping("/baseStorage/saveByApi")
+    ResponseEntity saveByApi(@ApiParam(value = "必传：storageCode",required = true)@RequestBody @Validated BaseStorage baseStorage);
+
+
 }

@@ -3,12 +3,15 @@ package com.fantechs.provider.wms.out.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
@@ -198,6 +201,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("DBCK-"));
         }else if(wmsOutDeliveryOrder.getOrderTypeId()==7){
             wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("OTCK-"));
+        }else if(wmsOutDeliveryOrder.getOrderTypeId()==8){
+            wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("LLCK-"));
         }
         wmsOutDeliveryOrder.setCreateTime(new Date());
         wmsOutDeliveryOrder.setCreateUserId(user.getUserId());
@@ -217,6 +222,10 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
         if(StringUtils.isNotEmpty(wmsOutDeliveryOrderDetList)){
             for (WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet : wmsOutDeliveryOrderDetList ) {
+                //领料出库单查询库存
+//                if(wmsOutDeliveryOrder.getOrderTypeId()==8){
+//                    this.findInventory(wmsOutDeliveryOrderDet);
+//                }
                 wmsOutDeliveryOrderDet.setDeliveryOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
                 wmsOutDeliveryOrderDet.setCreateTime(new Date());
                 wmsOutDeliveryOrderDet.setCreateUserId(user.getUserId());
@@ -273,6 +282,10 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
         if(StringUtils.isNotEmpty(wmsOutDeliveryOrderDetList)){
             for (WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet : wmsOutDeliveryOrderDetList ) {
+//                //领料出库单查询库存
+//                if(wmsOutDeliveryOrder.getOrderTypeId()==8){
+//                    this.findInventory(wmsOutDeliveryOrderDet);
+//                }
                 wmsOutDeliveryOrderDet.setModifiedTime(new Date());
                 wmsOutDeliveryOrderDet.setModifiedUserId(user.getUserId());
                 wmsOutDeliveryOrderDet.setOrgId(user.getOrganizationId());
@@ -287,6 +300,31 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
 
         return i;
+    }
+
+    /**
+     * 领料拣货单匹配库存
+     * @param wmsOutDeliveryOrderDet
+     */
+    private void findInventory(WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet){
+        //查询库存
+        SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
+        searchWmsInnerInventory.setWarehouseId(wmsOutDeliveryOrderDet.getWarehouseId());
+        searchWmsInnerInventory.setStorageId(wmsOutDeliveryOrderDet.getStorageId());
+        searchWmsInnerInventory.setMaterialId(wmsOutDeliveryOrderDet.getMaterialId());
+        searchWmsInnerInventory.setBatchCode(wmsOutDeliveryOrderDet.getBatchCode());
+        searchWmsInnerInventory.setJobStatus((byte)1);
+        ResponseEntity<List<WmsInnerInventoryDto>> responseEntity = innerFeignApi.findList(searchWmsInnerInventory);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404);
+        }
+        List<WmsInnerInventoryDto> wmsInnerInventoryDtos = responseEntity.getData();
+        if(StringUtils.isEmpty(wmsInnerInventoryDtos)){
+            throw new BizErrorException("无库存！");
+        }
+       if(wmsInnerInventoryDtos.stream().map(WmsInnerInventory::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add).compareTo(wmsOutDeliveryOrderDet.getPackingQty())==-1){
+           throw new BizErrorException("库存不足！");
+       }
     }
 
     @Override
@@ -349,7 +387,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         map.put("deliveryOrderId", id);
         List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderMapper.findList(map);
         if (StringUtils.isEmpty(list)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003,"无数据");
         }
         WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
         if(wmsOutDeliveryOrderDto.getOrderTypeId().equals(1L) && wmsOutDeliveryOrderDto.getAuditStatus() != (byte) 1){
@@ -400,6 +438,13 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
                 for (WmsOutDeliveryOrderDetDto dto : dtoList) {
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                    if(wmsInnerJobOrder.getOrderTypeId()==8 && StringUtils.isNotEmpty(dto.getPickingStorageId())){
+                        wmsInnerJobOrder.setType(1);
+                        wmsInnerJobOrderDet.setOutStorageId(dto.getPickingStorageId());
+                        wmsInnerJobOrderDet.setDistributionQty(dto.getPackingQty());
+                    }else {
+                        wmsInnerJobOrder.setType(0);
+                    }
                     wmsInnerJobOrderDet.setSourceDetId(dto.getDeliveryOrderDetId());
                     wmsInnerJobOrderDet.setInStorageId(dto.getStorageId());
                     wmsInnerJobOrderDet.setInventoryStatusId(dto.getInventoryStatusId());
@@ -415,7 +460,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 //创建作业单
                 ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("创建拣货作业单失败");
+                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                 }
             }
         } else {

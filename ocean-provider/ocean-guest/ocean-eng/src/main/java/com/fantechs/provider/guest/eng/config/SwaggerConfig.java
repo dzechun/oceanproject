@@ -1,4 +1,4 @@
-package com.fantechs.provider.eng.config;
+package com.fantechs.provider.guest.eng.config;
 /**注意导入包是否齐全**/
 
 import com.google.common.base.Function;
@@ -45,7 +45,7 @@ public class SwaggerConfig
                 .apiInfo(apiInfo())
                 .select()
                 // 指定当前包路径，这里就添加了两个包，注意方法变成了basePackage，中间加上成员变量splitor
-                .apis(basePackage("com.fantechs.provider.eng.controller"))
+                .apis(basePackage("com.fantechs.provider.guest.eng.controller"))
                 // 扫描所有 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()

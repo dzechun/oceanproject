@@ -13,6 +13,7 @@
     <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="customer_id" jdbcType="BIGINT" property="customerId"/>
     <result column="delivery_order_code" jdbcType="VARCHAR" property="deliveryOrderCode" />
     <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
     <result column="related_order_code_1" jdbcType="VARCHAR" property="relatedOrderCode1" />
@@ -49,6 +50,8 @@
     <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
@@ -63,6 +66,8 @@
     wodo.order_type_id,
     wodo.warehouse_id,
     wodo.storage_id,
+wodo.supplier_id,
+wodo.customer_id,
     wodo.delivery_order_code,
     wodo.customer_order_code,
     wodo.related_order_code_1,
@@ -99,11 +104,15 @@
     bmo.material_owner_name,bw.warehouse_name,bs.storage_code,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
-    bo.organization_name
+    bo.organization_name,
+    su.supplier_name,
+    sus.supplier_name as 'customer_name'
     from fantech_imes_v2.wms_out_delivery_order wodo
     LEFT JOIN fantech_imes_v2.base_material_owner bmo ON wodo.material_owner_id = bmo.material_owner_id
     LEFT JOIN fantech_imes_v2.base_warehouse bw ON wodo.warehouse_id = bw.warehouse_id
     LEFT JOIN fantech_imes_v2.base_storage bs ON wodo.storage_id = bs.storage_id
+    LEFT JOIN base_supplier su on  su.supplier_id = wodo.supplier_id
+    LEFT JOIN base_supplier sus on  sus.supplier_id = wodo.customer_id
     LEFT JOIN ocean_v2.sys_user su ON wodo.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wodo.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON wodo.org_id = bo.organization_id

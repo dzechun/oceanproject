@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.eng.mapper.EngPackingOrderSummaryMapper">
+<mapper namespace="com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary">
     <!--
       WARNING - @mbg.generated
@@ -50,7 +50,7 @@
     spos.purchase_req_order_code,
     spos.contract_code,
     spos.carton_code,
-    spos.profession_code
+    spos.profession_code,
     spos.device_code,
     spos.location_num,
     spos.material_id,

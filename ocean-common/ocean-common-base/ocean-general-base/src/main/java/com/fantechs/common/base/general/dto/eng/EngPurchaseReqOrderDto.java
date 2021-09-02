@@ -1,19 +1,15 @@
 package com.fantechs.common.base.general.dto.eng;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
+import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
-import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
-import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serializable;
-
-public class EngPurchaseReqOrderDto extends EngContractQtyOrder implements Serializable {
+@Data
+public class EngPurchaseReqOrderDto extends EngPurchaseReqOrder implements Serializable {
     /**
      * 创建用户名称
      */

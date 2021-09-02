@@ -107,5 +107,11 @@ public class WmsOutDespatchOrderReJo extends ValidGroup implements Serializable 
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    /**
+     * 拣货单据类型id
+     */
+    @Transient
+    private Long orderTypeId;
+
     private static final long serialVersionUID = 1L;
 }

@@ -60,7 +60,7 @@ public interface PickingOrderService {
      * @param outDeliveryOrderId
      * @return
      */
-    int autoOutOrder(Long outDeliveryOrderId);
+    int autoOutOrder(Long outDeliveryOrderId,Byte orderTypeId);
 
     Map<String ,Object> checkBarcode(String barCode, Long jobOrderDetId);
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.eng.mapper.EngHtPackingOrderSummaryMapper">
+<mapper namespace="com.fantechs.provider.guest.eng.mapper.EngHtPackingOrderSummaryMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrderSummary">
     <!--
       WARNING - @mbg.generated
