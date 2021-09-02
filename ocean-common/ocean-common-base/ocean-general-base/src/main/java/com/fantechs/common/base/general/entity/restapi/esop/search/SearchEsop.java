@@ -13,4 +13,8 @@ public class SearchEsop extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="code",value = "部门编码")
     private String code;
+
+    private String isDeleted;
+
+    private String isWas;
 }

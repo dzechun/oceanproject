@@ -1,19 +1,17 @@
-package com.fantechs.common.base.general.dto.srm;
+package com.fantechs.common.base.general.dto.eng;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.srm.SrmDeliveryNoteDet;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.srm.SrmPackingOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.Date;
 
 
 @Data
-public class SrmPackingOrderDto extends SrmPackingOrder implements Serializable {
+public class EngPackingOrderDto extends EngPackingOrder implements Serializable {
 
     /**
      * 供应商编码

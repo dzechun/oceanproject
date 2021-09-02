@@ -1,8 +1,7 @@
-package com.fantechs.common.base.general.dto.srm;
+package com.fantechs.common.base.general.dto.eng;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.srm.SrmPackingOrderSummary;
-import com.fantechs.common.base.general.entity.srm.history.SrmHtPackingOrderSummary;
+import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrderSummaryDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -12,7 +11,7 @@ import java.io.Serializable;
 
 
 @Data
-public class SrmHtPackingOrderSummaryDetDto extends SrmHtPackingOrderSummary implements Serializable {
+public class EngHtPackingOrderSummaryDto extends EngHtPackingOrderSummaryDet implements Serializable {
 
 
     /**

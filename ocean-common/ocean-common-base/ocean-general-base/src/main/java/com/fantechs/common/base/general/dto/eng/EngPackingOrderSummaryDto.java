@@ -1,8 +1,8 @@
-package com.fantechs.common.base.general.dto.srm;
+package com.fantechs.common.base.general.dto.eng;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.srm.SrmPackingOrderSummaryDet;
-import com.fantechs.common.base.general.entity.srm.history.SrmHtPackingOrderSummaryDet;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
+import com.fantechs.common.base.general.entity.srm.SrmPackingOrderSummary;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 
 @Data
-public class SrmHtPackingOrderSummaryDto extends SrmHtPackingOrderSummaryDet implements Serializable {
+public class EngPackingOrderSummaryDto extends EngPackingOrderSummary implements Serializable {
 
 
     /**
@@ -55,5 +55,4 @@ public class SrmHtPackingOrderSummaryDto extends SrmHtPackingOrderSummaryDet imp
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
 
-    private static final long serialVersionUID = 1L;
 }

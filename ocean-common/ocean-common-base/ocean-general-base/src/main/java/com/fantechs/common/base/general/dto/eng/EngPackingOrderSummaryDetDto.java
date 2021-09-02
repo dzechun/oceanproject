@@ -1,7 +1,8 @@
-package com.fantechs.common.base.general.dto.srm;
+package com.fantechs.common.base.general.dto.eng;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.srm.SrmPackingOrderSummary;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
+import com.fantechs.common.base.general.entity.srm.SrmPackingOrderSummaryDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import java.io.Serializable;
 
 
 @Data
-public class SrmPackingOrderSummaryDto extends SrmPackingOrderSummary implements Serializable {
+public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet implements Serializable {
 
 
     /**
@@ -36,7 +37,7 @@ public class SrmPackingOrderSummaryDto extends SrmPackingOrderSummary implements
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="12")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="")
     private String createUserName;
 
     /**
@@ -44,7 +45,7 @@ public class SrmPackingOrderSummaryDto extends SrmPackingOrderSummary implements
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="14")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="")
     private String modifiedUserName;
 
     /**
