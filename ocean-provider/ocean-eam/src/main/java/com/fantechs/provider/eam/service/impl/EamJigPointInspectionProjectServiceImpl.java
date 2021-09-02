@@ -111,7 +111,7 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
         if(StringUtils.isNotEmpty(list)) {
             for (EamJigPointInspectionProjectItemDto eamJigPointInspectionProjectItemDto : list) {
                 if (StringUtils.isNotEmpty(eamJigPointInspectionProjectItemDto.getJigPointInspectionProjectItemId())) {
-                    eamJigPointInspectionProjectItemMapper.updateByPrimaryKeySelective(eamJigPointInspectionProjectItemDto);
+                    eamJigPointInspectionProjectItemMapper.updateByPrimaryKey(eamJigPointInspectionProjectItemDto);
                     idList.add(eamJigPointInspectionProjectItemDto.getJigPointInspectionProjectItemId());
                 }
             }

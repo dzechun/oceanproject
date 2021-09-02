@@ -78,13 +78,6 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
                     getPermsSet(roleMenuList);
                 }
             }
-            if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
-                List<SysMenuInListDTO> menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
-                        "parentId", "0",
-                        "menuType", 1 + ""
-                ), null);
-                redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(menuList));
-            }
         }
 
         //如何带有token将token删除

@@ -1,7 +1,9 @@
 package com.fantechs.provider.eam.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.dto.eam.EamJigMaintainOrderDetDto;
@@ -14,6 +16,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamJigScrapOrderService;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +44,8 @@ public class EamJigScrapOrderServiceImpl extends BaseService<EamJigScrapOrder> i
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
     private EamJigMapper eamJigMapper;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<EamJigScrapOrderDto> findList(Map<String, Object> map) {
@@ -58,40 +63,49 @@ public class EamJigScrapOrderServiceImpl extends BaseService<EamJigScrapOrder> i
     public int autoCreateOrder() {
         int sum = 0;
 
-        Map<String, Object> map = new HashMap<>();
-        List<EamJigBarcodeDto> list = eamJigBarcodeMapper.findList(map);
-        for (EamJigBarcodeDto eamJigBarcodeDto : list){
-            boolean tag = false;
-            EamJig eamJig = eamJigMapper.selectByPrimaryKey(eamJigBarcodeDto.getJigId());
-            //治具当前使用次数(当前使用天数)大于等于该治具最大使用次数(最大使用天数)时创建报废单
-            if(StringUtils.isNotEmpty(eamJigBarcodeDto.getCurrentUsageTime(),eamJig.getMaxUsageTime())){
-                if(eamJigBarcodeDto.getCurrentUsageTime().compareTo(eamJig.getMaxUsageTime())==0
-                ||eamJigBarcodeDto.getCurrentUsageTime().compareTo(eamJig.getMaxUsageTime())==1){
-                    tag = true;
+        //治具达到最大次数或天数是否可以继续使用
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("IsJigCanContinueUse");
+        List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(Integer.parseInt(sysSpecItemList.get(0).getParaValue()) == 0) {
+
+            Map<String, Object> map = new HashMap<>();
+            List<EamJigBarcodeDto> list = eamJigBarcodeMapper.findList(map);
+            for (EamJigBarcodeDto eamJigBarcodeDto : list) {
+                boolean tag = false;
+                EamJig eamJig = eamJigMapper.selectByPrimaryKey(eamJigBarcodeDto.getJigId());
+                //治具当前使用次数(当前使用天数)大于等于该治具最大使用次数(最大使用天数)时创建报废单
+                if (StringUtils.isNotEmpty(eamJigBarcodeDto.getCurrentUsageTime(), eamJig.getMaxUsageTime())
+                        && eamJig.getMaxUsageTime() != 0) {
+                    if (eamJigBarcodeDto.getCurrentUsageTime().compareTo(eamJig.getMaxUsageTime()) == 0
+                            || eamJigBarcodeDto.getCurrentUsageTime().compareTo(eamJig.getMaxUsageTime()) == 1) {
+                        tag = true;
+                    }
                 }
-            }
 
-            if(StringUtils.isNotEmpty(eamJigBarcodeDto.getCurrentUsageDays(),eamJig.getMaxUsageDays())) {
-                if (eamJigBarcodeDto.getCurrentUsageDays().compareTo(eamJig.getMaxUsageDays()) == 0
-                        || eamJigBarcodeDto.getCurrentUsageDays().compareTo(eamJig.getMaxUsageDays()) == 1) {
-                    tag = true;
+                if (StringUtils.isNotEmpty(eamJigBarcodeDto.getCurrentUsageDays(), eamJig.getMaxUsageDays())
+                        && eamJig.getMaxUsageDays() != 0) {
+                    if (eamJigBarcodeDto.getCurrentUsageDays().compareTo(eamJig.getMaxUsageDays()) == 0
+                            || eamJigBarcodeDto.getCurrentUsageDays().compareTo(eamJig.getMaxUsageDays()) == 1) {
+                        tag = true;
+                    }
                 }
-            }
 
-            //创建单据
-            if(tag){
-                EamJigScrapOrderDto eamJigScrapOrderDto = new EamJigScrapOrderDto();
-                EamJigScrapOrderDetDto eamJigScrapOrderDetDto = new EamJigScrapOrderDetDto();
-                List<EamJigScrapOrderDetDto> eamJigScrapOrderDetDtos = new ArrayList<>();
+                //创建单据
+                if (tag) {
+                    EamJigScrapOrderDto eamJigScrapOrderDto = new EamJigScrapOrderDto();
+                    EamJigScrapOrderDetDto eamJigScrapOrderDetDto = new EamJigScrapOrderDetDto();
+                    List<EamJigScrapOrderDetDto> eamJigScrapOrderDetDtos = new ArrayList<>();
 
-                eamJigScrapOrderDetDto.setJigBarcodeId(eamJigBarcodeDto.getJigBarcodeId());
-                eamJigScrapOrderDetDtos.add(eamJigScrapOrderDetDto);
+                    eamJigScrapOrderDetDto.setJigBarcodeId(eamJigBarcodeDto.getJigBarcodeId());
+                    eamJigScrapOrderDetDtos.add(eamJigScrapOrderDetDto);
 
-                eamJigScrapOrderDto.setJigScrapOrderCode(CodeUtils.getId("BF-"));
-                eamJigScrapOrderDto.setOrderStatus((byte)1);
-                eamJigScrapOrderDto.setList(eamJigScrapOrderDetDtos);
+                    eamJigScrapOrderDto.setJigScrapOrderCode(CodeUtils.getId("BF-"));
+                    eamJigScrapOrderDto.setOrderStatus((byte) 1);
+                    eamJigScrapOrderDto.setList(eamJigScrapOrderDetDtos);
 
-                sum += this.save(eamJigScrapOrderDto);
+                    sum += this.save(eamJigScrapOrderDto);
+                }
             }
         }
 

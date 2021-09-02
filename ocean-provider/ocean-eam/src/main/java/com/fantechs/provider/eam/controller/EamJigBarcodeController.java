@@ -103,4 +103,10 @@ public class EamJigBarcodeController {
                                                   @ApiParam(value = "治具使用次数", required = true) @RequestParam @NotNull(message = "治具使用次数不能为空") Integer num) {
         return ControllerUtil.returnCRUD(eamJigBarcodeService.plusCurrentUsageTime(jigBarcodeId,num));
     }
+
+    @ApiOperation(value = "发送治具预警信息",notes = "发送治具预警信息")
+    @PostMapping("/jigWarning")
+    public ResponseEntity jigWarning() {
+        return ControllerUtil.returnCRUD(eamJigBarcodeService.jigWarning());
+    }
 }

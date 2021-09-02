@@ -652,7 +652,7 @@ public class BarcodeUtils {
             }
 
             baseExecuteResultDto.setIsSuccess(true);
-            baseExecuteResultDto.setSuccessMsg(pass + " 验证通过 产线名称 " + proName + " 工序名称 " + processName + " 用户名称 " + userName);
+            baseExecuteResultDto.setSuccessMsg(pass + ",验证通过,产线名称:" + proName + ",工序名称:" + processName + ",用户名称:" + userName);
         }
         catch (Exception ex){
             baseExecuteResultDto.setIsSuccess(false);

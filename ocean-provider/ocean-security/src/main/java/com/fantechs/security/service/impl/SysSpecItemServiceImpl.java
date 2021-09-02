@@ -9,6 +9,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
@@ -16,6 +17,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.mapper.SysHtSpecItemMapper;
 import com.fantechs.security.mapper.SysSpecItemMapper;
+import com.fantechs.security.service.SysMenuInfoService;
 import com.fantechs.security.service.SysSpecItemService;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
@@ -40,6 +42,8 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     private RedisUtil redisUtil;
     @Resource
     private SysHtSpecItemMapper sysHtSpecItemMapper;
+    @Resource
+    private SysMenuInfoService sysMenuInfoService;
 
     @Override
     public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
@@ -50,7 +54,13 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
             if (StringUtils.isNotEmpty(searchSysSpecItem.getMenuId())) {
                 Object menuList = redisUtil.get(MENU_REDIS_KEY);
                 if(ObjectUtil.isNull(menuList)){
-                    throw new BizErrorException(ErrorCodeEnum.UAC10012008);
+                    if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
+                        menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
+                                "parentId", "0",
+                                "menuType", 2 + ""
+                        ), null);
+                        redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(menuList));
+                    }
                 }
                 List<SysMenuInListDTO> menuInListDTOS = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
                 SysMenuInListDTO dg = this.findNodes(menuInListDTOS, searchSysSpecItem.getMenuId());

@@ -122,7 +122,7 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
         if(StringUtils.isNotEmpty(items)) {
             for (EamEquPointInspectionProjectItem eamEquPointInspectionProjectItem : items) {
                 if (StringUtils.isNotEmpty(eamEquPointInspectionProjectItem.getEquPointInspectionProjectItemId())) {
-                    eamEquPointInspectionProjectItemMapper.updateByPrimaryKeySelective(eamEquPointInspectionProjectItem);
+                    eamEquPointInspectionProjectItemMapper.updateByPrimaryKey(eamEquPointInspectionProjectItem);
                     idList.add(eamEquPointInspectionProjectItem.getEquPointInspectionProjectItemId());
                 }
             }

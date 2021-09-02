@@ -1,5 +1,5 @@
 server:
-  port: 8810
+  port: 9020
   max-http-header-size: 10000000
 
 spring:

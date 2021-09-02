@@ -27,6 +27,8 @@ import java.util.Arrays;
 public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
+    private  CustomAuthenticationProvider customAuthenticationProvider;
+    @Resource
     private UserDetailsServiceImpl userDetailsService;
     @Resource
     private MyAccessDecisionManager myAccessDecisionManager;
@@ -66,7 +68,18 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
         //需要传入用户详情service
         //配置userService需要实体类实现UserDetail接口供security使用实体信息
         //userService接口实现UserDetailService接口，重写方法
-        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+        auth.authenticationProvider(customAuthenticationProvider);
+        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder(){
+              @Override
+              public String encode(CharSequence charSequence) {
+                                 return charSequence.toString();
+                             }
+
+                      @Override
+              public boolean matches(CharSequence charSequence, String s) {
+                                 return s.equals(charSequence.toString());
+                             }
+          });
     }
     //第二步配置动态权限过滤器
     @Override
@@ -79,7 +92,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             }
         }).and().cors().and()
                 .formLogin()
-//                .loginPage("/tologin")
+                .loginPage("/tologin")
                 .loginProcessingUrl("/login")
                 .authenticationDetailsSource(customAuthenticationDetailsSource)
                 .successHandler(myAuthenticationSuccessHandler)//可以配置登录成功的提示
