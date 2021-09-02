@@ -1,10 +1,10 @@
-package com.fantechs.provider.eng.service.impl;
+package com.fantechs.provider.guest.eng.service.impl;
 
 import com.fantechs.common.base.general.dto.eng.EngHtPackingOrderSummaryDto;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrderSummary;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.provider.eng.mapper.EngHtPackingOrderSummaryMapper;
-import com.fantechs.provider.eng.service.EngHtPackingOrderSummaryService;
+import com.fantechs.provider.guest.eng.mapper.EngHtPackingOrderSummaryMapper;
+import com.fantechs.provider.guest.eng.service.EngHtPackingOrderSummaryService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

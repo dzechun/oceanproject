@@ -1,4 +1,4 @@
-package com.fantechs.provider.eng.service.impl;
+package com.fantechs.provider.guest.eng.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -6,12 +6,9 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryDetImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrderSummaryDet;
@@ -20,11 +17,10 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.eng.mapper.EngHtPackingOrderSummaryDetMapper;
-import com.fantechs.provider.eng.mapper.EngPackingOrderMapper;
-import com.fantechs.provider.eng.mapper.EngPackingOrderSummaryDetMapper;
-import com.fantechs.provider.eng.mapper.EngPackingOrderSummaryMapper;
-import com.fantechs.provider.eng.service.EngPackingOrderSummaryDetService;
+import com.fantechs.provider.guest.eng.mapper.EngHtPackingOrderSummaryDetMapper;
+import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
+import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryMapper;
+import com.fantechs.provider.guest.eng.service.EngPackingOrderSummaryDetService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,8 +45,6 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
     private BaseFeignApi baseFeignApi;
     @Resource
     private EngPackingOrderSummaryMapper engPackingOrderSummaryMapper;
-    @Resource
-    private EngPackingOrderMapper engPackingOrderMapper;
 
     @Override
     public List<EngPackingOrderSummaryDetDto> findList(Map<String, Object> map) {

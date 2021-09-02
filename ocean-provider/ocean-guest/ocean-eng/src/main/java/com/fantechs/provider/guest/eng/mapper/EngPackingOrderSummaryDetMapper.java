@@ -1,4 +1,4 @@
-package com.fantechs.provider.eng.mapper;
+package com.fantechs.provider.guest.eng.mapper;
 
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;

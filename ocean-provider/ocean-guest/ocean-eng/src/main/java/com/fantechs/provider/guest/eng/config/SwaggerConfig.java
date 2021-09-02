@@ -1,4 +1,4 @@
-package com.fantechs.provider.eng.config;
+package com.fantechs.provider.guest.eng.config;
 /**注意导入包是否齐全**/
 
 import com.google.common.base.Function;
