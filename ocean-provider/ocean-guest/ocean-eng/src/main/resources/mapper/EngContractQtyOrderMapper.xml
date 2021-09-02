@@ -43,7 +43,7 @@
     ecqo.material_purpose,
     ecqo.pur_qty,
     ecqo.profession_code,
-    ecqo.status`,
+    ecqo.status,
     ecqo.remark,
     ecqo.org_id,
     ecqo.create_user_id,
