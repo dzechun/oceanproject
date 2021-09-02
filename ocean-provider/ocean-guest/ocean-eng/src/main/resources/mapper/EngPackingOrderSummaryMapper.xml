@@ -50,7 +50,7 @@
     spos.purchase_req_order_code,
     spos.contract_code,
     spos.carton_code,
-    spos.profession_code
+    spos.profession_code,
     spos.device_code,
     spos.location_num,
     spos.material_id,
