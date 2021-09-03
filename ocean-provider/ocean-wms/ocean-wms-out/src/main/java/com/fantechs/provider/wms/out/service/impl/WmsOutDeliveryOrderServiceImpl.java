@@ -41,6 +41,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -444,6 +445,12 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 //计算总数量
                 BigDecimal packingSum = dtoList.stream().map(WmsOutDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO, BigDecimal::add);
                 wmsInnerJobOrder.setPlanQty(packingSum);
+
+                if(wmsInnerJobOrder.getOrderTypeId()==8){
+                    if(dtoList.stream().filter(li->StringUtils.isEmpty(li.getPickingStorageId())).collect(Collectors.toList()).size()>0){
+                        throw new BizErrorException("维护所有的拣货库位");
+                    }
+                }
 
                 //作业单明细
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
