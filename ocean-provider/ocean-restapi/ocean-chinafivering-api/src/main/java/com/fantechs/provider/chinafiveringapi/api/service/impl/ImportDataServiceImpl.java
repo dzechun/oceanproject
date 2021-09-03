@@ -200,6 +200,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             //取工作区编码为default的ID
             SearchBaseWorkingArea searchBaseWorkingArea=new SearchBaseWorkingArea();
             searchBaseWorkingArea.setWorkingAreaCode("default");
+            searchBaseWorkingArea.setOrgId(1004L);
             ResponseEntity<List<BaseWorkingAreaDto>> responseEntityList=baseFeignApi.findWorkingAreaList(searchBaseWorkingArea);
             if(StringUtils.isEmpty(responseEntityList.getData())){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003,"default工作区编码不存在");

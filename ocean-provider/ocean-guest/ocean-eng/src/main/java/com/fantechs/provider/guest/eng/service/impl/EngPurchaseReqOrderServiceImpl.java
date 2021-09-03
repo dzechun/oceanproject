@@ -42,6 +42,7 @@ public class EngPurchaseReqOrderServiceImpl extends BaseService<EngPurchaseReqOr
         EngPurchaseReqOrder ecqoExist=engPurchaseReqOrderMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(ecqoExist)){
             engPurchaseReqOrder.setPurchaseReqOrderId(ecqoExist.getPurchaseReqOrderId());
+            engPurchaseReqOrder.setModifiedTime(new Date());
             return engPurchaseReqOrderMapper.updateByPrimaryKeySelective(engPurchaseReqOrder);
         }
         else {

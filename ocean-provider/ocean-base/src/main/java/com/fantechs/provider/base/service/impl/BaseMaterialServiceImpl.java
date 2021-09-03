@@ -621,6 +621,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         }
         else {
             baseMaterial.setMaterialId(baseMaterialExist.getMaterialId());
+            baseMaterial.setModifiedTime(new Date());
             baseMaterialMapper.updateByPrimaryKeySelective(baseMaterial);
         }
 

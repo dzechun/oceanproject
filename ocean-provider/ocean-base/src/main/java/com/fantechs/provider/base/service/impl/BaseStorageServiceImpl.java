@@ -328,6 +328,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             i = baseStorageMapper.insertSelective(baseStorage);
         }else{
             baseStorage.setStorageId(baseStorageExist.getStorageId());
+            baseStorage.setModifiedTime(new Date());
             baseStorageMapper.updateByPrimaryKeySelective(baseStorage);
         }
         return i;
