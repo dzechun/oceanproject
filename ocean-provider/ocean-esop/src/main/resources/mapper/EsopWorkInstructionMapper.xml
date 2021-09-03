@@ -30,6 +30,7 @@
     <result column="write_make_user_name" jdbcType="VARCHAR" property="writeMakeUserName" />
     <result column="write_make_time" jdbcType="TIMESTAMP" property="writeMakeTime" />
     <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName" />
+    <result column="approve_user_name" jdbcType="VARCHAR" property="approveUserName" />
   </resultMap>
 
 
@@ -86,6 +87,7 @@
         ewi.standard_time,
         ewi.write_make_user_name,
         ewi.write_make_time,
+        ewi.approve_user_name,
         ewi.audit_user_name
     </sql>
 

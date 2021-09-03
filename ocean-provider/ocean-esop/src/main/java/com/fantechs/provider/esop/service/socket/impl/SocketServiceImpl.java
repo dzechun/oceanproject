@@ -127,12 +127,11 @@ public class SocketServiceImpl implements SocketService {
                     String[] paraValue =specItemList.getData().get(0).getParaValue().split(",");
                     Map IssueMap = new HashMap();
                     IssueMap.put("equipmentIp",eamEquipment.getEquipmentIp());
-                    //ESOP
-                    IssueMap.put("orgId",(long)29);
+                    IssueMap.put("orgId",user.getOrganizationId());
                     List esopIssues = esopIssueService.findList(IssueMap);
                     if("1".equals(paraValue[0]) && StringUtils.isNotEmpty(esopIssues)){
                         managementDate.put("code", 1207);
-                        managementDate.put("url", url+"/#/IssueList?ip=" + eamEquipment.getEquipmentIp());
+                        managementDate.put("url", urlHeader + "/#/IssueList?ip=" + eamEquipment.getEquipmentIp());
                         managementDate.put("seconds", paraValue[1]);
                         managementDate.put("isShow", 1);
                         list.add(managementDate);
@@ -188,8 +187,9 @@ public class SocketServiceImpl implements SocketService {
 
                 //开机获取mac地址，保存ip
                 String mac = inputStreamToString(socket, addr.getHostAddress());
+                EsopEquipment equipment = null;
                 if(StringUtils.isNotEmpty(mac) && mac.length()>5){
-                    EsopEquipment equipment = getEquipment(null, mac);
+                    equipment = getEquipment(null, mac);
                     equipment.setEquipmentIp(ip);
                     esopEquipmentMapper.updateByPrimaryKeySelective(equipment);
                 }
@@ -215,8 +215,7 @@ public class SocketServiceImpl implements SocketService {
                     String[] paraValue =specItemList.getData().get(0).getParaValue().split(",");
                     Map IssueMap = new HashMap();
                     IssueMap.put("equipmentIp",ip);
-                    //ESOP
-                    IssueMap.put("orgId",(long)29);
+                    IssueMap.put("orgId",equipment.getOrgId());
                     List list = esopIssueService.findList(IssueMap);
                     if("1".equals(paraValue[0]) && StringUtils.isNotEmpty(list)){
                         managementDate.put("code", 1207);
@@ -248,7 +247,7 @@ public class SocketServiceImpl implements SocketService {
                     }
                     //重连更新mac地址
                     if(StringUtils.isNotEmpty(str) && str.length()>5){
-                        EsopEquipment equipment = getEquipment(null, mac);
+                        equipment = getEquipment(null, mac);
                         equipment.setEquipmentIp(addr.getHostAddress());
                         esopEquipmentMapper.updateByPrimaryKeySelective(equipment);
                         updateStatus(ip, (byte)2);

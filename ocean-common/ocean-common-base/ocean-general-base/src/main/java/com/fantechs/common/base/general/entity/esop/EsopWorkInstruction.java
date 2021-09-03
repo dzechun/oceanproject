@@ -206,5 +206,11 @@ public class EsopWorkInstruction extends ValidGroup implements Serializable {
     @Column(name = "audit_user_name")
     private String auditUserName;
 
+    /**
+     * 审批人
+     */
+    @ApiModelProperty(name="approveUserName",value = "审批人")
+    @Column(name = "approve_user_name")
+    private String approveUserName;
 
 }
