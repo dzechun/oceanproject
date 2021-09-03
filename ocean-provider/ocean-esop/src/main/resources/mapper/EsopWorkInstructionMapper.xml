@@ -9,6 +9,7 @@
     <result column="work_instruction_code" jdbcType="VARCHAR" property="workInstructionCode" />
     <result column="work_instruction_name" jdbcType="VARCHAR" property="workInstructionName" />
     <result column="work_instruction_ver" jdbcType="VARCHAR" property="workInstructionVer" />
+    <result column="work_instruction_seq_num" jdbcType="VARCHAR" property="workInstructionSeqNum" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="secrecy_grade" jdbcType="TINYINT" property="secrecyGrade" />
@@ -65,6 +66,7 @@
         ewi.work_instruction_code,
         ewi.work_instruction_name,
         ewi.work_instruction_ver,
+        ewi.work_instruction_seq_num,
         ewi.process_id,
         ewi.material_id,
         ewi.secrecy_grade,

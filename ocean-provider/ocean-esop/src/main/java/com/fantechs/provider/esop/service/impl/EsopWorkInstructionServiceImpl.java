@@ -701,7 +701,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
             for (EsopWiReleaseDet EsopWiReleaseDet : EsopWiReleaseDetList) {
                 EsopWiRelease EsopWiRelease = esopWiReleaseMapper.selectByPrimaryKey(EsopWiReleaseDet.getWiReleaseId());
                 if (EsopWiRelease.getReleaseStatus() == (byte) 2) {
-                    socketService.BatchInstructions(EsopWiRelease.getProLineId(), "1202", "/#/YunZhiESOP?ip=");
+                    socketService.BatchInstructions(EsopWiRelease.getProLineId(), "1202", "/#/YunZhiESOP?ip=","0");
                 }
             }
         }

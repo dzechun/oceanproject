@@ -121,7 +121,7 @@ public class EngPackingOrderSummaryImport implements Serializable {
      * 包装方式
      */
     @ApiModelProperty(name="packingType",value = "包装方式")
-    @Excel(name = "包装方式", height = 20, width = 30,orderNum="8")
+    @Excel(name = "包装方式", height = 20, width = 30)
     private String packingType;
 
 }

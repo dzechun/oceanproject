@@ -96,17 +96,20 @@ public class SocketServiceImpl implements SocketService {
     }
 
     @Override
-    public int BatchInstructions(Long proLineId,String code,Object url) {
+    public int BatchInstructions(Long proLineId,String code,Object url,String type) {
         if(StringUtils.isEmpty(url) || StringUtils.isEmpty(code))  throw new BizErrorException("code或url不能为空");
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(EsopEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", user.getOrganizationId());
-        // criteria.andEqualTo("usageStatus", (byte) 1);
         criteria.andEqualTo("status", (byte) 1);
         if(StringUtils.isNotEmpty(proLineId ))
             criteria.andEqualTo("proLineId", proLineId);
         List<EsopEquipment> eamEquipments = esopEquipmentMapper.selectByExample(example);
+        //查询是否有问题清单
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("IssueSeconds");
+        ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
         for (EsopEquipment eamEquipment : eamEquipments) {
             try {
                 Socket socket = (Socket)hashtable.get(eamEquipment.getEquipmentIp());
@@ -117,6 +120,25 @@ public class SocketServiceImpl implements SocketService {
                 Map<String, Object> map = new HashMap();
                 Map<String, Object> data = new HashMap();
                 List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+                Map<String, Object> managementDate = new HashMap();
+
+                //配置项为展示状态且问题清单有数据。则发送信息。
+                if(StringUtils.isNotEmpty(specItemList)&& "1".equals(type)) {
+                    String[] paraValue =specItemList.getData().get(0).getParaValue().split(",");
+                    Map IssueMap = new HashMap();
+                    IssueMap.put("equipmentIp",eamEquipment.getEquipmentIp());
+                    //ESOP
+                    IssueMap.put("orgId",(long)29);
+                    List esopIssues = esopIssueService.findList(IssueMap);
+                    if("1".equals(paraValue[0]) && StringUtils.isNotEmpty(esopIssues)){
+                        managementDate.put("code", 1207);
+                        managementDate.put("url", url+"/#/IssueList?ip=" + eamEquipment.getEquipmentIp());
+                        managementDate.put("seconds", paraValue[1]);
+                        managementDate.put("isShow", 1);
+                        list.add(managementDate);
+                    }
+                }
+
                 map.put("code", code);
                 map.put("url", urlHeader + url + eamEquipment.getEquipmentIp());
                 list.add(map);
@@ -182,13 +204,8 @@ public class SocketServiceImpl implements SocketService {
                 List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
 
                 map.put("code", 1201);
-            //    map.put("url", "http://qmsapp.donlim.com/esop/#/ESOPDataShow?ip=" + ip);
                 map.put("url", url+"/#/ESOPDataShow?ip=" + ip);
                 newList.add(map);
-                newMap.put("code", 1202);
-                newMap.put("url", url+"/#/YunZhiESOP?ip=" + ip);
-         //       newMap.put("url", "http://qmsapp.donlim.com/esop/#/YunZhiESOP?ip=" + ip);
-                newList.add(newMap);
 
                 //配置项为展示状态且问题清单有数据。则发送信息。
                 SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -204,12 +221,17 @@ public class SocketServiceImpl implements SocketService {
                     if("1".equals(paraValue[0]) && StringUtils.isNotEmpty(list)){
                         managementDate.put("code", 1207);
                         managementDate.put("url", url+"/#/IssueList?ip=" + ip);
-               //         managementDate.put("url", "http://qmsapp.donlim.com/esop/#/IssueList?ip=" + ip);
                         managementDate.put("seconds", paraValue[1]);
                         managementDate.put("isShow", 1);
                         newList.add(managementDate);
                     }
                 }
+
+
+                newMap.put("code", 1202);
+                newMap.put("url", url+"/#/YunZhiESOP?ip=" + ip);
+                newList.add(newMap);
+
                 newData.put("data", newList);
                 String outMsg = JSON.toJSONString(newData);
                 os=socket.getOutputStream();

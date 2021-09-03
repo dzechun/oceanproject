@@ -39,7 +39,7 @@ public class EsopWorkInstruction extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="workInstructionCode",value = "WI编码")
     @NotNull(message = "WI编码不能为空")
-    @Excel(name = "WI编码", height = 20, width = 30,orderNum="1")
+    @Excel(name = "WI编码", height = 20, width = 30,orderNum="")
     @Column(name = "work_instruction_code")
     private String workInstructionCode;
 
@@ -58,6 +58,14 @@ public class EsopWorkInstruction extends ValidGroup implements Serializable {
     @Excel(name = "WI版本", height = 20, width = 30,orderNum="3")
     @Column(name = "work_instruction_ver")
     private String workInstructionVer;
+
+    /**
+     * WI序号(文件编号)
+     */
+    @ApiModelProperty(name="workInstructionSeqNum",value = "WI序号(文件编号)")
+    @Excel(name = "WI序号", height = 20, width = 30,orderNum="1")
+    @Column(name = "work_instruction_seq_num")
+    private String workInstructionSeqNum;
 
 
     /**
