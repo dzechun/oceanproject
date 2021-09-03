@@ -85,17 +85,18 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
 
 
         //复制数据
+        List<String> formCode = new ArrayList<>();
         for(SysDefaultCustomFormDto sysDefaultCustomFormDto : list){
             //非父表单且非子表单
             if(StringUtils.isEmpty(sysDefaultCustomFormDto.getSubId())&&!subIdList.contains(sysDefaultCustomFormDto.getCustomFormId())){
-                i += copyDefaultData(sysDefaultCustomFormDto,orgId);
+                i += copyDefaultData(sysDefaultCustomFormDto,orgId, formCode);
             }
 
             //父表单
             if(StringUtils.isNotEmpty(sysDefaultCustomFormDto.getSubId())){
                 for(SysDefaultCustomFormDto subDefaultCustomFormDto : list){
                     if(sysDefaultCustomFormDto.getSubId().equals(subDefaultCustomFormDto.getCustomFormId())){
-                        i += copyDefaultData(sysDefaultCustomFormDto,subDefaultCustomFormDto,orgId);
+                        i += copyDefaultData(sysDefaultCustomFormDto,subDefaultCustomFormDto,orgId, formCode);
                     }
                 }
             }
@@ -111,25 +112,29 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
      * @param orgId
      * @return
      */
-    public int copyDefaultData(SysDefaultCustomFormDto sysDefaultCustomFormDto,Long orgId){
+    public int copyDefaultData(SysDefaultCustomFormDto sysDefaultCustomFormDto,Long orgId, List<String> formCode){
+        long count = formCode.stream().filter(item -> item.equals(sysDefaultCustomFormDto.getCustomFormCode())).count();
+        if (count <= 0){
+            SysCustomForm sysCustomForm = new SysCustomForm();
+            BeanUtils.autoFillEqFields(sysDefaultCustomFormDto,sysCustomForm);
+            sysCustomForm.setCustomFormId(null);
+            sysCustomForm.setOrgId(orgId);
+            sysCustomFormMapper.insertUseGeneratedKeys(sysCustomForm);
+            formCode.add(sysCustomForm.getCustomFormCode());
 
-        SysCustomForm sysCustomForm = new SysCustomForm();
-        BeanUtils.autoFillEqFields(sysDefaultCustomFormDto,sysCustomForm);
-        sysCustomForm.setCustomFormId(null);
-        sysCustomForm.setOrgId(orgId);
-        sysCustomFormMapper.insertUseGeneratedKeys(sysCustomForm);
 
-        List<SysCustomFormDet> Dets = new ArrayList<>();
-        List<SysDefaultCustomFormDetDto> formDets = sysDefaultCustomFormDto.getFormDets();
-        if(StringUtils.isNotEmpty(formDets)){
-            for (SysDefaultCustomFormDetDto sysDefaultCustomFormDetDto : formDets){
-                SysCustomFormDet sysCustomFormDet = new SysCustomFormDet();
-                BeanUtils.autoFillEqFields(sysDefaultCustomFormDetDto,sysCustomFormDet);
-                sysCustomFormDet.setCustomFormId(sysCustomForm.getCustomFormId());
-                sysCustomFormDet.setOrgId(orgId);
-                Dets.add(sysCustomFormDet);
+            List<SysCustomFormDet> Dets = new ArrayList<>();
+            List<SysDefaultCustomFormDetDto> formDets = sysDefaultCustomFormDto.getFormDets();
+            if(StringUtils.isNotEmpty(formDets)){
+                for (SysDefaultCustomFormDetDto sysDefaultCustomFormDetDto : formDets){
+                    SysCustomFormDet sysCustomFormDet = new SysCustomFormDet();
+                    BeanUtils.autoFillEqFields(sysDefaultCustomFormDetDto,sysCustomFormDet);
+                    sysCustomFormDet.setCustomFormId(sysCustomForm.getCustomFormId());
+                    sysCustomFormDet.setOrgId(orgId);
+                    Dets.add(sysCustomFormDet);
+                }
+                sysCustomFormDetMapper.insertList(Dets);
             }
-            sysCustomFormDetMapper.insertList(Dets);
         }
 
         return 1;
@@ -142,14 +147,16 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
      * @param orgId  组织id
      * @return
      */
-    public int copyDefaultData(SysDefaultCustomFormDto sysDefaultCustomFormDto,SysDefaultCustomFormDto subDefaultCustomFormDto,Long orgId){
+    public int copyDefaultData(SysDefaultCustomFormDto sysDefaultCustomFormDto,SysDefaultCustomFormDto subDefaultCustomFormDto,Long orgId, List<String> formCode){
 
         //关联子表
         SysCustomForm sysCustomForm = new SysCustomForm();
-        BeanUtils.autoFillEqFields(subDefaultCustomFormDto,sysCustomForm);
+        BeanUtil.copyProperties(subDefaultCustomFormDto, sysCustomForm);
+//        BeanUtils.autoFillEqFields(subDefaultCustomFormDto,sysCustomForm);
         sysCustomForm.setCustomFormId(null);
         sysCustomForm.setOrgId(orgId);
         sysCustomFormMapper.insertUseGeneratedKeys(sysCustomForm);
+        formCode.add(sysCustomForm.getCustomFormCode());
 
         List<SysCustomFormDet> Dets = new ArrayList<>();
         List<SysDefaultCustomFormDetDto> formDets = subDefaultCustomFormDto.getFormDets();
@@ -166,7 +173,7 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
 
         //主表
         sysDefaultCustomFormDto.setSubId(sysCustomForm.getCustomFormId());
-        this.copyDefaultData(sysDefaultCustomFormDto,orgId);
+        this.copyDefaultData(sysDefaultCustomFormDto,orgId, formCode);
 
         return 2;
     }
