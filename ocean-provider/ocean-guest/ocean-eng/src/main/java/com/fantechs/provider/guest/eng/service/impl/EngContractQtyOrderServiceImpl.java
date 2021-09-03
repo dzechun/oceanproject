@@ -43,6 +43,7 @@ public class EngContractQtyOrderServiceImpl extends BaseService<EngContractQtyOr
         EngContractQtyOrder ecqoExist=engContractQtyOrderMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(ecqoExist)){
             engContractQtyOrder.setContractQtyOrderId(ecqoExist.getContractQtyOrderId());
+            engContractQtyOrder.setModifiedTime(new Date());
             return engContractQtyOrderMapper.updateByPrimaryKeySelective(engContractQtyOrder);
 
         }

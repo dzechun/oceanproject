@@ -133,6 +133,7 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
             i = baseCustomerMapper.insertSelective(baseCustomer);
         }else{
             baseCustomer.setCustomerId(baseCustomerExist.getCustomerId());
+            baseCustomer.setModifiedTime(new Date());
             baseCustomerMapper.updateByPrimaryKeySelective(baseCustomer);
         }
         return i;

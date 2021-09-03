@@ -299,6 +299,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             i = baseSupplierMapper.insertSelective(baseSupplier);
         }else{
             baseSupplier.setSupplierId(supplier.getSupplierId());
+            baseSupplier.setModifiedTime(new Date());
             baseSupplierMapper.updateByPrimaryKeySelective(baseSupplier);
         }
         return i;
