@@ -1,7 +1,9 @@
 package com.fantechs.provider.wms.out.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
@@ -24,6 +26,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderMapper;
@@ -56,6 +59,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     private WmsOutHtDeliveryOrderDetMapper wmsOutHtDeliveryOrderDetMapper;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -390,8 +395,14 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             throw new BizErrorException(ErrorCodeEnum.OPT20012003,"无数据");
         }
         WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
-        if(wmsOutDeliveryOrderDto.getOrderTypeId().equals(1L) && wmsOutDeliveryOrderDto.getAuditStatus() != (byte) 1){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011023, "此销售出库单尚未审核，不允许创建作业单！");
+
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("wmsOutDelivery");
+        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(!specItems.isEmpty() && "wb".equals(specItems.get(0).getParaValue())){
+            if(wmsOutDeliveryOrderDto.getOrderTypeId().equals(1L) && (wmsOutDeliveryOrderDto.getAuditStatus() == null || wmsOutDeliveryOrderDto.getAuditStatus() != (byte) 1)){
+                throw new BizErrorException(ErrorCodeEnum.UAC10011023, "此销售出库单尚未审核，不允许创建作业单！");
+            }
         }
 
         SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
