@@ -3,7 +3,6 @@ package com.fantechs.security.config;
 
 import com.fantechs.security.filter.CustomAuthenticationDetailsSource;
 import com.fantechs.security.securityIntercepter.*;
-import com.fantechs.security.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +12,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -28,8 +26,6 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
     private  CustomAuthenticationProvider customAuthenticationProvider;
-    @Resource
-    private UserDetailsServiceImpl userDetailsService;
     @Resource
     private MyAccessDecisionManager myAccessDecisionManager;
     @Resource
@@ -69,7 +65,6 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
         //配置userService需要实体类实现UserDetail接口供security使用实体信息
         //userService接口实现UserDetailService接口，重写方法
         auth.authenticationProvider(customAuthenticationProvider);
-        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
     //第二步配置动态权限过滤器
     @Override

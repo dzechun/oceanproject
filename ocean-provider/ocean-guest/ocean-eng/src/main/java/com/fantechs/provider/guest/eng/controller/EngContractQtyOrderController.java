@@ -28,7 +28,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/09/01.
  */
 @RestController
-@Api(tags = "engContractQtyOrder控制器")
+@Api(tags = "合同量单信息")
 @RequestMapping("/engContractQtyOrder")
 @Validated
 public class EngContractQtyOrderController {

@@ -30,7 +30,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/09/02.
  */
 @RestController
-@Api(tags = "engPurchaseReqOrder控制器")
+@Api(tags = "请购单信息")
 @RequestMapping("/engPurchaseReqOrder")
 @Validated
 public class EngPurchaseReqOrderController {

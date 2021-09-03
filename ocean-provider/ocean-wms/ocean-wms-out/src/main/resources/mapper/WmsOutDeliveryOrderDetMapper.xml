@@ -11,6 +11,7 @@
     <result column="order_det_id" jdbcType="BIGINT" property="orderDetId" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="picking_storage_id" jdbcType="BIGINT" property="pickingStorageId"/>
     <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
     <result column="line_number" jdbcType="INTEGER" property="lineNumber" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
@@ -32,6 +33,13 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+      <result column="option4" jdbcType="VARCHAR" property="option4" />
+      <result column="option5" jdbcType="VARCHAR" property="option5" />
+      <result column="option6" jdbcType="VARCHAR" property="option6" />
+      <result column="option7" jdbcType="VARCHAR" property="option7" />
+      <result column="option8" jdbcType="VARCHAR" property="option8" />
+      <result column="option9" jdbcType="VARCHAR" property="option9" />
+      <result column="option10" jdbcType="VARCHAR" property="option10" />
   </resultMap>
 
   <resultMap id="BaseResultMapDTO" extends="BaseResultMap"
@@ -43,6 +51,7 @@
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+    <result column="picking_storage_code" jdbcType="VARCHAR" property="pickingStorageCode"/>
     <result column="volume" jdbcType="DECIMAL" property="volume"/>
     <result column="net_weight" jdbcType="DECIMAL" property="netWeight" />
     <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight" />
@@ -56,6 +65,7 @@
     wodod.order_det_id,
     wodod.warehouse_id,
     wodod.storage_id,
+wodod.picking_storage_id,
     wodod.inventory_status_id,
     wodod.line_number,
     wodod.material_id,
@@ -76,12 +86,19 @@
     wodod.is_delete,
     wodod.option1,
     wodod.option2,
-    wodod.option3
+    wodod.option3,
+wodod.option4,
+    wodod.option5,
+    wodod.option6,
+wodod.option7,
+    wodod.option8,
+    wodod.option9,
+wodod.option10
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
     select<include refid="Base_Column_List"/>,
-    bm.material_code,bm.material_name,bw.warehouse_name,bs.storage_code,
+    bm.material_code,bm.material_name,bw.warehouse_name,bs.storage_code,bss.storage_code as 'picking_storage_code',
     bmt.volume,bmt.net_weight,bmt.gross_weight,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
@@ -90,6 +107,7 @@
     LEFT JOIN fantech_imes_v2.base_material bm ON wodod.material_id = bm.material_id
     LEFT JOIN fantech_imes_v2.base_warehouse bw ON wodod.warehouse_id = bw.warehouse_id
     LEFT JOIN fantech_imes_v2.base_storage bs ON wodod.storage_id = bs.storage_id
+    LEFT JOIN fantech_imes_v2.base_storage bss ON wodod.picking_storage_id = bss.storage_id
     LEFT JOIN fantech_imes_v2.base_material_tab bmt ON wodod.material_id = bmt.material_id
     LEFT JOIN ocean_v2.sys_user su ON wodod.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wodod.modified_user_id = sus.user_id

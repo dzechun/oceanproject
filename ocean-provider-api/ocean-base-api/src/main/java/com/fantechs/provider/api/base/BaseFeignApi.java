@@ -477,5 +477,9 @@ public interface BaseFeignApi {
     @PostMapping("/baseStorage/saveByApi")
     ResponseEntity saveByApi(@ApiParam(value = "必传：storageCode",required = true)@RequestBody @Validated BaseStorage baseStorage);
 
+    @ApiOperation("工作区域列表")
+    @PostMapping("/baseWorkingArea/findList")
+    ResponseEntity<List<BaseWorkingAreaDto>> findWorkingAreaList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWorkingArea searchBaseWorkingArea);
+
 
 }

@@ -31,10 +31,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
-import com.fantechs.provider.wms.inner.service.WmsInnerInventoryService;
-import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderDetBarcodeService;
-import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderDetService;
-import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderService;
+import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import org.springframework.stereotype.Service;
@@ -73,6 +70,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     WmsInnerInventoryService wmsInnerInventoryService;
     @Resource
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
+    @Resource
+    private PickingOrderService pickingOrderService;
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
@@ -1176,7 +1175,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInnerInventoryService.update(innerInventory);
             }
         }
-        if (StringUtils.isNotEmpty(record.getProductPalletId())) {
+        if (StringUtils.isNotEmpty(record.getProductPalletId()) && record.getJobOrderType()==3) {
             //生成上架单绑定栈板关联关系
             WmsInnerJobOrderReMspp wmsInnerJobOrderReMspp = WmsInnerJobOrderReMspp.builder()
                     .jobOrderId(record.getJobOrderId())
@@ -1190,6 +1189,16 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             int res = wmsInnerJobOrderReMsppMapper.insertSelective(wmsInnerJobOrderReMspp);
             if (res <= 0) {
                 throw new BizErrorException("上架单关联栈板失败");
+            }
+        }
+        //拣货 领料拣货
+        //创建已经分配领料拣货单
+        //1、判断领料出库单所选库位是否库存不足 不足提示库存不足 创建领料拣货单失败
+        if(record.getOrderTypeId()==8 && record.getJobOrderType()==4 && record.getType()==1){
+            //创建已经分配的拣货单
+            int i = pickingOrderService.handDistribution(record.getWmsInPutawayOrderDets());
+            if(i<1){
+                throw new BizErrorException("拣货单创建失败");
             }
         }
         return num;
