@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.entity.eam.EamJig;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.EamJigRequisition;
 import com.fantechs.common.base.general.entity.eam.EamJigReturn;
