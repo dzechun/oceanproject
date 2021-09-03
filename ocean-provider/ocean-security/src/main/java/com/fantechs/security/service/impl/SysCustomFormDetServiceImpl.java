@@ -65,30 +65,6 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(SysCustomFormDet sysCustomFormDet){
-        SysCustomForm sysCustomForm = sysCustomFormMapper.selectByPrimaryKey(sysCustomFormDet.getCustomFormId());
-
-        List<SysCustomFormDet> dets = new ArrayList<>();
-        dets.add(sysCustomFormDet);
-        List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(new SearchBaseOrganization()).getData();
-        if(!organizationDtos.isEmpty()){
-            for (BaseOrganizationDto org : organizationDtos){
-                if(!org.getOrganizationId().equals(sysCustomFormDet.getOrgId())){
-                    //查对应组织下该表单的id
-                    Example example = new Example(SysCustomForm.class);
-                    Example.Criteria criteria = example.createCriteria();
-                    criteria.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode())
-                            .andEqualTo("orgId",org.getOrganizationId());
-                    SysCustomForm customForm = sysCustomFormMapper.selectOneByExample(example);
-
-                    SysCustomFormDet det = new SysCustomFormDet();
-                    BeanUtil.copyProperties(sysCustomFormDet, det);
-                    det.setCustomFormId(customForm.getCustomFormId());
-                    det.setOrgId(org.getOrganizationId());
-                    dets.add(det);
-                }
-            }
-        }
-
         //同步到默认自定义表单明细
         SysDefaultCustomForm sysDefaultCustomForm = sysDefaultCustomFormMapper.selectByPrimaryKey(sysCustomFormDet.getCustomFormId());
         if(StringUtils.isNotEmpty(sysDefaultCustomForm)){
@@ -98,6 +74,6 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
             sysDefaultCustomFormDetMapper.insertSelective(defaultCustomFormDet);
         }
 
-        return sysCustomFormDetMapper.insertList(dets);
+        return sysCustomFormDetMapper.insertSelective(sysCustomFormDet);
     }
 }

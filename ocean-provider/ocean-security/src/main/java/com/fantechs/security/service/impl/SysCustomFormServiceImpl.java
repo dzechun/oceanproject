@@ -95,19 +95,7 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
 
         ifCodeRepeat(sysCustomForm,user);
 
-        List<SysCustomForm> dets = new ArrayList<>();
-        dets.add(sysCustomForm);
-        List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(new SearchBaseOrganization()).getData();
-        if(!organizationDtos.isEmpty()){
-            for (BaseOrganizationDto org : organizationDtos){
-                if(!org.getOrganizationId().equals(sysCustomForm.getOrgId())){
-                    SysCustomForm form = new SysCustomForm();
-                    BeanUtil.copyProperties(sysCustomForm, form);
-                    form.setOrgId(org.getOrganizationId());
-                    dets.add(form);
-                }
-            }
-        }
+        int i = sysCustomFormMapper.insertUseGeneratedKeys(sysCustomForm);
 
         //同步到默认自定义表单
         Example example = new Example(SysDefaultCustomForm.class);
@@ -121,7 +109,7 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
             sysDefaultCustomFormMapper.insertSelective(defaultCustomForm);
         }
 
-        return sysCustomFormMapper.insertList(dets);
+        return i;
     }
 
 

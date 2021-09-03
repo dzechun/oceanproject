@@ -66,7 +66,6 @@
     wodo.order_type_id,
     wodo.warehouse_id,
     wodo.storage_id,
-wodo.supplier_id,
 wodo.customer_id,
     wodo.delivery_order_code,
     wodo.customer_order_code,
