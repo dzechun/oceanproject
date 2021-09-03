@@ -17,6 +17,11 @@
     <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
     <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId" />
     <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate" />
+    <result column="item_category_name" jdbcType="VARCHAR" property="itemCategoryName" />
+    <result column="order_unit_name" jdbcType="VARCHAR" property="orderUnitName" />
+    <result column="inventory_site" jdbcType="VARCHAR" property="inventorySite" />
+    <result column="free_item" jdbcType="VARCHAR" property="freeItem" />
+    <result column="sales_return_item" jdbcType="VARCHAR" property="salesReturnItem" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -34,7 +39,7 @@
     opo.purchase_order_id, opo.purchase_order_code, opo.order_type, opo.order_status, opo.supplier_id,opo.order_date,
     opo.purchase_dept_id, opo.purchase_user_id, opo.make_order_user_id, opo.make_order_date,opo.audit_user_id, opo.audit_date,
     opo.status, opo.remark, opo.org_id, opo.create_user_id,opo.create_time, opo.modified_user_id, opo.modified_time,
-    opo.is_delete, opo.option1, opo.option2, opo.option3
+    opo.is_delete, opo.option1, opo.option2,opo.option3,opo.item_category_name,opo.order_unit_name,opo.inventory_site,opo.free_item,opo.sales_return_item
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto">
