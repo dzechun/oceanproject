@@ -85,21 +85,25 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
 
 
         //复制数据
-        List<String> formCode = new ArrayList<>();
-        for(SysDefaultCustomFormDto sysDefaultCustomFormDto : list){
-            //非父表单且非子表单
-            if(StringUtils.isEmpty(sysDefaultCustomFormDto.getSubId())&&!subIdList.contains(sysDefaultCustomFormDto.getCustomFormId())){
-                i += copyDefaultData(sysDefaultCustomFormDto,orgId, formCode);
-            }
+        if(StringUtils.isNotEmpty(list)) {
+            List<String> formCode = new ArrayList<>();
+            for (SysDefaultCustomFormDto sysDefaultCustomFormDto : list) {
+                //非父表单且非子表单
+                if (StringUtils.isEmpty(sysDefaultCustomFormDto.getSubId()) && !subIdList.contains(sysDefaultCustomFormDto.getCustomFormId())) {
+                    i += copyDefaultData(sysDefaultCustomFormDto, orgId, formCode);
+                }
 
-            //父表单
-            if(StringUtils.isNotEmpty(sysDefaultCustomFormDto.getSubId())){
-                for(SysDefaultCustomFormDto subDefaultCustomFormDto : list){
-                    if(sysDefaultCustomFormDto.getSubId().equals(subDefaultCustomFormDto.getCustomFormId())){
-                        i += copyDefaultData(sysDefaultCustomFormDto,subDefaultCustomFormDto,orgId, formCode);
+                //父表单
+                if (StringUtils.isNotEmpty(sysDefaultCustomFormDto.getSubId())) {
+                    for (SysDefaultCustomFormDto subDefaultCustomFormDto : list) {
+                        if (sysDefaultCustomFormDto.getSubId().equals(subDefaultCustomFormDto.getCustomFormId())) {
+                            i += copyDefaultData(sysDefaultCustomFormDto, subDefaultCustomFormDto, orgId, formCode);
+                        }
                     }
                 }
             }
+        }else {
+            return 1;
         }
 
         return i;
