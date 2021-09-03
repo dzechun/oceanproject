@@ -1,13 +1,17 @@
 package com.fantechs.provider.chinafiveringapi.api.service.impl;
 
-import com.ctc.wstx.sw.EncodingXmlWriter;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
+import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
 import com.fantechs.common.base.general.entity.basic.BaseCustomer;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkingArea;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -35,6 +39,12 @@ public class ImportDataServiceImpl implements ImportDataService {
     EngFeignApi engFeignApi;
 
     @Override
+    /**
+     * create by: Dylan
+     * description: 合同量单接口
+     * create time:
+     * @return
+     */
     public BaseExecuteResultDto getPoDetails(String projectID) throws Exception {
 //        WebService1HttpGet webService1HttpGet=null;
 //        // 代理工厂
@@ -66,11 +76,12 @@ public class ImportDataServiceImpl implements ImportDataService {
             String s8=s7.replaceAll("PPGUID","option1");
             String s9=s8.replaceAll("PSGUID","option2");
             String s10=s9.replaceAll("RDGUID","option3");
+            String s11=s10.replaceAll("专业","professionCode");
 
             //同步到数据库
-            int indexb=s10.indexOf("[");
-            int indexe=s10.lastIndexOf("]");
-            String str=s10.substring(indexb,indexe+1);
+            int indexb=s11.indexOf("[");
+            int indexe=s11.lastIndexOf("]");
+            String str=s11.substring(indexb,indexe+1);
             List<EngContractQtyOrder> listPO= BeanUtils.jsonToListObject(str,EngContractQtyOrder.class);
             for (EngContractQtyOrder engContractQtyOrder : listPO) {
                 engContractQtyOrder.setOrgId(1004L);
@@ -90,6 +101,12 @@ public class ImportDataServiceImpl implements ImportDataService {
     }
 
     @Override
+    /**
+     * create by: Dylan
+     * description: 领料单接口
+     * create time:
+     * @return
+     */
     public BaseExecuteResultDto getIssueDetails(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try{
@@ -111,6 +128,12 @@ public class ImportDataServiceImpl implements ImportDataService {
     }
 
     @Override
+    /**
+     * create by: Dylan
+     * description: 材料信息接口
+     * create time:
+     * @return
+     */
     public BaseExecuteResultDto getPartNoInfo(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
@@ -134,6 +157,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             List<BaseMaterial> listBM= BeanUtils.jsonToListObject(str,BaseMaterial.class);
             for (BaseMaterial baseMaterial : listBM) {
                 baseMaterial.setOrganizationId(1004L);
+                baseMaterial.setStatus((byte)1);
                 baseFeignApi.saveByApi(baseMaterial);
             }
 
@@ -148,6 +172,12 @@ public class ImportDataServiceImpl implements ImportDataService {
     }
 
     @Override
+    /**
+     * create by: Dylan
+     * description: 库位信息接口
+     * create time:
+     * @return
+     */
     public BaseExecuteResultDto getShelvesNo(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
@@ -157,8 +187,8 @@ public class ImportDataServiceImpl implements ImportDataService {
 
             //转换为实体类集合
             String strResult=baseExecuteResultDto.getExecuteResult().toString();
-            String s0=strResult.replaceAll("货架编号","storageCode");
-            String s1=s0.replaceAll("货架编号描述","storageName");
+            String s0=strResult.replaceAll("货架编号描述","storageName");
+            String s1=s0.replaceAll("货架编号","storageCode");
             String s2=s1.replaceAll("DHGUID","option1");
 
             //同步到数据库
@@ -166,8 +196,27 @@ public class ImportDataServiceImpl implements ImportDataService {
             int indexe=s2.lastIndexOf("]");
             String str=s2.substring(indexb,indexe+1);
             List<BaseStorage> listBC= BeanUtils.jsonToListObject(str,BaseStorage.class);
+
+            //取工作区编码为default的ID
+            SearchBaseWorkingArea searchBaseWorkingArea=new SearchBaseWorkingArea();
+            searchBaseWorkingArea.setWorkingAreaCode("default");
+            ResponseEntity<List<BaseWorkingAreaDto>> responseEntityList=baseFeignApi.findWorkingAreaList(searchBaseWorkingArea);
+            if(StringUtils.isEmpty(responseEntityList.getData())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003,"default工作区编码不存在");
+            }
             for (BaseStorage baseStorage : listBC) {
                 baseStorage.setOrganizationId(1004L);
+                baseStorage.setStorageType((byte)1);//库位类型
+                baseStorage.setWorkingAreaId(responseEntityList.getData().get(0).getWorkingAreaId());//工作区ID
+                baseStorage.setRoadway(1);//项道
+                baseStorage.setRowNo(1);//排
+                baseStorage.setColumnNo(1);//列
+                baseStorage.setLevelNo(1);//层
+                baseStorage.setPutawayMoveLineNo(1);//上架动线号
+                baseStorage.setPickingMoveLineNo(1);//拣货动线号
+                baseStorage.setStockMoveLineNo(1);//盘点动线号
+                baseStorage.setStatus(1);//状态默认1
+
                 baseFeignApi.saveByApi(baseStorage);
             }
 
@@ -184,6 +233,12 @@ public class ImportDataServiceImpl implements ImportDataService {
     }
 
     @Override
+    /**
+     * create by: Dylan
+     * description: 客户信息接口
+     * create time:
+     * @return
+     */
     public BaseExecuteResultDto getSubcontractor(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
@@ -203,6 +258,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             List<BaseCustomer> listBC= BeanUtils.jsonToListObject(str,BaseCustomer.class);
             for (BaseCustomer baseCustomer : listBC) {
                 baseCustomer.setOrganizationId(1004L);
+                baseCustomer.setStatus(1);
                 baseFeignApi.saveByApi(baseCustomer);
             }
 
@@ -219,6 +275,12 @@ public class ImportDataServiceImpl implements ImportDataService {
     }
 
     @Override
+    /**
+     * create by: Dylan
+     * description: 供应商信息接口
+     * create time:
+     * @return
+     */
     public BaseExecuteResultDto getVendor() throws Exception{
         BaseExecuteResultDto baseExecuteResultDto = new BaseExecuteResultDto();
         try {
@@ -238,6 +300,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             //同步到数据库
             for (BaseSupplier baseSupplier : listSu) {
                 baseSupplier.setOrganizationId(1004L);
+                baseSupplier.setStatus((byte)1);
                 baseFeignApi.saveByApi(baseSupplier);
             }
 
@@ -252,6 +315,12 @@ public class ImportDataServiceImpl implements ImportDataService {
     }
 
     @Override
+    /**
+     * create by: Dylan
+     * description: 请购单信息接口
+     * create time:
+     * @return
+     */
     public BaseExecuteResultDto getReqDetails(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try{
