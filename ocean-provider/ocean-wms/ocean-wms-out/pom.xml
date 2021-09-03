@@ -43,6 +43,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.fantechs.provider.api.security</groupId>
+            <artifactId>ocean-security-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.fantechs.provider.api.wms.inner</groupId>
             <artifactId>ocean-wms-inner-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
