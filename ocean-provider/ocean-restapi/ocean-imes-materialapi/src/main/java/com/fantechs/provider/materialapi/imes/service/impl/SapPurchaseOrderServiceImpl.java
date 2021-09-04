@@ -72,6 +72,12 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
                     omPurchaseOrder.setOrderDate(DateUtils.getStrToDate("yyyyMMdd", purchaseOrderApiDto.getAEDAT()));
                 omPurchaseOrder.setSupplierId(getSupplier(purchaseOrderApiDto.getLIFNR(), orgId));
                 omPurchaseOrder.setOrgId(orgId);
+                omPurchaseOrder.setItemCategoryName(purchaseOrderApiDto.getEPSTP());
+                omPurchaseOrder.setOrderUnitName(purchaseOrderApiDto.getMEINS());
+                omPurchaseOrder.setInventorySite(purchaseOrderApiDto.getLGORT());
+                omPurchaseOrder.setFreeItem(purchaseOrderApiDto.getUMSON());
+                omPurchaseOrder.setSalesReturnItem(purchaseOrderApiDto.getRETPO());
+
                 ResponseEntity<OmPurchaseOrder> omPurchaseOrderResponseEntity = oMFeignApi.saveByApi(omPurchaseOrder);
                 purchaseMap.put(purchaseOrderApiDto.getEBELN(),omPurchaseOrderResponseEntity.getData().getPurchaseOrderId());
             }

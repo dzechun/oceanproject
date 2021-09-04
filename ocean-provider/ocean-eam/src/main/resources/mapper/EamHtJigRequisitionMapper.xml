@@ -82,6 +82,9 @@
     left join ocean_v2.sys_user s on ehjr.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ehjr.org_id = bo.organization_id
     <where>
+      <if test="requisitionStatus!=null">
+        and isnull(ejret.jig_return_id)=#{requisitionStatus}
+      </if>
       <if test="jigId != null">
         and wo.jig_id = #{jigId}
       </if>
@@ -107,10 +110,10 @@
         and ejc.jig_category_name like CONCAT('%', #{jigCategoryName}, '%')
       </if>
       <if test="requisitionTime != null and requisitionTime!=''">
-        and ehjr.create_time = #{requisitionTime}
+        and date_format(ehjr.create_time, '%Y-%m-%d') = #{requisitionTime}
       </if>
       <if test="returnTime != null and returnTime!=''">
-        and ejret.create_time = #{returnTime}
+        and date_format(ejret.create_time, '%Y-%m-%d') = #{returnTime}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ehjr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

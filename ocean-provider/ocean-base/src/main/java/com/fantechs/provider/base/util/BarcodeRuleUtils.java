@@ -226,7 +226,8 @@ public class BarcodeRuleUtils {
             if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
                 if(StringUtils.isNotEmpty(maxCode)){
                     if(sum+length>maxCode.length() || sum>maxCode.length()){
-                        maxSerialNumber = maxCode+"1";
+                        //maxSerialNumber = maxCode+"1";
+                        return null;
                     }else{
                         maxSerialNumber = maxCode.substring(sum, sum + length);
                     }

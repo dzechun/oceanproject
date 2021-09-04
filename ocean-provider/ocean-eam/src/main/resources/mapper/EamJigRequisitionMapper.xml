@@ -84,6 +84,9 @@
     left join ocean_v2.sys_user s on ejr.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ejr.org_id = bo.organization_id
     <where>
+      <if test="requisitionStatus!=null">
+        and isnull(ejret.jig_return_id)=#{requisitionStatus}
+      </if>
       <if test="ifExceptReturn != null and ifExceptReturn == 1">
         and ejret.jig_return_id IS NULL
       </if>

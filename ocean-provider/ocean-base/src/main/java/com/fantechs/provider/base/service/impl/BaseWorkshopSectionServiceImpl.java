@@ -220,14 +220,19 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
 
     @Override
     public BaseWorkshopSection addOrUpdate(BaseWorkshopSection baseWorkshopSection) {
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         Example example = new Example(BaseWorkshopSection.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("sectionCode", baseWorkshopSection.getSectionCode());
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        if(StringUtils.isEmpty(baseWorkshopSection.getOrganizationId())){
+            SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(currentUser)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        }else{
+            criteria.andEqualTo("organizationId", baseWorkshopSection.getOrganizationId());
+        }
         List<BaseWorkshopSection> baseWorkshopSections = workshopSectionMapper.selectByExample(example);
 
         baseWorkshopSection.setModifiedTime(new Date());

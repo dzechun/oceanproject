@@ -122,6 +122,9 @@
     left join ocean_v2.sys_user s on ej.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ej.org_id = bo.organization_id
     <where>
+      <if test="jigCategoryId != null">
+        and ej.jig_category_id = #{jigCategoryId}
+      </if>
       <if test="jigId != null">
         and ej.jig_id = #{jigId}
       </if>

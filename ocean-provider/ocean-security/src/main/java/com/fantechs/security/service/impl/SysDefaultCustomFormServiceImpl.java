@@ -1,6 +1,7 @@
 package com.fantechs.security.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fantechs.common.base.general.dto.security.SysCustomFormDetDto;
 import com.fantechs.common.base.general.dto.security.SysCustomFormDto;
 import com.fantechs.common.base.general.dto.security.SysDefaultCustomFormDetDto;
 import com.fantechs.common.base.general.dto.security.SysDefaultCustomFormDto;
@@ -63,6 +64,7 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
         Map<String, Object> defaultMap = new HashMap<>();
         List<SysDefaultCustomFormDto> sysDefaultCustomFormDtos = sysDefaultCustomFormMapper.findList(defaultMap);
 
+
         //筛选出 默认自定义表单 对比 自定义表单 新增的数据
         for (SysDefaultCustomFormDto sysDefaultCustomFormDto : sysDefaultCustomFormDtos){
             boolean tag = false;
@@ -86,25 +88,87 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
 
         //复制数据
         List<String> formCode = new ArrayList<>();
-        for(SysDefaultCustomFormDto sysDefaultCustomFormDto : list){
-            //非父表单且非子表单
-            if(StringUtils.isEmpty(sysDefaultCustomFormDto.getSubId())&&!subIdList.contains(sysDefaultCustomFormDto.getCustomFormId())){
-                i += copyDefaultData(sysDefaultCustomFormDto,orgId, formCode);
-            }
+        if(StringUtils.isNotEmpty(list)) {
+            for (SysDefaultCustomFormDto sysDefaultCustomFormDto : list) {
+                //非父表单且非子表单
+                if (StringUtils.isEmpty(sysDefaultCustomFormDto.getSubId()) && !subIdList.contains(sysDefaultCustomFormDto.getCustomFormId())) {
+                    i += copyDefaultData(sysDefaultCustomFormDto, orgId, formCode);
+                }
 
-            //父表单
-            if(StringUtils.isNotEmpty(sysDefaultCustomFormDto.getSubId())){
-                for(SysDefaultCustomFormDto subDefaultCustomFormDto : list){
-                    if(sysDefaultCustomFormDto.getSubId().equals(subDefaultCustomFormDto.getCustomFormId())){
-                        i += copyDefaultData(sysDefaultCustomFormDto,subDefaultCustomFormDto,orgId, formCode);
+                //父表单
+                if (StringUtils.isNotEmpty(sysDefaultCustomFormDto.getSubId())) {
+                    for (SysDefaultCustomFormDto subDefaultCustomFormDto : list) {
+                        if (sysDefaultCustomFormDto.getSubId().equals(subDefaultCustomFormDto.getCustomFormId())) {
+                            i += copyDefaultData(sysDefaultCustomFormDto, subDefaultCustomFormDto, orgId, formCode);
+                        }
                     }
                 }
             }
         }
 
+        i += this.onlyCopyDet(orgId,formCode);
+
         return i;
     }
 
+    /**
+     *  只同步明细表
+     *  @param orgId
+     *  @return
+     */
+    public int onlyCopyDet(Long orgId,List<String> formCode){
+        //存放需新增的明细数据
+        List<SysDefaultCustomFormDetDto> detList = new ArrayList<>();
+
+        Map<String, Object> detMap = new HashMap<>();
+        detMap.put("orgId", orgId);
+        List<SysCustomFormDetDto> sysCustomFormDetDtos = sysCustomFormDetMapper.findList(detMap);
+
+        Map<String, Object> defaultDetMap = new HashMap<>();
+        List<SysDefaultCustomFormDetDto> sysDefaultCustomFormDetDtos = sysDefaultCustomFormDetMapper.findList(defaultDetMap);
+
+        //筛选出需新增的数据
+        for (SysDefaultCustomFormDetDto sysDefaultCustomFormDetDto : sysDefaultCustomFormDetDtos) {
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(sysCustomFormDetDtos)) {
+                for (SysCustomFormDetDto sysCustomFormDetDto : sysCustomFormDetDtos) {
+                    if (sysDefaultCustomFormDetDto.getCustomFormCode().equals(sysCustomFormDetDto.getCustomFormCode())
+                            && sysDefaultCustomFormDetDto.getItemKey().equals(sysCustomFormDetDto.getItemKey())) {
+                        tag = true;
+                        break;
+                    }
+                }
+            }
+
+            if(formCode.contains(sysDefaultCustomFormDetDto.getCustomFormCode())){
+                tag = true;
+            }
+
+            if (!tag) {
+                detList.add(sysDefaultCustomFormDetDto);
+            }
+        }
+
+
+        if(StringUtils.isNotEmpty(detList)) {
+            for (SysDefaultCustomFormDetDto sysDefaultCustomFormDetDto : detList) {
+                Example example = new Example(SysCustomForm.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("customFormCode", sysDefaultCustomFormDetDto.getCustomFormCode())
+                        .andEqualTo("orgId", orgId);
+                SysCustomForm sysCustomForm = sysCustomFormMapper.selectOneByExample(example);
+
+                SysCustomFormDet sysCustomFormDet = new SysCustomFormDet();
+                BeanUtil.copyProperties(sysDefaultCustomFormDetDto, sysCustomFormDet);
+                sysCustomFormDet.setCustomFormDetId(null);
+                sysCustomFormDet.setCustomFormId(sysCustomForm.getCustomFormId());
+                sysCustomFormDet.setOrgId(orgId);
+                sysCustomFormDetMapper.insertSelective(sysCustomFormDet);
+            }
+        }
+
+        return 1;
+    }
 
     /**
      *  主表数据复制
@@ -129,6 +193,7 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
                 for (SysDefaultCustomFormDetDto sysDefaultCustomFormDetDto : formDets){
                     SysCustomFormDet sysCustomFormDet = new SysCustomFormDet();
                     BeanUtils.autoFillEqFields(sysDefaultCustomFormDetDto,sysCustomFormDet);
+                    sysCustomFormDet.setCustomFormDetId(null);
                     sysCustomFormDet.setCustomFormId(sysCustomForm.getCustomFormId());
                     sysCustomFormDet.setOrgId(orgId);
                     Dets.add(sysCustomFormDet);
@@ -164,6 +229,7 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
             for (SysDefaultCustomFormDetDto sysDefaultCustomFormDetDto : formDets){
                 SysCustomFormDet sysCustomFormDet = new SysCustomFormDet();
                 BeanUtils.autoFillEqFields(sysDefaultCustomFormDetDto,sysCustomFormDet);
+                sysCustomFormDet.setCustomFormDetId(null);
                 sysCustomFormDet.setCustomFormId(sysCustomForm.getCustomFormId());
                 sysCustomFormDet.setOrgId(orgId);
                 Dets.add(sysCustomFormDet);

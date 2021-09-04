@@ -206,5 +206,46 @@ public class OmPurchaseOrder extends ValidGroup implements Serializable {
     @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="") 
     private String option3;
 
+
+    /**
+     * 项目类别名称
+     */
+    @ApiModelProperty(name="itemCategoryName",value = "项目类别名称")
+    @Excel(name = "项目类别名称", height = 20, width = 30,orderNum="")
+    @Column(name = "item_category_name")
+    private String itemCategoryName;
+
+    /**
+     * 订单单位名称
+     */
+    @ApiModelProperty(name="orderUnitName",value = "订单单位名称")
+    @Excel(name = "订单单位名称", height = 20, width = 30,orderNum="")
+    @Column(name = "order_unit_name")
+    private String orderUnitName;
+
+    /**
+     * 库存地点
+     */
+    @ApiModelProperty(name="inventorySite",value = "库存地点")
+    @Excel(name = "库存地点", height = 20, width = 30,orderNum="")
+    @Column(name = "inventory_site")
+    private String inventorySite;
+
+    /**
+     * 免费项目
+     */
+    @ApiModelProperty(name="freeItem",value = "免费项目")
+    @Excel(name = "免费项目", height = 20, width = 30,orderNum="")
+    @Column(name = "free_item")
+    private String freeItem;
+
+    /**
+     * 退货项目
+     */
+    @ApiModelProperty(name="salesReturnItem",value = "退货项目")
+    @Excel(name = "退货项目", height = 20, width = 30,orderNum="")
+    @Column(name = "sales_return_item")
+    private String salesReturnItem;
+
     private static final long serialVersionUID = 1L;
 }
