@@ -75,11 +75,8 @@
     left join ocean_v2.sys_user s on ecqo.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ecqo.org_id = bo.organization_id
     <where>
-      <if test="purchaseReqOrderCode != null and purchaseReqOrderCode!='' and codeQueryMark!=1">
+      <if test="purchaseReqOrderCode != null and purchaseReqOrderCode!=''">
         and ecqo.purchaseReqOrder_code like CONCAT('%', #{purchaseReqOrderCode}, '%')
-      </if>
-      <if test="purchaseReqOrderCode != null and purchaseReqOrderCode!='' and codeQueryMark==1">
-        and ecqo.purchaseReqOrder_code = #{purchaseReqOrderCode}
       </if>
       <if test="purchaseReqOrderName != null and purchaseReqOrderName!=''">
         and ecqo.purchaseReqOrder_name like CONCAT('%', #{purchaseReqOrderName}, '%')
