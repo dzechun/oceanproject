@@ -56,14 +56,7 @@ public class EamJigCategoryServiceImpl extends BaseService<EamJigCategory> imple
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(EamJigCategory.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigCategoryCode", record.getJigCategoryCode())
-                .orEqualTo("jigCategoryName",record.getJigCategoryName());
-        EamJigCategory eamJigCategory = eamJigCategoryMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamJigCategory)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
+        ifRepeat(record);
 
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
@@ -88,14 +81,7 @@ public class EamJigCategoryServiceImpl extends BaseService<EamJigCategory> imple
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(EamJigCategory.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigCategoryCode", entity.getJigCategoryCode())
-                .orEqualTo("jigCategoryName",entity.getJigCategoryName());
-        EamJigCategory eamJigCategory = eamJigCategoryMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamJigCategory)&&!entity.getJigCategoryId().equals(eamJigCategory.getJigCategoryId())){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
+        ifRepeat(entity);
 
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
@@ -105,6 +91,31 @@ public class EamJigCategoryServiceImpl extends BaseService<EamJigCategory> imple
         eamHtJigCategoryMapper.insert(eamHtJigCategory);
 
         return eamJigCategoryMapper.updateByPrimaryKeySelective(entity);
+    }
+
+    public void ifRepeat(EamJigCategory eamJigCategory){
+        Example example = new Example(EamJigCategory.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("jigCategoryCode", eamJigCategory.getJigCategoryCode());
+        if(StringUtils.isNotEmpty(eamJigCategory.getJigCategoryId())){
+            criteria.andNotEqualTo("jigCategoryId",eamJigCategory.getJigCategoryId());
+        }
+        EamJigCategory jigCategory = eamJigCategoryMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(jigCategory)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        example.clear();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("jigCategoryName", eamJigCategory.getJigCategoryName());
+        if(StringUtils.isNotEmpty(eamJigCategory.getJigCategoryId())){
+            criteria1.andNotEqualTo("jigCategoryId",eamJigCategory.getJigCategoryId());
+        }
+        EamJigCategory eamJigCategory1 = eamJigCategoryMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(eamJigCategory1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"名称重复");
+        }
+
     }
 
     @Override
