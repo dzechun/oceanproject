@@ -170,6 +170,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                 wmsOutDeliveryOrder.setOrgId(1004L);
                 wmsOutDeliveryOrder.setMaterialOwnerId(153L);
                 wmsOutDeliveryOrder.setOrderDate(new Date());
+                wmsOutDeliveryOrder.setStatus((byte) 1);
 
                 Long customerId=0L;
                 List<WmsOutDeliveryOrderTempDto> listDto=result.get(key);
