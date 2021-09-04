@@ -2,9 +2,11 @@ package com.fantechs.common.base.general.entity.eng.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 
+@Data
 public class SearchEngContractQtyOrder extends BaseQuery implements Serializable {
 
     /**
