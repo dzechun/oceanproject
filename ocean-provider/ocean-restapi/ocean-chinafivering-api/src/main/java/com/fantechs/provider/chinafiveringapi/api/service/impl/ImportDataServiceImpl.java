@@ -35,10 +35,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -171,9 +168,12 @@ public class ImportDataServiceImpl implements ImportDataService {
                 WmsOutDeliveryOrder wmsOutDeliveryOrder=new WmsOutDeliveryOrder();
                 wmsOutDeliveryOrder.setOrderTypeId(8L);//单据类型 领料出库=8
                 wmsOutDeliveryOrder.setOrgId(1004L);
+                wmsOutDeliveryOrder.setMaterialOwnerId(153L);
+                wmsOutDeliveryOrder.setOrderDate(new Date());
+
                 Long customerId=0L;
                 List<WmsOutDeliveryOrderTempDto> listDto=result.get(key);
-                List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList=null;
+                List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList= new ArrayList<>();
                 for (WmsOutDeliveryOrderTempDto tempDto : listDto) {
                     //表头 领料单号
                     wmsOutDeliveryOrder.setDeliveryOrderCode(tempDto.getDeliveryOrderCode());
@@ -190,6 +190,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                         SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
                         searchBaseSupplier.setSupplierCode(tempDto.getCustomerCode());
                         searchBaseSupplier.setSupplierType((byte) 2);// 1 是供应商 2 是客户
+                        searchBaseSupplier.setOrganizationId(1004L);
                         ResponseEntity<List<BaseSupplier>> supplierList = baseFeignApi.findSupplierList(searchBaseSupplier);
                         if (StringUtils.isNotEmpty(supplierList.getData())) {
                             customerId = supplierList.getData().get(0).getSupplierId();
@@ -203,6 +204,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                     String materialCode=tempDto.getMaterialCode();
                     SearchBaseMaterial searchBaseMaterial=new SearchBaseMaterial();
                     searchBaseMaterial.setMaterialCode(materialCode);
+                    searchBaseMaterial.setOrganizationId(1004L);
                     ResponseEntity<List<BaseMaterial>> baseList=baseFeignApi.findList(searchBaseMaterial);
                     if(StringUtils.isEmpty(baseList.getData())){
                         //throw new BizErrorException("找不到物料编码的信息-->"+materialCode);

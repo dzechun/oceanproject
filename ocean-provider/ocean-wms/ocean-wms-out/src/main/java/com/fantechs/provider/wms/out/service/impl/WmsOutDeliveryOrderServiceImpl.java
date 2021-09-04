@@ -518,7 +518,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int saveByApi(WmsOutDeliveryOrder wmsOutDeliveryOrder) {
-        Example example = new Example(BaseSupplier.class);
+        Example example = new Example(WmsOutDeliveryOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("deliveryOrderCode",wmsOutDeliveryOrder.getDeliveryOrderCode());
         criteria.andEqualTo("orgId",wmsOutDeliveryOrder.getOrgId());
