@@ -448,7 +448,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsInnerJobOrder.setPlanQty(packingSum);
 
                 if(wmsInnerJobOrder.getOrderTypeId()==8){
-                    if(dtoList.stream().filter(li->StringUtils.isEmpty(li.getPickingStorageId())).collect(Collectors.toList()).size()>0){
+                    if(dtoList.stream().filter(li->StringUtils.isEmpty(li.getPickingStorageId())).collect(Collectors.toList()).size()>0 && dtoList.stream().filter(li->StringUtils.isNotEmpty(li.getPickingStorageId())).collect(Collectors.toList()).size()>0){
                         throw new BizErrorException("维护所有的拣货库位");
                     }
                 }
