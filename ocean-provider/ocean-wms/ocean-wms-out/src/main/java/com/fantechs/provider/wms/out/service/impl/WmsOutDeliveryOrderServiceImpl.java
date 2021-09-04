@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -512,5 +513,64 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     @Override
     public int updateStatus(List<Long> ids) {
         return wmsOutDeliveryOrderMapper.batchUpdateStatus(ids);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int saveByApi(WmsOutDeliveryOrder wmsOutDeliveryOrder) {
+        Example example = new Example(BaseSupplier.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("deliveryOrderCode",wmsOutDeliveryOrder.getDeliveryOrderCode());
+        criteria.andEqualTo("orgId",wmsOutDeliveryOrder.getOrgId());
+        WmsOutDeliveryOrder outDeliveryOrder = wmsOutDeliveryOrderMapper.selectOneByExample(example);
+        int i= 0;
+        if(StringUtils.isEmpty(outDeliveryOrder)) {
+            wmsOutDeliveryOrder.setCreateTime(new Date());
+            wmsOutDeliveryOrder.setCreateUserId((long) 1);
+            wmsOutDeliveryOrder.setModifiedUserId((long) 1);
+            wmsOutDeliveryOrder.setModifiedTime(new Date());
+            wmsOutDeliveryOrder.setIsDelete((byte) 1);
+            i = wmsOutDeliveryOrderMapper.insertSelective(wmsOutDeliveryOrder);
+
+            //明细
+            List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
+            if(StringUtils.isNotEmpty(wmsOutDeliveryOrderDetList)){
+                for (WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet : wmsOutDeliveryOrderDetList ) {
+                    wmsOutDeliveryOrderDet.setDeliveryOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
+                    wmsOutDeliveryOrderDet.setCreateTime(new Date());
+                    wmsOutDeliveryOrderDet.setCreateUserId(1L);
+                }
+                wmsOutDeliveryOrderDetMapper.insertList(wmsOutDeliveryOrderDetList);
+            }
+
+        }else{
+            wmsOutDeliveryOrder.setDeliveryOrderId(outDeliveryOrder.getDeliveryOrderId());
+            wmsOutDeliveryOrder.setModifiedTime(new Date());
+            wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
+
+            //明细
+            List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
+            if(StringUtils.isNotEmpty(wmsOutDeliveryOrderDetList)){
+                for (WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet : wmsOutDeliveryOrderDetList ) {
+                    //IDGUID判断是否重复
+                    Example exampleDet = new Example(WmsOutDeliveryOrderDet.class);
+                    Example.Criteria criteriaDet = exampleDet.createCriteria();
+                    criteriaDet.andEqualTo("option1",wmsOutDeliveryOrderDet.getOption1());
+                    WmsOutDeliveryOrderDet outDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectOneByExample(exampleDet);
+                    if(StringUtils.isEmpty(outDeliveryOrderDet)){
+                        wmsOutDeliveryOrderDet.setCreateUserId(1L);
+                        wmsOutDeliveryOrderDet.setCreateTime(new Date());
+                        wmsOutDeliveryOrderDetMapper.insertSelective(wmsOutDeliveryOrderDet);
+                    }
+                    else{
+                        wmsOutDeliveryOrderDet.setDeliveryOrderDetId(outDeliveryOrderDet.getDeliveryOrderDetId());
+                        wmsOutDeliveryOrderDet.setModifiedTime(new Date());
+                        wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
+                    }
+
+                }
+            }
+        }
+        return i;
     }
 }

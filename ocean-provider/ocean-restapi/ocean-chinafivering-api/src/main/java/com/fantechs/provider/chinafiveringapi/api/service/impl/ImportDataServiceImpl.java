@@ -16,11 +16,13 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkingArea;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
+import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.chinafiveringapi.api.service.ImportDataService;
 import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,8 @@ public class ImportDataServiceImpl implements ImportDataService {
     BaseFeignApi baseFeignApi;
     @Resource
     EngFeignApi engFeignApi;
+    @Resource
+    OutFeignApi outFeignApi;
 
     @Override
     /**
@@ -164,41 +168,45 @@ public class ImportDataServiceImpl implements ImportDataService {
 
             //循环分组数据 组成领料单
             for (String key:result.keySet()) {
-                WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto=new WmsOutDeliveryOrderDto();
+                WmsOutDeliveryOrder wmsOutDeliveryOrder=new WmsOutDeliveryOrder();
+                wmsOutDeliveryOrder.setOrderTypeId(8L);//单据类型 领料出库=8
+                wmsOutDeliveryOrder.setOrgId(1004L);
                 Long customerId=0L;
                 List<WmsOutDeliveryOrderTempDto> listDto=result.get(key);
                 List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList=null;
                 for (WmsOutDeliveryOrderTempDto tempDto : listDto) {
                     //表头 领料单号
-                    wmsOutDeliveryOrderDto.setDeliveryOrderCode(tempDto.getDeliveryOrderCode());
+                    wmsOutDeliveryOrder.setDeliveryOrderCode(tempDto.getDeliveryOrderCode());
                     // 表头 领料时间
-                    wmsOutDeliveryOrderDto.setOption1(tempDto.getOutMaterialTime());
+                    wmsOutDeliveryOrder.setOption1(tempDto.getOutMaterialTime());
                     // 表头 领料截止时间
-                    wmsOutDeliveryOrderDto.setOption2(tempDto.getOutMaterialTimeEnd());
+                    wmsOutDeliveryOrder.setOption2(tempDto.getOutMaterialTimeEnd());
                     // 表头 项目ID
-                    wmsOutDeliveryOrderDto.setOption3(tempDto.getProjectId());
+                    wmsOutDeliveryOrder.setOption3(tempDto.getProjectId());
                     // 表头 领料单审批状态代码
-                    wmsOutDeliveryOrderDto.setOption4(tempDto.getConfirmCode());
+                    wmsOutDeliveryOrder.setOption4(tempDto.getConfirmCode());
 
                     if(customerId==0L) {
                         SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
                         searchBaseSupplier.setSupplierCode(tempDto.getCustomerCode());
+                        searchBaseSupplier.setSupplierType((byte) 2);// 1 是供应商 2 是客户
                         ResponseEntity<List<BaseSupplier>> supplierList = baseFeignApi.findSupplierList(searchBaseSupplier);
                         if (StringUtils.isNotEmpty(supplierList.getData())) {
                             customerId = supplierList.getData().get(0).getSupplierId();
                         }
                     }
                     // 表头 客户ID
-                    wmsOutDeliveryOrderDto.setCustomerId(customerId);
+                    wmsOutDeliveryOrder.setCustomerId(customerId);
 
-                    //明细
+                    //明细 取物料ID
                     WmsOutDeliveryOrderDetDto detDto=new WmsOutDeliveryOrderDetDto();
                     String materialCode=tempDto.getMaterialCode();
                     SearchBaseMaterial searchBaseMaterial=new SearchBaseMaterial();
                     searchBaseMaterial.setMaterialCode(materialCode);
                     ResponseEntity<List<BaseMaterial>> baseList=baseFeignApi.findList(searchBaseMaterial);
                     if(StringUtils.isEmpty(baseList.getData())){
-                        throw new BizErrorException("找不到物料编码的信息-->"+materialCode);
+                        //throw new BizErrorException("找不到物料编码的信息-->"+materialCode);
+                        continue;
                     }
                     //设置物料ID
                     detDto.setMaterialId(baseList.getData().get(0).getMaterialId());
@@ -235,20 +243,14 @@ public class ImportDataServiceImpl implements ImportDataService {
                     wmsOutDeliveryOrderDetList.add(detDto);
                 }
 
+                //设置领料单明细
+                wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetList);
+
+                //同步到数据库
+                outFeignApi.saveByApi(wmsOutDeliveryOrder);
+
             }
 
-//            for (WmsOutDeliveryOrderTempDto tempDto : listWmsOut) {
-//                String deliveryOrderCode=tempDto.getDeliveryOrderCode();
-//                if(StringUtils.isEmpty(tempDeliveryOrderCode))
-//                    tempDeliveryOrderCode=deliveryOrderCode;
-//
-//                if(listMap.containsKey(deliveryOrderCode)==false){
-//
-//                }
-//
-//                tempDto.setOrgId(1004L);
-//                engFeignApi.saveByApi(engContractQtyOrder);
-//            }
 
             baseExecuteResultDto.setExecuteResult("");
             baseExecuteResultDto.setIsSuccess(true);

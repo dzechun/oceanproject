@@ -148,4 +148,10 @@ public class WmsOutDeliveryOrderController {
     public ResponseEntity forwardingStatus(@RequestParam Long deliverOrderId,@RequestParam Byte orderStatus){
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.forwardingStatus(deliverOrderId,orderStatus));
     }
+
+    @ApiOperation("api增加领料出库单信息")
+    @PostMapping("/saveByApi")
+    public ResponseEntity saveByApi(@ApiParam(value = "对象，deliveryOrderCode必传",required = true)@RequestBody @Validated WmsOutDeliveryOrder wmsOutDeliveryOrder) {
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.saveByApi(wmsOutDeliveryOrder));
+    }
 }
