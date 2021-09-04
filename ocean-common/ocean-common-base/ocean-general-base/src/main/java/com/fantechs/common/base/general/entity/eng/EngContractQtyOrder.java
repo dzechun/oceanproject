@@ -92,6 +92,15 @@ public class EngContractQtyOrder extends ValidGroup implements Serializable {
     private String professionCode;
 
     /**
+     * 专业名称
+     */
+    @ApiModelProperty(name="professionName",value = "专业名称")
+    @Excel(name = "专业名称", height = 20, width = 30,orderNum="")
+    @Column(name = "profession_name")
+    private String professionName;
+
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
