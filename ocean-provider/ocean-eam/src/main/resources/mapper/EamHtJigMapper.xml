@@ -109,6 +109,9 @@
     left join ocean_v2.sys_user s on ehj.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ehj.org_id = bo.organization_id
     <where>
+      <if test="jigCategoryId != null">
+        and ehj.jig_category_id = #{jigCategoryId}
+      </if>
       <if test="jigCode != null and jigCode!=''">
         and ehj.jig_code like CONCAT('%', #{jigCode}, '%')
       </if>

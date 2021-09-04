@@ -16,7 +16,7 @@ public class EamEquPointInspectionOrderDto extends EamEquPointInspectionOrder im
      */
     @Transient
     @ApiModelProperty(name="equPointInspectionProjectCode",value = "点检项目编码")
-    @Excel(name = "点检项目编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "点检项目编码", height = 20, width = 30,orderNum="6")
     private String equPointInspectionProjectCode;
 
     /**
@@ -24,7 +24,7 @@ public class EamEquPointInspectionOrderDto extends EamEquPointInspectionOrder im
      */
     @Transient
     @ApiModelProperty(name="equPointInspectionProjectName",value = "点检项目名称")
-    @Excel(name = "点检项目名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "点检项目名称", height = 20, width = 30,orderNum="7")
     private String equPointInspectionProjectName;
 
     /**
@@ -32,7 +32,7 @@ public class EamEquPointInspectionOrderDto extends EamEquPointInspectionOrder im
      */
     @Transient
     @ApiModelProperty(name="equipmentCode",value = "设备编码")
-    @Excel(name = "设备编码", height = 20, width = 30,orderNum="")
+    @Excel(name = "设备编码", height = 20, width = 30,orderNum="3")
     private String equipmentCode;
 
     /**
@@ -40,7 +40,7 @@ public class EamEquPointInspectionOrderDto extends EamEquPointInspectionOrder im
      */
     @Transient
     @ApiModelProperty(name="equipmentName",value = "设备名称")
-    @Excel(name = "设备名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "设备名称", height = 20, width = 30,orderNum="4")
     private String equipmentName;
 
     /**
@@ -48,7 +48,7 @@ public class EamEquPointInspectionOrderDto extends EamEquPointInspectionOrder im
      */
     @Transient
     @ApiModelProperty(name="equipmentCategoryName",value = "设备类别名称")
-    @Excel(name = "设备类别名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "设备类别名称", height = 20, width = 30,orderNum="5")
     private String equipmentCategoryName;
 
     /**
@@ -56,7 +56,7 @@ public class EamEquPointInspectionOrderDto extends EamEquPointInspectionOrder im
      */
     @Transient
     @ApiModelProperty(name="equipmentBarcode",value = "设备条码")
-    @Excel(name = "设备条码", height = 20, width = 30,orderNum="")
+    @Excel(name = "设备条码", height = 20, width = 30,orderNum="2")
     private String equipmentBarcode;
 
     /**
@@ -64,7 +64,7 @@ public class EamEquPointInspectionOrderDto extends EamEquPointInspectionOrder im
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="16")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="9")
     private String createUserName;
 
     /**
@@ -72,7 +72,7 @@ public class EamEquPointInspectionOrderDto extends EamEquPointInspectionOrder im
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="18")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
     private String modifiedUserName;
 
     /**

@@ -292,4 +292,10 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="option10",value = "扩展字段10")
     private String option10;
+
+    /**
+     * 扩展字段11
+     */
+    @ApiModelProperty(name="option11",value = "扩展字段11")
+    private String option11;
 }
