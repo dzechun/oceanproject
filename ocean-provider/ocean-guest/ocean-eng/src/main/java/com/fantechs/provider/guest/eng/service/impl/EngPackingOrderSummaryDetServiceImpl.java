@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -169,10 +170,12 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             searchSysSpecItem.setSpecCode("Specialities");
             List<SysSpecItem> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
             if(StringUtils.isEmpty(specItemList )) throw new BizErrorException("导入失败，未查询到专业编码");
-            String[] paraValue =specItemList.get(0).getParaValue().split(",");
+            //String[] paraValue =specItemList.get(0).getParaValue();
+          //  List<String> paraValue=JsonUtils.jsonToList(specItemList.get(0).getParaValue(),List.class);
+            List<Map<String, String>> itemList = JSONArray.parseObject(specItemList.get(0).getParaValue(), List.class);
             String header = "";
-            for(int i=0;i<paraValue.length;i++){
-                Map map = JsonUtils.jsonToMap(paraValue[i]);
+           // for(int i=0;i<paraValue.size();i++){
+            for(Map map : itemList){
                 if(engPackingOrderSummary.getProfessionCode().equals(map.get("name")))
                     header = map.get("code").toString();
             }

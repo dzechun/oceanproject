@@ -114,7 +114,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
                 continue;
             }
 
-            //判断编码是否重复
+            /*//判断编码是否重复
             Example example = new Example(EngPackingOrderSummary.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("orgId", user.getOrganizationId());
@@ -123,7 +123,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             if (StringUtils.isNotEmpty(engPackingOrderSummary)){
                 fail = fail+1;
                 continue;
-            }
+            }*/
 
         //    getMaterial(dto,user);
 
