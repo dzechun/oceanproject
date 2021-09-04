@@ -120,7 +120,7 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
     public int saveByApi(BaseCustomer baseCustomer) {
         Example example = new Example(BaseCustomer.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("customer_code",baseCustomer.getCustomerCode());
+        criteria.andEqualTo("customerCode",baseCustomer.getCustomerCode());
         criteria.andEqualTo("organizationId",baseCustomer.getOrganizationId());
         BaseCustomer baseCustomerExist = baseCustomerMapper.selectOneByExample(example);
         int i= 0;

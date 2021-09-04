@@ -65,11 +65,8 @@
     left join ocean_v2.sys_user s on ecqo.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ecqo.org_id = bo.organization_id
     <where>
-      <if test="contractCode != null and contractCode!='' and codeQueryMark!=1">
+      <if test="contractCode != null and contractCode!=''">
         and ecqo.contract_code like CONCAT('%', #{contractCode}, '%')
-      </if>
-      <if test="contractCode != null and contractCode!='' and codeQueryMark==1">
-        and ecqo.contract_code = #{contractCode}
       </if>
       <if test="deviceCode != null and deviceCode!=''">
         and ecqo.device_code like CONCAT('%', #{deviceCode}, '%')

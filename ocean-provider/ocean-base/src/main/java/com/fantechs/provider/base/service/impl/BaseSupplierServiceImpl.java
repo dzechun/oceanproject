@@ -287,6 +287,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         Example example = new Example(BaseSupplier.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("supplierCode",baseSupplier.getSupplierCode());
+        criteria.andEqualTo("supplierType",baseSupplier.getSupplierType());
         criteria.andEqualTo("organizationId",baseSupplier.getOrganizationId());
         BaseSupplier supplier = baseSupplierMapper.selectOneByExample(example);
         int i= 0;
@@ -295,6 +296,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             baseSupplier.setCreateUserId((long) 1);
             baseSupplier.setModifiedUserId((long) 1);
             baseSupplier.setModifiedTime(new Date());
+            baseSupplier.setSupplierType((byte)1);
             baseSupplier.setIsDelete((byte) 1);
             i = baseSupplierMapper.insertSelective(baseSupplier);
         }else{

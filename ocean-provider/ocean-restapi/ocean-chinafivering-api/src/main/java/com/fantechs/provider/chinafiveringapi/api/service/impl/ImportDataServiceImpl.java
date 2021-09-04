@@ -4,10 +4,15 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderTempDto;
 import com.fantechs.common.base.general.entity.basic.BaseCustomer;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkingArea;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
@@ -17,15 +22,22 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.chinafiveringapi.api.service.ImportDataService;
+import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Service
 public class ImportDataServiceImpl implements ImportDataService {
@@ -114,6 +126,129 @@ public class ImportDataServiceImpl implements ImportDataService {
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
+            String strResult=baseExecuteResultDto.getExecuteResult().toString();
+            String s0=strResult.replaceAll("领料单号","deliveryOrderCode");
+            String s1=s0.replaceAll("领料时间","outMaterialTime");
+            String s2=s1.replaceAll("领料单位","customerCode");
+            String s3=s2.replaceAll("领料截止时间","outMaterialTimeEnd");
+            String s4=s3.replaceAll("项目ID","projectId");
+            String s5=s4.replaceAll("领料单审批状态代码","confirmCode");
+            String s6=s5.replaceAll("材料编码","materialCode");
+            String s7=s6.replaceAll("发料备注","remark");
+            String s8=s7.replaceAll("IDGUID","option1");
+            String s9=s8.replaceAll("ISGUID","option2");
+            String s10=s9.replaceAll("PLGUID","option3");
+            String s11=s10.replaceAll("PSGUID","option4");
+            String s12=s11.replaceAll("DHGUID","option5");
+            String s13=s12.replaceAll("专业","option6");
+            String s14=s13.replaceAll("位号","option7");
+            String s15=s14.replaceAll("主项号","option8");
+            String s16=s15.replaceAll("装置号","option9");
+            String s17=s16.replaceAll("申领量","option10");
+            String s18=s17.replaceAll("实发量","option11");
+            String s19=s18.replaceAll("批准量","dispatchQty");
+
+            //同步到数据库
+            int indexb=s19.indexOf("[");
+            int indexe=s19.lastIndexOf("]");
+            String str=s19.substring(indexb,indexe+1);
+            List<WmsOutDeliveryOrderTempDto> listWmsOut= BeanUtils.jsonToListObject(str,WmsOutDeliveryOrderTempDto.class);
+
+            //按照领料单号分组
+            Map<String, List<WmsOutDeliveryOrderTempDto>> result = listWmsOut.stream().collect(Collectors.groupingBy(c -> {
+                String deliveryOrderCode = c.getDeliveryOrderCode();
+                return deliveryOrderCode;
+            }, TreeMap::new, Collectors.toList()));
+
+            System.out.println(result);
+
+            //循环分组数据 组成领料单
+            for (String key:result.keySet()) {
+                WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto=new WmsOutDeliveryOrderDto();
+                Long customerId=0L;
+                List<WmsOutDeliveryOrderTempDto> listDto=result.get(key);
+                List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList=null;
+                for (WmsOutDeliveryOrderTempDto tempDto : listDto) {
+                    //表头 领料单号
+                    wmsOutDeliveryOrderDto.setDeliveryOrderCode(tempDto.getDeliveryOrderCode());
+                    // 表头 领料时间
+                    wmsOutDeliveryOrderDto.setOption1(tempDto.getOutMaterialTime());
+                    // 表头 领料截止时间
+                    wmsOutDeliveryOrderDto.setOption2(tempDto.getOutMaterialTimeEnd());
+                    // 表头 项目ID
+                    wmsOutDeliveryOrderDto.setOption3(tempDto.getProjectId());
+                    // 表头 领料单审批状态代码
+                    wmsOutDeliveryOrderDto.setOption4(tempDto.getConfirmCode());
+
+                    if(customerId==0L) {
+                        SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
+                        searchBaseSupplier.setSupplierCode(tempDto.getCustomerCode());
+                        ResponseEntity<List<BaseSupplier>> supplierList = baseFeignApi.findSupplierList(searchBaseSupplier);
+                        if (StringUtils.isNotEmpty(supplierList.getData())) {
+                            customerId = supplierList.getData().get(0).getSupplierId();
+                        }
+                    }
+                    // 表头 客户ID
+                    wmsOutDeliveryOrderDto.setCustomerId(customerId);
+
+                    //明细
+                    WmsOutDeliveryOrderDetDto detDto=new WmsOutDeliveryOrderDetDto();
+                    String materialCode=tempDto.getMaterialCode();
+                    SearchBaseMaterial searchBaseMaterial=new SearchBaseMaterial();
+                    searchBaseMaterial.setMaterialCode(materialCode);
+                    ResponseEntity<List<BaseMaterial>> baseList=baseFeignApi.findList(searchBaseMaterial);
+                    if(StringUtils.isEmpty(baseList.getData())){
+                        throw new BizErrorException("找不到物料编码的信息-->"+materialCode);
+                    }
+                    //设置物料ID
+                    detDto.setMaterialId(baseList.getData().get(0).getMaterialId());
+                    //IDGUID
+                    detDto.setOption1(tempDto.getOption1());
+                    //ISGUID
+                    detDto.setOption2(tempDto.getOption2());
+                    //PLGUID
+                    detDto.setOption3(tempDto.getOption3());
+                    //PSGUID
+                    detDto.setOption4(tempDto.getOption4());
+                    //DHGUID
+                    detDto.setOption5(tempDto.getOption5());
+                    //专业
+                    detDto.setOption6(tempDto.getOption6());
+                    //位号
+                    detDto.setOption7(tempDto.getOption7());
+                    //主项号
+                    detDto.setOption8(tempDto.getOption8());
+                    //装置号
+                    detDto.setOption9(tempDto.getOption9());
+                    //申领量
+                    detDto.setOption10(tempDto.getOption10());
+                    //实发量
+                    detDto.setOption11(tempDto.getOption11());
+                    //备注
+                    detDto.setRemark(tempDto.getRemark());
+                    //批准量
+                    if(StringUtils.isEmpty(tempDto.getDispatchQty()))
+                        detDto.setDispatchQty(BigDecimal.ZERO);
+                    else
+                        detDto.setDispatchQty(new BigDecimal(tempDto.getDispatchQty()));
+
+                    wmsOutDeliveryOrderDetList.add(detDto);
+                }
+
+            }
+
+//            for (WmsOutDeliveryOrderTempDto tempDto : listWmsOut) {
+//                String deliveryOrderCode=tempDto.getDeliveryOrderCode();
+//                if(StringUtils.isEmpty(tempDeliveryOrderCode))
+//                    tempDeliveryOrderCode=deliveryOrderCode;
+//
+//                if(listMap.containsKey(deliveryOrderCode)==false){
+//
+//                }
+//
+//                tempDto.setOrgId(1004L);
+//                engFeignApi.saveByApi(engContractQtyOrder);
+//            }
 
             baseExecuteResultDto.setExecuteResult("");
             baseExecuteResultDto.setIsSuccess(true);
@@ -249,18 +384,20 @@ public class ImportDataServiceImpl implements ImportDataService {
 
             //转换为实体类集合
             String strResult=baseExecuteResultDto.getExecuteResult().toString();
-            String s0=strResult.replaceAll("分包商编号","customerCode");
-            String s1=s0.replaceAll("分包商名称","customerName");
+            String s0=strResult.replaceAll("分包商编号","supplierCode");
+            String s1=s0.replaceAll("分包商名称","supplierName");
 
             //同步到数据库
             int indexb=s1.indexOf("[");
             int indexe=s1.lastIndexOf("]");
             String str=s1.substring(indexb,indexe+1);
-            List<BaseCustomer> listBC= BeanUtils.jsonToListObject(str,BaseCustomer.class);
-            for (BaseCustomer baseCustomer : listBC) {
-                baseCustomer.setOrganizationId(1004L);
-                baseCustomer.setStatus(1);
-                baseFeignApi.saveByApi(baseCustomer);
+            List<BaseSupplier> listBC= BeanUtils.jsonToListObject(str,BaseSupplier.class);
+            for (BaseSupplier baseSupplier : listBC) {
+                baseSupplier.setOrganizationId(1004L);
+                baseSupplier.setStatus((byte)1);
+                //客户供应商用同一个表 SupplierType=2 表示客户
+                baseSupplier.setSupplierType((byte)2);
+                baseFeignApi.saveByApi(baseSupplier);
             }
 
             //baseExecuteResultDto.setExecuteResult("");
@@ -302,6 +439,8 @@ public class ImportDataServiceImpl implements ImportDataService {
             for (BaseSupplier baseSupplier : listSu) {
                 baseSupplier.setOrganizationId(1004L);
                 baseSupplier.setStatus((byte)1);
+                //客户供应商用同一个表 SupplierType=1 表示客户
+                baseSupplier.setSupplierType((byte)1);
                 baseFeignApi.saveByApi(baseSupplier);
             }
 

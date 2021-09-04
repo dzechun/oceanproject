@@ -1,6 +1,9 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionStandardImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWorkerImport;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionStandard;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionStandard;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionStandard;
@@ -15,14 +18,17 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -32,6 +38,7 @@ import java.util.List;
 @Api(tags = "检验标准控制器")
 @RequestMapping("/baseInspectionStandard")
 @Validated
+@Slf4j
 public class BaseInspectionStandardController {
 
     @Resource
@@ -90,6 +97,31 @@ public class BaseInspectionStandardController {
         EasyPoiUtils.exportExcel(list, "导出信息", "检验标准信息", BaseInspectionStandard.class, "检验标准.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入部件组成信息",notes = "从excel导入部件组成信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseInspectionStandardImport> baseInspectionStandardImports = EasyPoiUtils.importExcel(file, 2, 1, BaseInspectionStandardImport.class);
+            Map<String, Object> resultMap = baseInspectionStandardService.importExcel(baseInspectionStandardImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

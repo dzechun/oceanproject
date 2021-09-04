@@ -78,15 +78,16 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
 
 
             //保存工段
-            BaseWorkshopSection baseWorkshopSection = new BaseWorkshopSection();
-            baseWorkshopSection.setSectionCode(res.getPROCESS().get(0).getARBPL());
-            baseWorkshopSection.setSectionName(res.getPROCESS().get(0).getLTXA1());
-            baseWorkshopSection.setSectionDesc(res.getPROCESS().get(0).getLTXA1());
-            baseWorkshopSection.setStatus((byte)1);
-            baseWorkshopSection.setOrganizationId(orgId);
-            baseWorkshopSection.setIsDelete((byte)1);
-            baseFeignApi.addOrUpdate(baseWorkshopSection);
-
+            for(DTMESPROCESS process: res.getPROCESS()){
+                BaseWorkshopSection baseWorkshopSection = new BaseWorkshopSection();
+                baseWorkshopSection.setSectionCode(process.getARBPL());
+                baseWorkshopSection.setSectionName(process.getLTXA1());
+                baseWorkshopSection.setSectionDesc(process.getLTXA1());
+                baseWorkshopSection.setStatus((byte)1);
+                baseWorkshopSection.setOrganizationId(orgId);
+                baseWorkshopSection.setIsDelete((byte)1);
+                baseFeignApi.addOrUpdate(baseWorkshopSection);
+            }
             //保存工序类别
        /*     BaseProcessCategory baseProcessCategory = new BaseProcessCategory();
             baseProcessCategory.setProcessCategoryName(res.getPROCESS().get(0).getKTEXT());
