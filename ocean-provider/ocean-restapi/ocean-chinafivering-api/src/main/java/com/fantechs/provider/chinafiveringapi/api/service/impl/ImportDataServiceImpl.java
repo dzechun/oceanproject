@@ -301,7 +301,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                 baseFeignApi.saveByApi(baseMaterial);
             }
 
-            //baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setExecuteResult("");
             baseExecuteResultDto.setIsSuccess(true);
             baseExecuteResultDto.setSuccessMsg("操作成功");
         }catch (Exception ex){
@@ -361,7 +361,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                 baseFeignApi.saveByApi(baseStorage);
             }
 
-            //baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setExecuteResult("");
             baseExecuteResultDto.setIsSuccess(true);
             baseExecuteResultDto.setSuccessMsg("操作成功");
 
@@ -405,7 +405,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                 baseFeignApi.saveByApi(baseSupplier);
             }
 
-            //baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setExecuteResult("");
             baseExecuteResultDto.setIsSuccess(true);
             baseExecuteResultDto.setSuccessMsg("操作成功");
 
@@ -449,7 +449,9 @@ public class ImportDataServiceImpl implements ImportDataService {
                 baseFeignApi.saveByApi(baseSupplier);
             }
 
+            baseExecuteResultDto.setExecuteResult("");
             baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
 
         }catch (Exception ex){
             baseExecuteResultDto.setIsSuccess(false);

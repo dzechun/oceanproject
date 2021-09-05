@@ -1,5 +1,7 @@
 package com.fantechs.provider.chinafiveringapi.api.service;
 
+import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
+
 public interface ExportDataService {
 
     /**
@@ -10,7 +12,7 @@ public interface ExportDataService {
      * 参数：projectID,  说明：项目ID = 3919
      * 返回值：成功：success  错误：错误描述（如数据格式不正确）
      */
-    String writeDeliveryDetails(String jsonVoiceArray, String projectID) throws Exception;
+    BaseExecuteResultDto writeDeliveryDetails(String jsonVoiceArray, String projectID) throws Exception;
 
     /**
      * 中国五环-盘点单回传接口
@@ -20,7 +22,7 @@ public interface ExportDataService {
      * 参数：projectID,  说明：项目ID = 3919
      * 返回值：成功：success  错误：错误描述（如数据格式不正确）
      */
-    String writeMakeInventoryDetails(String jsonVoiceArray, String projectID) throws Exception;
+    BaseExecuteResultDto writeMakeInventoryDetails(String jsonVoiceArray, String projectID) throws Exception;
 
     /**
      * 中国五环-出库单回传接口
@@ -28,7 +30,7 @@ public interface ExportDataService {
      * 参数：jsonVoiceArray,说明： WMSKey,ISGUID,IDGUID,实发量,发料备注,登记时间,登记人
      * 返回值：成功：success  错误：错误描述（如数据格式不正确）
      */
-    String writeIssueDetails(String jsonVoiceArray, String ProjectID) throws Exception;
+    BaseExecuteResultDto writeIssueDetails(String jsonVoiceArray, String ProjectID) throws Exception;
 
     /**
      * 中国五环-移位调拨单接口
@@ -38,7 +40,7 @@ public interface ExportDataService {
      * 参数：projectID,  说明：项目ID = 3919
      * 返回值：成功：success  错误：错误描述（如数据格式不正确）
      */
-    String writeMoveInventoryDetails(String jsonVoiceArray, String projectID) throws Exception;
+    BaseExecuteResultDto writeMoveInventoryDetails(String jsonVoiceArray, String projectID) throws Exception;
 
     /**
      * 中国五环-箱单回传接口
@@ -48,5 +50,5 @@ public interface ExportDataService {
      * 参数：projectID,  说明：项目ID = 3919
      * 返回值：成功：success  错误：错误描述（如数据格式不正确）
      */
-    String writePackingLists(String jsonVoiceArray, String projectID) throws Exception;
+    BaseExecuteResultDto writePackingLists(String jsonVoiceArray, String projectID) throws Exception;
 }
