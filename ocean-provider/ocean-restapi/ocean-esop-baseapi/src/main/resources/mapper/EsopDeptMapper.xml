@@ -80,8 +80,14 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(xebd.modify_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-        <if test="code != null and code!=''">
-            and xebd.code = #{code}
+      <if test="code != null and code!=''">
+         and xebd.code = #{code}
+      </if>
+      <if test="isWas != null and isWas!=''">
+        and xebd.is_was = #{isWas}
+      </if>
+        <if test="isDeleted != null and isDeleted!=''">
+            and xebd.is_deleted = #{isDeleted}
         </if>
     </where>
   </select>

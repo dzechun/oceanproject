@@ -221,17 +221,17 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
     }
 
     @Override
-    public int batchAdd(List<EsopIssue> EsopIssues) {
+    public int batchAdd(List<EsopIssue> esopIssues) {
         int i=0;
-        if(StringUtils.isNotEmpty(EsopIssues)){
+        if(StringUtils.isNotEmpty(esopIssues)){
             Example example1 = new Example(EsopIssue.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("materialId", EsopIssues.get(0).getMaterialId());
+            criteria1.andEqualTo("materialId", esopIssues.get(0).getMaterialId());
             esopIssueMapper.deleteByExample(example1);
-            esopIssueMapper.insertList(EsopIssues);
+            i = esopIssueMapper.insertList(esopIssues);
         }
 
-        return 0;
+        return i;
     }
 
 }
