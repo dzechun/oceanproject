@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,8 +75,13 @@ public class WmsOutDeliveryOrderController {
 
     @ApiOperation("修改审核状态")
     @PostMapping("/updateStatus")
-    public ResponseEntity updateStatus(@ApiParam(value = "对象ID列表",required = true) @RequestParam @NotBlank(message="ids不能为空") List<Long> ids){
-        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.updateStatus(ids));
+    public ResponseEntity updateStatus(@ApiParam(value = "对象ID列表",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
+        String[] split = ids.split(",");
+        List<Long> list = new ArrayList<>(split.length);
+        for (String item : split){
+            list.add(Long.decode(item));
+        }
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.updateStatus(list));
     }
 
     @ApiOperation("获取详情")
