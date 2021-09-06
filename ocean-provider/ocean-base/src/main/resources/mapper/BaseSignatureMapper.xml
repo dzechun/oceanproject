@@ -61,6 +61,9 @@
             <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
+            <if test="materialName!=null and materialName!=''">
+                and sm.material_name like CONCAT('%', #{materialName}, '%')
+            </if>
             <if test="signatureCode!=null and signatureCode!=''">
                 and ss.signature_code like CONCAT('%', #{signatureCode}, '%')
             </if>

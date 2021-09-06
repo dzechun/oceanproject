@@ -83,7 +83,7 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
                             BaseMaterial baseMaterial =  new BaseMaterial();
                             baseMaterial.setMaterialCode((String)data.get("product_model"));
                             baseMaterial.setMaterialName((String)data.get("product_name"));
-                            baseMaterial.setMaterialDesc((String)data.get("product_name"));
+                        //   baseMaterial.setMaterialDesc((String)data.get("product_name"));
                             baseMaterial.setOrganizationId(orgId);
                             baseMaterial.setStatus((byte)1);
                             baseMaterial.setIsDelete((byte)1);

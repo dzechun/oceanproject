@@ -49,7 +49,9 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
         SIMESMATERIALQUERYOutService service = new SIMESMATERIALQUERYOutService();
         SIMESMATERIALQUERYOut out = service.getHTTPPort();
         DTMESMATERIALQUERYREQ req = new DTMESMATERIALQUERYREQ();
-        Long orgId =baseUtils.getOrId();
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+
         if(StringUtils.isEmpty(searchSapMaterialApi.getStartTime()) || StringUtils.isEmpty(searchSapMaterialApi.getEndTime()))
             throw new BizErrorException("开始和结束时间不能为空");
         req.setERSDA(searchSapMaterialApi.getStartTime());
@@ -66,10 +68,10 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
             }
             baseFeignApi.addList(addList);
             baseFeignApi.batchUpdateByCode(updateList);
-            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgIdList.get(0).getOrganizationId(),null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgIdList.get(0).getOrganizationId(),res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }
@@ -77,7 +79,9 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
     public void saveAndUpdate(DTMESMATERIAL material, List<BaseMaterial> addList, List<BaseMaterial> updateList){
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
         String materialCode =baseUtils.removeZero(material.getMATNR());
-        Long orgId = baseUtils.getOrId();
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+        Long orgId = orgIdList.get(0).getOrganizationId();
         searchBaseMaterial.setMaterialCode(materialCode);
         searchBaseMaterial.setOrganizationId(orgId);
         ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);

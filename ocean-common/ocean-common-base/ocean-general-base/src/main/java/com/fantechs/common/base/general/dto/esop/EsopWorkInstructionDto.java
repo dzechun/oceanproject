@@ -28,6 +28,13 @@ public class EsopWorkInstructionDto extends EsopWorkInstruction implements Seria
     private String materialName;
 
     /**
+     * 物料详情(规格)
+     */
+    @ApiModelProperty(name="materialDesc",value = "物料详情")
+    @Transient
+    private String materialDesc;
+
+    /**
      * 产品描述
      */
     @ApiModelProperty(name="productModelName",value = "产品描述")

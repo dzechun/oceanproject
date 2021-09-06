@@ -104,8 +104,8 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         }
         BaseLabelCategory baseLabelCategory = baseLabelCategoryMapper.selectByPrimaryKey(baseLabel.getLabelCategoryId());
         //标签名=标签类别+标签编码+版本号
-        baseLabel.setLabelName(baseLabelCategory.getLabelCategoryName()+"|"+baseLabel.getLabelCode()+"|"+baseLabel.getLabelVersion());
         baseLabel.setLabelVersion("0.0.1");
+        baseLabel.setLabelName(baseLabelCategory.getLabelCategoryName()+"|"+baseLabel.getLabelCode()+"|"+baseLabel.getLabelVersion());
 
         //以标签的版本号生成文件夹
         this.MkdirDocByVersion(baseLabel.getLabelVersion(),baseLabelCategory.getLabelCategoryName());

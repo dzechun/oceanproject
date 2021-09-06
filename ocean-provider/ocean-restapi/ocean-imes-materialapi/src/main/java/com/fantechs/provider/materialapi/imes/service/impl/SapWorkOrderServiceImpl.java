@@ -2,14 +2,9 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseProLine;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -53,7 +48,10 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         Map<String,String> bomMap = new HashMap<String,String>();
         List<MesPmWorkOrderBom> mesPmWorkOrderBomList = new ArrayList<MesPmWorkOrderBom>();
 
-        Long orgId = baseUtils.getOrId();
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) return "未查询到对应的组织信息";
+        Long orgId = orgIdList.get(0).getOrganizationId();
+
         for(RestapiWorkOrderApiDto restapiWorkOrderApiDto : restapiWorkOrderApiDtos) {
             String check = check(restapiWorkOrderApiDto);
             if (!check.equals("1")) {
@@ -68,7 +66,9 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                     mesPmWorkOrder.setPlanStartTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGSTRP()));
                 if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGLTRP()))
                     mesPmWorkOrder.setPlanEndTime(DateUtils.getStrToDate("yyyyMMdd", restapiWorkOrderApiDto.getGLTRP()));
-                mesPmWorkOrder.setMaterialId((baseUtils.getBaseMaterial(restapiWorkOrderApiDto.getMATNR()).getMaterialId()));
+                List<BaseMaterial> baseMaterials = baseUtils.getBaseMaterial(restapiWorkOrderApiDto.getMATNR());
+                if(StringUtils.isEmpty(baseMaterials)) return "未查询到对应的物料编码，编码为："+restapiWorkOrderApiDto.getMATNR();
+                mesPmWorkOrder.setMaterialId(baseMaterials.get(0).getMaterialId());
                 if(StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGAMNG()))
                  mesPmWorkOrder.setWorkOrderQty(new BigDecimal(restapiWorkOrderApiDto.getGAMNG().trim()));
                 //目前还未同步产线
@@ -87,7 +87,9 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 bom.setUsageQty(new BigDecimal(restapiWorkOrderApiDto.getMENGE().trim()));
                 bom.setOption1(restapiWorkOrderApiDto.getRSPOS());
                 bom.setWorkOrderId(orderMap.get(restapiWorkOrderApiDto.getAUFNR()));
-                bom.setPartMaterialId(baseUtils.getBaseMaterial(restapiWorkOrderApiDto.getZJMATNR()).getMaterialId());
+                List<BaseMaterial> baseMaterialss = baseUtils.getBaseMaterial(restapiWorkOrderApiDto.getZJMATNR());
+                if(StringUtils.isEmpty(baseMaterialss)) return "未查询到对应的物料编码，编码为："+restapiWorkOrderApiDto.getZJMATNR();
+                bom.setPartMaterialId(baseMaterialss.get(0).getMaterialId());
                 bom.setOrgId(orgId);
                 bom.setIsDelete((byte)1);
                 mesPmWorkOrderBomList.add(bom);
@@ -111,7 +113,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         return check;
     }
 
-    public Long getProLine(String proLineCode,Long orgId){
+    /*public Long getProLine(String proLineCode,Long orgId){
         SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
         searchBaseProLine.setProCode(proLineCode);
         searchBaseProLine.setOrgId(orgId);
@@ -119,6 +121,6 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         if(StringUtils.isEmpty(list.getData()))
             throw new BizErrorException("未查询到对应的产线："+proLineCode);
         return list.getData().get(0).getProLineId();
-    }
+    }*/
 
 }
