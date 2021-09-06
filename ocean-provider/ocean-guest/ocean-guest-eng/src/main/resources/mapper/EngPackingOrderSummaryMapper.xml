@@ -14,6 +14,7 @@
     <result column="device_code" jdbcType="VARCHAR" property="deviceCode" />
     <result column="location_num" jdbcType="VARCHAR" property="locationNum" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="carton_qty" jdbcType="INTEGER" property="cartonQty" />
     <result column="packing_type" jdbcType="VARCHAR" property="packingType" />
@@ -54,6 +55,7 @@
     spos.device_code,
     spos.location_num,
     spos.material_id,
+    spos.material_name,
     spos.supplier_id,
     spos.carton_qty,
     spos.packing_type,

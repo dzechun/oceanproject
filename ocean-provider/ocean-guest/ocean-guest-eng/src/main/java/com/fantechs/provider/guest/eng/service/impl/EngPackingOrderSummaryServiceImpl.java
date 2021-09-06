@@ -105,16 +105,13 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         List<EngPackingOrderSummary> ins = new ArrayList<EngPackingOrderSummary>();
         List<EngHtPackingOrderSummary> engHtPackingOrderSummarys = new ArrayList<EngHtPackingOrderSummary>();
         SysUser user = getUser();
-        int fail =0;
         for(EngPackingOrderSummaryDto dto : engPackingOrderSummaryDtos) {
 
             EngPackingOrder engPackingOrder = getEngPackingOrder(user.getOrganizationId(), null,dto.getPackingOrderId());
             if(StringUtils.isNotEmpty(engPackingOrder)){
                 dto.setPackingOrderId(engPackingOrder.getPackingOrderId());
             }else{
-                // throw new BizErrorException("添加失败，未查询到上级数据");
-                fail = fail+1;
-                continue;
+                 throw new BizErrorException("添加失败，未查询到上级数据");
             }
             //规则校验
             check(dto,user);
@@ -135,18 +132,15 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             }
 
         }
+        int i =0;
         if(StringUtils.isNotEmpty(ins)) {
-            engPackingOrderSummaryMapper.insertList(ins);
+           i= engPackingOrderSummaryMapper.insertList(ins);
         }
         //新增历史信息
         if(StringUtils.isNotEmpty(engHtPackingOrderSummarys))
             engHtPackingOrderSummaryMapper.insertList(engHtPackingOrderSummarys);
 
-        if(fail >0){
-            throw new BizErrorException("添加完成，添加失败条数："+fail);
-        }else{
-            return 1;
-        }
+            return i;
 
 
     }
@@ -246,7 +240,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             EngPackingOrderSummaryDto dto = new EngPackingOrderSummaryDto();
             BeanUtils.copyProperties(engPackingOrderSummaryImport, dto);
 
-            // EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(packingOrderId);
+            EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(packingOrderId);
             //校验请购单
             Example orderExample = new Example(EngPurchaseReqOrder.class);
             Example.Criteria orderCriteria = orderExample.createCriteria();
@@ -260,9 +254,8 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             //查询合同量单，获取专业
             Example qtyExample = new Example(EngContractQtyOrder.class);
             Example.Criteria qtyCriteria = qtyExample.createCriteria();
-            //   qtyCriteria.andEqualTo("purchaseReqOrderCode", engPackingOrderSummaryImport.getPurchaseReqOrderCode());
+            qtyCriteria.andEqualTo("supplierId",engPackingOrder.getSupplierId());
             qtyCriteria.andEqualTo("contractCode",contractCode);
-            //    qtyCriteria.andEqualTo("supplierId",engPackingOrder.getSupplierId());
             List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
             if(StringUtils.isEmpty(engContractQtyOrders)){
                 fail.add(i+2);
@@ -336,6 +329,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         Example qtyExample = new Example(EngContractQtyOrder.class);
         Example.Criteria qtyCriteria = qtyExample.createCriteria();
         qtyCriteria.andEqualTo("contractCode",dto.getContractCode());
+        qtyCriteria.andEqualTo("supplierId",dto.getSupplierId());
         List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
         if(StringUtils.isEmpty(engContractQtyOrders))
             throw new BizErrorException("添加失败，未查询到合同量单");

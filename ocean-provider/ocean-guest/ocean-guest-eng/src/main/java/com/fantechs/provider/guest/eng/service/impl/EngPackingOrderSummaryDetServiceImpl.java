@@ -103,14 +103,12 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         List<EngPackingOrderSummaryDet> ins = new ArrayList<EngPackingOrderSummaryDet>();
         List<EngHtPackingOrderSummaryDet> engHtPackingOrderSummaryDets = new ArrayList<EngHtPackingOrderSummaryDet>();
         SysUser user = getUser();
-        int fail =0;
         for(EngPackingOrderSummaryDetDto det : engPackingOrderSummaryDetDtos) {
             EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), det.getCartonCode());
             if(StringUtils.isNotEmpty(engPackingOrderSummary)) {
                 getMaterial(det, user, engPackingOrderSummary);
             }else{
-                fail =fail +1;
-                continue;
+                throw new BizErrorException("添加失败，未查询到上级数据");
             }
             if(StringUtils.isNotEmpty(det.getPackingOrderSummaryDetId())){
                 engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(det);
@@ -129,18 +127,16 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             }
 
         }
+        int i= 0;
         if(StringUtils.isNotEmpty(ins)) {
-            engPackingOrderSummaryDetMapper.insertList(ins);
+            i = engPackingOrderSummaryDetMapper.insertList(ins);
         }
         //新增历史信息
         if(StringUtils.isNotEmpty(engHtPackingOrderSummaryDets))
             engHtPackingOrderSummaryDetMapper.insertList(engHtPackingOrderSummaryDets);
 
-        if(fail >0){
-            throw new BizErrorException("添加完成，添加失败条数："+fail);
-        }else{
-            return 1;
-        }
+            return i;
+
 
     }
 
@@ -170,8 +166,6 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             searchSysSpecItem.setSpecCode("Specialities");
             List<SysSpecItem> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
             if(StringUtils.isEmpty(specItemList )) throw new BizErrorException("导入失败，未查询到专业编码");
-            //String[] paraValue =specItemList.get(0).getParaValue();
-            //  List<String> paraValue=JsonUtils.jsonToList(specItemList.get(0).getParaValue(),List.class);
             List<Map<String, String>> itemList = JSONArray.parseObject(specItemList.get(0).getParaValue(), List.class);
             String header = "";
             // for(int i=0;i<paraValue.size();i++){
@@ -235,7 +229,6 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             String cartonCode = engPackingOrderSummaryDetImport.getCartonCode();
             String purchaseReqOrderCode = engPackingOrderSummaryDetImport.getPurchaseReqOrderCode();
             String contractCode = engPackingOrderSummaryDetImport.getContractCode();
-            //   String deviceCode = engPackingOrderSummaryDetImport.getDeviceCode();
             String materialName = engPackingOrderSummaryDetImport.getMaterialName();
             String unitName = engPackingOrderSummaryDetImport.getUnitName();
             String dominantTermCode = engPackingOrderSummaryDetImport.getDominantTermCode();
