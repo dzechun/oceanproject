@@ -55,4 +55,23 @@ public class SearchEngPurchaseReqOrder extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name="purchaseExplain",value = "采购说明")
     private String purchaseExplain;
+
+    /**
+     * 专业
+     */
+    @ApiModelProperty(name="professionName",value = "专业")
+    private String professionName;
+
+    /**
+     * 请购说明
+     */
+    @ApiModelProperty(name="purchaseReqExplain",value = "请购说明")
+    private String purchaseReqExplain;
+
+    /**
+     * 主项号
+     */
+    @ApiModelProperty(name="dominantTermCode",value = "主项号")
+    private String dominantTermCode;
+
 }

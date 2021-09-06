@@ -4,12 +4,14 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionItem;
-import com.fantechs.common.base.general.entity.basic.BaseProcessInspectionItem;
-import com.fantechs.common.base.general.entity.basic.BaseProcessInspectionItemItem;
+import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessCauseImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionItemImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCause;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionItem;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionItem;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -24,10 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -98,7 +98,8 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
 
         Example example = new Example(BaseInspectionItem.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andIn("inspectionItemCode", codeList);
+        criteria.andIn("inspectionItemCode", codeList)
+                .andEqualTo("organizationId", user.getOrganizationId());
         List<BaseInspectionItem> baseInspectionItems1 = baseInspectionItemMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseInspectionItems1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
@@ -168,6 +169,7 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
         Example example = new Example(BaseInspectionItem.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andIn("inspectionItemCode", codeList)
+                .andEqualTo("organizationId", user.getOrganizationId())
                 .andNotIn("inspectionItemId",idList);
         List<BaseInspectionItem> baseInspectionItems1 = baseInspectionItemMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseInspectionItems1)){
@@ -239,4 +241,116 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
 
         return baseInspectionItemMapper.deleteByIds(ids);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseInspectionItemImport> baseInspectionItemImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<BaseInspectionItem> list = new LinkedList<>();
+        LinkedList<BaseHtInspectionItem> htList = new LinkedList<>();
+        LinkedList<BaseInspectionItemImport> inspectionItemImports = new LinkedList<>();
+        LinkedList<BaseInspectionItem> detList = new LinkedList<>();
+
+        for (int i = 0; i < baseInspectionItemImports.size(); i++) {
+            BaseInspectionItemImport baseInspectionItemImport = baseInspectionItemImports.get(i);
+            String inspectionItemCodeBig = baseInspectionItemImport.getInspectionItemCodeBig();
+            String inspectionItemDescBig = baseInspectionItemImport.getInspectionItemDescBig();
+            String inspectionItemCodeSmall = baseInspectionItemImport.getInspectionItemCodeSmall();
+            String inspectionItemDescSmall = baseInspectionItemImport.getInspectionItemDescSmall();
+
+            if (StringUtils.isEmpty(
+                    inspectionItemCodeBig,inspectionItemDescBig,inspectionItemCodeSmall,inspectionItemDescSmall
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断编码是否重复
+            List<String> codeList = new ArrayList<>();
+            codeList.add(inspectionItemCodeBig);
+            codeList.add(inspectionItemCodeSmall);
+            Example example = new Example(BaseInspectionItem.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId())
+                    .andIn("inspectionItemCode",codeList);
+            if (StringUtils.isNotEmpty(baseInspectionItemMapper.selectOneByExample(example))){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断集合中是否存在该条数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(inspectionItemImports)){
+                for (BaseInspectionItemImport inspectionItemImport: inspectionItemImports) {
+                    if (inspectionItemCodeSmall.equals(inspectionItemImport.getInspectionItemCodeSmall())
+                        &&inspectionItemCodeBig.equals(inspectionItemImport.getInspectionItemCodeBig())){
+                        tag = true;
+                        break;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
+
+            inspectionItemImports.add(baseInspectionItemImport);
+        }
+
+        if (StringUtils.isNotEmpty(inspectionItemImports)){
+
+            //对合格数据进行分组
+            HashMap<String, List<BaseInspectionItemImport>> map = inspectionItemImports.stream().collect(Collectors.groupingBy(BaseInspectionItemImport::getInspectionItemCodeBig, HashMap::new, Collectors.toList()));
+            Set<String> codeList = map.keySet();
+            for (String code : codeList) {
+                List<BaseInspectionItemImport> baseInspectionItemImports1 = map.get(code);
+                //新增检验项目父级数据
+                BaseInspectionItem baseInspectionItem = new BaseInspectionItem();
+                baseInspectionItem.setInspectionItemType((byte)1);
+                baseInspectionItem.setInspectionItemCode(baseInspectionItemImports1.get(0).getInspectionItemCodeBig());
+                baseInspectionItem.setInspectionItemDesc(baseInspectionItemImports1.get(0).getInspectionItemDescBig());
+                baseInspectionItem.setCreateTime(new Date());
+                baseInspectionItem.setCreateUserId(currentUser.getUserId());
+                baseInspectionItem.setModifiedUserId(currentUser.getUserId());
+                baseInspectionItem.setModifiedTime(new Date());
+                baseInspectionItem.setOrganizationId(currentUser.getOrganizationId());
+                baseInspectionItem.setStatus((byte)1);
+                success += baseInspectionItemMapper.insertUseGeneratedKeys(baseInspectionItem);
+
+                BaseHtInspectionItem baseHtInspectionItem = new BaseHtInspectionItem();
+                BeanUtils.copyProperties(baseInspectionItem, baseHtInspectionItem);
+                htList.add(baseHtInspectionItem);
+
+                //新增检验项目明细数据
+                for (BaseInspectionItemImport baseInspectionItemImport : baseInspectionItemImports1) {
+                    BaseInspectionItem inspectionItem = new BaseInspectionItem();
+                    inspectionItem.setParentId(baseInspectionItem.getInspectionItemId());
+                    inspectionItem.setInspectionItemType((byte)2);
+                    inspectionItem.setInspectionItemCode(baseInspectionItemImport.getInspectionItemCodeSmall());
+                    inspectionItem.setInspectionItemDesc(baseInspectionItemImport.getInspectionItemDescSmall());
+                    inspectionItem.setInspectionItemStandard(baseInspectionItemImport.getInspectionItemStandard());
+                    inspectionItem.setCreateTime(new Date());
+                    inspectionItem.setCreateUserId(currentUser.getUserId());
+                    inspectionItem.setModifiedUserId(currentUser.getUserId());
+                    inspectionItem.setModifiedTime(new Date());
+                    inspectionItem.setStatus((byte) 1);
+                    detList.add(inspectionItem);
+                }
+                baseInspectionItemMapper.insertList(detList);
+            }
+            baseHtInspectionItemMapper.insertList(htList);
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
+    }
+
 }

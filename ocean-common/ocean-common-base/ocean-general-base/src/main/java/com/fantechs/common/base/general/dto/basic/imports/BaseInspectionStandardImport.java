@@ -98,12 +98,6 @@ public class BaseInspectionStandardImport implements Serializable {
     private String inspectionItemCodeBig;
 
     /**
-     * 检验项目id-大类
-     */
-    @ApiModelProperty(name="inspectionItemIdBig" ,value="检验项目id-大类")
-    private Long inspectionItemIdBig;
-
-    /**
      * 检验项目编码-小类
      */
     @ApiModelProperty(name="inspectionItemCodeSmall" ,value="检验项目编码-小类")
@@ -111,10 +105,10 @@ public class BaseInspectionStandardImport implements Serializable {
     private String inspectionItemCodeSmall;
 
     /**
-     * 检验项目id-小类
+     * 检验项目id
      */
-    @ApiModelProperty(name="inspectionItemIdSmall" ,value="检验项目id-小类")
-    private Long inspectionItemIdSmall;
+    @ApiModelProperty(name="inspectionItemId" ,value="检验项目id")
+    private Long inspectionItemId;
 
     /**
      * 检验工具

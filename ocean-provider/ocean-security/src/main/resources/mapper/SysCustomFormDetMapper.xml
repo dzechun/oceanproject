@@ -97,6 +97,9 @@ cfd.select_value
         LEFT JOIN sys_custom_form cf on cf.custom_form_id = cfd.custom_form_id
         LEFT JOIN sys_custom_form scf on cf.sub_id = scf.custom_form_id
         <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(cfd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
             <if test="customFormId!=null and customFormId!=''">
                 and cfd.custom_form_id=#{customFormId}
             </if>

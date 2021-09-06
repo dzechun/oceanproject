@@ -33,4 +33,11 @@ public class EngContractQtyOrderDto extends EngContractQtyOrder implements Seria
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 供应商名称
+     */
+    @Transient
+    @ApiModelProperty(name = "supplierName",value = "供应商名称")
+    private String supplierName;
 }

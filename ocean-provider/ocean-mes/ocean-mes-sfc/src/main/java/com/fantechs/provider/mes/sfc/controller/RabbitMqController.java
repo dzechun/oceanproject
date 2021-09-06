@@ -45,4 +45,10 @@ public class RabbitMqController {
         rabbitProducer.sendPrint(printDto);
         return ControllerUtil.returnSuccess();
     }
+
+    @PostMapping("/QUEUEprint")
+    public ResponseEntity QUEUEprint(@RequestBody PrintDto printDto,@RequestParam String id){
+        rabbitProducer.sendPrint(printDto,id);
+        return ControllerUtil.returnSuccess();
+    }
 }
