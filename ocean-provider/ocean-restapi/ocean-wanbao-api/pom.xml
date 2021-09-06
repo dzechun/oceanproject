@@ -114,7 +114,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>C:/work/workSpace/d/baseapi</outputDirectory>
+            <outputDirectory>C:/work/wanbao</outputDirectory>
             </configuration>
             </execution>
             </executions>
