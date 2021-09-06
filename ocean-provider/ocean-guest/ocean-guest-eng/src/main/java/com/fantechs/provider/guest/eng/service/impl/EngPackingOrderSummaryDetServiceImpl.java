@@ -103,6 +103,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         List<EngPackingOrderSummaryDet> ins = new ArrayList<EngPackingOrderSummaryDet>();
         List<EngHtPackingOrderSummaryDet> engHtPackingOrderSummaryDets = new ArrayList<EngHtPackingOrderSummaryDet>();
         SysUser user = getUser();
+        int result =1;
         for(EngPackingOrderSummaryDetDto det : engPackingOrderSummaryDetDtos) {
             EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), det.getCartonCode());
             if(StringUtils.isNotEmpty(engPackingOrderSummary)) {
@@ -111,7 +112,8 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 throw new BizErrorException("添加失败，未查询到上级数据");
             }
             if(StringUtils.isNotEmpty(det.getPackingOrderSummaryDetId())){
-                engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(det);
+                int i = engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(det);
+                if (i<1) result=i;
                 continue;
             }else{
                 det.setCreateTime(new Date());
@@ -127,15 +129,15 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             }
 
         }
-        int i= 0;
         if(StringUtils.isNotEmpty(ins)) {
-            i = engPackingOrderSummaryDetMapper.insertList(ins);
+           int i = engPackingOrderSummaryDetMapper.insertList(ins);
+            if (i<1) result=i;
         }
         //新增历史信息
         if(StringUtils.isNotEmpty(engHtPackingOrderSummaryDets))
             engHtPackingOrderSummaryDetMapper.insertList(engHtPackingOrderSummaryDets);
 
-            return i;
+            return result;
 
 
     }

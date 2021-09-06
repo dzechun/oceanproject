@@ -105,6 +105,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         List<EngPackingOrderSummary> ins = new ArrayList<EngPackingOrderSummary>();
         List<EngHtPackingOrderSummary> engHtPackingOrderSummarys = new ArrayList<EngHtPackingOrderSummary>();
         SysUser user = getUser();
+        int result =1;
         for(EngPackingOrderSummaryDto dto : engPackingOrderSummaryDtos) {
 
             EngPackingOrder engPackingOrder = getEngPackingOrder(user.getOrganizationId(), null,dto.getPackingOrderId());
@@ -117,7 +118,9 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             check(dto,user);
 
             if (StringUtils.isNotEmpty(dto.getPackingOrderSummaryId())) {
-                engPackingOrderSummaryMapper.updateByPrimaryKeySelective(dto);
+                int i = engPackingOrderSummaryMapper.updateByPrimaryKeySelective(dto);
+                if (i<1) result=i;
+                continue;
             }else{
                 dto.setCreateTime(new Date());
                 dto.setCreateUserId(user.getUserId());
@@ -132,15 +135,16 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             }
 
         }
-        int i =0;
+
         if(StringUtils.isNotEmpty(ins)) {
-           i= engPackingOrderSummaryMapper.insertList(ins);
+           int i= engPackingOrderSummaryMapper.insertList(ins);
+           if (i<1) result=i;
         }
         //新增历史信息
         if(StringUtils.isNotEmpty(engHtPackingOrderSummarys))
             engHtPackingOrderSummaryMapper.insertList(engHtPackingOrderSummarys);
 
-            return i;
+            return result;
 
 
     }
