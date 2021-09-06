@@ -1114,32 +1114,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     }else {
                         wmsInPutawayOrderDet.setOrderStatus((byte)4);
                     }
-//                    //已拣货数量为
-//                    if(StringUtils.isEmpty(det.getActualQty()))
-//                    if(StringUtils.isEmpty(det.getActualQty()) || (det.getActualQty().add(wmsInPutawayOrderDet.getActualQty())).compareTo(det.getDistributionQty())==-1){
-//                        //拣货数量小于等于计划数量
-//                        isBeyond=false;
-//                    }else if(StringUtils.isNotEmpty(det.getActualQty()) && (det.getActualQty().add(wmsInPutawayOrderDet.getActualQty())).compareTo(det.getDistributionQty())==1){
-//                        //拣货数量超拣
-//                        //判断是否允许超拣
-//                        if(map.get("beyond").equals("false")){
-//                            //不允许超拣
-//                            throw new BizErrorException("领料拣货单超出计划数量");
-//                        }else {
-//                            //计算超出数量=（已拣货数量+拣货数量）-计划数量
-//
-//                            BigDecimal qty = ()
-//                        }
-//                        //判断库存是否足够
-//                        isBeyond=true;
-//                        wmsInPutawayOrderDet.setWorkEndTime(new Date());
-//                    }else{
-//                        if(map.get("lack").equals("false")){
-//                            //扣减分配数量
-//                            wmsInPutawayOrderDet.setOrderStatus((byte)5);
-//                        }
-//                        isBeyond=false;
-//                    }
                     totalQty = totalQty.add(wmsInPutawayOrderDet.getActualQty());
                     this.addDistribute(isBeyond,wmsInnerJobOrder,wmsInPutawayOrderDet);
                     if(StringUtils.isNotEmpty(det.getActualQty())){
