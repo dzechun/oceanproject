@@ -80,7 +80,7 @@ public class MesPmWorkOrderController {
 
     @ApiOperation("批量修改完工数量")
     @PostMapping("/batchUpdate")
-    public ResponseEntity batchUpdate(List<MesPmWorkOrder> mesPmWorkOrders){
+    public ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true) @RequestBody List<MesPmWorkOrder> mesPmWorkOrders){
         return ControllerUtil.returnCRUD(mesPmWorkOrderService.batchUpdate(mesPmWorkOrders));
     }
 
