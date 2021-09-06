@@ -67,11 +67,16 @@
     left join ocean_v2.sys_user s on ecqo.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ecqo.org_id = bo.organization_id
     <where>
-      <if test="contractCode != null and contractCode!=''">
+      <if test="contractCode != null and contractCode!='' and codeQueryMark!=1">
         and ecqo.contract_code like CONCAT('%', #{contractCode}, '%')
       </if>
+<<<<<<< HEAD:ocean-provider/ocean-guest/ocean-eng/src/main/resources/mapper/EngContractQtyOrderMapper.xml
       <if test="professionName != null and professionName!=''">
         and ecqo.profession_name like CONCAT('%', #{professionName}, '%')
+=======
+      <if test="contractCode != null and contractCode!='' and codeQueryMark==1">
+        and ecqo.contract_code = #{contractCode}
+>>>>>>> 1d9046651d69ee59060dce864956d480f9433506:ocean-provider/ocean-guest/ocean-guest-eng/src/main/resources/mapper/EngContractQtyOrderMapper.xml
       </if>
       <if test="deviceCode != null and deviceCode!=''">
         and ecqo.device_code like CONCAT('%', #{deviceCode}, '%')

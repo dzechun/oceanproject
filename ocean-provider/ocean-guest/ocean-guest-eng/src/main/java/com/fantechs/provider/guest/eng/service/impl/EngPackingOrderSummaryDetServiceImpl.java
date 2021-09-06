@@ -1,35 +1,25 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryDetImport;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
-import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
-import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrderSummaryDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.JsonUtils;
-import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
-import com.fantechs.provider.guest.eng.mapper.*;
+import com.fantechs.provider.guest.eng.mapper.EngHtPackingOrderSummaryDetMapper;
+import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
+import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryMapper;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderSummaryDetService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -55,14 +45,6 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
     private BaseFeignApi baseFeignApi;
     @Resource
     private EngPackingOrderSummaryMapper engPackingOrderSummaryMapper;
-    @Resource
-    private SecurityFeignApi securityFeignApi;
-    @Resource
-    private RedisUtil redisUtil;
-    @Resource
-    private EngContractQtyOrderMapper engContractQtyOrderMapper;
-    @Resource
-    private EngPurchaseReqOrderMapper engPurchaseReqOrderMapper;
 
     @Override
     public List<EngPackingOrderSummaryDetDto> findList(Map<String, Object> map) {
@@ -78,12 +60,16 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         if(StringUtils.isEmpty(engPackingOrderSummaryDetDto.getCartonCode()))
             throw new BizErrorException("包装箱号不能为空");
         SysUser user = getUser();
+        engPackingOrderSummaryDetDto.setCreateTime(new Date());
+        engPackingOrderSummaryDetDto.setCreateUserId(user.getUserId());
+        engPackingOrderSummaryDetDto.setModifiedTime(new Date());
+        engPackingOrderSummaryDetDto.setModifiedUserId(user.getUserId());
         engPackingOrderSummaryDetDto.setStatus((byte)1);
         engPackingOrderSummaryDetDto.setOrgId(user.getOrganizationId());
+
+        getMaterial(engPackingOrderSummaryDetDto,user);
+
         EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), engPackingOrderSummaryDetDto.getCartonCode());
-
-        getMaterial(engPackingOrderSummaryDetDto,user,engPackingOrderSummary);
-
         if(StringUtils.isNotEmpty(engPackingOrderSummary)){
             engPackingOrderSummaryDetDto.setPackingOrderSummaryId(engPackingOrderSummary.getPackingOrderSummaryId());
         }else{
@@ -105,13 +91,9 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         SysUser user = getUser();
         int fail =0;
         for(EngPackingOrderSummaryDetDto det : engPackingOrderSummaryDetDtos) {
-            EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), det.getCartonCode());
-            if(StringUtils.isNotEmpty(engPackingOrderSummary)) {
-                getMaterial(det, user, engPackingOrderSummary);
-            }else{
-                fail =fail +1;
-                continue;
-            }
+
+            getMaterial(det,user);
+
             if(StringUtils.isNotEmpty(det.getPackingOrderSummaryDetId())){
                 engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(det);
                continue;
@@ -160,42 +142,15 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
     }
 
     //获取物料id ，未查询到则根据编码或者规则生成
-    public void getMaterial(EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto,SysUser user,EngPackingOrderSummary engPackingOrderSummary) {
+    public void getMaterial(EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto,SysUser user) {
         ResponseEntity<BaseMaterial> baseMaterialResponseEntity = null;
-        BaseMaterial baseMaterial = new BaseMaterial();
         if (StringUtils.isEmpty(engPackingOrderSummaryDetDto.getMaterialCode())) {
-
-            //按照规则自动生成编码
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("Specialities");
-            List<SysSpecItem> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            if(StringUtils.isEmpty(specItemList )) throw new BizErrorException("导入失败，未查询到专业编码");
-            //String[] paraValue =specItemList.get(0).getParaValue();
-          //  List<String> paraValue=JsonUtils.jsonToList(specItemList.get(0).getParaValue(),List.class);
-            List<Map<String, String>> itemList = JSONArray.parseObject(specItemList.get(0).getParaValue(), List.class);
-            String header = "";
-           // for(int i=0;i<paraValue.size();i++){
-            for(Map map : itemList){
-                if(engPackingOrderSummary.getProfessionCode().equals(map.get("name")))
-                    header = map.get("code").toString();
-            }
-            SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
-            searchBaseBarcodeRule.setBarcodeRuleCode("装箱清单条码规则");
-            List<BaseBarcodeRuleDto> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
-            if(StringUtils.isEmpty(barcodeRulList)) throw new BizErrorException("未配置《装箱清单条码规则》");
-            SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
-            searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRulList.get(0).getBarcodeRuleId());
-            ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecList= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
-            if(barcodeRuleSpecList.getCode()!=0) throw new BizErrorException(barcodeRuleSpecList.getMessage());
-            if(barcodeRuleSpecList.getData().size()<1) throw new BizErrorException("请设置条码规则");
-            List<BaseBarcodeRuleSpec>  list = barcodeRuleSpecList.getData();
-            String code = header + creatBarCode(list, "", (long) 0);
-            logger.info("----------自动生成流水号code---------"+code);
+            BaseMaterial baseMaterial = new BaseMaterial();
             baseMaterial.setMaterialName(engPackingOrderSummaryDetDto.getMaterialName());
-            baseMaterial.setMaterialCode(code);
-            baseMaterial.setMaterialDesc(engPackingOrderSummaryDetDto.getSpec());
-            baseMaterial.setRemark(engPackingOrderSummaryDetDto.getUnitName());
+            Long startTs = System.currentTimeMillis();
+            baseMaterial.setMaterialCode(startTs.toString());
             baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
+          //  return baseMaterialResponseEntity.getData();
             engPackingOrderSummaryDetDto.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
         } else {
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
@@ -204,12 +159,13 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
             if (StringUtils.isNotEmpty(list.getData())) {
                 engPackingOrderSummaryDetDto.setMaterialId(list.getData().get(0).getMaterialId());
+            //    return list.getData().get(0);
             } else {
+                BaseMaterial baseMaterial = new BaseMaterial();
                 baseMaterial.setMaterialName(engPackingOrderSummaryDetDto.getMaterialName());
                 baseMaterial.setMaterialCode(engPackingOrderSummaryDetDto.getMaterialCode());
-                baseMaterial.setMaterialDesc(engPackingOrderSummaryDetDto.getSpec());
-                baseMaterial.setRemark(engPackingOrderSummaryDetDto.getUnitName());
                 baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
+            //    return baseMaterialResponseEntity.getData();
              engPackingOrderSummaryDetDto.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
             }
         }
@@ -227,25 +183,25 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         LinkedList<EngPackingOrderSummaryDetDto> list = new LinkedList<>();
         LinkedList<EngHtPackingOrderSummaryDet> htList = new LinkedList<>();
 
+        EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(packingOrderSummaryId);
 
         for (int i = 0; i < engPackingOrderSummaryDetImports.size(); i++) {
             EngPackingOrderSummaryDetImport engPackingOrderSummaryDetImport = engPackingOrderSummaryDetImports.get(i);
 
-            //非空校验
             String cartonCode = engPackingOrderSummaryDetImport.getCartonCode();
             String purchaseReqOrderCode = engPackingOrderSummaryDetImport.getPurchaseReqOrderCode();
             String contractCode = engPackingOrderSummaryDetImport.getContractCode();
-         //   String deviceCode = engPackingOrderSummaryDetImport.getDeviceCode();
+            String deviceCode = engPackingOrderSummaryDetImport.getDeviceCode();
             String materialName = engPackingOrderSummaryDetImport.getMaterialName();
             String unitName = engPackingOrderSummaryDetImport.getUnitName();
             String dominantTermCode = engPackingOrderSummaryDetImport.getDominantTermCode();
             if (StringUtils.isEmpty(
-                    cartonCode,materialName,purchaseReqOrderCode,contractCode,unitName,dominantTermCode
+                    cartonCode,deviceCode,materialName,purchaseReqOrderCode,contractCode,unitName,dominantTermCode
             )){
                 fail.add(i+2);
                 continue;
             }
-            EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), cartonCode);
+
             //判断各参数是否大于0
             BigDecimal qty = engPackingOrderSummaryDetImport.getQty();
             if(qty.compareTo(BigDecimal.ZERO)<0 ){
@@ -260,56 +216,9 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 fail.add(i+2);
                 continue;
             }
-            EngPackingOrderSummaryDetDto dto = new EngPackingOrderSummaryDetDto();
-            BeanUtils.copyProperties(engPackingOrderSummaryDetImport, dto);
 
-
-            //材料编码、原材料编码二者不能都为空，必须有一个有值，而且存在于物料表中
-            if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
-                fail.add(i+2);
-                continue;
-            }else{
-                if("管道".equals(engPackingOrderSummary.getProfessionCode())&& StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode())){
-                    fail.add(i+2);
-                    continue;
-                }else if(!"管道".equals(engPackingOrderSummary.getProfessionCode())&& StringUtils.isEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
-                    fail.add(i+2);
-                    continue;
-                }
-            }
-            //校验请购单
-            Example orderExample = new Example(EngPurchaseReqOrder.class);
-            Example.Criteria orderCriteria = orderExample.createCriteria();
-            orderCriteria.andEqualTo("purchaseReqOrderCode",engPackingOrderSummaryDetImport.getPurchaseReqOrderCode());
-            List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
-            if(StringUtils.isEmpty(engPurchaseReqOrders)){
-                fail.add(i+2);
-                continue;
-            }
-
-            //校验合同量单
-            Example qtyExample = new Example(EngContractQtyOrder.class);
-            Example.Criteria qtyCriteria = qtyExample.createCriteria();
-            qtyCriteria.andEqualTo("contractCode",contractCode);
-            qtyCriteria.andEqualTo("dominantTermCode",engPackingOrderSummaryDetImport.getDominantTermCode());
-            if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getMaterialCode())){
-                qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDetImport.getMaterialCode());
-            }else if(StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
-                qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDetImport.getRawMaterialCode());
-            }
-            List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
-            if(StringUtils.isEmpty(engContractQtyOrders)){
-                fail.add(i+2);
-                continue;
-            }
-
-
-            getMaterial(dto,user,engPackingOrderSummary);
-
-
-
-            //判断集合中是否已经存在同样的数据---所有字段可重复，无法校验
-/*            boolean tag = false;
+            //判断集合中是否已经存在同样的数据
+            boolean tag = false;
             if (StringUtils.isNotEmpty(list)){
                 for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : list) {
                     if (engPackingOrderSummaryDetDto.getMaterialName().equals(engPackingOrderSummaryDetImport.getMaterialName())){
@@ -320,9 +229,24 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             if (tag){
                 fail.add(i+2);
                 continue;
+            }
+
+            EngPackingOrderSummaryDetDto dto = new EngPackingOrderSummaryDetDto();
+            BeanUtils.copyProperties(engPackingOrderSummaryDetImport, dto);
+            getMaterial(dto,user);
+
+            /*SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
+            searchBaseSupplier.setSupplierName(engPackingOrderSummaryDetImport.getSupplierName());
+            ResponseEntity<List<BaseSupplier>> baseSuppliers = baseFeignApi.findSupplierList(searchBaseSupplier);
+            if(StringUtils.isNotEmpty(baseSuppliers.getData())) {
+                dto.setSupplierId(baseSuppliers.getData().get(0).getSupplierId());
+            }else {
+                fail.add(i+2);
+                continue;
             }*/
 
             dto.setPackingOrderSummaryId(packingOrderSummaryId);
+
             dto.setCreateTime(new Date());
             dto.setCreateUserId(user.getUserId());
             dto.setModifiedTime(new Date());
@@ -357,38 +281,4 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectOneByExample(example);
         return engPackingOrderSummary;
     }
-
-    //生成条码
-    private String creatBarCode(List<BaseBarcodeRuleSpec> list, String materialCode, Long materialId){
-        String lastBarCode = null;
-        boolean hasKey = redisUtil.hasKey(this.sub(list));
-        if(hasKey){
-            // 从redis获取上次生成条码
-            Object redisRuleData = redisUtil.get(this.sub(list));
-            lastBarCode = String.valueOf(redisRuleData);
-        }
-        //获取最大流水号
-        String maxCode = baseFeignApi.generateMaxCode(list, lastBarCode).getData();
-        //生成条码
-        ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode,materialCode,materialId.toString());
-        if(rs.getCode()!=0){
-            throw new BizErrorException(rs.getMessage());
-        }
-
-        // 更新redis最新条码
-        redisUtil.set(sub(list), rs.getData());
-
-        return rs.getData();
-    }
-
-
-    public String sub(List<BaseBarcodeRuleSpec> list){
-        StringBuffer sb = new StringBuffer();
-        for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
-            sb.append(baseBarcodeRuleSpec.getSpecification());
-        }
-        return sb.toString();
-    }
-
-
 }

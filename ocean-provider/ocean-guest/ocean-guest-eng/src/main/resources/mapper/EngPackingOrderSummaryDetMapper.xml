@@ -47,7 +47,6 @@
     sposd.packing_order_summary_id,
     sposd.carton_code,
     sposd.despatch_batch,
-    sposd.dominant_term_code,
     sposd.spec,
     sposd.inner_carton_code,
     sposd.location_num,
