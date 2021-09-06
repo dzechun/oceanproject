@@ -9,10 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.fantechs.provider.ocean.eng</groupId>
-    <artifactId>ocean-eng</artifactId>
+    <groupId>com.fantechs.provider.ocean.guest.eng</groupId>
+    <artifactId>ocean-guest-eng</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean-eng</name>
+    <name>ocean-guest-eng</name>
     <description>Demo project for Spring Boot</description>
 
     <dependencies>
