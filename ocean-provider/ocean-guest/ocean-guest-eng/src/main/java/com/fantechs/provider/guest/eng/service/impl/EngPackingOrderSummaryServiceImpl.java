@@ -5,23 +5,16 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryImport;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
+import com.fantechs.common.base.general.entity.eng.*;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrderSummary;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.guest.eng.mapper.EngHtPackingOrderSummaryMapper;
-import com.fantechs.provider.guest.eng.mapper.EngPackingOrderMapper;
-import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
-import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryMapper;
+import com.fantechs.provider.guest.eng.mapper.*;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderSummaryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -49,6 +42,10 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
     private EngPackingOrderMapper engPackingOrderMapper;
     @Resource
     private EngPackingOrderSummaryDetMapper engPackingOrderSummaryDetMapper;
+    @Resource
+    private EngContractQtyOrderMapper engContractQtyOrderMapper;
+    @Resource
+    private EngPurchaseReqOrderMapper engPurchaseReqOrderMapper;
 
 
     @Override
@@ -67,13 +64,18 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
 
     public int save(EngPackingOrderSummaryDto engPackingOrderSummaryDto) {
         SysUser user = getUser();
-        engPackingOrderSummaryDto.setCreateTime(new Date());
-        engPackingOrderSummaryDto.setCreateUserId(user.getUserId());
-        engPackingOrderSummaryDto.setModifiedTime(new Date());
-        engPackingOrderSummaryDto.setModifiedUserId(user.getUserId());
-        engPackingOrderSummaryDto.setStatus((byte)1);
-        engPackingOrderSummaryDto.setOrgId(user.getOrganizationId());
-        getMaterial(engPackingOrderSummaryDto,user);
+
+        //规则校验
+        check(engPackingOrderSummaryDto,user);
+
+        //判断编码是否重复
+        Example example = new Example(EngPackingOrderSummary.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", user.getOrganizationId());
+        criteria.andEqualTo("cartonCode",engPackingOrderSummaryDto.getCartonCode());
+        if (StringUtils.isNotEmpty(engPackingOrderSummaryMapper.selectOneByExample(example))){
+            throw new BizErrorException("添加失败，编码重复");
+        }
 
         EngPackingOrder engPackingOrder = getEngPackingOrder(user.getOrganizationId(), null,engPackingOrderSummaryDto.getPackingOrderId());
         if(StringUtils.isNotEmpty(engPackingOrder)){
@@ -81,6 +83,13 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         }else{
             throw new BizErrorException("添加失败，未查询到上级数据");
         }
+
+        engPackingOrderSummaryDto.setCreateTime(new Date());
+        engPackingOrderSummaryDto.setCreateUserId(user.getUserId());
+        engPackingOrderSummaryDto.setModifiedTime(new Date());
+        engPackingOrderSummaryDto.setModifiedUserId(user.getUserId());
+        engPackingOrderSummaryDto.setStatus((byte)1);
+        engPackingOrderSummaryDto.setOrgId(user.getOrganizationId());
 
         int i = engPackingOrderSummaryMapper.insertUseGeneratedKeys(engPackingOrderSummaryDto);
 
@@ -103,12 +112,12 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             if(StringUtils.isNotEmpty(engPackingOrder)){
                 dto.setPackingOrderId(engPackingOrder.getPackingOrderId());
             }else{
-               // throw new BizErrorException("添加失败，未查询到上级数据");
+                // throw new BizErrorException("添加失败，未查询到上级数据");
                 fail = fail+1;
                 continue;
             }
-
-            getMaterial(dto,user);
+            //规则校验
+            check(dto,user);
 
             if (StringUtils.isNotEmpty(dto.getPackingOrderSummaryId())) {
                 engPackingOrderSummaryMapper.updateByPrimaryKeySelective(dto);
@@ -183,6 +192,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         for (int i = 0; i < engPackingOrderSummaryImports.size(); i++) {
             EngPackingOrderSummaryImport engPackingOrderSummaryImport = engPackingOrderSummaryImports.get(i);
 
+            //判断非空
             String cartonCode = engPackingOrderSummaryImport.getCartonCode();
             String purchaseReqOrderCode = engPackingOrderSummaryImport.getPurchaseReqOrderCode();
             String contractCode = engPackingOrderSummaryImport.getContractCode();
@@ -221,37 +231,49 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
                 continue;
             }
 
-
-            EngPackingOrderSummaryDto dto = new EngPackingOrderSummaryDto();
-            BeanUtils.copyProperties(engPackingOrderSummaryImport, dto);
-            getMaterial(dto,user);
-
-/*            SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
-            searchBaseSupplier.setSupplierName(engPackingOrderSummaryImport.getSupplierName());
-            ResponseEntity<List<BaseSupplier>> baseSuppliers = baseFeignApi.findSupplierList(searchBaseSupplier);
-            if(StringUtils.isNotEmpty(baseSuppliers.getData())) {
-                dto.setSupplierId(baseSuppliers.getData().get(0).getSupplierId());
-            }else {
-                fail.add(i+2);
-                continue;
-            }*/
-
-            //装箱单id
-            dto.setPackingOrderId(packingOrderId);
-
             //判断编码是否重复
             Example example = new Example(EngPackingOrderSummary.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("orgId", user.getOrganizationId());
             criteria.andEqualTo("cartonCode",cartonCode);
-            criteria.andEqualTo("packingOrderId",dto.getPackingOrderId());
+            //        criteria.andEqualTo("packingOrderId",packingOrderId);
             if (StringUtils.isNotEmpty(engPackingOrderSummaryMapper.selectOneByExample(example))){
                 fail.add(i+2);
                 continue;
             }
+            example.clear();
+
+            EngPackingOrderSummaryDto dto = new EngPackingOrderSummaryDto();
+            BeanUtils.copyProperties(engPackingOrderSummaryImport, dto);
+
+            // EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(packingOrderId);
+            //校验请购单
+            Example orderExample = new Example(EngPurchaseReqOrder.class);
+            Example.Criteria orderCriteria = orderExample.createCriteria();
+            orderCriteria.andEqualTo("purchaseReqOrderCode",engPackingOrderSummaryImport.getPurchaseReqOrderCode());
+            List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
+            if(StringUtils.isEmpty(engPurchaseReqOrders)){
+                fail.add(i+2);
+                continue;
+            }
+
+            //查询合同量单，获取专业
+            Example qtyExample = new Example(EngContractQtyOrder.class);
+            Example.Criteria qtyCriteria = qtyExample.createCriteria();
+            //   qtyCriteria.andEqualTo("purchaseReqOrderCode", engPackingOrderSummaryImport.getPurchaseReqOrderCode());
+            qtyCriteria.andEqualTo("contractCode",contractCode);
+            //    qtyCriteria.andEqualTo("supplierId",engPackingOrder.getSupplierId());
+            List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
+            if(StringUtils.isEmpty(engContractQtyOrders)){
+                fail.add(i+2);
+                continue;
+            }else{
+                dto.setProfessionCode(engContractQtyOrders.get(0).getProfessionCode());
+            }
 
             if(StringUtils.isEmpty(dto.getCartonQty()))
                 dto.setCartonQty(1);
+            dto.setPackingOrderId(packingOrderId);
             dto.setCreateTime(new Date());
             dto.setCreateUserId(user.getUserId());
             dto.setModifiedTime(new Date());
@@ -287,42 +309,6 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         return currentUser;
     }
 
-    public List<BaseSupplierReUser> getSupplier(Long userId){
-        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
-        searchBaseSupplierReUser.setUserId(userId);
-        ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
-        return list.getData();
-    }
-
-    //获取物料id ，未查询到则根据编码或者规则生成
-    public void getMaterial(EngPackingOrderSummaryDto engPackingOrderSummaryDto, SysUser user) {
-        ResponseEntity<BaseMaterial> baseMaterialResponseEntity = null;
-        if (StringUtils.isEmpty(engPackingOrderSummaryDto.getMaterialCode())) {
-            BaseMaterial baseMaterial = new BaseMaterial();
-            baseMaterial.setMaterialName(engPackingOrderSummaryDto.getMaterialName());
-            Long startTs = System.currentTimeMillis();
-            baseMaterial.setMaterialCode(startTs.toString());
-            baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
-            //  return baseMaterialResponseEntity.getData();
-            engPackingOrderSummaryDto.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
-        } else {
-            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-            searchBaseMaterial.setMaterialCode(engPackingOrderSummaryDto.getMaterialCode());
-            searchBaseMaterial.setOrganizationId(user.getOrganizationId());
-            ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
-            if (StringUtils.isNotEmpty(list.getData())) {
-                engPackingOrderSummaryDto.setMaterialId(list.getData().get(0).getMaterialId());
-                //    return list.getData().get(0);
-            } else {
-                BaseMaterial baseMaterial = new BaseMaterial();
-                baseMaterial.setMaterialName(engPackingOrderSummaryDto.getMaterialName());
-                baseMaterial.setMaterialCode(engPackingOrderSummaryDto.getMaterialCode());
-                baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
-                //    return baseMaterialResponseEntity.getData();
-                engPackingOrderSummaryDto.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
-            }
-        }
-    }
 
     public EngPackingOrder getEngPackingOrder(Long userId, String code, Long id){
         Example example = new Example(EngPackingOrder.class);
@@ -334,6 +320,46 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             criteria.andEqualTo("packingOrderId", id);
         EngPackingOrder engPackingOrder = engPackingOrderMapper.selectOneByExample(example);
         return engPackingOrder;
+    }
+
+    public void check(EngPackingOrderSummaryDto dto, SysUser user){
+        if (StringUtils.isEmpty(dto.getCartonCode()))
+            throw new BizErrorException("添加失败，包装箱号不能为空");
+        if (StringUtils.isEmpty(dto.getPurchaseReqOrderCode()))
+            throw new BizErrorException("添加失败，请购单号不能为空");
+        if (StringUtils.isEmpty(dto.getContractCode()))
+            throw new BizErrorException("添加失败，合同号不能为空");
+        if (StringUtils.isEmpty(dto.getMaterialName()))
+            throw new BizErrorException("添加失败，货物名称不能为空");
+
+        //查询合同量单，获取专业
+        Example qtyExample = new Example(EngContractQtyOrder.class);
+        Example.Criteria qtyCriteria = qtyExample.createCriteria();
+        qtyCriteria.andEqualTo("contractCode",dto.getContractCode());
+        List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
+        if(StringUtils.isEmpty(engContractQtyOrders))
+            throw new BizErrorException("添加失败，未查询到合同量单");
+
+        //校验请购单
+        Example orderExample = new Example(EngPurchaseReqOrder.class);
+        Example.Criteria orderCriteria = orderExample.createCriteria();
+        orderCriteria.andEqualTo("purchaseReqOrderCode",dto.getPurchaseReqOrderCode());
+        List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
+        if(StringUtils.isEmpty(engPurchaseReqOrders))
+            throw new BizErrorException("添加失败，未查询到请购单");
+
+        //判断各参数是否大于0
+        BigDecimal netWeight = dto.getNetWeight();
+        BigDecimal grossWeight = dto.getGrossWeight();
+        BigDecimal length = dto.getLength();
+        BigDecimal width = dto.getWidth();
+        BigDecimal height = dto.getHeight();
+        BigDecimal volume = dto.getVolume();
+        if(netWeight.compareTo(BigDecimal.ZERO)<0 || grossWeight.compareTo(BigDecimal.ZERO)<0 || length.compareTo(BigDecimal.ZERO)<0
+                ||width.compareTo(BigDecimal.ZERO)<0 || height.compareTo(BigDecimal.ZERO)<0 || volume.compareTo(BigDecimal.ZERO)<0 ){
+            throw new BizErrorException("添加失败，长宽高等参数必须大于0");
+        }
+
     }
 
 }
