@@ -2,6 +2,7 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.*;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -15,6 +16,7 @@ import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 import javax.annotation.Resource;
 import java.net.Authenticator;
 import java.text.ParseException;
+import java.util.List;
 
 
 @org.springframework.stereotype.Service
@@ -42,7 +44,10 @@ public class SapReportWorkApiServiceImpl implements SapReportWorkApiService {
         req.setRMNGA(searchSapReportWorkApi.getReWorkQty());
         req.setXMNGA(searchSapReportWorkApi.getScrapQty());
         DTMESWORKORDERREPORTSAVERES res = out.siMESWORKORDERREPORTSAVEOut(req);
-        Long orgId =baseUtils.getOrId();
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+        Long orgId = orgIdList.get(0).getOrganizationId();
+
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())){
             logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
             return 1;

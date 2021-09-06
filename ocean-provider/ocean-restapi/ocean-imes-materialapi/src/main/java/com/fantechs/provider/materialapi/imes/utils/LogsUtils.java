@@ -25,7 +25,7 @@ public class LogsUtils {
      * @param responseData
      * @param requestParameter
      */
-    public void  addlog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) throws ParseException {
+    public void  addlog(Byte result,Byte type,Long orgId,String responseData,String requestParameter){
         SysApiLog sysApiLog = new SysApiLog();
         sysApiLog.setThirdpartySysName("雷赛");
         sysApiLog.setCallResult(result);

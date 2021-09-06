@@ -43,7 +43,9 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
         SIMESPROCESSQUERYOutService service = new SIMESPROCESSQUERYOutService();
         SIMESPROCESSQUERYOut out = service.getHTTPPort();
         DTMESPROCESSQUERYREQ req = new DTMESPROCESSQUERYREQ();
-        Long orgId = baseUtils.getOrId();
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+        Long orgId = orgIdList.get(0).getOrganizationId();
         if(StringUtils.isEmpty(searchSapRouteApi.getMaterialCode()) || StringUtils.isEmpty(searchSapRouteApi.getWerks()))
             throw new BizErrorException("物料编码和工厂不能为空");
         req.setMATNR(searchSapRouteApi.getMaterialCode());

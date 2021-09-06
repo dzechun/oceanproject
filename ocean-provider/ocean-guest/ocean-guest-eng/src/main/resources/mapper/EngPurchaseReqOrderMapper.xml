@@ -79,14 +79,11 @@
     left join ocean_v2.sys_user s on ecqo.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON ecqo.org_id = bo.organization_id
     <where>
-      <if test="purchaseReqOrderCode != null and purchaseReqOrderCode!='' and codeQueryMark!=1">
-        and ecqo.purchaseReqOrder_code like CONCAT('%', #{purchaseReqOrderCode}, '%')
-      </if>
-      <if test="purchaseReqOrderCode != null and purchaseReqOrderCode!='' and codeQueryMark==1">
-        and ecqo.purchaseReqOrder_code = #{purchaseReqOrderCode}
+      <if test="purchaseReqOrderCode != null and purchaseReqOrderCode!=''">
+        and ecqo.purchase_req_order_code like CONCAT('%', #{purchaseReqOrderCode}, '%')
       </if>
       <if test="purchaseReqOrderName != null and purchaseReqOrderName!=''">
-        and ecqo.purchaseReqOrder_name like CONCAT('%', #{purchaseReqOrderName}, '%')
+        and ecqo.purchase_req_order_name like CONCAT('%', #{purchaseReqOrderName}, '%')
       </if>
       <if test="materialGrade != null and materialGrade!=''">
         and ecqo.material_grade like CONCAT('%', #{materialGrade}, '%')
@@ -111,6 +108,9 @@
       </if>
       <if test="purchaseReqExplain != null and purchaseReqExplain!=''">
         and ecqo.purchase_req_explain = #{purchaseReqExplain}
+      </if>
+      <if test="purchaseExplain != null and purchaseExplain!=''">
+        and ecqo.purchase_explain = #{purchaseExplain}
       </if>
       <if test="dominantTermCode != null and dominantTermCode!=''">
         and ecqo.dominant_term_code = #{dominantTermCode}

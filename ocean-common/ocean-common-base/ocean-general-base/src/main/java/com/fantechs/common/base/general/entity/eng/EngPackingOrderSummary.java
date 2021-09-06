@@ -99,6 +99,14 @@ public class EngPackingOrderSummary extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     * 货物名称
+     */
+    @ApiModelProperty(name="materialName",value = "货物名称")
+    @Excel(name = "货物名称", height = 20, width = 30,orderNum="")
+    @Column(name = "material_name")
+    private String materialName;
+
+    /**
      * 供应商ID
      */
     @ApiModelProperty(name="supplierId",value = "供应商ID")
