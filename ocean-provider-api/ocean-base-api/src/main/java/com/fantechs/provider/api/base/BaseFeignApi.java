@@ -95,6 +95,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseMaterial/findList")
     ResponseEntity<List<BaseMaterial>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterial searchBaseMaterial);
 
+    @ApiOperation("修改物料信息")
+    @PostMapping("/baseMaterial/update")
+    ResponseEntity update(@ApiParam(value = "物料信息对象，物料信息Id必传",required = true)@RequestBody @Validated(value = BaseMaterial.update.class) BaseMaterial baseMaterial);
+
     @ApiOperation(value = "批量更新储位", notes = "批量更新")
     @PostMapping("/baseStorage/batchUpdate")
     ResponseEntity batchUpdate(@ApiParam(value = "储位集合", required = true) @RequestBody List<BaseStorage> baseStorages);
