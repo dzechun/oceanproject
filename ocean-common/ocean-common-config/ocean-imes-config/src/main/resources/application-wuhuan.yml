@@ -32,7 +32,7 @@ spring:
     host: 10.5.2.92
     #host: 10.182.163.246
     port: 6379
-    password:
+    password: qwe!@#
   jackson:
     date-format: yyyy-MM-dd HH:mm
     time-zone: GMT+8
@@ -40,8 +40,6 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
-  main:
-    allow-bean-definition-overriding: true
 mybatis:
   config-location: classpath:myBatis-config.xml
   mapper-locations: classpath:mapper/*.xml
@@ -55,7 +53,7 @@ eureka:
     #status-page-url: http://${spring.cloud.client.ip-address}:${server.port}/swagger-ui.html
   client:
     service-url:
-      defaultZone: http://root:root@192.168.204.163:8761/eureka/
+      defaultZone: http://root:root@10.5.2.92:8761/eureka/
 ribbon:
   eureka:
     enabled: true
@@ -64,7 +62,7 @@ ribbon:
 
 tx-lcn:
   client:
-    manager-address: 10.5.2.91:8070
+    manager-address: 10.5.2.92:8070
 
 feign:
   hystrix:

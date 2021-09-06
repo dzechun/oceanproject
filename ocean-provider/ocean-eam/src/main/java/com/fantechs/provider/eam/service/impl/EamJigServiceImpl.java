@@ -68,11 +68,18 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
 
         Example example = new Example(EamJig.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigCode", record.getJigCode())
-                .orEqualTo("jigName",record.getJigName());
+        criteria.andEqualTo("jigCode", record.getJigCode());
         EamJig eamJig = eamJigMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(eamJig)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        example.clear();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("jigName",record.getJigName());
+        EamJig eamJig1 = eamJigMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(eamJig1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"名称重复");
         }
 
         record.setCreateUserId(user.getUserId());
@@ -148,6 +155,10 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         List<String> assetCodes = new ArrayList<>();
 
         for (EamJigBarcode eamJigBarcode : eamJigBarcodeList) {
+            if(StringUtils.isEmpty(eamJigBarcode.getJigBarcode(),eamJigBarcode.getAssetCode())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "资产条码和治具条码不能为空");
+            }
+
             if(jigBarcodes.contains(eamJigBarcode.getJigBarcode())||assetCodes.contains(eamJigBarcode.getAssetCode())){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "条码重复");
             }
@@ -190,10 +201,19 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         Example example = new Example(EamJig.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("jigCode", entity.getJigCode())
-                .orEqualTo("jigName",entity.getJigName());
+                .andNotEqualTo("jigId",entity.getJigId());
         EamJig eamJig = eamJigMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamJig)&&!entity.getJigId().equals(eamJig.getJigId())){
+        if (StringUtils.isNotEmpty(eamJig)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        example.clear();
+        Example.Criteria criteria4 = example.createCriteria();
+        criteria4.andEqualTo("jigName",entity.getJigName())
+                 .andNotEqualTo("jigId",entity.getJigId());
+        EamJig eamJig1 = eamJigMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(eamJig1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"名称重复");
         }
 
         entity.setModifiedTime(new Date());

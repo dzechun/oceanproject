@@ -204,8 +204,17 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         Example example = new Example(MesPmWorkOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workOrderCode", mesPmWorkOrder.getWorkOrderCode());
+        criteria.andEqualTo("orgId", mesPmWorkOrder.getOrgId());
         List<MesPmWorkOrder> mesPmWorkOrders = mesPmWorkOrderMapper.selectByExample(example);
-        mesPmWorkOrderMapper.deleteByExample(example);
+        //mesPmWorkOrderMapper.deleteByExample(example);
+        if(StringUtils.isNotEmpty(mesPmWorkOrders)) {
+            mesPmWorkOrder.setWorkOrderId(mesPmWorkOrders.get(0).getWorkOrderId());
+            mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder);
+        }else{
+            mesPmWorkOrder.setModifiedTime(new Date());
+            mesPmWorkOrder.setCreateTime(new Date());
+            mesPmWorkOrderMapper.insertUseGeneratedKeys(mesPmWorkOrder);
+        }
         example.clear();
 
         //删除该工单下的所有bom表单
@@ -216,9 +225,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             mesPmWorkOrderBomMapper.deleteByExample(bomExample);
             bomExample.clear();
         }
-        mesPmWorkOrder.setModifiedTime(new Date());
-        mesPmWorkOrder.setCreateTime(new Date());
-        mesPmWorkOrderMapper.insertUseGeneratedKeys(mesPmWorkOrder);
+
         return mesPmWorkOrder;
     }
 

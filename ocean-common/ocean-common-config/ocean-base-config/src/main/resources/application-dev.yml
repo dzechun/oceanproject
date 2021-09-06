@@ -49,6 +49,19 @@ spring:
     host: 192.168.204.151
     port: 6379
     password:
+    jedis:
+      pool:
+        # 最大空闲连接
+        max-idle: 8
+        # 最小空闲链接
+        min-idle: 0
+        # 最大连接数（负数表示没有限制）
+        max-active: 8
+        # 最大阻塞等待时间（负数表示没有限制）
+        max-wait: 0
+      # 链接超时时间（毫秒）
+      timeout: 1000
+
   jackson:
     date-format: yyyy-MM-dd HH:mm
     time-zone: GMT+8
@@ -82,7 +95,7 @@ ribbon:
 
 tx-lcn:
   client:
-    manager-address: 127.0.0.1:8070
+    manager-address: 192.168.204.163:8070
 
 feign:
   hystrix:

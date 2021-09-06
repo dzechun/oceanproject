@@ -82,6 +82,9 @@
           <if test="orgId!=null">
               and bhpp.org_id=#{orgId}
           </if>
+          <if test="ifCustomized!=null">
+              and bhpp.if_customized=#{ifCustomized}
+          </if>
       </where>
     order by create_time desc
   </select>

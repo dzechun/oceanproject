@@ -32,40 +32,65 @@ public class SearchSrmPackingOrder extends BaseQuery implements Serializable {
     private String despatchBatch;
 
     /**
-     * 订单日期
+     * 订单日期开始
      */
-    @ApiModelProperty(name="orderTime",value = "订单日期")
-    @JSONField(format ="yyyy-MM-dd HH:mm")
-    private Date orderTime;
+    @ApiModelProperty(name="orderTimeStart",value = "订单日期开始(yyyy-MM-dd HH:mm)")
+    private String orderTimeStart;
+
+    /**
+     * 订单日期结束
+     */
+    @ApiModelProperty(name="orderTimeEnd",value = "订单日期结束(yyyy-MM-dd HH:mm)")
+    private String orderTimeEnd;
 
 
     /**
-     * 出厂时间
+     * 出厂时间开始
      */
-    @ApiModelProperty(name="leaveFactoryTime",value = "出厂时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm")
-    private Date leaveFactoryTime;
+    @ApiModelProperty(name="leaveFactoryTimeStart",value = "出厂时间开始(yyyy-MM-dd HH:mm)")
+    private String leaveFactoryTimeStart;
 
     /**
-     * 离港时间
+     * 出厂时间结束
      */
-    @ApiModelProperty(name="leavePortTime",value = "离港时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm")
-    private Date leavePortTime;
+    @ApiModelProperty(name="leaveFactoryTimeEnd",value = "出厂时间结束(yyyy-MM-dd HH:mm)")
+    private String leaveFactoryTimeEnd;
 
     /**
-     * 到港时间
+     * 离港时间开始
      */
-    @ApiModelProperty(name="arrivalPortTime",value = "到港时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm")
-    private Date arrivalPortTime;
+    @ApiModelProperty(name="leavePortTimeStart",value = "离港时间开始(yyyy-MM-dd HH:mm)")
+    private String leavePortTimeStart;
 
     /**
-     * 到场时间
+     * 离港时间结束
      */
-    @ApiModelProperty(name="arrivalTime",value = "到场时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm")
-    private Date arrivalTime;
+    @ApiModelProperty(name="leavePortTimeEnd",value = "离港时间结束(yyyy-MM-dd HH:mm)")
+    private String leavePortTimeEnd;
+
+    /**
+     * 到港时间开始
+     */
+    @ApiModelProperty(name="arrivalPortTimeStart",value = "到港时间开始(yyyy-MM-dd HH:mm)")
+    private String arrivalPortTimeStart;
+
+    /**
+     * 到港时间结束
+     */
+    @ApiModelProperty(name="arrivalPortTimeEnd",value = "到港时间结束(yyyy-MM-dd HH:mm)")
+    private String arrivalPortTimeEnd;
+
+    /**
+     * 到场时间开始
+     */
+    @ApiModelProperty(name="arrivalTimeStart",value = "到场时间开始(yyyy-MM-dd HH:mm)")
+    private String arrivalTimeStart;
+
+    /**
+     * 到场时间结束
+     */
+    @ApiModelProperty(name="arrivalTimeEnd",value = "到场时间结束(yyyy-MM-dd HH:mm)")
+    private String arrivalTimeEnd;
 
     /**
      * 订单状态(1-未审核 2-审核中 3-已通过 4-未通过)

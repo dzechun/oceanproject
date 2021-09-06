@@ -79,6 +79,13 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     private Long storageId;
 
     /**
+     * 拣货库位
+     */
+    @ApiModelProperty(name = "pickingStorageId",value = "拣货库位")
+    @Column(name = "picking_storage_id")
+    private Long pickingStorageId;
+
+    /**
      * 库存状态ID
      */
     @ApiModelProperty(name="inventoryStatusId",value = "库存状态ID")
@@ -244,4 +251,51 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="option3",value = "扩展字段3")
     private String option3;
 
+    /**
+     * 扩展字段4
+     */
+    @ApiModelProperty(name="option4",value = "扩展字段4")
+    private String option4;
+
+    /**
+     * 扩展字段5
+     */
+    @ApiModelProperty(name="option5",value = "扩展字段5")
+    private String option5;
+
+    /**
+     * 扩展字段6
+     */
+    @ApiModelProperty(name="option6",value = "扩展字段6")
+    private String option6;
+
+    /**
+     * 扩展字段7
+     */
+    @ApiModelProperty(name="option7",value = "扩展字段7")
+    private String option7;
+
+    /**
+     * 扩展字段8
+     */
+    @ApiModelProperty(name="option8",value = "扩展字段8")
+    private String option8;
+
+    /**
+     * 扩展字段9
+     */
+    @ApiModelProperty(name="option9",value = "扩展字段9")
+    private String option9;
+
+    /**
+     * 扩展字段10
+     */
+    @ApiModelProperty(name="option10",value = "扩展字段10")
+    private String option10;
+
+    /**
+     * 扩展字段11
+     */
+    @ApiModelProperty(name="option11",value = "扩展字段11")
+    private String option11;
 }

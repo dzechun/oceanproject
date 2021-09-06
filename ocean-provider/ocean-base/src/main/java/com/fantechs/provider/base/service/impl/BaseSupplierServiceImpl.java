@@ -287,14 +287,23 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         Example example = new Example(BaseSupplier.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("supplierCode",baseSupplier.getSupplierCode());
+        criteria.andEqualTo("supplierType",baseSupplier.getSupplierType());
         criteria.andEqualTo("organizationId",baseSupplier.getOrganizationId());
-        baseSupplierMapper.deleteByExample(example);
-
-        baseSupplier.setCreateTime(new Date());
-        baseSupplier.setCreateUserId((long)1);
-        baseSupplier.setModifiedUserId((long)1);
-        baseSupplier.setModifiedTime(new Date());
-        baseSupplier.setIsDelete((byte) 1);
-        return baseSupplierMapper.insertSelective(baseSupplier);
+        BaseSupplier supplier = baseSupplierMapper.selectOneByExample(example);
+        int i= 0;
+        if(StringUtils.isEmpty(supplier)) {
+            baseSupplier.setCreateTime(new Date());
+            baseSupplier.setCreateUserId((long) 1);
+            baseSupplier.setModifiedUserId((long) 1);
+            baseSupplier.setModifiedTime(new Date());
+            baseSupplier.setSupplierType((byte)1);
+            baseSupplier.setIsDelete((byte) 1);
+            i = baseSupplierMapper.insertSelective(baseSupplier);
+        }else{
+            baseSupplier.setSupplierId(supplier.getSupplierId());
+            baseSupplier.setModifiedTime(new Date());
+            baseSupplierMapper.updateByPrimaryKeySelective(baseSupplier);
+        }
+        return i;
     }
 }

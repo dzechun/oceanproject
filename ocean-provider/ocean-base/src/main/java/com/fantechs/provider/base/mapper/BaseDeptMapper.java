@@ -12,5 +12,7 @@ import java.util.Map;
 public interface BaseDeptMapper extends MyMapper<BaseDept> {
     List<BaseDept> findList(Map<String, Object> map);
 
+    Long findList_COUNT(Map<String, Object> map);
+
     List<BaseDept> findById(Long parentId);
 }

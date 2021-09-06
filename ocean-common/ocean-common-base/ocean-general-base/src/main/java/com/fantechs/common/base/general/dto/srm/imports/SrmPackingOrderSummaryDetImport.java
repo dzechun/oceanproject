@@ -49,10 +49,10 @@ public class SrmPackingOrderSummaryDetImport implements Serializable {
     private String contractCode;
 
     /**
-     * 装置码
+     * 装置号
      */
-    @ApiModelProperty(name="deviceCode",value = "装置码")
-    @Excel(name = "装置码", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="deviceCode",value = "装置号")
+    @Excel(name = "装置号", height = 20, width = 30,orderNum="")
     private String deviceCode;
 
     /**
@@ -97,6 +97,12 @@ public class SrmPackingOrderSummaryDetImport implements Serializable {
     @Excel(name = "件号", height = 20, width = 30,orderNum="")
     private String partNumber;
 
+    /**
+     * 货物名称
+     */
+    @ApiModelProperty(name="materialName",value = "货物名称")
+    @Excel(name = "货物名称", height = 20, width = 30,orderNum="")
+    private String materialName;
 
     /**
      * 规格

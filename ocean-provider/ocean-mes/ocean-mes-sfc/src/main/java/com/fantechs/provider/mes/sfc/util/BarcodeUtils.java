@@ -652,7 +652,7 @@ public class BarcodeUtils {
             }
 
             baseExecuteResultDto.setIsSuccess(true);
-            baseExecuteResultDto.setSuccessMsg(pass + " 验证通过 产线名称 " + proName + " 工序名称 " + processName + " 用户名称 " + userName);
+            baseExecuteResultDto.setSuccessMsg(pass + ",验证通过,产线名称:" + proName + ",工序名称:" + processName + ",用户名称:" + userName);
         }
         catch (Exception ex){
             baseExecuteResultDto.setIsSuccess(false);
@@ -681,7 +681,7 @@ public class BarcodeUtils {
                 baseExecuteResultDto=checkParameter(restapiChkSNRoutingApiDto.getProCode(),restapiChkSNRoutingApiDto.getProcessCode(),
                         restapiChkSNRoutingApiDto.getBarcodeCode(),restapiChkSNRoutingApiDto.getPartBarcode(),
                         restapiChkSNRoutingApiDto.getEamJigBarCode(),restapiChkSNRoutingApiDto.getEquipmentBarCode(),
-                        "","","","");
+                        "","","","","1");
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -751,7 +751,8 @@ public class BarcodeUtils {
             baseExecuteResultDto=checkParameter(restapiSNDataTransferApiDto.getProCode(),restapiSNDataTransferApiDto.getProcessCode(),
                     restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getPartBarcode(),
                     restapiSNDataTransferApiDto.getEamJigBarCode(),restapiSNDataTransferApiDto.getEquipmentBarCode(),
-                    "",restapiSNDataTransferApiDto.getStationCode(),restapiSNDataTransferApiDto.getUserCode(),restapiSNDataTransferApiDto.getBadnessPhenotypeCode());
+                    "",restapiSNDataTransferApiDto.getStationCode(),restapiSNDataTransferApiDto.getUserCode(),
+                    restapiSNDataTransferApiDto.getBadnessPhenotypeCode(),"2");
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
@@ -839,7 +840,8 @@ public class BarcodeUtils {
        String badnessPhenotypeCode 不良现象代码
      */
     public static BaseExecuteResultDto checkParameter(String proCode,String processCode,String barcodeCode,String partBarcode,
-                String eamJigBarCode,String equipmentBarCode, String sectionCode,String stationCode,String userCode,String badnessPhenotypeCode) throws Exception{
+                String eamJigBarCode,String equipmentBarCode, String sectionCode,String stationCode,String userCode,
+                 String badnessPhenotypeCode,String checkType) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         UpdateProcessDto updateProcessDto=new UpdateProcessDto();
         try{
@@ -906,6 +908,8 @@ public class BarcodeUtils {
                 //设置产线ID
                 updateProcessDto.setProLineId(baseProLinelist.getData().get(0).getProLineId());
             }
+            if("2".equals(checkType) && StringUtils.isEmpty(stationCode))
+                throw new Exception("工位编码不能为空");
             if(StringUtils.isNotEmpty(stationCode)){
                 ResponseEntity<List<BaseStation>> responseEntityStation=barcodeUtils.deviceInterFaceUtils.getStation(stationCode,orgId);
                 if(StringUtils.isEmpty(responseEntityStation.getData())){
@@ -927,7 +931,13 @@ public class BarcodeUtils {
                 updateProcessDto.setNowProcessId(baseProcesslist.getData().get(0).getProcessId());
             }
 
-            if(StringUtils.isEmpty(barcodeCode)){
+            //检查半成品SN
+            if("2".equals(checkType) && StringUtils.isEmpty(barcodeCode)){
+                throw new Exception("半成品SN不能为空");
+            }
+
+            //检查成品SN
+            if("2".equals(checkType) && StringUtils.isEmpty(partBarcode)){
                 throw new Exception("成品SN不能为空");
             }
             else{
@@ -957,6 +967,9 @@ public class BarcodeUtils {
             updateProcessDto.setBarCode(barcodeCode);
 
             //检查工段
+            if("2".equals(checkType) && StringUtils.isEmpty(sectionCode)){
+                throw new Exception("工段编码不能为空");
+            }
             if (StringUtils.isNotEmpty(sectionCode)) {
                 ResponseEntity<List<BaseWorkshopSection>> baseWorkshopSectionList = barcodeUtils.deviceInterFaceUtils.getWorkshopSection(sectionCode, orgId);
                 if (StringUtils.isEmpty(baseWorkshopSectionList.getData())) {

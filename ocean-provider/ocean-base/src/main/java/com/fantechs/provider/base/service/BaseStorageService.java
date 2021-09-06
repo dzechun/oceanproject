@@ -41,4 +41,6 @@ public interface BaseStorageService extends IService<BaseStorage> {
     List<StorageRuleDto> MixedWithStorage(Map<String ,Object> map);
 
     List<StorageRuleDto> LastStorage(Map<String ,Object> map);
+
+    int saveByApi(BaseStorage baseStorage);
 }

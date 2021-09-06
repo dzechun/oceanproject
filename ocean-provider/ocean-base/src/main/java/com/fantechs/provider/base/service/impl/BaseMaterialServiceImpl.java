@@ -600,9 +600,34 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("organizationId", baseMaterial.getOrganizationId());
         criteria.andEqualTo("materialCode", baseMaterial.getMaterialCode());
-        baseMaterialMapper.deleteByExample(example);
-        baseMaterial.setOrganizationId(baseMaterial.getOrganizationId());
-        int i = baseMaterialMapper.insertUseGeneratedKeys(baseMaterial);
+
+        BaseMaterial baseMaterialExist=baseMaterialMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(baseMaterialExist)){
+            baseMaterial.setCreateTime(new Date());
+            baseMaterial.setCreateUserId((long) 1);
+            baseMaterial.setModifiedUserId((long) 1);
+            baseMaterial.setModifiedTime(new Date());
+            baseMaterial.setIsDelete((byte) 1);
+
+            baseMaterialMapper.insertUseGeneratedKeys(baseMaterial);
+
+            //新增单位 五环用Option2保存单位
+            if(StringUtils.isNotEmpty(baseMaterial.getOption2())) {
+                BaseTab baseTab = new BaseTab();
+                baseTab.setMaterialId(baseMaterial.getMaterialId());
+                baseTab.setMainUnit(baseMaterial.getOption2());
+                baseTabMapper.insertSelective(baseTab);
+            }
+        }
+        else {
+            baseMaterial.setMaterialId(baseMaterialExist.getMaterialId());
+            baseMaterial.setModifiedTime(new Date());
+            baseMaterialMapper.updateByPrimaryKeySelective(baseMaterial);
+        }
+
+//        baseMaterialMapper.deleteByExample(example);
+//        baseMaterial.setOrganizationId(baseMaterial.getOrganizationId());
+//        int i = baseMaterialMapper.insertUseGeneratedKeys(baseMaterial);
 
         //新增物料历史信息
         BaseHtMaterial baseHtMaterial = new BaseHtMaterial();

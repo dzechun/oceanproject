@@ -41,7 +41,7 @@ public class BaseUtils {
     public BaseMaterial getBaseMaterial(String materialCode){
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
         searchBaseMaterial.setMaterialCode(removeZero(materialCode));
-        ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findSmtMaterialList(searchBaseMaterial);
+        ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findList(searchBaseMaterial);
         if(StringUtils.isEmpty(parentMaterialList.getData()))
             throw new BizErrorException("未查询到对应的物料："+materialCode);
         return parentMaterialList.getData().get(0);

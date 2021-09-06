@@ -1,0 +1,588 @@
+package com.fantechs.provider.chinafiveringapi.api.service.impl;
+
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
+import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderTempDto;
+import com.fantechs.common.base.general.entity.basic.BaseCustomer;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkingArea;
+import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
+import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
+import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.guest.eng.EngFeignApi;
+import com.fantechs.provider.api.wms.out.OutFeignApi;
+import com.fantechs.provider.chinafiveringapi.api.service.ImportDataService;
+import io.swagger.annotations.ApiParam;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import javax.annotation.Resource;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+public class ImportDataServiceImpl implements ImportDataService {
+
+    // Webservice接口地址
+    private final String address = "http://mattest.cwcec.com/LocWebServices/WebService1.asmx";
+
+    @Resource
+    BaseFeignApi baseFeignApi;
+    @Resource
+    EngFeignApi engFeignApi;
+    @Resource
+    OutFeignApi outFeignApi;
+
+    @Override
+    /**
+     * create by: Dylan
+     * description: 合同量单接口
+     * create time:
+     * @return
+     */
+    public BaseExecuteResultDto getPoDetails(String projectID) throws Exception {
+//        WebService1HttpGet webService1HttpGet=null;
+//        // 代理工厂
+//        JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
+//        // 设置代理地址
+//        jaxWsProxyFactoryBean.setAddress(address);
+//        // 设置接口类型
+//        jaxWsProxyFactoryBean.setServiceClass(WebService1HttpGet.class);
+//        // 创建一个代理接口实现
+//        webService1HttpGet = (WebService1HttpGet) jaxWsProxyFactoryBean.create();
+//        return webService1HttpGet.getPoDetails(projectID.toString());
+
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        try {
+            baseExecuteResultDto= callWebService(address,"getPoDetails",projectID);
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            //转换为实体类集合
+            String strResult=baseExecuteResultDto.getExecuteResult().toString();
+            String s0=strResult.replaceAll("材料用途","materialPurpose");
+            String s1=s0.replaceAll("合同号","contractCode");
+            String s2=s1.replaceAll("材料编码","materialCode");
+            String s3=s2.replaceAll("位号","locationNum");
+            String s4=s3.replaceAll("采购量","purQty");
+            String s5=s4.replaceAll("备注","remark");
+            String s6=s5.replaceAll("装置号","deviceCode");
+            String s7=s6.replaceAll("主项号","dominantTermCode");
+            String s8=s7.replaceAll("PPGUID","option1");
+            String s9=s8.replaceAll("PSGUID","option2");
+            String s10=s9.replaceAll("RDGUID","option3");
+            String s11=s10.replaceAll("专业","professionCode");
+
+            //同步到数据库
+            int indexb=s11.indexOf("[");
+            int indexe=s11.lastIndexOf("]");
+            String str=s11.substring(indexb,indexe+1);
+            List<EngContractQtyOrder> listPO= BeanUtils.jsonToListObject(str,EngContractQtyOrder.class);
+            for (EngContractQtyOrder engContractQtyOrder : listPO) {
+                engContractQtyOrder.setOrgId(1004L);
+                engFeignApi.saveByApi(engContractQtyOrder);
+            }
+
+            baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
+    }
+
+    @Override
+    /**
+     * create by: Dylan
+     * description: 领料单接口
+     * create time:
+     * @return
+     */
+    public BaseExecuteResultDto getIssueDetails(String projectID) throws Exception{
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        try{
+            baseExecuteResultDto= callWebService(address,"getIssueDetails",projectID);
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            String strResult=baseExecuteResultDto.getExecuteResult().toString();
+            String s0=strResult.replaceAll("领料单号","deliveryOrderCode");
+            String s1=s0.replaceAll("领料时间","outMaterialTime");
+            String s2=s1.replaceAll("领料单位","customerCode");
+            String s3=s2.replaceAll("领料截止时间","outMaterialTimeEnd");
+            String s4=s3.replaceAll("项目ID","projectId");
+            String s5=s4.replaceAll("领料单审批状态代码","confirmCode");
+            String s6=s5.replaceAll("材料编码","materialCode");
+            String s7=s6.replaceAll("发料备注","remark");
+            String s8=s7.replaceAll("IDGUID","option1");
+            String s9=s8.replaceAll("ISGUID","option2");
+            String s10=s9.replaceAll("PLGUID","option3");
+            String s11=s10.replaceAll("PSGUID","option4");
+            String s12=s11.replaceAll("DHGUID","option5");
+            String s13=s12.replaceAll("专业","option6");
+            String s14=s13.replaceAll("位号","option7");
+            String s15=s14.replaceAll("主项号","option8");
+            String s16=s15.replaceAll("装置号","option9");
+            String s17=s16.replaceAll("申领量","option10");
+            String s18=s17.replaceAll("实发量","option11");
+            String s19=s18.replaceAll("批准量","dispatchQty");
+
+            //同步到数据库
+            int indexb=s19.indexOf("[");
+            int indexe=s19.lastIndexOf("]");
+            String str=s19.substring(indexb,indexe+1);
+            List<WmsOutDeliveryOrderTempDto> listWmsOut= BeanUtils.jsonToListObject(str,WmsOutDeliveryOrderTempDto.class);
+
+            //按照领料单号分组
+            Map<String, List<WmsOutDeliveryOrderTempDto>> result = listWmsOut.stream().collect(Collectors.groupingBy(c -> {
+                String deliveryOrderCode = c.getDeliveryOrderCode();
+                return deliveryOrderCode;
+            }, TreeMap::new, Collectors.toList()));
+
+            System.out.println(result);
+
+            //循环分组数据 组成领料单
+            for (String key:result.keySet()) {
+                WmsOutDeliveryOrder wmsOutDeliveryOrder=new WmsOutDeliveryOrder();
+                wmsOutDeliveryOrder.setOrderTypeId(8L);//单据类型 领料出库=8
+                wmsOutDeliveryOrder.setOrgId(1004L);
+                wmsOutDeliveryOrder.setMaterialOwnerId(153L);
+                wmsOutDeliveryOrder.setOrderDate(new Date());
+                wmsOutDeliveryOrder.setStatus((byte) 1);
+
+                Long customerId=0L;
+                List<WmsOutDeliveryOrderTempDto> listDto=result.get(key);
+                List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList= new ArrayList<>();
+                for (WmsOutDeliveryOrderTempDto tempDto : listDto) {
+                    //表头 领料单号
+                    wmsOutDeliveryOrder.setDeliveryOrderCode(tempDto.getDeliveryOrderCode());
+                    // 表头 领料时间
+                    wmsOutDeliveryOrder.setOption1(tempDto.getOutMaterialTime());
+                    // 表头 领料截止时间
+                    wmsOutDeliveryOrder.setOption2(tempDto.getOutMaterialTimeEnd());
+                    // 表头 项目ID
+                    wmsOutDeliveryOrder.setOption3(tempDto.getProjectId());
+                    // 表头 领料单审批状态代码
+                    wmsOutDeliveryOrder.setOption4(tempDto.getConfirmCode());
+
+                    if(customerId==0L) {
+                        SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
+                        searchBaseSupplier.setSupplierCode(tempDto.getCustomerCode());
+                        searchBaseSupplier.setSupplierType((byte) 2);// 1 是供应商 2 是客户
+                        searchBaseSupplier.setOrganizationId(1004L);
+                        ResponseEntity<List<BaseSupplier>> supplierList = baseFeignApi.findSupplierList(searchBaseSupplier);
+                        if (StringUtils.isNotEmpty(supplierList.getData())) {
+                            customerId = supplierList.getData().get(0).getSupplierId();
+                        }
+                    }
+                    // 表头 客户ID
+                    wmsOutDeliveryOrder.setCustomerId(customerId);
+
+                    //明细 取物料ID
+                    WmsOutDeliveryOrderDetDto detDto=new WmsOutDeliveryOrderDetDto();
+                    String materialCode=tempDto.getMaterialCode();
+                    SearchBaseMaterial searchBaseMaterial=new SearchBaseMaterial();
+                    searchBaseMaterial.setMaterialCode(materialCode);
+                    searchBaseMaterial.setOrganizationId(1004L);
+                    ResponseEntity<List<BaseMaterial>> baseList=baseFeignApi.findList(searchBaseMaterial);
+                    if(StringUtils.isEmpty(baseList.getData())){
+                        //throw new BizErrorException("找不到物料编码的信息-->"+materialCode);
+                        continue;
+                    }
+                    //设置物料ID
+                    detDto.setMaterialId(baseList.getData().get(0).getMaterialId());
+                    //IDGUID
+                    detDto.setOption1(tempDto.getOption1());
+                    //ISGUID
+                    detDto.setOption2(tempDto.getOption2());
+                    //PLGUID
+                    detDto.setOption3(tempDto.getOption3());
+                    //PSGUID
+                    detDto.setOption4(tempDto.getOption4());
+                    //DHGUID
+                    detDto.setOption5(tempDto.getOption5());
+                    //专业
+                    detDto.setOption6(tempDto.getOption6());
+                    //位号
+                    detDto.setOption7(tempDto.getOption7());
+                    //主项号
+                    detDto.setOption8(tempDto.getOption8());
+                    //装置号
+                    detDto.setOption9(tempDto.getOption9());
+                    //申领量
+                    detDto.setOption10(tempDto.getOption10());
+                    //实发量
+                    detDto.setOption11(tempDto.getOption11());
+                    //备注
+                    detDto.setRemark(tempDto.getRemark());
+                    //批准量
+                    if(StringUtils.isEmpty(tempDto.getDispatchQty()))
+                        detDto.setDispatchQty(BigDecimal.ZERO);
+                    else
+                        detDto.setDispatchQty(new BigDecimal(tempDto.getDispatchQty()));
+
+                    wmsOutDeliveryOrderDetList.add(detDto);
+                }
+
+                //设置领料单明细
+                wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetList);
+
+                //同步到数据库
+                outFeignApi.saveByApi(wmsOutDeliveryOrder);
+
+            }
+
+
+            baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+
+        return baseExecuteResultDto;
+    }
+
+    @Override
+    /**
+     * create by: Dylan
+     * description: 材料信息接口
+     * create time:
+     * @return
+     */
+    public BaseExecuteResultDto getPartNoInfo(String projectID) throws Exception{
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        try {
+            baseExecuteResultDto = callWebService(address, "getPartNoInfo", projectID);
+            if (baseExecuteResultDto.getIsSuccess() == false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            //转换为实体类集合
+            String strResult=baseExecuteResultDto.getExecuteResult().toString();
+            String s0=strResult.replaceAll("项目ID","systemSource");
+            String s1=s0.replaceAll("材料编码","materialCode");
+            String s2=s1.replaceAll("位号","option1");
+            String s3=s2.replaceAll("材料名称","materialName");
+            String s4=s3.replaceAll("规格描述","materialDesc");
+            String s5=s4.replaceAll("计量单位","option2");
+
+            //同步到数据库
+            int indexb=s5.indexOf("[");
+            int indexe=s5.lastIndexOf("]");
+            String str=s5.substring(indexb,indexe+1);
+            List<BaseMaterial> listBM= BeanUtils.jsonToListObject(str,BaseMaterial.class);
+            for (BaseMaterial baseMaterial : listBM) {
+                baseMaterial.setOrganizationId(1004L);
+                baseMaterial.setStatus((byte)1);
+                baseFeignApi.saveByApi(baseMaterial);
+            }
+
+            baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+        return baseExecuteResultDto;
+    }
+
+    @Override
+    /**
+     * create by: Dylan
+     * description: 库位信息接口
+     * create time:
+     * @return
+     */
+    public BaseExecuteResultDto getShelvesNo(String projectID) throws Exception{
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        try {
+            baseExecuteResultDto= callWebService(address,"getShelvesNo",projectID);
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            //转换为实体类集合
+            String strResult=baseExecuteResultDto.getExecuteResult().toString();
+            String s0=strResult.replaceAll("货架编号描述","storageName");
+            String s1=s0.replaceAll("货架编号","storageCode");
+            String s2=s1.replaceAll("DHGUID","option1");
+
+            //同步到数据库
+            int indexb=s2.indexOf("[");
+            int indexe=s2.lastIndexOf("]");
+            String str=s2.substring(indexb,indexe+1);
+            List<BaseStorage> listBC= BeanUtils.jsonToListObject(str,BaseStorage.class);
+
+            //取工作区编码为default的ID
+            SearchBaseWorkingArea searchBaseWorkingArea=new SearchBaseWorkingArea();
+            searchBaseWorkingArea.setWorkingAreaCode("default");
+            searchBaseWorkingArea.setOrgId(1004L);
+            ResponseEntity<List<BaseWorkingAreaDto>> responseEntityList=baseFeignApi.findWorkingAreaList(searchBaseWorkingArea);
+            if(StringUtils.isEmpty(responseEntityList.getData())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003,"default工作区编码不存在");
+            }
+            for (BaseStorage baseStorage : listBC) {
+                baseStorage.setOrganizationId(1004L);
+                baseStorage.setStorageType((byte)1);//库位类型
+                baseStorage.setWorkingAreaId(responseEntityList.getData().get(0).getWorkingAreaId());//工作区ID
+                baseStorage.setRoadway(1);//项道
+                baseStorage.setRowNo(1);//排
+                baseStorage.setColumnNo(1);//列
+                baseStorage.setLevelNo(1);//层
+                baseStorage.setPutawayMoveLineNo(1);//上架动线号
+                baseStorage.setPickingMoveLineNo(1);//拣货动线号
+                baseStorage.setStockMoveLineNo(1);//盘点动线号
+                baseStorage.setStatus(1);//状态默认1
+
+                baseFeignApi.saveByApi(baseStorage);
+            }
+
+            baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
+    }
+
+    @Override
+    /**
+     * create by: Dylan
+     * description: 客户信息接口
+     * create time:
+     * @return
+     */
+    public BaseExecuteResultDto getSubcontractor(String projectID) throws Exception{
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        try {
+            baseExecuteResultDto= callWebService(address,"getSubcontractor",projectID);
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            //转换为实体类集合
+            String strResult=baseExecuteResultDto.getExecuteResult().toString();
+            String s0=strResult.replaceAll("分包商编号","supplierCode");
+            String s1=s0.replaceAll("分包商名称","supplierName");
+
+            //同步到数据库
+            int indexb=s1.indexOf("[");
+            int indexe=s1.lastIndexOf("]");
+            String str=s1.substring(indexb,indexe+1);
+            List<BaseSupplier> listBC= BeanUtils.jsonToListObject(str,BaseSupplier.class);
+            for (BaseSupplier baseSupplier : listBC) {
+                baseSupplier.setOrganizationId(1004L);
+                baseSupplier.setStatus((byte)1);
+                //客户供应商用同一个表 SupplierType=2 表示客户
+                baseSupplier.setSupplierType((byte)2);
+                baseFeignApi.saveByApi(baseSupplier);
+            }
+
+            baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
+    }
+
+    @Override
+    /**
+     * create by: Dylan
+     * description: 供应商信息接口
+     * create time:
+     * @return
+     */
+    public BaseExecuteResultDto getVendor() throws Exception{
+        BaseExecuteResultDto baseExecuteResultDto = new BaseExecuteResultDto();
+        try {
+            baseExecuteResultDto = callWebService(address, "getVendor", "");
+            if (baseExecuteResultDto.getIsSuccess() == false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            String strResult = baseExecuteResultDto.getExecuteResult().toString();
+            String s0 = strResult.replaceAll("企业中文名称", "supplierName");
+            String s1 = s0.replaceAll("厂商企标ID", "supplierCode");
+
+            int indexb = s1.indexOf("[");
+            int indexe = s1.lastIndexOf("]");
+            String str = s1.substring(indexb, indexe + 1);
+            List<BaseSupplier> listSu = BeanUtils.jsonToListObject(str, BaseSupplier.class);
+
+            //同步到数据库
+            for (BaseSupplier baseSupplier : listSu) {
+                baseSupplier.setOrganizationId(1004L);
+                baseSupplier.setStatus((byte)1);
+                //客户供应商用同一个表 SupplierType=1 表示客户
+                baseSupplier.setSupplierType((byte)1);
+                baseFeignApi.saveByApi(baseSupplier);
+            }
+
+            baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
+    }
+
+    @Override
+    /**
+     * create by: Dylan
+     * description: 请购单信息接口
+     * create time:
+     * @return
+     */
+    public BaseExecuteResultDto getReqDetails(String projectID) throws Exception{
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        try{
+            baseExecuteResultDto= callWebService(address,"getReqDetails",projectID);
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new Exception(baseExecuteResultDto.getFailMsg());
+
+            //转换为实体类集合
+            String strResult=baseExecuteResultDto.getExecuteResult().toString();
+            String s0=strResult.replaceAll("请购单号","purchaseReqOrderCode");
+            String s1=s0.replaceAll("请购单名称","purchaseReqOrderName");
+            String s2=s1.replaceAll("专业名称","remark");
+            String s3=s2.replaceAll("材料等级","materialGrade");
+            String s4=s3.replaceAll("材料编码","materialCode");
+            String s5=s4.replaceAll("位号","locationNum");
+            String s6=s5.replaceAll("设计量","designQty");
+            String s7=s6.replaceAll("余量","surplusQty");
+            String s8=s7.replaceAll("请购量","purchaseReqQty");
+            String s9=s8.replaceAll("请购说明","purchaseReqExplain");
+            String s10=s9.replaceAll("装置号","deviceCode");
+            String s11=s10.replaceAll("主项号","dominantTermCode");
+            String s12=s11.replaceAll("材料用途","materialPurpose");
+            String s13=s12.replaceAll("采购说明","purchaseExplain");
+            String s14=s13.replaceAll("RSGUID","option2");
+            String s15=s14.replaceAll("RDGUID","option3");
+
+            //同步到数据库
+            int indexb=s15.indexOf("[");
+            int indexe=s15.lastIndexOf("]");
+            String str=s15.substring(indexb,indexe+1);
+            List<EngPurchaseReqOrder> listPO= BeanUtils.jsonToListObject(str,EngPurchaseReqOrder.class);
+            for (EngPurchaseReqOrder engPurchaseReqOrder : listPO) {
+                engPurchaseReqOrder.setOrgId(1004L);
+                engFeignApi.saveByApi(engPurchaseReqOrder);
+            }
+
+            baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
+    }
+
+    private  String actionBySOAP(String method,String projectID){
+        String str="";
+        if(StringUtils.isEmpty(projectID)){
+            str="<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +
+                    "   <soapenv:Header/>\n" +
+                    "   <soapenv:Body>\n" +
+                    "      <tem:"+method+"/>\n" +
+                    "   </soapenv:Body>\n" +
+                    "</soapenv:Envelope>";
+        }
+        else {
+            str = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +
+                    "   <soapenv:Header/>\n" +
+                    "   <soapenv:Body>\n" +
+                    "      <tem:" + method + ">\n" +
+                    "         <tem:projectID>" + projectID + "</tem:projectID>\n" +
+                    "      </tem:" + method + ">\n" +
+                    "   </soapenv:Body>\n" +
+                    "</soapenv:Envelope>";
+
+        }
+
+        return str;
+    }
+
+    private BaseExecuteResultDto callWebService(String wsdl, String method, String projectID) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        try {
+            System.setProperty("sun.net.client.defaultConnectTimeout", "20000");
+            System.setProperty("sun.net.client.defaultReadTimeout", "20000");
+
+            // URL连接
+            URL url = new URL(wsdl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            // conn.setRequestMethod("GET");
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Length", String.valueOf(actionBySOAP(method, projectID).getBytes().length));
+            conn.setRequestProperty("Content-Type", "text/xml; charset=GBK");
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setConnectTimeout(20000);
+            // 请求输入内容
+            OutputStream output = conn.getOutputStream();
+            output.write(actionBySOAP(method, projectID).getBytes());
+            output.flush();
+            output.close();
+            // 请求返回内容
+            InputStreamReader isr = new InputStreamReader(conn.getInputStream());
+            BufferedReader br = new BufferedReader(isr);
+
+            String str = null;
+            while ((str = br.readLine()) != null) {
+                sb.append(str + "\n");
+            }
+            br.close();
+            isr.close();
+
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setExecuteResult(sb.toString());
+
+        }catch (Exception ex) {
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
+    }
+
+}

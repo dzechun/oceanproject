@@ -3,6 +3,7 @@ package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.entity.basic.BaseCustomer;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseCustomer;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -112,6 +113,29 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
         baseCustomer.setOrganizationId(currentUser.getOrganizationId());
         int i= baseCustomerMapper.updateByPrimaryKeySelective(baseCustomer);
 
+        return i;
+    }
+
+    @Override
+    public int saveByApi(BaseCustomer baseCustomer) {
+        Example example = new Example(BaseCustomer.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("customerCode",baseCustomer.getCustomerCode());
+        criteria.andEqualTo("organizationId",baseCustomer.getOrganizationId());
+        BaseCustomer baseCustomerExist = baseCustomerMapper.selectOneByExample(example);
+        int i= 0;
+        if(StringUtils.isEmpty(baseCustomerExist)) {
+            baseCustomer.setCreateTime(new Date());
+            baseCustomer.setCreateUserId((long) 1);
+            baseCustomer.setModifiedUserId((long) 1);
+            baseCustomer.setModifiedTime(new Date());
+            baseCustomer.setIsDelete((byte) 1);
+            i = baseCustomerMapper.insertSelective(baseCustomer);
+        }else{
+            baseCustomer.setCustomerId(baseCustomerExist.getCustomerId());
+            baseCustomer.setModifiedTime(new Date());
+            baseCustomerMapper.updateByPrimaryKeySelective(baseCustomer);
+        }
         return i;
     }
 }

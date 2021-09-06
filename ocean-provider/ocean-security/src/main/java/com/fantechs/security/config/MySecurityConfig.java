@@ -3,7 +3,6 @@ package com.fantechs.security.config;
 
 import com.fantechs.security.filter.CustomAuthenticationDetailsSource;
 import com.fantechs.security.securityIntercepter.*;
-import com.fantechs.security.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +12,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -27,7 +25,7 @@ import java.util.Arrays;
 public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
-    private UserDetailsServiceImpl userDetailsService;
+    private  CustomAuthenticationProvider customAuthenticationProvider;
     @Resource
     private MyAccessDecisionManager myAccessDecisionManager;
     @Resource
@@ -66,7 +64,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
         //需要传入用户详情service
         //配置userService需要实体类实现UserDetail接口供security使用实体信息
         //userService接口实现UserDetailService接口，重写方法
-        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+        auth.authenticationProvider(customAuthenticationProvider);
     }
     //第二步配置动态权限过滤器
     @Override
@@ -79,7 +77,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             }
         }).and().cors().and()
                 .formLogin()
-//                .loginPage("/tologin")
+                .loginPage("/tologin")
                 .loginProcessingUrl("/login")
                 .authenticationDetailsSource(customAuthenticationDetailsSource)
                 .successHandler(myAuthenticationSuccessHandler)//可以配置登录成功的提示

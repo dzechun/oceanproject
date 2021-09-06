@@ -47,6 +47,11 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
     private String storageCode;
 
     @Transient
+    @ApiModelProperty(name="pickingStorageCode" ,value="拣货库位编码")
+    @Excel(name = "拣货库位编码", height = 20, width = 30)
+    private String pickingStorageCode;
+
+    @Transient
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
     @Excel(name = "仓库名称", height = 20, width = 30)
     private String warehouseName;

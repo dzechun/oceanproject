@@ -74,9 +74,9 @@
       <if test="factoryId!=null and factoryId!=''">
         and sd.factory_id=#{factoryId}
       </if>
-      <if test="parentId!=null and parentId!=''">
-        and sd.parent_id=#{parentId}
-      </if>
+<!--      <if test="parentId!=null and parentId!=''">-->
+<!--        and sd.parent_id=#{parentId}-->
+<!--      </if>-->
       <if test="status!=null">
         and sd.status=#{status}
       </if>
@@ -97,6 +97,41 @@
     left join ocean_v2.sys_user s on sd.modified_user_id=s.user_id
     left join fantech_imes_v2.base_factory sf on sd.factory_id=sf.factory_id
     where sd.parent_id=#{parentId}
+  </select>
+
+  <select id="findList_COUNT" parameterType="map" resultType="Long">
+    select count(sd.dept_id) from fantech_imes_v2.base_dept sd
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(sd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="deptCode!=null and deptCode!='' and codeQueryMark != 1">
+        and sd.dept_code like CONCAT('%', #{deptCode}, '%')
+      </if>
+      <if test="deptCode!=null and deptCode!='' and codeQueryMark == 1">
+        and sd.dept_code = #{deptCode}
+      </if>
+      <if test="deptName!=null and deptName!=''">
+        and sd.dept_name like CONCAT('%', #{deptName}, '%')
+      </if>
+      <if test="deptDesc!=null and deptDesc!=''">
+        and sd.dept_desc like CONCAT('%', #{deptDesc}, '%')
+      </if>
+      <if test="factoryId!=null and factoryId!=''">
+        and sd.factory_id=#{factoryId}
+      </if>
+      <if test="parentId!=null and parentId!=''">
+        and sd.parent_id=#{parentId}
+      </if>
+      <if test="status!=null">
+        and sd.status=#{status}
+      </if>
+      <if test="orgId!=null">
+        and sd.org_id=#{orgId}
+      </if>
+        and sd.parent_id = -1
+    </where>
+    order by sd.create_time desc
   </select>
 
 </mapper>

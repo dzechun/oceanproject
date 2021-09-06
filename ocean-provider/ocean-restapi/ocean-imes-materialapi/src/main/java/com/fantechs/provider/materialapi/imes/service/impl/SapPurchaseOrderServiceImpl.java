@@ -72,6 +72,12 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
                     omPurchaseOrder.setOrderDate(DateUtils.getStrToDate("yyyyMMdd", purchaseOrderApiDto.getAEDAT()));
                 omPurchaseOrder.setSupplierId(getSupplier(purchaseOrderApiDto.getLIFNR(), orgId));
                 omPurchaseOrder.setOrgId(orgId);
+                omPurchaseOrder.setItemCategoryName(purchaseOrderApiDto.getEPSTP());
+                omPurchaseOrder.setOrderUnitName(purchaseOrderApiDto.getMEINS());
+                omPurchaseOrder.setInventorySite(purchaseOrderApiDto.getLGORT());
+                omPurchaseOrder.setFreeItem(purchaseOrderApiDto.getUMSON());
+                omPurchaseOrder.setSalesReturnItem(purchaseOrderApiDto.getRETPO());
+
                 ResponseEntity<OmPurchaseOrder> omPurchaseOrderResponseEntity = oMFeignApi.saveByApi(omPurchaseOrder);
                 purchaseMap.put(purchaseOrderApiDto.getEBELN(),omPurchaseOrderResponseEntity.getData().getPurchaseOrderId());
             }
@@ -84,6 +90,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             purchaseOrderDet.setStatus((byte)1);
             purchaseOrderDet.setWarehouseId(getWarehouse(purchaseOrderApiDto.getLGORT(),orgId));
             purchaseOrderDet.setFactoryId(getFactory(purchaseOrderApiDto.getWERKS(),orgId));
+            purchaseOrderDet.setIsDelete((byte)1);
             omPurchaseOrderDetList.add(purchaseOrderDet);
         }
         oMFeignApi.saveByApi(omPurchaseOrderDetList);

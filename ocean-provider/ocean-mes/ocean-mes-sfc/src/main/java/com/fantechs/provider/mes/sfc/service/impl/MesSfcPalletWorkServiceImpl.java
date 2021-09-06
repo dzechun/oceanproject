@@ -31,6 +31,7 @@ import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -41,6 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Resource
@@ -594,9 +596,10 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
             if(!itemList.isEmpty()){
                 String warehouseCode = null;
+                log.info("程序配置项值："+ itemList.get(0).getParaValue());
                 List<Map<String, String>> list = JSONArray.parseObject(itemList.get(0).getParaValue(), List.class);
                 for (Map<String, String> item : list){
-                    if(item.get("material").contains(barcodeDtos.get(0).getMaterialCode())){
+                    if(barcodeDtos.get(0).getMaterialCode().contains(item.get("material"))){
                         warehouseCode = item.get("warehouse");
                         break;
                     }

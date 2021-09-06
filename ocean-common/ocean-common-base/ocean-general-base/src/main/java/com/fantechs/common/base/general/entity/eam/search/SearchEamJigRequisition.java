@@ -10,6 +10,12 @@ import java.io.Serializable;
 public class SearchEamJigRequisition extends BaseQuery implements Serializable {
 
     /**
+     * 领用状态（0-已归还 1-已领用）
+     */
+    @ApiModelProperty(name="requisitionStatus",value = "领用状态（0-已归还 1-已领用）")
+    private Byte requisitionStatus;
+
+    /**
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")

@@ -79,7 +79,7 @@ public class PickingOrderController {
 
     @ApiOperation("调拨出库单快捷发运")
     @PostMapping("/autoOutOrder")
-    public ResponseEntity autoOutOrder(@RequestParam Long outDeliveryOrderId){
-        return ControllerUtil.returnCRUD(pickingOrderService.autoOutOrder(outDeliveryOrderId));
+    public ResponseEntity autoOutOrder(@RequestParam Long outDeliveryOrderId,@RequestParam Byte orderTypeId){
+        return ControllerUtil.returnCRUD(pickingOrderService.autoOutOrder(outDeliveryOrderId,orderTypeId));
     }
 }

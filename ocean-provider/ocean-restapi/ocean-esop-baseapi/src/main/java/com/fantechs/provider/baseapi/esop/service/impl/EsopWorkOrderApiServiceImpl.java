@@ -24,6 +24,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@org.springframework.stereotype.Service
+@Service
 public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
     private static final Logger log = LoggerFactory.getLogger(EsopLineServiceImpl.class);
     @Resource

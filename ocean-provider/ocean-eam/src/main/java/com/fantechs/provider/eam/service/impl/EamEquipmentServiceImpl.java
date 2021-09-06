@@ -112,6 +112,8 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                 eamEquipmentBarcode.setEquipmentStatus((byte)5);
             }
             eamEquipmentBarcodeMapper.insertList(eamEquipmentBarcodeList);
+        }else {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"请至少填一项条码信息");
         }
 
         //附件列表
@@ -313,6 +315,10 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         List<String> assetCodes = new ArrayList<>();
 
         for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodeList) {
+            if(StringUtils.isEmpty(eamEquipmentBarcode.getEquipmentBarcode(),eamEquipmentBarcode.getAssetCode())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "资产条码和设备条码不能为空");
+            }
+
             if(equipmentBarcodes.contains(eamEquipmentBarcode.getEquipmentBarcode())||assetCodes.contains(eamEquipmentBarcode.getAssetCode())){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "条码重复");
             }

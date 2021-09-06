@@ -1,7 +1,9 @@
 package com.fantechs.provider.esop.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.esop.EsopWiReleaseDetDto;
 import com.fantechs.common.base.general.dto.esop.EsopWiReleaseDto;
@@ -10,14 +12,17 @@ import com.fantechs.common.base.general.entity.esop.EsopWiReleaseDet;
 import com.fantechs.common.base.general.entity.esop.history.EsopHtWiRelease;
 import com.fantechs.common.base.general.entity.esop.history.EsopHtWiReleaseDet;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopWiRelease;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.esop.mapper.EsopHtWiReleaseDetMapper;
 import com.fantechs.provider.esop.mapper.EsopHtWiReleaseMapper;
 import com.fantechs.provider.esop.mapper.EsopWiReleaseDetMapper;
 import com.fantechs.provider.esop.mapper.EsopWiReleaseMapper;
+import com.fantechs.provider.esop.service.EsopIssueService;
 import com.fantechs.provider.esop.service.EsopWiReleaseService;
 import com.fantechs.provider.esop.service.socket.SocketService;
 import lombok.SneakyThrows;
@@ -25,10 +30,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -47,6 +49,10 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
     private EsopHtWiReleaseDetMapper esopHtWiReleaseDetMapper;
     @Resource
     private SocketService socketService;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private EsopIssueService esopIssueService;
 
     @Override
     public List<EsopWiReleaseDto> findList(SearchEsopWiRelease searchEsopWiRelease) {
@@ -165,9 +171,7 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
         EsopWiRelease.setStatus((byte)1);
         EsopWiRelease.setReleaseStatus((byte)2);
         int i = esopWiReleaseMapper.updateByPrimaryKeySelective(EsopWiRelease);
-        socketService.BatchInstructions(EsopWiRelease.getProLineId(),"1202","/#/YunZhiESOP?ip=");
-   //    socketService.BatchInstructions(EsopWiRelease.getProLineId(),"1202","http://qmsapp.donlim.com/esop/#/YunZhiESOP?ip=");
-
+        socketService.BatchInstructions(EsopWiRelease.getProLineId(),"1202","/#/YunZhiESOP?ip=", "1");
         return i;
     }
 

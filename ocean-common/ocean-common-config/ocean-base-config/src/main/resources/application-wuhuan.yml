@@ -1,9 +1,9 @@
 server:
   max-http-header-size: 10000000
   undertow:
-    max-http-post-size: 0
-    buffer-size: 1024
-    direct-buffers: true
+     max-http-post-size: 0
+     buffer-size: 1024
+     direct-buffers: true
   tomcat:
     basedir: /tmp/tomcat
 spring:
@@ -48,7 +48,7 @@ spring:
   redis:
     host: 10.5.2.92
     port: 6379
-    password:
+    password: qwe!@#
   jackson:
     date-format: yyyy-MM-dd HH:mm
     time-zone: GMT+8
@@ -82,14 +82,14 @@ ribbon:
 
 tx-lcn:
   client:
-    manager-address: 10.5.2.91:8070
+    manager-address: 10.5.2.92:8070
 
 feign:
   hystrix:
     enabled: false
   httpclient:
-    enabled: true
-    connection-timeout: 60000
+        enabled: true
+        connection-timeout: 60000
   compression:
     request:
       enabled: true

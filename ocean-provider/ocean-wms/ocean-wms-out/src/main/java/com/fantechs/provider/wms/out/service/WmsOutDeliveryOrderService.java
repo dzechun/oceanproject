@@ -33,4 +33,12 @@ public interface WmsOutDeliveryOrderService extends IService<WmsOutDeliveryOrder
      * @return
      */
     int updateStatus(List<Long> ids);
+
+    /**
+     * create by: Dylan
+     * description: 接口新增领料出库单
+     * create time:
+     * @return
+     */
+    int saveByApi(WmsOutDeliveryOrder wmsOutDeliveryOrder);
 }

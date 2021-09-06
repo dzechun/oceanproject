@@ -231,5 +231,11 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "productPalletId",value = "车间管理模块栈板表ID")
     private Long productPalletId;
 
+    /**
+     * TYPE-1 生产待作业拣货单 type=0
+     */
+    @Transient
+    private Integer type;
+
     private static final long serialVersionUID = 1L;
 }

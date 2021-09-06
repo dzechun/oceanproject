@@ -79,10 +79,6 @@ public interface BaseFeignApi {
     @PostMapping("/baseStorage/detail")
     ResponseEntity<BaseStorage> detail(@ApiParam(value = "id", required = true) @RequestParam(value = "id") Long id);
 
-    @ApiOperation(value = "获取物料信息", notes = "获取物料信息")
-    @PostMapping(value = "/baseMaterial/findList")
-    ResponseEntity<List<BaseMaterial>> findSmtMaterialList(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterial searchBaseMaterial);
-
     @ApiOperation("根据条件查询物料对应储位信息列表")
     @PostMapping("/baseStorageMaterial/findList")
     ResponseEntity<List<BaseStorageMaterial>> findStorageMaterialList(@ApiParam(value = "查询对象") @RequestBody SearchBaseStorageMaterial searchBaseStorageMaterial);
@@ -457,6 +453,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseProductModel/add")
     ResponseEntity add(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody BaseProductModel baseProductModel);
 
+    @ApiOperation("新增产品型号并返回对象")
+    @PostMapping("/baseProductModel/addForReturn")
+    ResponseEntity<BaseProductModel> addForReturn(@ApiParam(value = "必传：productModelCode、productModelName",required = true) @RequestBody BaseProductModel baseProductModel);
+
     @ApiOperation("批量新增物料信息")
     @PostMapping("/baseMaterial/add")
     ResponseEntity add(@ApiParam(value = "物料信息集合") @RequestBody BaseMaterial baseMaterials);
@@ -468,4 +468,18 @@ public interface BaseFeignApi {
     @ApiOperation("用户绑定供应商列表")
     @PostMapping("/baseSupplierReUser/findList")
     ResponseEntity<List<BaseSupplierReUser>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSupplierReUser searchBaseSupplierReUser);
+
+    @ApiOperation("增加客户信息")
+    @PostMapping("/baseCustomer/saveByApi")
+    ResponseEntity saveByApi(@ApiParam(value = "必传：customer_code",required = true)@RequestBody @Validated BaseCustomer baseCustomer);
+
+    @ApiOperation("增加库位信息")
+    @PostMapping("/baseStorage/saveByApi")
+    ResponseEntity saveByApi(@ApiParam(value = "必传：storageCode",required = true)@RequestBody @Validated BaseStorage baseStorage);
+
+    @ApiOperation("工作区域列表")
+    @PostMapping("/baseWorkingArea/findList")
+    ResponseEntity<List<BaseWorkingAreaDto>> findWorkingAreaList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWorkingArea searchBaseWorkingArea);
+
+
 }

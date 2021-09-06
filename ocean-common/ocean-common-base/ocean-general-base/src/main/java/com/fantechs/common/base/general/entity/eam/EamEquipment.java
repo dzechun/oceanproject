@@ -76,6 +76,7 @@ public class EamEquipment extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="equipmentCategoryId",value = "设备类别ID")
     @Column(name = "equipment_category_id")
+    @NotNull(message = "设备类别不能为空")
     private Long equipmentCategoryId;
 
     /**

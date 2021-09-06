@@ -310,4 +310,27 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     public List<StorageRuleDto> LastStorage(Map<String, Object> map) {
         return baseStorageMapper.LastStorage(map);
     }
+
+    @Override
+    public int saveByApi(BaseStorage baseStorage) {
+        Example example = new Example(BaseStorage.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("storageCode",baseStorage.getStorageCode());
+        criteria.andEqualTo("organizationId",baseStorage.getOrganizationId());
+        BaseStorage baseStorageExist = baseStorageMapper.selectOneByExample(example);
+        int i= 0;
+        if(StringUtils.isEmpty(baseStorageExist)) {
+            baseStorage.setCreateTime(new Date());
+            baseStorage.setCreateUserId((long) 1);
+            baseStorage.setModifiedUserId((long) 1);
+            baseStorage.setModifiedTime(new Date());
+            baseStorage.setIsDelete((byte) 1);
+            i = baseStorageMapper.insertSelective(baseStorage);
+        }else{
+            baseStorage.setStorageId(baseStorageExist.getStorageId());
+            baseStorage.setModifiedTime(new Date());
+            baseStorageMapper.updateByPrimaryKeySelective(baseStorage);
+        }
+        return i;
+    }
 }
