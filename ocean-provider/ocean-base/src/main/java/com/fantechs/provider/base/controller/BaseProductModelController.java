@@ -69,8 +69,8 @@ public class BaseProductModelController {
 
     @ApiOperation("新增产品型号并返回对象")
     @PostMapping("/addForReturn")
-    public ResponseEntity addForReturn(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody @Validated BaseProductModel baseProductModel){
-        return ControllerUtil.returnCRUD(baseProductModelService.save(baseProductModel));
+    public ResponseEntity<BaseProductModel> addForReturn(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody @Validated BaseProductModel baseProductModel){
+        return ControllerUtil.returnSuccess("成功", baseProductModelService.addForReturn(baseProductModel));
     }
 
     @ApiOperation("获取详情")
