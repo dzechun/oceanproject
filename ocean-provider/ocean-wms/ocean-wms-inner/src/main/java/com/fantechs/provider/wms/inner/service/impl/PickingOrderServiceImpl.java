@@ -1070,7 +1070,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         // 拣货数量小于等于计划数量
                         if(wmsInPutawayOrderDet.getActualQty().compareTo(det.getPlanQty())<1){
                             isBeyond = false;
-                            if(det.getActualQty().add(wmsInPutawayOrderDet.getActualQty()).compareTo(det.getPlanQty())==0){
+                            if(wmsInPutawayOrderDet.getActualQty().compareTo(det.getPlanQty())==0){
                                 wmsInPutawayOrderDet.setWorkEndTime(new Date());
                             }
                         }
@@ -1200,18 +1200,21 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsIn.setInventoryId(wmsInnerInventory.getInventoryId());
             if(isBeyond){
                 BigDecimal qty = wmsInPutawayOrderDet.getActualQty();
-                if(StringUtils.isNotEmpty(wmsIn.getPackingQty()) && wmsInPutawayOrderDet.getActualQty().compareTo(wmsIn.getPackingQty())==1){
+                if(StringUtils.isNotEmpty(wmsIn.getPackingQty()) && wmsInPutawayOrderDet.getActualQty().compareTo(wmsIn.getPackingQty())>-1){
                     qty = wmsInPutawayOrderDet.getActualQty().subtract(wmsIn.getPackingQty());
                     wmsIn.setPackingQty(wmsIn.getPackingQty().subtract(wmsIn.getPackingQty()));
                     wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsIn);
                 }
-                //查询库存是否足够
-                WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = new WmsInnerJobOrderDetDto();
-                BeanUtil.copyProperties(wmsInPutawayOrderDet,wmsInnerJobOrderDetDto);
-                wmsInnerJobOrderDetDto.setActualQty(qty);
-                this.subtract(wmsInnerJobOrderDetDto,1,null);
+                if(StringUtils.isNotEmpty(qty) && qty.compareTo(BigDecimal.ZERO)==1){
+                    //查询库存是否足够
+                    WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = new WmsInnerJobOrderDetDto();
+                    BeanUtil.copyProperties(wmsInPutawayOrderDet,wmsInnerJobOrderDetDto);
+                    wmsInnerJobOrderDetDto.setActualQty(qty);
+                    this.subtract(wmsInnerJobOrderDetDto,1,null);
+                }
             }else {
                 wmsIn.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInPutawayOrderDet.getActualQty()));
+                wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsIn);
             }
         //}
         //加库存
