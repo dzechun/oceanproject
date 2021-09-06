@@ -51,6 +51,7 @@
     sposd.inner_carton_code,
     sposd.location_num,
     sposd.device_code,
+    sposd.dominant_term_code,
     sposd.material_id,
     sposd.supplier_id,
     sposd.drawing_number,
