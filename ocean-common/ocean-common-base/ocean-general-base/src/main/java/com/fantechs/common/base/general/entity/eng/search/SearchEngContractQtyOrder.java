@@ -50,4 +50,10 @@ public class SearchEngContractQtyOrder extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name="materialPurpose",value = "材料用途")
     private String materialPurpose;
+
+    /**
+     * 供应商名称
+     */
+    @ApiModelProperty(name="supplierName",value = "供应商名称")
+    private String supplierName;
 }
