@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.guest.eng.mapper.EngPurchaseReqOrderMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder">
+<mapper namespace="com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.eng.EngContractQtyOrder">
     <!--
-      WARNING - @mbg.generated
+      WARNING - @mbg.generated com.fantechs.common.base.general.entity.eng.EngContractQtyOrder
     -->
-    <id column="purchase_req_order_id" jdbcType="BIGINT" property="purchaseReqOrderId" />
-    <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode" />
-    <result column="purchase_req_order_name" jdbcType="VARCHAR" property="purchaseReqOrderName" />
-    <result column="material_grade" jdbcType="VARCHAR" property="materialGrade" />
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
-    <result column="location_num" jdbcType="VARCHAR" property="locationNum" />
-    <result column="design_qty" jdbcType="VARCHAR" property="designQty" />
-    <result column="surplus_qty" jdbcType="VARCHAR" property="surplusQty" />
-    <result column="purchase_req_qty" jdbcType="VARCHAR" property="purchaseReqQty" />
-    <result column="purchase_req_explain" jdbcType="VARCHAR" property="purchaseReqExplain" />
+    <id column="contract_qty_order_id" jdbcType="BIGINT" property="contractQtyOrderId" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="device_code" jdbcType="VARCHAR" property="deviceCode" />
     <result column="dominant_term_code" jdbcType="VARCHAR" property="dominantTermCode" />
+    <result column="location_num" jdbcType="VARCHAR" property="locationNum" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_purpose" jdbcType="VARCHAR" property="materialPurpose" />
-    <result column="purchase_explain" jdbcType="VARCHAR" property="purchaseExplain" />
+    <result column="pur_qty" jdbcType="DECIMAL" property="purQty" />
+    <result column="profession_code" jdbcType="VARCHAR" property="professionCode" />
+    <result column="profession_name" jdbcType="VARCHAR" property="professionName" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -32,27 +29,25 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eng.EngPurchaseReqOrderDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eng.EngContractQtyOrderDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
-    ecqo.purchase_req_order_id,
-    ecqo.purchase_req_order_code,
-    ecqo.purchase_req_order_name,
-    ecqo.material_grade,
-    ecqo.material_code,
-    ecqo.location_num,
-    ecqo.design_qty,
-    ecqo.surplus_qty,
-    ecqo.purchase_req_qty,
-    ecqo.purchase_req_explain,
+    ecqo.contract_qty_order_id,
+    ecqo.supplier_id,
+    ecqo.contract_code,
     ecqo.device_code,
     ecqo.dominant_term_code,
+    ecqo.location_num,
+    ecqo.material_code,
     ecqo.material_purpose,
-    ecqo.purchase_explain,
+    ecqo.pur_qty,
+    ecqo.profession_code,
+    ecqo.profession_name,
     ecqo.status,
     ecqo.remark,
     ecqo.org_id,
@@ -69,32 +64,34 @@
     select <include refid="Base_Column_List"></include>,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
+    bs.supplier_name,
     bo.organization_name
-    from eng_purchase_req_order ecqo
+    from eng_contract_qty_order ecqo
     left join ocean_v2.sys_user u on ecqo.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ecqo.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_supplier bs ON ecqo.supplier_id = bs.supplier_id
     left join fantech_imes_v2.base_organization bo ON ecqo.org_id = bo.organization_id
     <where>
-      <if test="purchaseReqOrderCode != null and purchaseReqOrderCode!=''">
-        and ecqo.purchaseReqOrder_code like CONCAT('%', #{purchaseReqOrderCode}, '%')
+      <if test="contractCode != null and contractCode!='' and codeQueryMark!=1">
+        and ecqo.contract_code like CONCAT('%', #{contractCode}, '%')
       </if>
-      <if test="purchaseReqOrderName != null and purchaseReqOrderName!=''">
-        and ecqo.purchaseReqOrder_name like CONCAT('%', #{purchaseReqOrderName}, '%')
+      <if test="professionName != null and professionName!=''">
+        and ecqo.profession_name like CONCAT('%', #{professionName}, '%')
       </if>
-      <if test="materialGrade != null and materialGrade!=''">
-        and ecqo.material_grade like CONCAT('%', #{materialGrade}, '%')
+      <if test="contractCode != null and contractCode!='' and codeQueryMark==1">
+        and ecqo.contract_code = #{contractCode}
+      </if>
+      <if test="deviceCode != null and deviceCode!=''">
+        and ecqo.device_code like CONCAT('%', #{deviceCode}, '%')
+      </if>
+      <if test="dominantTermCode != null and dominantTermCode!=''">
+        and ecqo.dominant_term_code like CONCAT('%', #{dominantTermCode}, '%')
+      </if>
+      <if test="locationNum != null and locationNum!=''">
+        and ecqo.location_num like CONCAT('%', #{locationNum}, '%')
       </if>
       <if test="materialCode != null and materialCode!=''">
         and ecqo.material_code like CONCAT('%', #{materialCode}, '%')
-      </if>
-      <if test="materialPurpose != null and materialPurpose!=''">
-        and ecqo.material_purpose = #{materialPurpose}
-      </if>
-      <if test="locationNum != null and locationNum!=''">
-        and ecqo.location_num = #{locationNum}
-      </if>
-      <if test="deviceCode != null and deviceCode!=''">
-        and ecqo.device_code = #{deviceCode}
       </if>
       <if test="materialPurpose != null and materialPurpose!=''">
         and ecqo.material_purpose = #{materialPurpose}
@@ -112,5 +109,4 @@
     </where>
     order by ecqo.create_time desc
   </select>
-
 </mapper>

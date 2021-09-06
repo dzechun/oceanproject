@@ -530,7 +530,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             wmsOutDeliveryOrder.setModifiedUserId((long) 1);
             wmsOutDeliveryOrder.setModifiedTime(new Date());
             wmsOutDeliveryOrder.setIsDelete((byte) 1);
-            i = wmsOutDeliveryOrderMapper.insertSelective(wmsOutDeliveryOrder);
+            i = wmsOutDeliveryOrderMapper.insertUseGeneratedKeys(wmsOutDeliveryOrder);
 
             //明细
             List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();

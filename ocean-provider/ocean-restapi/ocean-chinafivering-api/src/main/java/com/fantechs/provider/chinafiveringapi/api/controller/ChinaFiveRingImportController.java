@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 
 @RestController
 @Api(tags = "中国五环")
-@RequestMapping("/webService")
+@RequestMapping("/webServiceImport")
 public class ChinaFiveRingImportController {
 
     @Resource

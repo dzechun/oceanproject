@@ -3,8 +3,10 @@ package com.fantechs.provider.base.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList;
-import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
+import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessCauseImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionExemptedListImport;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCause;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInventoryStatus;
 import com.fantechs.common.base.support.BaseService;
@@ -12,16 +14,17 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseHtInspectionExemptedListMapper;
 import com.fantechs.provider.base.mapper.BaseInspectionExemptedListMapper;
+import com.fantechs.provider.base.mapper.BaseMaterialMapper;
+import com.fantechs.provider.base.mapper.BaseSupplierMapper;
 import com.fantechs.provider.base.service.BaseInspectionExemptedListService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.common.BaseMapper;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -34,6 +37,10 @@ public class BaseInspectionExemptedListServiceImpl extends BaseService<BaseInspe
     private BaseInspectionExemptedListMapper baseInspectionExemptedListMapper;
     @Resource
     private BaseHtInspectionExemptedListMapper baseHtInspectionExemptedListMapper;
+    @Resource
+    private BaseMaterialMapper baseMaterialMapper;
+    @Resource
+    private BaseSupplierMapper baseSupplierMapper;
 
     @Override
     public List<BaseInspectionExemptedList> findList(Map<String, Object> map) {
@@ -110,5 +117,98 @@ public class BaseInspectionExemptedListServiceImpl extends BaseService<BaseInspe
         baseHtInspectionExemptedListMapper.insertList(list);
 
         return baseInspectionExemptedListMapper.deleteByIds(ids);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseInspectionExemptedListImport> baseInspectionExemptedListImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<BaseInspectionExemptedList> list = new LinkedList<>();
+        LinkedList<BaseHtInspectionExemptedList> htList = new LinkedList<>();
+        LinkedList<BaseInspectionExemptedListImport> inspectionExemptedListImports = new LinkedList<>();
+
+        for (int i = 0; i < baseInspectionExemptedListImports.size(); i++) {
+            BaseInspectionExemptedListImport baseInspectionExemptedListImport = baseInspectionExemptedListImports.get(i);
+            Integer objType = baseInspectionExemptedListImport.getObjType();
+            String materialCode = baseInspectionExemptedListImport.getMaterialCode();
+            String customerCode = baseInspectionExemptedListImport.getCustomerCode();
+            String supplierCode = baseInspectionExemptedListImport.getSupplierCode();
+
+            if (StringUtils.isEmpty(
+                    objType,materialCode
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断物料信息是否存在
+            Example example1 = new Example(BaseMaterial.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId())
+                     .andEqualTo("materialCode", materialCode);
+            BaseMaterial baseMaterial = baseMaterialMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(baseMaterial)) {
+                fail.add(i + 4);
+                continue;
+            }
+            baseInspectionExemptedListImport.setMaterialId(baseMaterial.getMaterialId());
+
+
+            //判断客户信息是否存在
+            Example example2 = new Example(BaseSupplier.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("organizationId", currentUser.getOrganizationId())
+                    .andEqualTo("supplierCode", objType == 1 ? supplierCode : customerCode)
+                    .andEqualTo("supplierType", objType);
+            BaseSupplier baseSupplier = baseSupplierMapper.selectOneByExample(example2);
+            if (StringUtils.isEmpty(baseSupplier)) {
+                fail.add(i + 4);
+                continue;
+            }
+            if(objType == 1){
+                baseInspectionExemptedListImport.setSupplierId(baseSupplier.getSupplierId());
+            }else if(objType == 2){
+                baseInspectionExemptedListImport.setCustomerId(baseSupplier.getSupplierId());
+            }
+
+            inspectionExemptedListImports.add(baseInspectionExemptedListImport);
+        }
+
+        if (StringUtils.isNotEmpty(inspectionExemptedListImports)){
+
+            for (BaseInspectionExemptedListImport baseInspectionExemptedListImport : inspectionExemptedListImports) {
+                BaseInspectionExemptedList baseInspectionExemptedList = new BaseInspectionExemptedList();
+                BeanUtils.copyProperties(baseInspectionExemptedListImport,baseInspectionExemptedList);
+                baseInspectionExemptedList.setObjType(baseInspectionExemptedListImport.getObjType().byteValue());
+                baseInspectionExemptedList.setCreateTime(new Date());
+                baseInspectionExemptedList.setCreateUserId(currentUser.getUserId());
+                baseInspectionExemptedList.setModifiedTime(new Date());
+                baseInspectionExemptedList.setModifiedUserId(currentUser.getUserId());
+                baseInspectionExemptedList.setOrgId(currentUser.getOrganizationId());
+                baseInspectionExemptedList.setStatus((byte)1);
+                list.add(baseInspectionExemptedList);
+            }
+            success = baseInspectionExemptedListMapper.insertList(list);
+
+            if(StringUtils.isNotEmpty(list)){
+                for (BaseInspectionExemptedList baseInspectionExemptedList : list) {
+                    BaseHtInspectionExemptedList baseHtInspectionExemptedList = new BaseHtInspectionExemptedList();
+                    BeanUtils.copyProperties(baseInspectionExemptedList, baseHtInspectionExemptedList);
+                    htList.add(baseHtInspectionExemptedList);
+                }
+                baseHtInspectionExemptedListMapper.insertList(htList);
+            }
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }

@@ -25,6 +25,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -49,6 +50,10 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
     private BaseMaterialSupplierMapper baseMaterialSupplierMapper;
     @Resource
     private BaseInspectionExemptedListMapper baseInspectionExemptedListMapper;
+    @Resource
+    private BaseInspectionItemMapper baseInspectionItemMapper;
+    @Resource
+    private BaseSampleProcessMapper baseSampleProcessMapper;
 
     @Override
     public List<BaseInspectionStandard> findList(Map<String, Object> map) {
@@ -280,6 +285,9 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
             String supplierCode = baseInspectionStandardImport.getSupplierCode();
             Integer inspectionType = baseInspectionStandardImport.getInspectionType();
             String inspectionWayCode = baseInspectionStandardImport.getInspectionWayCode();
+            String inspectionItemCodeBig = baseInspectionStandardImport.getInspectionItemCodeBig();
+            String inspectionItemCodeSmall = baseInspectionStandardImport.getInspectionItemCodeSmall();
+            String sampleProcessCode = baseInspectionStandardImport.getSampleProcessCode();
 
             if (StringUtils.isEmpty(
                     inspectionStandardCode,inspectionStandardName
@@ -298,22 +306,7 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
                 continue;
             }
 
-            //检验方式
-            if(StringUtils.isNotEmpty(inspectionWayCode,inspectionType)){
-                Example example2 = new Example(BaseInspectionWay.class);
-                Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("orgId", user.getOrganizationId())
-                        .andEqualTo("inspectionWayCode",inspectionWayCode)
-                        .andEqualTo("inspectionType",inspectionType);
-                BaseInspectionWay baseInspectionWay = baseInspectionWayMapper.selectOneByExample(example2);
-                if (StringUtils.isEmpty(baseInspectionWay)){
-                    fail.add(i+4);
-                    continue;
-                }
-                baseInspectionStandardImport.setInspectionWayId(baseInspectionWay.getInspectionWayId());
-            }
-
-            //物料编码是否为空，为空则为通用检验标准
+            //物料编码是否为空
             if(StringUtils.isNotEmpty(materialCode)){
                 Example example1 = new Example(BaseMaterial.class);
                 Example.Criteria criteria1 = example1.createCriteria();
@@ -325,17 +318,6 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
                     continue;
                 }
                 baseInspectionStandardImport.setMaterialId(baseMaterial.getMaterialId());
-            }else {
-                baseInspectionStandardImport.setMaterialId((long)0);
-                example.clear();
-                example.createCriteria().andEqualTo("orgId", user.getOrganizationId())
-                        .andEqualTo("materialId",0)
-                        .andEqualTo("inspectionWayId", baseInspectionStandardImport.getInspectionWayId());
-                BaseInspectionStandard baseInspectionStandard = baseInspectionStandardMapper.selectOneByExample(example);
-                if (StringUtils.isNotEmpty(baseInspectionStandard)) {
-                    fail.add(i+4);
-                    continue;
-                }
             }
 
             //客户编码
@@ -382,9 +364,113 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
                 baseInspectionStandardImport.setSupplierId(baseSupplier.getSupplierId());
             }
 
+            //检验方式
+            if(StringUtils.isNotEmpty(inspectionWayCode,inspectionType)){
+                Example example2 = new Example(BaseInspectionWay.class);
+                Example.Criteria criteria2 = example2.createCriteria();
+                criteria2.andEqualTo("orgId", user.getOrganizationId())
+                        .andEqualTo("inspectionWayCode",inspectionWayCode)
+                        .andEqualTo("inspectionType",inspectionType);
+                BaseInspectionWay baseInspectionWay = baseInspectionWayMapper.selectOneByExample(example2);
+                if (StringUtils.isEmpty(baseInspectionWay)){
+                    fail.add(i+4);
+                    continue;
+                }
+                baseInspectionStandardImport.setInspectionWayId(baseInspectionWay.getInspectionWayId());
+            }
+
+            //物料编码与客户编码为空则默认为通用检验标准
+            if(StringUtils.isEmpty(materialCode,supplierCode)) {
+                baseInspectionStandardImport.setMaterialId((long)0);
+                example.clear();
+                example.createCriteria().andEqualTo("orgId", user.getOrganizationId())
+                        .andEqualTo("materialId",0)
+                        .andEqualTo("inspectionWayId", baseInspectionStandardImport.getInspectionWayId());
+                BaseInspectionStandard baseInspectionStandard = baseInspectionStandardMapper.selectOneByExample(example);
+                if (StringUtils.isNotEmpty(baseInspectionStandard)) {
+                    fail.add(i+4);
+                    continue;
+                }
+            }
+
+            //---------明细-----------
+            //检验项目
+            Example example6 = new Example(BaseInspectionItem.class);
+            Example.Criteria criteria6 = example6.createCriteria();
+            if(StringUtils.isNotEmpty(inspectionItemCodeSmall)){
+                criteria6.andEqualTo("organizationId",user.getOrganizationId())
+                        .andEqualTo("inspectionItemCode",inspectionItemCodeSmall);
+                BaseInspectionItem baseInspectionItem = baseInspectionItemMapper.selectOneByExample(example6);
+                if (StringUtils.isEmpty(baseInspectionItem)) {
+                    fail.add(i+4);
+                    continue;
+                }
+                baseInspectionStandardImport.setInspectionItemId(baseInspectionItem.getInspectionItemId());
+            }else if(StringUtils.isNotEmpty(inspectionItemCodeBig)){
+                criteria6.andEqualTo("organizationId",user.getOrganizationId())
+                        .andEqualTo("inspectionItemCode",inspectionItemCodeBig);
+                BaseInspectionItem baseInspectionItem = baseInspectionItemMapper.selectOneByExample(example6);
+                if (StringUtils.isEmpty(baseInspectionItem)) {
+                    fail.add(i+4);
+                    continue;
+                }
+                baseInspectionStandardImport.setInspectionItemId(baseInspectionItem.getInspectionItemId());
+            }
+
+            //抽样过程
+            if(StringUtils.isNotEmpty(sampleProcessCode)){
+                Example example7 = new Example(BaseSampleProcess.class);
+                Example.Criteria criteria7 = example7.createCriteria();
+                criteria7.andEqualTo("orgId",user.getOrganizationId())
+                        .andEqualTo("sampleProcessCode",sampleProcessCode);
+                BaseSampleProcess baseSampleProcess = baseSampleProcessMapper.selectOneByExample(example7);
+                if (StringUtils.isEmpty(baseSampleProcess)) {
+                    fail.add(i+4);
+                    continue;
+                }
+                baseInspectionStandardImport.setSampleProcessId(baseSampleProcess.getSampleProcessId());
+            }
+
             inspectionStandardImports.add(baseInspectionStandardImport);
         }
 
+        if(StringUtils.isNotEmpty(inspectionStandardImports)){
+            //对合格数据进行分组
+            HashMap<String, List<BaseInspectionStandardImport>> map = inspectionStandardImports.stream().collect(Collectors.groupingBy(BaseInspectionStandardImport::getInspectionStandardCode, HashMap::new, Collectors.toList()));
+            Set<String> codeList = map.keySet();
+            for (String code : codeList) {
+                List<BaseInspectionStandardImport> baseInspectionStandardImports1 = map.get(code);
+                BaseInspectionStandard baseInspectionStandard = new BaseInspectionStandard();
+                //新增检验标准父级数据
+                BeanUtils.copyProperties(baseInspectionStandardImports1.get(0), baseInspectionStandard);
+                baseInspectionStandard.setCreateTime(new Date());
+                baseInspectionStandard.setCreateUserId(user.getUserId());
+                baseInspectionStandard.setModifiedUserId(user.getUserId());
+                baseInspectionStandard.setModifiedTime(new Date());
+                baseInspectionStandard.setOrgId(user.getOrganizationId());
+                baseInspectionStandard.setStatus((byte)1);
+                baseInspectionStandard.setInspectionType(baseInspectionStandardImports1.get(0).getInspectionType().byteValue());
+                success += baseInspectionStandardMapper.insertUseGeneratedKeys(baseInspectionStandard);
+
+                //履历
+                BaseHtInspectionStandard baseHtInspectionStandard = new BaseHtInspectionStandard();
+                BeanUtils.copyProperties(baseInspectionStandard, baseHtInspectionStandard);
+                htList.add(baseHtInspectionStandard);
+
+                //新增检验标准明细数据
+                for (BaseInspectionStandardImport baseInspectionStandardImport : baseInspectionStandardImports1) {
+                    BaseInspectionStandardDet baseInspectionStandardDet = new BaseInspectionStandardDet();
+                    BeanUtils.copyProperties(baseInspectionStandardImport, baseInspectionStandardDet);
+                    baseInspectionStandardDet.setInspectionStandardId(baseInspectionStandard.getInspectionStandardId());
+                    baseInspectionStandardDet.setStatus((byte) 1);
+                    baseInspectionStandardDet.setIfMustInspection(baseInspectionStandardImport.getIfMustInspection().byteValue());
+                    baseInspectionStandardDet.setInspectionTag(baseInspectionStandardImport.getInspectionTag().byteValue());
+                    detList.add(baseInspectionStandardDet);
+                }
+                baseInspectionStandardDetMapper.insertList(detList);
+            }
+            baseHtInspectionStandardMapper.insertList(htList);
+        }
 
         resultMap.put("操作成功总数",success);
         resultMap.put("操作失败行数",fail);

@@ -1,6 +1,9 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessCauseImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionItemImport;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionItem;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionItem;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionItem;
@@ -15,14 +18,17 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -32,6 +38,7 @@ import java.util.List;
 @Api(tags = "检验项目")
 @RequestMapping("/baseInspectionItem")
 @Validated
+@Slf4j
 public class BaseInspectionItemController {
 
     @Resource
@@ -98,6 +105,31 @@ public class BaseInspectionItemController {
         EasyPoiUtils.exportExcel(list, "导出信息", "检验项目", BaseInspectionItem.class, "检验项目.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseInspectionItemImport> baseInspectionItemImports = EasyPoiUtils.importExcel(file, 2, 1, BaseInspectionItemImport.class);
+            Map<String, Object> resultMap = baseInspectionItemService.importExcel(baseInspectionItemImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }
