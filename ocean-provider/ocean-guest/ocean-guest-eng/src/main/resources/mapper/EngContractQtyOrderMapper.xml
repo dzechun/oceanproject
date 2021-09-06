@@ -70,13 +70,11 @@
       <if test="contractCode != null and contractCode!='' and codeQueryMark!=1">
         and ecqo.contract_code like CONCAT('%', #{contractCode}, '%')
       </if>
-<<<<<<< HEAD:ocean-provider/ocean-guest/ocean-eng/src/main/resources/mapper/EngContractQtyOrderMapper.xml
       <if test="professionName != null and professionName!=''">
         and ecqo.profession_name like CONCAT('%', #{professionName}, '%')
-=======
+      </if>
       <if test="contractCode != null and contractCode!='' and codeQueryMark==1">
         and ecqo.contract_code = #{contractCode}
->>>>>>> 1d9046651d69ee59060dce864956d480f9433506:ocean-provider/ocean-guest/ocean-guest-eng/src/main/resources/mapper/EngContractQtyOrderMapper.xml
       </if>
       <if test="deviceCode != null and deviceCode!=''">
         and ecqo.device_code like CONCAT('%', #{deviceCode}, '%')
