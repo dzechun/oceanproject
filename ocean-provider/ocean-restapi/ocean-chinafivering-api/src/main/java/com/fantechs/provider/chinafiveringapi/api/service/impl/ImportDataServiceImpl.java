@@ -22,7 +22,9 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.chinafiveringapi.api.service.ImportDataService;
+import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.io.BufferedReader;
@@ -85,7 +87,8 @@ public class ImportDataServiceImpl implements ImportDataService {
             String s8=s7.replaceAll("PPGUID","option1");
             String s9=s8.replaceAll("PSGUID","option2");
             String s10=s9.replaceAll("RDGUID","option3");
-            String s11=s10.replaceAll("专业","professionCode");
+            String s11=s10.replaceAll("专业","professionName");
+            String s12=s11.replaceAll("企业中文名称","professionCode");
 
             //同步到数据库
             int indexb=s11.indexOf("[");
@@ -93,6 +96,15 @@ public class ImportDataServiceImpl implements ImportDataService {
             String str=s11.substring(indexb,indexe+1);
             List<EngContractQtyOrder> listPO= BeanUtils.jsonToListObject(str,EngContractQtyOrder.class);
             for (EngContractQtyOrder engContractQtyOrder : listPO) {
+                //通过供应商名称找供应商ID
+                SearchBaseSupplier searchBaseSupplier=new SearchBaseSupplier();
+                searchBaseSupplier.setOrganizationId(1004L);
+                searchBaseSupplier.setSupplierName(engContractQtyOrder.getProfessionCode());
+                ResponseEntity<List<BaseSupplier>> responseEntityL=baseFeignApi.findSupplierList(searchBaseSupplier);
+                if(StringUtils.isNotEmpty(responseEntityL.getData())){
+                    engContractQtyOrder.setSupplierId(responseEntityL.getData().get(0).getSupplierId());
+                }
+                engContractQtyOrder.setProfessionCode("");
                 engContractQtyOrder.setOrgId(1004L);
                 engFeignApi.saveByApi(engContractQtyOrder);
             }
