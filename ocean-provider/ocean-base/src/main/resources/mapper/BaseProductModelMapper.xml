@@ -68,6 +68,12 @@
             <if test="productModelDesc!=null and productModelDesc!=''">
                 and spm.product_model_desc like CONCAT('%', #{productModelDesc}, '%')
             </if>
+            <if test="productModelName!=null and productModelName!=''">
+                and spm.product_model_name like CONCAT('%', #{productModelName}, '%')
+            </if>
+            <if test="productFamilyName!=null and productFamilyName!=''">
+                and bpf.product_family_name like CONCAT('%', #{productFamilyName}, '%')
+            </if>
             <if test="status!=null">
                 and spm.status=#{status}
             </if>
