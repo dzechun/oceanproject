@@ -14,8 +14,8 @@ import tk.mybatis.spring.annotation.MapperScan;
 @MapperScan({"com.fantechs.provider.guest.eng.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider")
 @EnableDistributedTransaction
-public class OceanEngApplication {
+public class OceanGuestEngApplication {
     public static void main(String[] args) {
-        SpringApplication.run(OceanEngApplication.class, args);
+        SpringApplication.run(OceanGuestEngApplication.class, args);
     }
 }

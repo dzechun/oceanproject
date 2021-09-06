@@ -10,7 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "ocean-eng")
+@FeignClient(name = "ocean-guest-eng")
 public interface EngFeignApi {
 
     @ApiOperation("接口新增或修改合同量单信息")
