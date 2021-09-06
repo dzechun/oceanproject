@@ -10,9 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.fantechs.provider.api.guest.fivering</groupId>
-    <artifactId>ocean-fivering-api</artifactId>
+    <artifactId>ocean-ocean-fivering-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean-fivering-api</name>
+    <name>ocean-guest-fivering-api</name>
     <description>Demo project for Spring Boot</description>
     <dependencies>
         <dependency>

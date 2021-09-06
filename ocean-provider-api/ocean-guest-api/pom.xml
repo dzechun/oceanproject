@@ -18,7 +18,7 @@
     <modules>
         <module>ocean-guest-eng-api</module>
         <module>ocean-guest-leisai-api</module>
-        <module>ocean-fivering-api</module>
+        <module>ocean-guest-fivering-api</module>
     </modules>
 
 </project>
