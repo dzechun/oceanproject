@@ -1070,7 +1070,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         // 拣货数量小于等于计划数量
                         if(wmsInPutawayOrderDet.getActualQty().compareTo(det.getPlanQty())<1){
                             isBeyond = false;
-                            if(det.getActualQty().add(wmsInPutawayOrderDet.getActualQty()).compareTo(det.getPlanQty())==0){
+                            if(wmsInPutawayOrderDet.getActualQty().compareTo(det.getPlanQty())==0){
                                 wmsInPutawayOrderDet.setWorkEndTime(new Date());
                             }
                         }
@@ -1114,32 +1114,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     }else {
                         wmsInPutawayOrderDet.setOrderStatus((byte)4);
                     }
-//                    //已拣货数量为
-//                    if(StringUtils.isEmpty(det.getActualQty()))
-//                    if(StringUtils.isEmpty(det.getActualQty()) || (det.getActualQty().add(wmsInPutawayOrderDet.getActualQty())).compareTo(det.getDistributionQty())==-1){
-//                        //拣货数量小于等于计划数量
-//                        isBeyond=false;
-//                    }else if(StringUtils.isNotEmpty(det.getActualQty()) && (det.getActualQty().add(wmsInPutawayOrderDet.getActualQty())).compareTo(det.getDistributionQty())==1){
-//                        //拣货数量超拣
-//                        //判断是否允许超拣
-//                        if(map.get("beyond").equals("false")){
-//                            //不允许超拣
-//                            throw new BizErrorException("领料拣货单超出计划数量");
-//                        }else {
-//                            //计算超出数量=（已拣货数量+拣货数量）-计划数量
-//
-//                            BigDecimal qty = ()
-//                        }
-//                        //判断库存是否足够
-//                        isBeyond=true;
-//                        wmsInPutawayOrderDet.setWorkEndTime(new Date());
-//                    }else{
-//                        if(map.get("lack").equals("false")){
-//                            //扣减分配数量
-//                            wmsInPutawayOrderDet.setOrderStatus((byte)5);
-//                        }
-//                        isBeyond=false;
-//                    }
                     totalQty = totalQty.add(wmsInPutawayOrderDet.getActualQty());
                     this.addDistribute(isBeyond,wmsInnerJobOrder,wmsInPutawayOrderDet);
                     if(StringUtils.isNotEmpty(det.getActualQty())){
@@ -1200,18 +1174,21 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsIn.setInventoryId(wmsInnerInventory.getInventoryId());
             if(isBeyond){
                 BigDecimal qty = wmsInPutawayOrderDet.getActualQty();
-                if(StringUtils.isNotEmpty(wmsIn.getPackingQty()) && wmsInPutawayOrderDet.getActualQty().compareTo(wmsIn.getPackingQty())==1){
+                if(StringUtils.isNotEmpty(wmsIn.getPackingQty()) && wmsInPutawayOrderDet.getActualQty().compareTo(wmsIn.getPackingQty())>-1){
                     qty = wmsInPutawayOrderDet.getActualQty().subtract(wmsIn.getPackingQty());
                     wmsIn.setPackingQty(wmsIn.getPackingQty().subtract(wmsIn.getPackingQty()));
                     wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsIn);
                 }
-                //查询库存是否足够
-                WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = new WmsInnerJobOrderDetDto();
-                BeanUtil.copyProperties(wmsInPutawayOrderDet,wmsInnerJobOrderDetDto);
-                wmsInnerJobOrderDetDto.setActualQty(qty);
-                this.subtract(wmsInnerJobOrderDetDto,1,null);
+                if(StringUtils.isNotEmpty(qty) && qty.compareTo(BigDecimal.ZERO)==1){
+                    //查询库存是否足够
+                    WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = new WmsInnerJobOrderDetDto();
+                    BeanUtil.copyProperties(wmsInPutawayOrderDet,wmsInnerJobOrderDetDto);
+                    wmsInnerJobOrderDetDto.setActualQty(qty);
+                    this.subtract(wmsInnerJobOrderDetDto,1,null);
+                }
             }else {
                 wmsIn.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInPutawayOrderDet.getActualQty()));
+                wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsIn);
             }
         //}
         //加库存

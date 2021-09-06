@@ -68,6 +68,12 @@
             <if test="productModelDesc!=null and productModelDesc!=''">
                 and shpm.product_model_desc like CONCAT('%', #{productModelDesc}, '%')
             </if>
+            <if test="productModelName!=null and productModelName!=''">
+                and shpm.product_model_name like CONCAT('%', #{productModelName}, '%')
+            </if>
+            <if test="productFamilyName!=null and productFamilyName!=''">
+                and bpf.product_family_name like CONCAT('%', #{productFamilyName}, '%')
+            </if>
             <if test="orgId!=null">
                 and shpm.org_id=#{orgId}
             </if>
