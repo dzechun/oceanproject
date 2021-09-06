@@ -96,6 +96,9 @@
       <if test="materialPurpose != null and materialPurpose!=''">
         and ecqo.material_purpose = #{materialPurpose}
       </if>
+      <if test="supplierName != null and supplierName!=''">
+        and bs.supplier_name = #{supplierName}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ecqo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

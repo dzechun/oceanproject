@@ -109,6 +109,9 @@
       <if test="purchaseReqExplain != null and purchaseReqExplain!=''">
         and ecqo.purchase_req_explain = #{purchaseReqExplain}
       </if>
+      <if test="purchaseExplain != null and purchaseExplain!=''">
+        and ecqo.purchase_explain = #{purchaseExplain}
+      </if>
       <if test="dominantTermCode != null and dominantTermCode!=''">
         and ecqo.dominant_term_code = #{dominantTermCode}
       </if>

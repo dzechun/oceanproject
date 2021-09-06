@@ -127,6 +127,9 @@
       <if test="orgId != null">
         and wohdo.org_id = #{orgId}
       </if>
+      <if test="orderStatus!=null">
+        and wohdo.order_status = #{orderStatus}
+      </if>
     </where>
     order by wohdo.modified_time desc
   </select>

@@ -22,9 +22,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.chinafiveringapi.api.service.ImportDataService;
-import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.io.BufferedReader;
@@ -45,9 +43,9 @@ public class ImportDataServiceImpl implements ImportDataService {
     @Resource
     BaseFeignApi baseFeignApi;
     @Resource
-    EngFeignApi engFeignApi;
-    @Resource
     OutFeignApi outFeignApi;
+    @Resource
+    EngFeignApi engFeignApi;
 
     @Override
     /**
@@ -91,9 +89,9 @@ public class ImportDataServiceImpl implements ImportDataService {
             String s12=s11.replaceAll("企业中文名称","professionCode");
 
             //同步到数据库
-            int indexb=s11.indexOf("[");
-            int indexe=s11.lastIndexOf("]");
-            String str=s11.substring(indexb,indexe+1);
+            int indexb=s12.indexOf("[");
+            int indexe=s12.lastIndexOf("]");
+            String str=s12.substring(indexb,indexe+1);
             List<EngContractQtyOrder> listPO= BeanUtils.jsonToListObject(str,EngContractQtyOrder.class);
             for (EngContractQtyOrder engContractQtyOrder : listPO) {
                 //通过供应商名称找供应商ID

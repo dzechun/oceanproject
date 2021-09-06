@@ -24,6 +24,12 @@ public class SearchBaseSignature extends BaseQuery implements Serializable {
     private String materialCode;
 
     /**
+     * 物料名称
+     */
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
+
+    /**
      * 物料ID集合
      */
     @ApiModelProperty(name="materialIds" ,value="物料ID集合")

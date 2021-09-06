@@ -75,9 +75,21 @@ public class SearchBaseMaterial extends BaseQuery implements Serializable {
     @ApiModelProperty(name="organizationId",value = "组织id")
     private Long organizationId;
 
+    /**
+     * 物料类别
+     */
     @ApiModelProperty(name = "materialCategoryId",value = "物料类别")
     private Long materialCategoryId;
 
+    /**
+     * 是否启用配置项物料类别
+     */
     @ApiModelProperty(name = "ifUseSpecMaterialCategory",value = "是否启用配置项物料类别")
     private Byte ifUseSpecMaterialCategory;
+
+    /**
+     * 物料属性(0.半成品，1.成品)
+     */
+    @ApiModelProperty(name = "materialProperty",value = "物料属性(0.半成品，1.成品)")
+    private Integer materialProperty;
 }

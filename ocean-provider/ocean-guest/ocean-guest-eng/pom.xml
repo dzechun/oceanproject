@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.fantechs.provider.ocean.eng</groupId>
+    <groupId>com.fantechs.provider.ocean.guest.eng</groupId>
     <artifactId>ocean-guest-eng</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-guest-eng</name>

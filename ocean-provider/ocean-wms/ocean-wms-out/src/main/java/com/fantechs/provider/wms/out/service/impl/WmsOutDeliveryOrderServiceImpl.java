@@ -10,7 +10,6 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
-import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -211,6 +210,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }else if(wmsOutDeliveryOrder.getOrderTypeId()==8){
             wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("LLCK-"));
         }
+        wmsOutDeliveryOrder.setAuditStatus((byte) 0);
         wmsOutDeliveryOrder.setCreateTime(new Date());
         wmsOutDeliveryOrder.setCreateUserId(user.getUserId());
         wmsOutDeliveryOrder.setModifiedTime(new Date());
