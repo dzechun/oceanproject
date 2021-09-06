@@ -64,9 +64,9 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
 
     public int save(EngPackingOrderSummaryDto engPackingOrderSummaryDto) {
         SysUser user = getUser();
-
+        EngPackingOrder engPackingOrder = getEngPackingOrder(user.getOrganizationId(), null,engPackingOrderSummaryDto.getPackingOrderId());
         //规则校验
-        check(engPackingOrderSummaryDto,user);
+        check(engPackingOrderSummaryDto,user,engPackingOrder);
 
         //判断编码是否重复
         Example example = new Example(EngPackingOrderSummary.class);
@@ -77,7 +77,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             throw new BizErrorException("添加失败，编码重复");
         }
 
-        EngPackingOrder engPackingOrder = getEngPackingOrder(user.getOrganizationId(), null,engPackingOrderSummaryDto.getPackingOrderId());
+
         if(StringUtils.isNotEmpty(engPackingOrder)){
             engPackingOrderSummaryDto.setPackingOrderSummaryId(engPackingOrder.getPackingOrderId());
         }else{
@@ -115,7 +115,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
                  throw new BizErrorException("添加失败，未查询到上级数据");
             }
             //规则校验
-            check(dto,user);
+            check(dto,user,engPackingOrder);
 
             if (StringUtils.isNotEmpty(dto.getPackingOrderSummaryId())) {
                 int i = engPackingOrderSummaryMapper.updateByPrimaryKeySelective(dto);
@@ -319,7 +319,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         return engPackingOrder;
     }
 
-    public void check(EngPackingOrderSummaryDto dto, SysUser user){
+    public void check(EngPackingOrderSummaryDto dto, SysUser user,EngPackingOrder engPackingOrder){
         if (StringUtils.isEmpty(dto.getCartonCode()))
             throw new BizErrorException("添加失败，包装箱号不能为空");
         if (StringUtils.isEmpty(dto.getPurchaseReqOrderCode()))
@@ -333,7 +333,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         Example qtyExample = new Example(EngContractQtyOrder.class);
         Example.Criteria qtyCriteria = qtyExample.createCriteria();
         qtyCriteria.andEqualTo("contractCode",dto.getContractCode());
-        qtyCriteria.andEqualTo("supplierId",dto.getSupplierId());
+        qtyCriteria.andEqualTo("supplierId",engPackingOrder.getSupplierId());
         List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
         if(StringUtils.isEmpty(engContractQtyOrders))
             throw new BizErrorException("添加失败，未查询到合同量单");

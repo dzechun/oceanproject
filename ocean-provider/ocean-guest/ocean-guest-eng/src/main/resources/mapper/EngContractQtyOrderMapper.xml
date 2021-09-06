@@ -75,6 +75,9 @@
       <if test="contractCode != null and contractCode!='' and codeQueryMark!=1">
         and ecqo.contract_code like CONCAT('%', #{contractCode}, '%')
       </if>
+      <if test="supplierId != null and supplierId!=''">
+        and ecqo.supplier_id = #{supplierId}
+      </if>
       <if test="professionName != null and professionName!=''">
         and ecqo.profession_name like CONCAT('%', #{professionName}, '%')
       </if>
