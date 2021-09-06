@@ -41,6 +41,8 @@ public class EsopDeptServiceImpl extends BaseService<EsopDept> implements EsopDe
     @Override
     @LcnTransaction
     public List<BaseDept> addDept(Map<String, Object> map) throws ParseException {
+        map.put("isWas",1); //1为各个分公司
+        map.put("isDeleted",0); //新宝0为未删除 1为已删除
         List<EsopDept> list = esopDeptMapper.findList(map);
         List<BaseDept> baseDepts = new ArrayList<BaseDept>();
         Long orgId = baseUtils.getOrId();
@@ -50,7 +52,7 @@ public class EsopDeptServiceImpl extends BaseService<EsopDept> implements EsopDe
             }
         }
         ResponseEntity<List<BaseDept>> baseDeptlist = baseFeignApi.batchAddDept(baseDepts);
-        logsUtils.addlog((byte)1,(byte)1,orgId,null,null);
+    //    logsUtils.addlog((byte)1,(byte)1,orgId,null,null);
         return baseDeptlist.getData();
     }
 

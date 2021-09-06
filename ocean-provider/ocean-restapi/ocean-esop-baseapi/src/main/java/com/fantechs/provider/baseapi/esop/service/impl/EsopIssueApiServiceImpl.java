@@ -35,7 +35,7 @@ import java.util.Map;
 
 @org.springframework.stereotype.Service
 public class EsopIssueApiServiceImpl implements EsopIssueApiService {
-    private static final Logger log = LoggerFactory.getLogger(EsopLineServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(EsopIssueApiServiceImpl.class);
 
     @Resource
     private LogsUtils logsUtils;
@@ -62,32 +62,32 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
             CloseableHttpResponse response = null;
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(materialCode);
-            searchBaseMaterial.setOrgId(orgId);
-            ResponseEntity<List<BaseMaterial>> baseMaterials = baseFeignApi.findList(searchBaseMaterial);
-
+            searchBaseMaterial.setOrganizationId(orgId);
+            List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
+            if(StringUtils.isEmpty(baseMaterials))  throw new  BizErrorException("未查询到对应物料编码，请先同步物料");
             try {
                 response = httpClient.execute(get);
                 if (response != null && response.getStatusLine().getStatusCode() == 200) {
                     HttpEntity entity = response.getEntity();
                     result = EntityUtils.toString(entity);
                     Map<String, Object> map = JsonUtils.jsonToMap(result);
-                    Map<String, Object> data = (Map<String, Object>) map.get("data");
-                    List<Map<String,Object>> list = (List<Map<String,Object>>) data.get("data");
+                   /* Map<String, Object> data = (Map<String, Object>) map.get("data");*/
+                    List<Map<String,Object>> list = (List<Map<String,Object>>) map.get("data");
                     List<EsopIssue> esopIssues = new ArrayList<>();
                     for(int i=0;i<list.size();i++){
                         EsopIssue issue = new EsopIssue();
                         issue.setIssueName((String)list.get(i).get("defect_name"));
-                        issue.setRemark((String)list.get(i).get("num"));
-                        issue.setMaterialId(baseMaterials.getData().get(0).getMaterialId());
+                        issue.setRemark(list.get(i).get("num").toString());
+                        issue.setMaterialId(baseMaterials.get(0).getMaterialId());
                         issue.setCreateTime(new Date());
                         issue.setModifiedTime(new Date());
-                        issue.setOrgId(baseUtils.getOrId());
+                        issue.setOrgId(orgId);
                         issue.setStatus((byte)1);
                         esopIssues.add(issue);
                     }
                     esopFeignApi.batchAdd(esopIssues);
                 }
-                logsUtils.addlog((byte)1,(byte)1,orgId,result,materialCode);
+            //    logsUtils.addlog((byte)1,(byte)1,orgId,result,materialCode);
                 return 1;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -110,7 +110,7 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    return 0;
+    return 1;
     }
 
     @Override
