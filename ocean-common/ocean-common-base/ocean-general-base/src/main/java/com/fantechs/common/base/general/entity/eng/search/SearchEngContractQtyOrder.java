@@ -16,10 +16,22 @@ public class SearchEngContractQtyOrder extends BaseQuery implements Serializable
     private String contractCode;
 
     /**
+     * 专业
+     */
+    @ApiModelProperty(name="professionName",value = "专业")
+    private String professionName;
+
+    /**
      * 装置码
      */
     @ApiModelProperty(name="deviceCode",value = "装置码")
     private String deviceCode;
+
+    /**
+     * 主项号
+     */
+    @ApiModelProperty(name="dominantTermCode",value = "主项号")
+    private String dominantTermCode;
 
     /**
      * 位号

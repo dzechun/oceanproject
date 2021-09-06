@@ -14,6 +14,7 @@
     <result column="material_purpose" jdbcType="VARCHAR" property="materialPurpose" />
     <result column="pur_qty" jdbcType="DECIMAL" property="purQty" />
     <result column="profession_code" jdbcType="VARCHAR" property="professionCode" />
+    <result column="profession_name" jdbcType="VARCHAR" property="professionName" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -43,6 +44,7 @@
     ecqo.material_purpose,
     ecqo.pur_qty,
     ecqo.profession_code,
+    ecqo.profession_name,
     ecqo.status,
     ecqo.remark,
     ecqo.org_id,
@@ -68,8 +70,14 @@
       <if test="contractCode != null and contractCode!=''">
         and ecqo.contract_code like CONCAT('%', #{contractCode}, '%')
       </if>
+      <if test="professionName != null and professionName!=''">
+        and ecqo.profession_name like CONCAT('%', #{professionName}, '%')
+      </if>
       <if test="deviceCode != null and deviceCode!=''">
         and ecqo.device_code like CONCAT('%', #{deviceCode}, '%')
+      </if>
+      <if test="dominantTermCode != null and dominantTermCode!=''">
+        and ecqo.dominant_term_code like CONCAT('%', #{dominantTermCode}, '%')
       </if>
       <if test="locationNum != null and locationNum!=''">
         and ecqo.location_num like CONCAT('%', #{locationNum}, '%')

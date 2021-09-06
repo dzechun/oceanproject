@@ -13,6 +13,8 @@
     <result column="location_num" jdbcType="VARCHAR" property="locationNum" />
     <result column="design_qty" jdbcType="VARCHAR" property="designQty" />
     <result column="surplus_qty" jdbcType="VARCHAR" property="surplusQty" />
+    <result column="profession_code" jdbcType="VARCHAR" property="professionCode" />
+    <result column="profession_name" jdbcType="VARCHAR" property="professionName" />
     <result column="purchase_req_qty" jdbcType="VARCHAR" property="purchaseReqQty" />
     <result column="purchase_req_explain" jdbcType="VARCHAR" property="purchaseReqExplain" />
     <result column="device_code" jdbcType="VARCHAR" property="deviceCode" />
@@ -47,6 +49,8 @@
     ecqo.location_num,
     ecqo.design_qty,
     ecqo.surplus_qty,
+    ecqo.profession_code,
+    ecqo.profession_name,
     ecqo.purchase_req_qty,
     ecqo.purchase_req_explain,
     ecqo.device_code,
@@ -98,6 +102,15 @@
       </if>
       <if test="materialPurpose != null and materialPurpose!=''">
         and ecqo.material_purpose = #{materialPurpose}
+      </if>
+      <if test="professionName != null and professionName!=''">
+        and ecqo.profession_name = #{professionName}
+      </if>
+      <if test="purchaseReqExplain != null and purchaseReqExplain!=''">
+        and ecqo.purchase_req_explain = #{purchaseReqExplain}
+      </if>
+      <if test="dominantTermCode != null and dominantTermCode!=''">
+        and ecqo.dominant_term_code = #{dominantTermCode}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ecqo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
