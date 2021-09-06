@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.basic.BaseMaterialCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterialCategory;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.eam.EamJigCategory;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -53,6 +54,8 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        ifCodeRepeat(baseMaterialCategory,user);
+
         baseMaterialCategory.setCreateTime(new Date());
         baseMaterialCategory.setCreateUserId(user.getUserId());
         baseMaterialCategory.setModifiedTime(new Date());
@@ -76,6 +79,9 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        ifCodeRepeat(baseMaterialCategory,user);
+
         baseMaterialCategory.setModifiedTime(new Date());
         baseMaterialCategory.setModifiedUserId(user.getUserId());
 
@@ -84,6 +90,21 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
         baseHtMaterialCategoryMapper.insert(baseHtMaterialCategory);
 
         return baseMaterialCategoryMapper.updateByPrimaryKeySelective(baseMaterialCategory);
+    }
+
+    public void ifCodeRepeat(BaseMaterialCategory baseMaterialCategory,SysUser user){
+        Example example = new Example(BaseMaterialCategory.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("materialCategoryCode", baseMaterialCategory.getMaterialCategoryCode())
+                .andEqualTo("organizationId",user.getOrganizationId());
+        if(StringUtils.isNotEmpty(baseMaterialCategory.getMaterialCategoryId())){
+            criteria.andNotEqualTo("materialCategoryId",baseMaterialCategory.getMaterialCategoryId());
+        }
+        BaseMaterialCategory materialCategory = baseMaterialCategoryMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(materialCategory)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
     }
 
     @Override

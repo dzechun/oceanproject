@@ -63,6 +63,7 @@ public class RabbitProducer {
 
     /**
      * 第一位1表示打印标签 发送打印字节
+     * @param id 标识
      * @param printDto
      */
     public void sendPrint(PrintDto printDto,String id){
@@ -71,10 +72,6 @@ public class RabbitProducer {
         byte[] ibytes = new byte[1+bytes.length];
         ibytes[0]=(byte)1;
         System.arraycopy(bytes,0,ibytes,1,bytes.length);
-        Message message = MessageBuilder.withBody(ibytes)
-                .setContentType(MessageProperties.CONTENT_TYPE_JSON)
-                .setContentEncoding("utf-8")
-                .setMessageId(id).build();
-        this.rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_NAME_FILE,message);
+        this.rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_NAME_FILE+":"+id,ibytes);
     }
 }

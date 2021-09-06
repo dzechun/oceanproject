@@ -10,9 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.fantechs.provider.ocean.eng</groupId>
-    <artifactId>ocean-guest-eng</artifactId>
+    <artifactId>ocean-eng</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean-guest-eng</name>
+    <name>ocean-eng</name>
     <description>Demo project for Spring Boot</description>
 
     <dependencies>
@@ -35,6 +35,18 @@
         <dependency>
             <groupId>com.fantechs.provider.api.base</groupId>
             <artifactId>ocean-base-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.security</groupId>
+            <artifactId>ocean-security-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.mes.sfc</groupId>
+            <artifactId>ocean-mes-sfc-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

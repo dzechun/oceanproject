@@ -1,6 +1,9 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionExemptedListImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionItemImport;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionExemptedList;
@@ -15,14 +18,17 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -32,6 +38,7 @@ import java.util.List;
 @Api(tags = "免检清单")
 @RequestMapping("/baseInspectionExemptedList")
 @Validated
+@Slf4j
 public class BaseInspectionExemptedListController {
 
     @Resource
@@ -90,6 +97,31 @@ public class BaseInspectionExemptedListController {
         EasyPoiUtils.exportExcel(list, "导出信息", "免检清单", BaseInspectionExemptedList.class, "免检清单.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseInspectionExemptedListImport> baseInspectionExemptedListImports = EasyPoiUtils.importExcel(file, 2, 1, BaseInspectionExemptedListImport.class);
+            Map<String, Object> resultMap = baseInspectionExemptedListService.importExcel(baseInspectionExemptedListImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

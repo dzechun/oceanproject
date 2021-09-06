@@ -99,6 +99,14 @@ public class EngContractQtyOrder extends ValidGroup implements Serializable {
     @Column(name = "profession_name")
     private String professionName;
 
+    /**
+     * 供应商ID
+     */
+    @ApiModelProperty(name="supplierId",value = "供应商ID")
+    @Excel(name = "供应商ID", height = 20, width = 30,orderNum="")
+    @Column(name = "supplier_id")
+    private Long supplierId;
+
 
     /**
      * 状态(0无效，1有效)

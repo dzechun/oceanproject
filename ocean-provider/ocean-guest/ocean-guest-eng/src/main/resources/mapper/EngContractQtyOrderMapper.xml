@@ -6,6 +6,7 @@
       WARNING - @mbg.generated com.fantechs.common.base.general.entity.eng.EngContractQtyOrder
     -->
     <id column="contract_qty_order_id" jdbcType="BIGINT" property="contractQtyOrderId" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="device_code" jdbcType="VARCHAR" property="deviceCode" />
     <result column="dominant_term_code" jdbcType="VARCHAR" property="dominantTermCode" />
@@ -14,6 +15,7 @@
     <result column="material_purpose" jdbcType="VARCHAR" property="materialPurpose" />
     <result column="pur_qty" jdbcType="DECIMAL" property="purQty" />
     <result column="profession_code" jdbcType="VARCHAR" property="professionCode" />
+    <result column="profession_name" jdbcType="VARCHAR" property="professionName" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -31,10 +33,12 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
     ecqo.contract_qty_order_id,
+    ecqo.supplier_id,
     ecqo.contract_code,
     ecqo.device_code,
     ecqo.dominant_term_code,
@@ -43,6 +47,7 @@
     ecqo.material_purpose,
     ecqo.pur_qty,
     ecqo.profession_code,
+    ecqo.profession_name,
     ecqo.status,
     ecqo.remark,
     ecqo.org_id,
@@ -59,20 +64,28 @@
     select <include refid="Base_Column_List"></include>,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
+    bs.supplier_name,
     bo.organization_name
     from eng_contract_qty_order ecqo
     left join ocean_v2.sys_user u on ecqo.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ecqo.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_supplier bs ON ecqo.supplier_id = bs.supplier_id
     left join fantech_imes_v2.base_organization bo ON ecqo.org_id = bo.organization_id
     <where>
       <if test="contractCode != null and contractCode!='' and codeQueryMark!=1">
         and ecqo.contract_code like CONCAT('%', #{contractCode}, '%')
+      </if>
+      <if test="professionName != null and professionName!=''">
+        and ecqo.profession_name like CONCAT('%', #{professionName}, '%')
       </if>
       <if test="contractCode != null and contractCode!='' and codeQueryMark==1">
         and ecqo.contract_code = #{contractCode}
       </if>
       <if test="deviceCode != null and deviceCode!=''">
         and ecqo.device_code like CONCAT('%', #{deviceCode}, '%')
+      </if>
+      <if test="dominantTermCode != null and dominantTermCode!=''">
+        and ecqo.dominant_term_code like CONCAT('%', #{dominantTermCode}, '%')
       </if>
       <if test="locationNum != null and locationNum!=''">
         and ecqo.location_num like CONCAT('%', #{locationNum}, '%')

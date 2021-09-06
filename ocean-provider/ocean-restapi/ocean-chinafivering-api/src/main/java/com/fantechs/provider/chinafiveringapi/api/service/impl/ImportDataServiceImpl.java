@@ -5,9 +5,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderTempDto;
-import com.fantechs.common.base.general.entity.basic.BaseCustomer;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
@@ -89,7 +87,8 @@ public class ImportDataServiceImpl implements ImportDataService {
             String s8=s7.replaceAll("PPGUID","option1");
             String s9=s8.replaceAll("PSGUID","option2");
             String s10=s9.replaceAll("RDGUID","option3");
-            String s11=s10.replaceAll("专业","professionCode");
+            String s11=s10.replaceAll("专业","professionName");
+            String s12=s11.replaceAll("企业中文名称","professionCode");
 
             //同步到数据库
             int indexb=s11.indexOf("[");
@@ -97,6 +96,15 @@ public class ImportDataServiceImpl implements ImportDataService {
             String str=s11.substring(indexb,indexe+1);
             List<EngContractQtyOrder> listPO= BeanUtils.jsonToListObject(str,EngContractQtyOrder.class);
             for (EngContractQtyOrder engContractQtyOrder : listPO) {
+                //通过供应商名称找供应商ID
+                SearchBaseSupplier searchBaseSupplier=new SearchBaseSupplier();
+                searchBaseSupplier.setOrganizationId(1004L);
+                searchBaseSupplier.setSupplierName(engContractQtyOrder.getProfessionCode());
+                ResponseEntity<List<BaseSupplier>> responseEntityL=baseFeignApi.findSupplierList(searchBaseSupplier);
+                if(StringUtils.isNotEmpty(responseEntityL.getData())){
+                    engContractQtyOrder.setSupplierId(responseEntityL.getData().get(0).getSupplierId());
+                }
+                engContractQtyOrder.setProfessionCode("");
                 engContractQtyOrder.setOrgId(1004L);
                 engFeignApi.saveByApi(engContractQtyOrder);
             }
