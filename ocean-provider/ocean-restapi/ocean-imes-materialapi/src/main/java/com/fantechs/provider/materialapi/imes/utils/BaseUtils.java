@@ -27,24 +27,21 @@ public class BaseUtils {
     /**
      * 获取组织信息
      */
-    public Long getOrId() {
+    public List<BaseOrganizationDto> getOrId() {
         SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
         searchBaseOrganization.setOrganizationName("雷赛");
         ResponseEntity<List<BaseOrganizationDto>> organizationList = baseFeignApi.findOrganizationList(searchBaseOrganization);
-        if (StringUtils.isEmpty(organizationList.getData())) throw new BizErrorException("未查询到对应组织");
-        return organizationList.getData().get(0).getOrganizationId();
+        return organizationList.getData();
     }
 
     /**
      * 获取物料信息
      */
-    public BaseMaterial getBaseMaterial(String materialCode){
+    public List<BaseMaterial> getBaseMaterial(String materialCode){
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
         searchBaseMaterial.setMaterialCode(removeZero(materialCode));
         ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findList(searchBaseMaterial);
-        if(StringUtils.isEmpty(parentMaterialList.getData()))
-            throw new BizErrorException("未查询到对应的物料："+materialCode);
-        return parentMaterialList.getData().get(0);
+        return parentMaterialList.getData();
     }
 
     public String removeZero(String str){

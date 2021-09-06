@@ -2,6 +2,7 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.dto.restapi.*;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
@@ -53,7 +54,9 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
         req.setMATNR(searchSapProductBomApi.getMaterialCode());
         req.setOITXT(searchSapProductBomApi.getOitxt());
         DTMESBOMQUERYRES res = out.siMESBOMQUERYOut(req);
-        Long orgId =baseUtils.getOrId();
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())){
             if(StringUtils.isEmpty(res.getBOM())) throw new BizErrorException("请求结果为空");
 
@@ -69,17 +72,21 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
             }
 
             //保存bom表以及det表
-            BaseProductBom parentBomData =  saveBaseProductBom(baseUtils.getBaseMaterial(searchSapProductBomApi.getMaterialCode()),parentList.get(0).getAENNR());
+            List<BaseMaterial> baseMaterial1 = baseUtils.getBaseMaterial(searchSapProductBomApi.getMaterialCode());
+            if(StringUtils.isEmpty(baseMaterial1)) throw new BizErrorException("未查询到对应物料编码");
+
+            BaseProductBom parentBomData =  saveBaseProductBom(baseMaterial1.get(0),parentList.get(0).getAENNR());
             BaseProductBom bomData =  null;
             for(String code : materialCodes){
-                BaseMaterial baseMaterial = baseUtils.getBaseMaterial(code);
+                List<BaseMaterial> baseMaterials = baseUtils.getBaseMaterial(code);
+                if(StringUtils.isEmpty(baseMaterials)) throw new BizErrorException("未查询到对应物料编码");
                  if(searchSapProductBomApi.getMaterialCode().equals(code)){
                      bomData = parentBomData;
                  }else{
-                     bomData = saveBaseProductBom(baseMaterial,"0");
+                     bomData = saveBaseProductBom(baseMaterials.get(0),"0");
                      BaseProductBomDet subBomDet = new BaseProductBomDet();
                      subBomDet.setProductBomId(parentBomData.getProductBomId());
-                     subBomDet.setMaterialId(baseMaterial.getMaterialId());
+                     subBomDet.setMaterialId(baseMaterials.get(0).getMaterialId());
                      subBomDet.setIfHaveLowerLevel((byte)1);
                      subBomDet.setIsDelete((byte)1);
                      subBomDet.setStatus((byte)1);
@@ -91,7 +98,9 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                     if(bom.getMATNR().equals(code)) {
                         BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
                         baseProductBomDet.setProductBomId(bomData.getProductBomId());
-                        baseProductBomDet.setMaterialId(baseUtils.getBaseMaterial(bom.getIDNRK()).getMaterialId());
+                        List<BaseMaterial> bomMaterial = baseUtils.getBaseMaterial(bom.getIDNRK());
+                        if(StringUtils.isEmpty(bomMaterial)) throw new BizErrorException("未查询到对应物料编码");
+                        baseProductBomDet.setMaterialId(bomMaterial.get(0).getMaterialId());
                         baseProductBomDet.setUsageQty(new BigDecimal(bom.getMENGE().trim()));
                         baseProductBomDet.setBaseQty(new BigDecimal(bom.getBMENG().trim()));
                         baseProductBomDet.setRemark(bom.getMAKTXZ());
@@ -102,10 +111,10 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                     }
                 }
             }
-            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgIdList.get(0).getOrganizationId(),null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgIdList.get(0).getOrganizationId(),res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }

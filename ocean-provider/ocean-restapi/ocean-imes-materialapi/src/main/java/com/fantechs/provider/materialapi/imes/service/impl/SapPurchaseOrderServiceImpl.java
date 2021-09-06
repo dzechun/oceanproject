@@ -56,13 +56,40 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
         if(StringUtils.isEmpty(purchaseOrderApiDtos)) return "采购订单参数为空";
         Map<String,Long> purchaseMap = new HashMap<String,Long>();
         List<OmPurchaseOrderDet> omPurchaseOrderDetList = new ArrayList<OmPurchaseOrderDet>();
-        Long orgId =baseUtils.getOrId();
+
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) return "未查询到对应的组织信息";
+        Long orgId = orgIdList.get(0).getOrganizationId();
+
         for(RestapiPurchaseOrderApiDto purchaseOrderApiDto : purchaseOrderApiDtos) {
-            String check = check(purchaseOrderApiDto);
+            String check = "1";
+            check = check(purchaseOrderApiDto,check);
             if (!check.equals("1")) {
                 logsUtils.addlog((byte)0,(byte)2,(long)1002,check,purchaseOrderApiDto.toString());
                 return check;
             }
+
+            SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
+            searchBaseSupplier.setSupplierCode(baseUtils.removeZero(purchaseOrderApiDto.getLIFNR()));
+            searchBaseSupplier.setOrganizationId(orgId);
+            ResponseEntity<List<BaseSupplier>> baseSupplierList = baseFeignApi.findSupplierList(searchBaseSupplier);
+            if(StringUtils.isEmpty(baseSupplierList.getData()))
+                return "未查询到对应的供应商，编码为："+purchaseOrderApiDto.getLIFNR();
+
+            SearchBaseWarehouse searchBaseWarehouse = new SearchBaseWarehouse();
+            searchBaseWarehouse.setWarehouseCode(baseUtils.removeZero(purchaseOrderApiDto.getLGORT()));
+            searchBaseWarehouse.setOrgId(orgId);
+            ResponseEntity<List<BaseWarehouse>> baseWarehouseList = baseFeignApi.findList(searchBaseWarehouse);
+            if(StringUtils.isEmpty(baseWarehouseList.getData()))
+                return"未查询到对应的供应商，编码为："+purchaseOrderApiDto.getLGORT();
+
+            SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
+            searchBaseFactory.setFactoryCode(baseUtils.removeZero(purchaseOrderApiDto.getWERKS()));
+            searchBaseFactory.setOrgId(orgId);
+            ResponseEntity<List<BaseFactoryDto>> factoryList = baseFeignApi.findFactoryList(searchBaseFactory);
+            if(StringUtils.isEmpty(factoryList.getData()))
+                return "未查询到对应的工厂，编码为："+purchaseOrderApiDto.getWERKS();
+
             //保存或更新采购订单
             if(StringUtils.isEmpty(purchaseMap.get(purchaseOrderApiDto.getEBELN()))) {
                 OmPurchaseOrder omPurchaseOrder = new OmPurchaseOrder();
@@ -70,7 +97,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
                 omPurchaseOrder.setOrderType(purchaseOrderApiDto.getBSART());
                 if (StringUtils.isNotEmpty(purchaseOrderApiDto.getAEDAT()))
                     omPurchaseOrder.setOrderDate(DateUtils.getStrToDate("yyyyMMdd", purchaseOrderApiDto.getAEDAT()));
-                omPurchaseOrder.setSupplierId(getSupplier(purchaseOrderApiDto.getLIFNR(), orgId));
+                omPurchaseOrder.setSupplierId(baseSupplierList.getData().get(0).getSupplierId());
                 omPurchaseOrder.setOrgId(orgId);
                 omPurchaseOrder.setItemCategoryName(purchaseOrderApiDto.getEPSTP());
                 omPurchaseOrder.setOrderUnitName(purchaseOrderApiDto.getMEINS());
@@ -85,11 +112,14 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             OmPurchaseOrderDet purchaseOrderDet = new OmPurchaseOrderDet();
             purchaseOrderDet.setPurchaseOrderId(purchaseMap.get(purchaseOrderApiDto.getEBELN()));
             purchaseOrderDet.setProjectCode(baseUtils.removeZero(purchaseOrderApiDto.getEBELP()));
-            purchaseOrderDet.setMaterialId(baseUtils.getBaseMaterial(purchaseOrderApiDto.getMATNR()).getMaterialId());
+            List<BaseMaterial> baseMaterials = baseUtils.getBaseMaterial(purchaseOrderApiDto.getMATNR());
+            if(StringUtils.isEmpty(baseMaterials)) return "未查询到对应的物料编码，编码为："+purchaseOrderApiDto.getMATNR();
+
+            purchaseOrderDet.setMaterialId(baseMaterials.get(0).getMaterialId());
             purchaseOrderDet.setOrderQty(new BigDecimal(purchaseOrderApiDto.getMENGE().trim()));
             purchaseOrderDet.setStatus((byte)1);
-            purchaseOrderDet.setWarehouseId(getWarehouse(purchaseOrderApiDto.getLGORT(),orgId));
-            purchaseOrderDet.setFactoryId(getFactory(purchaseOrderApiDto.getWERKS(),orgId));
+            purchaseOrderDet.setWarehouseId(baseWarehouseList.getData().get(0).getWarehouseId());
+            purchaseOrderDet.setFactoryId(factoryList.getData().get(0).getFactoryId());
             purchaseOrderDet.setIsDelete((byte)1);
             omPurchaseOrderDetList.add(purchaseOrderDet);
         }
@@ -99,8 +129,8 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
     }
 
 
-    public String check(RestapiPurchaseOrderApiDto purchaseOrderApiDto) {
-        String check = "1";
+    public String check(RestapiPurchaseOrderApiDto purchaseOrderApiDto,String check) {
+
         if(StringUtils.isEmpty(purchaseOrderApiDto))
             check = "请求失败,参数为空";
         if(StringUtils.isEmpty(purchaseOrderApiDto.getEBELN()))
@@ -114,38 +144,4 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
         return check;
     }
 
-    public Long getSupplier(String supplierCode,Long orgId){
-        SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
-        searchBaseSupplier.setSupplierCode(baseUtils.removeZero(supplierCode));
-        searchBaseSupplier.setOrganizationId(orgId);
-        ResponseEntity<List<BaseSupplier>> baseSupplierList = baseFeignApi.findSupplierList(searchBaseSupplier);
-        if(StringUtils.isEmpty(baseSupplierList.getData()))
-            throw new BizErrorException("未查询到对应的供应商，编码为："+supplierCode);
-        return baseSupplierList.getData().get(0).getSupplierId();
-    }
-
-    /**
-     * 获取工厂id方法
-     *
-     * @return
-     */
-    public Long getWarehouse(String warehouseCode,Long orgId){
-        SearchBaseWarehouse searchBaseWarehouse = new SearchBaseWarehouse();
-        searchBaseWarehouse.setWarehouseCode(baseUtils.removeZero(warehouseCode));
-        searchBaseWarehouse.setOrgId(orgId);
-        ResponseEntity<List<BaseWarehouse>> baseWarehouseList = baseFeignApi.findList(searchBaseWarehouse);
-        if(StringUtils.isEmpty(baseWarehouseList.getData()))
-            throw new BizErrorException("未查询到对应的供应商，编码为："+warehouseCode);
-        return baseWarehouseList.getData().get(0).getWarehouseId();
-    }
-
-    public Long getFactory(String factoryCode,Long orgId){
-        SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
-        searchBaseFactory.setFactoryCode(baseUtils.removeZero(factoryCode));
-        searchBaseFactory.setOrgId(orgId);
-        ResponseEntity<List<BaseFactoryDto>> factoryList = baseFeignApi.findFactoryList(searchBaseFactory);
-        if(StringUtils.isEmpty(factoryList.getData()))
-            throw new BizErrorException("未查询到对应的工厂，编码为："+factoryCode);
-        return factoryList.getData().get(0).getFactoryId();
-    }
 }
