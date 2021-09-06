@@ -1,7 +1,9 @@
 package com.fantechs.provider.qms.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderAuditUser;
@@ -10,6 +12,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderAuditUserMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderAuditUserService;
@@ -33,6 +36,8 @@ public class QmsIpqcInspectionOrderAuditUserServiceImpl extends BaseService<QmsI
     private QmsIpqcInspectionOrderAuditUserMapper qmsIpqcInspectionOrderAuditUserMapper;
     @Resource
     private QmsIpqcInspectionOrderMapper qmsIpqcInspectionOrderMapper;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<QmsIpqcInspectionOrderAuditUser> findList(Map<String, Object> map) {
@@ -77,7 +82,14 @@ public class QmsIpqcInspectionOrderAuditUserServiceImpl extends BaseService<QmsI
             criteria1.andEqualTo("ipqcInspectionOrderId",record.getIpqcInspectionOrderId());
             int count = qmsIpqcInspectionOrderAuditUserMapper.selectCountByExample(example);
 
-            if(count == 6){
+            //审批部门
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("ipqcAuditDeptList");
+            List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            String paraValue = sysSpecItemList.get(0).getParaValue();
+            String[] DeptList = paraValue.substring(1, paraValue.length() - 1).split(",");
+
+            if(count == DeptList.length){
                 qmsIpqcInspectionOrder.setAuditStatus((byte)2);
                 qmsIpqcInspectionOrderMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrder);
             }

@@ -1,7 +1,9 @@
 package com.fantechs.provider.eam.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
@@ -16,9 +18,11 @@ import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRequisitio
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamJigReturnService;
 import org.springframework.beans.BeanUtils;
@@ -53,6 +57,10 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
     private EamJigMapper eamJigMapper;
     @Resource
     private PMFeignApi pmFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private EamJigScrapOrderServiceImpl eamJigScrapOrderService;
 
     @Override
     public List<EamJigReturnDto> findList(Map<String, Object> map) {
@@ -77,6 +85,10 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("IsJigCanContinueUse");
+        List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
 
         List<EamHtJigReturn> htList = new ArrayList<>();
         for (EamJigReturn eamJigReturn : list){
@@ -113,6 +125,30 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
                     eamJigReturn.getThisTimeUsageTime():
                     eamJigBarcode.getCurrentMaintainUsageTime()+eamJigReturn.getThisTimeUsageTime());
             eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
+
+            //治具使用次数达到使用上限不允许继续使用的，生成报废单
+            if(Integer.parseInt(sysSpecItemList.get(0).getParaValue()) == 0) {
+                EamJig eamJig = eamJigMapper.selectByPrimaryKey(eamJigBarcode.getJigId());
+                if (StringUtils.isNotEmpty(eamJigBarcode.getCurrentUsageTime(), eamJig.getMaxUsageTime())
+                        && eamJig.getMaxUsageTime() != 0) {
+                    if (eamJigBarcode.getCurrentUsageTime().compareTo(eamJig.getMaxUsageTime()) == 0
+                            || eamJigBarcode.getCurrentUsageTime().compareTo(eamJig.getMaxUsageTime()) == 1) {
+                        EamJigScrapOrderDto eamJigScrapOrderDto = new EamJigScrapOrderDto();
+                        EamJigScrapOrderDetDto eamJigScrapOrderDetDto = new EamJigScrapOrderDetDto();
+                        List<EamJigScrapOrderDetDto> eamJigScrapOrderDetDtos = new ArrayList<>();
+
+                        eamJigScrapOrderDetDto.setJigBarcodeId(eamJigBarcode.getJigBarcodeId());
+                        eamJigScrapOrderDetDtos.add(eamJigScrapOrderDetDto);
+
+                        eamJigScrapOrderDto.setJigScrapOrderCode(CodeUtils.getId("BF-"));
+                        eamJigScrapOrderDto.setOrderStatus((byte) 1);
+                        eamJigScrapOrderDto.setList(eamJigScrapOrderDetDtos);
+
+                        eamJigScrapOrderService.save(eamJigScrapOrderDto);
+                    }
+                }
+            }
+
         }
 
         return eamHtJigReturnMapper.insertList(htList);

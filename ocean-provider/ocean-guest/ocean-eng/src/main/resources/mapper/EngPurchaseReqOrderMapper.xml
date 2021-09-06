@@ -76,10 +76,10 @@
     left join fantech_imes_v2.base_organization bo ON ecqo.org_id = bo.organization_id
     <where>
       <if test="purchaseReqOrderCode != null and purchaseReqOrderCode!=''">
-        and ecqo.purchaseReqOrder_code like CONCAT('%', #{purchaseReqOrderCode}, '%')
+        and ecqo.purchase_req_order_code like CONCAT('%', #{purchaseReqOrderCode}, '%')
       </if>
       <if test="purchaseReqOrderName != null and purchaseReqOrderName!=''">
-        and ecqo.purchaseReqOrder_name like CONCAT('%', #{purchaseReqOrderName}, '%')
+        and ecqo.purchase_req_order_name like CONCAT('%', #{purchaseReqOrderName}, '%')
       </if>
       <if test="materialGrade != null and materialGrade!=''">
         and ecqo.material_grade like CONCAT('%', #{materialGrade}, '%')

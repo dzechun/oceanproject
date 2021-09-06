@@ -126,6 +126,22 @@ public class EngPurchaseReqOrder extends ValidGroup implements Serializable {
     private String materialPurpose;
 
     /**
+     * 专业编码
+     */
+    @ApiModelProperty(name="professionCode",value = "专业编码")
+    @Excel(name = "专业编码", height = 20, width = 30,orderNum="")
+    @Column(name = "profession_code")
+    private String professionCode;
+
+    /**
+     * 专业名称
+     */
+    @ApiModelProperty(name="professionName",value = "专业名称")
+    @Excel(name = "专业名称", height = 20, width = 30,orderNum="")
+    @Column(name = "profession_name")
+    private String professionName;
+
+    /**
      * 采购说明
      */
     @ApiModelProperty(name="purchaseExplain",value = "采购说明")

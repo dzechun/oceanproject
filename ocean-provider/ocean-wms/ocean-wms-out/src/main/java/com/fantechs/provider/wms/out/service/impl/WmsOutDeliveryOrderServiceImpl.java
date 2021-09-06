@@ -518,7 +518,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int saveByApi(WmsOutDeliveryOrder wmsOutDeliveryOrder) {
-        Example example = new Example(BaseSupplier.class);
+        Example example = new Example(WmsOutDeliveryOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("deliveryOrderCode",wmsOutDeliveryOrder.getDeliveryOrderCode());
         criteria.andEqualTo("orgId",wmsOutDeliveryOrder.getOrgId());
@@ -530,7 +530,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             wmsOutDeliveryOrder.setModifiedUserId((long) 1);
             wmsOutDeliveryOrder.setModifiedTime(new Date());
             wmsOutDeliveryOrder.setIsDelete((byte) 1);
-            i = wmsOutDeliveryOrderMapper.insertSelective(wmsOutDeliveryOrder);
+            i = wmsOutDeliveryOrderMapper.insertUseGeneratedKeys(wmsOutDeliveryOrder);
 
             //明细
             List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
