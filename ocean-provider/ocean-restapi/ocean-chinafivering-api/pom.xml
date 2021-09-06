@@ -128,7 +128,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>C:/work/workSpace/d/fiveringapi</outputDirectory>
+                            <outputDirectory>D:/IMES/lib/fivering</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

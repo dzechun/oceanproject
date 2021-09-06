@@ -17,6 +17,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>ocean-eng-api</module>
+        <module>ocean-fivering-api</module>
     </modules>
 
 </project>
