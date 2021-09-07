@@ -54,6 +54,8 @@ ribbon:
     enabled: true
   ConnectTimeout: 60000
   ReadTimeout: 60000
+  MaxConnectionsPerHost: 50
+  MaxTotalConnections: 200
 
 tx-lcn:
   client:
