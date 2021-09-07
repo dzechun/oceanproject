@@ -3,12 +3,14 @@ package com.fantechs.common.base.general.entity.basic;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
-import lombok.Data;
 
 /**
  * 页签信息表
@@ -493,6 +495,10 @@ public class BaseTab extends ValidGroup implements Serializable {
     @Excel(name = "配送载具数算法", height = 20, width = 30)
     @Column(name = "ids_vehicle_count_arithmetic")
     private String idsVehicleCountArithmetic;
+
+    @ApiModelProperty(name="orgId",value = "组织id")
+    @Column(name = "org_id")
+    private Long orgId;
 
     private static final long serialVersionUID = 1L;
 }
