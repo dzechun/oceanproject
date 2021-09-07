@@ -75,6 +75,14 @@ public class EngPackingOrderSummary extends ValidGroup implements Serializable {
     private String professionCode;
 
     /**
+     * 专业名称
+     */
+    @ApiModelProperty(name="professionName",value = "专业")
+    @Excel(name = "专业", height = 20, width = 30,orderNum="7")
+    @Column(name = "profession_name")
+    private String professionName;
+
+    /**
      * 装置码
      */
     @ApiModelProperty(name="deviceCode",value = "装置码")
