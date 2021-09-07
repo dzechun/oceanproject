@@ -186,6 +186,7 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         //新增IPQC检验单
         qmsIpqcInspectionOrder.setIpqcInspectionOrderCode(CodeUtils.getId("IPQC-"));
         qmsIpqcInspectionOrder.setInspectionStatus((byte)1);
+        qmsIpqcInspectionOrder.setAuditStatus((byte)1);
         qmsIpqcInspectionOrder.setCreateUserId(user.getUserId());
         qmsIpqcInspectionOrder.setCreateTime(new Date());
         qmsIpqcInspectionOrder.setModifiedUserId(user.getUserId());

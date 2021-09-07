@@ -29,6 +29,9 @@ public interface SFCFeignApi {
     @PostMapping("/rabbit/print")
     ResponseEntity print(@RequestBody PrintDto printDto);
 
+    @PostMapping("/rabbit/QUEUEprint")
+    ResponseEntity QUEUEprint(@RequestBody PrintDto printDto,@RequestParam String id);
+
     @ApiOperation("列表")
     @PostMapping("/mesSfcBarcodeProcess/findList")
     ResponseEntity<List<MesSfcBarcodeProcessDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess);

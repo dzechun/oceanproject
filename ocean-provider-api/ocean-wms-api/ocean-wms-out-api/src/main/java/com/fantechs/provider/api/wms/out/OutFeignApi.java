@@ -2,6 +2,7 @@ package com.fantechs.provider.api.wms.out;
 
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
@@ -56,4 +57,9 @@ public interface OutFeignApi {
     @ApiOperation("获取详情")
     @PostMapping("/wmsOutDeliveryOrderDet/detail")
     ResponseEntity<WmsOutDeliveryOrderDet> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
+    @ApiOperation("增加领料出库单信息")
+    @PostMapping("/wmsOutDeliveryOrder/saveByApi")
+    ResponseEntity saveByApi(@ApiParam(value = "必传：deliveryOrderCode",required = true)@RequestBody @Validated WmsOutDeliveryOrder wmsOutDeliveryOrder);
+
 }

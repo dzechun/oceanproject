@@ -68,6 +68,9 @@
         LEFT JOIN fantech_imes_v2.base_material_tab bt on sm.material_id = bt.material_id
         LEFT JOIN fantech_imes_v2.base_material_category bmc on bmc.material_category_id = bt.material_category_id
         <where>
+            <if test="materialProperty!=null">
+                and bt.material_property=#{materialProperty}
+            </if>
             <if test="propertyQueryMark!=null and propertyQueryMark == 1">
                 and bt.material_property in(0,1)
             </if>

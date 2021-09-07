@@ -111,9 +111,7 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
             num += esopNewsMapper.updateByPrimaryKeySelective(EsopNews);
         }
         //发送消息
-        socketService.BatchInstructions(null,"1201","/#/ESOPDataShow?ip=");
-   //   socketService.BatchInstructions(null,"1201","http://qmsapp.donlim.com/esop/#/ESOPDataShow?ip=");
-
+        socketService.BatchInstructions(null,"1201","/#/ESOPDataShow?ip=","0");
         return num;
     }
 

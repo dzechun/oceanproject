@@ -42,7 +42,9 @@
         LEFT JOIN sys_custom_form scf on cf.sub_id = scf.custom_form_id
 
         <where>
-
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(cf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
             <if test="customFormId!=null and customFormId!=''">
                 and cf.custom_form_id=#{customFormId}
             </if>

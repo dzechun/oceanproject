@@ -40,7 +40,25 @@
         </dependency>
         <dependency>
             <groupId>com.fantechs.provider.api.guest.eng</groupId>
-            <artifactId>ocean-eng-api</artifactId>
+            <artifactId>ocean-guest-eng-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.wms.out</groupId>
+            <artifactId>ocean-wms-out-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.guest.eng</groupId>
+            <artifactId>ocean-guest-eng-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.security</groupId>
+            <artifactId>ocean-security-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
@@ -122,7 +140,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>C:/work/workSpace/d/fiveringapi</outputDirectory>
+                            <outputDirectory>D:/IMES/lib/fivering</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

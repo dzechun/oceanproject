@@ -12,11 +12,11 @@ import java.io.Serializable;
 public class EamEquipmentMaintainProjectDto extends EamEquipmentMaintainProject implements Serializable {
 
     /**
-     * 设备分类
+     * 设备类别
      */
     @Transient
-    @ApiModelProperty(name = "equipmentCategoryName",value = "设备分类")
-    @Excel(name = "设备分类", height = 20, width = 30,orderNum="16")
+    @ApiModelProperty(name = "equipmentCategoryName",value = "设备类别")
+    @Excel(name = "设备类别", height = 20, width = 30,orderNum="4")
     private String equipmentCategoryName;
 
     /**
@@ -24,7 +24,7 @@ public class EamEquipmentMaintainProjectDto extends EamEquipmentMaintainProject 
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="16")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
     private String createUserName;
 
     /**
@@ -32,7 +32,7 @@ public class EamEquipmentMaintainProjectDto extends EamEquipmentMaintainProject 
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="18")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
     private String modifiedUserName;
 
     /**

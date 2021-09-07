@@ -55,7 +55,9 @@ public class SapBadnessCategoryApiServiceImpl implements SapBadnessCategoryApiSe
         req.setKATALOGART(searchSapBadnessCategoryApi.getCatalogue());
         req.setCODEGRUPPE(searchSapBadnessCategoryApi.getBadnessCodes());
         DTMESBADCODEQUERYRES res = out.siMESBADCODEQUERYOut(req);
-        Long orgId = baseUtils.getOrId();
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+        Long orgId = orgIdList.get(0).getOrganizationId();
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE()) ){
             if(StringUtils.isEmpty(res.getBADCODE())) throw new BizErrorException("请求结果为空");
             //保存或更新不良代类别

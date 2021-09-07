@@ -166,6 +166,10 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         if (0 >= baseTab.getTransferQuantity()){
             throw new BizErrorException("转移批量必须大于0");
         }
+        if (StringUtils.isNotEmpty(baseTab.getNetWeight(),baseTab.getGrossWeight())
+                &&baseTab.getNetWeight().compareTo(baseTab.getGrossWeight())==1){
+            throw new BizErrorException("净重不能大于毛重");
+        }
         baseTab.setMaterialId(baseMaterial.getMaterialId());
         baseTabMapper.insertSelective(baseTab);
 
@@ -207,6 +211,10 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             }
             if (0 >= baseTab.getTransferQuantity()){
                 throw new BizErrorException("转移批量必须大于0");
+            }
+            if (StringUtils.isNotEmpty(baseTab.getNetWeight(),baseTab.getGrossWeight())
+               &&baseTab.getNetWeight().compareTo(baseTab.getGrossWeight())==1){
+                throw new BizErrorException("净重不能大于毛重");
             }
             //判断该物料的页签是否存在
             Example example1 = new Example(BaseTab.class);
@@ -621,6 +629,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         }
         else {
             baseMaterial.setMaterialId(baseMaterialExist.getMaterialId());
+            baseMaterial.setModifiedTime(new Date());
             baseMaterialMapper.updateByPrimaryKeySelective(baseMaterial);
         }
 

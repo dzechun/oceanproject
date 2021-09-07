@@ -16,7 +16,9 @@
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>
     <modules>
-        <module>ocean-eng-api</module>
+        <module>ocean-guest-eng-api</module>
+        <module>ocean-guest-leisai-api</module>
+        <module>ocean-guest-fivering-api</module>
     </modules>
 
 </project>

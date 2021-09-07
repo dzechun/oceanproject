@@ -43,7 +43,9 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
         SIMESPROCESSQUERYOutService service = new SIMESPROCESSQUERYOutService();
         SIMESPROCESSQUERYOut out = service.getHTTPPort();
         DTMESPROCESSQUERYREQ req = new DTMESPROCESSQUERYREQ();
-        Long orgId = baseUtils.getOrId();
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+        Long orgId = orgIdList.get(0).getOrganizationId();
         if(StringUtils.isEmpty(searchSapRouteApi.getMaterialCode()) || StringUtils.isEmpty(searchSapRouteApi.getWerks()))
             throw new BizErrorException("物料编码和工厂不能为空");
         req.setMATNR(searchSapRouteApi.getMaterialCode());
@@ -78,15 +80,16 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
 
 
             //保存工段
-            BaseWorkshopSection baseWorkshopSection = new BaseWorkshopSection();
-            baseWorkshopSection.setSectionCode(res.getPROCESS().get(0).getARBPL());
-            baseWorkshopSection.setSectionName(res.getPROCESS().get(0).getLTXA1());
-            baseWorkshopSection.setSectionDesc(res.getPROCESS().get(0).getLTXA1());
-            baseWorkshopSection.setStatus((byte)1);
-            baseWorkshopSection.setOrganizationId(orgId);
-            baseWorkshopSection.setIsDelete((byte)1);
-            baseFeignApi.addOrUpdate(baseWorkshopSection);
-
+            for(DTMESPROCESS process: res.getPROCESS()){
+                BaseWorkshopSection baseWorkshopSection = new BaseWorkshopSection();
+                baseWorkshopSection.setSectionCode(process.getARBPL());
+                baseWorkshopSection.setSectionName(process.getLTXA1());
+                baseWorkshopSection.setSectionDesc(process.getLTXA1());
+                baseWorkshopSection.setStatus((byte)1);
+                baseWorkshopSection.setOrganizationId(orgId);
+                baseWorkshopSection.setIsDelete((byte)1);
+                baseFeignApi.addOrUpdate(baseWorkshopSection);
+            }
             //保存工序类别
        /*     BaseProcessCategory baseProcessCategory = new BaseProcessCategory();
             baseProcessCategory.setProcessCategoryName(res.getPROCESS().get(0).getKTEXT());

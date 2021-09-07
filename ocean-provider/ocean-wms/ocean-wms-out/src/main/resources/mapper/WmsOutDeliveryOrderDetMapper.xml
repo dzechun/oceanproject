@@ -88,12 +88,12 @@ wodod.picking_storage_id,
     wodod.option2,
     wodod.option3,
 wodod.option4,
-    wodod.option6,
+    wodod.option5,
     wodod.option6,
 wodod.option7,
     wodod.option8,
     wodod.option9,
-wodod.option10,
+wodod.option10
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">

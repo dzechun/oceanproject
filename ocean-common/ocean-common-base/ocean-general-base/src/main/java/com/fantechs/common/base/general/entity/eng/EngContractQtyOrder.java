@@ -1,13 +1,19 @@
 package com.fantechs.common.base.general.entity.eng;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 合同量单
@@ -90,6 +96,23 @@ public class EngContractQtyOrder extends ValidGroup implements Serializable {
     @Excel(name = "专业编码", height = 20, width = 30,orderNum="") 
     @Column(name = "profession_code")
     private String professionCode;
+
+    /**
+     * 专业名称
+     */
+    @ApiModelProperty(name="professionName",value = "专业名称")
+    @Excel(name = "专业名称", height = 20, width = 30,orderNum="")
+    @Column(name = "profession_name")
+    private String professionName;
+
+    /**
+     * 供应商ID
+     */
+    @ApiModelProperty(name="supplierId",value = "供应商ID")
+    @Excel(name = "供应商ID", height = 20, width = 30,orderNum="")
+    @Column(name = "supplier_id")
+    private Long supplierId;
+
 
     /**
      * 状态(0无效，1有效)

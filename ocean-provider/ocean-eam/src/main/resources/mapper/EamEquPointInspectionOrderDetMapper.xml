@@ -70,6 +70,9 @@
           #{item}
         </foreach>
       </if>
+      <if test="equPointInspectionOrderId!=null">
+        and eepiod.equ_point_inspection_order_id = #{equPointInspectionOrderId}
+      </if>
       <if test="status!=null">
         and eepiod.status = #{status}
       </if>

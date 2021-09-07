@@ -9,6 +9,7 @@
     <result column="work_instruction_code" jdbcType="VARCHAR" property="workInstructionCode" />
     <result column="work_instruction_name" jdbcType="VARCHAR" property="workInstructionName" />
     <result column="work_instruction_ver" jdbcType="VARCHAR" property="workInstructionVer" />
+    <result column="work_instruction_seq_num" jdbcType="VARCHAR" property="workInstructionSeqNum" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="secrecy_grade" jdbcType="TINYINT" property="secrecyGrade" />
@@ -29,6 +30,7 @@
     <result column="write_make_user_name" jdbcType="VARCHAR" property="writeMakeUserName" />
     <result column="write_make_time" jdbcType="TIMESTAMP" property="writeMakeTime" />
     <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName" />
+    <result column="approve_user_name" jdbcType="VARCHAR" property="approveUserName" />
   </resultMap>
 
 
@@ -36,6 +38,7 @@
              type="com.fantechs.common.base.general.dto.esop.EsopWorkInstructionDto">
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
     <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
@@ -65,6 +68,7 @@
         ewi.work_instruction_code,
         ewi.work_instruction_name,
         ewi.work_instruction_ver,
+        ewi.work_instruction_seq_num,
         ewi.process_id,
         ewi.material_id,
         ewi.secrecy_grade,
@@ -84,14 +88,15 @@
         ewi.standard_time,
         ewi.write_make_user_name,
         ewi.write_make_time,
+        ewi.approve_user_name,
         ewi.audit_user_name
     </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
 
     SELECT<include refid="BaseColumnList"/>,
-    bm.material_code as material_code,bm.material_name as material_name,spm.product_model_code as product_model_code,spm.product_model_name as product_model_name,
-    sp.process_name as process_name,sp.process_code as process_code,su.user_name AS create_user_name,
+    bm.material_code as material_code,bm.material_name as material_name,bm.material_desc as material_desc,spm.product_model_code as product_model_code,
+    spm.product_model_name as product_model_name,sp.process_name as process_name,sp.process_code as process_code,su.user_name AS create_user_name,
     CONCAT(bt.length,',',bt.width,',',bt.height) as specifications,bpl.pro_name as pro_name,
     sus.user_name AS modified_user_name,bo.organization_name AS organization_name
     FROM esop_work_instruction ewi

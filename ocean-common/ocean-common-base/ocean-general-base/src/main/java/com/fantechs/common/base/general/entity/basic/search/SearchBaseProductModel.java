@@ -31,4 +31,16 @@ public class SearchBaseProductModel extends BaseQuery implements Serializable {
     @ApiModelProperty(name="productModelDesc" ,value="产品型号描述")
     private String productModelDesc;
 
+    /**
+     *  产品型号名称
+     */
+    @ApiModelProperty(name="productModelName" ,value="产品型号名称")
+    private String productModelName;
+
+    /**
+     *  产品族名称
+     */
+    @ApiModelProperty(name="productFamilyName" ,value="产品族名称")
+    private String productFamilyName;
+
 }

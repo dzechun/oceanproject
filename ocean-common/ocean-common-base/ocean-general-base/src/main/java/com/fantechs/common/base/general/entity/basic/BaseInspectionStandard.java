@@ -78,11 +78,11 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
     private Long supplierId;
 
     /**
-     * 检验类型(1- 来料检验 2- 驻厂检验 3-出货检验 4-IPQC检验)
+     * 检验类型(1-来料检验 2-驻厂检验 3-出货检验 4-IPQC检验)
      */
-    @ApiModelProperty(name="inspectionType",value = "检验类型(1- 来料检验 2- 驻厂检验 3-出货检验 4-IPQC检验)")
+    @ApiModelProperty(name="inspectionType",value = "检验类型(1-来料检验 2-驻厂检验 3-出货检验 4-IPQC检验)")
     @Column(name = "inspection_type")
-    @Excel(name = "检验类型(1- 来料检验 2- 驻厂检验 3-出货检验 4-IPQC检验)", height = 20, width = 30,orderNum="6",replace = {"来料检验_1", "驻厂检验_2", "出货检验_3"})
+    @Excel(name = "检验类型(1-来料检验 2-驻厂检验 3-出货检验 4-IPQC检验)", height = 20, width = 30,orderNum="6",replace = {"来料检验_1", "驻厂检验_2", "出货检验_3", "IPQC检验_4"})
     private Byte inspectionType;
 
     /**

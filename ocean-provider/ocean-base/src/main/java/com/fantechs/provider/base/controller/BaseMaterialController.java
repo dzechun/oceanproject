@@ -1,12 +1,12 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseMaterialImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -29,7 +29,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  * @Auther: wcz
@@ -57,6 +56,13 @@ public class BaseMaterialController {
         Page<Object> page = PageHelper.startPage(searchBaseMaterial.getStartPage(), searchBaseMaterial.getPageSize());
         List<BaseMaterialDto> smtMaterials = baseMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterial));
         return ControllerUtil.returnDataSuccess(smtMaterials,(int)page.getTotal());
+    }
+
+    @ApiOperation("根据条件查询物料信息列表")
+    @PostMapping("/getAll")
+    public ResponseEntity<List<BaseMaterialDto>> getAll(@ApiParam(value = "查询对象")@RequestBody SearchBaseMaterial searchBaseMaterial){
+        List<BaseMaterialDto> smtMaterials = baseMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterial));
+        return ControllerUtil.returnDataSuccess(smtMaterials, smtMaterials.size());
     }
 
     @ApiOperation("增加物料信息")

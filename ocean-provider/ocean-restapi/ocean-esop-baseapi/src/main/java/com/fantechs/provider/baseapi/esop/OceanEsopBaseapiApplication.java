@@ -18,7 +18,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @ComponentScan({"com.fantechs.provider.baseapi.esop","com.fantechs.common"})
 @MapperScan({"com.fantechs.provider.baseapi.esop.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider")
-//@EnableDistributedTransaction
+@EnableDistributedTransaction
 public class OceanEsopBaseapiApplication {
 
     public static void main(String[] args) {

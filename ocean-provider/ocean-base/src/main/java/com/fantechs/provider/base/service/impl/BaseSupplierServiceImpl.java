@@ -4,12 +4,9 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseAddressDto;
-import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionExemptedList;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -287,6 +284,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         Example example = new Example(BaseSupplier.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("supplierCode",baseSupplier.getSupplierCode());
+        criteria.andEqualTo("supplierType",baseSupplier.getSupplierType());
         criteria.andEqualTo("organizationId",baseSupplier.getOrganizationId());
         BaseSupplier supplier = baseSupplierMapper.selectOneByExample(example);
         int i= 0;
@@ -295,10 +293,13 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             baseSupplier.setCreateUserId((long) 1);
             baseSupplier.setModifiedUserId((long) 1);
             baseSupplier.setModifiedTime(new Date());
+            if(StringUtils.isEmpty(baseSupplier.getSupplierType()))
+                baseSupplier.setSupplierType((byte)1);
             baseSupplier.setIsDelete((byte) 1);
             i = baseSupplierMapper.insertSelective(baseSupplier);
         }else{
             baseSupplier.setSupplierId(supplier.getSupplierId());
+            baseSupplier.setModifiedTime(new Date());
             baseSupplierMapper.updateByPrimaryKeySelective(baseSupplier);
         }
         return i;

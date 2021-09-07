@@ -1,9 +1,11 @@
 package com.fantechs.common.base.general.entity.wms.out.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 @Data
@@ -68,5 +70,11 @@ public class SearchWmsOutDeliveryOrder extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name="emailAddress" ,value="邮箱")
     private String emailAddress;
+
+    /**
+     * 单据状态(1-待拣货，2-拣货中，3-待发运、4-部分发运、5-发运完成)
+     */
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待拣货，2-拣货中，3-待发运、4-部分发运、5-发运完成)")
+    private Integer orderStatus;
 
 }

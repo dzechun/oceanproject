@@ -3,6 +3,7 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.*;
 import com.fantechs.common.base.general.entity.basic.BaseFactory;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
@@ -45,7 +46,9 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
         DTMESSUPPLIERQUERYREQ req = new DTMESSUPPLIERQUERYREQ();
         if(StringUtils.isEmpty(searchSapSupplierApi.getWerks()))
             throw new BizErrorException("工厂号不能为空");
-        Long orgId = baseUtils.getOrId();
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+        Long orgId = orgIdList.get(0).getOrganizationId();
         req.setWERKS(searchSapSupplierApi.getWerks());
         DTMESSUPPLIERQUERYRES res = out.siMESSUPPLIERQUERYOut(req);
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())){
@@ -72,7 +75,10 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
     @Override
     public int getSuppliers(){
         SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
-        searchBaseFactory.setOrgId(baseUtils.getOrId());
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+        Long orgId = orgIdList.get(0).getOrganizationId();
+        searchBaseFactory.setOrgId(orgId);
         ResponseEntity<List<BaseFactoryDto>> factoryList = baseFeignApi.findFactoryList(searchBaseFactory);
         int i = 0;
         if(StringUtils.isNotEmpty(factoryList.getData())){

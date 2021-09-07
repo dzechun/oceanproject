@@ -3,6 +3,7 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.*;
 import com.fantechs.common.base.general.entity.basic.BaseFactory;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
@@ -49,7 +50,11 @@ public class SapCustomerApiServiceImpl implements SapCustomerApiService {
             throw new BizErrorException("工厂号不能为空");
         req.setWERKS(searchSapSupplierApi.getWerks());
         DTMESCUSTOMERQUERYRES res = out.siMESCUSTOMERQUERYOut(req);
-        Long orgId = baseUtils.getOrId();
+
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+        Long orgId = orgIdList.get(0).getOrganizationId();
+
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())){
             if(StringUtils.isEmpty(res.getCUSTOMER())) throw new BizErrorException("请求结果为空");
 
@@ -76,7 +81,10 @@ public class SapCustomerApiServiceImpl implements SapCustomerApiService {
     @Override
     public int getCustomers(){
         SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
-        searchBaseFactory.setOrgId(baseUtils.getOrId());
+        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
+        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
+        Long orgId = orgIdList.get(0).getOrganizationId();
+        searchBaseFactory.setOrgId(orgId);
         ResponseEntity<List<BaseFactoryDto>> factoryList = baseFeignApi.findFactoryList(searchBaseFactory);
         int i = 0;
         if(StringUtils.isNotEmpty(factoryList.getData())){
