@@ -116,6 +116,14 @@ public class EngPackingOrder extends ValidGroup implements Serializable {
     private Byte orderStatus;
 
     /**
+     * 订单状态(1-未审核 2-审核中 3-已通过 4-未通过)
+     */
+    @ApiModelProperty(name="auditStatus",value = "审核状态(1-未审核 2-审核中 3-已通过 4-未通过)")
+    @Excel(name = "审核状态(1-未审核 2-审核中 3-已通过 4-未通过)", height = 20, width = 30)
+    @Column(name = "audit_status")
+    private Byte auditStatus;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

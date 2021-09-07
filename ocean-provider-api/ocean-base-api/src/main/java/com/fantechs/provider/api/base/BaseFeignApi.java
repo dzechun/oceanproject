@@ -27,6 +27,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseTab/findList")
     ResponseEntity<List<BaseTabDto>> findTabList(@ApiParam(value = "查询对象") @RequestBody SearchBaseTab searchBaseTab);
 
+    @ApiOperation("页签信息列表")
+    @PostMapping("/baseTab/getAll")
+    ResponseEntity<List<BaseTabDto>> getAll(@ApiParam(value = "查询对象") @RequestBody SearchBaseTab searchBaseTab);
+
     @ApiOperation(value = "新增页签", notes = "新增页签")
     @PostMapping("/baseTab/add")
     ResponseEntity addTab(@ApiParam(value = "必传：", required = true) @RequestBody @Validated BaseTab baseTab);
@@ -94,6 +98,10 @@ public interface BaseFeignApi {
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/baseMaterial/findList")
     ResponseEntity<List<BaseMaterial>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterial searchBaseMaterial);
+
+    @ApiOperation("根据条件查询物料信息列表")
+    @PostMapping("/baseMaterial/getAll")
+    ResponseEntity<List<BaseMaterial>> getAll(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterial searchBaseMaterial);
 
     @ApiOperation("修改物料信息")
     @PostMapping("/baseMaterial/update")
@@ -452,6 +460,10 @@ public interface BaseFeignApi {
     @ApiOperation("根据条件查询产品型号信息列表")
     @PostMapping("/baseProductModel/findList")
     ResponseEntity<List<BaseProductModel>> findList(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchBaseProductModel searchBaseProductModel);
+
+    @ApiOperation("根据条件查询产品型号信息列表")
+    @PostMapping("/baseProductModel/getAll")
+    ResponseEntity<List<BaseProductModel>> getAll(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchBaseProductModel searchBaseProductModel);
 
     @ApiOperation("新增产品型号")
     @PostMapping("/baseProductModel/add")

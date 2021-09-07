@@ -16,6 +16,7 @@
     <result column="arrival_port_time" jdbcType="TIMESTAMP" property="arrivalPortTime" />
     <result column="arrival_time" jdbcType="TIMESTAMP" property="arrivalTime" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -47,6 +48,7 @@
     spo.arrival_port_time,
     spo.arrival_time,
     spo.order_status,
+    spo.audit_status,
     spo.`status`,
     spo.remark,
     spo.org_id,

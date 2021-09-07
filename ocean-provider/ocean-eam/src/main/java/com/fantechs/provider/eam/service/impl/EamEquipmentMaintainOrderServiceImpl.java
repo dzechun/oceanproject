@@ -170,6 +170,7 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
         eamEquipmentMaintainOrder.setModifiedTime(new Date());
         eamEquipmentMaintainOrder.setOrgId(user.getOrganizationId());
         eamEquipmentMaintainOrder.setStatus(StringUtils.isEmpty(eamEquipmentMaintainOrder.getStatus())?1: eamEquipmentMaintainOrder.getStatus());
+        eamEquipmentMaintainOrder.setOrderStatus((byte)1);
         eamEquipmentMaintainOrderMapper.insertUseGeneratedKeys(eamEquipmentMaintainOrder);
 
         // 新增保养单履历
