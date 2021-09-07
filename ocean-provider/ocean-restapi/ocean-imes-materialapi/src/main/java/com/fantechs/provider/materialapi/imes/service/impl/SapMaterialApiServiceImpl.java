@@ -1,5 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
@@ -43,8 +44,7 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
-    @LcnTransaction
-    public int getMaterial(SearchSapMaterialApi searchSapMaterialApi) throws ParseException {
+    public int getMaterial(SearchSapMaterialApi searchSapMaterialApi) {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESMATERIALQUERYOutService service = new SIMESMATERIALQUERYOutService();
         SIMESMATERIALQUERYOut out = service.getHTTPPort();
@@ -52,10 +52,19 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
         List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
         if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
 
-        if(StringUtils.isEmpty(searchSapMaterialApi.getStartTime()) || StringUtils.isEmpty(searchSapMaterialApi.getEndTime()))
+        if(StringUtils.isEmpty(searchSapMaterialApi.getStartTime()) && StringUtils.isEmpty(searchSapMaterialApi.getEndTime())) {
+            String endTime = DateUtil.format(new Date(), "yyyyMMdd");
+            req.setERSDA("20180101");
+            req.setERSDAEND(endTime);
+        }else if(StringUtils.isNotEmpty(searchSapMaterialApi.getStartTime()) || StringUtils.isNotEmpty(searchSapMaterialApi.getEndTime())) {
+            //(StringUtils.isEmpty(searchSapMaterialApi.getStartTime()) || StringUtils.isEmpty(searchSapMaterialApi.getEndTime()))
+
+            req.setERSDA(searchSapMaterialApi.getStartTime());
+            req.setERSDAEND(searchSapMaterialApi.getEndTime());
+        }else{
             throw new BizErrorException("开始和结束时间不能为空");
-        req.setERSDA(searchSapMaterialApi.getStartTime());
-        req.setERSDAEND(searchSapMaterialApi.getEndTime());
+        }
+
         DTMESMATERIALQUERYRES res = out.siMESMATERIALQUERYOut(req);
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())){
             if(StringUtils.isEmpty(res.getMATS())) throw new BizErrorException("请求结果为空");

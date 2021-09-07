@@ -32,7 +32,7 @@ public class BaseBadnessCauseDto extends BaseBadnessCause implements Serializabl
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum="8")
     private String organizationName;
 
     /**

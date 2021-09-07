@@ -60,6 +60,9 @@
     left join ocean_v2.sys_user s on eempi.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON eempi.org_id = bo.organization_id
     <where>
+      <if test="equipmentMaintainProjectId!=null">
+        and eempi.equipment_maintain_project_id = #{equipmentMaintainProjectId}
+      </if>
       <if test="equipmentMaintainProjectDesc != null and equipmentMaintainProjectDesc!=''">
         and eempi.equipment_maintain_project_desc like CONCAT('%', #{equipmentMaintainProjectDesc}, '%')
       </if>

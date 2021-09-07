@@ -80,7 +80,8 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         SysUser user = getUser();
         engPackingOrderSummaryDetDto.setStatus((byte)1);
         engPackingOrderSummaryDetDto.setOrgId(user.getOrganizationId());
-        EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), engPackingOrderSummaryDetDto.getCartonCode());
+
+        EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
 
         getMaterial(engPackingOrderSummaryDetDto,user,engPackingOrderSummary);
 
@@ -105,7 +106,9 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         SysUser user = getUser();
         int result =1;
         for(EngPackingOrderSummaryDetDto det : engPackingOrderSummaryDetDtos) {
-            EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), det.getCartonCode());
+
+          //  EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), det.getCartonCode());
+            EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(det.getPackingOrderSummaryId());
             if(StringUtils.isNotEmpty(engPackingOrderSummary)) {
                 getMaterial(det, user, engPackingOrderSummary);
             }else{
@@ -222,25 +225,24 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<EngPackingOrderSummaryDetDto> list = new LinkedList<>();
         LinkedList<EngHtPackingOrderSummaryDet> htList = new LinkedList<>();
-
-
+        Long engPackingOrderId = engPackingOrderSummaryMapper.selectByPrimaryKey(packingOrderSummaryId).getPackingOrderId();
         for (int i = 0; i < engPackingOrderSummaryDetImports.size(); i++) {
             EngPackingOrderSummaryDetImport engPackingOrderSummaryDetImport = engPackingOrderSummaryDetImports.get(i);
 
             //非空校验
-            String cartonCode = engPackingOrderSummaryDetImport.getCartonCode();
+            String cartonCode = engPackingOrderSummaryDetImport.getCartonCode();//
             String purchaseReqOrderCode = engPackingOrderSummaryDetImport.getPurchaseReqOrderCode();
             String contractCode = engPackingOrderSummaryDetImport.getContractCode();
             String materialName = engPackingOrderSummaryDetImport.getMaterialName();
-            String unitName = engPackingOrderSummaryDetImport.getUnitName();
-            String dominantTermCode = engPackingOrderSummaryDetImport.getDominantTermCode();
+            String unitName = engPackingOrderSummaryDetImport.getUnitName();//
+            String dominantTermCode = engPackingOrderSummaryDetImport.getDominantTermCode();//
             if (StringUtils.isEmpty(
                     cartonCode,materialName,purchaseReqOrderCode,contractCode,unitName,dominantTermCode
             )){
                 fail.add(i+2);
                 continue;
             }
-            EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), cartonCode);
+            EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), cartonCode, engPackingOrderId);
             //判断各参数是否大于0
             BigDecimal qty = engPackingOrderSummaryDetImport.getQty();
             if(qty.compareTo(BigDecimal.ZERO)<0 ){
@@ -263,15 +265,14 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
                 fail.add(i+2);
                 continue;
-            }else{
-                if("管道".equals(engPackingOrderSummary.getProfessionCode())&& StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode())){
-                    fail.add(i+2);
-                    continue;
-                }else if(!"管道".equals(engPackingOrderSummary.getProfessionCode())&& StringUtils.isEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
+            }else if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
+                if(!"管道".equals(engPackingOrderSummary.getProfessionName())){
                     fail.add(i+2);
                     continue;
                 }
+                continue;
             }
+
             //校验请购单
             Example orderExample = new Example(EngPurchaseReqOrder.class);
             Example.Criteria orderCriteria = orderExample.createCriteria();
@@ -317,7 +318,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 continue;
             }*/
 
-            dto.setPackingOrderSummaryId(packingOrderSummaryId);
+            dto.setPackingOrderSummaryId(engPackingOrderSummary.getPackingOrderSummaryId());
             dto.setCreateTime(new Date());
             dto.setCreateUserId(user.getUserId());
             dto.setModifiedTime(new Date());
@@ -344,11 +345,12 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         return resutlMap;
     }
 
-    public EngPackingOrderSummary getEngPackingOrderSummary(Long userId, String code){
+    public EngPackingOrderSummary getEngPackingOrderSummary(Long userId, String code,Long packingOrderId){
         Example example = new Example(EngPackingOrderSummary.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", userId);
         criteria.andEqualTo("cartonCode", code);
+        criteria.andEqualTo("packingOrderId", packingOrderId);
         EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectOneByExample(example);
         return engPackingOrderSummary;
     }

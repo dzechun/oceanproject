@@ -188,7 +188,7 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         if(StringUtils.isNotEmpty(baseInspectionStandardDetList)) {
             for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDetList) {
                 if (StringUtils.isNotEmpty(baseInspectionStandardDet.getInspectionStandardDetId())) {
-                    baseInspectionStandardDetMapper.updateByPrimaryKeySelective(baseInspectionStandardDet);
+                    baseInspectionStandardDetMapper.updateByPrimaryKey(baseInspectionStandardDet);
                     idList.add(baseInspectionStandardDet.getInspectionStandardDetId());
                 }
             }

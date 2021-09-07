@@ -170,6 +170,7 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
         eamEquPointInspectionOrder.setModifiedTime(new Date());
         eamEquPointInspectionOrder.setOrgId(user.getOrganizationId());
         eamEquPointInspectionOrder.setStatus(StringUtils.isEmpty(eamEquPointInspectionOrder.getStatus())?1: eamEquPointInspectionOrder.getStatus());
+        eamEquPointInspectionOrder.setOrderStatus((byte)1);
         eamEquPointInspectionOrderMapper.insertUseGeneratedKeys(eamEquPointInspectionOrder);
 
         // 新增点检单履历

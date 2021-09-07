@@ -45,7 +45,7 @@ spring:
     useGlobalDataSourceStat: true
     #通过connectProperties属性来打开mergesql功能罗慢sQL记录
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500;
-  redis:
+redis:
     host: 192.168.204.151
     port: 6379
     password:
@@ -92,6 +92,8 @@ ribbon:
     enabled: true
   ConnectTimeout: 60000
   ReadTimeout: 60000
+  MaxConnectionsPerHost: 50
+  MaxTotalConnections: 200
 
 tx-lcn:
   client:
@@ -119,6 +121,8 @@ zuul:
   host:
     connect-timeout-millis: 60000
     socket-timeout-millis: 60000
+    max-per-route-connections: 20
+    max-total-connections: 200
 
 management:
   endpoints:

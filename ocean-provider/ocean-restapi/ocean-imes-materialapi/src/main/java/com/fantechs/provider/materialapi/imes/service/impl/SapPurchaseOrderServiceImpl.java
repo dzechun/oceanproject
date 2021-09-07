@@ -51,7 +51,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
 
     @Override
     @LcnTransaction
-    public String purchaseOrder(List<RestapiPurchaseOrderApiDto> purchaseOrderApiDtos) throws ParseException {
+    public String purchaseOrder(List<RestapiPurchaseOrderApiDto> purchaseOrderApiDtos) {
 
         if(StringUtils.isEmpty(purchaseOrderApiDtos)) return "采购订单参数为空";
         Map<String,Long> purchaseMap = new HashMap<String,Long>();
@@ -81,7 +81,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             searchBaseWarehouse.setOrgId(orgId);
             ResponseEntity<List<BaseWarehouse>> baseWarehouseList = baseFeignApi.findList(searchBaseWarehouse);
             if(StringUtils.isEmpty(baseWarehouseList.getData()))
-                return"未查询到对应的供应商，编码为："+purchaseOrderApiDto.getLGORT();
+                return"未查询到对应的仓库，编码为："+purchaseOrderApiDto.getLGORT();
 
             SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
             searchBaseFactory.setFactoryCode(baseUtils.removeZero(purchaseOrderApiDto.getWERKS()));
@@ -95,8 +95,13 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
                 OmPurchaseOrder omPurchaseOrder = new OmPurchaseOrder();
                 omPurchaseOrder.setPurchaseOrderCode(baseUtils.removeZero(purchaseOrderApiDto.getEBELN()));
                 omPurchaseOrder.setOrderType(purchaseOrderApiDto.getBSART());
-                if (StringUtils.isNotEmpty(purchaseOrderApiDto.getAEDAT()))
-                    omPurchaseOrder.setOrderDate(DateUtils.getStrToDate("yyyyMMdd", purchaseOrderApiDto.getAEDAT()));
+                if (StringUtils.isNotEmpty(purchaseOrderApiDto.getAEDAT())) {
+                    try {
+                        omPurchaseOrder.setOrderDate(DateUtils.getStrToDate("yyyyMMdd", purchaseOrderApiDto.getAEDAT()));
+                    } catch (ParseException e) {
+                        return "时间格式错误";
+                    }
+                }
                 omPurchaseOrder.setSupplierId(baseSupplierList.getData().get(0).getSupplierId());
                 omPurchaseOrder.setOrgId(orgId);
                 omPurchaseOrder.setItemCategoryName(purchaseOrderApiDto.getEPSTP());

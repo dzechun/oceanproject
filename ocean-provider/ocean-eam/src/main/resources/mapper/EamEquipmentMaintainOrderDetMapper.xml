@@ -70,6 +70,9 @@
           #{item}
         </foreach>
       </if>
+      <if test="equipmentMaintainOrderId!=null">
+        and eemod.equipment_maintain_order_id = #{equipmentMaintainOrderId}
+      </if>
       <if test="status!=null">
         and eemod.status = #{status}
       </if>

@@ -31,7 +31,7 @@ public class SapMaterialApiController {
 
     @ApiOperation(value = "请求雷赛物料信息",notes = "新增或更新")
     @PostMapping("/getMaterial")
-    public ResponseEntity getSapMaterial(@ApiParam(value = "查询对象")@RequestBody SearchSapMaterialApi searchSapMaterialApi) throws ParseException {
+    public ResponseEntity getSapMaterial(@ApiParam(value = "查询对象")@RequestBody SearchSapMaterialApi searchSapMaterialApi){
         return ControllerUtil.returnCRUD(sapMaterialApiService.getMaterial(searchSapMaterialApi));
     }
 }

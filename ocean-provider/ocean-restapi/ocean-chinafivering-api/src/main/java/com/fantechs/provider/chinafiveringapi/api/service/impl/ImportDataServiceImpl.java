@@ -450,7 +450,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             for (BaseSupplier baseSupplier : listSu) {
                 baseSupplier.setOrganizationId(1004L);
                 baseSupplier.setStatus((byte)1);
-                //客户供应商用同一个表 SupplierType=1 表示客户
+                //客户供应商用同一个表 SupplierType=1 表示供应商
                 baseSupplier.setSupplierType((byte)1);
                 baseFeignApi.saveByApi(baseSupplier);
             }
