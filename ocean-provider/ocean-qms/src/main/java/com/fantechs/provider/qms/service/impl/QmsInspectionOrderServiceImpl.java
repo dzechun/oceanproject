@@ -62,8 +62,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Resource
     private QmsInspectionOrderDetSampleMapper qmsInspectionOrderDetSampleMapper;
     @Resource
-    private QmsInspectionOrderDetService qmsInspectionOrderDetService;
-    @Resource
     private InFeignApi inFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
@@ -84,6 +82,32 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         List<QmsInspectionOrder> qmsInspectionOrders = qmsInspectionOrderMapper.findList(map);
 
         return qmsInspectionOrders;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int audit(QmsInspectionOrder qmsInspectionOrder) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        qmsInspectionOrder.setModifiedUserId(user.getUserId());
+        qmsInspectionOrder.setModifiedTime(new Date());
+        return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int thirdInspection(QmsInspectionOrder qmsInspectionOrder) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        qmsInspectionOrder.setModifiedUserId(user.getUserId());
+        qmsInspectionOrder.setModifiedTime(new Date());
+        return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
     }
 
     @Override

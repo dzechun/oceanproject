@@ -14,6 +14,9 @@
     <result column="inspection_way_id" jdbcType="BIGINT" property="inspectionWayId" />
     <result column="inspection_status" jdbcType="TINYINT" property="inspectionStatus" />
     <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
+    <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
+    <result column="if_third_inspection" jdbcType="TINYINT" property="ifThirdInspection" />
+    <result column="access_url" jdbcType="VARCHAR" property="accessUrl" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -50,6 +53,9 @@
     qio.inspection_way_id,
     qio.inspection_status,
     qio.inspection_result,
+    qio.audit_status,
+    qio.if_third_inspection,
+    qio.access_url,
     qio.`status`,
     qio.remark,
     qio.org_id,
