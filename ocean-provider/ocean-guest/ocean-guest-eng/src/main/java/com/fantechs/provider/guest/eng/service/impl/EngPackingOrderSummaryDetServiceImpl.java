@@ -228,12 +228,12 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             EngPackingOrderSummaryDetImport engPackingOrderSummaryDetImport = engPackingOrderSummaryDetImports.get(i);
 
             //非空校验
-            String cartonCode = engPackingOrderSummaryDetImport.getCartonCode();
+            String cartonCode = engPackingOrderSummaryDetImport.getCartonCode();//
             String purchaseReqOrderCode = engPackingOrderSummaryDetImport.getPurchaseReqOrderCode();
             String contractCode = engPackingOrderSummaryDetImport.getContractCode();
             String materialName = engPackingOrderSummaryDetImport.getMaterialName();
-            String unitName = engPackingOrderSummaryDetImport.getUnitName();
-            String dominantTermCode = engPackingOrderSummaryDetImport.getDominantTermCode();
+            String unitName = engPackingOrderSummaryDetImport.getUnitName();//
+            String dominantTermCode = engPackingOrderSummaryDetImport.getDominantTermCode();//
             if (StringUtils.isEmpty(
                     cartonCode,materialName,purchaseReqOrderCode,contractCode,unitName,dominantTermCode
             )){
@@ -263,15 +263,14 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
                 fail.add(i+2);
                 continue;
-            }else{
-                if("管道".equals(engPackingOrderSummary.getProfessionCode())&& StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode())){
-                    fail.add(i+2);
-                    continue;
-                }else if(!"管道".equals(engPackingOrderSummary.getProfessionCode())&& StringUtils.isEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
+            }else if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
+                if(!"管道".equals(engPackingOrderSummary.getProfessionName())){
                     fail.add(i+2);
                     continue;
                 }
+                continue;
             }
+
             //校验请购单
             Example orderExample = new Example(EngPurchaseReqOrder.class);
             Example.Criteria orderCriteria = orderExample.createCriteria();
@@ -317,7 +316,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 continue;
             }*/
 
-            dto.setPackingOrderSummaryId(packingOrderSummaryId);
+            dto.setPackingOrderSummaryId(engPackingOrderSummary.getPackingOrderSummaryId());
             dto.setCreateTime(new Date());
             dto.setCreateUserId(user.getUserId());
             dto.setModifiedTime(new Date());

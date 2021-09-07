@@ -234,7 +234,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("orgId", user.getOrganizationId());
             criteria.andEqualTo("cartonCode",cartonCode);
-            //        criteria.andEqualTo("packingOrderId",packingOrderId);
+            criteria.andEqualTo("packingOrderId",packingOrderId);
             if (StringUtils.isNotEmpty(engPackingOrderSummaryMapper.selectOneByExample(example))){
                 fail.add(i+2);
                 continue;
