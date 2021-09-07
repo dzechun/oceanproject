@@ -102,7 +102,7 @@
       <if test="supplierId != null and supplierId!=''">
         and ecqo.supplier_id = #{supplierId}
       </if>
-      <if test="supplierName != null and supplierName!='' and (supplierId is null or supplierId='')">
+      <if test="supplierName != null and supplierName!='' and (supplierId == null or supplierId=='')">
         and bs.supplier_name = #{supplierName}
       </if>
       <if test="remark != null and remark!=''">
