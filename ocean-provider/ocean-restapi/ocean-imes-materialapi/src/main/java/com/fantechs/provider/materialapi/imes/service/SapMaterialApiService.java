@@ -7,6 +7,6 @@ import java.text.ParseException;
 
 public interface SapMaterialApiService {
 
-    int getMaterial(SearchSapMaterialApi searchSapMaterialApi) throws ParseException;
+    int getMaterial(SearchSapMaterialApi searchSapMaterialApi);
 
 }

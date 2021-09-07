@@ -38,7 +38,6 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
-    @LcnTransaction
     public int getSupplier(SearchSapSupplierApi searchSapSupplierApi) throws ParseException {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESSUPPLIERQUERYOutService service = new SIMESSUPPLIERQUERYOutService();

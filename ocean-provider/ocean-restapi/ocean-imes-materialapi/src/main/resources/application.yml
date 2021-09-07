@@ -7,6 +7,9 @@ spring:
     include: dev
   application:
     name: @pom.artifactId@
+ribbon:
+  ConnectTimeout: 5000 # 连接超时时间(ms)
+  ReadTimeout: 1800000 # 通信超时时间(ms)  全量同步物料接口需极长时间
 
 logging:
   file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
