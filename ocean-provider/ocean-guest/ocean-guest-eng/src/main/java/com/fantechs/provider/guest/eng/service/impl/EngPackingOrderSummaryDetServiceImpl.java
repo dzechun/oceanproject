@@ -80,7 +80,8 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         SysUser user = getUser();
         engPackingOrderSummaryDetDto.setStatus((byte)1);
         engPackingOrderSummaryDetDto.setOrgId(user.getOrganizationId());
-        EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), engPackingOrderSummaryDetDto.getCartonCode());
+
+        EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
 
         getMaterial(engPackingOrderSummaryDetDto,user,engPackingOrderSummary);
 
@@ -105,7 +106,9 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         SysUser user = getUser();
         int result =1;
         for(EngPackingOrderSummaryDetDto det : engPackingOrderSummaryDetDtos) {
-            EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), det.getCartonCode());
+
+          //  EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), det.getCartonCode());
+            EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(det.getPackingOrderSummaryId());
             if(StringUtils.isNotEmpty(engPackingOrderSummary)) {
                 getMaterial(det, user, engPackingOrderSummary);
             }else{
@@ -222,8 +225,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<EngPackingOrderSummaryDetDto> list = new LinkedList<>();
         LinkedList<EngHtPackingOrderSummaryDet> htList = new LinkedList<>();
-
-
+        Long engPackingOrderId = engPackingOrderSummaryMapper.selectByPrimaryKey(packingOrderSummaryId).getPackingOrderId();
         for (int i = 0; i < engPackingOrderSummaryDetImports.size(); i++) {
             EngPackingOrderSummaryDetImport engPackingOrderSummaryDetImport = engPackingOrderSummaryDetImports.get(i);
 
@@ -240,7 +242,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 fail.add(i+2);
                 continue;
             }
-            EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), cartonCode);
+            EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), cartonCode, engPackingOrderId);
             //判断各参数是否大于0
             BigDecimal qty = engPackingOrderSummaryDetImport.getQty();
             if(qty.compareTo(BigDecimal.ZERO)<0 ){
@@ -343,11 +345,12 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         return resutlMap;
     }
 
-    public EngPackingOrderSummary getEngPackingOrderSummary(Long userId, String code){
+    public EngPackingOrderSummary getEngPackingOrderSummary(Long userId, String code,Long packingOrderId){
         Example example = new Example(EngPackingOrderSummary.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", userId);
         criteria.andEqualTo("cartonCode", code);
+        criteria.andEqualTo("packingOrderId", packingOrderId);
         EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectOneByExample(example);
         return engPackingOrderSummary;
     }
