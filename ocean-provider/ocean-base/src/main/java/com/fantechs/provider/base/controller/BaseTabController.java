@@ -11,15 +11,14 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseTabService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -67,6 +66,13 @@ public class BaseTabController {
         Page<Object> page = PageHelper.startPage(searchBaseTab.getStartPage(),searchBaseTab.getPageSize());
         List<BaseTabDto> list = baseTabService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseTab));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("页签信息列表")
+    @PostMapping("/getAll")
+    public ResponseEntity<List<BaseTabDto>> getAll(@ApiParam(value = "查询对象")@RequestBody SearchBaseTab searchBaseTab) {
+        List<BaseTabDto> list = baseTabService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseTab));
+        return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
 /*    @ApiOperation("历史列表")
