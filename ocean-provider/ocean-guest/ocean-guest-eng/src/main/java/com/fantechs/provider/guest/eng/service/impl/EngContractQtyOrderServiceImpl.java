@@ -1,9 +1,17 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderDto;
+import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderMapper;
 import com.fantechs.provider.guest.eng.service.EngContractQtyOrderService;
 import org.springframework.stereotype.Service;
@@ -23,9 +31,21 @@ public class EngContractQtyOrderServiceImpl extends BaseService<EngContractQtyOr
 
     @Resource
     private EngContractQtyOrderMapper engContractQtyOrderMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<EngContractQtyOrderDto> findList(Map<String, Object> map) {
+        SysUser user= getUser();
+        if(StringUtils.isEmpty(map.get("orgId"))){
+            map.put("orgId",user.getOrganizationId());
+        }
+
+        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
+        searchBaseSupplierReUser.setUserId(user.getUserId());
+        ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
+        if(StringUtils.isNotEmpty(list.getData()))
+            map.put("supplierId",list.getData().get(0).getSupplierId());
         return engContractQtyOrderMapper.findList(map);
     }
 
@@ -56,5 +76,13 @@ public class EngContractQtyOrderServiceImpl extends BaseService<EngContractQtyOr
             return engContractQtyOrderMapper.insertSelective(engContractQtyOrder);
         }
 
+    }
+
+    public SysUser getUser(){
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        return currentUser;
     }
 }
