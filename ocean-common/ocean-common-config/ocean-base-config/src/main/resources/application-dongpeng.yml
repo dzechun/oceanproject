@@ -47,6 +47,18 @@ spring:
     host: 192.168.19.176
     port: 6379
     password: 'qwe!@#'
+    jedis:
+      pool:
+        # 最大空闲连接
+        max-idle: 8
+        # 最小空闲链接
+        min-idle: 0
+        # 最大连接数（负数表示没有限制）
+        max-active: 8
+        # 最大阻塞等待时间（负数表示没有限制）
+        max-wait: 0
+      # 链接超时时间（毫秒）
+      timeout: 1000
   jackson:
     date-format: yyyy-MM-dd HH:mm
     time-zone: GMT+8
@@ -96,6 +108,8 @@ zuul:
   host:
     connect-timeout-millis: 60000
     socket-timeout-millis: 60000
+    max-per-route-connections: 20
+    max-total-connections: 200
 
 management:
   endpoints:
