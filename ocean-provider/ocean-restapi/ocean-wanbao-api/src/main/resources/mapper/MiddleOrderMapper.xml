@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wanbao.api.mapper.MiddleOrderMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.provider.wanbao.api.entity.MiddleOrder">
+        <id column="work_order_id" jdbcType="BIGINT" property="middleOrderId"/>
+        <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
+        <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus"/>
+        <result column="work_order_type" jdbcType="TINYINT" property="workOrderType"/>
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="plan_start_time" jdbcType="TIMESTAMP" property="planStartTime"/>
+        <result column="plan_end_time" jdbcType="TIMESTAMP" property="planEndTime"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="work_order_qty" jdbcType="DECIMAL" property="workOrderQty"/>
+        <result column="output_qty" jdbcType="DECIMAL" property="outputQty"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    </resultMap>
+
+    <select id="findOrderData" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+            we.wip_entity_name AS work_order_code,
+            wjs.meaning AS work_order_status,
+            decode( wdj.job_type, 1, '标准', '非标' ) AS work_order_type,
+            wdj.Attribute5 AS sales_order_code,
+            wdj.attribute6 AS pro_name,
+            wdj.SCHEDULE_GROUP_ID AS pro_code,
+            wdj.scheduled_start_date AS plan_start_time,
+            wdj.scheduled_completion_date AS plan_end_time,
+            msib.segment1 AS material_code,
+            msib.description AS material_name,
+            wdj.start_quantity AS work_order_qty,
+            wdj.quantity_completed AS output_qty,
+            wdj.last_update_date AS modified_time
+        FROM
+            wip_entities we,
+            mfg_lookups wjs,
+            wip_discrete_jobs wdj,
+            mtl_system_items_b msib
+        WHERE
+            we.wip_entity_id = wdj.wip_entity_id
+          AND wdj.primary_item_id = msib.inventory_item_id
+          AND msib.organization_id = 83
+          AND wjs.lookup_type = 'WIP_JOB_STATUS'
+          AND wjs.LOOKUP_CODE = WDJ.STATUS_TYPE
+          AND wjs.meaning = 'Released'
+          AND SCHEDULE_GROUP_ID in (2047, 2045, 2046, 2047)
+        ORDER BY
+            msib.segment1,
+            we.wip_entity_name
+    </select>
+
+</mapper>

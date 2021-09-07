@@ -2,16 +2,15 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.basic.imports.BaseProductModelImport;
-import com.fantechs.common.base.general.entity.basic.BaseProductModel;
-import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtProductModel;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductModel;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseProductFamilyDto;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseProductModelImport;
+import com.fantechs.common.base.general.entity.basic.BaseProductModel;
+import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
 import com.fantechs.common.base.general.entity.basic.BaseTab;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtProductModel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductFamily;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -251,5 +250,11 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
         resutlMap.put("操作成功总数", success);
         resutlMap.put("操作失败行数", fail);
         return resutlMap;
+    }
+
+    @Override
+    public BaseProductModel addForReturn(BaseProductModel productModel) {
+        baseProductModelMapper.insertUseGeneratedKeys(productModel);
+        return productModel;
     }
 }

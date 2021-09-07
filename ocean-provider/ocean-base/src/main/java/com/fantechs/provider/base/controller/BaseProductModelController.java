@@ -2,11 +2,11 @@ package com.fantechs.provider.base.controller;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProductModelImport;
 import com.fantechs.common.base.general.entity.basic.BaseProductModel;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductModel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductModel;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -29,7 +29,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  * @Auther: wcz
@@ -65,6 +64,12 @@ public class BaseProductModelController {
     @ApiOperation("新增产品型号")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody @Validated BaseProductModel baseProductModel){
+        return ControllerUtil.returnCRUD(baseProductModelService.save(baseProductModel));
+    }
+
+    @ApiOperation("新增产品型号并返回对象")
+    @PostMapping("/addForReturn")
+    public ResponseEntity addForReturn(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody @Validated BaseProductModel baseProductModel){
         return ControllerUtil.returnCRUD(baseProductModelService.save(baseProductModel));
     }
 
