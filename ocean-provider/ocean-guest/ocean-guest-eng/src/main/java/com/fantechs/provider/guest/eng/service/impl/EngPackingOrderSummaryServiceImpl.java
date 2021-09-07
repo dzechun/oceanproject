@@ -245,15 +245,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             BeanUtils.copyProperties(engPackingOrderSummaryImport, dto);
 
             EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(packingOrderId);
-            //校验请购单
-            Example orderExample = new Example(EngPurchaseReqOrder.class);
-            Example.Criteria orderCriteria = orderExample.createCriteria();
-            orderCriteria.andEqualTo("purchaseReqOrderCode",engPackingOrderSummaryImport.getPurchaseReqOrderCode());
-            List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
-            if(StringUtils.isEmpty(engPurchaseReqOrders)){
-                fail.add(i+2);
-                continue;
-            }
+
 
             //查询合同量单，获取专业
             Example qtyExample = new Example(EngContractQtyOrder.class);
@@ -267,6 +259,18 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             }else{
                 dto.setProfessionName(engContractQtyOrders.get(0).getProfessionName());
             }
+
+            //校验请购单
+            Example orderExample = new Example(EngPurchaseReqOrder.class);
+            Example.Criteria orderCriteria = orderExample.createCriteria();
+            orderCriteria.andEqualTo("purchaseReqOrderCode",engPackingOrderSummaryImport.getPurchaseReqOrderCode());
+            orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
+            List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
+            if(StringUtils.isEmpty(engPurchaseReqOrders)){
+                fail.add(i+2);
+                continue;
+            }
+
 
             if(StringUtils.isEmpty(dto.getCartonQty()))
                 dto.setCartonQty(1);

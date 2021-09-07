@@ -10,6 +10,7 @@
     <result column="despatch_batch" jdbcType="VARCHAR" property="despatchBatch" />
     <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="shipment_enterprise_id" jdbcType="BIGINT" property="shipmentEnterpriseId" />
     <result column="total_carton_qty" jdbcType="INTEGER" property="totalCartonQty" />
     <result column="leave_factory_time" jdbcType="TIMESTAMP" property="leaveFactoryTime" />
     <result column="leave_port_time" jdbcType="TIMESTAMP" property="leavePortTime" />
@@ -42,6 +43,7 @@
     spo.despatch_batch,
     spo.order_time,
     spo.supplier_id,
+    spo.shipment_enterprise_id,
     spo.total_carton_qty,
     spo.leave_factory_time,
     spo.leave_port_time,
