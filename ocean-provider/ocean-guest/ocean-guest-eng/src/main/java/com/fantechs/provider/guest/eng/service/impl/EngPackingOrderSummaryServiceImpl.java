@@ -265,7 +265,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
                 fail.add(i+2);
                 continue;
             }else{
-                dto.setProfessionCode(engContractQtyOrders.get(0).getProfessionCode());
+                dto.setProfessionName(engContractQtyOrders.get(0).getProfessionName());
             }
 
             if(StringUtils.isEmpty(dto.getCartonQty()))
