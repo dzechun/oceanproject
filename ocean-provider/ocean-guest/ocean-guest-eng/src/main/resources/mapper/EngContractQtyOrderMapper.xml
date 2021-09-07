@@ -75,6 +75,9 @@
       <if test="contractCode != null and contractCode!='' and codeQueryMark!=1">
         and ecqo.contract_code like CONCAT('%', #{contractCode}, '%')
       </if>
+      <if test="supplierId != null and supplierId!=''">
+        and ecqo.supplier_id = #{supplierId}
+      </if>
       <if test="professionName != null and professionName!=''">
         and ecqo.profession_name like CONCAT('%', #{professionName}, '%')
       </if>
@@ -96,8 +99,17 @@
       <if test="materialPurpose != null and materialPurpose!=''">
         and ecqo.material_purpose = #{materialPurpose}
       </if>
-      <if test="supplierName != null and supplierName!=''">
+      <if test="supplierId != null and supplierId!=''">
+        and ecqo.supplier_id = #{supplierId}
+      </if>
+      <if test="supplierName != null and supplierName!='' and (supplierId == null or supplierId=='')">
         and bs.supplier_name = #{supplierName}
+      </if>
+      <if test="remark != null and remark!=''">
+        and ecqo.remark like CONCAT('%', #{remark}, '%')
+      </if>
+      <if test="purQty != null and purQty!=''">
+        and ecqo.pur_qty = #{purQty}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ecqo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -1,9 +1,14 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPurchaseReqOrderDto;
 import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngPurchaseReqOrderMapper;
 import com.fantechs.provider.guest.eng.service.EngPurchaseReqOrderService;
 import org.springframework.stereotype.Service;
@@ -23,9 +28,16 @@ public class EngPurchaseReqOrderServiceImpl extends BaseService<EngPurchaseReqOr
 
     @Resource
     private EngPurchaseReqOrderMapper engPurchaseReqOrderMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
+
 
     @Override
     public List<EngPurchaseReqOrderDto> findList(Map<String, Object> map) {
+        if(StringUtils.isEmpty(map.get("orgId"))){
+        SysUser user = getUser();
+        map.put("orgId",user.getOrganizationId());
+        }
         return engPurchaseReqOrderMapper.findList(map);
     }
 
@@ -54,5 +66,13 @@ public class EngPurchaseReqOrderServiceImpl extends BaseService<EngPurchaseReqOr
             return engPurchaseReqOrderMapper.insertSelective(engPurchaseReqOrder);
         }
 
+    }
+
+    public SysUser getUser(){
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        return currentUser;
     }
 }
