@@ -108,10 +108,10 @@ public class EngPackingOrder extends ValidGroup implements Serializable {
     private Date arrivalTime;
 
     /**
-     * 订单状态(1-未审核 2-审核中 3-已通过 4-未通过)
+     * 订单状态(单据状态(1-未到达 2-待收货 3-收货中 4-收货完成)
      */
-    @ApiModelProperty(name="orderStatus",value = "订单状态(1-未审核 2-审核中 3-已通过 4-未通过)")
-    @Excel(name = "订单状态(1-未审核 2-审核中 3-已通过 4-未通过)", height = 20, width = 30,orderNum="10")
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-未到达 2-待收货 3-收货中 4-收货完成)")
+    @Excel(name = "单据状态(1-未到达 2-待收货 3-收货中 4-收货完成)", height = 20, width = 30,orderNum="10")
     @Column(name = "order_status")
     private Byte orderStatus;
 

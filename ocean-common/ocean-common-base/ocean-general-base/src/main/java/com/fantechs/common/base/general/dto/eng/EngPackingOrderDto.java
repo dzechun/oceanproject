@@ -44,4 +44,10 @@ public class EngPackingOrderDto extends EngPackingOrder implements Serializable 
     @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="14")
     private String modifiedUserName;
 
+
+    /**
+     * 物流商名称
+     */
+    @ApiModelProperty(name="shipmentEnterpriseName",value = "物流商ID")
+    private Long shipmentEnterpriseName;
 }

@@ -101,4 +101,21 @@ public class SearchEngPackingOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="packingOrderCode",value = "装箱单号")
     private String packingOrderCode;
 
+    /**
+     * 审核状态(1-未审核 2-审核中 3-已通过 4-未通过)
+     */
+    @ApiModelProperty(name="auditStatus",value = "审核状态(1-未审核 2-审核中 3-已通过 4-未通过)")
+    private Byte auditStatus;
+
+    /**
+     * 物流商ID
+     */
+    @ApiModelProperty(name="shipmentEnterpriseId",value = "物流商ID")
+    private Long shipmentEnterpriseId;
+
+    /**
+     * 物流商名称
+     */
+    @ApiModelProperty(name="shipmentEnterpriseName",value = "物流商ID")
+    private Long shipmentEnterpriseName;
 }
