@@ -57,7 +57,7 @@
         and bii.inspection_item_code like CONCAT('%', #{inspectionItemCode}, '%')
       </if>
       <if test="inspectionItemDesc!=null and inspectionItemDesc!= ''">
-        and bii.inspection_item_desc = #{inspectionItemDesc}
+        and bii.inspection_item_desc like CONCAT('%', #{inspectionItemDesc}, '%')
       </if>
       <if test="status!=null">
         and bii.status=#{status}

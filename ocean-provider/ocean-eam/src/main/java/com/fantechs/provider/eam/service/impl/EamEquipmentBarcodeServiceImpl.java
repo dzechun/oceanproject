@@ -137,10 +137,10 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
         String msg = "";
         boolean tag = false;
 
-        if (StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageTime(), eamEquipment.getMaxUsageTimes())
-                && eamEquipment.getMaxUsageTimes() != 0) {
-            if (eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTimes()) == 0
-                    || eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTimes()) == 1) {
+        if (StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageTime(), eamEquipment.getMaxUsageTime())
+                && eamEquipment.getMaxUsageTime() != 0) {
+            if (eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTime()) == 0
+                    || eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTime()) == 1) {
                 tag = true;
             }
         }

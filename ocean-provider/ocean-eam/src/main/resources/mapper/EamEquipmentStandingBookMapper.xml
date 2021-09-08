@@ -35,7 +35,7 @@
     <result column="equipment_category_name" jdbcType="VARCHAR" property="equipmentCategoryName"/>
       <result column="asset_code" jdbcType="VARCHAR" property="assetCode"/>
       <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
-      <result column="equipment_status" jdbcType="VARCHAR" property="equipmentStatus"/>
+      <result column="equipment_status" jdbcType="TINYINT" property="equipmentStatus"/>
       <result column="equipment_barcode" jdbcType="VARCHAR" property="equipmentBarcode"/>
     <collection property="eamEquipmentStandingBookAttachments" ofType="com.fantechs.common.base.general.entity.eam.EamEquipmentStandingBookAttachment"
                 column="{equipmentStandingBookId=equipment_standing_book_id}" select="com.fantechs.provider.eam.mapper.EamEquipmentStandingBookAttachmentMapper.findList">

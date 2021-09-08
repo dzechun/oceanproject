@@ -258,10 +258,10 @@ public class EamEquipment extends ValidGroup implements Serializable {
     /**
      * 最大使用次数
      */
-    @ApiModelProperty(name="maxUsageTimes",value = "最大使用次数")
+    @ApiModelProperty(name="maxUsageTime",value = "最大使用次数")
     @Excel(name = "最大使用次数", height = 20, width = 30,orderNum="14")
-    @Column(name = "max_usage_times")
-    private Integer maxUsageTimes;
+    @Column(name = "max_usage_time")
+    private Integer maxUsageTime;
 
     /**
      * 警告次数

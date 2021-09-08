@@ -36,7 +36,7 @@
     <result column="maintain_max_usage_time" jdbcType="INTEGER" property="maintainMaxUsageTime" />
     <result column="maintain_warning_time" jdbcType="INTEGER" property="maintainWarningTime" />
     <result column="lifecycle" jdbcType="DECIMAL" property="lifecycle" />
-    <result column="max_usage_times" jdbcType="INTEGER" property="maxUsageTimes" />
+    <result column="max_usage_time" jdbcType="INTEGER" property="maxUsageTime" />
     <result column="warning_time" jdbcType="INTEGER" property="warningTime" />
     <result column="max_usage_days" jdbcType="INTEGER" property="maxUsageDays" />
     <result column="warning_days" jdbcType="INTEGER" property="warningDays" />
@@ -95,7 +95,7 @@
     ehe.maintain_max_usage_time,
     ehe.maintain_warning_time,
     ehe.lifecycle,
-    ehe.max_usage_times,
+    ehe.max_usage_time,
     ehe.warning_time,
     ehe.max_usage_days,
     ehe.warning_days,

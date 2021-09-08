@@ -56,10 +56,10 @@
     <where>
       bhii.inspection_item_type = 1
       <if test="inspectionItemCode!=null and inspectionItemCode!= ''">
-        and bhii.inspection_item_code = #{inspectionItemCode}
+        and bhii.inspection_item_code like CONCAT('%', #{inspectionItemCode}, '%')
       </if>
       <if test="inspectionItemDesc!=null and inspectionItemDesc!= ''">
-        and bhii.inspection_item_desc = #{inspectionItemDesc}
+        and bhii.inspection_item_desc like CONCAT('%', #{inspectionItemDesc}, '%')
       </if>
       <if test="status!=null">
         and bhii.status=#{status}
