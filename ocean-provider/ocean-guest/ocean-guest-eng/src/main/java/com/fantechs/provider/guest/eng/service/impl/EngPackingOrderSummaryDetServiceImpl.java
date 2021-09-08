@@ -10,10 +10,7 @@ import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryDetImport;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
-import com.fantechs.common.base.general.entity.basic.BaseTab;
+import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -248,14 +245,15 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             EngPackingOrderSummaryDetImport engPackingOrderSummaryDetImport = engPackingOrderSummaryDetImports.get(i);
 
             //非空校验
-            String cartonCode = engPackingOrderSummaryDetImport.getCartonCode();//
+            String cartonCode = engPackingOrderSummaryDetImport.getCartonCode();
             String purchaseReqOrderCode = engPackingOrderSummaryDetImport.getPurchaseReqOrderCode();
             String contractCode = engPackingOrderSummaryDetImport.getContractCode();
             String materialName = engPackingOrderSummaryDetImport.getMaterialName();
-            String unitName = engPackingOrderSummaryDetImport.getUnitName();//
-            String dominantTermCode = engPackingOrderSummaryDetImport.getDominantTermCode();//
+            String unitName = engPackingOrderSummaryDetImport.getUnitName();
+            String dominantTermCode = engPackingOrderSummaryDetImport.getDominantTermCode();
+            String deviceCode = engPackingOrderSummaryDetImport.getDeviceCode();
             if (StringUtils.isEmpty(
-                    cartonCode,materialName,purchaseReqOrderCode,contractCode,unitName,dominantTermCode
+                    cartonCode,materialName,purchaseReqOrderCode,contractCode,deviceCode,unitName,dominantTermCode
             )){
                 throw new BizErrorException("添加失败，箱号、请购单号、合同号、货物名称、单位、主项号不能为空,"+"错误行数为:"+(i+2));
                /* fail.add(i+2);
@@ -284,12 +282,11 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
 
 
             //材料编码、原材料编码二者不能都为空，必须有一个有值，而且存在于物料表中
-            if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
-                /*fail.add(i+2);
-                continue;*/
-                throw new BizErrorException("添加失败，材料编码、原材料编码二者不能同时为空,"+"错误行数为:"+(i+2));
-            }else if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode())
-            && "管道".equals(engPackingOrderSummary.getProfessionName())){
+            //
+            /*if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
+                //throw new BizErrorException("添加失败，材料编码、原材料编码二者不能同时为空,"+"错误行数为:"+(i+2));
+            }else */
+            if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode())&& "管道".equals(engPackingOrderSummary.getProfessionName())){
                     throw new BizErrorException("添加失败，专业等于管道时，材料编码不能为空,"+"错误行数为:"+(i+2));
             }
 
@@ -297,12 +294,13 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             Example qtyExample = new Example(EngContractQtyOrder.class);
             Example.Criteria qtyCriteria = qtyExample.createCriteria();
             qtyCriteria.andEqualTo("contractCode",contractCode);
-            qtyCriteria.andEqualTo("dominantTermCode",engPackingOrderSummaryDetImport.getDominantTermCode());
+            qtyCriteria.andEqualTo("dominantTermCode",dominantTermCode);
             if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getMaterialCode())){
                 qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDetImport.getMaterialCode());
-            }else if(StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
+            }else if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
                 qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDetImport.getRawMaterialCode());
             }
+            qtyCriteria.andEqualTo("deviceCode",deviceCode);
             List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
             if(StringUtils.isEmpty(engContractQtyOrders)){
                 throw new BizErrorException("添加失败，未查询到对应的合同量单,"+"错误行数为:"+(i+2));
@@ -321,9 +319,6 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 /*fail.add(i+2);
                 continue;*/
             }
-
-
-
 
             getMaterial(dto,user,engPackingOrderSummary);
 
@@ -383,10 +378,15 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
     //生成条码
     private String creatBarCode(List<BaseBarcodeRuleSpec> list, String materialCode, Long materialId){
         String lastBarCode = null;
-        boolean hasKey = redisUtil.hasKey(this.sub(list));
+        SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+        searchBaseBarcodeRule.setBarcodeRuleId(list.get(0).getBarcodeRuleId());
+        List<BaseBarcodeRuleDto> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
+        if(StringUtils.isEmpty(barcodeRulList)) throw new BizErrorException("未查询到编码规则");
+
+        boolean hasKey = redisUtil.hasKey(barcodeRulList.get(0).getBarcodeRule());
         if(hasKey){
             // 从redis获取上次生成条码
-            Object redisRuleData = redisUtil.get(this.sub(list));
+            Object redisRuleData = redisUtil.get(barcodeRulList.get(0).getBarcodeRule());
             lastBarCode = String.valueOf(redisRuleData);
         }
         //获取最大流水号
@@ -398,19 +398,19 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         }
 
         // 更新redis最新条码
-        redisUtil.set(sub(list), rs.getData());
 
+        redisUtil.set(barcodeRulList.get(0).getBarcodeRule(), rs.getData());
         return rs.getData();
     }
 
-
+/*
     public String sub(List<BaseBarcodeRuleSpec> list){
         StringBuffer sb = new StringBuffer();
         for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
             sb.append(baseBarcodeRuleSpec.getSpecification());
         }
         return sb.toString();
-    }
+    }*/
 
 
     public void check(EngPackingOrderSummaryDetDto dto, SysUser user,EngPackingOrderSummary engPackingOrderSummary){
