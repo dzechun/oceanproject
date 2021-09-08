@@ -335,6 +335,8 @@ public class BarcodeUtils {
         mesSfcBarcodeProcessRecord.setOperatorUserId(dto.getOperatorUserId());
         mesSfcBarcodeProcessRecord.setModifiedTime(new Date());
         mesSfcBarcodeProcessRecord.setModifiedUserId(dto.getOperatorUserId());
+        //雷赛增加过站耗时记录 用预留栏位 option1 记录
+        mesSfcBarcodeProcessRecord.setOption1(dto.getPassTime());
         barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
         Map<String, Object> map = new HashMap<>();
