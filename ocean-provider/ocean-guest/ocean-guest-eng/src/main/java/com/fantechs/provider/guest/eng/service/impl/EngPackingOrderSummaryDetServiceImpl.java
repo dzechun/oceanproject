@@ -194,6 +194,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             baseMaterial.setMaterialCode(code);
             baseMaterial.setMaterialDesc(engPackingOrderSummaryDetDto.getSpec());
             baseMaterial.setRemark(engPackingOrderSummaryDetDto.getUnitName());
+            baseMaterial.setOrganizationId(user.getOrganizationId());
             baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
             engPackingOrderSummaryDetDto.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
         } else {
@@ -208,6 +209,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 baseMaterial.setMaterialCode(engPackingOrderSummaryDetDto.getMaterialCode());
                 baseMaterial.setMaterialDesc(engPackingOrderSummaryDetDto.getSpec());
                 baseMaterial.setRemark(engPackingOrderSummaryDetDto.getUnitName());
+                baseMaterial.setOrganizationId(user.getOrganizationId());
                 baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
                 engPackingOrderSummaryDetDto.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
             }
