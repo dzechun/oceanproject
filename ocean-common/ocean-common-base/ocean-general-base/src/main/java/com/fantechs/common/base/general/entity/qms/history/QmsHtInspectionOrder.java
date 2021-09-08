@@ -108,6 +108,27 @@ public class QmsHtInspectionOrder extends ValidGroup implements Serializable {
     private Byte inspectionResult;
 
     /**
+     * 审核状态(0-未审核 1-通过 2-不通过)
+     */
+    @ApiModelProperty(name="auditStatus",value = "审核状态(0-未审核 1-通过 2-不通过)")
+    @Column(name = "audit_status")
+    private Byte auditStatus;
+
+    /**
+     * 第三方检验(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifThirdInspection",value = "第三方检验(0-否 1-是)")
+    @Column(name = "if_third_inspection")
+    private Byte ifThirdInspection;
+
+    /**
+     * 访问路径
+     */
+    @ApiModelProperty(name="accessUrl",value = "访问路径")
+    @Column(name = "access_url")
+    private String accessUrl;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

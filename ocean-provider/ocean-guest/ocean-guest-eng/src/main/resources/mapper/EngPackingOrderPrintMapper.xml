@@ -17,7 +17,9 @@
                  LEFT JOIN base_supplier bs ON eposd.supplier_id = bs.supplier_id
                  LEFT JOIN ocean_v2.sys_user su ON eposd.create_user_id = su.user_id
                  LEFT JOIN ocean_v2.sys_user sus ON eposd.modified_user_id = sus.user_id
+                left join fantech_imes_v2.base_organization bo ON eposd.org_id = bo.organization_id
     <where>
+        epo.audit_status=3
         <if test="despatchBatch!=null and despatchBatch!=''">
             and epo.despatch_batch like CONCAT('%',#{despatchBatch},'%')
         </if>
@@ -51,8 +53,14 @@
 <if test="supplierName!=null and supplierName!=''">
     and bs.supplier_name like CONCAT('%',#{supplierName},'%')
 </if>
+<if test="orgId!=null and orgId!=''">
+    and epo.org_id=#{orgId}
+</if>
+<if test="supplierId!=null and supplierId!=''">
+    and epo.supplier_id = #{supplierId}
+</if>
     </where>
-        order by eposd.create_time
+        order by eposd.create_time desc
     </select>
     <select id="ViewPrint" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
         select * FROM
@@ -64,7 +72,7 @@
                 view_WUHUAN_innerBoxCode
             </when>
             <when test="type==3">
-                view_WUHUAN_ materialsCode
+                view_WUHUAN_materialsCode
             </when>
         </choose>
 <where>

@@ -81,6 +81,20 @@ public class EngPackingOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+
+    @ApiOperation("提交")
+    @PostMapping("/submit")
+    public ResponseEntity submit(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EngPackingOrder.update.class) EngPackingOrder engPackingOrder) {
+        return ControllerUtil.returnCRUD(engPackingOrderService.submit(engPackingOrder));
+    }
+
+
+    @ApiOperation("审核")
+    @PostMapping("/censor")
+    public ResponseEntity censor(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EngPackingOrder.update.class) EngPackingOrder engPackingOrder) {
+        return ControllerUtil.returnCRUD(engPackingOrderService.censor(engPackingOrder));
+    }
+
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")

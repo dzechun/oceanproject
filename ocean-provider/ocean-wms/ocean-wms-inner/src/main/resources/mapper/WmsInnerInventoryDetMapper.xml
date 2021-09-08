@@ -28,6 +28,9 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
+        <result column="spec" jdbcType="VARCHAR" property="spec"/>
+        <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto">
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
@@ -63,7 +66,15 @@ wiid.barcode_status,
         wiid.create_time,
         wiid.modified_user_id,
         wiid.modified_time,
-        wiid.is_delete
+        wiid.is_delete,
+wiid.contract_code,
+wiid.spec,
+wiid.purchase_req_order_code,
+wiid.option1,
+wiid.option2,
+wiid.option3,
+wiid.option4,
+wiid.option5
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select<include refid="Base_Column_List"/>,

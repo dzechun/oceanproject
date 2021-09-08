@@ -14,4 +14,7 @@ import java.util.Map;
 
 public interface EngPackingOrderService extends IService<EngPackingOrder> {
     List<EngPackingOrderDto> findList(Map<String, Object> map);
+    int censor(EngPackingOrder engPackingOrder);
+
+    int submit(EngPackingOrder engPackingOrder);
 }

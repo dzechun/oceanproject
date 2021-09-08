@@ -65,6 +65,7 @@
       <result column="vehicle_count" jdbcType="VARCHAR" property="vehicleCount" />
       <result column="ids_type" jdbcType="VARCHAR" property="idsType" />
       <result column="ids_vehicle_count_arithmetic" jdbcType="VARCHAR" property="idsVehicleCountArithmetic" />
+      <result column="org_id" jdbcType="BIGINT" property="orgId" />
   </resultMap>
 
     <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseTabDto" extends="BaseResultMap">

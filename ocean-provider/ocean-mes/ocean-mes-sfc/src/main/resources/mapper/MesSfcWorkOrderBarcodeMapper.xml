@@ -107,15 +107,7 @@ order by mswob.create_time desc
         WHERE blc.label_category_code = #{labelCategoryCode}
     </select>
     <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
-        select * FROM
-        <choose>
-            <when test="barcodeType==56">
-                view_workOrder
-            </when>
-            <when test="barcodeType==57">
-                view_order
-            </when>
-        </choose>
+        select * FROM ${labelCode}
         <where>
             id = #{id}
         </where>

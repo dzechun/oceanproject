@@ -10,6 +10,7 @@
     <result column="despatch_batch" jdbcType="VARCHAR" property="despatchBatch" />
     <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="shipment_enterprise_id" jdbcType="BIGINT" property="shipmentEnterpriseId" />
     <result column="total_carton_qty" jdbcType="INTEGER" property="totalCartonQty" />
     <result column="leave_factory_time" jdbcType="TIMESTAMP" property="leaveFactoryTime" />
     <result column="leave_port_time" jdbcType="TIMESTAMP" property="leavePortTime" />
@@ -34,6 +35,7 @@
     <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="shipment_enterprise_name" jdbcType="VARCHAR" property="shipmentEnterpriseName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -42,6 +44,7 @@
     spo.despatch_batch,
     spo.order_time,
     spo.supplier_id,
+    spo.shipment_enterprise_id,
     spo.total_carton_qty,
     spo.leave_factory_time,
     spo.leave_port_time,
@@ -63,11 +66,12 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    bs.supplier_name as supplier_name, bs.supplier_code as supplier_code,
+    bs.supplier_name as supplier_name, bs.supplier_code as supplier_code,bse.shipment_enterprise_name as shipment_enterprise_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,bo.organization_name
     from eng_packing_order spo
     left join base_supplier bs on spo.supplier_id=bs.supplier_id
+    left join base_shipment_enterprise bse on spo.shipment_enterprise_id=bse.shipment_enterprise_id
     left join ocean_v2.sys_user u on spo.create_user_id=u.user_id
     left join ocean_v2.sys_user s on spo.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON spo.org_id = bo.organization_id
@@ -78,6 +82,9 @@
       <if test="supplierName != null and supplierName!=''">
         and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
       </if>
+      <if test="shipmentEnterpriseName != null and shipmentEnterpriseName!=''">
+        and bs.shipment_enterprise_name like CONCAT('%', #{shipmentEnterpriseName}, '%')
+      </if>
       <if test="packingOrderCode != null and packingOrderCode!=''">
         and spo.packing_order_code like CONCAT('%',  #{packingOrderCode}, '%')
       </if>
@@ -86,6 +93,9 @@
       </if>
       <if test="orderStatus != null and orderStatus!=''">
         and spo.order_status = #{orderStatus}
+      </if>
+      <if test="auditStatus != null and auditStatus!=''">
+        and spo.audit_status = #{auditStatus}
       </if>
       <if test="orderTimeStart!= null and orderTimeStart!= '' and orderTimeEnd!= null and orderTimeEnd!= ''">
         and date_format(spo.order_time, '%Y-%m-%d %H:%i') BETWEEN #{orderTimeStart} AND #{orderTimeEnd}
@@ -107,6 +117,12 @@
       </if>
       <if test="orgId!=null">
         and spo.org_id=#{orgId}
+      </if>
+      <if test="supplierId!=null">
+        and spo.supplier_id=#{supplierId}
+      </if>
+      <if test="shipmentEnterpriseId!=null">
+        and spo.shipment_enterprise_id=#{shipmentEnterpriseId}
       </if>
     </where>
     order by spo.create_time desc

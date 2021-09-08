@@ -33,6 +33,9 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
+    <result column="spec" jdbcType="VARCHAR" property="spec"/>
+    <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
@@ -76,7 +79,15 @@ wiil.remark,
 	wiil.create_time,
 	wiil.modified_user_id,
 	wiil.modified_time,
-	wiil.is_delete
+	wiil.is_delete,
+wiil.contract_code,
+wiil.spec,
+wiil.purchase_req_order_code,
+wiil.option1,
+wiil.option2,
+wiil.option3,
+wiil.option4,
+wiil.option5
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"/>,bmo.material_owner_name,bw.warehouse_name,bs.storage_code,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name

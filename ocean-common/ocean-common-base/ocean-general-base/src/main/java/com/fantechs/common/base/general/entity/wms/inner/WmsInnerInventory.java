@@ -316,5 +316,34 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     @Column(name = "inspection_order_code")
     private String inspectionOrderCode;
 
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(name = "contractCode",value = "合同号")
+    @Column(name = "contract_code")
+    private String contractCode;
 
+    /**
+     * 规格
+     */
+    @ApiModelProperty(name = "spec",value = "规格")
+    @Column(name = "spec")
+    private String spec;
+
+    /**
+     * 请购单号
+     */
+    @ApiModelProperty(name = "purchaseReqOrderCode",value = "请购单号")
+    @Column(name = "purchase_req_order_code")
+    private String purchaseReqOrderCode;
+
+    private String option1;
+
+    private String option2;
+
+    private String option3;
+
+    private String option4;
+
+    private String option5;
 }

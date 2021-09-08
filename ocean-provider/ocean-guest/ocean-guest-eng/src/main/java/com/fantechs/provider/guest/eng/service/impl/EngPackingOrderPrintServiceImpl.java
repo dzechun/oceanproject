@@ -1,13 +1,19 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderPrintDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderPrintParam;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
+import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderPrintMapper;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderPrintService;
@@ -28,13 +34,28 @@ public class EngPackingOrderPrintServiceImpl implements EngPackingOrderPrintServ
     private EngPackingOrderPrintMapper engPackingOrderPrintMapper;
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
+
     @Override
     public List<EngPackingOrderPrintDto> findList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId", sysUser.getOrganizationId());
+        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
+        searchBaseSupplierReUser.setUserId(sysUser.getUserId());
+        ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
+        if (StringUtils.isNotEmpty(list.getData())){
+            map.put("supplierId", list.getData().get(0).getSupplierId());
+        }
         return engPackingOrderPrintMapper.findList(map);
     }
 
     @Override
     public int print(EngPackingOrderPrintParam engPackingOrderPrintParam) {
+        SysUser sysUser = currentUser();
+        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
+        searchBaseSupplierReUser.setUserId(sysUser.getUserId());
+        ResponseEntity<List<BaseSupplierReUser>> lists = baseFeignApi.findList(searchBaseSupplierReUser);
         if(StringUtils.isEmpty(engPackingOrderPrintParam.getPrintName())){
             throw new BizErrorException("请输入打印机名称");
         }
@@ -53,10 +74,23 @@ public class EngPackingOrderPrintServiceImpl implements EngPackingOrderPrintServ
             list.add(printModel);
         }
         printDto.setPrintModelList(list);
-        ResponseEntity responseEntity = sfcFeignApi.QUEUEprint(printDto,"1");
+        ResponseEntity responseEntity;
+        if (StringUtils.isNotEmpty(lists.getData())){
+             responseEntity = sfcFeignApi.QUEUEprint(printDto,lists.getData().get(0).getSupplierId().toString());
+        }else {
+            responseEntity = sfcFeignApi.print(printDto);
+        }
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
         }
         return 1;
+    }
+
+    private SysUser currentUser(){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(sysUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        return sysUser;
     }
 }

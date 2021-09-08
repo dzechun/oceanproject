@@ -214,6 +214,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             } else {
                 wmsInnerJobOrder.setOrderStatus((byte) 3);
             }
+            wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
             wmsInnerJobOrder.setModifiedTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);

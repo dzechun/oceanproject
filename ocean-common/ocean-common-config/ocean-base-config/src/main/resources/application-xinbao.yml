@@ -80,6 +80,8 @@ ribbon:
     enabled: true
   ConnectTimeout: 60000
   ReadTimeout: 60000
+  MaxConnectionsPerHost: 50
+  MaxTotalConnections: 200
 
 tx-lcn:
   client:
@@ -107,6 +109,8 @@ zuul:
   host:
     connect-timeout-millis: 60000
     socket-timeout-millis: 60000
+    max-per-route-connections: 20
+    max-total-connections: 200
 
 management:
   endpoints:

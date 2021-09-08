@@ -40,7 +40,6 @@ public class SapCustomerApiServiceImpl implements SapCustomerApiService {
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
-    @LcnTransaction
     public int getCustomer(SearchSapSupplierApi searchSapSupplierApi) throws ParseException {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESCUSTOMERQUERYOutService service = new SIMESCUSTOMERQUERYOutService();

@@ -45,7 +45,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
         return engPackingOrderMapper.findList(map);
     }
@@ -54,12 +54,14 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(EngPackingOrder engPackingOrder) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         engPackingOrder.setCreateTime(new Date());
         engPackingOrder.setCreateUserId(user.getUserId());
         engPackingOrder.setModifiedTime(new Date());
         engPackingOrder.setModifiedUserId(user.getUserId());
         engPackingOrder.setStatus((byte)1);
+        engPackingOrder.setAuditStatus((byte)1);
+        engPackingOrder.setOrderStatus((byte)1);
         engPackingOrder.setOrgId(user.getOrganizationId());
         int i = engPackingOrderMapper.insertUseGeneratedKeys(engPackingOrder);
 
@@ -72,7 +74,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(EngPackingOrder engPackingOrder) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         engPackingOrder.setModifiedUserId(user.getUserId());
         engPackingOrder.setModifiedTime(new Date());
 
@@ -85,10 +87,43 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         return i;
     }
 
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int submit(EngPackingOrder engPackingOrder) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        check(engPackingOrder);
+        engPackingOrder.setModifiedUserId(user.getUserId());
+        engPackingOrder.setModifiedTime(new Date());
+        int i = engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
+        EngHtPackingOrder engHtPackingOrder =new EngHtPackingOrder();
+        BeanUtils.copyProperties(engPackingOrder, engHtPackingOrder);
+        engHtPackingOrderMapper.insertSelective(engHtPackingOrder);
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int censor(EngPackingOrder engPackingOrder) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        check(engPackingOrder);
+        engPackingOrder.setModifiedUserId(user.getUserId());
+        engPackingOrder.setModifiedTime(new Date());
+        int i = engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
+
+        EngHtPackingOrder engHtPackingOrder =new EngHtPackingOrder();
+        BeanUtils.copyProperties(engPackingOrder, engHtPackingOrder);
+        engHtPackingOrderMapper.insertSelective(engHtPackingOrder);
+
+        return i;
+    }
+
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         List<EngHtPackingOrder> htList = new ArrayList<>();
         String[] split = ids.split(",");
@@ -121,11 +156,21 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         return engPackingOrderMapper.deleteByIds(ids);
     }
 
-    public SysUser getUser(){
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+    public void check(EngPackingOrder engPackingOrder){
+        Example example = new Example(EngPackingOrderSummary.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("packingOrderId",engPackingOrder.getPackingOrderId());
+        List<EngPackingOrderSummary> engPackingOrderSummaryList = engPackingOrderSummaryMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(engPackingOrderSummaryList)){
+            for(EngPackingOrderSummary engPackingOrderSummary : engPackingOrderSummaryList){
+                Example detexample = new Example(EngPackingOrderSummaryDet.class);
+                Example.Criteria detcriteria = detexample.createCriteria();
+                detcriteria.andEqualTo("packingOrderSummaryId",engPackingOrderSummary.getPackingOrderSummaryId());
+                List<EngPackingOrderSummaryDet> engPackingOrderSummaryDets = engPackingOrderSummaryDetMapper.selectByExample(detexample);
+                if(StringUtils.isEmpty(engPackingOrderSummaryDets))  throw new BizErrorException("提交失败，装箱汇总明细信息不能为空");
+            }
+        }else{
+            throw new BizErrorException("提交失败，未查询到装箱汇总信息");
         }
-        return currentUser;
     }
 }
