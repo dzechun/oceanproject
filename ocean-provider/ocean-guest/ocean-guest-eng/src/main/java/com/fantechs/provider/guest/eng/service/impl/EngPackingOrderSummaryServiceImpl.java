@@ -198,8 +198,9 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             if (StringUtils.isEmpty(
                     cartonCode,purchaseReqOrderCode,materialName,contractCode
             )){
-                fail.add(i+2);
-                continue;
+                throw new BizErrorException("添加失败，箱号、请购单号、合同号和货物名称不能为空");
+               /* fail.add(i+2);
+                continue;*/
             }
 
             //判断集合中是否已经存在同样的数据
@@ -225,9 +226,14 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             BigDecimal volume = engPackingOrderSummaryImport.getVolume();
             if(netWeight.compareTo(BigDecimal.ZERO)<0 || grossWeight.compareTo(BigDecimal.ZERO)<0 || length.compareTo(BigDecimal.ZERO)<0
                     ||width.compareTo(BigDecimal.ZERO)<0 || height.compareTo(BigDecimal.ZERO)<0 || volume.compareTo(BigDecimal.ZERO)<0 ){
-                fail.add(i+2);
-                continue;
+                throw new BizErrorException("添加失败，长宽高、毛重、净重等参数必须大于0"+"错误行数为:"+(i+2));
+               /* fail.add(i+2);
+                continue;*/
             }
+            if(grossWeight.subtract(netWeight).compareTo(BigDecimal.ZERO)<0){
+                throw new BizErrorException("添加失败，毛重不能小于净重"+"错误行数为:"+(i+2));
+            }
+
 
             //判断编码是否重复
             Example example = new Example(EngPackingOrderSummary.class);
@@ -236,8 +242,9 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             criteria.andEqualTo("cartonCode",cartonCode);
             criteria.andEqualTo("packingOrderId",packingOrderId);
             if (StringUtils.isNotEmpty(engPackingOrderSummaryMapper.selectOneByExample(example))){
-                fail.add(i+2);
-                continue;
+                throw new BizErrorException("添加失败，编码重复"+"错误行数为:"+(i+2));
+                /*fail.add(i+2);
+                continue;*/
             }
             example.clear();
 
@@ -254,8 +261,9 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             qtyCriteria.andEqualTo("contractCode",contractCode);
             List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
             if(StringUtils.isEmpty(engContractQtyOrders)){
-                fail.add(i+2);
-                continue;
+                throw new BizErrorException("添加失败，未查询到合同量单"+"错误行数为:"+(i+2));
+               /* fail.add(i+2);
+                continue;*/
             }else{
                 dto.setProfessionName(engContractQtyOrders.get(0).getProfessionName());
             }
@@ -267,8 +275,9 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
             List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
             if(StringUtils.isEmpty(engPurchaseReqOrders)){
-                fail.add(i+2);
-                continue;
+                throw new BizErrorException("添加失败，未查询到请购单"+"错误行数为:"+(i+2));
+               /* fail.add(i+2);
+                continue;*/
             }
 
 

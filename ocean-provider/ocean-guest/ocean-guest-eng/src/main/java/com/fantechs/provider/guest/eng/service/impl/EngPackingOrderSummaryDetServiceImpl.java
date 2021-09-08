@@ -239,23 +239,26 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             if (StringUtils.isEmpty(
                     cartonCode,materialName,purchaseReqOrderCode,contractCode,unitName,dominantTermCode
             )){
-                fail.add(i+2);
-                continue;
+                throw new BizErrorException("添加失败，箱号、请购单号、合同号、货物名称、单位、主项号不能为空");
+               /* fail.add(i+2);
+                continue;*/
             }
             EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), cartonCode, engPackingOrderId);
             //判断各参数是否大于0
             BigDecimal qty = engPackingOrderSummaryDetImport.getQty();
             if(qty.compareTo(BigDecimal.ZERO)<0 ){
-                fail.add(i+2);
-                continue;
+                throw new BizErrorException("添加失败，数量必须大于0"+"错误行数为:"+(i+2));
+                /*fail.add(i+2);
+                continue;*/
             }
 
             //装箱汇总明细的包装箱号需与装箱汇总的包装箱号一致
             if (!cartonCode.equals(engPackingOrderSummary.getCartonCode()) || !contractCode.equals(engPackingOrderSummary.getContractCode())
                     || !purchaseReqOrderCode.equals(engPackingOrderSummary.getPurchaseReqOrderCode())
             ){
-                fail.add(i+2);
-                continue;
+                throw new BizErrorException("添加失败，包装箱号、合同号、请购单号必须和装箱汇总一致"+"错误行数为:"+(i+2));
+                /*fail.add(i+2);
+                continue;*/
             }
             EngPackingOrderSummaryDetDto dto = new EngPackingOrderSummaryDetDto();
             BeanUtils.copyProperties(engPackingOrderSummaryDetImport, dto);
@@ -263,23 +266,15 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
 
             //材料编码、原材料编码二者不能都为空，必须有一个有值，而且存在于物料表中
             if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
-                fail.add(i+2);
-                continue;
+                /*fail.add(i+2);
+                continue;*/
+                throw new BizErrorException("添加失败，材料编码、原材料编码二者不能同时为空"+"错误行数为:"+(i+2));
             }else if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
                 if(!"管道".equals(engPackingOrderSummary.getProfessionName())){
-                    fail.add(i+2);
-                    continue;
+                    /*fail.add(i+2);
+                    continue;*/
+                    throw new BizErrorException("添加失败，专业不等于管道时，原材料编码不能为空"+"错误行数为:"+(i+2));
                 }
-                continue;
-            }
-
-            //校验请购单
-            Example orderExample = new Example(EngPurchaseReqOrder.class);
-            Example.Criteria orderCriteria = orderExample.createCriteria();
-            orderCriteria.andEqualTo("purchaseReqOrderCode",engPackingOrderSummaryDetImport.getPurchaseReqOrderCode());
-            List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
-            if(StringUtils.isEmpty(engPurchaseReqOrders)){
-                fail.add(i+2);
                 continue;
             }
 
@@ -295,9 +290,24 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             }
             List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
             if(StringUtils.isEmpty(engContractQtyOrders)){
-                fail.add(i+2);
-                continue;
+                throw new BizErrorException("添加失败，未查询到对应的合同量单"+"错误行数为:"+(i+2));
+               /* fail.add(i+2);
+                continue;*/
             }
+
+            //校验请购单
+            Example orderExample = new Example(EngPurchaseReqOrder.class);
+            Example.Criteria orderCriteria = orderExample.createCriteria();
+            orderCriteria.andEqualTo("purchaseReqOrderCode",engPackingOrderSummaryDetImport.getPurchaseReqOrderCode());
+            orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
+            List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
+            if(StringUtils.isEmpty(engPurchaseReqOrders)){
+                throw new BizErrorException("添加失败，未查询到对应的请购单号"+"错误行数为:"+(i+2));
+                /*fail.add(i+2);
+                continue;*/
+            }
+
+
 
 
             getMaterial(dto,user,engPackingOrderSummary);
