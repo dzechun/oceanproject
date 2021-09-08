@@ -104,6 +104,27 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
     private Byte auditStatus;
 
     /**
+     * 审核部门ID
+     */
+    @ApiModelProperty(name="auditDeptId",value = "审核部门ID")
+    @Column(name = "audit_dept_id")
+    private Long auditDeptId;
+
+    /**
+     * 审核用户ID
+     */
+    @ApiModelProperty(name="auditUserId",value = "审核用户ID")
+    @Column(name = "audit_user_id")
+    private Long auditUserId;
+
+    /**
+     * 审核备注
+     */
+    @ApiModelProperty(name="auditRemark",value = "审核备注")
+    @Column(name = "audit_remark")
+    private String auditRemark;
+
+    /**
      * 第三方检验(0-否 1-是)
      */
     @ApiModelProperty(name="ifThirdInspection",value = "第三方检验(0-否 1-是)")
@@ -245,6 +266,20 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "inspectionWayCode",value = "检验方式")
     @Excel(name = "检验方式", height = 20, width = 30,orderNum="8")
     private String inspectionWayCode;
+
+    /**
+     * 审核部门
+     */
+    @Transient
+    @ApiModelProperty(name = "deptName",value = "审核部门")
+    private String deptName;
+
+    /**
+     * 审核人
+     */
+    @Transient
+    @ApiModelProperty(name = "auditUserName",value = "审核人")
+    private String auditUserName;
 
     /**
      * 成品检验单明细

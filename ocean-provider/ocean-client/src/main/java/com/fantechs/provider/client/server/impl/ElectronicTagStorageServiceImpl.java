@@ -1356,9 +1356,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     public String intercepting(String s, int number) throws UnsupportedEncodingException {
 
-        while (s.getBytes("GBK").length < number) {
-            s += " ";
-        }
+//        while (s.getBytes("GBK").length < number) {
+//            s += " ";
+//        }
         while (s.getBytes("GBK").length > number) {
             s = s.substring(1);
         }
@@ -1386,7 +1386,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
      * 获取电子标签下一个需要亮灯的拣货任务
      *
      * @param ptlJobOrderDetDto
-     * @param type              0-优先获取当前拣货任务单 1-只判断是否有下一个拣货任务单
+     * @param type 0-优先获取当前拣货任务单 1-只判断是否有下一个拣货任务单
      * @return
      */
     @Override
