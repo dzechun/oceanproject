@@ -7,11 +7,13 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
+import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryDetImport;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -193,9 +195,16 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             baseMaterial.setMaterialName(engPackingOrderSummaryDetDto.getMaterialName());
             baseMaterial.setMaterialCode(code);
             baseMaterial.setMaterialDesc(engPackingOrderSummaryDetDto.getSpec());
-            baseMaterial.setRemark(engPackingOrderSummaryDetDto.getUnitName());
+
             baseMaterial.setOrganizationId(user.getOrganizationId());
+            baseMaterial.setStatus((byte)1);
             baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
+            BaseTab baseTab = new BaseTab();
+            baseTab.setOrgId(user.getOrganizationId());
+            baseTab.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
+            baseTab.setTransferQuantity(1);
+            baseTab.setMainUnit(engPackingOrderSummaryDetDto.getUnitName());
+            baseFeignApi.addTab(baseTab);
             engPackingOrderSummaryDetDto.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
         } else {
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
@@ -210,6 +219,13 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 baseMaterial.setMaterialDesc(engPackingOrderSummaryDetDto.getSpec());
                 baseMaterial.setRemark(engPackingOrderSummaryDetDto.getUnitName());
                 baseMaterial.setOrganizationId(user.getOrganizationId());
+                baseMaterial.setStatus((byte)1);
+                BaseTab baseTab = new BaseTab();
+                baseTab.setOrgId(user.getOrganizationId());
+                baseTab.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
+                baseTab.setTransferQuantity(1);
+                baseTab.setMainUnit(engPackingOrderSummaryDetDto.getUnitName());
+                baseFeignApi.addTab(baseTab);
                 baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
                 engPackingOrderSummaryDetDto.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
             }
