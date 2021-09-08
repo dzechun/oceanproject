@@ -270,13 +270,9 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 /*fail.add(i+2);
                 continue;*/
                 throw new BizErrorException("添加失败，材料编码、原材料编码二者不能同时为空"+"错误行数为:"+(i+2));
-            }else if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
-                if("管道".equals(engPackingOrderSummary.getProfessionName())){
-                    /*fail.add(i+2);
-                    continue;*/
+            }else if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode())
+            && "管道".equals(engPackingOrderSummary.getProfessionName())){
                     throw new BizErrorException("添加失败，专业等于管道时，材料编码不能为空"+"错误行数为:"+(i+2));
-                }
-                continue;
             }
 
             //校验合同量单
