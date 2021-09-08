@@ -78,5 +78,3 @@ logging:
 url:
   securityUrl: http://localhost:8768/ocean-security/clientGetToken
 
-constant-base:
-  orgId: 36

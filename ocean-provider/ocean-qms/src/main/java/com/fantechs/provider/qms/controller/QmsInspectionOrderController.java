@@ -47,6 +47,18 @@ public class QmsInspectionOrderController {
         return ControllerUtil.returnCRUD(qmsInspectionOrderService.writeBack(inspectionOrderId));
     }
 
+    @ApiOperation("审核")
+    @PostMapping("/audit")
+    public ResponseEntity audit(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsInspectionOrder.update.class) QmsInspectionOrder qmsInspectionOrder) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.audit(qmsInspectionOrder));
+    }
+
+    @ApiOperation("第三方检验")
+    @PostMapping("/thirdInspection")
+    public ResponseEntity thirdInspection(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsInspectionOrder.update.class) QmsInspectionOrder qmsInspectionOrder) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.thirdInspection(qmsInspectionOrder));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated QmsInspectionOrder qmsInspectionOrder) {
