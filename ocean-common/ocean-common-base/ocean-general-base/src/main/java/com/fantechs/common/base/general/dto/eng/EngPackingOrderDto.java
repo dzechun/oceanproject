@@ -49,5 +49,5 @@ public class EngPackingOrderDto extends EngPackingOrder implements Serializable 
      * 物流商名称
      */
     @ApiModelProperty(name="shipmentEnterpriseName",value = "物流商ID")
-    private Long shipmentEnterpriseName;
+    private String shipmentEnterpriseName;
 }
