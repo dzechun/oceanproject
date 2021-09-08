@@ -42,6 +42,9 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
     <result column="job_order_det_id" jdbcType="BIGINT" property="jobOrderDetId"/>
+    <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
+    <result column="spec" jdbcType="VARCHAR" property="spec"/>
+    <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto" extends="BaseResultMap">
@@ -94,7 +97,15 @@ wii.storage_id,
 	wii.create_time,
 	wii.modified_user_id,
 	wii.modified_time,
-	wii.is_delete
+	wii.is_delete,
+wii.contract_code,
+wii.spec,
+wii.purchase_req_order_code,
+wii.option1,
+wii.option2,
+wii.option3,
+wii.option4,
+wii.option5
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">

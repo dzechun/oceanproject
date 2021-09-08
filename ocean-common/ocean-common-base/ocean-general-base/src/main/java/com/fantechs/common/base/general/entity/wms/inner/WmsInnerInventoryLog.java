@@ -245,22 +245,55 @@ public class WmsInnerInventoryLog extends ValidGroup implements Serializable {
     private Byte isDelete;
 
     /**
+     * 合同号
+     */
+    @ApiModelProperty(name = "contractCode",value = "合同号")
+    @Column(name = "contract_code")
+    private String contractCode;
+
+    /**
+     * 规格
+     */
+    @ApiModelProperty(name = "spec",value = "规格")
+    @Column(name = "spec")
+    private String spec;
+
+    /**
+     * 请购单号
+     */
+    @ApiModelProperty(name = "purchaseReqOrderCode",value = "请购单号")
+    @Column(name = "purchase_req_order_code")
+    private String purchaseReqOrderCode;
+
+    /**
      * option1
      */
     @ApiModelProperty(name="option1",value = "option1")
     private String option1;
 
     /**
-     * option1
+     * option2
      */
-    @ApiModelProperty(name="option2",value = "option1")
+    @ApiModelProperty(name="option2",value = "option2")
     private String option2;
 
     /**
-     * option1
+     * option3
      */
-    @ApiModelProperty(name="option3",value = "option1")
+    @ApiModelProperty(name="option3",value = "option3")
     private String option3;
+
+    /**
+     * option4
+     */
+    @ApiModelProperty(name="option4",value = "option4")
+    private String option4;
+
+    /**
+     * option5
+     */
+    @ApiModelProperty(name="option5",value = "option5")
+    private String option5;
 
     private static final long serialVersionUID = 1L;
 }
