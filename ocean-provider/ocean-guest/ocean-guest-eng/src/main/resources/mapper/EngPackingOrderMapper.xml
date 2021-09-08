@@ -67,7 +67,6 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
     bs.supplier_name as supplier_name, bs.supplier_code as supplier_code,bse.shipment_enterprise_name as shipment_enterprise_name,
-    bse.supplier_code as supplier_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,bo.organization_name
     from eng_packing_order spo
