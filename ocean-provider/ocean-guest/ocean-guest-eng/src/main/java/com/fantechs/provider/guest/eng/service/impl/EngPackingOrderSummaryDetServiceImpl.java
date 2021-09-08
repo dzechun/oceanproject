@@ -244,6 +244,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 continue;*/
             }
             EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), cartonCode, engPackingOrderId);
+            if(StringUtils.isEmpty(engPackingOrderSummary))  throw new BizErrorException("添加失败，未查询到对应的装箱汇总"+"错误行数为:"+(i+2));
             //判断各参数是否大于0
             BigDecimal qty = engPackingOrderSummaryDetImport.getQty();
             if(qty.compareTo(BigDecimal.ZERO)<0 ){
@@ -270,10 +271,10 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 continue;*/
                 throw new BizErrorException("添加失败，材料编码、原材料编码二者不能同时为空"+"错误行数为:"+(i+2));
             }else if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
-                if(!"管道".equals(engPackingOrderSummary.getProfessionName())){
+                if("管道".equals(engPackingOrderSummary.getProfessionName())){
                     /*fail.add(i+2);
                     continue;*/
-                    throw new BizErrorException("添加失败，专业不等于管道时，原材料编码不能为空"+"错误行数为:"+(i+2));
+                    throw new BizErrorException("添加失败，专业等于管道时，材料编码不能为空"+"错误行数为:"+(i+2));
                 }
                 continue;
             }
