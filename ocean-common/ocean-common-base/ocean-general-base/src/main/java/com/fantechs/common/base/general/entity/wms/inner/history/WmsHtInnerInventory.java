@@ -63,7 +63,7 @@ public class WmsHtInnerInventory extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialOwnerName",value = "货主名称")
     @Excel(name = "货主名称", height = 20, width = 30,orderNum="")
-    @Column(name = "material_owner_name")
+    @Transient
     private String materialOwnerName;
 
     /**
@@ -71,7 +71,7 @@ public class WmsHtInnerInventory extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum="")
-    @Column(name = "warehouse_name")
+    @Transient
     private String warehouseName;
 
     /**
@@ -79,7 +79,7 @@ public class WmsHtInnerInventory extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="storageName",value = "库位名称")
     @Excel(name = "库位名称", height = 20, width = 30,orderNum="")
-    @Column(name = "storage_name")
+    @Transient
     private String storageName;
 
     /**
@@ -103,7 +103,7 @@ public class WmsHtInnerInventory extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
     @Excel(name = "物料编码", height = 20, width = 30,orderNum="")
-    @Column(name = "material_code")
+    @Transient
     private String materialCode;
 
     /**
@@ -111,7 +111,7 @@ public class WmsHtInnerInventory extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialName",value = "物料名称")
     @Excel(name = "物料名称", height = 20, width = 30,orderNum="")
-    @Column(name = "material_name")
+    @Transient
     private String materialName;
 
     /**
@@ -263,7 +263,7 @@ public class WmsHtInnerInventory extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="supplierName",value = "供应商名称")
     @Excel(name = "供应商名称", height = 20, width = 30,orderNum="")
-    @Column(name = "supplier_name")
+    @Transient
     private String supplierName;
 
     /**
