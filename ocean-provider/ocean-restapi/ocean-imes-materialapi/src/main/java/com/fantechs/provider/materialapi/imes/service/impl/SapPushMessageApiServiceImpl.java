@@ -3,27 +3,26 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
-import com.fantechs.common.base.general.dto.restapi.*;
+import com.fantechs.common.base.general.dto.restapi.Resbase;
+import com.fantechs.common.base.general.dto.restapi.SapPushMessageApi;
+import com.fantechs.common.base.general.dto.restapi.Textmsginput;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.materialapi.imes.service.SapPushMessageApiService;
-import com.fantechs.provider.materialapi.imes.service.SapReportWorkApiService;
 import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
-import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.pushMessage.SendMsg;
 import com.fantechs.provider.materialapi.imes.utils.pushMessage.SendMsgService;
-import com.fantechs.provider.materialapi.imes.utils.reportWorkApi.SIMESWORKORDERREPORTSAVEOut;
-import com.fantechs.provider.materialapi.imes.utils.reportWorkApi.SIMESWORKORDERREPORTSAVEOutService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.net.Authenticator;
-import java.text.ParseException;
 import java.util.List;
 
 
-@org.springframework.stereotype.Service
+@Service
 public class SapPushMessageApiServiceImpl implements SapPushMessageApiService {
-
+    protected static final Logger logger = LoggerFactory.getLogger(SapPushMessageApiServiceImpl.class);
     @Resource
     private LogsUtils logsUtils;
     @Resource
@@ -37,20 +36,19 @@ public class SapPushMessageApiServiceImpl implements SapPushMessageApiService {
         List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
         if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
         Long orgId = orgIdList.get(0).getOrganizationId();
-
         SendMsgService service = new SendMsgService();
         SendMsg msg = service.getSendMsgPort();
         Textmsginput req = new Textmsginput();
         req.setAPPID(appid);
         req.setMSG(sapPushMessageApi.getMsg());
         req.setUSERNAME(sapPushMessageApi.getUserName());
-
+        req.setUSERID("");
         Resbase res = msg.sendMessage(req);
-        if(StringUtils.isNotEmpty(res)){
-            logsUtils.addlog((byte)1,(byte)1,orgId,res.toString(),req.toString());
+        if(StringUtils.isNotEmpty(res)&&"0".equals(res.getRETCODE())){
+            logsUtils.addlog((byte)1,(byte)1,orgId,req.getMSG(),res.getRETMSG());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgId,req.getMSG(),res.getRETMSG());
             throw new BizErrorException("接口请求失败,失败原因："+res.getRETMSG());
         }
     }

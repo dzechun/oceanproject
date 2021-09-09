@@ -78,10 +78,10 @@ public class SapBadnessCategoryApiServiceImpl implements SapBadnessCategoryApiSe
                 baseBadnessCause.setOrgId(orgId);
                 baseFeignApi.saveByApi(baseBadnessCause);
             }
-            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.getCODEGRUPPE()+"-"+req.getKATALOGART());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgId,res.getMESSAGE(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }
