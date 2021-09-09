@@ -8,11 +8,14 @@ import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.security.SysCustomFormDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.security.SysCustomForm;
+import com.fantechs.common.base.general.entity.security.SysCustomFormDet;
 import com.fantechs.common.base.general.entity.security.SysDefaultCustomForm;
+import com.fantechs.common.base.general.entity.security.SysDefaultCustomFormDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.security.mapper.SysCustomFormDetMapper;
 import com.fantechs.security.mapper.SysCustomFormMapper;
 import com.fantechs.security.mapper.SysDefaultCustomFormMapper;
 import com.fantechs.security.service.SysCustomFormService;
@@ -33,12 +36,8 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
 
     @Resource
     private SysCustomFormMapper sysCustomFormMapper;
-
     @Resource
-    private BaseFeignApi baseFeignApi;
-
-    @Resource
-    private SysDefaultCustomFormMapper sysDefaultCustomFormMapper;
+    private SysCustomFormDetMapper sysCustomFormDetMapper;
 
     @Override
     public List<SysCustomFormDto> findList(Map<String, Object> map) {
@@ -62,26 +61,8 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
 
         ifCodeRepeat(sysCustomForm,user);
 
-        //修改默认自定义表单的关联子表单
-        if(StringUtils.isNotEmpty(sysCustomForm.getSubId())) {
-            SysCustomForm subCustomForm = sysCustomFormMapper.selectByPrimaryKey(sysCustomForm.getSubId());
-
-            Example example = new Example(SysDefaultCustomForm.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("customFormCode", sysCustomForm.getCustomFormCode());
-            SysDefaultCustomForm sysDefaultCustomForm = sysDefaultCustomFormMapper.selectOneByExample(example);
-
-            example.clear();
-            Example.Criteria criteria1 = example.createCriteria();
-            criteria1.andEqualTo("customFormCode", subCustomForm.getCustomFormCode());
-            SysDefaultCustomForm subDefaultCustomForm = sysDefaultCustomFormMapper.selectOneByExample(example);
-
-            sysDefaultCustomForm.setSubId(subDefaultCustomForm.getCustomFormId());
-            sysDefaultCustomFormMapper.updateByPrimaryKeySelective(sysDefaultCustomForm);
-        }
-
         sysCustomForm.setOrgId(user.getOrganizationId());
-        return sysCustomFormMapper.updateByPrimaryKey(sysCustomForm);
+        return sysCustomFormMapper.updateByPrimaryKeySelective(sysCustomForm);
     }
 
     @Override
@@ -95,21 +76,8 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
 
         ifCodeRepeat(sysCustomForm,user);
 
-        int i = sysCustomFormMapper.insertUseGeneratedKeys(sysCustomForm);
-
-        //同步到默认自定义表单
-        Example example = new Example(SysDefaultCustomForm.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode());
-        SysDefaultCustomForm sysDefaultCustomForm = sysDefaultCustomFormMapper.selectOneByExample(example);
-        if(StringUtils.isEmpty(sysDefaultCustomForm)){
-            SysDefaultCustomForm defaultCustomForm = new SysDefaultCustomForm();
-            BeanUtil.copyProperties(sysCustomForm, defaultCustomForm);
-            defaultCustomForm.setOrgId(null);
-            sysDefaultCustomFormMapper.insertSelective(defaultCustomForm);
-        }
-
-        return i;
+        sysCustomForm.setOrgId(user.getOrganizationId());
+        return sysCustomFormMapper.insertSelective(sysCustomForm);
     }
 
 
@@ -126,5 +94,30 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
         if(StringUtils.isNotEmpty(customForm)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchDelete(String ids) {
+        // 获取登录用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        String[] idsArr  = ids.split(",");
+        for (String id : idsArr) {
+            SysCustomForm sysCustomForm = sysCustomFormMapper.selectByPrimaryKey(id);
+            if (StringUtils.isEmpty(sysCustomForm)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+
+            Example example = new Example(SysCustomFormDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("customFormId",id);
+            sysCustomFormDetMapper.deleteByExample(example);
+        }
+
+        return sysCustomFormMapper.deleteByIds(ids);
     }
 }
