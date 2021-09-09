@@ -31,6 +31,10 @@
         <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
         <result column="spec" jdbcType="VARCHAR" property="spec"/>
         <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
+        <result column="carton_code" jdbcType="VARCHAR" property="cartonCode"/>
+        <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
+        <result column="inspection_order_code" jdbcType="VARCHAR" property="inspectionOrderCode"/>
+        <result column="qc_date" jdbcType="TIMESTAMP" property="qcDate"/>
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto">
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
@@ -39,6 +43,7 @@
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -70,6 +75,10 @@ wiid.barcode_status,
 wiid.contract_code,
 wiid.spec,
 wiid.purchase_req_order_code,
+        wiid.carton_code,
+        wiid.inventory_status_id,
+        wiid.inspection_order_code,
+        wiid.qc_date,
 wiid.option1,
 wiid.option2,
 wiid.option3,
@@ -78,9 +87,10 @@ wiid.option5
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select<include refid="Base_Column_List"/>,
-        bs.storage_code,bs.warehouse_id,bw.warehouse_name,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS
-        create_user_name, sus.user_name AS modified_user_name
+        bs.storage_code,bs.warehouse_id,bw.warehouse_name,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,bis.inventory_status_name,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
+        LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wiid.inventory_status_id
         LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
         LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id
         LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
@@ -94,6 +104,15 @@ wiid.option5
             </if>
             <if test="storageId!=null and storageId!='' and notEqualMark==1">
                 and wiid.storage_id != #{storageId}
+            </if>
+            <if test="inventoryStatusId!=null and inventoryStatusId!=''">
+                and wiid.inventory_status_id = #{inventoryStatusId}
+            </if>
+            <if test="inspectionOrderCode!=null and inspectionOrderCode!=''">
+                and wiid.inspection_order_code like CONCAT('%',#{inspectionOrderCode},'%')
+            </if>
+            <if test="ifInspectionOrderCodeNull!=null and ifInspectionOrderCodeNull==1">
+                and wiid.inspection_order_code is null
             </if>
             <if test="materialId!=null and materialId!=''">
                 and wiid.material_id = #{materialId}

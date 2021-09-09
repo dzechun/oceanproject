@@ -131,6 +131,35 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
     private String deliveryOrderCode;
 
     /**
+     * 箱号
+     */
+    @ApiModelProperty(name="cartonCode",value = "箱号")
+    @Column(name = "carton_code")
+    private String cartonCode;
+
+    /**
+     * 库存状态ID
+     */
+    @ApiModelProperty(name="inventoryStatusId",value = "库存状态ID")
+    @Column(name = "inventory_status_id")
+    private Long inventoryStatusId;
+
+    /**
+     * 检验单号
+     */
+    @ApiModelProperty(name="inspectionOrderCode",value = "检验单号")
+    @Column(name = "inspection_order_code")
+    private String inspectionOrderCode;
+
+    /**
+     * 质检日期
+     */
+    @ApiModelProperty(name="qcDate",value = "质检日期")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "qc_date")
+    private Date qcDate;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

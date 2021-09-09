@@ -64,6 +64,9 @@
     left join ocean_v2.sys_user s on bis.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo on bis.org_id = bo.organization_id
     <where>
+      <if test="inventoryStatusId!=null">
+        and bis.inventory_status_id = #{inventoryStatusId}
+      </if>
       <if test="warehouseId!=null">
         and bis.warehouse_id = #{warehouseId}
       </if>
