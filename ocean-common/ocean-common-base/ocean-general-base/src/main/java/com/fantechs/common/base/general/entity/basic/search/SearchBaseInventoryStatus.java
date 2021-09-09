@@ -12,6 +12,12 @@ import java.io.Serializable;
 public class SearchBaseInventoryStatus extends BaseQuery implements Serializable {
 
     /**
+     * 库存状态id
+     */
+    @ApiModelProperty(name="inventoryStatusId" ,value="库存状态id")
+    private Long inventoryStatusId;
+
+    /**
      * 仓库id
      */
     @ApiModelProperty(name="warehouseId" ,value="仓库id")

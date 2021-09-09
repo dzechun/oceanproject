@@ -36,8 +36,8 @@ public interface SendMsg {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "sendMpnewsMessage", targetNamespace = "http://ws.leige.com/", className = "testClient.SendMpnewsMessage")
-    @ResponseWrapper(localName = "sendMpnewsMessageResponse", targetNamespace = "http://ws.leige.com/", className = "testClient.SendMpnewsMessageResponse")
+    @RequestWrapper(localName = "sendMpnewsMessage", targetNamespace = "http://ws.leige.com/", className = "com.fantechs.common.base.general.dto.restapi.SendMpnewsMessage")
+    @ResponseWrapper(localName = "sendMpnewsMessageResponse", targetNamespace = "http://ws.leige.com/", className = "com.fantechs.common.base.general.dto.restapi.SendMpnewsMessageResponse")
     @Action(input = "http://ws.leige.com/SendMsg/sendMpnewsMessageRequest", output = "http://ws.leige.com/SendMsg/sendMpnewsMessageResponse")
     public Resbase sendMpnewsMessage(
             @WebParam(name = "arg0", targetNamespace = "")
@@ -51,8 +51,8 @@ public interface SendMsg {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "sendMessage", targetNamespace = "http://ws.leige.com/", className = "testClient.SendMessage")
-    @ResponseWrapper(localName = "sendMessageResponse", targetNamespace = "http://ws.leige.com/", className = "testClient.SendMessageResponse")
+    @RequestWrapper(localName = "sendMessage", targetNamespace = "http://ws.leige.com/", className = "com.fantechs.common.base.general.dto.restapi.SendMessage")
+    @ResponseWrapper(localName = "sendMessageResponse", targetNamespace = "http://ws.leige.com/", className = "com.fantechs.common.base.general.dto.restapi.SendMessageResponse")
     @Action(input = "http://ws.leige.com/SendMsg/sendMessageRequest", output = "http://ws.leige.com/SendMsg/sendMessageResponse")
     public Resbase sendMessage(
             @WebParam(name = "arg0", targetNamespace = "")

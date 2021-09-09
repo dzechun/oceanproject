@@ -61,6 +61,13 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     private String supplierName;
 
     /**
+     * 库存状态名称
+     */
+    @ApiModelProperty(name="inventoryStatusName",value = "库存状态名称")
+    @Transient
+    private String inventoryStatusName;
+
+    /**
      * 组织名称
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
