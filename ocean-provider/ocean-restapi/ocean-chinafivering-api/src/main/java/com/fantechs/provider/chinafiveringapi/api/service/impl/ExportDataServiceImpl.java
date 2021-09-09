@@ -5,7 +5,6 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.chinafiveringapi.api.service.ExportDataService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -198,13 +197,13 @@ public class ExportDataServiceImpl implements ExportDataService {
             isr.close();
 
             baseExecuteResultDto.setIsSuccess(true);
-            baseExecuteResultDto.setExecuteResult(sb.toString());
 
         }catch (Exception ex) {
             baseExecuteResultDto.setIsSuccess(false);
-            baseExecuteResultDto.setFailMsg(ex.getMessage()+sb.toString());
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
         }
 
+        baseExecuteResultDto.setExecuteResult(sb.toString());
         return baseExecuteResultDto;
     }
 }

@@ -1,6 +1,7 @@
 package com.fantechs.provider.guest.eng.controller;
 
 import com.fantechs.common.base.general.dto.restapi.EngDataExportEngPackingOrderDto;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngContractQtyOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -41,10 +42,10 @@ public class EngDataExportEngPackingOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation("列表")
+    @ApiOperation("装箱单回传")
     @PostMapping("/writePackingLists")
-    public ResponseEntity<String> writePackingLists() {
-        String result = engDataExportEngPackingOrderService.writePackingLists();
+    public ResponseEntity<String> writePackingLists(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= EngPackingOrder.update.class) EngPackingOrder engPackingOrder) {
+        String result = engDataExportEngPackingOrderService.writePackingLists(engPackingOrder);
         return ControllerUtil.returnDataSuccess(result,1);
     }
 

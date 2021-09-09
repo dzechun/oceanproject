@@ -15,6 +15,7 @@ import com.fantechs.provider.guest.eng.mapper.EngHtPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryMapper;
+import com.fantechs.provider.guest.eng.service.EngDataExportEngPackingOrderService;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,8 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     private EngPackingOrderSummaryMapper engPackingOrderSummaryMapper;
     @Resource
     private EngPackingOrderSummaryDetMapper engPackingOrderSummaryDetMapper;
+    @Resource
+    private EngDataExportEngPackingOrderService engDataExportEngPackingOrderService;
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
@@ -115,6 +118,11 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         EngHtPackingOrder engHtPackingOrder =new EngHtPackingOrder();
         BeanUtils.copyProperties(engPackingOrder, engHtPackingOrder);
         engHtPackingOrderMapper.insertSelective(engHtPackingOrder);
+
+        //审核通过回传
+        if(engPackingOrder.getAuditStatus()==(byte)3 && i>0) {
+            String result = engDataExportEngPackingOrderService.writePackingLists(engPackingOrder);
+        }
 
         return i;
     }

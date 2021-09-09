@@ -11,6 +11,10 @@ import java.io.Serializable;
 public class EngDataExportEngPackingOrderDto implements Serializable {
 
     @Id
+    @ApiModelProperty(name="packingOrderId",value = "装箱单ID")
+    @Column(name = "packing_order_id")
+    private String packingOrderId;
+
     @ApiModelProperty(name="option2",value = "PSGUID")
     @Column(name = "option2")
     private String option2;

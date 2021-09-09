@@ -1,6 +1,7 @@
 package com.fantechs.provider.guest.eng.service;
 
 import com.fantechs.common.base.general.dto.restapi.EngDataExportEngPackingOrderDto;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -14,5 +15,5 @@ import java.util.Map;
 public interface EngDataExportEngPackingOrderService extends IService<EngDataExportEngPackingOrderDto> {
     List<EngDataExportEngPackingOrderDto> findExportData(Map<String, Object> map);
 
-    String writePackingLists ();
+    String writePackingLists(EngPackingOrder engPackingOrder);
 }

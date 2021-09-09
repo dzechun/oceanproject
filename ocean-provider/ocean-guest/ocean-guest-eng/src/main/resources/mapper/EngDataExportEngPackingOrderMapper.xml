@@ -5,8 +5,8 @@
     <!--
       WARNING - @mbg.generated com.fantechs.common.base.general.entity.eng.EngContractQtyOrder
     -->
-    <id column="option2" jdbcType="VARCHAR" property="option2" />
-<!--    <result column="option2" jdbcType="VARCHAR" property="option2" />-->
+    <id column="packing_order_id" jdbcType="VARCHAR" property="packingOrderId" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="location_num" jdbcType="VARCHAR" property="locationNum" />
     <result column="design_qty" jdbcType="VARCHAR" property="designQty" />
@@ -25,6 +25,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
+    epos.packing_order_id,
     ecqo.option2,
     epro.material_code,
     bm.material_name,
@@ -49,14 +50,11 @@
     LEFT JOIN eng_contract_qty_order ecqo ON epro.option3=ecqo.option3
 
     <where>
-      <if test="status!=null">
-        and epos.status = #{status}
-      </if>
-      <if test="orgId!=null">
-        and epos.org_id=#{orgId}
+      <if test="packingOrderId!=null and packingOrderId!=''">
+        and epos.packing_order_id = #{packingOrderId}
       </if>
     </where>
-    GROUP BY ecqo.option2,epro.material_code,bm.material_name,eposdet.spec,eposdet.unit_name,
+    GROUP BY epos.packing_order_id,ecqo.option2,epro.material_code,bm.material_name,eposdet.spec,eposdet.unit_name,
     epro.location_num,epro.design_qty,epro.surplus_qty,epro.purchase_req_qty,
     epro.dominant_term_code,epro.device_code,epro.material_purpose
     HAVING ecqo.option2 IS NOT NULL

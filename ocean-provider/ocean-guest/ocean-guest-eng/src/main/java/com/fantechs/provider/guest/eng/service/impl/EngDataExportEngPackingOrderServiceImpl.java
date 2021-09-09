@@ -1,6 +1,7 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
 import com.fantechs.common.base.general.dto.restapi.EngDataExportEngPackingOrderDto;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.JsonUtils;
@@ -32,11 +33,11 @@ public class EngDataExportEngPackingOrderServiceImpl extends BaseService<EngData
     }
 
     @Override
-    public String writePackingLists() {
+    public String writePackingLists(EngPackingOrder engPackingOrder) {
         String jsonVoiceArray="";
         String projectID="3919";
         Map<String, Object> map=new HashMap<>();
-        map.put("pageSize",1000);
+        map.put("packingOrderId",engPackingOrder.getPackingOrderId());
         List<EngDataExportEngPackingOrderDto> listDto=findExportData(map);
         jsonVoiceArray= JsonUtils.objectToJson(listDto);
         String s0=jsonVoiceArray.replaceAll("option2","PSGUID");
@@ -57,6 +58,7 @@ public class EngDataExportEngPackingOrderServiceImpl extends BaseService<EngData
         String s15=s14.replaceAll("unitName","单位");
 
         ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writePackingLists(s15,projectID);
+
         return responseEntityResult.getData();
     }
 }
