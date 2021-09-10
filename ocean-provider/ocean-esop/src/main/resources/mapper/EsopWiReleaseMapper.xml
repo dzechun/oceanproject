@@ -122,6 +122,7 @@
             and bws.pro_line_name  like CONCAT('%', #{proLineName}, '%')
         </if>
     </where>
+      order by ewr.modified_time desc
   </select>
 
 </mapper>

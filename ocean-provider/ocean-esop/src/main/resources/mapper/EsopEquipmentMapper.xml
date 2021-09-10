@@ -161,7 +161,7 @@
         and ee.equipment_mac_address = #{equipmentMacAddress}
       </if>
     </where>
-    order by ee.create_time desc
+    order by ee.modified_time desc
   </select>
 
   <update id="batchUpdate" parameterType="java.util.List">
