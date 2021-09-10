@@ -52,13 +52,6 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
     public List<EngPackingOrderSummaryDto> findList(Map<String, Object> map) {
         SysUser user = getUser();
         map.put("orgId",user.getOrganizationId());
-
-        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
-        searchBaseSupplierReUser.setUserId(user.getUserId());
-        ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
-        if(StringUtils.isNotEmpty(list.getData()))
-            map.put("supplierId",list.getData().get(0).getSupplierId());
-
         return engPackingOrderSummaryMapper.findList(map);
     }
 
@@ -118,6 +111,19 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             check(dto,user,engPackingOrder);
 
             if (StringUtils.isNotEmpty(dto.getPackingOrderSummaryId())) {
+                if(StringUtils.isNotEmpty(dto.getCartonCode())){
+                    Example example = new Example(EngPackingOrderSummaryDet.class);
+                    Example.Criteria criteria = example.createCriteria();
+                    criteria.andEqualTo("orgId", user.getOrganizationId());
+                    criteria.andEqualTo("packingOrderSummaryId",dto.getPackingOrderSummaryId());
+                    List<EngPackingOrderSummaryDet> engPackingOrderSummaryDets = engPackingOrderSummaryDetMapper.selectByExample(example);
+                    if(StringUtils.isNotEmpty(engPackingOrderSummaryDets)){
+                        for(EngPackingOrderSummaryDet det : engPackingOrderSummaryDets){
+                            det.setCartonCode(dto.getCartonCode());
+                            engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(det);
+                        }
+                    }
+                }
                 int i = engPackingOrderSummaryMapper.updateByPrimaryKeySelective(dto);
                 if (i<1) result=i;
                 continue;
@@ -279,7 +285,6 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
                /* fail.add(i+2);
                 continue;*/
             }
-
 
             if(StringUtils.isEmpty(dto.getCartonQty()))
                 dto.setCartonQty(1);

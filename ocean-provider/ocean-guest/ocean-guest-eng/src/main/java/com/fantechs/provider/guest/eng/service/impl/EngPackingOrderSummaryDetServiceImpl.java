@@ -67,9 +67,6 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
     public List<EngPackingOrderSummaryDetDto> findList(Map<String, Object> map) {
         SysUser user = getUser();
         map.put("orgId",user.getOrganizationId());
-        List<BaseSupplierReUser> supplier = getSupplier(user.getUserId());
-        if(StringUtils.isNotEmpty(supplier))
-            map.put("supplierId",supplier.get(0).getSupplierId());
         return engPackingOrderSummaryDetMapper.findList(map);
     }
 
@@ -217,13 +214,14 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 baseMaterial.setRemark(engPackingOrderSummaryDetDto.getUnitName());
                 baseMaterial.setOrganizationId(user.getOrganizationId());
                 baseMaterial.setStatus((byte)1);
+                baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
+
                 BaseTab baseTab = new BaseTab();
                 baseTab.setOrgId(user.getOrganizationId());
                 baseTab.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
                 baseTab.setTransferQuantity(1);
                 baseTab.setMainUnit(engPackingOrderSummaryDetDto.getUnitName());
                 baseFeignApi.addTab(baseTab);
-                baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
                 engPackingOrderSummaryDetDto.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
             }
         }
@@ -402,15 +400,6 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         redisUtil.set(barcodeRulList.get(0).getBarcodeRule(), rs.getData());
         return rs.getData();
     }
-
-/*
-    public String sub(List<BaseBarcodeRuleSpec> list){
-        StringBuffer sb = new StringBuffer();
-        for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
-            sb.append(baseBarcodeRuleSpec.getSpecification());
-        }
-        return sb.toString();
-    }*/
 
 
     public void check(EngPackingOrderSummaryDetDto dto, SysUser user,EngPackingOrderSummary engPackingOrderSummary){

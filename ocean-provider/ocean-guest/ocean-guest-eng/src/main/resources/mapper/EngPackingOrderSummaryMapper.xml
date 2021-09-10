@@ -42,7 +42,6 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
   </resultMap>
 
@@ -55,6 +54,7 @@
     spos.carton_code,
     spos.profession_code,
     spos.profession_name,
+    spos.material_name,
     spos.device_code,
     spos.location_num,
     spos.material_id,
@@ -82,7 +82,7 @@ spos.summary_status
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"/>,
-   bm.material_name,bm.material_code,
+    bm.material_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name,
