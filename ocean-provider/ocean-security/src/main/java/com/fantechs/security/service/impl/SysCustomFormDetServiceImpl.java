@@ -39,18 +39,6 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
      @Resource
      private SysCustomFormDetMapper sysCustomFormDetMapper;
 
-     @Resource
-     private BaseFeignApi baseFeignApi;
-
-    @Resource
-    private SysCustomFormMapper sysCustomFormMapper;
-
-    @Resource
-    private SysDefaultCustomFormMapper sysDefaultCustomFormMapper;
-
-    @Resource
-    private SysDefaultCustomFormDetMapper sysDefaultCustomFormDetMapper;
-
     @Override
     public List<SysCustomFormDetDto> findList(Map<String, Object> map) {
         // 获取登录用户
@@ -62,18 +50,4 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
         return sysCustomFormDetMapper.findList(map);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int save(SysCustomFormDet sysCustomFormDet){
-        //同步到默认自定义表单明细
-        SysDefaultCustomForm sysDefaultCustomForm = sysDefaultCustomFormMapper.selectByPrimaryKey(sysCustomFormDet.getCustomFormId());
-        if(StringUtils.isNotEmpty(sysDefaultCustomForm)){
-            SysDefaultCustomFormDet defaultCustomFormDet = new SysDefaultCustomFormDet();
-            BeanUtil.copyProperties(sysCustomFormDet, defaultCustomFormDet);
-            defaultCustomFormDet.setOrgId(null);
-            sysDefaultCustomFormDetMapper.insertSelective(defaultCustomFormDet);
-        }
-
-        return sysCustomFormDetMapper.insertSelective(sysCustomFormDet);
-    }
 }

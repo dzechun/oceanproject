@@ -171,6 +171,12 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     private Byte qcLock;
 
     /**
+     * 盘点锁(0-否 1-是)
+     */
+    @ApiModelProperty(name="stockLock",value = "盘点锁(0-否 1-是)")
+    private Byte stockLock;
+
+    /**
      * 库位类型（1-存货 2-收货 3-发货）
      */
     @ApiModelProperty(name="storageType",value = "库位类型（1-存货 2-收货 3-发货）")

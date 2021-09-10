@@ -99,7 +99,7 @@ public class EamEquipmentStandingBookDto extends EamEquipmentStandingBook implem
     @Transient
     @ApiModelProperty(name = "equipmentStatus",value = "设备状态(1-空转运行 2-待料停机 3-上料停机 4-生产中 5-待生产 6-点检中 7-保养中 8-维修中 9-已报废)")
     @Excel(name = "设备状态(1-空转运行 2-待料停机 3-上料停机 4-生产中 5-待生产 6-点检中 7-保养中 8-维修中 9-已报废)", height = 20, width = 30,orderNum="12")
-    private String equipmentStatus;
+    private Byte equipmentStatus;
 
     /**
      * 设备条码

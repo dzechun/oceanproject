@@ -34,4 +34,13 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
 
     @ApiModelProperty("库位")
     private String storageCode;
+
+    @ApiModelProperty("库存状态id")
+    private Long inventoryStatusId;
+
+    @ApiModelProperty("检验单编码")
+    private String inspectionOrderCode;
+
+    @ApiModelProperty("检验单编码是否为空  0-否 1-是")
+    private Integer ifInspectionOrderCodeNull;
 }

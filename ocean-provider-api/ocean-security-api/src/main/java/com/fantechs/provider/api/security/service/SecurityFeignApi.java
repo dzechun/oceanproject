@@ -61,5 +61,8 @@ public interface SecurityFeignApi {
     ResponseEntity<SysAuthRole> getSysAuthRole(@ApiParam(value = "必传：roleId", required = true) @RequestParam @Validated @NotNull(message = "roleId不能为空") Long roleId, @ApiParam(value = "必传：menuId", required = true) @RequestParam @Validated @NotNull(message = "menuId不能为空") Long menuId);
 
 
+    @ApiOperation(value = "同步默认自定义表单的数据到自定义表单",notes = "同步默认自定义表单的数据到自定义表单")
+    @PostMapping("/sysDefaultCustomForm/syncDefaultData")
+    ResponseEntity syncDefaultData(@ApiParam(value = "组织id",required = true)@RequestParam  @NotNull(message="组织id不能为空") Long orgId);
 
 }

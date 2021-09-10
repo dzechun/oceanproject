@@ -889,7 +889,7 @@ public class BarcodeUtils {
 
                 //判断设备条码使用次数
                 EamEquipmentDto eamEquipmentDto=eamEquipmentDtoList.getData().get(0);
-                if(eamEquipmentBarcode.getCurrentUsageTime()+1>=eamEquipmentDto.getMaxUsageTimes())
+                if(eamEquipmentBarcode.getCurrentUsageTime()+1>=eamEquipmentDto.getMaxUsageTime())
                     throw new Exception("该设备条码已达到最大使用次数-->"+equipmentBarCode);
 
                 //最大使用天数判断

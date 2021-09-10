@@ -1,16 +1,22 @@
 package com.fantechs.security.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.security.SysCustomFormDetDto;
 import com.fantechs.common.base.general.dto.security.SysCustomFormDto;
 import com.fantechs.common.base.general.dto.security.SysDefaultCustomFormDetDto;
 import com.fantechs.common.base.general.dto.security.SysDefaultCustomFormDto;
+import com.fantechs.common.base.general.entity.basic.BaseMaterialCategory;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterialCategory;
 import com.fantechs.common.base.general.entity.security.SysCustomForm;
 import com.fantechs.common.base.general.entity.security.SysCustomFormDet;
 import com.fantechs.common.base.general.entity.security.SysDefaultCustomForm;
 import com.fantechs.common.base.general.entity.security.SysDefaultCustomFormDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.mapper.SysCustomFormDetMapper;
 import com.fantechs.security.mapper.SysCustomFormMapper;
@@ -47,6 +53,77 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
     public List<SysDefaultCustomFormDto> findList(Map<String, Object> map) {
         return sysDefaultCustomFormMapper.findList(map);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int update(SysDefaultCustomForm sysDefaultCustomForm) {
+        // 获取登录用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        ifCodeRepeat(sysDefaultCustomForm,user);
+
+        sysDefaultCustomForm.setOrgId(null);
+        return sysDefaultCustomFormMapper.updateByPrimaryKeySelective(sysDefaultCustomForm);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int save(SysDefaultCustomForm sysDefaultCustomForm) {
+        // 获取登录用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        ifCodeRepeat(sysDefaultCustomForm,user);
+
+        sysDefaultCustomForm.setOrgId(null);
+        return sysDefaultCustomFormMapper.insertSelective(sysDefaultCustomForm);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchDelete(String ids) {
+        // 获取登录用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(user)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        String[] idsArr  = ids.split(",");
+        for (String id : idsArr) {
+            SysDefaultCustomForm defaultCustomForm = sysDefaultCustomFormMapper.selectByPrimaryKey(id);
+            if (StringUtils.isEmpty(defaultCustomForm)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+
+            Example example = new Example(SysDefaultCustomFormDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("customFormId",id);
+            sysDefaultCustomFormDetMapper.deleteByExample(example);
+        }
+
+        return sysDefaultCustomFormMapper.deleteByIds(ids);
+    }
+
+
+    public void ifCodeRepeat(SysDefaultCustomForm sysDefaultCustomForm, SysUser user){
+        Example example = new Example(SysDefaultCustomForm.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("customFormCode",sysDefaultCustomForm.getCustomFormCode());
+        if(StringUtils.isNotEmpty(sysDefaultCustomForm.getCustomFormId())){
+            criteria.andNotEqualTo("customFormId",sysDefaultCustomForm.getCustomFormId());
+        }
+        SysDefaultCustomForm defaultCustomForm = sysDefaultCustomFormMapper.selectOneByExample(example);
+
+        if(StringUtils.isNotEmpty(defaultCustomForm)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+    }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -158,12 +235,14 @@ public class SysDefaultCustomFormServiceImpl extends BaseService<SysDefaultCusto
                         .andEqualTo("orgId", orgId);
                 SysCustomForm sysCustomForm = sysCustomFormMapper.selectOneByExample(example);
 
-                SysCustomFormDet sysCustomFormDet = new SysCustomFormDet();
-                BeanUtil.copyProperties(sysDefaultCustomFormDetDto, sysCustomFormDet);
-                sysCustomFormDet.setCustomFormDetId(null);
-                sysCustomFormDet.setCustomFormId(sysCustomForm.getCustomFormId());
-                sysCustomFormDet.setOrgId(orgId);
-                sysCustomFormDetMapper.insertSelective(sysCustomFormDet);
+                if(StringUtils.isNotEmpty(sysCustomForm)) {
+                    SysCustomFormDet sysCustomFormDet = new SysCustomFormDet();
+                    BeanUtil.copyProperties(sysDefaultCustomFormDetDto, sysCustomFormDet);
+                    sysCustomFormDet.setCustomFormDetId(null);
+                    sysCustomFormDet.setCustomFormId(sysCustomForm.getCustomFormId());
+                    sysCustomFormDet.setOrgId(orgId);
+                    sysCustomFormDetMapper.insertSelective(sysCustomFormDet);
+                }
             }
         }
 

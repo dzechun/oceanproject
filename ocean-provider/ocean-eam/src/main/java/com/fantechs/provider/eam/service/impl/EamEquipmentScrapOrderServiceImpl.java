@@ -73,10 +73,10 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
                 EamEquipment eamEquipment = eamEquipmentMapper.selectByPrimaryKey(eamEquipmentBarcode.getEquipmentId());
 
                 //设备当前使用次数(当前使用天数)大于等于该设备最大使用次数(最大使用天数)时创建报废单
-                if (StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageTime(), eamEquipment.getMaxUsageTimes())
-                        && eamEquipment.getMaxUsageTimes() != 0) {
-                    if (eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTimes()) == 0
-                            || eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTimes()) == 1) {
+                if (StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageTime(), eamEquipment.getMaxUsageTime())
+                        && eamEquipment.getMaxUsageTime() != 0) {
+                    if (eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTime()) == 0
+                            || eamEquipmentBarcode.getCurrentUsageTime().compareTo(eamEquipment.getMaxUsageTime()) == 1) {
                         tag = true;
                     }
                 }
