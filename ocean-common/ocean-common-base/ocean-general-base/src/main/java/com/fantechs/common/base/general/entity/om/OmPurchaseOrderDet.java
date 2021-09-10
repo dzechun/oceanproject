@@ -1,26 +1,20 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.support.ValidGroup;
+import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
-;
-;
+import javax.persistence.*;
+import lombok.Data;
 
 /**
  * 采购订单明细
  * om_purchase_order_det
- * @author 81947
- * @date 2021-06-17 10:17:22
+ * @author 86178
+ * @date 2021-09-08 17:39:05
  */
 @Data
 @Table(name = "om_purchase_order_det")
@@ -105,6 +99,46 @@ public class OmPurchaseOrderDet extends ValidGroup implements Serializable {
     @Excel(name = "交货日期", height = 20, width = 30,orderNum="") 
     @Column(name = "delivery_date")
     private Date deliveryDate;
+
+    /**
+     * 单价(元)
+     */
+    @ApiModelProperty(name="unitPrice",value = "单价(元)")
+    @Excel(name = "单价(元)", height = 20, width = 30,orderNum="") 
+    @Column(name = "unit_price")
+    private BigDecimal unitPrice;
+
+    /**
+     * 该物料总金额
+     */
+    @ApiModelProperty(name="materialTotalPrice",value = "该物料总金额")
+    @Excel(name = "该物料总金额", height = 20, width = 30,orderNum="") 
+    @Column(name = "material_total_price")
+    private BigDecimal materialTotalPrice;
+
+    /**
+     * 累计收货数量
+     */
+    @ApiModelProperty(name="totalReceivingQty",value = "累计收货数量")
+    @Excel(name = "累计收货数量", height = 20, width = 30,orderNum="") 
+    @Column(name = "total_receiving_qty")
+    private BigDecimal totalReceivingQty;
+
+    /**
+     * 累计退货数量
+     */
+    @ApiModelProperty(name="totalSalesReturnQty",value = "累计退货数量")
+    @Excel(name = "累计退货数量", height = 20, width = 30,orderNum="") 
+    @Column(name = "total_sales_return_qty")
+    private BigDecimal totalSalesReturnQty;
+
+    /**
+     * IQC暂收数量
+     */
+    @ApiModelProperty(name="iqcTemporaryQty",value = "IQC暂收数量")
+    @Excel(name = "IQC暂收数量", height = 20, width = 30,orderNum="") 
+    @Column(name = "iqc_temporary_qty")
+    private BigDecimal iqcTemporaryQty;
 
     /**
      * 状态（0、无效 1、有效）

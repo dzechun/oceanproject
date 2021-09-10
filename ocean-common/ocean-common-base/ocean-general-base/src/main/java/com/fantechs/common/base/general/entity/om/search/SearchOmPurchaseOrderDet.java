@@ -13,10 +13,7 @@ import java.io.Serializable;
 @Data
 public class SearchOmPurchaseOrderDet extends BaseQuery implements Serializable {
 
-    /**
-     * 采购订单明细ID
-     */
-    @ApiModelProperty(name="purchaseOrderDetId",value = "采购订单明细ID")
-    private Long purchaseOrderDetId;
+    @ApiModelProperty(name="purchaseOrderId",value = "采购订单ID")
+    private Long purchaseOrderId;
 
 }
