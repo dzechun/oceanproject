@@ -227,11 +227,11 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
             Example example = new Example(BaseProcess.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
-            criteria.andEqualTo("processCode", processCode)
-                    .orEqualTo("processName",processName);
+            criteria.andEqualTo("processCode", processCode);
             List<BaseProcess> processes = baseProcessMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(processes)) {
-                throw new BizErrorException("工序名称或编码重复");
+                fail.add(i + 4);
+                continue;
             }
 
             //判断工序类别是否存在
@@ -244,20 +244,20 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
                 fail.add(i + 4);
                 continue;
             }
+            baseProcessImport.setProcessCategoryId(baseProcessCategory.getProcessCategoryId());
 
             //判断工段是否存在
-            if (StringUtils.isNotEmpty(sectionCode)) {
-                Example example2 = new Example(BaseWorkshopSection.class);
-                Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
-                criteria2.andEqualTo("sectionCode", sectionCode);
-                BaseWorkshopSection baseWorkshopSection = baseWorkshopSectionMapper.selectOneByExample(example2);
-                if (StringUtils.isEmpty(baseWorkshopSection)) {
-                    fail.add(i + 4);
-                    continue;
-                }
-                baseProcessImport.setSectionId(baseWorkshopSection.getSectionId());
+            Example example2 = new Example(BaseWorkshopSection.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
+            criteria2.andEqualTo("sectionCode", sectionCode);
+            BaseWorkshopSection baseWorkshopSection = baseWorkshopSectionMapper.selectOneByExample(example2);
+            if (StringUtils.isEmpty(baseWorkshopSection)) {
+                fail.add(i + 4);
+                continue;
             }
+            baseProcessImport.setSectionId(baseWorkshopSection.getSectionId());
+
 
             //判断集合中是否存在重复数据
             boolean tag = false;
@@ -285,6 +285,9 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
                 baseProcess.setModifiedTime(new Date());
                 baseProcess.setModifiedUserId(currentUser.getUserId());
                 baseProcess.setOrganizationId(currentUser.getOrganizationId());
+                baseProcess.setIsJobScan(processImport.getIsJobScan().byteValue());
+                baseProcess.setIsQuality(processImport.getIsQuality().byteValue());
+                baseProcess.setIsStartScan(processImport.getIsStartScan().byteValue());
                 list.add(baseProcess);
             }
 
