@@ -6,14 +6,18 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto;
+import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrder;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngHtPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
@@ -48,11 +52,19 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     private EngPackingOrderSummaryDetMapper engPackingOrderSummaryDetMapper;
     @Resource
     private EngDataExportEngPackingOrderService engDataExportEngPackingOrderService;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
+        List<BaseSupplierReUser> suppliers = getSupplier(user.getUserId());
+        if(StringUtils.isNotEmpty(suppliers)) {
+            map.put("supplierId", suppliers.get(0).getSupplierId());
+        }else{
+            map.put("supplierId",0);
+        }
         return engPackingOrderMapper.findList(map);
     }
 
@@ -81,9 +93,21 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     @Transactional(rollbackFor = Exception.class)
     public int update(EngPackingOrder engPackingOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        if(StringUtils.isNotEmpty(engPackingOrder.getLeaveFactoryTime()) && StringUtils.isNotEmpty(engPackingOrder.getArrivalTime())
+        && engPackingOrder.getLeaveFactoryTime().after(engPackingOrder.getArrivalTime())){
+            throw new BizErrorException("出厂时间不能晚于出场时间");
+        }
+        if(StringUtils.isNotEmpty(engPackingOrder.getLeaveFactoryTime()) && StringUtils.isNotEmpty(engPackingOrder.getLeavePortTime())
+                && engPackingOrder.getLeaveFactoryTime().after(engPackingOrder.getLeavePortTime())){
+            throw new BizErrorException("出厂时间不能晚于离岗时间");
+        }
+        if(StringUtils.isNotEmpty(engPackingOrder.getLeavePortTime()) && StringUtils.isNotEmpty(engPackingOrder.getArrivalPortTime())
+                && engPackingOrder.getLeavePortTime().after(engPackingOrder.getArrivalPortTime())){
+            throw new BizErrorException("离岗时间不能晚于到岗时间");
+        }
         engPackingOrder.setModifiedUserId(user.getUserId());
         engPackingOrder.setModifiedTime(new Date());
-
         int i = engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
 
         EngHtPackingOrder engHtPackingOrder =new EngHtPackingOrder();
@@ -219,5 +243,12 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         }else{
             throw new BizErrorException("提交失败，未查询到装箱汇总信息");
         }
+    }
+
+    public List<BaseSupplierReUser> getSupplier(Long userId){
+        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
+        searchBaseSupplierReUser.setUserId(userId);
+        ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
+        return list.getData();
     }
 }

@@ -41,8 +41,11 @@
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-               type="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto">
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <collection property="mesPmWorkOrderBomDtos" ofType="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto"
                     column="{workOrderId=work_order_id}" select="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderBomMapper.findList">
         </collection>
@@ -76,7 +79,6 @@
         <result column="is_must_pass" jdbcType="TINYINT" property="isMustPass"/>
         <result column="inspection_time" jdbcType="INTEGER" property="inspectionTime"/>
         <result column="qualification_id" jdbcType="BIGINT" property="qualificationId"/>
-
         <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
         <result column="process_name" jdbcType="VARCHAR" property="processName"/>
     </resultMap>
@@ -116,10 +118,10 @@
         swo.remark,
         swo.contract_no,
         swo.batch_code,
-        sm.material_code AS 'materialCode',
-        sm.material_name AS 'materialName',
-        sm.material_version AS 'materialVersion',
-        sm.material_desc AS 'materialDesc',
+        sm.material_code AS material_code,
+        sm.material_name AS material_name,
+        sm.material_version AS material_version,
+        sm.material_desc AS material_desc,
         bt.main_unit AS 'mainUnit',
         bt.transfer_quantity AS 'transferQuantity',
         spl.pro_code AS 'proCode',
@@ -224,10 +226,10 @@
                swo.work_order_status,
                swo.pro_line_id,
                swo.batch_code,
-               sm.material_code     AS 'materialCode',
-               sm.material_name     AS 'materialName',
-               sm.material_version  AS 'materialVersion',
-               sm.material_desc     AS 'materialDesc',
+                sm.material_code AS material_code,
+                sm.material_name AS material_name,
+                sm.material_version AS material_version,
+                sm.material_desc AS material_desc,
                bt.transfer_quantity AS 'transferQuantity',
                bppd.quantity        AS 'quantity',
                spl.pro_name         AS 'proName',

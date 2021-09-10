@@ -41,9 +41,9 @@ public class MesPmWorkOrderBomDto extends MesPmWorkOrderBom implements Serializa
      * 版本
      */
     @Transient
-    @ApiModelProperty(name="version" ,value="版本")
+    @ApiModelProperty(name="materialVersion" ,value="版本")
     @Excel(name = "产品料号版本", height = 20, width = 30,orderNum="3")
-    private String version;
+    private String materialVersion;
 
     /**
      * 物料描述

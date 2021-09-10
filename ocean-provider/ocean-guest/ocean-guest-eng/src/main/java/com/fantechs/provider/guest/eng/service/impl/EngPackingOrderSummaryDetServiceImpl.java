@@ -67,9 +67,6 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
     public List<EngPackingOrderSummaryDetDto> findList(Map<String, Object> map) {
         SysUser user = getUser();
         map.put("orgId",user.getOrganizationId());
-        List<BaseSupplierReUser> supplier = getSupplier(user.getUserId());
-        if(StringUtils.isNotEmpty(supplier))
-            map.put("supplierId",supplier.get(0).getSupplierId());
         return engPackingOrderSummaryDetMapper.findList(map);
     }
 
@@ -108,6 +105,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
 
           //  EngPackingOrderSummary engPackingOrderSummary = getEngPackingOrderSummary(user.getOrganizationId(), det.getCartonCode());
             EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(det.getPackingOrderSummaryId());
+            check(det,user,engPackingOrderSummary);
             if(StringUtils.isNotEmpty(engPackingOrderSummary)) {
                 getMaterial(det, user, engPackingOrderSummary);
             }else{
@@ -217,13 +215,14 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 baseMaterial.setRemark(engPackingOrderSummaryDetDto.getUnitName());
                 baseMaterial.setOrganizationId(user.getOrganizationId());
                 baseMaterial.setStatus((byte)1);
+                baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
+
                 BaseTab baseTab = new BaseTab();
                 baseTab.setOrgId(user.getOrganizationId());
                 baseTab.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
                 baseTab.setTransferQuantity(1);
                 baseTab.setMainUnit(engPackingOrderSummaryDetDto.getUnitName());
                 baseFeignApi.addTab(baseTab);
-                baseMaterialResponseEntity = baseFeignApi.saveByApi(baseMaterial);
                 engPackingOrderSummaryDetDto.setMaterialId(baseMaterialResponseEntity.getData().getMaterialId());
             }
         }
@@ -403,15 +402,6 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         return rs.getData();
     }
 
-/*
-    public String sub(List<BaseBarcodeRuleSpec> list){
-        StringBuffer sb = new StringBuffer();
-        for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
-            sb.append(baseBarcodeRuleSpec.getSpecification());
-        }
-        return sb.toString();
-    }*/
-
 
     public void check(EngPackingOrderSummaryDetDto dto, SysUser user,EngPackingOrderSummary engPackingOrderSummary){
         if (StringUtils.isEmpty(dto.getCartonCode()))
@@ -438,6 +428,32 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         //材料编码、原材料编码二者不能都为空，必须有一个有值，而且存在于物料表中
         if (StringUtils.isEmpty(dto.getMaterialCode())&& "管道".equals(engPackingOrderSummary.getProfessionName())){
             throw new BizErrorException("添加失败，专业等于管道时，材料编码不能为空");
+        }
+
+        //校验合同量单
+        Example qtyExample = new Example(EngContractQtyOrder.class);
+        Example.Criteria qtyCriteria = qtyExample.createCriteria();
+        qtyCriteria.andEqualTo("contractCode",engPackingOrderSummary.getContractCode());
+        qtyCriteria.andEqualTo("dominantTermCode",dto.getDominantTermCode());
+        if(StringUtils.isNotEmpty(dto.getMaterialCode())){
+            qtyCriteria.andEqualTo("materialCode",dto.getMaterialCode());
+        }else if(StringUtils.isNotEmpty(dto.getRawMaterialCode())){
+            qtyCriteria.andEqualTo("materialCode",dto.getRawMaterialCode());
+        }
+        qtyCriteria.andEqualTo("deviceCode",dto.getDeviceCode());
+        List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
+        if(StringUtils.isEmpty(engContractQtyOrders)){
+            throw new BizErrorException("添加失败，未查询到对应的合同量单");
+        }
+
+        //校验请购单
+        Example orderExample = new Example(EngPurchaseReqOrder.class);
+        Example.Criteria orderCriteria = orderExample.createCriteria();
+        orderCriteria.andEqualTo("purchaseReqOrderCode",engPackingOrderSummary.getPurchaseReqOrderCode());
+        orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
+        List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
+        if(StringUtils.isEmpty(engPurchaseReqOrders)){
+            throw new BizErrorException("添加失败，未查询到对应的请购单号");
         }
     }
 

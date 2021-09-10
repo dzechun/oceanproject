@@ -89,9 +89,9 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 //            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
 //        }
 
-        if(StringUtils.isEmpty(omSalesOrder.getContractCode())) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "合同号不能为空");
-        }
+//        if(StringUtils.isEmpty(omSalesOrder.getContractCode())) {
+//            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "合同号不能为空");
+//        }
 
         if(StringUtils.isEmpty(omSalesOrder.getCustomerOrderCode())) {
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "客户订单号不能为空");

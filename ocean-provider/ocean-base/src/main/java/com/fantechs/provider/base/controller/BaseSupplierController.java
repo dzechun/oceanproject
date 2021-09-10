@@ -83,7 +83,7 @@ public class BaseSupplierController {
     @ApiOperation("列表")
     @PostMapping("/findAll")
     public ResponseEntity<List<BaseSupplier>> findAll() {
-        List<BaseSupplier> list = baseSupplierService.findList(new HashMap<>());
+        List<BaseSupplier> list = baseSupplierService.findAll(new HashMap<>());
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 

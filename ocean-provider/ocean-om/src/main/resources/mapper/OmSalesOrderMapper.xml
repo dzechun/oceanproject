@@ -25,6 +25,9 @@
         <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
         <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName" />
         <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate" />
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
+        <result column="make_code" jdbcType="VARCHAR" property="makeCode" />
+        <result column="sales_code_qty" jdbcType="DECIMAL" property="salesCodeQty" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="org_id" jdbcType="BIGINT" property="orgId" />
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -49,7 +52,7 @@
     so.sales_order_id, so.sales_order_code, so.contract_code, so.supplier_id, so.customer_order_code,
     so.source_order_code, so.source_order_line_number, so.barcode_rule_set_id, so.delivery_type, so.sales_dept,
     so.sales_user_name, so.data_source, so.order_type, so.order_status, so.status, so.order_date, so.make_order_user_name,
-    so.make_order_date, so.audit_user_name, so.audit_date, so.remark, so.org_id, so.create_user_id,
+    so.make_order_date, so.audit_user_name, so.audit_date, so.sales_code, so.make_code, so.remark, so.org_id, so.create_user_id,
     so.create_time, so.modified_user_id, so.modified_time, so.is_delete, so.option1, so.option2, so.option3
   </sql>
 

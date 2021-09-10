@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -114,6 +115,10 @@ public class BaseSupplierReUser extends ValidGroup implements Serializable {
     private String option2;
 
     private String option3;
+
+    @Transient
+    @ApiModelProperty(name = "supplierCode",value = "供应商编码")
+    private String supplierCode;
 
     private static final long serialVersionUID = 1L;
 }
