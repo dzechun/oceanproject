@@ -113,7 +113,7 @@
         and ewi.org_id = #{orgId}
       </if>
        <if test="workInstructionName!=null and workInstructionName!=''">
-           and ewi.work_instruction_name = #{workInstructionName}
+           and ewi.work_instruction_name like CONCAT('%', #{workInstructionName}, '%')
        </if>
        <if test="workInstructionCode!=null and workInstructionCode!=''">
            and ewi.work_instruction_code = #{workInstructionCode}

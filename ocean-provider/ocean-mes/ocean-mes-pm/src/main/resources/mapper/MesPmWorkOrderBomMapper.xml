@@ -34,7 +34,7 @@
     <result column="part_material_code" jdbcType="VARCHAR" property="partMaterialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="version" jdbcType="VARCHAR" property="version"/>
+    <result column="material_ersion" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -49,9 +49,9 @@
     mpwo.work_order_code,
     mpwob.part_material_id,
     bm.material_code AS part_material_code,
-    bm.material_name,
-    bm.material_version,
-    bm.material_desc,
+    bm.material_name AS material_name,
+    bm.material_version AS material_version,
+    bm.material_desc AS material_desc,
     mpwob.sub_material_id,
     bml.material_code AS sub_material_code,
     mpwob.process_id,
