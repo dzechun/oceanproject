@@ -79,9 +79,9 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         SysUser user = getUser();
         engPackingOrderSummaryDetDto.setStatus((byte)1);
         engPackingOrderSummaryDetDto.setOrgId(user.getOrganizationId());
-
         EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
 
+        check(engPackingOrderSummaryDetDto,user,engPackingOrderSummary);
         getMaterial(engPackingOrderSummaryDetDto,user,engPackingOrderSummary);
 
         if(StringUtils.isNotEmpty(engPackingOrderSummary)){
@@ -424,6 +424,8 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             throw new BizErrorException("添加失败，单位名称不能为空");
         if (StringUtils.isEmpty(dto.getMaterialName()))
             throw new BizErrorException("添加失败，货物名称不能为空");
+        if (StringUtils.isEmpty(dto.getDeviceCode()))
+            throw new BizErrorException("添加失败，装置号不能为空");
 
         //判断参数是否大于0
         BigDecimal netWeight = dto.getQty();
@@ -434,10 +436,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             throw new BizErrorException("添加失败，包装箱号不一致");
 
         //材料编码、原材料编码二者不能都为空，必须有一个有值，而且存在于物料表中
-        if (StringUtils.isEmpty(dto.getMaterialCode()) && StringUtils.isEmpty(dto.getRawMaterialCode())){
-            throw new BizErrorException("添加失败，材料编码、原材料编码二者不能都为空");
-        }else if (StringUtils.isEmpty(dto.getMaterialCode())
-                && "管道".equals(engPackingOrderSummary.getProfessionName())){
+        if (StringUtils.isEmpty(dto.getMaterialCode())&& "管道".equals(engPackingOrderSummary.getProfessionName())){
             throw new BizErrorException("添加失败，专业等于管道时，材料编码不能为空");
         }
     }

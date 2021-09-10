@@ -4,13 +4,17 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
+import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrder;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngHtPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
@@ -45,6 +49,8 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     private EngPackingOrderSummaryDetMapper engPackingOrderSummaryDetMapper;
     @Resource
     private EngDataExportEngPackingOrderService engDataExportEngPackingOrderService;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
@@ -180,5 +186,13 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         }else{
             throw new BizErrorException("提交失败，未查询到装箱汇总信息");
         }
+    }
+
+
+    public List<BaseSupplierReUser> getSupplier(Long userId){
+        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
+        searchBaseSupplierReUser.setUserId(userId);
+        ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
+        return list.getData();
     }
 }
