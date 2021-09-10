@@ -219,5 +219,42 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
 
     private String option3;
 
+    /**
+     * 分配数量
+     */
+    @ApiModelProperty(value = "分配数量",name = "distributionQty")
+    @Column(name = "distribution_qty")
+    private BigDecimal distributionQty;
+
+    /**
+     * 上架数量
+     */
+    @ApiModelProperty( value = "上架数量",name = "putawayQty")
+    @Column(name = "putaway_qty")
+    private BigDecimal putawayQty;
+
+    /**
+     * 收货数量
+     */
+    @ApiModelProperty(value = "收货数量",name = "receivingQty")
+    @Column(name = "receiving_qty")
+    private BigDecimal receivingQty;
+
+    @ApiModelProperty(value = "收货库位id",name = "receivingStorageId")
+    @Column(name = "receiving_storage_id")
+    private Long receivingStorageId;
+
+
+    @ApiModelProperty(name = "putawayStorageId",value = "上架库位")
+    @Column(name = "putaway_storage_id")
+    private Long putawayStorageId;
+
+    /**
+     *汇总明细状态(1-待收货 2-收货中 3-待上架 4-完成)
+     */
+    @ApiModelProperty(name = "summaryDetStatus",value = "汇总明细状态(1-待收货 2-收货中 3-待上架 4-完成)")
+    @Column(name = "summary_det_status")
+    private Byte summaryDetStatus;
+
     private static final long serialVersionUID = 1L;
 }

@@ -43,8 +43,8 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     public List<WmsInnerInventoryDto> findList(Map<String, Object> map) {
-       // SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-//        map.put("orgId",sysUser.getOrganizationId());
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
         return wmsInnerInventoryMapper.findList(map);
     }
 
@@ -127,6 +127,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public WmsInnerInventory selectOneByExample(Map<String,Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId",map.get("materialId")).andEqualTo("batchCode",map.get("batchCode"));
@@ -146,6 +147,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
             criteria.andEqualTo("inventoryStatusId",map.get("inventoryStatusId"));
         }
         criteria.andEqualTo("stockLock", 0).andEqualTo("qcLock", 0).andEqualTo("lockStatus", 0);
+        criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         return wmsInnerInventorys;
     }
@@ -161,6 +163,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
     public int updateByExampleSelective(WmsInnerInventory wmsInnerInventory, Map<String,Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("relevanceOrderCode",map.get("relevanceOrderCode")).andEqualTo("materialId",map.get("materialId"));
@@ -176,6 +179,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         criteria.andEqualTo("stockLock", 0).andEqualTo("qcLock", 0).andEqualTo("lockStatus", 0);
         wmsInnerInventory.setPackingQty(new BigDecimal(Double.parseDouble(map.get("actualQty").toString())
         ));
+        criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         int num = wmsInnerInventoryMapper.updateByExampleSelective(wmsInnerInventory, example);
         return num;
     }
@@ -184,7 +188,20 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
     public int insertSelective(WmsInnerInventory wmsInnerInventory) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        wmsInnerInventory.setOrgId(sysUser.getOrganizationId());
+        wmsInnerInventory.setCreateTime(new Date());
+        wmsInnerInventory.setCreateUserId(sysUser.getUserId());
+        wmsInnerInventory.setModifiedTime(new Date());
+        wmsInnerInventory.setModifiedUserId(sysUser.getUserId());
         return wmsInnerInventoryMapper.insertSelective(wmsInnerInventory);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
+    public int insertList(List<WmsInnerInventory> wmsInnerInventories) {
+        return wmsInnerInventoryMapper.insertList(wmsInnerInventories);
     }
 
     @Override

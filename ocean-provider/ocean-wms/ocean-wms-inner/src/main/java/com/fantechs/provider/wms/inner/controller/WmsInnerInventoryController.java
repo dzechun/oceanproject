@@ -122,6 +122,12 @@ public class WmsInnerInventoryController {
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.insertSelective(wmsInnerInventory));
     }
 
+    @ApiIgnore
+    @PostMapping("/insertList")
+    public ResponseEntity insertList(@RequestBody List<WmsInnerInventory> wmsInnerInventories){
+        return ControllerUtil.returnCRUD(wmsInnerInventoryService.insertList(wmsInnerInventories));
+    }
+
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")

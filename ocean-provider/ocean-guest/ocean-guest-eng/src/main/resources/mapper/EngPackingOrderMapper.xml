@@ -28,6 +28,8 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="ago_confirm_time" jdbcType="TIMESTAMP" property="agoConfirmTime"/>
+    <result column="ago_confirm_user_id" jdbcType="BIGINT" property="agoConfirmUserId"/>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eng.EngPackingOrderDto">
@@ -36,6 +38,7 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="shipment_enterprise_name" jdbcType="VARCHAR" property="shipmentEnterpriseName"/>
+    <result column="ago_confirm_user_name" jdbcType="VARCHAR" property="agoConfirmUserName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -61,17 +64,20 @@
     spo.modified_time,
     spo.option1,
     spo.option2,
-    spo.option3
+    spo.option3,
+spo.ago_confirm_time,
+spo.ago_confirm_user_id
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
     bs.supplier_name as supplier_name, bs.supplier_code as supplier_code,bse.shipment_enterprise_name as shipment_enterprise_name,
     u.user_name as create_user_name,
-    s.user_name as modified_user_name,bo.organization_name
+    s.user_name as modified_user_name,bo.organization_name,su.user_name as 'ago_confirm_user_name'
     from eng_packing_order spo
     left join base_supplier bs on spo.supplier_id=bs.supplier_id
     left join base_shipment_enterprise bse on spo.shipment_enterprise_id=bse.shipment_enterprise_id
+    LEFT JOIN ocean_v2.sys_user su on su.user_id = spo.ago_confirm_user_id
     left join ocean_v2.sys_user u on spo.create_user_id=u.user_id
     left join ocean_v2.sys_user s on spo.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON spo.org_id = bo.organization_id
@@ -91,8 +97,11 @@
       <if test="despatchBatch != null and despatchBatch!=''">
         and spo.despatch_batch like CONCAT('%', #{despatchBatch}, '%')
       </if>
-      <if test="orderStatus != null and orderStatus!=''">
-        and spo.order_status = #{orderStatus}
+      <if test="orderStatus != null and orderStatus.size >0">
+        and spo.order_status in
+        <foreach collection="orderStatus" item="item" separator="," open="(" close=")">
+           #{item}
+        </foreach>
       </if>
       <if test="auditStatus != null and auditStatus!=''">
         and spo.audit_status = #{auditStatus}
@@ -128,4 +137,13 @@
     order by spo.create_time desc
   </select>
 
+  <select id="findWarehouse" resultType="java.lang.Long">
+    select warehouse_id FROM base_warehouse where org_id=#{orgId}
+  </select>
+  <select id="findStorage" resultType="java.lang.Long">
+    select storage_id FROM base_storage where storage_type=2 and org_id=#{orgId} and warehouse_id=#{warehouseId}
+  </select>
+  <select id="findInventoryStatus" resultType="java.lang.Long">
+    select inventory_status_id FROM  base_inventory_status where org_id=#{orgId} and warehouse_id=#{warehouseId}
+  </select>
 </mapper>

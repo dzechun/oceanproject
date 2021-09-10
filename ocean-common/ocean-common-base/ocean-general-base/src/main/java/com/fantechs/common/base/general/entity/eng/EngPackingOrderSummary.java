@@ -245,5 +245,12 @@ public class EngPackingOrderSummary extends ValidGroup implements Serializable {
 
     private String option3;
 
+    /**
+     * 汇总状态(1-待收货 2-收货中 3-待上架 4-完成)
+     */
+    @ApiModelProperty(name = "summaryStatus",value = "汇总状态(1-待收货 2-收货中 3-待上架 4-完成)")
+    @Column(name = "summary_status")
+    private Byte summaryStatus;
+
     private static final long serialVersionUID = 1L;
 }

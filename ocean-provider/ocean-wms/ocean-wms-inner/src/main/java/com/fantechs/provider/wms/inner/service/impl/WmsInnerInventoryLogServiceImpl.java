@@ -32,6 +32,8 @@ public class WmsInnerInventoryLogServiceImpl extends BaseService<WmsInnerInvento
 
     @Override
     public List<WmsInnerInventoryLogDto> findList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId",sysUser.getOrganizationId());
         return wmsInnerInventoryLogMapper.findList(map);
     }
 
@@ -86,6 +88,7 @@ public class WmsInnerInventoryLogServiceImpl extends BaseService<WmsInnerInvento
         map.put("materialId",wmsInnerInventoryLog.getMaterialId());
         map.put("batchCode",wmsInnerInventoryLog.getBatchCode());
         map.put("inventoryStatusId",wmsInnerInventoryLog.getInventoryStatusId());
+        map.put("orgId",wmsInnerInventoryLog.getOrgId());
         return map;
     }
 
