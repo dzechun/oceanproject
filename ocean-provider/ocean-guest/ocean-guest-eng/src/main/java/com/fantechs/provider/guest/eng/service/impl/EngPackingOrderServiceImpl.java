@@ -4,17 +4,16 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
-import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrder;
-import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngHtPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
@@ -49,8 +48,6 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     private EngPackingOrderSummaryDetMapper engPackingOrderSummaryDetMapper;
     @Resource
     private EngDataExportEngPackingOrderService engDataExportEngPackingOrderService;
-    @Resource
-    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
@@ -119,6 +116,42 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         check(engPackingOrder);
         engPackingOrder.setModifiedUserId(user.getUserId());
         engPackingOrder.setModifiedTime(new Date());
+        engPackingOrder.setOrderStatus((byte)1);
+
+        //审核通过给包装清单货品明细赋值默认收货库位及上架库位
+        //获取收货库存信息
+        Long warehouseId = engPackingOrderMapper.findWarehouse(ControllerUtil.dynamicCondition("orgId",user.getOrganizationId()));
+        if(StringUtils.isEmpty(warehouseId)){
+            throw new BizErrorException("获取仓库信息失败");
+        }
+        //获取库位信息
+        Long storageId = engPackingOrderMapper.findStorage(ControllerUtil.dynamicCondition("orgId",user.getOrganizationId(),"warehouseId",warehouseId));
+        if(StringUtils.isEmpty(storageId)){
+            throw new BizErrorException("获取库位信息失败");
+        }
+        //获取库存状态信息
+        Long inventoryStatus = engPackingOrderMapper.findInventoryStatus(ControllerUtil.dynamicCondition("orgId",user.getOrganizationId(),"warehouseId",warehouseId));
+        if(StringUtils.isEmpty(inventoryStatus)){
+            throw new BizErrorException("获取库位信息失败");
+        }
+        List<EngPackingOrderSummaryDto> list = engPackingOrderSummaryMapper.findList(ControllerUtil.dynamicCondition("packingOrderId",engPackingOrder.getPackingOrderId()));
+        for (EngPackingOrderSummaryDto engPackingOrderSummaryDto : list) {
+            //查询包箱货品明细
+            List<EngPackingOrderSummaryDetDto> engPackingOrderSummaryDetDtos = engPackingOrderSummaryDetMapper.findList(ControllerUtil.dynamicCondition("packingOrderSummaryId",engPackingOrderSummaryDto.getPackingOrderSummaryId()));
+            for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : engPackingOrderSummaryDetDtos) {
+                engPackingOrderSummaryDetDto.setSummaryDetStatus((byte)1);
+                engPackingOrderSummaryDetDto.setReceivingStorageId(storageId);
+                engPackingOrderSummaryDetDto.setPutawayStorageId(storageId);
+                engPackingOrderSummaryDetDto.setModifiedTime(new Date());
+                engPackingOrderSummaryDetDto.setModifiedUserId(user.getUserId());
+                engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDetDto);
+            }
+            engPackingOrderSummaryDto.setSummaryStatus((byte)1);
+            engPackingOrderSummaryDto.setModifiedTime(new Date());
+            engPackingOrderSummaryDto.setModifiedUserId(user.getUserId());
+            engPackingOrderSummaryMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDto);
+        }
+
         int i = engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
 
         EngHtPackingOrder engHtPackingOrder =new EngHtPackingOrder();
@@ -186,13 +219,5 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         }else{
             throw new BizErrorException("提交失败，未查询到装箱汇总信息");
         }
-    }
-
-
-    public List<BaseSupplierReUser> getSupplier(Long userId){
-        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
-        searchBaseSupplierReUser.setUserId(userId);
-        ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
-        return list.getData();
     }
 }

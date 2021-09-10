@@ -108,10 +108,10 @@ public class EngPackingOrder extends ValidGroup implements Serializable {
     private Date arrivalTime;
 
     /**
-     * 订单状态(单据状态(1-未到达 2-待收货 3-收货中 4-收货完成)
+     * 订单状态(1-未到达 2-待收货 3-收货中 4-待上架 5-完成)
      */
-    @ApiModelProperty(name="orderStatus",value = "单据状态(1-未到达 2-待收货 3-收货中 4-收货完成)")
-    @Excel(name = "单据状态(1-未到达 2-待收货 3-收货中 4-收货完成)", height = 20, width = 30,orderNum="10")
+    @ApiModelProperty(name="orderStatus",value = "订单状态(1-未到达 2-待收货 3-收货中 4-待上架 5-完成)")
+    @Excel(name = "订单状态(1-未到达 2-待收货 3-收货中 4-待上架 5-完成)", height = 20, width = 30,orderNum="10")
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -188,6 +188,21 @@ public class EngPackingOrder extends ValidGroup implements Serializable {
     private String option2;
 
     private String option3;
+
+    /**
+     * 到达时间
+     */
+    @ApiModelProperty(name="agoConfirmTime",value = "到达时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "ago_confirm_time")
+    private Date agoConfirmTime;
+
+    /**
+     * 到达登记人id
+     */
+    @ApiModelProperty(name = "agoConfirmUserId",value = "到达登记人id")
+    @Column(name = "ago_confirm_user_id")
+    private Long agoConfirmUserId;
 
     private static final long serialVersionUID = 1L;
 }

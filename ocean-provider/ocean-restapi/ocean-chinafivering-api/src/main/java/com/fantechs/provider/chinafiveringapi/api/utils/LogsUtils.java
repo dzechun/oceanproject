@@ -22,7 +22,7 @@ public class LogsUtils {
      */
     public void  addlog(Byte result,Byte type,Long orgId,String responseData,String requestParameter){
         SysApiLog sysApiLog = new SysApiLog();
-        sysApiLog.setThirdpartySysName("五环");
+        sysApiLog.setThirdpartySysName("五环回传接口");
         sysApiLog.setCallResult(result);
         sysApiLog.setCallType(type);
         sysApiLog.setApiModule("ocean-chinafivering-api");

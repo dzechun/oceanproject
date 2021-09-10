@@ -189,6 +189,13 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
+    public int insertList(List<WmsInnerInventory> wmsInnerInventories) {
+        return wmsInnerInventoryMapper.insertList(wmsInnerInventories);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int batchUpdate(List<WmsInnerInventory> list) {
         return wmsInnerInventoryMapper.batchUpdate(list);
     }
