@@ -104,6 +104,8 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             List<BaseSupplierReUser> list = baseSupplierReUserMapper.findList(mapReUser);
             if(StringUtils.isNotEmpty(list))
                 map.put("supplierId",list.get(0).getSupplierId());
+            else
+                map.put("supplierId","");
         }
 
         return baseSupplierMapper.findList(map);

@@ -572,9 +572,6 @@ public class BarcodeUtils {
     public static BaseExecuteResultDto ChkLogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws Exception {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
-            baseExecuteResultDto.setFailMsg("");
-            baseExecuteResultDto.setSuccessMsg("");
-            baseExecuteResultDto.setExecuteResult("");
             String pass = "Pass";
             String fail = "Fail";
             Long orgId = null;
@@ -724,16 +721,14 @@ public class BarcodeUtils {
 
                 baseExecuteResultDto.setIsSuccess(true);
                 baseExecuteResultDto.setSuccessMsg(" 验证通过 ");
-                baseExecuteResultDto.setFailMsg("");
+
         }catch (Exception ex) {
             baseExecuteResultDto.setIsSuccess(false);
             baseExecuteResultDto.setFailMsg(ex.getMessage());
-            baseExecuteResultDto.setSuccessMsg("");
         }
 
         //记录请求参数及结果
         barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkSNRoutingApiDto.toString());
-        baseExecuteResultDto.setExecuteResult("");
         return baseExecuteResultDto;
     }
 
@@ -821,16 +816,13 @@ public class BarcodeUtils {
 
             baseExecuteResultDto.setIsSuccess(true);
             baseExecuteResultDto.setSuccessMsg(" 过站成功 ");
-            baseExecuteResultDto.setFailMsg("");
         }catch (Exception ex) {
             baseExecuteResultDto.setIsSuccess(false);
             baseExecuteResultDto.setFailMsg(ex.getMessage());
-            baseExecuteResultDto.setSuccessMsg("");
         }
 
         //记录请求参数及结果
         barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiSNDataTransferApiDto.toString());
-        baseExecuteResultDto.setExecuteResult("");
         return baseExecuteResultDto;
     }
 
