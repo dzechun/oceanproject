@@ -6,21 +6,19 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
-import com.fantechs.common.base.general.entity.om.OmHtSalesOrder;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.*;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
 import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderDetService;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -57,9 +55,9 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
         }
 
         //数据库有限制这个字段不能为空
-        if(StringUtils.isEmpty(omSalesOrderDet.getProjectCode())) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "项目号不能为空");
-        }
+//        if(StringUtils.isEmpty(omSalesOrderDet.getProjectCode())) {
+//            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "项目号不能为空");
+//        }
 
         omSalesOrderDet.setSalesOrderDetId(null);
 

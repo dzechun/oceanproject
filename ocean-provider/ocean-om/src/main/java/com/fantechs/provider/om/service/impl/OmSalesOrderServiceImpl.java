@@ -3,7 +3,9 @@ package com.fantechs.provider.om.service.impl;
 
 import cn.hutool.core.date.DateTime;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
@@ -21,6 +23,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
@@ -54,13 +57,12 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     private OutFeignApi outFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public int saveDto(OmSalesOrderDto omSalesOrderDto) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         OmSalesOrder omSalesOrder = new OmSalesOrder();
 
@@ -98,7 +100,12 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 //        }
 
         omSalesOrder.setSalesOrderId(null);
-        omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("wanbaoSyncData");
+        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(specItems.isEmpty()){
+            omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
+        }
         omSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
         omSalesOrder.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
         omSalesOrder.setCreateUserId(currentUserInfo.getUserId());
