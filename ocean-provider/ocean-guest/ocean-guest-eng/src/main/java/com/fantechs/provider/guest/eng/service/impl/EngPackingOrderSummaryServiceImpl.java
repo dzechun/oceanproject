@@ -267,7 +267,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             qtyCriteria.andEqualTo("contractCode",contractCode);
             List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
             if(StringUtils.isEmpty(engContractQtyOrders)){
-                throw new BizErrorException("添加失败，未查询到合同量单,"+"错误行数为:"+(i+2));
+                throw new BizErrorException("添加失败，供应商与合同号未匹配到合同量单,"+"错误行数为:"+(i+2));
                /* fail.add(i+2);
                 continue;*/
             }else{
@@ -281,7 +281,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
             List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
             if(StringUtils.isEmpty(engPurchaseReqOrders)){
-                throw new BizErrorException("添加失败，未查询到请购单,"+"错误行数为:"+(i+2));
+                throw new BizErrorException("添加失败，合同量单与请购单号未匹配到请购单,"+"错误行数为:"+(i+2));
                /* fail.add(i+2);
                 continue;*/
             }
@@ -354,7 +354,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         qtyCriteria.andEqualTo("supplierId",engPackingOrder.getSupplierId());
         List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
         if(StringUtils.isEmpty(engContractQtyOrders))
-            throw new BizErrorException("添加失败，未查询到合同量单");
+            throw new BizErrorException("添加失败，供应商与合同号未匹配到合同量单");
 
         //校验请购单
         Example orderExample = new Example(EngPurchaseReqOrder.class);
@@ -362,7 +362,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         orderCriteria.andEqualTo("purchaseReqOrderCode",dto.getPurchaseReqOrderCode());
         List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
         if(StringUtils.isEmpty(engPurchaseReqOrders))
-            throw new BizErrorException("添加失败，未查询到请购单");
+            throw new BizErrorException("添加失败，合同量单与请购单号未匹配到请购单");
 
         //判断各参数是否大于0
         BigDecimal netWeight = dto.getNetWeight();

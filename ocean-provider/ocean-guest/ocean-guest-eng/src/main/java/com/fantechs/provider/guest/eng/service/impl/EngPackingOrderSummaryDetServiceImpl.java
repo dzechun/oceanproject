@@ -302,7 +302,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             qtyCriteria.andEqualTo("deviceCode",deviceCode);
             List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
             if(StringUtils.isEmpty(engContractQtyOrders)){
-                throw new BizErrorException("添加失败，未查询到对应的合同量单,"+"错误行数为:"+(i+2));
+                throw new BizErrorException("添加失败，主项号、合同号、装置号、（材料编码或原材料编码）未匹配到合同量单,"+"错误行数为:"+(i+2));
                /* fail.add(i+2);
                 continue;*/
             }
@@ -314,7 +314,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
             List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
             if(StringUtils.isEmpty(engPurchaseReqOrders)){
-                throw new BizErrorException("添加失败，未查询到对应的请购单号,"+"错误行数为:"+(i+2));
+                throw new BizErrorException("添加失败，合同量单与请购单号未匹配到请购单,"+"错误行数为:"+(i+2));
                 /*fail.add(i+2);
                 continue;*/
             }
@@ -443,7 +443,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         qtyCriteria.andEqualTo("deviceCode",dto.getDeviceCode());
         List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
         if(StringUtils.isEmpty(engContractQtyOrders)){
-            throw new BizErrorException("添加失败，未查询到对应的合同量单");
+            throw new BizErrorException("添加失败，主项号、合同号、装置号、（材料编码或原材料编码）未匹配到合同量单");
         }
 
         //校验请购单
@@ -453,7 +453,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
         List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
         if(StringUtils.isEmpty(engPurchaseReqOrders)){
-            throw new BizErrorException("添加失败，未查询到对应的请购单号");
+            throw new BizErrorException("添加失败，合同量单与请购单号未匹配到请购单");
         }
     }
 

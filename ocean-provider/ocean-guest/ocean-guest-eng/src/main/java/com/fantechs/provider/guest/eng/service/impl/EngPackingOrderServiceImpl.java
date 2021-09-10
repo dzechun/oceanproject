@@ -60,11 +60,8 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
         List<BaseSupplierReUser> suppliers = getSupplier(user.getUserId());
-        if(StringUtils.isNotEmpty(suppliers)) {
+        if(StringUtils.isNotEmpty(suppliers))
             map.put("supplierId", suppliers.get(0).getSupplierId());
-        }else{
-            map.put("supplierId",0);
-        }
         return engPackingOrderMapper.findList(map);
     }
 
