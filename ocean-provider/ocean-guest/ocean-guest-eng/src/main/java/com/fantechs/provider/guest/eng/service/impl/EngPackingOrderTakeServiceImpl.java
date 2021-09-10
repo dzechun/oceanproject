@@ -66,6 +66,8 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         for (Long id : ids) {
             EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(id);
             engPackingOrder.setOrderStatus((byte)2);
+            engPackingOrder.setAgoConfirmTime(new Date());
+            engPackingOrder.setAgoConfirmUserId(sysUser.getUserId());
             engPackingOrder.setModifiedTime(new Date());
             engPackingOrder.setModifiedUserId(sysUser.getUserId());
             num+=engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);

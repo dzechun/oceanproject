@@ -189,5 +189,20 @@ public class EngPackingOrder extends ValidGroup implements Serializable {
 
     private String option3;
 
+    /**
+     * 到达时间
+     */
+    @ApiModelProperty(name="agoConfirmTime",value = "到达时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "ago_confirm_time")
+    private Date agoConfirmTime;
+
+    /**
+     * 到达登记人id
+     */
+    @ApiModelProperty(name = "agoConfirmUserId",value = "到达登记人id")
+    @Column(name = "ago_confirm_user_id")
+    private Long agoConfirmUserId;
+
     private static final long serialVersionUID = 1L;
 }

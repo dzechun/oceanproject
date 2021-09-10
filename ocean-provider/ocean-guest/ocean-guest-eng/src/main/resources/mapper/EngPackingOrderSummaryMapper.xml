@@ -58,7 +58,6 @@
     spos.device_code,
     spos.location_num,
     spos.material_id,
-    spos.material_name,
     spos.supplier_id,
     spos.carton_qty,
     spos.packing_type,
@@ -83,13 +82,13 @@ spos.summary_status
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"/>,
-   bm.material_name as material_name,bm.material_code as material_code,
+   bm.material_name,bm.material_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name,
-    (SELECT IFNULL(SUM(eposd.receiving_qty,0) FROM eng_packing_order_summary_det eposd where eposd.packing_order_summary_id=spos.packing_order_summary_id)) as 'totalReceivingQty',
-    (SELECT IFNULL(SUM(eposd.distributionQty,0) FROM eng_packing_order_summary_det eposd where eposd.packing_order_summary_id=spos.packing_order_summary_id)) as 'totalDistributionQty',
-    (SELECT IFNULL(SUM(eposd.putawayQty,0) FROM eng_packing_order_summary_det eposd where eposd.packing_order_summary_id=spos.packing_order_summary_id)) as 'totalPutawayQty'
+    (SELECT IFNULL(SUM(eposd.receiving_qty),0) FROM eng_packing_order_summary_det eposd where eposd.packing_order_summary_id=spos.packing_order_summary_id) as 'totalReceivingQty',
+    (SELECT IFNULL(SUM(eposd.distribution_qty),0) FROM eng_packing_order_summary_det eposd where eposd.packing_order_summary_id=spos.packing_order_summary_id) as 'totalDistributionQty',
+    (SELECT IFNULL(SUM(eposd.putaway_qty),0) FROM eng_packing_order_summary_det eposd where eposd.packing_order_summary_id=spos.packing_order_summary_id) as 'totalPutawayQty'
     from eng_packing_order_summary spos
     left join base_material bm on spos.material_id=bm.material_id
     left join ocean_v2.sys_user u on spos.create_user_id=u.user_id

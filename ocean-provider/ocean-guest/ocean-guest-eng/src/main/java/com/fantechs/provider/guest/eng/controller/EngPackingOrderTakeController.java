@@ -47,16 +47,16 @@ public class EngPackingOrderTakeController {
     }
 
     @ApiOperation("包装清单明细")
-    @PostMapping("/findList")
-    public ResponseEntity<List<EngPackingOrderSummaryDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEngPackingOrderSummary searchEngPackingOrderSummary) {
+    @PostMapping("/findListSummary")
+    public ResponseEntity<List<EngPackingOrderSummaryDto>> findListSummary(@ApiParam(value = "查询对象")@RequestBody SearchEngPackingOrderSummary searchEngPackingOrderSummary) {
         Page<Object> page = PageHelper.startPage(searchEngPackingOrderSummary.getStartPage(),searchEngPackingOrderSummary.getPageSize());
         List<EngPackingOrderSummaryDto> list = engPackingOrderSummaryService.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrderSummary));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @ApiOperation("列表")
-    @PostMapping("/findList")
-    public ResponseEntity<List<EngPackingOrderSummaryDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEngPackingOrderSummaryDet searchEngPackingOrderSummaryDet) {
+    @PostMapping("/findListSummaryDet")
+    public ResponseEntity<List<EngPackingOrderSummaryDetDto>> findListSummaryDet(@ApiParam(value = "查询对象")@RequestBody SearchEngPackingOrderSummaryDet searchEngPackingOrderSummaryDet) {
         Page<Object> page = PageHelper.startPage(searchEngPackingOrderSummaryDet.getStartPage(),searchEngPackingOrderSummaryDet.getPageSize());
         List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrderSummaryDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
