@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.entity.eng.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,4 +25,16 @@ public class SearchEngPackingOrderSummaryDet extends BaseQuery implements Serial
     @ApiModelProperty(name = "summaryDetStatus",value = "汇总明细状态(1-待收货 2-收货中 3-待上架 4-完成)" +
             "PDA收货只展示待收货及收货中，PDA创建上架单只展示待上架状态")
     private List<Byte> summaryDetStatus;
+
+    /**
+     * 材料编码
+     */
+    @ApiModelProperty(name="rawMaterialCode",value = "材料编码")
+    private String rawMaterialCode;
+
+    /**
+     * 装箱清单id
+     */
+    @ApiModelProperty(name = "packingOrderId",value = "装箱清单id")
+    private Long packingOrderId;
 }

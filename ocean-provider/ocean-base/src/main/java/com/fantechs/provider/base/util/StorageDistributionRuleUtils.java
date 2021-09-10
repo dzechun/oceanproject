@@ -1,7 +1,9 @@
 package com.fantechs.provider.base.util;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,10 +124,12 @@ public class StorageDistributionRuleUtils {
      * @return 可上架列表
      */
     private static List<StorageRuleDto> getCanPutawayStorageList(Long warehouseId,Long materialId){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<StorageRuleDto> list = new ArrayList<>();
         Map<String,Object> map = new HashMap<>();
         map.put("warehouseId",warehouseId);
         map.put("materialId",materialId);
+        map.put("orgId",sysUser.getOrganizationId());
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.findStorageMaterial(map);
         list = calculateStorage(storageRuleDtos);
         return list;
@@ -139,42 +143,50 @@ public class StorageDistributionRuleUtils {
      * @return
      */
     private static List<StorageRuleDto> getBatchEqualStorageList(Long warehouseId, String batchCode, String prodDate,Long materialId){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<StorageRuleDto> list;
         Map<String,Object> map = new HashMap<>();
         map.put("warehouseId",warehouseId);
         map.put("batchCode",batchCode);
         map.put("materialId",materialId);
         map.put("productionDate",prodDate);
+        map.put("orgId",sysUser.getOrganizationId());
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.BatchEqualStorage(map);
         list = calculateStorage(storageRuleDtos);
         return list;
     }
 
    private static List<StorageRuleDto> getCanPutawayEmptyStorageList(Long warehouseId,Long materialId){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<StorageRuleDto> list;
         Map<String,Object> map = new HashMap<>();
         map.put("warehouseId",warehouseId);
         map.put("materialId",materialId);
+       map.put("orgId",sysUser.getOrganizationId());
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.EmptyStorage(map);
         list = calculateStorage(storageRuleDtos);
         return list;
     }
 
     private static List<StorageRuleDto> LasetStorage(Long warehouseId,Long materialId){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<StorageRuleDto> list;
         Map<String,Object> map = new HashMap<>();
         map.put("warehouseId",warehouseId);
         map.put("materialId",materialId);
+        map.put("orgId",sysUser.getOrganizationId());
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.LastStorage(map);
         list = calculateStorage(storageRuleDtos);
         return list;
     }
 
     private static List<StorageRuleDto> MixedWithStorage(Long warehouseId,Long materialId){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<StorageRuleDto> list;
         Map<String,Object> map = new HashMap<>();
         map.put("warehouseId",warehouseId);
         map.put("materialId",materialId);
+        map.put("orgId",sysUser.getOrganizationId());
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.MixedWithStorage(map);
         list = calculateStorage(storageRuleDtos);
         return list;
@@ -187,6 +199,7 @@ public class StorageDistributionRuleUtils {
      * @return 库位列表
      */
     private static Map<String,Object> getCanPutawayEmptyStorageList(Long warehouseId,Integer putawayMoveLineNo){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<StorageRuleDto> list = new ArrayList<>();
         List<StorageRuleDto> storageRuleDtos = null;
         Map<String,Object> mapList = new HashMap<>();
@@ -199,6 +212,7 @@ public class StorageDistributionRuleUtils {
             Map<String,Object> map = new HashMap<>();
             map.put("warehouseId",warehouseId);
             map.put("putawayMoveLineNo",putawayMoveLineNo);
+            map.put("orgId",sysUser.getOrganizationId());
             if(ran2<=5){
                 //降序
                 map.put("SART","DESC");

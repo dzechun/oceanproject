@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.entity.eng.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,4 +26,11 @@ public class SearchEngPackingOrderSummary extends BaseQuery implements Serializa
     @ApiModelProperty(name = "summaryStatus",value = "汇总状态(1-待收货 2-收货中 3-待上架 4-完成)" +
             "PDA收货只展示待收货及收货中状态 PDA上架只展示待上架状态")
     private List<Byte> summaryStatus;
+
+
+    /**
+     * 包装箱号
+     */
+    @ApiModelProperty(name="cartonCode",value = "包装箱号")
+    private String cartonCode;
 }

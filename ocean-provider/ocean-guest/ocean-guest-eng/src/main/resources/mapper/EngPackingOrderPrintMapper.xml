@@ -65,9 +65,6 @@
             #{item.supplierId,jdbcType=BIGINT}
         </foreach>
     </when>
-    <otherwise>
-        and epo.supplier_id IS NOT NULL
-    </otherwise>
 </choose>
     </where>
         order by eposd.create_time desc

@@ -53,6 +53,9 @@
         <if test="qcLock!=null and qcLock!=''">
             and wii.qc_lock = #{qcLock}
         </if>
+        <if test="orgId!=null and orgId!=''">
+            and wii.org_id=#{orgId}
+        </if>
 </where>
         group by wii.warehouse_id,wii.storage_id,wii.material_id,wii.packing_unit_name,wii.inventory_status_id,wii.lock_status,wii.stock_lock,wii.qc_lock
     </select>
