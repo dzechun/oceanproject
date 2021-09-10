@@ -73,6 +73,12 @@
             <if test="workShopId!=null and workShopId!=''">
                 and spl.work_shop_id = #{workShopId}
             </if>
+            <if test="factoryName!=null and factoryName!=''">
+                and f.factory_name like CONCAT('%', #{factoryName}, '%')
+            </if>
+            <if test="workShopName!=null and workShopName!=''">
+                and ws.work_shop_name like CONCAT('%', #{workShopName}, '%')
+            </if>
             <if test="status!=null">
                 and spl.status=#{status}
             </if>

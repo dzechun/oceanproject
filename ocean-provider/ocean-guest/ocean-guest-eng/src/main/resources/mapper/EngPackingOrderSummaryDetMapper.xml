@@ -92,6 +92,8 @@ sposd.summary_det_status
     bs.storage_name as 'receivingStorageName',
     bss.storage_name as 'putawayStorageName'
     from eng_packing_order_summary_det sposd
+    LEFT JOIN eng_packing_order_summary spos ON sposd.packing_order_summary_id = spos.packing_order_summary_id
+    LEFT JOIN eng_packing_order spo ON spos.packing_order_id = spo.packing_order_id
     left join base_material bm on sposd.material_id=bm.material_id
     LEFT JOIN base_storage bs on sposd.receiving_storage_id = bs.storage_id
     LEFT JOIn base_storage bss on sposd.putaway_storage_id = bss.storage_id
@@ -99,7 +101,6 @@ sposd.summary_det_status
     left join ocean_v2.sys_user s on sposd.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON sposd.org_id = bo.organization_id
     <where>
-
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sposd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
@@ -118,6 +119,12 @@ sposd.summary_det_status
            #{item}
         </foreach>
       </if>
+      <if test="packingOrderId!=null and packingOrderId!=''">
+        and spo.packing_order_id=#{packingOrderId}
+      </if>
+    <if test="rawMaterialCode!=null and rawMaterialCode!=''">
+      and sposd.raw_material_code like CONCAT('%',#{rawMaterialCode},'%')
+    </if>
     </where>
     order by sposd.create_time desc
   </select>

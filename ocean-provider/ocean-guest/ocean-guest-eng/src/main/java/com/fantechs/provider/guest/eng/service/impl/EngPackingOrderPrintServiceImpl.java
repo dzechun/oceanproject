@@ -76,7 +76,7 @@ public class EngPackingOrderPrintServiceImpl implements EngPackingOrderPrintServ
         printDto.setPrintModelList(list);
         ResponseEntity responseEntity;
         if (StringUtils.isNotEmpty(lists.getData())){
-             responseEntity = sfcFeignApi.QUEUEprint(printDto,lists.getData().get(0).getSupplierId().toString());
+             responseEntity = sfcFeignApi.QUEUEprint(printDto,lists.getData().get(0).getSupplierCode());
         }else {
             responseEntity = sfcFeignApi.print(printDto);
         }

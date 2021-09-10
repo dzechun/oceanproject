@@ -83,4 +83,10 @@ public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet impl
     @Transient
     @ApiModelProperty(name = "buttonType",value = "按钮类型（1-确认 2-收货确认）")
     private Byte buttonType;
+
+    /**
+     * 装箱清单id
+     */
+    @ApiModelProperty(name = "packingOrderId",value = "装箱清单id")
+    private Long packingOrderId;
 }

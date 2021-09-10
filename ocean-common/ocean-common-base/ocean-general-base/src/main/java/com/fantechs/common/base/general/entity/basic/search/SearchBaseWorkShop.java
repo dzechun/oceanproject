@@ -33,6 +33,12 @@ public class SearchBaseWorkShop extends BaseQuery implements Serializable {
     private String workShopDesc;
 
     /**
+     * 工程名称
+     */
+    @ApiModelProperty(name = "factoryName",value = "工程名称")
+    private String factoryName;
+
+    /**
      * 厂别id
      */
     @ApiModelProperty(name = "factoryId",value = "厂别id")

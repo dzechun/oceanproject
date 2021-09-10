@@ -40,7 +40,17 @@ public class SearchBaseProLine extends BaseQuery implements Serializable {
     @ApiModelProperty(name="workShopId" ,value="车间ID")
     private String workShopId;
 
+    /**
+     * 工厂名称
+     */
+    @ApiModelProperty(name="factoryName" ,value="工厂名称")
+    private String factoryName;
 
+    /**
+     * 车间名称
+     */
+    @ApiModelProperty(name="workShopName" ,value="车间名称")
+    private String workShopName;
 
     /**
      * 根据编码查询方式标记（传1则为等值查询）

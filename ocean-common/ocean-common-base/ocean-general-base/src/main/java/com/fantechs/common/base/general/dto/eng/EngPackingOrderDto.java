@@ -8,6 +8,7 @@ import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 
 @Data
@@ -58,4 +59,32 @@ public class EngPackingOrderDto extends EngPackingOrder implements Serializable 
     @Transient
     @ApiModelProperty(name = "agoConfirmUserName",value = "到货登记人名称")
     private String agoConfirmUserName;
+
+    /**
+     * 总数量
+     */
+    @Transient
+    @ApiModelProperty(name = "totalQty",value = "总数量")
+    private BigDecimal totalQty;
+
+    /**
+     * 分配数量
+     */
+    @Transient
+    @ApiModelProperty(value = "分配数量",name = "totalDistributionQty")
+    private BigDecimal totalDistributionQty;
+
+    /**
+     * 上架数量
+     */
+    @Transient
+    @ApiModelProperty( value = "上架数量",name = "totalPutawayQty")
+    private BigDecimal totalPutawayQty;
+
+    /**
+     * 收货数量
+     */
+    @Transient
+    @ApiModelProperty(value = "收货数量",name = "totalReceivingQty")
+    private BigDecimal totalReceivingQty;
 }
