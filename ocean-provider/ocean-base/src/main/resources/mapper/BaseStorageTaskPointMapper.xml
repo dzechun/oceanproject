@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseStorageTaskPointMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="storage_task_point_id" jdbcType="BIGINT" property="storageTaskPointId" />
+    <result column="task_point_code" jdbcType="VARCHAR" property="taskPointCode" />
+    <result column="task_point_name" jdbcType="VARCHAR" property="taskPointName" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="task_point_type" jdbcType="TINYINT" property="taskPointType" />
+    <result column="xyz_code" jdbcType="VARCHAR" property="xyzCode" />
+    <result column="use_priority" jdbcType="INTEGER" property="usePriority" />
+    <result column="storage_task_point_status" jdbcType="TINYINT" property="storageTaskPointStatus" />
+    <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
+    <result column="working_area_id" jdbcType="BIGINT" property="workingAreaId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
+    <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode" />
+    <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode" />
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bstp.storage_task_point_id,
+    bstp.task_point_code,
+    bstp.task_point_name,
+    bstp.storage_id,
+    bstp.task_point_type,
+    bstp.xyz_code,
+    bstp.use_priority,
+    bstp.storage_task_point_status,
+    bstp.warehouse_area_id,
+    bstp.working_area_id,
+    bstp.warehouse_id,
+    bstp.`status`,
+    bstp.remark,
+    bstp.org_id,
+    bstp.create_user_id,
+    bstp.create_time,
+    bstp.modified_user_id,
+    bstp.modified_time,
+    bstp.is_delete,
+    bstp.option1,
+    bstp.option2,
+    bstp.option3
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    sw.warehouse_code,swa.warehouse_area_code,bwa.working_area_code,bs.storage_code,
+    u.user_name as createUserName, s.user_name as modifiedUserName,
+    bo.organization_name
+    from fantech_imes_v2.base_storage_task_point bstp
+    left join fantech_imes_v2.base_storage bs on bstp.storage_id=bs.storage_id
+    left join fantech_imes_v2.base_warehouse sw on bs.warehouse_id=sw.warehouse_id
+    left join fantech_imes_v2.base_warehouse_area swa on bs.warehouse_area_id=swa.warehouse_area_id
+    left join fantech_imes_v2.base_working_area bwa on bs.working_area_id=bwa.working_area_id
+    left join ocean_v2.sys_user u on bstp.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bstp.modified_user_id=s.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bstp.org_id = bo.organization_id
+    <where>
+      <if test="taskPointCode!=null and taskPointCode!=''">
+        and bstp.task_point_code like CONCAT('%', #{taskPointCode}, '%')
+      </if>
+      <if test="taskPointName!=null and taskPointName!=''">
+        and bstp.task_point_name like CONCAT('%', #{taskPointName}, '%')
+      </if>
+      <if test="taskPointType!=null">
+        and bstp.task_point_type=#{taskPointType}
+      </if>
+      <if test="warehouseCode!=null and warehouseCode!=''">
+        and sw.warehouse_code like CONCAT('%', #{warehouseCode}, '%')
+      </if>
+      <if test="warehouseAreaCode!=null and warehouseAreaCode!=''">
+        and swa.warehouse_area_code like CONCAT('%', #{warehouseAreaCode}, '%')
+      </if>
+      <if test="storageCode!=null and storageCode!=''">
+        and bs.storage_code like CONCAT('%', #{storageCode}, '%')
+      </if>
+      <if test="storageTaskPointStatus!=null">
+        and bstp.storage_task_point_status=#{storageTaskPointStatus}
+      </if>
+      <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
+        AND date_format(bstp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="status!=null">
+        and bstp.status=#{status}
+      </if>
+      <if test="orgId!=null">
+        and bstp.org_id=#{orgId}
+      </if>
+    </where>
+    order by bstp.create_time desc
+  </select>
+</mapper>

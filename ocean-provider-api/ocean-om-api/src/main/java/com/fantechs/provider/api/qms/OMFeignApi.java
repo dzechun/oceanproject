@@ -60,9 +60,17 @@ public interface OMFeignApi {
     @PostMapping("/omSalesOrder/findList")
     ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDto searchOmSalesOrderDto);
 
+    @ApiOperation("销售列表")
+    @PostMapping("/omSalesOrder/findAll")
+    ResponseEntity<List<OmSalesOrderDto>> findSalesOrderAll();
+
     @ApiOperation(value = "批量新增销售订单",notes = "批量新增销售订单")
     @PostMapping("/omSalesOrder/addList")
     ResponseEntity addList(@ApiParam(value = "销售订单信息集合") @RequestBody List<OmSalesOrder> salesOrders);
+
+    @ApiOperation("批量修改")
+    @PostMapping("/omSalesOrder/batchUpdate")
+    ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrder.update.class) List<OmSalesOrder> salesOrders);
 
     @ApiOperation("其他出库订单数量反写")
     @PostMapping("/omOtherOutOrder/writeQty")

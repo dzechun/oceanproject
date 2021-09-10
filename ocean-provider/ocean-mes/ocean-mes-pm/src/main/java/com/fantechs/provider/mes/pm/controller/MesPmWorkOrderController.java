@@ -100,6 +100,13 @@ public class MesPmWorkOrderController {
     }
 
     @ApiOperation("工单列表")
+    @PostMapping("/findAll")
+    public ResponseEntity<List<MesPmWorkOrderDto>> findAll() {
+        List<MesPmWorkOrderDto> list = mesPmWorkOrderService.findList(new SearchMesPmWorkOrder());
+        return ControllerUtil.returnDataSuccess(list, list.size());
+    }
+
+    @ApiOperation("工单列表")
     @PostMapping("/getWorkOrderList")
     public ResponseEntity<List<MesPmWorkOrder>> getWorkOrderList(@ApiParam(value = "查询对象") @RequestBody List<String> workOrderIds){
         List<MesPmWorkOrder> workOrderList = mesPmWorkOrderService.getWorkOrderList(workOrderIds);

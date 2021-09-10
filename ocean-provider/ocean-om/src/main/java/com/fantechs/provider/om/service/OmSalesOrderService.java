@@ -17,4 +17,5 @@ public interface OmSalesOrderService extends IService<OmSalesOrder> {
     int saveDto(OmSalesOrderDto omSalesOrderDto);
     int updateDto(OmSalesOrderDto omSalesOrderDto);
     int issueWarehouse(Long id);
+    int batchUpdate(List<OmSalesOrder> orders);
 }

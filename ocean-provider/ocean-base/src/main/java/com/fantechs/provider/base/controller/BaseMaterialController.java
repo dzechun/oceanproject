@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,8 +61,8 @@ public class BaseMaterialController {
 
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/getAll")
-    public ResponseEntity<List<BaseMaterialDto>> getAll(@ApiParam(value = "查询对象")@RequestBody SearchBaseMaterial searchBaseMaterial){
-        List<BaseMaterialDto> smtMaterials = baseMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterial));
+    public ResponseEntity<List<BaseMaterialDto>> getAll(){
+        List<BaseMaterialDto> smtMaterials = baseMaterialService.findList(new HashMap<>());
         return ControllerUtil.returnDataSuccess(smtMaterials, smtMaterials.size());
     }
 

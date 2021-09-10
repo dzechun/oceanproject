@@ -77,6 +77,12 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
             BaseSupplierReUser supplierReUser = new BaseSupplierReUser();
             supplierReUser.setSupplierId(supplierId);
             supplierReUser.setUserId(userId);
+            supplierReUser.setCreateUserId(user.getUserId());
+            supplierReUser.setCreateTime(new Date());
+            supplierReUser.setModifiedUserId(user.getUserId());
+            supplierReUser.setModifiedTime(new Date());
+            supplierReUser.setOrganizationId(user.getOrganizationId());
+            supplierReUser.setStatus((byte)1);
             list.add(supplierReUser);
         }
 

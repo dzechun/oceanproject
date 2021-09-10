@@ -2,13 +2,11 @@ package com.fantechs.provider.base.controller;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProLineImport;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
-import com.fantechs.common.base.general.entity.basic.BaseProductBom;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -29,9 +27,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  * @Auther: wcz
@@ -57,6 +55,13 @@ public class BaseProLineController {
         Page<Object> page = PageHelper.startPage(searchBaseProLine.getStartPage(), searchBaseProLine.getPageSize());
         List<BaseProLine> baseProLines = baseProLineService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProLine));
         return ControllerUtil.returnDataSuccess(baseProLines,(int)page.getTotal());
+    }
+
+    @ApiOperation("生产线信息列表")
+    @PostMapping("/findAll")
+    public ResponseEntity<List<BaseProLine>> findAll(){
+        List<BaseProLine> baseProLines = baseProLineService.findList(new HashMap<>());
+        return ControllerUtil.returnDataSuccess(baseProLines, baseProLines.size());
     }
 
     @ApiOperation("增加生产线信息")
