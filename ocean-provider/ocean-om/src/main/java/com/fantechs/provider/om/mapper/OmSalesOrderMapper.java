@@ -11,4 +11,5 @@ import java.util.Map;
 @Mapper
 public interface OmSalesOrderMapper extends MyMapper<OmSalesOrder> {
     List<OmSalesOrderDto> findList(Map<String, Object> map);
+    int batchUpdate(List<OmSalesOrder> orders);
 }

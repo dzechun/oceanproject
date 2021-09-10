@@ -216,7 +216,7 @@
         select storage_id From base_storage where warehouse_id = #{warehouseId} and storage_type=#{storageType} and org_id=#{orgId} limit 1
     </select>
     <select id="findMaterialCode" resultType="java.lang.String">
-        select material_code FROM base_material where material_id = #{materialId}
+        select material_code FROM base_material where material_id = #{materialId} and org_id=#{orgId}
     </select>
     <select id="workBarCodeList" resultType="java.lang.String">
         SELECT msfwo.barcode FROM mes_sfc_product_pallet_det msfpd

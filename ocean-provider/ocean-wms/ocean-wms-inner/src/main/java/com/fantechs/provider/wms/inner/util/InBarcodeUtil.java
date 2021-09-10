@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.util;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
@@ -13,6 +14,7 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderReMspp;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
@@ -104,9 +106,10 @@ public class InBarcodeUtil {
      * @return
      */
     public static BigDecimal pickCheckBarCode(Long materialId,String barCode){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         //查询库存明细是否存在改条码
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode);
+        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode).andEqualTo("orgId",sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> list = inBarcodeUtil.wmsInnerInventoryDetMapper.selectByExample(example);
         if(list.size()<1){
             throw new BizErrorException("条码不存在");
@@ -127,10 +130,11 @@ public class InBarcodeUtil {
      * @return
      */
     public static BigDecimal getInventoryDetQty(Long asnOrderId,Long materialId,String barCode){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         String asnOrderCode = inBarcodeUtil.wmsInnerJobOrderMapper.findAsnCode(asnOrderId);
         //查询库存明细是否存在改条码
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode).andEqualTo("asnCode",asnOrderCode);
+        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode).andEqualTo("asnCode",asnOrderCode).andEqualTo("orgId",sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> list = inBarcodeUtil.wmsInnerInventoryDetMapper.selectByExample(example);
         if(list.size()<1){
             throw new BizErrorException("条码不存在");

@@ -15,9 +15,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOw
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
-import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -363,6 +361,11 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         }
 
         return 0;
+    }
+
+    @Override
+    public int batchUpdate(List<OmSalesOrder> orders) {
+        return omSalesOrderMapper.batchUpdate(orders);
     }
 
 }

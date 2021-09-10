@@ -112,9 +112,10 @@ sposd.summary_det_status
       <if test="orgId!=null">
         and sposd.org_id=#{orgId}
       </if>
-      <if test="summaryDetStatus!=null and summaryDetStatus!=''">
+      <if test="summaryDetStatus!=null and summaryDetStatus.size >0">
+        and sposd.summary_det_status in
         <foreach collection="summaryDetStatus" item="item" separator="," open="(" close=")">
-          and sposd.summary_det_status in #{item}
+           #{item}
         </foreach>
       </if>
     </where>

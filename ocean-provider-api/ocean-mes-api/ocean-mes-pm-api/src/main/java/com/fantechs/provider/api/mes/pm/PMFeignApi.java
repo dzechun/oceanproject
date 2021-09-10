@@ -30,6 +30,10 @@ public interface PMFeignApi {
     ResponseEntity<List<MesPmWorkOrderDto>> findWorkOrderList(@ApiParam(value = "查询对象") @RequestBody SearchMesPmWorkOrder searchMesPmWorkOrder);
 
     @ApiOperation("工单列表")
+    @PostMapping("/mesPmWorkOrder/findAll")
+    ResponseEntity<List<MesPmWorkOrderDto>> findWorkOrderAll();
+
+    @ApiOperation("工单列表")
     @PostMapping("/mesPmWorkOrder/getWorkOrderList")
     ResponseEntity<List<MesPmWorkOrder>> getWorkOrderList(@ApiParam(value = "查询对象") @RequestBody List<String> workOrderIds);
 

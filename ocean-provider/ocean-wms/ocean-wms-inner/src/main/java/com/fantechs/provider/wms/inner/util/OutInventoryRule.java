@@ -1,7 +1,9 @@
 package com.fantechs.provider.wms.inner.util;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import org.springframework.stereotype.Component;
@@ -42,6 +44,7 @@ public class OutInventoryRule {
      * @return 可出库库存
      */
     public static List<WmsInnerInventory> jobMainRule(Long warehouseId,Long materialId,String batchCode,String productionDate){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("warehouseId",warehouseId)
@@ -55,6 +58,7 @@ public class OutInventoryRule {
             criteria.andEqualTo("productionDate",productionDate);
         }
         criteria.andEqualTo("jobStatus",1);
+        criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         example.setOrderByClause("production_date,packing_qty desc");
         List<WmsInnerInventory> list  = outInventoryRule.wmsInnerInventoryMapper.selectByExample(example);
         if(list.size()<1){

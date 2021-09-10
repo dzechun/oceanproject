@@ -79,7 +79,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             List<WmsOutDeliveryOrderDetDto> list = wmsOutDeliveryOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrderDet));
             wmsOutDeliveryOrderDto.setWmsOutDeliveryOrderDetList(list);
             //计算总数量
-            BigDecimal packingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal packingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPackingQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
             wmsOutDeliveryOrderDto.setTotalPackingQty(packingSum);
             BigDecimal pickingSum = list.stream().map(WmsOutDeliveryOrderDetDto::getPickingQty).filter(e->e!=null).reduce(BigDecimal.ZERO,BigDecimal::add);
             wmsOutDeliveryOrderDto.setTotalPickingQty(pickingSum);

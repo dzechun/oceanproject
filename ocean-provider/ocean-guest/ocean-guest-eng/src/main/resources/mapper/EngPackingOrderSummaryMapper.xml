@@ -108,9 +108,10 @@ spos.summary_status
       <if test="orgId!=null">
         and spos.org_id=#{orgId}
       </if>
-      <if test="summaryStatus!=null and summaryStatus!=''">
+      <if test="summaryStatus!=null and summaryStatus.size > 0">
+        and spos.summary_status in
         <foreach collection="summaryStatus" item="item" separator="," open="(" close=")">
-          and spos.summary_status in #{item}
+                #{item}
         </foreach>
       </if>
     </where>

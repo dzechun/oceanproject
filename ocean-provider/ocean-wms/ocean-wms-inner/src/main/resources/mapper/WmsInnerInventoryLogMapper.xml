@@ -161,6 +161,9 @@ wiil.option5
   <if test="modifiedUserName!=null and modifiedUserName!=''">
     and sus.user_name like CONCAT('%',#{modifiedUserName},'%')
   </if>
+  <if test="orgId!=null and orgId!=''">
+    and wiil.org_id = #{orgId}
+  </if>
 </where>
 order by wiil.create_time desc
   </select>

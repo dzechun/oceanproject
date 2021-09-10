@@ -270,6 +270,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             wmsInnerInventory.setCreateUserId(sysUser.getUserId());
             wmsInnerInventory.setModifiedTime(new Date());
             wmsInnerInventory.setModifiedUserId(sysUser.getUserId());
+            wmsInnerInventory.setOrgId(sysUser.getOrganizationId());
             wmsInnerInventories.add(wmsInnerInventory);
         }
 
@@ -380,6 +381,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                                             .orderStatus((byte) 3)
                                             .inventoryStatusId(inventoryStatus)
                                             .option1(engPackingOrderSummaryDto.getCartonCode())
+                                            .orgId(sysUser.getOrganizationId())
                                             .build();
                                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
 
@@ -422,6 +424,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                         .orderStatus((byte) 3)
                         .actualQty(new BigDecimal("0"))
                         .wmsInPutawayOrderDets(wmsInnerJobOrderDets)
+                        .orgId(sysUser.getOrganizationId())
                         .build();
                 list.add(wmsInnerJobOrder);
             }
@@ -485,6 +488,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                             .orderStatus((byte) 3)
                             .inventoryStatusId(inventoryStatus)
                             .option1(engPackingOrderSummary.getCartonCode())
+                            .orgId(sysUser.getOrganizationId())
                             .build();
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
 
@@ -527,6 +531,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                     .orderStatus((byte) 3)
                     .actualQty(new BigDecimal("0"))
                     .wmsInPutawayOrderDets(wmsInnerJobOrderDets)
+                    .orgId(sysUser.getOrganizationId())
                     .build();
             wmsInnerJobOrders.add(wmsInnerJobOrder);
             ResponseEntity responseEntity = innerFeignApi.addList(wmsInnerJobOrders);

@@ -131,6 +131,9 @@
             <if test="nonShiftStorageStatus !=null and nonShiftStorageStatus!=''">
                 and wipod.shift_storage_status != #{nonShiftStorageStatus}
             </if>
+            <if test="orgId!=null and orgId!=''">
+                and wipod.org_id = #{orgId}
+            </if>
         </where>
     </select>
     <update id="batchUpdate" parameterType="java.util.ArrayList">
