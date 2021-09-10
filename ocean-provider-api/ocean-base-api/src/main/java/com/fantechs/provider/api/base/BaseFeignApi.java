@@ -29,7 +29,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("页签信息列表")
     @PostMapping("/baseTab/getAll")
-    ResponseEntity<List<BaseTabDto>> getAll(@ApiParam(value = "查询对象") @RequestBody SearchBaseTab searchBaseTab);
+    ResponseEntity<List<BaseTabDto>> findTabAll();
 
     @ApiOperation(value = "新增页签", notes = "新增页签")
     @PostMapping("/baseTab/add")
@@ -101,7 +101,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/baseMaterial/getAll")
-    ResponseEntity<List<BaseMaterial>> getAll(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterial searchBaseMaterial);
+    ResponseEntity<List<BaseMaterial>> findMaterialAll();
 
     @ApiOperation("修改物料信息")
     @PostMapping("/baseMaterial/update")
@@ -138,6 +138,10 @@ public interface BaseFeignApi {
     @ApiOperation("根据条件查询线别")
     @PostMapping("/baseProLine/findList")
     ResponseEntity<List<BaseProLine>> selectProLines(@RequestBody(required = false) SearchBaseProLine searchBaseProLine);
+
+    @ApiOperation("查询线别")
+    @PostMapping("/baseProLine/findAll")
+    ResponseEntity<List<BaseProLine>> findProLineAll();
 
     @ApiOperation("查询线别详情")
     @PostMapping("/baseProLine/detail")
@@ -463,7 +467,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("根据条件查询产品型号信息列表")
     @PostMapping("/baseProductModel/getAll")
-    ResponseEntity<List<BaseProductModel>> getAll(@ApiParam(value = "查询对象")@RequestBody(required = false) SearchBaseProductModel searchBaseProductModel);
+    ResponseEntity<List<BaseProductModel>> findProductModelAll();
 
     @ApiOperation("新增产品型号")
     @PostMapping("/baseProductModel/add")

@@ -99,6 +99,13 @@ public class OmSalesOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("列表")
+    @PostMapping("/findAll")
+    public ResponseEntity<List<OmSalesOrderDto>> findAll() {
+        List<OmSalesOrderDto> list = omSalesOrderService.findList(new HashMap<>());
+        return ControllerUtil.returnDataSuccess(list, list.size());
+    }
+
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<OmHtSalesOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDto searchOmSalesOrder) {

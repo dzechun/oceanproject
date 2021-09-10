@@ -60,6 +60,10 @@ public interface OMFeignApi {
     @PostMapping("/omSalesOrder/findList")
     ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDto searchOmSalesOrderDto);
 
+    @ApiOperation("销售列表")
+    @PostMapping("/omSalesOrder/findAll")
+    ResponseEntity<List<OmSalesOrderDto>> findSalesOrderAll();
+
     @ApiOperation(value = "批量新增销售订单",notes = "批量新增销售订单")
     @PostMapping("/omSalesOrder/addList")
     ResponseEntity addList(@ApiParam(value = "销售订单信息集合") @RequestBody List<OmSalesOrder> salesOrders);
