@@ -41,7 +41,7 @@ public class BaseSupplierReUserController {
     @PostMapping("/addUser")
     public ResponseEntity addUser(
             @ApiParam(value = "供应商Id",required = true)@RequestParam @NotNull(message = "供应商Id不能为空") Long supplierId,
-            @ApiParam(value = "用户Id",required = true)@RequestBody @NotEmpty(message = "userIds不能为空") List<Long> userIds){
+            @ApiParam(value = "用户Id",required = true)@RequestBody @NotNull(message = "userIds不能为空") List<Long> userIds){
         return ControllerUtil.returnCRUD(baseSupplierReUserService.addUser(supplierId,userIds));
     }
 

@@ -63,11 +63,12 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+        int i = 0;
 
         Example example = new Example(BaseSupplierReUser.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("supplierId",supplierId);
-        baseSupplierReUserMapper.deleteByExample(example);
+        i = baseSupplierReUserMapper.deleteByExample(example);
 
         List<BaseSupplierReUser> list = new ArrayList<>();
         for (Long userId : userIds) {
@@ -83,9 +84,9 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
             list.add(supplierReUser);
         }
 
-        int i = 0;
+
         if (StringUtils.isNotEmpty(list)){
-            i = baseSupplierReUserMapper.insertList(list);
+            i += baseSupplierReUserMapper.insertList(list);
         }
 
         return i;
