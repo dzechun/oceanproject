@@ -1,13 +1,12 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseCustomerImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -15,11 +14,11 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseSupplierService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,9 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  *
@@ -79,6 +78,13 @@ public class BaseSupplierController {
         Page<Object> page = PageHelper.startPage(searchBaseSupplier.getStartPage(), searchBaseSupplier.getPageSize());
         List<BaseSupplier> list = baseSupplierService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSupplier));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("列表")
+    @PostMapping("/findAll")
+    public ResponseEntity<List<BaseSupplier>> findAll() {
+        List<BaseSupplier> list = baseSupplierService.findList(new HashMap<>());
+        return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
     @ApiOperation("非免检客户列表")

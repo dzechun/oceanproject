@@ -217,6 +217,10 @@ public interface BaseFeignApi {
     ResponseEntity<List<BaseSupplier>> findSupplierList(@ApiParam(value = "查询对象") @RequestBody SearchBaseSupplier searchBaseSupplier);
 
     @ApiOperation("列表")
+    @PostMapping("/baseSupplier/findAll")
+    ResponseEntity<List<BaseSupplier>> findSupplierAll();
+
+    @ApiOperation("列表")
     @PostMapping("/baseBarCode/findList")
     ResponseEntity<List<BaseBarCodeDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseBarCode searchBaseBarCode);
 
