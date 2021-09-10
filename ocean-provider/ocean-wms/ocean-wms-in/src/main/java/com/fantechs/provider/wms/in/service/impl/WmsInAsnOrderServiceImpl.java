@@ -494,6 +494,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setCreateUserId(sysUser.getUserId());
             wmsInnerInventory.setModifiedTime(new Date());
             wmsInnerInventory.setModifiedUserId(sysUser.getUserId());
+            wmsInnerInventory.setOrgId(sysUser.getOrganizationId());
             ResponseEntity responseEntity =innerFeignApi.insertSelective(wmsInnerInventory);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("库存添加失败");
@@ -530,6 +531,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         wmsInnerInventoryLog.setChangeQty(wmsInAsnOrderDet.getActualQty());
         wmsInnerInventoryLog.setSupplierId(wmsInAsnOrder.getSupplierId());
         wmsInnerInventoryLog.setMaterialOwnerId(wmsInAsnOrder.getMaterialOwnerId());
+        wmsInnerInventoryLog.setOrgId(wmsInAsnOrder.getOrgId());
         ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryLog);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
@@ -924,6 +926,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventoryDet.setAsnCode(orderCode);
             wmsInnerInventoryDet.setReceivingDate(new Date());
             wmsInnerInventoryDet.setBarcodeStatus((byte)2);
+            wmsInnerInventoryDet.setOrgId(wmsInAsnOrderDet.getOrgId());
             wmsInnerInventoryDets.add(wmsInnerInventoryDet);
             ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
             if(responseEntity.getCode()!=0){

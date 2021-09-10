@@ -45,7 +45,7 @@ public class EngPackingOrderPrintServiceImpl implements EngPackingOrderPrintServ
         searchBaseSupplierReUser.setUserId(sysUser.getUserId());
         ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
         if (StringUtils.isNotEmpty(list.getData())){
-            map.put("supplierId", list.getData().get(0).getSupplierId());
+            map.put("supplierIdList", list.getData());
         }
         return engPackingOrderPrintMapper.findList(map);
     }
