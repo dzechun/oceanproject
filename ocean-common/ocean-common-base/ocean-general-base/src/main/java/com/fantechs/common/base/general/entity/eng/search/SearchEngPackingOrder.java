@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchEngPackingOrder extends BaseQuery implements Serializable {
@@ -89,10 +90,11 @@ public class SearchEngPackingOrder extends BaseQuery implements Serializable {
     private String arrivalTimeEnd;
 
     /**
-     * 订单状态(1-未审核 2-审核中 3-已通过 4-未通过)
+     * 订单状态(1-未到达 2-待收货 3-收货中 4-待上架 5-完成)
+     * PDA登记只显示未到达状态 PDA收货只展示待收货及收货中状态 PDA上架只展示待上架状态
      */
-    @ApiModelProperty(name="orderStatus",value = "订单状态(1-未审核 2-审核中 3-已通过 4-未通过)")
-    private Byte orderStatus;
+    @ApiModelProperty(name="orderStatus",value = "订单状态(1-未到达 2-待收货 3-收货中 4-待上架 5-完成)")
+    private List<Byte> orderStatus;
 
 
     /**

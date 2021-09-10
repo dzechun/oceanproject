@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -126,5 +127,11 @@ public class WmsInnerJobOrderController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiIgnore
+    @PostMapping("/addList")
+    public ResponseEntity addList(@RequestBody List<WmsInnerJobOrder> list){
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.addList(list));
     }
 }

@@ -9,12 +9,14 @@
                epos.purchase_req_order_code as 'purchaseReqOrderCode',epos.contract_code as 'contractCode',epos.carton_code as 'cartonCode',
                eposd.inner_carton_code as 'innerCartonCode',eposd.raw_material_code as 'rawMaterialCode',eposd.device_code as 'deviceCode',eposd.location_num as 'locationNum',
                bm.material_name as 'materialName',bs.supplier_name as 'supplierName',su.user_name as 'createUserName',eposd.create_time as 'createTime',sus.user_name as 'modifiedUserName',eposd.modified_time as 'modifiedTime',
-        eposd.packing_order_summary_det_id as 'packingOrderSummaryDetId',epos.packing_order_summary_id as 'packingOrderSummaryId',epo.packing_order_id as 'packingOrderId'
+        eposd.packing_order_summary_det_id as 'packingOrderSummaryDetId',epos.packing_order_summary_id as 'packingOrderSummaryId',epo.packing_order_id as 'packingOrderId',
+        bse.shipment_enterprise_name as 'shipmentEnterpriseName',eposd.part_number as 'partNumber',eposd.drawing_number as 'drawingNumber',epo.remark
         FROM eng_packing_order_summary_det eposd
                  LEFT JOIN eng_packing_order_summary epos ON eposd.packing_order_summary_id = epos.packing_order_summary_id
                  LEFT JOIN eng_packing_order epo ON epos.packing_order_id = epo.packing_order_id
                  LEFT JOIN base_material bm ON bm.material_id = eposd.material_id
-                 LEFT JOIN base_supplier bs ON eposd.supplier_id = bs.supplier_id
+                 LEFT JOIN base_supplier bs ON epo.supplier_id = bs.supplier_id
+                LEFT JOIN base_shipment_enterprise bse on epo.shipment_enterprise_id = bse.shipment_enterprise_id
                  LEFT JOIN ocean_v2.sys_user su ON eposd.create_user_id = su.user_id
                  LEFT JOIN ocean_v2.sys_user sus ON eposd.modified_user_id = sus.user_id
                 left join fantech_imes_v2.base_organization bo ON eposd.org_id = bo.organization_id
