@@ -68,6 +68,13 @@ public class ${modelNameUpperCamel}Controller {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("列表(不分页)")
+    @PostMapping("/findList")
+    public ResponseEntity<List<${modelNameUpperCamel}Dto>> findAll(@ApiParam(value = "查询对象") @RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
+        List<${modelNameUpperCamel}Dto> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
+        return ControllerUtil.returnDataSuccess(list, list.size());
+    }
+
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<${modelNameUpperCamel}>> findHtList(@ApiParam(value = "查询对象")@RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
