@@ -1101,6 +1101,90 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         return num;
     }
 
+    /**
+     * 收货作业批量新增上架单
+     * @param list
+     * @return
+     */
+    @Override
+    @Transactional
+    public int addList(List<WmsInnerJobOrder> list){
+        SysUser sysUser = currentUser();
+        for (WmsInnerJobOrder wmsInnerJobOrder : list) {
+            wmsInnerJobOrder.setJobOrderCode(CodeUtils.getId("PUT-"));
+            wmsInnerJobOrder.setCreateTime(new Date());
+            wmsInnerJobOrder.setCreateUserId(sysUser.getUserId());
+            wmsInnerJobOrder.setModifiedTime(new Date());
+            wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
+            wmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
+            wmsInnerJobOrder.setIsDelete((byte) 1);
+            wmsInPutawayOrderMapper.insertUseGeneratedKeys(wmsInnerJobOrder);
+            for (WmsInnerJobOrderDet wmsInPutawayOrderDet : wmsInnerJobOrder.getWmsInPutawayOrderDets()) {
+                wmsInPutawayOrderDet.setJobOrderId(wmsInPutawayOrderDet.getJobOrderId());
+                wmsInPutawayOrderDet.setCreateTime(new Date());
+                wmsInPutawayOrderDet.setCreateUserId(sysUser.getUserId());
+                wmsInPutawayOrderDet.setModifiedTime(new Date());
+                wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
+                wmsInPutawayOrderDet.setOrgId(sysUser.getOrganizationId());
+                wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wmsInPutawayOrderDet);
+
+                //扣拣收货库存
+                Example example = new Example(WmsInnerInventory.class);
+                example.createCriteria().andEqualTo("relevanceOrderCode", wmsInPutawayOrderDet.getOption1())
+                        .andEqualTo("materialId", wmsInPutawayOrderDet.getMaterialId())
+                        .andEqualTo("warehouseId", wmsInPutawayOrderDet.getWarehouseId())
+                        .andEqualTo("storageId", wmsInPutawayOrderDet.getOutStorageId())
+                        .andEqualTo("inventoryStatusId", wmsInPutawayOrderDet.getInventoryStatusId());
+                WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+                if(StringUtils.isNotEmpty(wmsInnerInventory)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                }
+                if (StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) || wmsInnerInventory.getPackingQty().compareTo(BigDecimal.ZERO) == -1) {
+                    throw new BizErrorException("数据变动,请恢复单据");
+                }
+                WmsInnerInventory wmsIn = new WmsInnerInventory();
+                wmsIn.setInventoryId(wmsInnerInventory.getInventoryId());
+                wmsIn.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInPutawayOrderDet.getDistributionQty()));
+                wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsIn);
+
+                //查询是否存在库存
+                example = new Example(WmsInnerInventory.class);
+                Example.Criteria criteria1 = example.createCriteria();
+                criteria1.andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
+                        .andEqualTo("materialId", wmsInPutawayOrderDet.getMaterialId())
+                        .andEqualTo("warehouseId", wmsInPutawayOrderDet.getWarehouseId())
+                        .andEqualTo("storageId", wmsInPutawayOrderDet.getOutStorageId())
+                        .andEqualTo("inventoryStatusId", wmsInPutawayOrderDet.getInventoryStatusId());
+                criteria1.andEqualTo("jobOrderDetId", wmsInPutawayOrderDet.getJobOrderDetId());
+                criteria1.andEqualTo("jobStatus", (byte) 2);
+                WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
+                if (StringUtils.isEmpty(wmsInnerInventorys)) {
+                    //添加库存
+                    WmsInnerInventory inv = new WmsInnerInventory();
+                    BeanUtil.copyProperties(wmsInnerInventory, inv);
+                    inv.setStorageId(wmsInPutawayOrderDet.getOutStorageId());
+                    inv.setWarehouseId(wmsInPutawayOrderDet.getWarehouseId());
+                    inv.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                    inv.setPackingQty(wmsInPutawayOrderDet.getDistributionQty());
+                    inv.setJobStatus((byte) 2);
+                    inv.setInventoryId(null);
+                    inv.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
+                    inv.setOrgId(sysUser.getOrganizationId());
+                    inv.setCreateUserId(sysUser.getUserId());
+                    inv.setCreateTime(new Date());
+                    inv.setModifiedTime(new Date());
+                    inv.setModifiedUserId(sysUser.getUserId());
+                    return wmsInnerInventoryMapper.insertSelective(inv);
+                } else {
+                    //原库存
+                    wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().add(wmsInPutawayOrderDet.getDistributionQty()));
+                    return wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
+                }
+            }
+        }
+        return 1;
+    }
+
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(WmsInnerJobOrder record) {

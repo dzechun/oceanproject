@@ -76,4 +76,11 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @return
      */
     int batchDeleteByShiftWork(String ids);
+
+    /**
+     * 批量新增
+     * @param list
+     * @return
+     */
+    int addList(List<WmsInnerJobOrder> list);
 }

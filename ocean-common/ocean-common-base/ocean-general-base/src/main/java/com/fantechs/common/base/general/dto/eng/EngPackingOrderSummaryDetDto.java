@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 
 @Data
@@ -55,4 +56,31 @@ public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet impl
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
 
+    /**
+     * 收货库位
+     */
+    @Transient
+    @ApiModelProperty(name = "receivingStorageName",value = "收货库位")
+    private String receivingStorageName;
+
+    /**
+     * 上架库位
+     */
+    @Transient
+    @ApiModelProperty(name = "putawayStorageName",value = "上架库位")
+    private String putawayStorageName;
+
+    /**
+     * 取消数量
+     */
+    @Transient
+    @ApiModelProperty(name = "cancelQty",value = "取消数量")
+    private BigDecimal cancelQty;
+
+    /**
+     * 按钮类型（1-确认 2-收货确认）
+     */
+    @Transient
+    @ApiModelProperty(name = "buttonType",value = "按钮类型（1-确认 2-收货确认）")
+    private Byte buttonType;
 }

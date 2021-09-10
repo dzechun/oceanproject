@@ -370,7 +370,9 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
                 ||width.compareTo(BigDecimal.ZERO)<0 || height.compareTo(BigDecimal.ZERO)<0 || volume.compareTo(BigDecimal.ZERO)<0 ){
             throw new BizErrorException("添加失败，长宽高等参数必须大于0");
         }
-
+        if(grossWeight.subtract(netWeight).compareTo(BigDecimal.ZERO)<0){
+            throw new BizErrorException("添加失败，毛重不能小于净重,"+"错误行数为:");
+        }
     }
 
 }

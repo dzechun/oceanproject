@@ -9,7 +9,7 @@ class CodeGeneratorMain {
     private static final String MODEL_NAME = "ITest";
 
     private static final String[] TABLES = {
-            "eng_contract_qty_order"
+            "eng_purchase_req_order"
     };
 
     /**

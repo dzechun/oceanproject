@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ public interface InnerFeignApi {
     ResponseEntity updateByExampleSelective(@RequestBody WmsInnerInventory wmsInnerInventory,@RequestParam Map<String,Object> map);
     @PostMapping("/wmsInnerInventory/insertSelective")
     ResponseEntity insertSelective(@RequestBody WmsInnerInventory wmsInnerInventory);
+    @PostMapping("/wmsInnerInventory/insertList")
+    ResponseEntity insertList(@RequestBody List<WmsInnerInventory> wmsInnerInventories);
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/wmsInnerJobOrder/add")
@@ -89,4 +92,7 @@ public interface InnerFeignApi {
     @ApiOperation(value = "新增库存日志",notes = "新增库存日志")
     @PostMapping("/wmsInnerInventoryLog/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerInventoryLog wmsInnerInventoryLog);
+
+    @PostMapping("/wmsInnerJobOrder/addList")
+    ResponseEntity addList(@RequestBody List<WmsInnerJobOrder> list);
 }
