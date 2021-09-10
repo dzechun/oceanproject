@@ -5,7 +5,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -15,9 +14,9 @@ import com.fantechs.provider.om.service.OmSalesOrderService;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -75,6 +74,12 @@ public class OmSalesOrderController {
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrder.update.class) OmSalesOrderDto omSalesOrderDto) {
         return ControllerUtil.returnCRUD(omSalesOrderService.updateDto(omSalesOrderDto));
+    }
+
+    @ApiOperation("批量修改")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrder.update.class) List<OmSalesOrder> salesOrders) {
+        return ControllerUtil.returnCRUD(omSalesOrderService.batchUpdate(salesOrders));
     }
 
     @ApiOperation("获取详情")

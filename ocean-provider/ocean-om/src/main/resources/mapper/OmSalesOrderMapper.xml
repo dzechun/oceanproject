@@ -102,4 +102,38 @@
         </where>
         order by so.modified_time desc
     </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            update om_sales_order oso set
+            oso.sales_order_code = #{item.salesOrderCode},
+            oso.contract_code = #{item.contractCode},
+            oso.supplier_id = #{item.supplierId},
+            oso.customer_order_code = #{item.customerOrderCode},
+            oso.source_order_code = #{item.sourceOorderCode},
+            oso.source_order_line_number = #{item.sourceOrderLineNumber},
+            oso.barcode_rule_set_id = #{item.barcodeRuleSetId},
+            oso.delivery_type = #{item.deliveryType},
+            oso.sales_dept = #{item.salesDept},
+            oso.sales_user_name = #{item.salesUserName},
+            oso.data_source = #{item.dataSource},
+            oso.order_type = #{item.orderType},
+            oso.order_status = #{item.orderStatus},
+            oso.status = #{item.status},
+            oso.order_date = #{item.orderDate},
+            oso.make_order_user_name = #{item.makeOrderUserName},
+            oso.make_order_date = #{item.makeOrderDate},
+            oso.audit_user_name = #{item.auditUserName},
+            oso.audit_date = #{item.auditDate},
+            oso.remark = #{item.remark},
+            oso.order_date = #{item.orderDate},
+            oso.org_id = #{item.orgId},
+            oso.create_user_id = #{item.createUserId},
+            oso.create_time = #{item.createTime},
+            oso.modified_user_id = #{item.modifiedUserId},
+            oso.modified_time = #{item.modifiedTime},
+            oso.is_delete = #{item.isDelete}
+            where oso.sales_order_id = #{item.salesOrderId}
+        </foreach>
+    </update>
 </mapper>
