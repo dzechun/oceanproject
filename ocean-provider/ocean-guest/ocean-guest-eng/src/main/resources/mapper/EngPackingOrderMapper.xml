@@ -97,9 +97,10 @@ spo.ago_confirm_user_id
       <if test="despatchBatch != null and despatchBatch!=''">
         and spo.despatch_batch like CONCAT('%', #{despatchBatch}, '%')
       </if>
-      <if test="orderStatus != null and orderStatus!=''">
+      <if test="orderStatus != null and orderStatus.size >0">
+        and spo.order_status in
         <foreach collection="orderStatus" item="item" separator="," open="(" close=")">
-          and spo.order_status in #{item}
+           #{item}
         </foreach>
       </if>
       <if test="auditStatus != null and auditStatus!=''">

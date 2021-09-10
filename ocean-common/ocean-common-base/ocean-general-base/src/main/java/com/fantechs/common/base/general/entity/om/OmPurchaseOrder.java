@@ -1,25 +1,19 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.support.ValidGroup;
+import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
-
-;
-;
+import javax.persistence.*;
+import lombok.Data;
 
 /**
  * 采购订单
  * om_purchase_order
- * @author 81947
- * @date 2021-06-17 10:17:21
+ * @author 86178
+ * @date 2021-09-08 17:46:11
  */
 @Data
 @Table(name = "om_purchase_order")
@@ -122,6 +116,70 @@ public class OmPurchaseOrder extends ValidGroup implements Serializable {
     private Date auditDate;
 
     /**
+     * 项目类别名称
+     */
+    @ApiModelProperty(name="itemCategoryName",value = "项目类别名称")
+    @Excel(name = "项目类别名称", height = 20, width = 30,orderNum="") 
+    @Column(name = "item_category_name")
+    private String itemCategoryName;
+
+    /**
+     * 订单单位名称
+     */
+    @ApiModelProperty(name="orderUnitName",value = "订单单位名称")
+    @Excel(name = "订单单位名称", height = 20, width = 30,orderNum="") 
+    @Column(name = "order_unit_name")
+    private String orderUnitName;
+
+    /**
+     * 库存地点
+     */
+    @ApiModelProperty(name="inventorySite",value = "库存地点")
+    @Excel(name = "库存地点", height = 20, width = 30,orderNum="") 
+    @Column(name = "inventory_site")
+    private String inventorySite;
+
+    /**
+     * 免费项目
+     */
+    @ApiModelProperty(name="freeItem",value = "免费项目")
+    @Excel(name = "免费项目", height = 20, width = 30,orderNum="") 
+    @Column(name = "free_item")
+    private String freeItem;
+
+    /**
+     * 退货项目
+     */
+    @ApiModelProperty(name="salesReturnItem",value = "退货项目")
+    @Excel(name = "退货项目", height = 20, width = 30,orderNum="") 
+    @Column(name = "sales_return_item")
+    private String salesReturnItem;
+
+    /**
+     * 币别ID
+     */
+    @ApiModelProperty(name="currencyId",value = "币别ID")
+    @Excel(name = "币别ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "currency_id")
+    private Long currencyId;
+
+    /**
+     * 计划交货日期
+     */
+    @ApiModelProperty(name="planDeliveryDate",value = "计划交货日期")
+    @Excel(name = "计划交货日期", height = 20, width = 30,orderNum="") 
+    @Column(name = "plan_delivery_date")
+    private Date planDeliveryDate;
+
+    /**
+     * 审核状态(1-未审核 2-已审核)
+     */
+    @ApiModelProperty(name="auditStatus",value = "审核状态(1-未审核 2-已审核)")
+    @Excel(name = "审核状态(1-未审核 2-已审核)", height = 20, width = 30,orderNum="") 
+    @Column(name = "audit_status")
+    private Byte auditStatus;
+
+    /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
@@ -205,47 +263,6 @@ public class OmPurchaseOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="option3",value = "扩展字段3")
     @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="") 
     private String option3;
-
-
-    /**
-     * 项目类别名称
-     */
-    @ApiModelProperty(name="itemCategoryName",value = "项目类别名称")
-    @Excel(name = "项目类别名称", height = 20, width = 30,orderNum="")
-    @Column(name = "item_category_name")
-    private String itemCategoryName;
-
-    /**
-     * 订单单位名称
-     */
-    @ApiModelProperty(name="orderUnitName",value = "订单单位名称")
-    @Excel(name = "订单单位名称", height = 20, width = 30,orderNum="")
-    @Column(name = "order_unit_name")
-    private String orderUnitName;
-
-    /**
-     * 库存地点
-     */
-    @ApiModelProperty(name="inventorySite",value = "库存地点")
-    @Excel(name = "库存地点", height = 20, width = 30,orderNum="")
-    @Column(name = "inventory_site")
-    private String inventorySite;
-
-    /**
-     * 免费项目
-     */
-    @ApiModelProperty(name="freeItem",value = "免费项目")
-    @Excel(name = "免费项目", height = 20, width = 30,orderNum="")
-    @Column(name = "free_item")
-    private String freeItem;
-
-    /**
-     * 退货项目
-     */
-    @ApiModelProperty(name="salesReturnItem",value = "退货项目")
-    @Excel(name = "退货项目", height = 20, width = 30,orderNum="")
-    @Column(name = "sales_return_item")
-    private String salesReturnItem;
 
     private static final long serialVersionUID = 1L;
 }

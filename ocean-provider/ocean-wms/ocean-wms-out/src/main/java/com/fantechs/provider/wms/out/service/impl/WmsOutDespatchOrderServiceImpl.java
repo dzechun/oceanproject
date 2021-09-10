@@ -112,6 +112,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     map.put("batchCode",wmsInnerJobOrderDetDto.getBatchCode());
                     map.put("jobOrderDetId",wmsInnerJobOrderDetDto.getJobOrderDetId());
                     map.put("jobStatus",(byte)2);
+                    map.put("orgId",sysUser.getOrganizationId());
                     ResponseEntity<WmsInnerInventory> responseEntity = innerFeignApi.selectOneByExample(map);
                     if(responseEntity.getCode()!=0){
                         throw new BizErrorException(ErrorCodeEnum.GL9999404);
@@ -166,6 +167,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     wmsInnerInventoryLog.setInventoryStatusId(wmsInnerJobOrderDetDto.getInventoryStatusId());
                     wmsInnerInventoryLog.setChangeQty(wmsInnerJobOrderDetDto.getActualQty());
                     wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerJobOrder.getMaterialOwnerId());
+                    wmsInnerInventoryLog.setOrgId(sysUser.getOrganizationId());
                     innerFeignApi.add(wmsInnerInventoryLog);
                 }
             }

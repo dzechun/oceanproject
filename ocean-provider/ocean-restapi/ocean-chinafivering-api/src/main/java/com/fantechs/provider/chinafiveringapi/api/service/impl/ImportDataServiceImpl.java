@@ -243,11 +243,11 @@ public class ImportDataServiceImpl implements ImportDataService {
                     detDto.setOption11(tempDto.getOption11());
                     //备注
                     detDto.setRemark(tempDto.getRemark());
-                    //批准量
+                    //批准量 保存到 包装数量 packingQty
                     if(StringUtils.isEmpty(tempDto.getDispatchQty()))
-                        detDto.setDispatchQty(BigDecimal.ZERO);
+                        detDto.setPackingQty(BigDecimal.ZERO);
                     else
-                        detDto.setDispatchQty(new BigDecimal(tempDto.getDispatchQty()));
+                        detDto.setPackingQty(new BigDecimal(tempDto.getDispatchQty()));
 
                     wmsOutDeliveryOrderDetList.add(detDto);
                 }

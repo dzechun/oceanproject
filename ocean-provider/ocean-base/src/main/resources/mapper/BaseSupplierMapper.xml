@@ -76,6 +76,9 @@
             <if test="supplierType!=null and supplierType!=''">
                 and ss.supplier_type=#{supplierType}
             </if>
+            <if test="supplierId!=null and supplierId!=''">
+                and ss.supplier_id=#{supplierId}
+            </if>
             <if test="status!=null">
                 and ss.status=#{status}
             </if>

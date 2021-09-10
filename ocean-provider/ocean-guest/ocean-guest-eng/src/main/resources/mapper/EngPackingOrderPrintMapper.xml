@@ -58,9 +58,17 @@
 <if test="orgId!=null and orgId!=''">
     and epo.org_id=#{orgId}
 </if>
-<if test="supplierId!=null and supplierId!=''">
-    and epo.supplier_id = #{supplierId}
-</if>
+<choose>
+    <when test="supplierIdList!=null and supplierIdList.size > 0">
+        and epo.supplier_id in
+        <foreach collection="supplierIdList" item="item" separator="," open="(" close=")">
+            #{item.supplierId,jdbcType=BIGINT}
+        </foreach>
+    </when>
+    <otherwise>
+        and epo.supplier_id IS NOT NULL
+    </otherwise>
+</choose>
     </where>
         order by eposd.create_time desc
     </select>

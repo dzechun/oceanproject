@@ -34,6 +34,8 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
 
     @Override
     public List<WmsInnerInventoryDetDto> findList(Map<String, Object> map) {
+        SysUser sysUser = currentUser();
+        map.put("orgId",sysUser.getOrganizationId());
         return wmsInnerInventoryDetMapper.findList(map);
     }
 
@@ -51,6 +53,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
             wmsInnerInventoryDet.setCreateUserId(sysUser.getUserId());
             wmsInnerInventoryDet.setModifiedTime(new Date());
             wmsInnerInventoryDet.setModifiedUserId(sysUser.getUserId());
+            wmsInnerInventoryDet.setOrgId(sysUser.getOrganizationId());
         }
         return wmsInnerInventoryDetMapper.insertList(wmsInnerInventoryDets);
     }
@@ -64,6 +67,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
     public int subtract(WmsInnerInventoryDet wmsInnerInventoryDet) {
+        SysUser sysUser = currentUser();
         Example example = new Example(WmsInnerInventoryDet.class);
         Example.Criteria criteria = example.createCriteria();
         if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty()) || wmsInnerInventoryDet.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
@@ -84,6 +88,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getDeliveryOrderCode())){
             criteria.andEqualTo("deliveryOrderCode",wmsInnerInventoryDet.getDeliveryOrderCode());
         }
+        criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> wms = wmsInnerInventoryDetMapper.selectByExample(example);
         BigDecimal qty = wmsInnerInventoryDet.getMaterialQty();
         int num=0;
@@ -119,8 +124,9 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
 
     @Override
     public WmsInnerInventoryDet findByOne(String barCode){
+        SysUser sysUser = currentUser();
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("barcode",barCode);
+        example.createCriteria().andEqualTo("barcode",barCode).andEqualTo("orgId",sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectByExample(example);
         if(wmsInnerInventoryDet.size()>0){
             return wmsInnerInventoryDet.get(0);

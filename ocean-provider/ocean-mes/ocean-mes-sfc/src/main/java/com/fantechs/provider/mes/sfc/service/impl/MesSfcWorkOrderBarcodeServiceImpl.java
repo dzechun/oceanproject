@@ -4,8 +4,10 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
@@ -279,15 +281,20 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             throw new BizErrorException("请设置条码规则");
         }
 
+        SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+        searchBaseBarcodeRule.setBarcodeRuleId(list.get(0).getBarcodeRuleId());
+        List<BaseBarcodeRuleDto> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
+        if(StringUtils.isEmpty(barcodeRulList)) throw new BizErrorException("未查询到编码规则");
+
         for (Integer i = 0; i < record.getQty(); i++) {
             record.setWorkOrderBarcodeId(null);
             //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId())
 
             String lastBarCode = null;
-            boolean hasKey = redisUtil.hasKey(this.sub(list));
+            boolean hasKey = redisUtil.hasKey(barcodeRulList.get(0).getBarcodeRule());
             if(hasKey){
                 // 从redis获取上次生成条码
-                Object redisRuleData = redisUtil.get(this.sub(list));
+                Object redisRuleData = redisUtil.get(barcodeRulList.get(0).getBarcodeRule());
                 lastBarCode = String.valueOf(redisRuleData);
             }
             //获取最大流水号
@@ -300,7 +307,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             record.setBarcode(rs.getData());
 
             // 更新redis最新条码
-            redisUtil.set(sub(list), rs.getData());
+            redisUtil.set(barcodeRulList.get(0).getBarcodeRule(), rs.getData());
 
             //待打印状态
             record.setBarcodeStatus((byte)3);

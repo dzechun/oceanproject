@@ -43,6 +43,9 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     @Resource
     private BaseOrganizationMapper baseOrganizationMapper;
 
+    @Resource
+    private BaseSupplierReUserMapper baseSupplierReUserMapper;
+
     @Override
     public List<BaseSupplier> findInspectionSupplierList(SearchBaseInspectionExemptedList searchBaseInspectionExemptedList) {
         if(StringUtils.isEmpty(searchBaseInspectionExemptedList.getMaterialCode())){
@@ -97,7 +100,15 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
             map.put("orgId", user.getOrganizationId());
+
+            Map<String, Object> mapReUser=new HashMap<>();
+            mapReUser.put("userId",user.getUserId());
+            mapReUser.put("orgId",user.getOrganizationId());
+            List<BaseSupplierReUser> list = baseSupplierReUserMapper.findList(mapReUser);
+            if(StringUtils.isNotEmpty(list))
+                map.put("supplierId",list.get(0).getSupplierId());
         }
+
         return baseSupplierMapper.findList(map);
     }
 

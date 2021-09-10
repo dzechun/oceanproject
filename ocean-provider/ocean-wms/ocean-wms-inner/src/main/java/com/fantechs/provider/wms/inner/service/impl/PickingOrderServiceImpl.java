@@ -198,7 +198,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private int addInventoryDet(String barcode,String jobOrderCode,WmsInnerJobOrderDet wmsInnerJobOrderDet){
         //获取完工入库单单号
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("barcode",barcode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcodeStatus",3);
+        example.createCriteria().andEqualTo("barcode",barcode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcodeStatus",3).andEqualTo("orgId",wmsInnerJobOrderDet.getOrgId());
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventoryDet)){
             throw new BizErrorException("库存匹配失败");
@@ -217,12 +217,13 @@ public class PickingOrderServiceImpl implements PickingOrderService {
      */
     @Override
     public Map<String ,Object> checkBarcode(String barCode,Long jobOrderDetId) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
         if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
         Map<String ,Object> map  = new HashMap<>();
-        String materialCode = wmsInnerJobOrderMapper.findMaterialCode(wmsInnerJobOrderDet.getMaterialId());
+        String materialCode = wmsInnerJobOrderMapper.findMaterialCode(wmsInnerJobOrderDet.getMaterialId(),sysUser.getOrganizationId());
         if(StringUtils.isNotEmpty(materialCode) && materialCode.equals(barCode)){
             map.put("SN","false");
             return map;
@@ -709,7 +710,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 criteria.andEqualTo("batchCode",wmsInnerJobOrderDetDto.getBatchCode());
             }
             criteria.andEqualTo("jobStatus",(byte)1);
-            criteria.andEqualTo("storageId",wmsInnerJobOrderDetDto.getOutStorageId()).andEqualTo("warehouseId",wmsInnerJobOrderDetDto.getWarehouseId()).andGreaterThan("packingQty",0);
+            criteria.andEqualTo("storageId",wmsInnerJobOrderDetDto.getOutStorageId()).andEqualTo("warehouseId",wmsInnerJobOrderDetDto.getWarehouseId()).andGreaterThan("packingQty",0).andEqualTo("orgId",wmsInnerJobOrderDetDto.getOrgId());
             wmsInnerInventory = wmsInnerInventoryMapper.selectByExample(example);
         }else if(type==2){
             wmsInnerInventory.add(wmsInnerInventorys);
@@ -784,6 +785,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         criteria.andEqualTo("jobStatus",(byte)2);
         criteria.andEqualTo("jobOrderDetId",wmsInnerJobOrderDetDto.getJobOrderDetId());
         criteria.andEqualTo("storageId",wmsInnerJobOrderDetDto.getOutStorageId()).andEqualTo("warehouseId",wmsInnerJobOrderDetDto.getWarehouseId());
+        criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventorys)){
             //新增一条分配库存
@@ -803,6 +805,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wms.setCreateUserId(sysUser.getUserId());
             wms.setModifiedUserId(sysUser.getUserId());
             wms.setModifiedTime(new Date());
+            wms.setOrgId(sysUser.getOrganizationId());
             num = wmsInnerInventoryMapper.insertSelective(wms);
             if(num<1){
                 throw new BizErrorException("库存分配失败");
@@ -835,6 +838,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         criteria.andEqualTo("jobOrderDetId",oldDto.getJobOrderDetId());
         criteria.andEqualTo("jobStatus",(byte)2);
+        criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventory)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -853,6 +857,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         criteria1.andEqualTo("jobOrderDetId",newDto.getJobOrderDetId());
         criteria1.andEqualTo("jobStatus",(byte)2);
+        criteria1.andEqualTo("orgId",sysUser.getOrganizationId());
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventorys)){
             //添加库存
@@ -869,6 +874,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             inv.setCreateUserId(sysUser.getUserId());
             inv.setModifiedUserId(sysUser.getUserId());
             inv.setModifiedTime(new Date());
+            inv.setOrgId(sysUser.getOrganizationId());
             return wmsInnerInventoryMapper.insertSelective(inv);
         }else{
             //原库存
@@ -1166,6 +1172,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
             criteria.andEqualTo("jobOrderDetId",wmsInPutawayOrderDet.getJobOrderDetId());
             criteria.andEqualTo("jobStatus",(byte)2);
+            criteria.andEqualTo("orgId",wmsInnerJobOrder.getOrgId());
             wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
             if(StringUtils.isEmpty(wmsInnerInventory)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -1200,6 +1207,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         criteria1.andEqualTo("jobOrderDetId",wmsInPutawayOrderDet.getJobOrderDetId());
         criteria1.andEqualTo("jobStatus",(byte)2);
+        criteria1.andEqualTo("orgId",wmsInnerJobOrder.getOrgId());
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventorys)){
             //添加库存
@@ -1216,6 +1224,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             inv.setCreateUserId(wmsInnerJobOrder.getModifiedUserId());
             inv.setModifiedUserId(wmsInnerJobOrder.getModifiedUserId());
             inv.setModifiedTime(new Date());
+            inv.setOrgId(wmsInnerJobOrder.getOrgId());
             wmsInnerInventoryMapper.insertSelective(inv);
         }else{
             //原库存

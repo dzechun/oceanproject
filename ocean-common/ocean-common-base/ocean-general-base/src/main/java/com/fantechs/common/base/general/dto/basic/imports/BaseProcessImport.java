@@ -38,10 +38,10 @@ public class BaseProcessImport implements Serializable {
     private Long sectionId;
 
     /**
-     * 工段编码
+     * 工段编码(必填)
      */
-    @ApiModelProperty(name="sectionCode" ,value="工段编码")
-    @Excel(name = "工段编码", height = 20, width = 30)
+    @ApiModelProperty(name="sectionCode" ,value="工段编码(必填)")
+    @Excel(name = "工段编码(必填)", height = 20, width = 30)
     private String sectionCode;
 
     /**
@@ -51,10 +51,10 @@ public class BaseProcessImport implements Serializable {
     private Long processCategoryId;
 
     /**
-     * 工序类别编码
+     * 工序类别编码(必填)
      */
-    @ApiModelProperty(name="processCategoryCode" ,value="工序类别编码")
-    @Excel(name = "工序类别编码", height = 20, width = 30)
+    @ApiModelProperty(name="processCategoryCode" ,value="工序类别编码(必填)")
+    @Excel(name = "工序类别编码(必填)", height = 20, width = 30)
     private String processCategoryCode;
 
     /**
@@ -62,21 +62,21 @@ public class BaseProcessImport implements Serializable {
      */
     @ApiModelProperty(name="isJobScan" ,value="是否报工扫描")
     @Excel(name = "是否报工扫描（0、否 1、是）", height = 20, width = 30)
-    private Byte isJobScan;
+    private Integer isJobScan;
 
     /**
      * 是否开工扫描（0、否 1、是）
      */
     @ApiModelProperty(name= "isStartScan" ,value="是否开工扫描")
     @Excel(name = "是否开工扫描（0、否 1、是）", height = 20, width = 30)
-    private Byte isStartScan;
+    private Integer isStartScan;
 
     /**
      * 是否品质确认（0、否 1、是）
      */
     @ApiModelProperty(name="isQuality" ,value="是否品质确认")
     @Excel(name = "是否品质确认（0、否 1、是）", height = 20, width = 30)
-    private Byte isQuality;
+    private Integer isQuality;
 
     /**
      * 完成时间
@@ -96,6 +96,6 @@ public class BaseProcessImport implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status" ,value="状态")
-    @Excel(name = "状态", height = 20, width = 30)
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30)
     private Integer status;
 }
