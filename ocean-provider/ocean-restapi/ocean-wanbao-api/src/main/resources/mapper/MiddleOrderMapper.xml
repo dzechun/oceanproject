@@ -2,19 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.wanbao.api.mapper.MiddleOrderMapper">
     <resultMap id="BaseResultMap" type="com.fantechs.provider.wanbao.api.entity.MiddleOrder">
-        <id column="work_order_id" jdbcType="BIGINT" property="middleOrderId"/>
-        <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
-        <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus"/>
-        <result column="work_order_type" jdbcType="TINYINT" property="workOrderType"/>
+        <id column="work_order_id" jdbcType="VARCHAR" property="workOrderId"/>
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+        <result column="work_order_status" jdbcType="VARCHAR" property="workOrderStatus"/>
+        <result column="work_order_type" jdbcType="VARCHAR" property="workOrderType"/>
         <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
         <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
-        <result column="plan_start_time" jdbcType="TIMESTAMP" property="planStartTime"/>
-        <result column="plan_end_time" jdbcType="TIMESTAMP" property="planEndTime"/>
+        <result column="pro_code" jdbcType="VARCHAR" property="proCode"/>
+        <result column="plan_start_time" jdbcType="VARCHAR" property="planStartTime"/>
+        <result column="plan_end_time" jdbcType="VARCHAR" property="planEndTime"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-        <result column="work_order_qty" jdbcType="DECIMAL" property="workOrderQty"/>
-        <result column="output_qty" jdbcType="DECIMAL" property="outputQty"/>
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="work_order_qty" jdbcType="VARCHAR" property="workOrderQty"/>
+        <result column="output_qty" jdbcType="VARCHAR" property="outputQty"/>
+        <result column="modified_time" jdbcType="VARCHAR" property="modifiedTime"/>
     </resultMap>
 
     <select id="findOrderData" parameterType="map" resultMap="BaseResultMap">
@@ -37,17 +38,39 @@
             mfg_lookups wjs,
             wip_discrete_jobs wdj,
             mtl_system_items_b msib
-        WHERE
+        <where>
             we.wip_entity_id = wdj.wip_entity_id
-          AND wdj.primary_item_id = msib.inventory_item_id
-          AND msib.organization_id = 83
-          AND wjs.lookup_type = 'WIP_JOB_STATUS'
-          AND wjs.LOOKUP_CODE = WDJ.STATUS_TYPE
-          AND wjs.meaning = 'Released'
-          AND SCHEDULE_GROUP_ID in (2047, 2045, 2046, 2047)
+            AND wdj.primary_item_id = msib.inventory_item_id
+            AND msib.organization_id = 83
+            AND wjs.lookup_type = 'WIP_JOB_STATUS'
+            AND wjs.LOOKUP_CODE = WDJ.STATUS_TYPE
+            AND wjs.meaning = 'Released'
+            AND SCHEDULE_GROUP_ID in (2047, 2045, 2046, 2047)
+            <if test="date != null and date != ''">
+                AND wdj.scheduled_start_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
+            </if>
+        </where>
         ORDER BY
             msib.segment1,
             we.wip_entity_name
     </select>
+
+    <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleOrder">
+        INSERT INTO "K3WMS"."middle_order" ( "work_order_id", "work_order_code", "work_order_status", "work_order_type", "sales_order_code", "pro_name", "plan_start_time", "plan_end_time", "work_order_qty", "output_qty", "material_code", "material_name", "modified_time" )
+        VALUES
+            ( #{workOrderId},
+            #{workOrderCode},
+            #{workOrderStatus},
+            #{workOrderType},
+            #{salesOrderCode},
+            #{proName},
+            #{planStartTime},
+            #{planEndTime},
+            #{materialCode},
+            #{materialName} ,
+            #{workOrderQty} ,
+            #{outputQty} ,
+            #{modifiedTime} )
+    </insert>
 
 </mapper>

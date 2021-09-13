@@ -15,4 +15,11 @@ public interface MiddleMaterialMapper extends MyMapper<MiddleMaterial> {
      * @return
      */
     List<MiddleMaterial> findMaterialData(Map<String, Object> map);
+
+    /**
+     * 插入中间库
+     * @param material
+     * @return
+     */
+    int save(MiddleMaterial material);
 }

@@ -15,4 +15,11 @@ public interface MiddleOrderMapper extends MyMapper<MiddleOrder> {
      * @return
      */
     List<MiddleOrder> findOrderData(Map<String, Object> map);
+
+    /**
+     * 插入中间库
+     * @param order
+     * @return
+     */
+    int save(MiddleOrder order);
 }
