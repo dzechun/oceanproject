@@ -65,7 +65,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             String check = "1";
             check = check(purchaseOrderApiDto,check);
             if (!check.equals("1")) {
-                logsUtils.addlog((byte)0,(byte)2,(long)1002,check,purchaseOrderApiDto.toString());
+       //         logsUtils.addlog((byte)0,(byte)2,(long)1002,check,purchaseOrderApiDto.toString());
                 return check;
             }
 
@@ -117,7 +117,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             OmPurchaseOrderDet purchaseOrderDet = new OmPurchaseOrderDet();
             purchaseOrderDet.setPurchaseOrderId(purchaseMap.get(purchaseOrderApiDto.getEBELN()));
             purchaseOrderDet.setProjectCode(baseUtils.removeZero(purchaseOrderApiDto.getEBELP()));
-            List<BaseMaterial> baseMaterials = baseUtils.getBaseMaterial(purchaseOrderApiDto.getMATNR());
+            List<BaseMaterial> baseMaterials = baseUtils.getBaseMaterial(purchaseOrderApiDto.getMATNR(),orgId);
             if(StringUtils.isEmpty(baseMaterials)) return "未查询到对应的物料编码，编码为："+purchaseOrderApiDto.getMATNR();
 
             purchaseOrderDet.setMaterialId(baseMaterials.get(0).getMaterialId());
@@ -129,7 +129,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             omPurchaseOrderDetList.add(purchaseOrderDet);
         }
         oMFeignApi.saveByApi(omPurchaseOrderDetList);
-        logsUtils.addlog((byte)0,(byte)2,orgId,null,null);
+        //logsUtils.addlog((byte)0,(byte)2,orgId,null,null);
         return "success";
     }
 

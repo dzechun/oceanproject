@@ -284,10 +284,10 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             //
             /*if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && StringUtils.isEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
                 //throw new BizErrorException("添加失败，材料编码、原材料编码二者不能同时为空,"+"错误行数为:"+(i+2));
-            }else */
+            }else
             if (StringUtils.isEmpty(engPackingOrderSummaryDetImport.getMaterialCode())&& "管道".equals(engPackingOrderSummary.getProfessionName())){
                     throw new BizErrorException("添加失败，专业等于管道时，材料编码不能为空,"+"错误行数为:"+(i+2));
-            }
+            }*/
 
             //校验合同量单
             Example qtyExample = new Example(EngContractQtyOrder.class);
@@ -426,9 +426,9 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             throw new BizErrorException("添加失败，包装箱号不一致");
 
         //材料编码、原材料编码二者不能都为空，必须有一个有值，而且存在于物料表中
-        if (StringUtils.isEmpty(dto.getMaterialCode())&& "管道".equals(engPackingOrderSummary.getProfessionName())){
+       /* if (StringUtils.isEmpty(dto.getMaterialCode())&& "管道".equals(engPackingOrderSummary.getProfessionName())){
             throw new BizErrorException("添加失败，专业等于管道时，材料编码不能为空");
-        }
+        }*/
 
         //校验合同量单
         Example qtyExample = new Example(EngContractQtyOrder.class);
