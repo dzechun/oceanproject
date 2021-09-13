@@ -7,19 +7,43 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.Date;
+import java.math.BigDecimal;
 
 @Data
-@Table(name = "middle_material")
+@Table(name = "middle_sale_order")
 public class MiddleSaleOrder implements Serializable {
 
     @Id
-    @Column(name = "middle_sale_order_id")
-    private Long MiddleSaleOrderId;
+    @Column(name = "sale_order_id")
+    private String saleOrderId;
+
+    @ApiModelProperty(name="salesOrderCode",value = "销售订单号")
+    @Column(name = "sales_order_code")
+    private String salesOrderCode;
+
+    @ApiModelProperty(name="supplierCode",value = "客户编码")
+    @Column(name = "supplier_code")
+    private String supplierCode;
+
+    @ApiModelProperty(name="supplierId",value = "客户id")
+    @Column(name = "supplier_id")
+    private String supplierId;
+
+    @ApiModelProperty(name="orderStatus" ,value="订单状态")
+    @Column(name = "order_status")
+    private String orderStatus;
+
+    @ApiModelProperty(name="orderType" ,value="订单类型")
+    @Column(name = "order_type")
+    private String orderType;
+
+    @ApiModelProperty(name="factoryCode" ,value="工厂编码")
+    @Column(name = "factory_code")
+    private String factoryCode;
 
     @ApiModelProperty(name="materialId" ,value="物料id")
     @Column(name = "material_id")
-    private Long materialId;
+    private String materialId;
 
     @ApiModelProperty(name="materialCode" ,value="物料编码")
     @Column(name = "material_code")
@@ -29,27 +53,39 @@ public class MiddleSaleOrder implements Serializable {
     @Column(name = "material_name")
     private String materialName;
 
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Column(name = "material_desc")
-    private String materialDesc;
+    @ApiModelProperty(name="customerProductModel" ,value="客户型号")
+    @Column(name = "customer_product_model")
+    private String customerProductModel;
 
-    @ApiModelProperty(name="voltage",value = "电压")
-    @Column(name = "voltage")
-    private String voltage;
+    @ApiModelProperty(name="customerOrderLineNumber" ,value="订单行号")
+    @Column(name = "customer_order_line_number")
+    private String customerOrderLineNumber;
 
-    @ApiModelProperty(name="productModelId" ,value="产品型号ID")
-    @Column(name = "product_model_id")
-    private Long productModelId;
+    @ApiModelProperty(name="salesCode" ,value="销售编码")
+    @Column(name = "sales_code")
+    private String salesCode;
 
-    @ApiModelProperty(name="productModelCode" ,value="产品型号编码")
-    @Column(name = "product_model_code")
-    private String productModelCode;
+    @ApiModelProperty(name="makeCode" ,value="制造编码")
+    @Column(name = "make_code")
+    private String makeCode;
 
-    @ApiModelProperty(name="materialProperty",value = "物料属性(0.半成品，1.成品)")
-    @Column(name = "material_property")
-    private Byte materialProperty;
+    @ApiModelProperty(name="orderQty" ,value="订单数量")
+    @Column(name = "order_qty")
+    private BigDecimal orderQty;
+
+    @ApiModelProperty(name="salesCodeQty" ,value="订单数量")
+    @Column(name = "sales_code_qty")
+    private BigDecimal salesCodeQty;
+
+    @ApiModelProperty(name="makeOrderDate" ,value="修改时间")
+    @Column(name = "make_order_date")
+    private String makeOrderDate;
+
+    @ApiModelProperty(name="createTime" ,value="修改时间")
+    @Column(name = "create_time")
+    private String createTime;
 
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @Column(name = "modified_time")
-    private Date modifiedTime;
+    private String modifiedTime;
 }
