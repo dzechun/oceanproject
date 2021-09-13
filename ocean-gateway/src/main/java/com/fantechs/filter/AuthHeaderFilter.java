@@ -13,16 +13,12 @@ package com.fantechs.filter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.RestTemplateUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -49,11 +44,14 @@ public class AuthHeaderFilter extends ZuulFilter {
 	@Resource
 	private RedisUtil redisUtil;
 
-	@Resource
-	private SecurityFeignApi securityFeignApi;
+//	@Resource
+//	private SecurityFeignApi securityFeignApi;
 
 	@Value("${url.securityUrl}")
 	private String securityUrl;
+
+	@Value("${constant-base.orgId}")
+	private Long orgId;
 
 
 	//排除过滤的 uri 地址
@@ -128,13 +126,14 @@ public class AuthHeaderFilter extends ZuulFilter {
 					break;
 				}
 			} else {
-				SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-				searchSysSpecItem.setSpecCode("silentLogin");
-				List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-				if (specItems.isEmpty()){
-					throw new BizErrorException(ErrorCodeEnum.GL9999404, "定时任务默认组织的程序配置项不存在");
-				}
-				token = RestTemplateUtil.getForStringNoJson(securityUrl + "?orgId=" + specItems.get(0).getParaValue());
+//				SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+//				searchSysSpecItem.setSpecCode("silentLogin");
+//				List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+//				if (specItems.isEmpty()){
+//					throw new BizErrorException(ErrorCodeEnum.GL9999404, "定时任务默认组织的程序配置项不存在");
+//				}
+//				token = RestTemplateUtil.getForStringNoJson(securityUrl + "?orgId=" + specItems.get(0).getParaValue());
+				token = RestTemplateUtil.getForStringNoJson(securityUrl + "?orgId=" + orgId);
 				log.info("---------为客户端赋予一个可访问的token : " + token + "---------------");
 			}
 		}
