@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkingArea;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
@@ -252,8 +253,24 @@ public class ImportDataServiceImpl implements ImportDataService {
 
                     //拣货数量默认0
                     detDto.setPickingQty(new BigDecimal(0));
-                    //包装单位 packing_unit_name
-
+                    //包装单位 packing_unit_name option2
+                    detDto.setPackingUnitName(baseList.getData().get(0).getOption2());
+                    //发货库位和发货仓库
+                    SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
+                    searchBaseStorage.setStorageCode("default");
+                    searchBaseStorage.setOrgId(1004L);
+                    ResponseEntity<List<BaseStorage>> listStorage=baseFeignApi.findList(searchBaseStorage);
+                    if(StringUtils.isNotEmpty(listStorage.getData())){
+                        detDto.setStorageId(listStorage.getData().get(0).getStorageId());
+                        detDto.setWarehouseId(listStorage.getData().get(0).getWarehouseId());
+                    }
+                    //拣货库位 拣货库位为“DHGUID”的库位 库位信息option1栏位存DHGUID
+                    searchBaseStorage.setStorageCode("");
+                    searchBaseStorage.setOption1(tempDto.getOption5());
+                    listStorage=baseFeignApi.findList(searchBaseStorage);
+                    if(StringUtils.isNotEmpty(listStorage.getData())){
+                        detDto.setPickingStorageId(listStorage.getData().get(0).getStorageId());
+                    }
 
                     wmsOutDeliveryOrderDetList.add(detDto);
                 }

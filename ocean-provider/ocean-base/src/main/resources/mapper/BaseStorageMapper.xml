@@ -146,6 +146,9 @@
             <if test="minSurplusCanPutSalver!=null and minSurplusCanPutSalver!=''">
                 and ss.surplus_can_put_salver>#{minSurplusCanPutSalver}
             </if>
+            <if test="option1!=null and option1!=''">
+                and ss.option1=#{option1}
+            </if>
             <if test="orgId!=null">
                 and ss.org_id=#{orgId}
             </if>
