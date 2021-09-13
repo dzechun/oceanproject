@@ -449,7 +449,7 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
                 baseInspectionStandard.setModifiedTime(new Date());
                 baseInspectionStandard.setOrgId(user.getOrganizationId());
                 baseInspectionStandard.setStatus((byte)1);
-                baseInspectionStandard.setInspectionType(baseInspectionStandardImports1.get(0).getInspectionType().byteValue());
+                baseInspectionStandard.setInspectionType(StringUtils.isEmpty(baseInspectionStandardImports1.get(0).getInspectionType())?null:baseInspectionStandardImports1.get(0).getInspectionType().byteValue());
                 success += baseInspectionStandardMapper.insertUseGeneratedKeys(baseInspectionStandard);
 
                 //履历
@@ -463,8 +463,8 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
                     BeanUtils.copyProperties(baseInspectionStandardImport, baseInspectionStandardDet);
                     baseInspectionStandardDet.setInspectionStandardId(baseInspectionStandard.getInspectionStandardId());
                     baseInspectionStandardDet.setStatus((byte) 1);
-                    baseInspectionStandardDet.setIfMustInspection(baseInspectionStandardImport.getIfMustInspection().byteValue());
-                    baseInspectionStandardDet.setInspectionTag(baseInspectionStandardImport.getInspectionTag().byteValue());
+                    baseInspectionStandardDet.setIfMustInspection(StringUtils.isEmpty(baseInspectionStandardImport.getIfMustInspection()) ? null : baseInspectionStandardImport.getIfMustInspection().byteValue());
+                    baseInspectionStandardDet.setInspectionTag(StringUtils.isEmpty(baseInspectionStandardImport.getInspectionTag()) ? null : baseInspectionStandardImport.getInspectionTag().byteValue());
                     detList.add(baseInspectionStandardDet);
                 }
                 baseInspectionStandardDetMapper.insertList(detList);
