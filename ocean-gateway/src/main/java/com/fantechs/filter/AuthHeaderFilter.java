@@ -64,7 +64,8 @@ public class AuthHeaderFilter extends ZuulFilter {
 			",/ocean-security/eamlogin";
 	private static final String SWAGGER_URI = "/v2/api-docs";
 
-	private static final String CLIENT_URI = "/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder";
+	private static final String CLIENT_URI = "/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder,/wanbaoSyncData/syncMaterialData," +
+			"/wanbaoSyncData/syncOrderData,/wanbaoSyncData/syncSaleOrderData,/wanbaoSyncData/syncOutDeliveryData";
 
 	/**
 	 * Filter type string.
