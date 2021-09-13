@@ -62,4 +62,10 @@ public class SearchBaseStorageTaskPoint extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
     private Integer codeQueryMark;
+
+    /**
+     * 是否按优先级排序(设1为按优先级排序)
+     */
+    @ApiModelProperty(name = "ifOrderByUsePriority",value = "是否按优先级排序(设1为按优先级排序)")
+    private Integer ifOrderByUsePriority;
 }
