@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcRepairOrderSemiProductMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderSemiProduct">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="repair_order_semi_product_id" jdbcType="BIGINT" property="repairOrderSemiProductId" />
+    <result column="repair_order_id" jdbcType="BIGINT" property="repairOrderId" />
+    <result column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+  </resultMap>
+
+  <sql id="BaseColumnList">
+    msrosp.repair_order_semi_product_id,
+    msrosp.repair_order_id,
+    msrosp.work_order_barcode_id,
+    msrosp.barcode,
+    msrosp.material_id,
+    msrosp.`status`,
+    msrosp.remark,
+    msrosp.org_id,
+    msrosp.create_user_id,
+    msrosp.create_time,
+    msrosp.modified_user_id,
+    msrosp.modified_time,
+    msrosp.is_delete,
+    msrosp.option1,
+    msrosp.option2,
+    msrosp.option3
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="BaseColumnList"/>,
+    bm.material_code,bm.material_desc,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    FROM mes_sfc_repair_order_semi_product msrosp
+    left join fantech_imes_v2.base_material bm ON msrosp.material_id = bm.material_id
+    left join ocean_v2.sys_user u on msrosp.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on msrosp.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON msrosp.org_id = bo.organization_id
+    <where>
+      <if test="repairOrderId != null">
+        and msrosp.repair_order_id = #{repairOrderId}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(msrosp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="status!=null">
+        and msrosp.status = #{status}
+      </if>
+      <if test="orgId!=null">
+        and msrosp.org_id=#{orgId}
+      </if>
+    </where>
+    order by msrosp.create_time desc
+  </select>
+</mapper>

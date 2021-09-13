@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcRepairOrderBadPhenotypeRepairMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPhenotypeRepair">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="repair_order_bad_phenotype_repair_id" jdbcType="BIGINT" property="repairOrderBadPhenotypeRepairId" />
+    <result column="repair_order_bad_phenotype_id" jdbcType="BIGINT" property="repairOrderBadPhenotypeId" />
+    <result column="badness_cause_id" jdbcType="BIGINT" property="badnessCauseId" />
+    <result column="badness_duty_id" jdbcType="BIGINT" property="badnessDutyId" />
+    <result column="location_num" jdbcType="VARCHAR" property="locationNum" />
+    <result column="replace_material_id" jdbcType="BIGINT" property="replaceMaterialId" />
+    <result column="replacement_qty" jdbcType="DECIMAL" property="replacementQty" />
+    <result column="replacement_barcode" jdbcType="VARCHAR" property="replacementBarcode" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="badness_cause_code" jdbcType="VARCHAR" property="badnessCauseCode" />
+    <result column="badness_cause_desc" jdbcType="VARCHAR" property="badnessCauseDesc" />
+    <result column="badness_duty_code" jdbcType="VARCHAR" property="badnessDutyCode" />
+    <result column="badness_duty_desc" jdbcType="VARCHAR" property="badnessDutyDesc" />
+  </resultMap>
+
+  <sql id="BaseColumnList">
+    msrobpr.repair_order_bad_phenotype_repair_id,
+    msrobpr.repair_order_bad_phenotype_id,
+    msrobpr.badness_cause_id,
+    msrobpr.badness_duty_id,
+    msrobpr.location_num,
+    msrobpr.replace_material_id,
+    msrobpr.replacement_qty,
+    msrobpr.replacement_barcode,
+    msrobpr.`status`,
+    msrobpr.remark,
+    msrobpr.org_id,
+    msrobpr.create_user_id,
+    msrobpr.create_time,
+    msrobpr.modified_user_id,
+    msrobpr.modified_time,
+    msrobpr.is_delete,
+    msrobpr.option1,
+    msrobpr.option2,
+    msrobpr.option3
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="BaseColumnList"/>,
+    bbc.badness_cause_code,bbc.badness_cause_desc,bbd.badness_duty_code,bbd.badness_duty_desc,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    FROM mes_sfc_repair_order_bad_phenotype_repair msrobpr
+    left join fantech_imes_v2.base_badness_cause bbc ON msrobpr.badness_cause_id = bbc.badness_cause_id
+    left join fantech_imes_v2.base_badness_duty bbd ON msrobpr.badness_duty_id = bbd.badness_duty_id
+    left join ocean_v2.sys_user u on msrobpr.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on msrobpr.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON msrobpr.org_id = bo.organization_id
+    <where>
+      <if test="repairOrderBadPhenotypeId != null">
+        and msrobpr.repair_order_bad_phenotype_id = #{repairOrderBadPhenotypeId}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(msrobpr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="status!=null">
+        and msrobpr.status = #{status}
+      </if>
+      <if test="orgId!=null">
+        and msrobpr.org_id=#{orgId}
+      </if>
+    </where>
+    order by msrobpr.create_time desc
+  </select>
+</mapper>
