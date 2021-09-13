@@ -34,6 +34,12 @@ public class SearchBaseStorageTaskPoint extends BaseQuery implements Serializabl
     private String warehouseCode;
 
     /**
+     * 库区id
+     */
+    @ApiModelProperty(name="warehouseAreaId",value = "库区id")
+    private Long warehouseAreaId;
+
+    /**
      * 库区编码
      */
     @ApiModelProperty(name="warehouseAreaCode",value = "库区编码")
@@ -50,4 +56,10 @@ public class SearchBaseStorageTaskPoint extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="storageTaskPointStatus",value = "库位配送点状态(1-空闲 2-使用)")
     private Byte storageTaskPointStatus;
+
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

@@ -91,8 +91,14 @@
       <if test="warehouseAreaCode!=null and warehouseAreaCode!=''">
         and swa.warehouse_area_code like CONCAT('%', #{warehouseAreaCode}, '%')
       </if>
-      <if test="storageCode!=null and storageCode!=''">
+      <if test="warehouseAreaId!=null">
+        and bstp.warehouse_area_id=#{warehouseAreaId}
+      </if>
+      <if test="storageCode!=null and storageCode!='' and codeQueryMark != 1">
         and bs.storage_code like CONCAT('%', #{storageCode}, '%')
+      </if>
+      <if test="storageCode!=null and storageCode!='' and codeQueryMark == 1">
+        and bs.storage_code = #{storageCode}
       </if>
       <if test="storageTaskPointStatus!=null">
         and bstp.storage_task_point_status=#{storageTaskPointStatus}
