@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseFileMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseFile">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="file_id" jdbcType="BIGINT" property="fileId" />
+    <result column="relevance_id" jdbcType="BIGINT" property="relevanceId" />
+    <result column="relevance_table_name" jdbcType="VARCHAR" property="relevanceTableName" />
+    <result column="file_org_name" jdbcType="VARCHAR" property="fileOrgName" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="store_path" jdbcType="VARCHAR" property="storePath" />
+    <result column="access_url" jdbcType="VARCHAR" property="accessUrl" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bf.file_id,
+    bf.relevance_id,
+    bf.relevance_table_name,
+    bf.file_org_name,
+    bf.file_name,
+    bf.store_path,
+    bf.access_url,
+    bf.`status`,
+    bf.remark,
+    bf.org_id,
+    bf.create_user_id,
+    bf.create_time,
+    bf.modified_user_id,
+    bf.modified_time,
+    bf.option1,
+    bf.option2,
+    bf.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+    from fantech_imes_v2.base_file bf
+    left join ocean_v2.sys_user su on bf.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus on bf.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON bf.org_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="relevanceId != null">
+        and bf.relevance_id = #{relevanceId}
+      </if>
+      <if test="relevanceTableName != null and relevanceTableName != ''">
+        and bf.relevance_table_name  = #{relevanceTableName}
+      </if>
+      <if test="orgId!=null">
+        and bf.org_id=#{orgId}
+      </if>
+    </where>
+    order by bf.create_time desc
+  </select>
+</mapper>
