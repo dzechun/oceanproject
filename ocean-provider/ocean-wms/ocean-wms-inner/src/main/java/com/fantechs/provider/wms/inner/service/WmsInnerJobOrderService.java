@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.service;
 
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -83,4 +84,6 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @return
      */
     int addList(List<WmsInnerJobOrder> list);
+
+    int cancelJobOrder(List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels);
 }

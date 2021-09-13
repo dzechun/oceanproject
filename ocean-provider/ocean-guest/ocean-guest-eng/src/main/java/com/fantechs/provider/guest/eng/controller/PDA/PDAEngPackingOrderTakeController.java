@@ -64,7 +64,7 @@ public class PDAEngPackingOrderTakeController {
 
     @ApiOperation("登记")
     @PostMapping("/register")
-    public ResponseEntity register(@ApiParam("id")@RequestParam List<Long> ids){
+    public ResponseEntity register(@ApiParam("id")@RequestBody List<Long> ids){
         return ControllerUtil.returnCRUD(engPackingOrderTakeService.register(ids));
     }
 
@@ -84,5 +84,12 @@ public class PDAEngPackingOrderTakeController {
     @PostMapping("/pdaCreateInnerJobOrder")
     public ResponseEntity pdaCreateInnerJobOrder(@RequestBody List<EngPackingOrderSummaryDetDto> engPackingOrderSummaryDetDtos){
         return ControllerUtil.returnCRUD(engPackingOrderTakeService.pdaCreateInnerJobOrder(engPackingOrderSummaryDetDtos));
+    }
+
+    @ApiOperation("单一取消")
+    @PostMapping("/onlyCancel")
+    public ResponseEntity onlyCancel(@RequestBody List<EngPackingOrderSummaryDetDto> engPackingOrderSummaryDetDtos){
+        //return ControllerUtil.returnCRUD(engPackingOrderTakeService.onlyCancel(engPackingOrderSummaryDetDto));
+        return ControllerUtil.returnCRUD(1);
     }
 }

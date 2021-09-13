@@ -1,5 +1,6 @@
 package com.fantechs.provider.api.wms.inner;
 
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.*;
@@ -95,4 +96,8 @@ public interface InnerFeignApi {
 
     @PostMapping("/wmsInnerJobOrder/addList")
     ResponseEntity addList(@RequestBody List<WmsInnerJobOrder> list);
+
+    @ApiOperation(value = "收货作业取消收货",notes = "收货作业取消收货")
+    @PostMapping("/wmsInnerJobOrder/cancelJobOrder")
+    ResponseEntity cancelJobOrder(@RequestBody List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels);
 }
