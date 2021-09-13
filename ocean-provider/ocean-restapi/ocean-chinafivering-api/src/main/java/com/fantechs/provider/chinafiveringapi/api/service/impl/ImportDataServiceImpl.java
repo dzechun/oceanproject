@@ -177,6 +177,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                 wmsOutDeliveryOrder.setMaterialOwnerId(153L);
                 wmsOutDeliveryOrder.setOrderDate(new Date());
                 wmsOutDeliveryOrder.setStatus((byte) 1);
+                wmsOutDeliveryOrder.setOption1("1");//领料类型
 
                 Long customerId=0L;
                 List<WmsOutDeliveryOrderTempDto> listDto=result.get(key);
@@ -184,14 +185,14 @@ public class ImportDataServiceImpl implements ImportDataService {
                 for (WmsOutDeliveryOrderTempDto tempDto : listDto) {
                     //表头 领料单号
                     wmsOutDeliveryOrder.setDeliveryOrderCode(tempDto.getDeliveryOrderCode());
-                    // 表头 领料时间
-                    wmsOutDeliveryOrder.setOption1(tempDto.getOutMaterialTime());
-                    // 表头 领料截止时间
-                    wmsOutDeliveryOrder.setOption2(tempDto.getOutMaterialTimeEnd());
                     // 表头 项目ID
                     wmsOutDeliveryOrder.setOption3(tempDto.getProjectId());
                     // 表头 领料单审批状态代码
                     wmsOutDeliveryOrder.setOption4(tempDto.getConfirmCode());
+                    // 表头 领料时间
+                    wmsOutDeliveryOrder.setOption5(tempDto.getOutMaterialTime());
+                    // 表头 领料截止时间
+                    wmsOutDeliveryOrder.setOption6(tempDto.getOutMaterialTimeEnd());
 
                     if(customerId==0L) {
                         SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
@@ -248,6 +249,11 @@ public class ImportDataServiceImpl implements ImportDataService {
                         detDto.setPackingQty(BigDecimal.ZERO);
                     else
                         detDto.setPackingQty(new BigDecimal(tempDto.getDispatchQty()));
+
+                    //拣货数量默认0
+                    detDto.setPickingQty(new BigDecimal(0));
+                    //包装单位 packing_unit_name
+
 
                     wmsOutDeliveryOrderDetList.add(detDto);
                 }
