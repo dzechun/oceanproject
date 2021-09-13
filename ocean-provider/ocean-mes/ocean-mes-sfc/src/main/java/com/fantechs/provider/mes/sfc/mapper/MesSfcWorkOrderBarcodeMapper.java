@@ -48,4 +48,6 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
     List<PalletAutoAsnDto> findListGroupByWorkOrder(Map<String, Object> map);
 
     List<MesSfcWorkOrderBarcodeDto> findListByPalletDet(Map<String, Object> map);
+
+    String findSysUser(@Param("userCode")String userCode);
 }

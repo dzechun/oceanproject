@@ -18,8 +18,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -102,5 +104,11 @@ public class EngPackingOrderTakeController {
     @PostMapping("/onlyCancel")
     public ResponseEntity onlyCancel(@RequestBody EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto){
         return ControllerUtil.returnCRUD(engPackingOrderTakeService.onlyCancel(engPackingOrderSummaryDetDto));
+    }
+
+    @ApiIgnore
+    @PostMapping("/writeQty")
+    public ResponseEntity writeQty(@RequestParam Long id, @RequestParam BigDecimal qty){
+        return ControllerUtil.returnCRUD(engPackingOrderTakeService.writeQty(id, qty));
     }
 }

@@ -29,6 +29,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
@@ -73,6 +74,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
     @Resource
     private PickingOrderService pickingOrderService;
+    @Resource
+    private EngFeignApi engFeignApi;
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
@@ -610,13 +613,21 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                             }
                         }
                     } else {
-                        //反写完工入库单
-                        ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
-                                .putawayQty(wmsInnerJobOrderDet.getDistributionQty())
-                                .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
-                                .build());
-                        if (responseEntity.getCode() != 0) {
-                            throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                        if(wmsInnerJobOrder.getJobOrderId()==9){
+                            //收货作业反写
+                            ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),wmsInnerJobOrderDet.getDistributionQty());
+                            if(responseEntity.getCode()!=0){
+                                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                            }
+                        }else {
+                            //反写完工入库单
+                            ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                                    .putawayQty(wmsInnerJobOrderDet.getDistributionQty())
+                                    .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
+                                    .build());
+                            if (responseEntity.getCode() != 0) {
+                                throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                            }
                         }
                     }
                 }
@@ -830,7 +841,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
             }
 
-            if (wmsInnerJobOrder.getJobOrderType() != (byte) 2) {
+            if (wmsInnerJobOrder.getJobOrderType() != (byte) 2 && wmsInnerJobOrder.getJobOrderId()!=9) {
                 //反写完工入库单
                 ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
                         .putawayQty(wmsInnerJobOrderDetDto.getActualQty())
@@ -838,6 +849,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .build());
                 if (responseEntity.getCode() != 0) {
                     throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                }
+            }
+            if(wmsInnerJobOrder.getJobOrderId()==9){
+                ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDetDto.getSourceDetId(),wmsInnerJobOrderDetDto.getActualQty());
+                if(responseEntity.getCode()!=0){
+                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                 }
             }
         }
@@ -1111,7 +1128,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      * @return
      */
     @Override
-    @LcnTransaction
     @Transactional(rollbackFor = RuntimeException.class)
     public int addList(List<WmsInnerJobOrder> list){
         SysUser sysUser = currentUser();
@@ -1194,7 +1210,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     }
 
     @Override
-    @LcnTransaction
     @Transactional(rollbackFor = RuntimeException.class)
     public int cancelJobOrder(List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();

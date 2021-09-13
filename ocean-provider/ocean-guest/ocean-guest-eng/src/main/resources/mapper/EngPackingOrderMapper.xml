@@ -145,6 +145,9 @@ spo.ago_confirm_user_id
   <select id="findStorage" resultType="java.lang.Long">
     select storage_id FROM base_storage where storage_type=2 and org_id=#{orgId} and warehouse_id=#{warehouseId}
   </select>
+  <select id="findPutStorage" resultType="java.lang.Long">
+    select storage_id FROM base_storage where storage_type=1 and org_id=#{orgId} and warehouse_id=#{warehouseId}
+  </select>
   <select id="findInventoryStatus" resultType="java.lang.Long">
     select inventory_status_id FROM  base_inventory_status where org_id=#{orgId} and warehouse_id=#{warehouseId}
   </select>

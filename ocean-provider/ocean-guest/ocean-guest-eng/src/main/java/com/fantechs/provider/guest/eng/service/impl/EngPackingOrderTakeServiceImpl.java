@@ -229,6 +229,8 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 wmsInnerInventory.setLockStatus((byte)0);
                 wmsInnerInventory.setQcLock((byte)0);
                 wmsInnerInventory.setStockLock((byte)0);
+                wmsInnerInventory.setPackingUnitName(engPackingOrderSummaryDetDto.getUnitName());
+                wmsInnerInventory.setSupplierId(engPackingOrder.getSupplierId());
                 wmsInnerInventories.add(wmsInnerInventory);
 
                 //收货数量
@@ -344,6 +346,8 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             wmsInnerInventory.setLockStatus((byte)0);
             wmsInnerInventory.setQcLock((byte)0);
             wmsInnerInventory.setStockLock((byte)0);
+            wmsInnerInventory.setPackingUnitName(engPackingOrderSummaryDetDto.getUnitName());
+            wmsInnerInventory.setSupplierId(engPackingOrder.getSupplierId());
             wmsInnerInventories.add(wmsInnerInventory);
         }
 
@@ -355,6 +359,9 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         engPackingOrderSummaryDetDto.setModifiedUserId(sysUser.getUserId());
 
         //判断收货类型 1-确认并可以继续收货 2-收货完成 不能再收货
+        if(StringUtils.isEmpty(engPackingOrderSummaryDetDto.getButtonType())){
+            engPackingOrderSummaryDetDto.setButtonType((byte)1);
+        }
         if(engPackingOrderSummaryDetDto.getButtonType()==1){
             //实收数量为0时状态更改为待收货
             if(StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getCancelQty())) {
@@ -425,8 +432,8 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
     }
 
     @Override
-    @LcnTransaction
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int createInnerJobOrder(List<Long> ids) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<WmsInnerJobOrder> list = new ArrayList<>();
@@ -487,6 +494,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                                             .inventoryStatusId(inventoryStatus)
                                             .option1(engPackingOrderSummaryDto.getCartonCode())
                                             .orgId(sysUser.getOrganizationId())
+                                            .packingUnitName(engPackingOrderSummaryDetDto.getUnitName())
                                             .build();
                                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
 
@@ -511,7 +519,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                     }
                 }
                 //更新表头状态
-                if(engPackingOrder.getOrderStatus()==3 && (engPackingOrderSummaryDtos.size()==engPackingOrderSummaryDtos.stream().filter(li->li.getSummaryStatus()==4).collect(Collectors.toList()).size())){
+                if(engPackingOrder.getOrderStatus()==4 && (engPackingOrderSummaryDtos.size()==engPackingOrderSummaryDtos.stream().filter(li->li.getSummaryStatus()==4).collect(Collectors.toList()).size())){
                     engPackingOrder.setOrderStatus((byte)5);
                     engPackingOrder.setModifiedUserId(sysUser.getUserId());
                     engPackingOrder.setModifiedTime(new Date());
@@ -664,7 +672,6 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
     public int cancelAll(List<Long> ids) {
         SysUser sysUser  = CurrentUserInfoUtils.getCurrentUserInfo();
         int num = 0;
@@ -690,11 +697,21 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
     public int onlyCancel(EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto) {
         engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDetDto.getReceivingQty());
         engPackingOrderSummaryDetDto.setButtonType((byte)1);
         return this.onlyTask(engPackingOrderSummaryDetDto);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int writeQty(Long id, BigDecimal qty) {
+        EngPackingOrderSummaryDet engPackingOrderSummaryDet = engPackingOrderSummaryDetMapper.selectByPrimaryKey(id);
+        if(StringUtils.isEmpty(engPackingOrderSummaryDet.getPutawayQty())){
+            engPackingOrderSummaryDet.setPutawayQty(BigDecimal.ZERO);
+        }
+        engPackingOrderSummaryDet.setPutawayQty(engPackingOrderSummaryDet.getPutawayQty().add(qty));
+        return engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDet);
     }
 
     /**
@@ -727,10 +744,12 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             //添加库存日志
             this.addLog(wms,engPackingOrder);
         }
-        //批量新增库存明细
-        ResponseEntity responseEntity =innerFeignApi.insertList(list);
-        if(responseEntity.getCode()!=0){
-            throw new BizErrorException("库存添加失败");
+        if(list.size()>0){
+            //批量新增库存明细
+            ResponseEntity responseEntity =innerFeignApi.insertList(list);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException("库存添加失败");
+            }
         }
         return 1;
     }

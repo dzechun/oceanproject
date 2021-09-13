@@ -16,6 +16,8 @@ public interface EngPackingOrderMapper extends MyMapper<EngPackingOrder> {
 
     Long findStorage(Map<String ,Object> map);
 
+    Long findPutStorage(Map<String,Object> map);
+
     Long findInventoryStatus(Map<String ,Object> map);
 
     Long findMaterialOwner(Map<String,Object> map);

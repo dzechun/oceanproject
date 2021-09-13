@@ -4,7 +4,9 @@ import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
+import com.fantechs.common.base.utils.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -71,4 +73,12 @@ public interface EngPackingOrderTakeService {
      * @return
      */
     int onlyCancel(EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto);
+
+    /**
+     * 上架数量反写
+     * @param id
+     * @param qty
+     * @return
+     */
+    int writeQty(Long id, BigDecimal qty);
 }
