@@ -57,4 +57,18 @@ public interface EngPackingOrderTakeService {
      * @return
      */
     int pdaCreateInnerJobOrder(List<EngPackingOrderSummaryDetDto> engPackingOrderSummaryDetDtos);
+
+    /**
+     * 单一取消
+     * @param ids
+     * @return
+     */
+    int cancelAll(List<Long> ids);
+
+    /**
+     * 整单取消
+     * @param engPackingOrderSummaryDetDto
+     * @return
+     */
+    int onlyCancel(EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto);
 }

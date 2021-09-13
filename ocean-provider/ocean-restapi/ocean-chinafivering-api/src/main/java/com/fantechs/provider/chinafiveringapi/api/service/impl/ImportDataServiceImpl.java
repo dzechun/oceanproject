@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkingArea;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
@@ -177,6 +178,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                 wmsOutDeliveryOrder.setMaterialOwnerId(153L);
                 wmsOutDeliveryOrder.setOrderDate(new Date());
                 wmsOutDeliveryOrder.setStatus((byte) 1);
+                wmsOutDeliveryOrder.setOption1("1");//领料类型
 
                 Long customerId=0L;
                 List<WmsOutDeliveryOrderTempDto> listDto=result.get(key);
@@ -184,14 +186,14 @@ public class ImportDataServiceImpl implements ImportDataService {
                 for (WmsOutDeliveryOrderTempDto tempDto : listDto) {
                     //表头 领料单号
                     wmsOutDeliveryOrder.setDeliveryOrderCode(tempDto.getDeliveryOrderCode());
-                    // 表头 领料时间
-                    wmsOutDeliveryOrder.setOption1(tempDto.getOutMaterialTime());
-                    // 表头 领料截止时间
-                    wmsOutDeliveryOrder.setOption2(tempDto.getOutMaterialTimeEnd());
                     // 表头 项目ID
                     wmsOutDeliveryOrder.setOption3(tempDto.getProjectId());
                     // 表头 领料单审批状态代码
                     wmsOutDeliveryOrder.setOption4(tempDto.getConfirmCode());
+                    // 表头 领料时间
+                    wmsOutDeliveryOrder.setOption5(tempDto.getOutMaterialTime());
+                    // 表头 领料截止时间
+                    wmsOutDeliveryOrder.setOption6(tempDto.getOutMaterialTimeEnd());
 
                     if(customerId==0L) {
                         SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
@@ -248,6 +250,27 @@ public class ImportDataServiceImpl implements ImportDataService {
                         detDto.setPackingQty(BigDecimal.ZERO);
                     else
                         detDto.setPackingQty(new BigDecimal(tempDto.getDispatchQty()));
+
+                    //拣货数量默认0
+                    detDto.setPickingQty(new BigDecimal(0));
+                    //包装单位 packing_unit_name option2
+                    detDto.setPackingUnitName(baseList.getData().get(0).getOption2());
+                    //发货库位和发货仓库
+                    SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
+                    searchBaseStorage.setStorageCode("default");
+                    searchBaseStorage.setOrgId(1004L);
+                    ResponseEntity<List<BaseStorage>> listStorage=baseFeignApi.findList(searchBaseStorage);
+                    if(StringUtils.isNotEmpty(listStorage.getData())){
+                        detDto.setStorageId(listStorage.getData().get(0).getStorageId());
+                        detDto.setWarehouseId(listStorage.getData().get(0).getWarehouseId());
+                    }
+                    //拣货库位 拣货库位为“DHGUID”的库位 库位信息option1栏位存DHGUID
+                    searchBaseStorage.setStorageCode("");
+                    searchBaseStorage.setOption1(tempDto.getOption5());
+                    listStorage=baseFeignApi.findList(searchBaseStorage);
+                    if(StringUtils.isNotEmpty(listStorage.getData())){
+                        detDto.setPickingStorageId(listStorage.getData().get(0).getStorageId());
+                    }
 
                     wmsOutDeliveryOrderDetList.add(detDto);
                 }

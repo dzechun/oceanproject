@@ -38,7 +38,7 @@ public class EngPackingOrderTakeController {
     @Resource
     private EngPackingOrderSummaryDetService engPackingOrderSummaryDetService;
 
-    @ApiOperation("列表")
+    @ApiOperation("包装清单")
     @PostMapping("/findList")
     public ResponseEntity<List<EngPackingOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEngPackingOrder searchEngPackingOrder) {
         Page<Object> page = PageHelper.startPage(searchEngPackingOrder.getStartPage(),searchEngPackingOrder.getPageSize());
@@ -46,7 +46,7 @@ public class EngPackingOrderTakeController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation("包装清单明细")
+    @ApiOperation("包装清单装箱明细")
     @PostMapping("/findListSummary")
     public ResponseEntity<List<EngPackingOrderSummaryDto>> findListSummary(@ApiParam(value = "查询对象")@RequestBody SearchEngPackingOrderSummary searchEngPackingOrderSummary) {
         Page<Object> page = PageHelper.startPage(searchEngPackingOrderSummary.getStartPage(),searchEngPackingOrderSummary.getPageSize());
@@ -54,7 +54,7 @@ public class EngPackingOrderTakeController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation("列表")
+    @ApiOperation("包装清单装箱货品")
     @PostMapping("/findListSummaryDet")
     public ResponseEntity<List<EngPackingOrderSummaryDetDto>> findListSummaryDet(@ApiParam(value = "查询对象")@RequestBody SearchEngPackingOrderSummaryDet searchEngPackingOrderSummaryDet) {
         Page<Object> page = PageHelper.startPage(searchEngPackingOrderSummaryDet.getStartPage(),searchEngPackingOrderSummaryDet.getPageSize());
@@ -64,7 +64,7 @@ public class EngPackingOrderTakeController {
 
     @ApiOperation("登记")
     @PostMapping("/register")
-    public ResponseEntity register(@ApiParam("id")@RequestParam List<Long> ids){
+    public ResponseEntity register(@ApiParam("id")@RequestBody List<Long> ids){
         return ControllerUtil.returnCRUD(engPackingOrderTakeService.register(ids));
     }
 
@@ -90,5 +90,17 @@ public class EngPackingOrderTakeController {
     @PostMapping("/createInnerJobOrder")
     public ResponseEntity createInnerJobOrder(@RequestBody List<Long> ids){
         return ControllerUtil.returnCRUD(engPackingOrderTakeService.createInnerJobOrder(ids));
+    }
+
+    @ApiOperation("整单取消")
+    @PostMapping("/cancelAll")
+    public ResponseEntity cancelAll(@RequestBody List<Long> ids){
+        return ControllerUtil.returnCRUD(engPackingOrderTakeService.cancelAll(ids));
+    }
+
+    @ApiOperation("单一取消")
+    @PostMapping("/onlyCancel")
+    public ResponseEntity onlyCancel(@RequestBody EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto){
+        return ControllerUtil.returnCRUD(engPackingOrderTakeService.onlyCancel(engPackingOrderSummaryDetDto));
     }
 }

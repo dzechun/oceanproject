@@ -141,6 +141,22 @@ public class OmPurchaseOrderDet extends ValidGroup implements Serializable {
     private BigDecimal iqcTemporaryQty;
 
     /**
+     * 送货地址
+     */
+    @ApiModelProperty(name="deliveryAddress",value = "送货地址")
+    @Excel(name = "送货地址", height = 20, width = 30,orderNum="")
+    @Column(name = "delivery_address")
+    private String deliveryAddress;
+
+    /**
+     * 物料状态(1、装车2、发货3、已收货)
+     */
+    @ApiModelProperty(name="materialStatus",value = "物料状态(1、装车2、发货3、已收货)")
+    @Excel(name = "物料状态(1、装车2、发货3、已收货)", height = 20, width = 30,orderNum="")
+    @Column(name = "material_status")
+    private Byte materialStatus;
+
+    /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
