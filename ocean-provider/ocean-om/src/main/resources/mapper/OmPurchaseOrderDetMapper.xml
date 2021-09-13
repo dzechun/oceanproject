@@ -20,6 +20,8 @@
     <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty" />
     <result column="total_sales_return_qty" jdbcType="DECIMAL" property="totalSalesReturnQty" />
     <result column="iqc_temporary_qty" jdbcType="DECIMAL" property="iqcTemporaryQty" />
+    <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress" />
+    <result column="material_status" jdbcType="TINYINT" property="materialStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -36,8 +38,8 @@
   <sql id="Base_Column_List">
     opod.purchase_order_det_id, opod.purchase_order_id, opod.project_code, opod.material_id, opod.unit_name,opod.order_qty,
     opod.actual_qty, opod.warehouse_id, opod.factory_id, opod.delivery_date, opod.unit_price, opod.material_total_price,
-    opod.total_receiving_qty, opod.total_sales_return_qty, opod.iqc_temporary_qty, opod.status, opod.remark,opod.org_id, opod.create_user_id,
-    opod.create_time, opod.modified_user_id, opod.modified_time,opod.is_delete, opod.option1, opod.option2, opod.option3
+    opod.total_receiving_qty, opod.total_sales_return_qty, opod.iqc_temporary_qty, opod.status, opod.delivery_address, opod.material_status,
+    opod.remark,opod.org_id, opod.create_user_id, opod.create_time, opod.modified_user_id, opod.modified_time,opod.is_delete, opod.option1, opod.option2, opod.option3
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmPurchaseOrderDetDto">
