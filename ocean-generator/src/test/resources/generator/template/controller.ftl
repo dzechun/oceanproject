@@ -69,7 +69,7 @@ public class ${modelNameUpperCamel}Controller {
     }
 
     @ApiOperation("列表(不分页)")
-    @PostMapping("/findList")
+    @PostMapping("/findAll")
     public ResponseEntity<List<${modelNameUpperCamel}Dto>> findAll(@ApiParam(value = "查询对象") @RequestBody Search${modelNameUpperCamel} search${modelNameUpperCamel}) {
         List<${modelNameUpperCamel}Dto> list = ${modelNameLowerCamel}Service.findList(ControllerUtil.dynamicConditionByEntity(search${modelNameUpperCamel}));
         return ControllerUtil.returnDataSuccess(list, list.size());
