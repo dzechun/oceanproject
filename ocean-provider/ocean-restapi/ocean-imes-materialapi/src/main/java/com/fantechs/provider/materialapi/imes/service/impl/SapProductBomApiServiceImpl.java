@@ -56,7 +56,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
         DTMESBOMQUERYRES res = out.siMESBOMQUERYOut(req);
         List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
         if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
-
+        Long orgId = orgIdList.get(0).getOrganizationId();
         if(StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())){
             if(StringUtils.isEmpty(res.getBOM())) throw new BizErrorException("请求结果为空");
 
@@ -72,13 +72,13 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
             }
 
             //保存bom表以及det表
-            List<BaseMaterial> baseMaterial1 = baseUtils.getBaseMaterial(searchSapProductBomApi.getMaterialCode());
+            List<BaseMaterial> baseMaterial1 = baseUtils.getBaseMaterial(searchSapProductBomApi.getMaterialCode(),orgId);
             if(StringUtils.isEmpty(baseMaterial1)) throw new BizErrorException("未查询到对应物料编码");
 
             BaseProductBom parentBomData =  saveBaseProductBom(baseMaterial1.get(0),parentList.get(0).getAENNR());
             BaseProductBom bomData =  null;
             for(String code : materialCodes){
-                List<BaseMaterial> baseMaterials = baseUtils.getBaseMaterial(code);
+                List<BaseMaterial> baseMaterials = baseUtils.getBaseMaterial(code,orgId);
                 if(StringUtils.isEmpty(baseMaterials)) throw new BizErrorException("未查询到对应物料编码");
                  if(searchSapProductBomApi.getMaterialCode().equals(code)){
                      bomData = parentBomData;
@@ -98,7 +98,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                     if(bom.getMATNR().equals(code)) {
                         BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
                         baseProductBomDet.setProductBomId(bomData.getProductBomId());
-                        List<BaseMaterial> bomMaterial = baseUtils.getBaseMaterial(bom.getIDNRK());
+                        List<BaseMaterial> bomMaterial = baseUtils.getBaseMaterial(bom.getIDNRK(),orgId);
                         if(StringUtils.isEmpty(bomMaterial)) throw new BizErrorException("未查询到对应物料编码");
                         baseProductBomDet.setMaterialId(bomMaterial.get(0).getMaterialId());
                         baseProductBomDet.setUsageQty(new BigDecimal(bom.getMENGE().trim()));
@@ -107,14 +107,15 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                         baseProductBomDet.setIfHaveLowerLevel((byte)0);
                         baseProductBomDet.setIsDelete((byte)1);
                         baseProductBomDet.setStatus((byte)1);
+                        baseProductBomDet.setOrgId(orgId);
                         baseFeignApi.addOrUpdate(baseProductBomDet);
                     }
                 }
             }
-            logsUtils.addlog((byte)1,(byte)1,orgIdList.get(0).getOrganizationId(),null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,orgIdList.get(0).getOrganizationId(),res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
             throw new BizErrorException("接口请求失败");
         }
     }

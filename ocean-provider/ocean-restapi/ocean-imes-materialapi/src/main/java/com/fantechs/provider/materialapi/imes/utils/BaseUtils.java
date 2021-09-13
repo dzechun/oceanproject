@@ -37,9 +37,10 @@ public class BaseUtils {
     /**
      * 获取物料信息
      */
-    public List<BaseMaterial> getBaseMaterial(String materialCode){
+    public List<BaseMaterial> getBaseMaterial(String materialCode,Long orgId){
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
         searchBaseMaterial.setMaterialCode(removeZero(materialCode));
+        searchBaseMaterial.setOrganizationId(orgId);
         ResponseEntity<List<BaseMaterial>> parentMaterialList = baseFeignApi.findList(searchBaseMaterial);
         return parentMaterialList.getData();
     }
