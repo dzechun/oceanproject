@@ -733,13 +733,13 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         for (WmsInnerInventory innerInventory : wmsInnerInventory) {
             if(innerInventory.getPackingQty().compareTo(acuQty)==-1){
+                if(bigDecimalMap.containsKey(innerInventory.getInventoryId())){
+                    bigDecimalMap.put(innerInventory.getInventoryId(), bigDecimalMap.get(innerInventory.getInventoryId()).add(innerInventory.getPackingQty()));
+                }else{
+                    bigDecimalMap.put(innerInventory.getInventoryId(),innerInventory.getPackingQty());
+                }
                 acuQty = acuQty.subtract(innerInventory.getPackingQty());
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(innerInventory.getPackingQty()));
-                if(bigDecimalMap.containsKey(innerInventory.getInventoryId())){
-                    bigDecimalMap.put(innerInventory.getInventoryId(), bigDecimalMap.get(innerInventory.getInventoryId()).add(acuQty));
-                }else{
-                    bigDecimalMap.put(innerInventory.getInventoryId(),acuQty);
-                }
             }else{
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(acuQty));
                 if(bigDecimalMap.containsKey(innerInventory.getInventoryId())){
