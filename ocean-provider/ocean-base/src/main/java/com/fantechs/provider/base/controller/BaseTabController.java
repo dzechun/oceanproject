@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -70,8 +71,8 @@ public class BaseTabController {
 
     @ApiOperation("页签信息列表")
     @PostMapping("/getAll")
-    public ResponseEntity<List<BaseTabDto>> getAll(@ApiParam(value = "查询对象")@RequestBody SearchBaseTab searchBaseTab) {
-        List<BaseTabDto> list = baseTabService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseTab));
+    public ResponseEntity<List<BaseTabDto>> getAll() {
+        List<BaseTabDto> list = baseTabService.findList(new HashMap<>());
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
