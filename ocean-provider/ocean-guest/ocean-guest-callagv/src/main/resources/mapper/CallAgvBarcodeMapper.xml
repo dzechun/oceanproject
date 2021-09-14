@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.guest.callagv.mapper.CallAgvBarcodeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.callagv.CallAgvBarcode">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="barcode_id" jdbcType="BIGINT" property="barcodeId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="product_model" jdbcType="VARCHAR" property="productModel" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="qty" jdbcType="DECIMAL" property="qty" />
+    <result column="operator_user_name" jdbcType="VARCHAR" property="operatorUserName" />
+    <result column="process_name" jdbcType="VARCHAR" property="processName" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    cab.barcode_id, cab.barcode, cab.product_model, cab.batch_code, cab.qty, cab.operator_user_name, cab.process_name, cab.status, cab.remark,
+    cab.org_id, cab.create_user_id, cab.create_time, cab.modified_user_id, cab.modified_time, cab.is_delete, cab.option1, cab.option2, cab.option3
+  </sql>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.callagv.CallAgvVehicleReBarcodeDto">
+
+  </resultMap>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="Base_Column_List"></include>
+    from call_agv_barcode cab
+    <where>
+      <if test="barcode != null and barcode != ''">
+        and cab.barcode = #{barcode}
+      </if>
+      <if test="orgId != null">
+        and cab.org_id = #{orgId}
+      </if>
+    </where>
+  </select>
+</mapper>

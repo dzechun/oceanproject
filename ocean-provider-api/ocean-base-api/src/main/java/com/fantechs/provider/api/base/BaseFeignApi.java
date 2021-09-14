@@ -515,4 +515,16 @@ public interface BaseFeignApi {
     @ApiOperation("列表")
     @PostMapping("/baseFile/findList")
     ResponseEntity<List<BaseFile>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseFile searchBaseFile);
+
+    @ApiOperation("修改配送点")
+    @PostMapping("/baseStorageTaskPoint/update")
+    ResponseEntity updateBaseStorageTaskPoint(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=BaseStorageTaskPoint.update.class) BaseStorageTaskPoint baseStorageTaskPoint);
+
+    @ApiOperation("获取配送点详情")
+    @PostMapping("/baseStorageTaskPoint/detail")
+    ResponseEntity<BaseStorageTaskPoint> baseStorageTaskPointDetail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
+    @ApiOperation("配送点列表")
+    @PostMapping("/baseStorageTaskPoint/findList")
+    ResponseEntity<List<BaseStorageTaskPoint>> findBaseStorageTaskPointList(@ApiParam(value = "查询对象")@RequestBody SearchBaseStorageTaskPoint searchBaseStorageTaskPoint);
 }
