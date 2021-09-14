@@ -29,6 +29,8 @@
     <result column="badness_cause_desc" jdbcType="VARCHAR" property="badnessCauseDesc" />
     <result column="badness_duty_code" jdbcType="VARCHAR" property="badnessDutyCode" />
     <result column="badness_duty_desc" jdbcType="VARCHAR" property="badnessDutyDesc" />
+    <result column="replace_material_code" jdbcType="VARCHAR" property="replaceMaterialCode" />
+    <result column="replace_material_desc" jdbcType="VARCHAR" property="replaceMaterialDesc" />
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -56,10 +58,12 @@
   <select id="findList" resultMap="BaseResultMap" parameterType="map">
     select <include refid="BaseColumnList"/>,
     bbc.badness_cause_code,bbc.badness_cause_desc,bbd.badness_duty_code,bbd.badness_duty_desc,
+    bm.material_code as replace_material_code,bm.material_desc as replace_material_desc,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     FROM mes_sfc_repair_order_bad_phenotype_repair msrobpr
+    left join fantech_imes_v2.base_material bm ON msrobpr.replace_material_id = bm.material_id
     left join fantech_imes_v2.base_badness_cause bbc ON msrobpr.badness_cause_id = bbc.badness_cause_id
     left join fantech_imes_v2.base_badness_duty bbd ON msrobpr.badness_duty_id = bbd.badness_duty_id
     left join ocean_v2.sys_user u on msrobpr.create_user_id=u.user_id

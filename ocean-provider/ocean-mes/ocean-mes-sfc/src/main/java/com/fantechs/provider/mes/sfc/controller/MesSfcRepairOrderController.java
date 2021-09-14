@@ -63,6 +63,12 @@ public class MesSfcRepairOrderController {
         return  ControllerUtil.returnDataSuccess(mesSfcRepairOrder,StringUtils.isEmpty(mesSfcRepairOrder)?0:1);
     }
 
+    @ApiOperation(value = "打印",notes = "打印")
+    @PostMapping("/print")
+    public ResponseEntity print(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
+        return ControllerUtil.returnCRUD(mesSfcRepairOrderService.print(id));
+    }
+
     @ApiOperation("获取工单")
     @PostMapping("/getWorkOrder")
     public ResponseEntity<MesPmWorkOrderDto> getWorkOrder(@ApiParam(value = "序列号",required = true)@RequestParam String SNCode,

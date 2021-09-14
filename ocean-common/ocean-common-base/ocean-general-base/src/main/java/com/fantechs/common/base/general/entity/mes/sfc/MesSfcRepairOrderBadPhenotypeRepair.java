@@ -187,6 +187,22 @@ public class MesSfcRepairOrderBadPhenotypeRepair extends ValidGroup implements S
     @Excel(name = "不良责任描述", height = 20, width = 30,orderNum="11")
     private String badnessDutyDesc;
 
+    /**
+     * 替换零件料号
+     */
+    @Transient
+    @ApiModelProperty(name = "replaceMaterialCode",value = "替换零件料号")
+    @Excel(name = "替换零件料号", height = 20, width = 30,orderNum="11")
+    private String replaceMaterialCode;
+
+    /**
+     * 替换零件描述
+     */
+    @Transient
+    @ApiModelProperty(name = "replaceMaterialDesc",value = "替换零件描述")
+    @Excel(name = "替换零件描述", height = 20, width = 30,orderNum="11")
+    private String replaceMaterialDesc;
+
     private String option1;
 
     private String option2;
