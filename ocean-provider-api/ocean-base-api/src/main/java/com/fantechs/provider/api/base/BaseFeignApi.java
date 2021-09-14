@@ -5,7 +5,10 @@ import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -505,5 +508,11 @@ public interface BaseFeignApi {
     @PostMapping("/baseWorkingArea/findList")
     ResponseEntity<List<BaseWorkingAreaDto>> findWorkingAreaList(@ApiParam(value = "查询对象")@RequestBody SearchBaseWorkingArea searchBaseWorkingArea);
 
+    @ApiOperation(value = "批量新增文件",notes = "批量新增文件")
+    @PostMapping("/baseFile/batchAddFile")
+    ResponseEntity batchAddFile(@ApiParam(value = "必传：",required = true)@RequestBody List<BaseFile> list);
 
+    @ApiOperation("列表")
+    @PostMapping("/baseFile/findList")
+    ResponseEntity<List<BaseFile>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseFile searchBaseFile);
 }
