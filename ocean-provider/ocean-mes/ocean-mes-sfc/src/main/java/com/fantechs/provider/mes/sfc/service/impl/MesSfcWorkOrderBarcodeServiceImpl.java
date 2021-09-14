@@ -77,6 +77,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
+        SysUser sysUser = currentUser();
+        searchMesSfcWorkOrderBarcode.setOrgId(sysUser.getOrganizationId());
         return mesSfcWorkOrderBarcodeMapper.findList(searchMesSfcWorkOrderBarcode);
     }
 
@@ -95,7 +97,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("ReprintCode");
             List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            String isRoot = itemList.get(0).getParaValue();
+            String isRoot = itemList.get(0).getParaValue().trim();
             if(isRoot.equals("true")){
                 String hashPass = mesSfcWorkOrderBarcodeMapper.findSysUser(userCode);
                 if(StringUtils.isEmpty(hashPass)){

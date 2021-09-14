@@ -75,6 +75,9 @@
             <if test="barcode != null and barcode != ''">
                 and mswob.barcode like CONCAT('%',#{barcode},'%')
             </if>
+        <if test="orgId!=null and orgId!=''">
+            and mswob.org_id =#{orgId}
+        </if>
         </where>
 order by mswob.create_time desc
     </select>
