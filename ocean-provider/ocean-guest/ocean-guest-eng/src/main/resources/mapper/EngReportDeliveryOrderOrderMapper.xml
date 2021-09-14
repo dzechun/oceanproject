@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.guest.eng.mapper.EngReportDeliveryOrderOrderMapper">
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.restapi.EngReportDeliveryOrderOrderDto">
+    <!--
+      WARNING - @mbg.generated com.fantechs.common.base.general.entity.eng.EngContractQtyOrder
+    -->
+    <id column="delivery_order_id" jdbcType="VARCHAR" property="deliveryOrderId" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option11" jdbcType="VARCHAR" property="option11" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+  </resultMap>
+
+
+  <select id="findDeliveryOrderOrder" parameterType="map" resultMap="BaseResultMapDto">
+    select
+    wodod.delivery_order_id,wodod.option2,wodod.option11,wodod.remark,
+    wodod.create_time,u.user_name as create_user_name
+    FROM wms_out_delivery_order wodo
+    left join ocean_v2.sys_user u on wodo.create_user_id=u.user_id
+    left join wms_out_delivery_order_det wodod on wodo.delivery_order_id= wodod.delivery_order_id
+    <where>
+      <if test="deliveryOrderId!=null and deliveryOrderId!=''">
+        and wodo.delivery_order_id = #{deliveryOrderId}
+      </if>
+    </where>
+
+  </select>
+</mapper>
