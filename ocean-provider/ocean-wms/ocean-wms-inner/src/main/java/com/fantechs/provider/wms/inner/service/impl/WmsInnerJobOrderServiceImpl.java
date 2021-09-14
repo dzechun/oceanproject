@@ -612,7 +612,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                                 wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDetDto);
                             }
                         }
-                    } else {
+                    }
+                    /*else {
                         if(wmsInnerJobOrder.getJobOrderId()==9){
                             //收货作业反写
                             ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),wmsInnerJobOrderDet.getDistributionQty());
@@ -629,7 +630,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                                 throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
                             }
                         }
-                    }
+                    }*/
                 }
             }
             BigDecimal resultQty = wmsInnerJobOrderDets.stream()
@@ -841,7 +842,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
             }
 
-            if (wmsInnerJobOrder.getJobOrderType() != (byte) 2 && wmsInnerJobOrder.getJobOrderId()!=9) {
+            /*if (wmsInnerJobOrder.getJobOrderType() != (byte) 2 && wmsInnerJobOrder.getJobOrderId()!=9) {
                 //反写完工入库单
                 ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
                         .putawayQty(wmsInnerJobOrderDetDto.getActualQty())
@@ -856,7 +857,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                 }
-            }
+            }*/
         }
         return num;
     }
