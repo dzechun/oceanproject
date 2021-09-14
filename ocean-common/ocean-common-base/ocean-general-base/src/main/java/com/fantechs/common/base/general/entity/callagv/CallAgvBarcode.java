@@ -44,6 +44,14 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
     private String productModel;
 
     /**
+     * 批次
+     */
+    @ApiModelProperty(name="batch",value = "批次")
+    @Excel(name = "批次", height = 20, width = 30,orderNum="")
+    @Column(name = "batch")
+    private String batch;
+
+    /**
      * 批号
      */
     @ApiModelProperty(name="batchCode",value = "批号")

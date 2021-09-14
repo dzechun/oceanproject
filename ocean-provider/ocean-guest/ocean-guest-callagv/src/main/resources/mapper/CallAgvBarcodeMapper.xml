@@ -8,6 +8,7 @@
     <id column="barcode_id" jdbcType="BIGINT" property="barcodeId" />
     <result column="barcode" jdbcType="VARCHAR" property="barcode" />
     <result column="product_model" jdbcType="VARCHAR" property="productModel" />
+    <result column="batch" jdbcType="VARCHAR" property="batch" />
     <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
     <result column="qty" jdbcType="DECIMAL" property="qty" />
     <result column="operator_user_name" jdbcType="VARCHAR" property="operatorUserName" />
@@ -26,7 +27,7 @@
   </resultMap>
   
   <sql id="Base_Column_List">
-    cab.barcode_id, cab.barcode, cab.product_model, cab.batch_code, cab.qty, cab.operator_user_name, cab.process_name, cab.status, cab.remark,
+    cab.barcode_id, cab.barcode, cab.product_model, cab.batch, cab.batch_code, cab.qty, cab.operator_user_name, cab.process_name, cab.status, cab.remark,
     cab.org_id, cab.create_user_id, cab.create_time, cab.modified_user_id, cab.modified_time, cab.is_delete, cab.option1, cab.option2, cab.option3
   </sql>
 

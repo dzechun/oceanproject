@@ -41,7 +41,7 @@
     left join tem_vehicle tv on cavrb.vehicle_id = tv.vehicle_id
     left join base_storage_task_point bstp on tv.storage_task_point_id = bstp.storage_task_point_id
     left join base_storage bs on bstp.storage_id = bs.storage_id
-    left join base_warehouse_area bwa bs.warehouse_area_id = bwa.warehouse_area_id
+    left join base_warehouse_area bwa on bs.warehouse_area_id = bwa.warehouse_area_id
     <where>
       <if test="barcodeId != null">
         and cavrb.barcode_id = #{barcodeId}
