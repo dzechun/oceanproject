@@ -57,6 +57,9 @@
         LEFT JOIN fantech_imes_v2.base_factory sf ON sf.factory_id = ws.factory_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON ws.org_id = bo.organization_id
         <where>
+            <if test="workShopId != null and workShopId != ''">
+                and ws.work_shop_id = #{workShopId}
+            </if>
             <if test="workShopCode != null and workShopCode != '' and codeQueryMark != 1">
                 and ws.work_shop_code like CONCAT('%', #{workShopCode}, '%')
             </if>

@@ -14,6 +14,10 @@ public class SearchBaseWorkShop extends BaseQuery implements Serializable {
 
 
     private static final long serialVersionUID = 5222107074815036921L;
+
+    @ApiModelProperty(name = "workShopId",value = "车间id")
+    private Long workShopId;
+
     /**
      * 车间编码
      */
