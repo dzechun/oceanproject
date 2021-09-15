@@ -95,6 +95,12 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
         omPurchaseOrder.setIsDelete((byte) 1);
         if (StringUtils.isNotEmpty(omPurchaseOrder.getPurchaseOrderId())) {
             omPurchaseOrderMapper.updateByPrimaryKeySelective(omPurchaseOrder);
+
+            //删除该采购订单下的所有详情表
+            Example detExample = new Example(OmPurchaseOrderDet.class);
+            Example.Criteria detCriteria = detExample.createCriteria();
+            detCriteria.andEqualTo("purchaseOrderId", omPurchaseOrder.getPurchaseOrderId());
+            omPurchaseOrderDetMapper.deleteByExample(detExample);
         } else {
             omPurchaseOrderMapper.insertUseGeneratedKeys(omPurchaseOrder);
         }

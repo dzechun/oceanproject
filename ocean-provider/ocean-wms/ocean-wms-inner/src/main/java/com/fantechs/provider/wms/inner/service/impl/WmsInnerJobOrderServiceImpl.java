@@ -17,17 +17,18 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.*;
+import com.fantechs.common.base.utils.CodeUtils;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
@@ -661,6 +662,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             //更改表头为作业完成状态
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(innerJobOrder);
+
+            //返写移位接口（五环）
+            if("2".equals(innerJobOrder.getJobOrderType().toString())){
+                engFeignApi.writePackingLists(innerJobOrder);
+            }
+
         }
         return num;
     }
@@ -832,6 +839,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
                 ws.setWorkEndtTime(new Date());
                 num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
+                //返写移位接口（五环）
+                if("2".equals(ws.getJobOrderType().toString())){
+                    engFeignApi.writePackingLists(ws);
+                }
+
             } else {
                 WmsInnerJobOrder ws = wmsInPutawayOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDto.getJobOrderId());
                 ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
@@ -870,6 +882,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
 
         }
+        //返写领料出库单
+
         return num;
     }
 

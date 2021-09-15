@@ -6,11 +6,15 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
-import com.fantechs.common.base.general.entity.wms.inner.*;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderDetMapper;
@@ -41,6 +45,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     private WmsInnerInventoryMapper wmsInnerInventoryMapper;
     @Resource
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
+    @Resource
+    private EngFeignApi engFeignApi;
 
     @Override
     public List<WmsInnerStockOrderDto> findList(Map<String, Object> map) {
@@ -399,6 +405,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             wmsInventoryVerification.setModifiedTime(new Date());
             wmsInventoryVerification.setModifiedUserId(sysUser.getUserId());
             num +=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
+
+            //返写盘点数据（五环）
+            engFeignApi.writePackingLists(wmsInventoryVerificationDets,wmsInventoryVerification);
         }
         return num;
     }
@@ -438,6 +447,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
 
             wmsInventoryVerification.setOrderStatus((byte)6);
             num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
+
+            //返写盘点数据（五环）
+            engFeignApi.writePackingLists(wmsInventoryVerificationDets,wmsInventoryVerification);
         }
         return num;
     }

@@ -26,6 +26,4 @@ public interface CallAgvVehicleReBarcodeService extends IService<CallAgvVehicleR
     int vehicleBarcodeUnbound(RequestBarcodeUnboundDTO requestBarcodeUnboundDTO);
 
     List<CallAgvVehicleBarcodeDTO> findCallAgvVehicleList(Map<String, Object> map);
-
-    int CallAgvVehicle(Long vehicleId, Long warehouseAreaId) throws Exception;
 }

@@ -4,11 +4,7 @@ import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.*;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.StringUtils;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.Map;
@@ -100,4 +95,8 @@ public interface InnerFeignApi {
     @ApiOperation(value = "收货作业取消收货",notes = "收货作业取消收货")
     @PostMapping("/wmsInnerJobOrder/cancelJobOrder")
     ResponseEntity cancelJobOrder(@RequestBody List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels);
+
+    @ApiOperation("列表")
+    @PostMapping("/wmsInventoryVerification/findList")
+    ResponseEntity<List<WmsInnerStockOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerStockOrder searchWmsInnerStockOrder);
 }

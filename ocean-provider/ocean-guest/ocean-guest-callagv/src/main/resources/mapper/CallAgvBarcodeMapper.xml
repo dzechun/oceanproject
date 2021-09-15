@@ -31,7 +31,7 @@
     cab.org_id, cab.create_user_id, cab.create_time, cab.modified_user_id, cab.modified_time, cab.is_delete, cab.option1, cab.option2, cab.option3
   </sql>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.callagv.CallAgvVehicleReBarcodeDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.callagv.CallAgvBarcodeDto">
 
   </resultMap>
 

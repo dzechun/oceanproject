@@ -45,7 +45,6 @@ public class BaseShipmentEnterprise extends ValidGroup implements Serializable {
     @ApiModelProperty(name="shipmentEnterpriseName",value = "物流商名称")
     @Excel(name = "物流商名称", height = 20, width = 30,orderNum="2")
     @Column(name = "shipment_enterprise_name")
-    @NotBlank(message = "物流商名称不能为空")
     private String shipmentEnterpriseName;
 
     /**
@@ -62,7 +61,6 @@ public class BaseShipmentEnterprise extends ValidGroup implements Serializable {
     @ApiModelProperty(name="transportCategoryId",value = "运输类型ID")
     @Excel(name = "运输类型ID", height = 20, width = 30,orderNum="4")
     @Column(name = "transport_category_id")
-    @NotNull(message = "运输类型Id不能为空")
     private Byte transportCategoryId;
 
     /**
