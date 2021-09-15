@@ -77,7 +77,7 @@ public class EngReportStockOrderServiceImpl  implements EngReportStockOrderServi
             if(StringUtils.isEmpty(contractQtyOrders)) throw new BizErrorException("未查询到盘点单中对应的合同量单");
 
             EngReportStockOrderDto dto = new EngReportStockOrderDto();
-            dto.setStockOrderId(wmsInnerStockOrder.getStockOrderId());
+            dto.setStockOrderDetId(det.getStockOrderDetId());
             dto.setOption1(contractQtyOrders.get(0).getOption1());
             dto.setOption2(contractQtyOrders.get(0).getOption2());
             dto.setContractCode(contractQtyOrders.get(0).getContractCode());
@@ -96,7 +96,7 @@ public class EngReportStockOrderServiceImpl  implements EngReportStockOrderServi
         }
 
         jsonVoiceArray= JsonUtils.objectToJson(engReportStockOrderDtos);
-        String s0=jsonVoiceArray.replaceAll("stockOrderId","WMSKey");
+        String s0=jsonVoiceArray.replaceAll("stockOrderDetId","WMSKey");
         String s1=s0.replaceAll("option1","PPGUID");
         String s2=s1.replaceAll("option2","PSGUID");
         String s3=s2.replaceAll("contractCode","合同号");
@@ -112,7 +112,7 @@ public class EngReportStockOrderServiceImpl  implements EngReportStockOrderServi
         String s13=s12.replaceAll("createUserName","登记人");
 
 
-        ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeMakeInventoryDetails(s12,projectID);
+        ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeMakeInventoryDetails(s13,projectID);
 
         return responseEntityResult.getData();
     }

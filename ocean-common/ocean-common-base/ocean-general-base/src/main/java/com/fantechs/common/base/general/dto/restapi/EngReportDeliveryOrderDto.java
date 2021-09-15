@@ -8,12 +8,12 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 @Data
-public class EngReportDeliveryOrderOrderDto implements Serializable {
+public class EngReportDeliveryOrderDto implements Serializable {
 
     @Id
-    @ApiModelProperty(name="deliveryOrderId",value = "装箱单ID")
-    @Column(name = "delivery_order_id")
-    private String deliveryOrderId;
+    @ApiModelProperty(name="deliveryOrderDetId",value = "装箱单ID")
+    @Column(name = "delivery_order_det_id")
+    private String deliveryOrderDetId;
 
     @ApiModelProperty(name="option2",value = "option2")
     @Column(name = "option2")

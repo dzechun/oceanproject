@@ -2,6 +2,7 @@ package com.fantechs.provider.api.guest.eng;
 
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
@@ -40,4 +41,8 @@ public interface EngFeignApi {
     @ApiOperation("返写领料出库")
     @PostMapping("/reportDeliveryOrderOrder/writeQty")
     ResponseEntity<String> writePackingLists(WmsOutDeliveryOrder wmsOutDeliveryOrder);
+
+    @ApiOperation("返写移位")
+    @PostMapping("/reportInnerJobOrder/writeQty")
+    ResponseEntity<String> writePackingLists(WmsInnerJobOrder wmsInnerJobOrder);
 }

@@ -3,15 +3,13 @@ package com.fantechs.common.base.general.dto.restapi;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import java.io.Serializable;
 
 @Data
 public class EngReportStockOrderDto implements Serializable {
 
-    @ApiModelProperty(name="stockOrderId",value = "盘点单ID")
-    private Long stockOrderId;
+    @ApiModelProperty(name="stockOrderDetId",value = "盘点单ID")
+    private Long stockOrderDetId;
 
     @ApiModelProperty(name="option1",value = "option1")
     private String option1;

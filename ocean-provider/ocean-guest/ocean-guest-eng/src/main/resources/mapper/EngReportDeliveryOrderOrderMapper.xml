@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.guest.eng.mapper.EngReportDeliveryOrderOrderMapper">
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.restapi.EngReportDeliveryOrderOrderDto">
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.restapi.EngReportDeliveryOrderDto">
     <!--
       WARNING - @mbg.generated com.fantechs.common.base.general.entity.eng.EngContractQtyOrder
     -->
-    <id column="delivery_order_id" jdbcType="VARCHAR" property="deliveryOrderId" />
+    <id column="delivery_order_det_id" jdbcType="VARCHAR" property="deliveryOrderDetId" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option11" jdbcType="VARCHAR" property="option11" />

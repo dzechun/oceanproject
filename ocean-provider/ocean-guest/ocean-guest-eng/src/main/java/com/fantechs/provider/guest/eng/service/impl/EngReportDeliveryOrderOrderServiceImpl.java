@@ -1,6 +1,6 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
-import com.fantechs.common.base.general.dto.restapi.EngReportDeliveryOrderOrderDto;
+import com.fantechs.common.base.general.dto.restapi.EngReportDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
@@ -33,15 +33,15 @@ public class EngReportDeliveryOrderOrderServiceImpl implements EngReportDelivery
         String projectID="3919";
         Map<String, Object> map=new HashMap<>();
         map.put("deliveryOrderId",wmsOutDeliveryOrder.getDeliveryOrderId());
-        List<EngReportDeliveryOrderOrderDto> deliveryOrderOrder = engReportDeliveryOrderOrderMapper.findDeliveryOrderOrder(map);
+        List<EngReportDeliveryOrderDto> deliveryOrderOrder = engReportDeliveryOrderOrderMapper.findDeliveryOrderOrder(map);
 
 
         jsonVoiceArray= JsonUtils.objectToJson(deliveryOrderOrder);
-        String s0=jsonVoiceArray.replaceAll("stockOrderId","WMSKey");
+        String s0=jsonVoiceArray.replaceAll("deliveryOrderDetId","WMSKey");
         String s1=s0.replaceAll("option1","ISGUID");
         String s2=s1.replaceAll("option2","IDGUID");
-        String s3=s2.replaceAll("contractCode","实发量");
-        String s4=s3.replaceAll("purchaseReqOrderCode","发料备注");
+        String s3=s2.replaceAll("option11","实发量");
+        String s4=s3.replaceAll("remark","发料备注");
         String s5=s4.replaceAll("createTime","登记时间");
         String s6=s5.replaceAll("createUserName","登记人");
 
