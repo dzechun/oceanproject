@@ -34,7 +34,7 @@ public class TemVehicle extends ValidGroup implements Serializable {
      * 周转工具编码
      */
     @ApiModelProperty(name="vehicleCode",value = "周转工具编码")
-    @Excel(name = "周转工具编码", height = 20, width = 30,orderNum="1")
+    @Excel(name = "周转工具编码(必填)", height = 20, width = 30,orderNum="1")
     @Column(name = "vehicle_code")
     private String vehicleCode;
 
@@ -42,7 +42,7 @@ public class TemVehicle extends ValidGroup implements Serializable {
      * 周转工具名称
      */
     @ApiModelProperty(name="vehicleName",value = "周转工具名称")
-    @Excel(name = "周转工具名称", height = 20, width = 30,orderNum="2")
+    @Excel(name = "周转工具名称(必填)", height = 20, width = 30,orderNum="2")
     @Column(name = "vehicle_name")
     private String vehicleName;
 
@@ -50,7 +50,7 @@ public class TemVehicle extends ValidGroup implements Serializable {
      * 标准装载容量
      */
     @ApiModelProperty(name="standardCapacity",value = "标准装载容量")
-    @Excel(name = "标准装载容量", height = 20, width = 30,orderNum="4")
+    @Excel(name = "标准装载容量(必填)", height = 20, width = 30,orderNum="4")
     @Column(name = "standard_capacity")
     private BigDecimal standardCapacity;
 
@@ -58,7 +58,7 @@ public class TemVehicle extends ValidGroup implements Serializable {
      * AGV任务模板
      */
     @ApiModelProperty(name="agvTaskTemplate",value = "AGV任务模板")
-    @Excel(name = "AGV任务模板", height = 20, width = 30,orderNum="5")
+    @Excel(name = "AGV任务模板(必填)", height = 20, width = 30,orderNum="5")
     @Column(name = "agv_task_template")
     private String agvTaskTemplate;
 
@@ -87,6 +87,7 @@ public class TemVehicle extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30,orderNum = "10")
     private String remark;
 
     /**

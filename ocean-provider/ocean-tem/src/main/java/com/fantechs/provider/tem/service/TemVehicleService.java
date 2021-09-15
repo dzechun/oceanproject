@@ -1,6 +1,7 @@
 package com.fantechs.provider.tem.service;
 
 import com.fantechs.common.base.general.dto.tem.TemVehicleDto;
+import com.fantechs.common.base.general.dto.tem.TemVehicleImport;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.general.entity.tem.history.TemHtVehicle;
 import com.fantechs.common.base.support.IService;
@@ -18,4 +19,6 @@ public interface TemVehicleService extends IService<TemVehicle> {
     int delete(String ids);
 
     int update(TemVehicle temVehicle);
+
+    Map<String, Object> importExcel(List<TemVehicleImport> temVehicleImportList);
 }
