@@ -64,6 +64,9 @@
       <if test="vehicleCode != null and vehicleCode != ''">
           and tv.vehicle_code = #{vehicleCode}
       </if>
+      <if test="taskPointType != null">
+        and bstp.task_point_type = #{taskPointType}
+      </if>
       <if test="warehouseAreaId != null">
         and bwa.warehouse_area_id = #{warehouseAreaId}
       </if>

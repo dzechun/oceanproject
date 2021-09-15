@@ -65,7 +65,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     @LcnTransaction
     public int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -121,10 +121,15 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     }
 
     @Override
+    @Transactional
+    @LcnTransaction
     public String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Integer type) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<String> positionCodeList = new LinkedList<>();
         TemVehicle temVehicle = temVehicleFeignApi.detail(vehicleId).getData();
+        if (StringUtils.isEmpty(temVehicle.getAgvTaskTemplate())) {
+            throw new Exception("请先维护该货架对应的AGV任务模板");
+        }
         if (type == 2 && temVehicle.getVehicleStatus() == 1) {
             throw new Exception("空货架不能进行叫料");
         }
@@ -187,7 +192,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             } else {
                 message = "空货架返回";
             }
-            taskCode = genAgvSchedulingTask("ZT001", positionCodeList);
+            taskCode = genAgvSchedulingTask(temVehicle.getAgvTaskTemplate(), positionCodeList);
             log.info("==========启动agv执行" + message + "作业任务==============\r\n");
             baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
             baseStorageTaskPoint.setModifiedUserId(user.getUserId());
@@ -206,6 +211,8 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     }
 
     @Override
+    @Transactional
+    @LcnTransaction
     public int vehicleBarcodeUnbound(RequestBarcodeUnboundDTO requestBarcodeUnboundDTO) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         TemVehicle temVehicle = temVehicleFeignApi.detail(requestBarcodeUnboundDTO.getVehicleId()).getData();
@@ -241,6 +248,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     @Override
     public List<CallAgvVehicleBarcodeDTO> findCallAgvVehicleList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("taskPointType", 2);
         map.put("orgId", user.getOrganizationId());
         map.put("groupByVehicle", 1);
         List<CallAgvVehicleReBarcodeDto> callAgvVehicleReBarcodeDtos = callAgvVehicleReBarcodeMapper.findList(map);
@@ -258,20 +266,6 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         }
 
         return callAgvVehicleBarcodeDTOList;
-    }
-
-    @Override
-    public int CallAgvVehicle(Long vehicleId, Long warehouseAreaId) throws Exception {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        List<String> positionCodeList = new LinkedList<>();
-        TemVehicle temVehicle = temVehicleFeignApi.detail(vehicleId).getData();
-        if (temVehicle.getVehicleStatus() == 1) {
-            throw new Exception("空货架不能进行叫料");
-        }
-        BaseStorageTaskPoint baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(temVehicle.getStorageTaskPointId()).getData();
-        positionCodeList.add(baseStorageTaskPoint.getXyzCode());
-
-        return 1;
     }
 
     /**
