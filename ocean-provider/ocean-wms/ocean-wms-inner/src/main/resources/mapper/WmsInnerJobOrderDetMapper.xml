@@ -150,4 +150,7 @@
 LEFT JOIN wms_inner_job_order_re_mspp wi ON  wi.product_pallet_id = ms.product_pallet_id
 where wi.job_order_id = #{jobOrderId}
     </select>
+    <select id="findEngMaterial" resultType="java.lang.Long">
+        select material_id FROM eng_packing_order_summary_det where packing_order_summary_det_id=#{id}
+    </select>
 </mapper>

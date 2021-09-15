@@ -279,6 +279,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
                 baseSupplier.setModifiedUserId(currentUser.getUserId());
                 baseSupplier.setSupplierType(supplierType);
                 baseSupplier.setOrganizationId(currentUser.getOrganizationId());
+                baseSupplier.setStatus(StringUtils.isEmpty(baseSupplierImport.getStatus())?null:baseSupplierImport.getStatus().byteValue());
                 list.add(baseSupplier);
             }
             success = baseSupplierMapper.insertList(list);

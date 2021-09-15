@@ -401,8 +401,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             int count = list.stream().filter(li->li.getSummaryDetStatus()==3).collect(Collectors.toList()).size();
             if(list.stream().filter(li->li.getSummaryDetStatus()==1).collect(Collectors.toList()).size()==list.size()){
                 engPackingOrderSummary.setSummaryStatus((byte)1);
-            }
-            if(count<list.size()){
+            }else if(count<list.size()){
                 //收货中
                 engPackingOrderSummary.setSummaryStatus((byte)2);
             }else  if(count==list.size()){
@@ -415,8 +414,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             count = eng.stream().filter(li->li.getSummaryStatus()==3).collect(Collectors.toList()).size();
             if(eng.stream().filter(li->li.getSummaryStatus()==1).collect(Collectors.toList()).size()==eng.size()){
                 engPackingOrder.setOrderStatus((byte)2);
-            }
-            if(count<eng.size()){
+            }else if(count<eng.size()){
                 //收货中
                 engPackingOrder.setOrderStatus((byte)3);
             }else if(count==eng.size()){
@@ -469,6 +467,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         if(StringUtils.isEmpty(inventoryStatus)){
             throw new BizErrorException("获取货主信息失败");
         }
+        List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
         for (Long id : ids) {
             EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(id);
 //            if(engPackingOrder.getOrderStatus()!=4){
@@ -476,7 +475,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
 //            }
             BigDecimal sumQty = BigDecimal.ZERO;
             List<EngPackingOrderSummaryDto> engPackingOrderSummaryDtos = engPackingOrderSummaryMapper.findList(ControllerUtil.dynamicCondition("packingOrderId", id));
-            List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
+
             if (engPackingOrder.getOrderStatus() == 3 || engPackingOrder.getOrderStatus() == 4) {
                 for (EngPackingOrderSummaryDto engPackingOrderSummaryDto : engPackingOrderSummaryDtos) {
                     //收货中及待上架才能进行创建上架单
