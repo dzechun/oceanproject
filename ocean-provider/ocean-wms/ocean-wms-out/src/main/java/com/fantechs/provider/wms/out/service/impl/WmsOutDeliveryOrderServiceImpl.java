@@ -5,11 +5,18 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryOrderImport;
+import com.fantechs.common.base.general.entity.basic.BaseConsignee;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -26,6 +33,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderDetMapper;
@@ -62,6 +70,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     private InnerFeignApi innerFeignApi;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -573,4 +583,166 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
         return i;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<WmsOutDeliveryOrderImport> wmsOutDeliveryOrderImports) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<WmsOutDeliveryOrder> list = new LinkedList<>();
+        LinkedList<WmsOutHtDeliveryOrder> htList = new LinkedList<>();
+        LinkedList<WmsOutDeliveryOrderImport> deliveryOrderImports = new LinkedList<>();
+        for (int i = 0; i < wmsOutDeliveryOrderImports.size(); i++) {
+            WmsOutDeliveryOrderImport wmsOutDeliveryOrderImport = wmsOutDeliveryOrderImports.get(i);
+
+            String materialOwnerCode = wmsOutDeliveryOrderImport.getMaterialOwnerCode();
+            Date orderDate = wmsOutDeliveryOrderImport.getOrderDate();
+            Date demandArriveDate = wmsOutDeliveryOrderImport.getDemandArriveDate();
+            Date planDespatchDate = wmsOutDeliveryOrderImport.getPlanDespatchDate();
+
+            if (StringUtils.isEmpty(
+                    materialOwnerCode,orderDate,demandArriveDate,planDespatchDate
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //货主信息是否存在
+            SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
+            searchBaseMaterialOwner.setMaterialOwnerCode(materialOwnerCode);
+            searchBaseMaterialOwner.setOrgId(user.getOrganizationId());
+            List<BaseMaterialOwnerDto> materialOwnerDtos = baseFeignApi.findList(searchBaseMaterialOwner).getData();
+            if (StringUtils.isEmpty(materialOwnerDtos)){
+                fail.add(i+4);
+                continue;
+            }
+            wmsOutDeliveryOrderImport.setMaterialOwnerId(materialOwnerDtos.get(0).getMaterialOwnerId());
+
+
+            //客户信息是否存在
+            String customerCode = wmsOutDeliveryOrderImport.getCustomerCode();
+            if(StringUtils.isNotEmpty(customerCode)){
+                SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
+                searchBaseSupplier.setSupplierCode(customerCode);
+                searchBaseSupplier.setOrgId(user.getOrganizationId());
+                searchBaseSupplier.setSupplierType((byte)2);
+                List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierList(searchBaseSupplier).getData();
+                if (StringUtils.isEmpty(baseSuppliers)){
+                    fail.add(i+4);
+                    continue;
+                }
+                wmsOutDeliveryOrderImport.setCustomerId(baseSuppliers.get(0).getSupplierId());
+            }
+
+
+            //收货人是否存在
+            String consigneeCode = wmsOutDeliveryOrderImport.getConsigneeCode();
+            if(StringUtils.isNotEmpty(consigneeCode)){
+                SearchBaseConsignee searchBaseConsignee = new SearchBaseConsignee();
+                searchBaseConsignee.setConsigneeCode(consigneeCode);
+                searchBaseConsignee.setOrgId(user.getOrganizationId());
+                List<BaseConsignee> baseConsignees = baseFeignApi.findList(searchBaseConsignee).getData();
+                if (StringUtils.isEmpty(baseConsignees)){
+                    fail.add(i+4);
+                    continue;
+                }
+                wmsOutDeliveryOrderImport.setConsignee(baseConsignees.get(0).getConsigneeName());
+                wmsOutDeliveryOrderImport.setLinkManName(baseConsignees.get(0).getLinkManName());
+                wmsOutDeliveryOrderImport.setLinkManPhone(baseConsignees.get(0).getLinkManPhone());
+                wmsOutDeliveryOrderImport.setFaxNumber(baseConsignees.get(0).getFaxNumber());
+                wmsOutDeliveryOrderImport.setEmailAddress(baseConsignees.get(0).getEmailAddress());
+                wmsOutDeliveryOrderImport.setDetailedAddress(baseConsignees.get(0).getAddress());
+            }
+
+
+            //---------明细-----------
+            //发货库位是否存在
+            String storageCode = wmsOutDeliveryOrderImport.getStorageCode();
+            if(StringUtils.isNotEmpty(storageCode)){
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setOrgId(user.getOrganizationId());
+                searchBaseStorage.setCodeQueryMark((byte)1);
+                searchBaseStorage.setStorageCode(storageCode);
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if (StringUtils.isEmpty(baseStorages)){
+                    fail.add(i+4);
+                    continue;
+                }
+                BaseStorage baseStorage = baseStorages.get(0);
+                if(baseStorage.getStorageType() != 3){
+                    fail.add(i+4);
+                    continue;
+                }
+                wmsOutDeliveryOrderImport.setStorageId(baseStorages.get(0).getStorageId());
+                wmsOutDeliveryOrderImport.setWarehouseId(baseStorages.get(0).getWarehouseId());
+            }
+
+            //物料编码
+            String materialCode = wmsOutDeliveryOrderImport.getMaterialCode();
+            if(StringUtils.isNotEmpty(materialCode)) {
+                SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+                searchBaseMaterial.setMaterialCode(materialCode);
+                searchBaseMaterial.setOrgId(user.getOrganizationId());
+                List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
+                if (StringUtils.isEmpty(baseMaterials)){
+                    fail.add(i+4);
+                    continue;
+                }
+                wmsOutDeliveryOrderImport.setMaterialId(baseMaterials.get(0).getMaterialId());
+            }
+
+
+            deliveryOrderImports.add(wmsOutDeliveryOrderImport);
+        }
+
+        if(StringUtils.isNotEmpty(deliveryOrderImports)){
+            //对合格数据进行分组
+            HashMap<String, List<WmsOutDeliveryOrderImport>> map = deliveryOrderImports.stream().collect(Collectors.groupingBy(WmsOutDeliveryOrderImport::getGroupCode, HashMap::new, Collectors.toList()));
+            Set<String> codeList = map.keySet();
+            for (String code : codeList) {
+                List<WmsOutDeliveryOrderImport> wmsOutDeliveryOrderImports1 = map.get(code);
+                WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
+                //新增父级数据
+                BeanUtils.copyProperties(wmsOutDeliveryOrderImports1.get(0), wmsOutDeliveryOrder);
+                wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("XSCK-"));
+                wmsOutDeliveryOrder.setCreateTime(new Date());
+                wmsOutDeliveryOrder.setCreateUserId(user.getUserId());
+                wmsOutDeliveryOrder.setModifiedUserId(user.getUserId());
+                wmsOutDeliveryOrder.setModifiedTime(new Date());
+                wmsOutDeliveryOrder.setOrgId(user.getOrganizationId());
+                wmsOutDeliveryOrder.setStatus((byte)1);
+                wmsOutDeliveryOrder.setAuditStatus((byte) 0);
+                wmsOutDeliveryOrder.setOrderStatus((byte)1);
+                wmsOutDeliveryOrder.setOrderTypeId((long)1);
+                success += wmsOutDeliveryOrderMapper.insertUseGeneratedKeys(wmsOutDeliveryOrder);
+
+                //履历
+                WmsOutHtDeliveryOrder wmsOutHtDeliveryOrder = new WmsOutHtDeliveryOrder();
+                BeanUtils.copyProperties(wmsOutDeliveryOrder, wmsOutHtDeliveryOrder);
+                htList.add(wmsOutHtDeliveryOrder);
+
+                //新增明细数据
+                LinkedList<WmsOutDeliveryOrderDet> detList = new LinkedList<>();
+                for (WmsOutDeliveryOrderImport wmsOutDeliveryOrderImport : wmsOutDeliveryOrderImports1) {
+                    WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = new WmsOutDeliveryOrderDet();
+                    BeanUtils.copyProperties(wmsOutDeliveryOrderImport, wmsOutDeliveryOrderDet);
+                    wmsOutDeliveryOrderDet.setDeliveryOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
+                    wmsOutDeliveryOrderDet.setStatus((byte) 1);
+                    wmsOutDeliveryOrderDet.setOption1(wmsOutDeliveryOrderImport.getLIDCode());
+                    wmsOutDeliveryOrderDet.setOption2(wmsOutDeliveryOrderImport.getBRCode());
+                    detList.add(wmsOutDeliveryOrderDet);
+                }
+                wmsOutDeliveryOrderDetMapper.insertList(detList);
+            }
+            wmsOutHtDeliveryOrderMapper.insertList(htList);
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
+    }
+
 }
