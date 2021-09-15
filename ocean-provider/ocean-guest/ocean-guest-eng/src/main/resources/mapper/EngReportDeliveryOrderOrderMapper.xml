@@ -17,7 +17,7 @@
 
   <select id="findDeliveryOrderOrder" parameterType="map" resultMap="BaseResultMapDto">
     select
-    wodod.delivery_order_id,wodod.option2,wodod.option11,wodod.remark,
+    wodod.delivery_order_det_id,wodod.option2,wodod.option11,wodod.remark,
     wodod.create_time,u.user_name as create_user_name
     FROM wms_out_delivery_order wodo
     left join ocean_v2.sys_user u on wodo.create_user_id=u.user_id
