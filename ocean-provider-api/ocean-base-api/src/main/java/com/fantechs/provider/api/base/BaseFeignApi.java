@@ -212,6 +212,11 @@ public interface BaseFeignApi {
     @PostMapping("/baseWarehouseArea/detail")
     ResponseEntity<BaseWarehouseArea> warehouseAreaDetail(@ApiParam(value = "区域ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
+    @ApiOperation("获取库区列表")
+    @PostMapping("/baseWarehouseArea/findList")
+    ResponseEntity<List<BaseWarehouseAreaDto>> findWarehouseAreaList(@ApiParam(value = "查询对象") @RequestBody SearchBaseWarehouseArea searchBaseWarehouseArea);
+
+
     @ApiOperation("列表")
     @PostMapping("/baseSupplier/findList")
     ResponseEntity<List<BaseSupplier>> findSupplierList(@ApiParam(value = "查询对象") @RequestBody SearchBaseSupplier searchBaseSupplier);
