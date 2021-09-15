@@ -16,6 +16,7 @@
     <result column="route_id" jdbcType="BIGINT" property="routeId" />
     <result column="bad_process_id" jdbcType="BIGINT" property="badProcessId" />
     <result column="current_process_id" jdbcType="BIGINT" property="currentProcessId" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -40,7 +41,6 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
-    <result column="work_order_barcode" jdbcType="VARCHAR" property="workOrderBarcode"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
@@ -61,6 +61,7 @@
     msro.route_id,
     msro.bad_process_id,
     msro.current_process_id,
+    msro.order_status,
     msro.`status`,
     msro.remark,
     msro.org_id,
@@ -76,14 +77,13 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="BaseColumnList"/>,
-    mpwo.work_order_code,mswob.barcode as work_order_barcode,bm.material_code,bm.material_code,bm.material_desc,
+    mpwo.work_order_code,bm.material_code,bm.material_code,bm.material_desc,
     bpl.pro_name,br.route_name,bbp.process_name as bad_process_name,cbp.process_name as current_process_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     FROM mes_sfc_repair_order msro
     left join fantech_imes_v2.mes_pm_work_order mpwo ON msro.work_order_id = mpwo.work_order_id
-    left join fantech_imes_v2.mes_sfc_work_order_barcode mswob ON msro.work_order_barcode_id = mswob.work_order_barcode_id
     left join fantech_imes_v2.base_material bm ON msro.material_id = bm.material_id
     left join fantech_imes_v2.base_pro_line bpl ON msro.pro_line_id = bpl.pro_line_id
     left join fantech_imes_v2.base_route br ON msro.route_id = br.route_id
@@ -93,14 +93,23 @@
     left join ocean_v2.sys_user s on msro.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON msro.org_id = bo.organization_id
     <where>
+      <if test="repairOrderId != null">
+        and msro.repair_order_id = #{repairOrderId}
+      </if>
       <if test="repairOrderCode != null and repairOrderCode!=''">
         and msro.repair_order_code like CONCAT('%', #{repairOrderCode}, '%')
+      </if>
+      <if test="workOrderCode != null and workOrderCode!=''">
+        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(msro.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="status!=null">
         and msro.status = #{status}
+      </if>
+      <if test="orderStatus!=null">
+        and msro.order_status = #{orderStatus}
       </if>
       <if test="orgId!=null">
         and msro.org_id=#{orgId}

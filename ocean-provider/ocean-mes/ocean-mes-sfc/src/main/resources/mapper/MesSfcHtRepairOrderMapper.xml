@@ -17,6 +17,7 @@
     <result column="route_id" jdbcType="BIGINT" property="routeId" />
     <result column="bad_process_id" jdbcType="BIGINT" property="badProcessId" />
     <result column="current_process_id" jdbcType="BIGINT" property="currentProcessId" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -55,6 +56,7 @@
     mshro.route_id,
     mshro.bad_process_id,
     mshro.current_process_id,
+    mshro.order_status,
     mshro.`status`,
     mshro.remark,
     mshro.org_id,
@@ -90,11 +92,17 @@
       <if test="repairOrderCode != null and repairOrderCode!=''">
         and mshro.repair_order_code like CONCAT('%', #{repairOrderCode}, '%')
       </if>
+      <if test="workOrderCode != null and workOrderCode!=''">
+        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(mshro.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="status!=null">
         and mshro.status = #{status}
+      </if>
+      <if test="orderStatus!=null">
+        and mshro.order_status = #{orderStatus}
       </if>
       <if test="orgId!=null">
         and mshro.org_id=#{orgId}

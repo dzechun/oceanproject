@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,10 +63,8 @@ public class BaseProductModelController {
 
     @ApiOperation("根据条件查询产品型号信息列表")
     @PostMapping("/getAll")
-    public ResponseEntity<List<BaseProductModel>> getAll(
-            @ApiParam(value = "查询条件，请参考Model说明") @RequestBody(required = false) SearchBaseProductModel searchBaseProductModel
-    ) {
-        List<BaseProductModel> baseProductModels = baseProductModelService.selectProductModels(ControllerUtil.dynamicConditionByEntity(searchBaseProductModel));
+    public ResponseEntity<List<BaseProductModel>> getAll() {
+        List<BaseProductModel> baseProductModels = baseProductModelService.selectProductModels(new HashMap<>());
         return ControllerUtil.returnDataSuccess(baseProductModels, baseProductModels.size());
     }
 

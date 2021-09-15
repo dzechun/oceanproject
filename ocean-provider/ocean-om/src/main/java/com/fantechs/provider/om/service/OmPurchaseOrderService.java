@@ -16,4 +16,6 @@ public interface OmPurchaseOrderService extends IService<OmPurchaseOrder> {
     List<OmPurchaseOrderDto> findList(Map<String, Object> map);
 
     OmPurchaseOrder saveByApi (OmPurchaseOrder omPurchaseOrder);
+
+    int save(OmPurchaseOrder omPurchaseOrder);
 }

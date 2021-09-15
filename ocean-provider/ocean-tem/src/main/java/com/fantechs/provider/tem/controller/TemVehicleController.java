@@ -2,9 +2,9 @@ package com.fantechs.provider.tem.controller;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.tem.TemVehicleDto;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
+import com.fantechs.common.base.general.entity.tem.history.TemHtVehicle;
 import com.fantechs.common.base.general.entity.tem.search.SearchTemVehicle;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -53,8 +53,6 @@ public class TemVehicleController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    @Transactional
-    @LcnTransaction
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=TemVehicle.update.class) TemVehicle temVehicle) {
         return ControllerUtil.returnCRUD(temVehicleService.update(temVehicle));
     }
@@ -71,6 +69,14 @@ public class TemVehicleController {
     public ResponseEntity<List<TemVehicleDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchTemVehicle searchTemVehicle) {
         Page<Object> page = PageHelper.startPage(searchTemVehicle.getStartPage(),searchTemVehicle.getPageSize());
         List<TemVehicleDto> list = temVehicleService.findList(ControllerUtil.dynamicConditionByEntity(searchTemVehicle));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<TemHtVehicle>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchTemVehicle searchTemVehicle) {
+        Page<Object> page = PageHelper.startPage(searchTemVehicle.getStartPage(),searchTemVehicle.getPageSize());
+        List<TemHtVehicle> list = temVehicleService.findHtList(ControllerUtil.dynamicConditionByEntity(searchTemVehicle));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
