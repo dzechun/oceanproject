@@ -14,7 +14,7 @@ import lombok.Data;
  * 条码表
  * call_agv_barcode
  * @author 86178
- * @date 2021-09-10 13:54:24
+ * @date 2021-09-15 16:31:56
  */
 @Data
 @Table(name = "call_agv_barcode")
@@ -47,8 +47,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 批次
      */
     @ApiModelProperty(name="batch",value = "批次")
-    @Excel(name = "批次", height = 20, width = 30,orderNum="")
-    @Column(name = "batch")
+    @Excel(name = "批次", height = 20, width = 30,orderNum="") 
     private String batch;
 
     /**
@@ -81,6 +80,62 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
     @Excel(name = "工序名称", height = 20, width = 30,orderNum="") 
     @Column(name = "process_name")
     private String processName;
+
+    /**
+     * 保质期
+     */
+    @ApiModelProperty(name="shelfLife",value = "保质期")
+    @Excel(name = "保质期", height = 20, width = 30,orderNum="") 
+    @Column(name = "shelf_life")
+    private String shelfLife;
+
+    /**
+     * 生产日期
+     */
+    @ApiModelProperty(name="productionDate",value = "生产日期")
+    @Excel(name = "生产日期", height = 20, width = 30,orderNum="") 
+    @Column(name = "production_date")
+    private String productionDate;
+
+    /**
+     * 流水号
+     */
+    @ApiModelProperty(name="serialNumber",value = "流水号")
+    @Excel(name = "流水号", height = 20, width = 30,orderNum="") 
+    @Column(name = "serial_number")
+    private String serialNumber;
+
+    /**
+     * 注塑机名称
+     */
+    @ApiModelProperty(name="zhuSuJiName",value = "注塑机名称")
+    @Excel(name = "注塑机名称", height = 20, width = 30,orderNum="") 
+    @Column(name = "zhu_su_ji_name")
+    private String zhuSuJiName;
+
+    /**
+     * 注塑机班次
+     */
+    @ApiModelProperty(name="zhuSuJiShift",value = "注塑机班次")
+    @Excel(name = "注塑机班次", height = 20, width = 30,orderNum="") 
+    @Column(name = "zhu_su_ji_shift")
+    private String zhuSuJiShift;
+
+    /**
+     * 折弯机名称
+     */
+    @ApiModelProperty(name="zheWanJiName",value = "折弯机名称")
+    @Excel(name = "折弯机名称", height = 20, width = 30,orderNum="") 
+    @Column(name = "zhe_wan_ji_name")
+    private String zheWanJiName;
+
+    /**
+     * 折弯机班次
+     */
+    @ApiModelProperty(name="zheWanJiShift",value = "折弯机班次")
+    @Excel(name = "折弯机班次", height = 20, width = 30,orderNum="") 
+    @Column(name = "zhe_wan_ji_shift")
+    private String zheWanJiShift;
 
     /**
      * 状态（0、无效 1、有效）
