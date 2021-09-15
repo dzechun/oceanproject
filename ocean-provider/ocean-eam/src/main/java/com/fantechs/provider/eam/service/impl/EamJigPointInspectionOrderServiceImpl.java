@@ -3,17 +3,27 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.eam.*;
-import com.fantechs.common.base.general.entity.eam.*;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
+import com.fantechs.common.base.general.entity.eam.EamJigPointInspectionOrder;
+import com.fantechs.common.base.general.entity.eam.EamJigPointInspectionOrderDet;
+import com.fantechs.common.base.general.entity.eam.EamJigPointInspectionProjectItem;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigPointInspectionOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionProject;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamJigPointInspectionOrderService;
 import org.springframework.beans.BeanUtils;
@@ -44,6 +54,10 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
     private EamJigPointInspectionProjectMapper eamJigPointInspectionProjectMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
+    @Resource
+    private RedisUtil redisUtil;
 
     @Override
     public List<EamJigPointInspectionOrderDto> findList(Map<String, Object> map) {
@@ -140,8 +154,26 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        this.codeIfRepeat(record);
+        //this.codeIfRepeat(record);
+        //获取点检单号编码规则 jigPointInspectionOrderCodeRule
+        SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+        searchBaseBarcodeRule.setBarcodeRuleCode("jigPointInspectionOrderCodeRule");
+        List<BaseBarcodeRuleDto> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
+        if(StringUtils.isEmpty(barcodeRulList)) throw new BizErrorException("未配置治具点检单号编码规则 jigPointInspectionOrderCodeRule");
 
+        SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+        searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRulList.get(0).getBarcodeRuleId());
+        ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecList= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
+        if(barcodeRuleSpecList.getCode()!=0) throw new BizErrorException(barcodeRuleSpecList.getMessage());
+        if(barcodeRuleSpecList.getData().size()<1) throw new BizErrorException("请设置条码规则");
+        List<BaseBarcodeRuleSpec>  barcodeRuleSpecsList = barcodeRuleSpecList.getData();
+
+        //生成条码
+        String barCode=creatBarCode(barcodeRulList.get(0),barcodeRuleSpecsList);
+        if(StringUtils.isEmpty(barCode))
+            throw new BizErrorException("生成点检单号出错");
+
+        record.setJigPointInspectionOrderCode(barCode);
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
@@ -265,5 +297,28 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         if (StringUtils.isNotEmpty(jigPointInspectionOrder)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+    }
+
+    //生成条码
+    private String creatBarCode(BaseBarcodeRuleDto baseBarcodeRuleDto,List<BaseBarcodeRuleSpec> list){
+        String lastBarCode = null;
+
+        boolean hasKey = redisUtil.hasKey(baseBarcodeRuleDto.getBarcodeRule());
+        if(hasKey){
+            // 从redis获取上次生成条码
+            Object redisRuleData = redisUtil.get(baseBarcodeRuleDto.getBarcodeRule());
+            lastBarCode = String.valueOf(redisRuleData);
+        }
+        //获取最大流水号
+        String maxCode = baseFeignApi.generateMaxCode(list, lastBarCode).getData();
+        //生成条码
+        ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode,"","");
+        if(rs.getCode()!=0){
+            throw new BizErrorException(rs.getMessage());
+        }
+
+        // 更新redis最新条码
+        redisUtil.set(baseBarcodeRuleDto.getBarcodeRule(), rs.getData());
+        return rs.getData();
     }
 }
