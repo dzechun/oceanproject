@@ -125,17 +125,4 @@ public class CallAgvVehicleReBarcodeController {
         List<CallAgvVehicleBarcodeDTO> list = callAgvVehicleReBarcodeService.findCallAgvVehicleList(ControllerUtil.dynamicConditionByEntity(searchCallAgvVehicleReBarcode));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
-
-    @ApiOperation("叫料作业")
-    @PostMapping("/CallAgvVehicle")
-    public ResponseEntity CallAgvVehicle(
-            @ApiParam(value = "周转工具（货架）ID", required = true) @RequestParam Long vehicleId,
-            @ApiParam(value = "目标库区ID", required = true) @RequestParam Long warehouseAreaId) {
-
-        try {
-            return ControllerUtil.returnCRUD(callAgvVehicleReBarcodeService.CallAgvVehicle(vehicleId, warehouseAreaId));
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
-    }
 }

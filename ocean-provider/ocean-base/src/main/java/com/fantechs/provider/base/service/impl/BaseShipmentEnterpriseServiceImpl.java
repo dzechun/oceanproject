@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseShipmentEnterpriseDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseShipmentEnterpriseImport;
 import com.fantechs.common.base.general.entity.basic.BaseShipmentEnterprise;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtShipmentEnterprise;
 import com.fantechs.common.base.support.BaseService;
@@ -14,13 +15,11 @@ import com.fantechs.provider.base.mapper.BaseShipmentEnterpriseMapper;
 import com.fantechs.provider.base.service.BaseShipmentEnterpriseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by leifengzhi on 2020/12/16.
@@ -147,5 +146,85 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
         }
         map.put("orgId", user.getOrganizationId());
         return baseShipmentEnterpriseMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseShipmentEnterpriseImport> baseShipmentEnterpriseImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<BaseShipmentEnterprise> list = new LinkedList<>();
+        LinkedList<BaseHtShipmentEnterprise> htList = new LinkedList<>();
+        for (int i = 0; i < baseShipmentEnterpriseImports.size(); i++) {
+            BaseShipmentEnterpriseImport shipmentEnterpriseImport = baseShipmentEnterpriseImports.get(i);
+
+            String shipmentEnterpriseCode = shipmentEnterpriseImport.getShipmentEnterpriseCode();
+            if (StringUtils.isEmpty(
+                    shipmentEnterpriseCode
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(BaseShipmentEnterprise.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+            criteria.andEqualTo("shipmentEnterpriseCode",shipmentEnterpriseCode);
+            if (StringUtils.isNotEmpty(baseShipmentEnterpriseMapper.selectOneByExample(example))){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断集合中是否已经存在同样的数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(list)){
+                for (BaseShipmentEnterprise baseShipmentEnterprise : list) {
+                    if (baseShipmentEnterprise.getShipmentEnterpriseCode().equals(shipmentEnterpriseCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
+
+
+            BaseShipmentEnterprise baseShipmentEnterprise = new BaseShipmentEnterprise();
+            BeanUtils.copyProperties(shipmentEnterpriseImport, baseShipmentEnterprise);
+            baseShipmentEnterprise.setCreateTime(new Date());
+            baseShipmentEnterprise.setCreateUserId(currentUser.getUserId());
+            baseShipmentEnterprise.setModifiedTime(new Date());
+            baseShipmentEnterprise.setModifiedUserId(currentUser.getUserId());
+            baseShipmentEnterprise.setStatus((byte)1);
+            baseShipmentEnterprise.setOrganizationId(currentUser.getOrganizationId());
+            baseShipmentEnterprise.setTransportCategoryId(StringUtils.isEmpty(shipmentEnterpriseImport.getTransportCategoryId())?null:shipmentEnterpriseImport.getTransportCategoryId().byteValue());
+            list.add(baseShipmentEnterprise);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = baseShipmentEnterpriseMapper.insertList(list);
+        }
+
+        for (BaseShipmentEnterprise baseShipmentEnterprise : list) {
+            BaseHtShipmentEnterprise baseHtShipmentEnterprise = new BaseHtShipmentEnterprise();
+            BeanUtils.copyProperties(baseShipmentEnterprise, baseHtShipmentEnterprise);
+            htList.add(baseHtShipmentEnterprise);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            baseHtShipmentEnterpriseMapper.insertList(htList);
+        }
+
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }

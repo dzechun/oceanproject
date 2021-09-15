@@ -1,11 +1,8 @@
 package com.fantechs.provider.wms.out.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
@@ -17,20 +14,23 @@ import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.*;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
-import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
-import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrderReJoReDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryLog;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.*;
+import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrder;
+import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrderReJoReDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
@@ -67,6 +67,9 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
     private WmsOutDeliveryOrderMapper wmsOutDeliveryOrderMapper;
     @Resource
     private InFeignApi inFeignApi;
+    @Resource
+    private EngFeignApi engFeignApi;
+
 
     @Override
     public List<WmsOutDespatchOrderDto> findList(SearchWmsOutDespatchOrder searchWmsOutDespatchOrder) {
@@ -456,6 +459,11 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
         if(total1.equals(totalCount1)){
             //更新调拨出库单状态
             num+=wmsOutDespatchOrderReJoMapper.writeOutQty((byte)5,wmsOutDeliveryOrder.getDeliveryOrderId());
+            //领料出库回传接口（五环）
+            if(wmsOutDeliveryOrder.getOrderTypeId().toString().equals("8")){
+                engFeignApi.writePackingLists(wmsOutDeliveryOrder);
+            }
+
         }else{
             num+=wmsOutDespatchOrderReJoMapper.writeOutQty((byte)4,wmsOutDeliveryOrder.getDeliveryOrderId());
         }

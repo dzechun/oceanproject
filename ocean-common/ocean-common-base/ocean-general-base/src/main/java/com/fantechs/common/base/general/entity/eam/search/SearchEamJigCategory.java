@@ -20,4 +20,10 @@ public class SearchEamJigCategory extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="jigCategoryName",value = "治具类别名称")
     private String jigCategoryName;
+
+    /**
+     * 状态（0、无效 1、有效）
+     */
+    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
+    private Byte status;
 }

@@ -2,16 +2,14 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseUnitPriceImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseAreaImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
-import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouseArea;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseAreaImport;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouseArea;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -23,7 +21,6 @@ import com.fantechs.provider.base.service.BaseWarehouseAreaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.common.BaseMapper;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -48,11 +45,14 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
 
     @Override
     public List<BaseWarehouseAreaDto> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))){
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
+
         return baseWarehouseAreaMapper.findList(map);
     }
     @Override

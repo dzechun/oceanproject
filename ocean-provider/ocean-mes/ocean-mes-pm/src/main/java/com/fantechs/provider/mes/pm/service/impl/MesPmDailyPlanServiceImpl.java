@@ -4,11 +4,8 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
-import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
-import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.DateUtils;
@@ -21,7 +18,10 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -77,31 +77,36 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchSave(List<MesPmDailyPlan> list) {
-       /* SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }*/
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        int i = 0;
         if (StringUtils.isNotEmpty(list)){
             Example example = new Example(MesPmDailyPlan.class);
+            List<MesPmDailyPlan> addList = new ArrayList<>();
             for (MesPmDailyPlan mesPmDailyPlan : list) {
                 example.createCriteria().andEqualTo("workOrderId",mesPmDailyPlan.getWorkOrderId() == null ? -1 : mesPmDailyPlan.getWorkOrderId());
                 MesPmDailyPlan mesPmDailyPlan1 = mesPmDailyPlanMapper.selectOneByExample(example);
+                Date strToDate = null;
+                try {
+                    strToDate = DateUtils.getStrToDate(mesPmDailyPlan.getPlanDate());
+                    mesPmDailyPlan.setPlanTime(strToDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 if(StringUtils.isNotEmpty(mesPmDailyPlan1)) {
+                    mesPmDailyPlan.setModifiedUserId(user.getUserId());
+                    mesPmDailyPlanMapper.updateByPrimaryKeySelective(mesPmDailyPlan);
                     //TODO添加到履历表
-                    mesPmDailyPlanMapper.deleteByExample(example);
+                   // mesPmDailyPlanMapper.deleteByExample(example);
+                }else{
+                    mesPmDailyPlan.setCreateUserId(user.getUserId());
+                    mesPmDailyPlan.setModifiedUserId(user.getUserId());
+                    addList.add(mesPmDailyPlan);
                 }
-                if(StringUtils.isNotEmpty(mesPmDailyPlan.getPlanDate())) {
-                    try {
-                        mesPmDailyPlan.setPlanTime(DateUtils.getStrToDate(mesPmDailyPlan.getPlanDate()));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-                this.save(mesPmDailyPlan);
                 example.clear();
                 }
-            }
-        return 1;
+           i = mesPmDailyPlanMapper.insertList(addList);
+        }
+        return i;
     }
 
     @Override

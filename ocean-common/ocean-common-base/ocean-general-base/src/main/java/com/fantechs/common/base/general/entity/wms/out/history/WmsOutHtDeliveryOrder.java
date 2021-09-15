@@ -294,6 +294,7 @@ public class WmsOutHtDeliveryOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialOwnerName",value = "货主名称")
     @Excel(name = "货主名称", height = 20, width = 30,orderNum="3")
+    @Transient
     private String materialOwnerName;
 
     /**
@@ -301,6 +302,7 @@ public class WmsOutHtDeliveryOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="organizationCode",value = "组织代码")
     @Excel(name = "组织代码", height = 20, width = 30,orderNum="10")
+    @Transient
     private String organizationCode;
 
     /**
@@ -308,6 +310,7 @@ public class WmsOutHtDeliveryOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
     @Excel(name = "组织名称", height = 20, width = 30,orderNum="6")
+    @Transient
     private String organizationName;
 
     /**
@@ -333,6 +336,7 @@ public class WmsOutHtDeliveryOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="totalPackingQty",value = "总数量")
     @Excel(name = "总数量", height = 20, width = 30,orderNum="")
+    @Transient
     private BigDecimal totalPackingQty;
 
     /**
@@ -340,5 +344,6 @@ public class WmsOutHtDeliveryOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="totalPickingQty",value = "拣货数量")
     @Excel(name = "拣货数量", height = 20, width = 30,orderNum="5")
+    @Transient
     private BigDecimal totalPickingQty;
 }

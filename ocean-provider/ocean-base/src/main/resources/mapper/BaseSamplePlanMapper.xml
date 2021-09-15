@@ -78,6 +78,9 @@
       <if test="orgId!=null">
         and bsp.org_id=#{orgId}
       </if>
+      <if test="status != null and status!=''">
+        and bsp.status = #{status}
+      </if>
     </where>
     order by bsp.create_time desc
   </select>
