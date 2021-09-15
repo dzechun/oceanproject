@@ -17,6 +17,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
@@ -390,7 +391,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int num = 0;
         for (String s : arrId) {
             WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(s);
-            if(wmsInnerJobOrder.getOrderTypeId()==9L){
+            if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) && wmsInnerJobOrder.getOrderTypeId()==9L){
                 throw new BizErrorException("收货入库无法取消，请在收货入库进行取消收货！");
             }
             if (StringUtils.isEmpty(wmsInnerJobOrder)) {
@@ -617,9 +618,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                                 wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDetDto);
                             }
                         }
-                    }
-                    else {
-                        if(wmsInnerJobOrder.getOrderTypeId()==9L){
+                    } else {
+                        if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) &&wmsInnerJobOrder.getOrderTypeId()==9L){
                             //收货作业反写
                             ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),wmsInnerJobOrderDet.getDistributionQty());
                             if(responseEntity.getCode()!=0){
@@ -851,7 +851,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
             }
 
-            if(wmsInnerJobOrder.getOrderTypeId()==9L){
+            if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) && wmsInnerJobOrder.getOrderTypeId()==9L){
                 ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDetDto.getSourceDetId(),wmsInnerJobOrderDetDto.getActualQty());
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
@@ -883,22 +883,33 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     public Map<String, Object> checkBarcode(String barCode, Long jobOrderDetId) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInPutawayOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
+        WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDet.getJobOrderId());
         Map<String, Object> map = new HashMap<>();
         if (StringUtils.isEmpty(wmsInnerJobOrderDet)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
         //获取完工入库记录的工单
-        WmsInAsnOrderDet wms = inFeignApi.findDetList(SearchWmsInAsnOrderDet.builder()
-                .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
-                .build()).getData().get(0);
-        String materialCode = wmsInPutawayOrderMapper.findMaterialCode(wms.getMaterialId(),sysUser.getOrganizationId());
+        Long materialId = null;
+        WmsInAsnOrderDet wms = null;
+        if(wmsInnerJobOrder.getOrderTypeId()==9L){
+            materialId = wmsInPutawayOrderDetMapper.findEngMaterial(wmsInnerJobOrderDet.getSourceDetId());
+        }else {
+             wms = inFeignApi.findDetList(SearchWmsInAsnOrderDet.builder()
+                    .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
+                    .build()).getData().get(0);
+            materialId = wms.getMaterialId();
+        }
+
+        String materialCode = wmsInPutawayOrderMapper.findMaterialCode(materialId,sysUser.getOrganizationId());
         if (StringUtils.isNotEmpty(materialCode) && materialCode.equals(barCode)) {
             map.put("SN", "false");
             return map;
-        } else {
+        } else if(StringUtils.isNotEmpty(wms)){
             BigDecimal qty = InBarcodeUtil.getInventoryDetQty(wms.getAsnOrderId(), wmsInnerJobOrderDet.getMaterialId(), barCode);
             map.put("SN", "true");
             map.put("qty", qty);
+        }else{
+            throw new BizErrorException("作业单与该条码不匹配");
         }
         return map;
     }
@@ -1388,7 +1399,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //拣货 领料拣货
         //创建已经分配领料拣货单
         //1、判断领料出库单所选库位是否库存不足 不足提示库存不足 创建领料拣货单失败
-        if(record.getOrderTypeId()==8 && record.getJobOrderType()==4 && record.getType()==1){
+        if((StringUtils.isNotEmpty(record.getOrderTypeId())&&record.getOrderTypeId()==8) && record.getJobOrderType()==4 && (StringUtils.isNotEmpty(record.getType())||record.getType()==1)){
             //创建已经分配的拣货单
             int i = pickingOrderService.handDistribution(record.getWmsInPutawayOrderDets());
             if(i<1){
