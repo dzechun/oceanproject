@@ -173,7 +173,7 @@ public class WmsInnerInventoryLog extends ValidGroup implements Serializable {
     private BigDecimal initialQty;
 
     /**
-     * 期初数量
+     * 变化数量
      */
     @ApiModelProperty(name="changeQty",value = "变化数量")
     @Excel(name = "变化数量", height = 20, width = 30,orderNum="19")

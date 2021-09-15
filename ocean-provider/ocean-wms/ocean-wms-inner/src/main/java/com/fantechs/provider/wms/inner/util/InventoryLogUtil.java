@@ -75,28 +75,15 @@ public class InventoryLogUtil {
 
     /**
      * 盘点日志记录
-     * @param wmsInnerStockOrder
-     * @param wmsInnerInventory
-     * @param addOrSubtract
      */
-    public static void addLog(WmsInnerStockOrder wmsInnerStockOrder, WmsInnerInventory wmsInnerInventory, Byte addOrSubtract){
-        WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
-        wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerStockOrder.getStockOrderCode());
-        //收货
-        wmsInnerInventoryLog.setJobOrderType((byte)7);
-        wmsInnerInventoryLog.setAddOrSubtract(addOrSubtract);
-        wmsInnerInventoryLog.setProductionDate(wmsInnerInventory.getProductionDate());
-        wmsInnerInventoryLog.setExpiredDate(wmsInnerInventory.getExpiredDate());
-        wmsInnerInventoryLog.setBatchCode(wmsInnerInventory.getBatchCode());
-        wmsInnerInventoryLog.setPalletCode(wmsInnerInventory.getPalletCode());
-        wmsInnerInventoryLog.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
-        wmsInnerInventoryLog.setChangeQty(wmsInnerInventory.getPackingQty());
-        wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerInventory.getMaterialOwnerId());
+    public static void addLog(WmsInnerInventoryLog wmsInnerInventoryLog){
         wmsInnerInventoryLog.setInventoryStatusName(inventoryLogUtil.wmsInnerInventoryLogService.findInvName(wmsInnerInventoryLog.getInventoryLogId()));
-        //期初数量
-        Map<String,Object> map = paramUtil(wmsInnerInventoryLog);
-        wmsInnerInventoryLog.setInitialQty(inventoryLogUtil.wmsInnerInventoryLogService.findInv(map));
-        wmsInnerInventoryLog.setFinalQty(wmsInnerInventoryLog.getInitialQty().add(wmsInnerInventoryLog.getChangeQty()));
+        if(wmsInnerInventoryLog.getAddOrSubtract()==1){
+            //加
+            wmsInnerInventoryLog.setFinalQty(wmsInnerInventoryLog.getInitialQty().add(wmsInnerInventoryLog.getChangeQty()));
+        }else {
+            wmsInnerInventoryLog.setFinalQty(wmsInnerInventoryLog.getInitialQty().subtract(wmsInnerInventoryLog.getChangeQty()));
+        }
         inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
     }
 
