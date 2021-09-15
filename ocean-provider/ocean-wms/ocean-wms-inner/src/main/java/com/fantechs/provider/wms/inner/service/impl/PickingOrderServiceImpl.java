@@ -10,30 +10,23 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJo;
-import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
-import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
@@ -300,16 +293,29 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                                 //分配库存
                                 num += this.DistributionInventory(wmsInnerJobOrder, wms,2,wmsInnerInventory);
                             }else{
-                                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                                BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
-                                wmsInnerJobOrderDet.setJobOrderDetId(null);
-                                wmsInnerJobOrderDet.setPlanQty(playQty);
-                                wmsInnerJobOrderDet.setDistributionQty(playQty);
-                                num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
-                                playQty = playQty.subtract(BigDecimal.ZERO);
+                                if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1){
+                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                                    BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
+                                    wmsInnerJobOrderDet.setJobOrderDetId(null);
+                                    wmsInnerJobOrderDet.setPlanQty(playQty);
+                                    wmsInnerJobOrderDet.setDistributionQty(playQty);
+                                    num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+                                    playQty = BigDecimal.ZERO;
 
-                                //分配库存
-                                num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
+                                    //分配库存
+                                    num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
+                                }else {
+                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                                    BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
+                                    wmsInnerJobOrderDet.setJobOrderDetId(null);
+                                    wmsInnerJobOrderDet.setPlanQty(wmsInnerInventory.getPackingQty());
+                                    wmsInnerJobOrderDet.setDistributionQty(wmsInnerInventory.getPackingQty());
+                                    num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+                                    playQty = playQty.subtract(wmsInnerInventory.getPackingQty());
+
+                                    //分配库存
+                                    num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
+                                }
                             }
                         }
                     }
@@ -711,6 +717,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
             criteria.andEqualTo("jobStatus",(byte)1);
             criteria.andEqualTo("storageId",wmsInnerJobOrderDetDto.getOutStorageId()).andEqualTo("warehouseId",wmsInnerJobOrderDetDto.getWarehouseId()).andGreaterThan("packingQty",0).andEqualTo("orgId",wmsInnerJobOrderDetDto.getOrgId());
+            criteria.andEqualTo("stockLock",0).andEqualTo("qcLock",0).andEqualTo("lockStatus",0);
             wmsInnerInventory = wmsInnerInventoryMapper.selectByExample(example);
         }else if(type==2){
             wmsInnerInventory.add(wmsInnerInventorys);
@@ -779,7 +786,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrder.getJobOrderId());
         WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
         criteria.andEqualTo("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode()).andEqualTo("materialId",wmsInnerJobOrderDetDto.getMaterialId());
-        if(StringUtils.isNotEmpty(wmsInnerJobOrderDetDto.getDistributionQty())){
+//        if(StringUtils.isNotEmpty(wmsInnerJobOrderDetDto.getDistributionQty())){
+//            criteria.andEqualTo("batchCode",wmsInnerJobOrderDetDto.getBatchCode());
+//        }
+
+        //应该判断批次号不为空 2021-09-14 huangshuijun
+        if(StringUtils.isNotEmpty(wmsInnerJobOrderDetDto.getBatchCode())){
             criteria.andEqualTo("batchCode",wmsInnerJobOrderDetDto.getBatchCode());
         }
         criteria.andEqualTo("jobStatus",(byte)2);

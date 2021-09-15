@@ -20,4 +20,6 @@ public interface MesSfcRepairOrderService extends IService<MesSfcRepairOrder> {
     List<MesSfcHtRepairOrder> findHtList(Map<String, Object> map);
 
     MesPmWorkOrderDto getWorkOrder(String SNCode, String workOrderCode);
+
+    int print(Long repairOrderId);
 }

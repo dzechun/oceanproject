@@ -21,4 +21,6 @@ public interface EngPackingOrderMapper extends MyMapper<EngPackingOrder> {
     Long findInventoryStatus(Map<String ,Object> map);
 
     Long findMaterialOwner(Map<String,Object> map);
+
+    String findMaterialPurpose(Map<String,Object> map);
 }

@@ -391,6 +391,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int num = 0;
         for (String s : arrId) {
             WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(s);
+            if(wmsInnerJobOrder.getOrderTypeId()==9L){
+                throw new BizErrorException("收货入库无法取消，请在收货入库进行取消收货！");
+            }
             if (StringUtils.isEmpty(wmsInnerJobOrder)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
@@ -541,6 +544,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                             .jobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId())
                             .orderStatus((byte) 5)
                             .actualQty(wmsInnerJobOrderDet.getDistributionQty())
+                                    .workStartTime(new Date())
+                                    .workEndTime(new Date())
                             .modifiedUserId(sysUser.getUserId())
                             .modifiedTime(new Date())
                             .build());
@@ -614,24 +619,26 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                             }
                         }
                     }
-                    /*else {
-                        if(wmsInnerJobOrder.getJobOrderId()==9){
+                    else {
+                        if(wmsInnerJobOrder.getOrderTypeId()==9L){
                             //收货作业反写
                             ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),wmsInnerJobOrderDet.getDistributionQty());
                             if(responseEntity.getCode()!=0){
                                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                             }
-                        }else {
-                            //反写完工入库单
-                            ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
-                                    .putawayQty(wmsInnerJobOrderDet.getDistributionQty())
-                                    .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
-                                    .build());
-                            if (responseEntity.getCode() != 0) {
-                                throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                        }else{
+                            if(wmsInnerJobOrder.getJobOrderType()!=2){
+                                //反写完工入库单
+                                ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                                        .putawayQty(wmsInnerJobOrderDet.getDistributionQty())
+                                        .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
+                                        .build());
+                                if (responseEntity.getCode() != 0) {
+                                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                                }
                             }
                         }
-                    }*/
+                    }
                 }
             }
             BigDecimal resultQty = wmsInnerJobOrderDets.stream()
@@ -696,6 +703,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wms.setPlanQty(wmsInPutawayOrderDet.getActualQty());
                 wms.setDistributionQty(wmsInPutawayOrderDet.getActualQty());
                 wms.setOrderStatus((byte) 5);
+                wms.setWorkStartTime(new Date());
+                wms.setWorkEndTime(new Date());
                 num += wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wms);
                 jobOrderDetId = wms.getJobOrderDetId();
 
@@ -854,22 +863,24 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
             }
 
-            /*if (wmsInnerJobOrder.getJobOrderType() != (byte) 2 && wmsInnerJobOrder.getJobOrderId()!=9) {
-                //反写完工入库单
-                ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
-                        .putawayQty(wmsInnerJobOrderDetDto.getActualQty())
-                        .asnOrderDetId(wmsInnerJobOrderDetDto.getSourceDetId())
-                        .build());
-                if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
-                }
-            }
-            if(wmsInnerJobOrder.getJobOrderId()==9){
+            if(wmsInnerJobOrder.getOrderTypeId()==9L){
                 ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDetDto.getSourceDetId(),wmsInnerJobOrderDetDto.getActualQty());
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                 }
-            }*/
+            }else{
+                if (wmsInnerJobOrder.getJobOrderType() != (byte) 2) {
+                    //反写完工入库单
+                    ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                            .putawayQty(wmsInnerJobOrderDetDto.getActualQty())
+                            .asnOrderDetId(wmsInnerJobOrderDetDto.getSourceDetId())
+                            .build());
+                    if (responseEntity.getCode() != 0) {
+                        throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                    }
+                }
+            }
+
         }
         //返写领料出库单
 

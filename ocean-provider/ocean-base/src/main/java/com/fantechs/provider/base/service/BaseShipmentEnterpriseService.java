@@ -2,6 +2,7 @@ package com.fantechs.provider.base.service;
 
 
 import com.fantechs.common.base.general.dto.basic.BaseShipmentEnterpriseDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseShipmentEnterpriseImport;
 import com.fantechs.common.base.general.entity.basic.BaseShipmentEnterprise;
 import com.fantechs.common.base.support.IService;
 
@@ -16,4 +17,6 @@ import java.util.Map;
 public interface BaseShipmentEnterpriseService extends IService<BaseShipmentEnterprise> {
 
     List<BaseShipmentEnterpriseDto> findList(Map<String, Object> map);
+
+    Map<String, Object> importExcel(List<BaseShipmentEnterpriseImport> baseShipmentEnterpriseImports);
 }

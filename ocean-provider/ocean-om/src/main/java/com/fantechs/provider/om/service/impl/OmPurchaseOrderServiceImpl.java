@@ -72,4 +72,51 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
         return omPurchaseOrder;
     }
 
+    @Override
+    public int save(OmPurchaseOrder omPurchaseOrder) {
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        Example example = new Example(OmPurchaseOrder.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("purchaseOrderCode", omPurchaseOrder.getPurchaseOrderCode());
+        criteria.andEqualTo("orgId", omPurchaseOrder.getOrgId());
+        if (StringUtils.isNotEmpty(omPurchaseOrder.getPurchaseOrderId())) {
+            criteria.andNotEqualTo("purchaseOrderId", omPurchaseOrder.getPurchaseOrderId());
+        }
+        List<OmPurchaseOrder> omPurchaseOrders = omPurchaseOrderMapper.selectByExample(example);
+        if (!omPurchaseOrders.isEmpty()) {
+            throw new BizErrorException("采购单号重复");
+        }
+        omPurchaseOrder.setOrderStatus((byte) 1);
+        omPurchaseOrder.setStatus((byte) 1);
+        omPurchaseOrder.setOrgId(user.getOrganizationId());
+        omPurchaseOrder.setCreateUserId(user.getUserId());
+        omPurchaseOrder.setCreateTime(new Date());
+        omPurchaseOrder.setIsDelete((byte) 1);
+        if (StringUtils.isNotEmpty(omPurchaseOrder.getPurchaseOrderId())) {
+            omPurchaseOrderMapper.updateByPrimaryKeySelective(omPurchaseOrder);
+
+            //删除该采购订单下的所有详情表
+            Example detExample = new Example(OmPurchaseOrderDet.class);
+            Example.Criteria detCriteria = detExample.createCriteria();
+            detCriteria.andEqualTo("purchaseOrderId", omPurchaseOrder.getPurchaseOrderId());
+            omPurchaseOrderDetMapper.deleteByExample(detExample);
+        } else {
+            omPurchaseOrderMapper.insertUseGeneratedKeys(omPurchaseOrder);
+        }
+        for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrder.getOmPurchaseOrderDetList()) {
+            omPurchaseOrderDet.setPurchaseOrderId(omPurchaseOrder.getPurchaseOrderId());
+            omPurchaseOrderDet.setStatus((byte) 1);
+            omPurchaseOrderDet.setOrgId(user.getOrganizationId());
+            omPurchaseOrderDet.setCreateUserId(user.getUserId());
+            omPurchaseOrderDet.setCreateTime(new Date());
+            omPurchaseOrderDet.setIsDelete((byte) 1);
+        }
+        if (!omPurchaseOrder.getOmPurchaseOrderDetList().isEmpty()) {
+            omPurchaseOrderDetMapper.insertList(omPurchaseOrder.getOmPurchaseOrderDetList());
+        }
+
+        return 1;
+    }
+
 }

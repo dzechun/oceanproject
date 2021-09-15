@@ -1,18 +1,15 @@
 package com.fantechs.provider.chinafiveringapi.api.service.impl;
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
+import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderTempDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkingArea;
+import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
@@ -179,6 +176,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                 wmsOutDeliveryOrder.setOrderDate(new Date());
                 wmsOutDeliveryOrder.setStatus((byte) 1);
                 wmsOutDeliveryOrder.setOption1("1");//领料类型
+                wmsOutDeliveryOrder.setOrderStatus((byte)1);//单据状态
 
                 Long customerId=0L;
                 List<WmsOutDeliveryOrderTempDto> listDto=result.get(key);
@@ -372,8 +370,18 @@ public class ImportDataServiceImpl implements ImportDataService {
             searchBaseWorkingArea.setOrgId(1004L);
             ResponseEntity<List<BaseWorkingAreaDto>> responseEntityList=baseFeignApi.findWorkingAreaList(searchBaseWorkingArea);
             if(StringUtils.isEmpty(responseEntityList.getData())){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003,"default工作区编码不存在");
+                throw new BizErrorException("default工作区编码不存在");
             }
+
+            //取库区编码为default的ID base_warehouse_area
+            SearchBaseWarehouseArea searchBaseWarehouseArea=new SearchBaseWarehouseArea();
+            searchBaseWarehouseArea.setWarehouseAreaCode("default");
+            searchBaseWarehouseArea.setOrgId(1004L);
+            ResponseEntity<List<BaseWarehouseAreaDto>> responseEntityListWA=baseFeignApi.findWarehouseAreaList(searchBaseWarehouseArea);
+            if(StringUtils.isEmpty(responseEntityListWA.getData())){
+                throw new BizErrorException("default库区编码不存在");
+            }
+
             for (BaseStorage baseStorage : listBC) {
                 baseStorage.setOrganizationId(1004L);
                 baseStorage.setStorageType((byte)1);//库位类型
@@ -386,6 +394,10 @@ public class ImportDataServiceImpl implements ImportDataService {
                 baseStorage.setPickingMoveLineNo(1);//拣货动线号
                 baseStorage.setStockMoveLineNo(1);//盘点动线号
                 baseStorage.setStatus(1);//状态默认1
+                //库区ID
+                baseStorage.setWarehouseAreaId(responseEntityListWA.getData().get(0).getWarehouseAreaId());
+                //仓库
+                baseStorage.setWarehouseId(responseEntityListWA.getData().get(0).getWarehouseId());
 
                 baseFeignApi.saveByApi(baseStorage);
             }

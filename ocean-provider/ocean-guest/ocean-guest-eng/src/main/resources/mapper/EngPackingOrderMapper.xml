@@ -154,4 +154,8 @@ spo.ago_confirm_user_id
   <select id="findMaterialOwner" resultType="java.lang.Long">
     select material_owner_id FROM base_material_owner where org_id=#{orgId}
   </select>
+  <select id="findMaterialPurpose" resultType="java.lang.String">
+    select material_purpose FROM eng_contract_qty_order where contract_code=#{contractCode} and device_code=#{deviceCode}
+and dominant_term_code=#{dominantTermCode} and location_num=#{locationNum} and material_code=#{materialCode}
+  </select>
 </mapper>

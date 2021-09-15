@@ -6,6 +6,7 @@ import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
 
@@ -44,10 +45,10 @@ public class OmPurchaseOrder extends ValidGroup implements Serializable {
     private String orderType;
 
     /**
-     * 订单状态
+     * 订单状态（1-开立 2-审核）
      */
-    @ApiModelProperty(name="orderStatus",value = "订单状态")
-    @Excel(name = "订单状态", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="orderStatus",value = "订单状态（1-开立 2-审核）")
+    @Excel(name = "订单状态（1-开立 2-审核）", height = 20, width = 30,orderNum="")
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -263,6 +264,10 @@ public class OmPurchaseOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="option3",value = "扩展字段3")
     @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="") 
     private String option3;
+
+    @Transient
+    @ApiModelProperty(name="omPurchaseOrderDetList",value = "采购单明细")
+    private List<OmPurchaseOrderDet> omPurchaseOrderDetList;
 
     private static final long serialVersionUID = 1L;
 }

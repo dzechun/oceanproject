@@ -446,8 +446,8 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     omOtherOutOrderDet.setOtherOutOrderDetId(wmsOutDeliveryOrderDet.getOrderDetId());
                     omOtherOutOrderDet.setDispatchQty(wmsInnerJobOrderDetDto.getActualQty());
                     ResponseEntity responseEntity = omFeignApi.writeQtyToOut(omOtherOutOrderDet);
-                    num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
                 }
+                num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
                 break;
             case "8":
                 num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
