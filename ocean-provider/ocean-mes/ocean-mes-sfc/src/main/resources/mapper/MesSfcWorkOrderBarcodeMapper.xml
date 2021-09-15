@@ -75,6 +75,9 @@
             <if test="barcode != null and barcode != ''">
                 and mswob.barcode like CONCAT('%',#{barcode},'%')
             </if>
+        <if test="orgId!=null and orgId!=''">
+            and mswob.org_id =#{orgId}
+        </if>
         </where>
 order by mswob.create_time desc
     </select>
@@ -203,5 +206,10 @@ order by mswob.create_time desc
             </if>
         </where>
     </select>
-
+    <select id="findSysUser" resultType="java.lang.String">
+        SELECT su.`password` FROM ocean_v2.sys_user_role sur
+        LEFT JOIN ocean_v2.sys_role sr ON sur.role_id = sr.role_id
+        LEFT JOIN ocean_v2.sys_user su ON sur.user_id = su.user_id
+        WHERE sr.role_code=015 AND su.user_code=#{userCode}
+    </select>
 </mapper>

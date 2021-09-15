@@ -2,7 +2,9 @@ package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
@@ -27,10 +29,12 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -68,9 +72,13 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
+        SysUser sysUser = currentUser();
+        searchMesSfcWorkOrderBarcode.setOrgId(sysUser.getOrganizationId());
         return mesSfcWorkOrderBarcodeMapper.findList(searchMesSfcWorkOrderBarcode);
     }
 
@@ -82,7 +90,26 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int print(String ids,Byte printType,String printName) {
+    public int print(String ids,Byte printType,String printName,String userCode,String password) {
+        if(printType==2){
+            //获取配置项
+            //获取程序配置项
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("ReprintCode");
+            List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            String isRoot = itemList.get(0).getParaValue().trim();
+            if(isRoot.equals("true")){
+                String hashPass = mesSfcWorkOrderBarcodeMapper.findSysUser(userCode);
+                if(StringUtils.isEmpty(hashPass)){
+                    throw new BizErrorException("用户无权限，请联系管理员");
+                }
+                BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
+                boolean flag = bcryptPasswordEncoder.matches(password,hashPass);
+                if(!flag){
+                    throw new BizErrorException("密码错误");
+                }
+            }
+        }
         if(StringUtils.isEmpty(ids,printName)){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数传递错误");
         }

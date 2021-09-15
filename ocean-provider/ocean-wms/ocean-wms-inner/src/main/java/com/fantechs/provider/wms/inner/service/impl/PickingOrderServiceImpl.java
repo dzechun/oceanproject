@@ -293,16 +293,29 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                                 //分配库存
                                 num += this.DistributionInventory(wmsInnerJobOrder, wms,2,wmsInnerInventory);
                             }else{
-                                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                                BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
-                                wmsInnerJobOrderDet.setJobOrderDetId(null);
-                                wmsInnerJobOrderDet.setPlanQty(playQty);
-                                wmsInnerJobOrderDet.setDistributionQty(playQty);
-                                num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
-                                playQty = playQty.subtract(BigDecimal.ZERO);
+                                if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1){
+                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                                    BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
+                                    wmsInnerJobOrderDet.setJobOrderDetId(null);
+                                    wmsInnerJobOrderDet.setPlanQty(playQty);
+                                    wmsInnerJobOrderDet.setDistributionQty(playQty);
+                                    num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+                                    playQty = BigDecimal.ZERO;
 
-                                //分配库存
-                                num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
+                                    //分配库存
+                                    num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
+                                }else {
+                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                                    BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
+                                    wmsInnerJobOrderDet.setJobOrderDetId(null);
+                                    wmsInnerJobOrderDet.setPlanQty(wmsInnerInventory.getPackingQty());
+                                    wmsInnerJobOrderDet.setDistributionQty(wmsInnerInventory.getPackingQty());
+                                    num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+                                    playQty = playQty.subtract(wmsInnerInventory.getPackingQty());
+
+                                    //分配库存
+                                    num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
+                                }
                             }
                         }
                     }
@@ -704,6 +717,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
             criteria.andEqualTo("jobStatus",(byte)1);
             criteria.andEqualTo("storageId",wmsInnerJobOrderDetDto.getOutStorageId()).andEqualTo("warehouseId",wmsInnerJobOrderDetDto.getWarehouseId()).andGreaterThan("packingQty",0).andEqualTo("orgId",wmsInnerJobOrderDetDto.getOrgId());
+            criteria.andEqualTo("stockLock",0).andEqualTo("qcLock",0).andEqualTo("lockStatus",0);
             wmsInnerInventory = wmsInnerInventoryMapper.selectByExample(example);
         }else if(type==2){
             wmsInnerInventory.add(wmsInnerInventorys);
@@ -726,13 +740,13 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         for (WmsInnerInventory innerInventory : wmsInnerInventory) {
             if(innerInventory.getPackingQty().compareTo(acuQty)==-1){
+                if(bigDecimalMap.containsKey(innerInventory.getInventoryId())){
+                    bigDecimalMap.put(innerInventory.getInventoryId(), bigDecimalMap.get(innerInventory.getInventoryId()).add(innerInventory.getPackingQty()));
+                }else{
+                    bigDecimalMap.put(innerInventory.getInventoryId(),innerInventory.getPackingQty());
+                }
                 acuQty = acuQty.subtract(innerInventory.getPackingQty());
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(innerInventory.getPackingQty()));
-                if(bigDecimalMap.containsKey(innerInventory.getInventoryId())){
-                    bigDecimalMap.put(innerInventory.getInventoryId(), bigDecimalMap.get(innerInventory.getInventoryId()).add(acuQty));
-                }else{
-                    bigDecimalMap.put(innerInventory.getInventoryId(),acuQty);
-                }
             }else{
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(acuQty));
                 if(bigDecimalMap.containsKey(innerInventory.getInventoryId())){

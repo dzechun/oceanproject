@@ -273,7 +273,6 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<BaseInspectionStandard> list = new LinkedList<>();
-        LinkedList<BaseInspectionStandardDet> detList = new LinkedList<>();
         LinkedList<BaseHtInspectionStandard> htList = new LinkedList<>();
         LinkedList<BaseInspectionStandardImport> inspectionStandardImports = new LinkedList<>();
         for (int i = 0; i < baseInspectionStandardImports.size(); i++) {
@@ -458,6 +457,7 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
                 htList.add(baseHtInspectionStandard);
 
                 //新增检验标准明细数据
+                LinkedList<BaseInspectionStandardDet> detList = new LinkedList<>();
                 for (BaseInspectionStandardImport baseInspectionStandardImport : baseInspectionStandardImports1) {
                     BaseInspectionStandardDet baseInspectionStandardDet = new BaseInspectionStandardDet();
                     BeanUtils.copyProperties(baseInspectionStandardImport, baseInspectionStandardDet);

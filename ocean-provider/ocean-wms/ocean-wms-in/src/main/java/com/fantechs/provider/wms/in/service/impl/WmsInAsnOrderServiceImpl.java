@@ -395,6 +395,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         //查询是否创建作业单
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setSourceOrderId(asnOrderId);
+        searchWmsInnerJobOrder.setOrderTypeId(wmsInAsnOrder.getOrderTypeId());
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
         if(wmsInnerJobOrderDtos.size()>0){
             throw new BizErrorException("上架作业单已存在");

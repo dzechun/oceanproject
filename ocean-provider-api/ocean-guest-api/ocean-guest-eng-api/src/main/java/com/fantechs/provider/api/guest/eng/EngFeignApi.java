@@ -9,6 +9,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import springfox.documentation.annotations.ApiIgnore;
+
+import java.math.BigDecimal;
 
 @FeignClient(name = "ocean-guest-eng")
 public interface EngFeignApi {
@@ -21,4 +25,7 @@ public interface EngFeignApi {
     @PostMapping("/engPurchaseReqOrder/saveByApi")
     ResponseEntity saveByApi(@ApiParam(value = "必传：purchaseReqOrderCode、materialCode",required = true)@RequestBody @Validated EngPurchaseReqOrder engPurchaseReqOrder);
 
+    @ApiOperation("收货作业反写上架数量")
+    @PostMapping("/engPackingOrderTask/writeQty")
+    ResponseEntity writeQty(@RequestParam Long id, @RequestParam BigDecimal qty);
 }

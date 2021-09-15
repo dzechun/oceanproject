@@ -28,7 +28,6 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <result column="ago_confirm_time" jdbcType="TIMESTAMP" property="agoConfirmTime"/>
     <result column="ago_confirm_user_id" jdbcType="BIGINT" property="agoConfirmUserId"/>
   </resultMap>
 
@@ -65,7 +64,6 @@
     spo.option1,
     spo.option2,
     spo.option3,
-spo.ago_confirm_time,
 spo.ago_confirm_user_id
   </sql>
 
@@ -147,7 +145,17 @@ spo.ago_confirm_user_id
   <select id="findStorage" resultType="java.lang.Long">
     select storage_id FROM base_storage where storage_type=2 and org_id=#{orgId} and warehouse_id=#{warehouseId}
   </select>
+  <select id="findPutStorage" resultType="java.lang.Long">
+    select storage_id FROM base_storage where storage_type=1 and org_id=#{orgId} and warehouse_id=#{warehouseId}
+  </select>
   <select id="findInventoryStatus" resultType="java.lang.Long">
     select inventory_status_id FROM  base_inventory_status where org_id=#{orgId} and warehouse_id=#{warehouseId}
+  </select>
+  <select id="findMaterialOwner" resultType="java.lang.Long">
+    select material_owner_id FROM base_material_owner where org_id=#{orgId}
+  </select>
+  <select id="findMaterialPurpose" resultType="java.lang.String">
+    select material_purpose FROM eng_contract_qty_order where contract_code=#{contractCode} and device_code=#{deviceCode}
+and dominant_term_code=#{dominantTermCode} and location_num=#{locationNum} and material_code=#{materialCode}
   </select>
 </mapper>

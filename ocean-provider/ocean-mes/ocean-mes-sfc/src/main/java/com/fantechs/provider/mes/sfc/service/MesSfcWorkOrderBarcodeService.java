@@ -20,7 +20,7 @@ import java.util.Map;
 public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderBarcode> {
     List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode);
 
-    int print(String ids,Byte printType,String printName);
+    int print(String ids,Byte printType,String printName,String userCode,String password);
 
     LabelRuteDto findLabelRute(Long workOrderId, Byte barcodeType);
 

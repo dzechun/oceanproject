@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcRepairOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="repair_order_id" jdbcType="BIGINT" property="repairOrderId" />
+    <result column="repair_order_code" jdbcType="VARCHAR" property="repairOrderCode" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
+    <result column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="semi_product_barcode" jdbcType="VARCHAR" property="semiProductBarcode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
+    <result column="route_id" jdbcType="BIGINT" property="routeId" />
+    <result column="bad_process_id" jdbcType="BIGINT" property="badProcessId" />
+    <result column="current_process_id" jdbcType="BIGINT" property="currentProcessId" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <collection property="mesSfcRepairOrderBadPhenotypeList" ofType="com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPhenotype"
+                column="{repairOrderId=repair_order_id}" select="com.fantechs.provider.mes.sfc.mapper.MesSfcRepairOrderBadPhenotypeMapper.findList">
+    </collection>
+    <collection property="mesSfcRepairOrderSemiProductList" ofType="com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderSemiProduct"
+                column="{repairOrderId=repair_order_id}" select="com.fantechs.provider.mes.sfc.mapper.MesSfcRepairOrderSemiProductMapper.findList">
+    </collection>
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcRepairOrderDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+    <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
+    <result column="bad_process_name" jdbcType="VARCHAR" property="badProcessName"/>
+    <result column="current_process_name" jdbcType="VARCHAR" property="currentProcessName"/>
+  </resultMap>
+
+  <sql id="BaseColumnList">
+    msro.repair_order_id,
+    msro.repair_order_code,
+    msro.work_order_id,
+    msro.work_order_barcode_id,
+    msro.barcode,
+    msro.semi_product_barcode,
+    msro.material_id,
+    msro.pro_line_id,
+    msro.route_id,
+    msro.bad_process_id,
+    msro.current_process_id,
+    msro.order_status,
+    msro.`status`,
+    msro.remark,
+    msro.org_id,
+    msro.create_user_id,
+    msro.create_time,
+    msro.modified_user_id,
+    msro.modified_time,
+    msro.is_delete,
+    msro.option1,
+    msro.option2,
+    msro.option3
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select <include refid="BaseColumnList"/>,
+    mpwo.work_order_code,bm.material_code,bm.material_code,bm.material_desc,
+    bpl.pro_name,br.route_name,bbp.process_name as bad_process_name,cbp.process_name as current_process_name,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    FROM mes_sfc_repair_order msro
+    left join fantech_imes_v2.mes_pm_work_order mpwo ON msro.work_order_id = mpwo.work_order_id
+    left join fantech_imes_v2.base_material bm ON msro.material_id = bm.material_id
+    left join fantech_imes_v2.base_pro_line bpl ON msro.pro_line_id = bpl.pro_line_id
+    left join fantech_imes_v2.base_route br ON msro.route_id = br.route_id
+    left join fantech_imes_v2.base_process bbp ON msro.bad_process_id = bbp.process_id
+    left join fantech_imes_v2.base_process cbp ON msro.current_process_id = cbp.process_id
+    left join ocean_v2.sys_user u on msro.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on msro.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON msro.org_id = bo.organization_id
+    <where>
+      <if test="repairOrderId != null">
+        and msro.repair_order_id = #{repairOrderId}
+      </if>
+      <if test="repairOrderCode != null and repairOrderCode!=''">
+        and msro.repair_order_code like CONCAT('%', #{repairOrderCode}, '%')
+      </if>
+      <if test="workOrderCode != null and workOrderCode!=''">
+        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(msro.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="status!=null">
+        and msro.status = #{status}
+      </if>
+      <if test="orderStatus!=null">
+        and msro.order_status = #{orderStatus}
+      </if>
+      <if test="orgId!=null">
+        and msro.org_id=#{orgId}
+      </if>
+    </where>
+    order by msro.create_time desc
+  </select>
+</mapper>

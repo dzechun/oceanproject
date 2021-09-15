@@ -17,4 +17,11 @@ public interface MiddleSaleOrderMapper extends MyMapper<MiddleSaleOrder> {
      * @return
      */
     List<MiddleSaleOrder> findSaleOrderData(Map<String, Object> map);
+
+    /**
+     * 插入中间库
+     * @param saleOrder
+     * @return
+     */
+    int save(MiddleSaleOrder saleOrder);
 }

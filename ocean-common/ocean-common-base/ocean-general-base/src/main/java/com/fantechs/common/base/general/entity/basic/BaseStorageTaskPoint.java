@@ -230,6 +230,27 @@ public class BaseStorageTaskPoint extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
 
+    /**
+     * 周转工具ID
+     */
+    @Transient
+    @ApiModelProperty(name = "vehicleId",value = "周转工具ID")
+    private Long vehicleId;
+
+    /**
+     * 周转工具编码
+     */
+    @Transient
+    @ApiModelProperty(name = "vehicleCode",value = "周转工具编码")
+    private String vehicleCode;
+
+    /**
+     * 周转工具名称
+     */
+    @Transient
+    @ApiModelProperty(name = "vehicleName",value = "周转工具名称")
+    private String vehicleName;
+
     private String option1;
 
     private String option2;

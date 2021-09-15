@@ -150,6 +150,11 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         if(StringUtils.isEmpty(storageId)){
             throw new BizErrorException("获取库位信息失败");
         }
+        //获取默认上架库位
+        Long putStorageId = engPackingOrderMapper.findPutStorage(ControllerUtil.dynamicCondition("orgId",user.getOrganizationId(),"warehouseId",warehouseId));
+        if(StringUtils.isEmpty(storageId)){
+            throw new BizErrorException("获取库位信息失败");
+        }
         //获取库存状态信息
         Long inventoryStatus = engPackingOrderMapper.findInventoryStatus(ControllerUtil.dynamicCondition("orgId",user.getOrganizationId(),"warehouseId",warehouseId));
         if(StringUtils.isEmpty(inventoryStatus)){
@@ -162,7 +167,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
             for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : engPackingOrderSummaryDetDtos) {
                 engPackingOrderSummaryDetDto.setSummaryDetStatus((byte)1);
                 engPackingOrderSummaryDetDto.setReceivingStorageId(storageId);
-                engPackingOrderSummaryDetDto.setPutawayStorageId(storageId);
+                engPackingOrderSummaryDetDto.setPutawayStorageId(putStorageId);
                 engPackingOrderSummaryDetDto.setModifiedTime(new Date());
                 engPackingOrderSummaryDetDto.setModifiedUserId(user.getUserId());
                 engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDetDto);

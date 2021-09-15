@@ -35,6 +35,9 @@
     <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode" />
     <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode" />
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
+    <result column="vehicle_id" jdbcType="BIGINT" property="vehicleId" />
+    <result column="vehicle_code" jdbcType="VARCHAR" property="vehicleCode" />
+    <result column="vehicle_name" jdbcType="VARCHAR" property="vehicleName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -65,9 +68,11 @@
   <select id="findList" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
     sw.warehouse_code,swa.warehouse_area_code,bwa.working_area_code,bs.storage_code,
+    tv.vehicle_id,tv.vehicle_code,tv.vehicle_name,
     u.user_name as createUserName, s.user_name as modifiedUserName,
     bo.organization_name
     from fantech_imes_v2.base_storage_task_point bstp
+    left join fantech_imes_v2.tem_vehicle tv on bstp.storage_task_point_id=tv.storage_task_point_id
     left join fantech_imes_v2.base_storage bs on bstp.storage_id=bs.storage_id
     left join fantech_imes_v2.base_warehouse sw on bs.warehouse_id=sw.warehouse_id
     left join fantech_imes_v2.base_warehouse_area swa on bs.warehouse_area_id=swa.warehouse_area_id
@@ -112,7 +117,12 @@
       <if test="orgId!=null">
         and bstp.org_id=#{orgId}
       </if>
+      <if test="ifOrderByUsePriority == 1">
+        order by bstp.use_priority
+      </if>
+      <if test="ifOrderByUsePriority != 1">
+        order by bstp.create_time desc
+      </if>
     </where>
-    order by bstp.create_time desc
   </select>
 </mapper>

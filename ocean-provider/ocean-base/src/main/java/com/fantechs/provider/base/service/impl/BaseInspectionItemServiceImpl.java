@@ -341,6 +341,7 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
                     inspectionItem.setModifiedUserId(currentUser.getUserId());
                     inspectionItem.setModifiedTime(new Date());
                     inspectionItem.setStatus((byte) 1);
+                    inspectionItem.setOrganizationId(currentUser.getOrganizationId());
                     detList.add(inspectionItem);
                 }
                 baseInspectionItemMapper.insertList(detList);

@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -68,6 +69,15 @@ public class BaseStorageTaskPointServiceImpl extends BaseService<BaseStorageTask
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
+        example.clear();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria1.andEqualTo("storageId", record.getStorageId());
+        BaseStorageTaskPoint baseStorageTaskPoint1 = baseStorageTaskPointMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(baseStorageTaskPoint1)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"该库位已绑定其他配送点");
+        }
+
         record.setCreateUserId(currentUser.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(currentUser.getUserId());
@@ -86,6 +96,7 @@ public class BaseStorageTaskPointServiceImpl extends BaseService<BaseStorageTask
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int update(BaseStorageTaskPoint entity) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -99,6 +110,15 @@ public class BaseStorageTaskPointServiceImpl extends BaseService<BaseStorageTask
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
+        example.clear();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria1.andEqualTo("storageId", entity.getStorageId());
+        criteria1.andNotEqualTo("storageTaskPointId", entity.getStorageTaskPointId());
+        BaseStorageTaskPoint baseStorageTaskPoint1 = baseStorageTaskPointMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(baseStorageTaskPoint1)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"该库位已绑定其他配送点");
+        }
 
         entity.setModifiedUserId(currentUser.getUserId());
         entity.setModifiedTime(new Date());

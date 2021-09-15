@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.wanbao.api.mapper.MiddleSaleOrderMapper">
-    <resultMap id="BaseResultMap" type="com.fantechs.provider.wanbao.api.entity.MiddleMaterial">
-        <id column="middle_material_id" jdbcType="BIGINT" property="middleMaterialId"/>
+    <resultMap id="BaseResultMap" type="com.fantechs.provider.wanbao.api.entity.MiddleSaleOrder">
+        <id column="sale_order_id" jdbcType="VARCHAR" property="saleOrderId"/>
         <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
         <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="supplier_id" jdbcType="VARCHAR" property="supplierId"/>
         <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
         <result column="order_type" jdbcType="VARCHAR" property="orderType" />
+        <result column="factory_code" jdbcType="VARCHAR" property="factoryCode" />
         <result column="customer_product_model" jdbcType="VARCHAR" property="customerProductModel" />
         <result column="customer_order_line_number" jdbcType="VARCHAR" property="customerOrderLineNumber" />
         <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
         <result column="make_code" jdbcType="VARCHAR" property="makeCode" />
+        <result column="sales_code_qty" jdbcType="DECIMAL" property="salesCodeQty" />
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
-        <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="make_order_date" jdbcType="VARCHAR" property="makeOrderDate" />
+        <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+        <result column="modified_time" jdbcType="VARCHAR" property="modifiedTime" />
     </resultMap>
 
     <select id="setPolicy" >
@@ -30,24 +34,50 @@
             mh.CUSTOMER_NUMBER AS supplier_code,
             mh.mo_status AS order_status,
             mh.order_type_name AS order_type,
-            mh.salesperson_name 创建人,
             mld.factory_code AS factory_code,
             mld.CUSTOMER_MODEL AS customer_product_model,
             mld.product_code AS sales_code,
             mld.Wb_Make_Code AS make_code,
             mld.product_description AS material_name,
-            mld.CUST_TRADEMARK_NAME 客户商标,
+            mld.PRODUCT_CODE AS material_code,
             mld.quantity AS order_qty,
+            mld.quantity AS sales_code_qty,
             mh.order_date AS make_order_date,
             mld.LINE_NUMBER AS customer_order_line_number,
             mh.creation_date AS create_time,
             mh.LAST_UPDATE_DATE AS modified_time
         FROM
-            apps.oms_mo_headers_v mh,
-            apps.oms_mo_line_details_v mld
-        WHERE
-            mld.mo_header_id = mh.mo_header_id
-          AND mh.org_id = 81
+            oms_mo_headers_v mh
+            LEFT JOIN oms_mo_line_details_v mld ON mld.mo_header_id = mh.mo_header_id
+        <where>
+            mh.org_id = 81
+            <if test="date != null and date != ''">
+                and mh.order_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
+            </if>
+        </where>
     </select>
 
+    <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleSaleOrder">
+        INSERT INTO "K3WMS"."middle_sale_order" ( "sale_order_id", "sales_order_code", "supplier_code", "supplier_id", "order_status", "order_type", "factory_code"
+        , "customer_product_model", "customer_order_line_number", "sales_code", "make_code", "sales_code_qty", "material_name", "material_code", "order_qty", "make_order_date", "create_time", "modified_time")
+        VALUES
+            ( #{saleOrderId},
+            #{salesOrderCode},
+            #{supplierCode},
+            #{supplierId},
+            #{orderStatus},
+            #{orderType},
+            #{factoryCode},
+            #{customerProductModel},
+            #{customerOrderLineNumber},
+            #{salesCode},
+            #{makeCode},
+            #{salesCodeQty},
+            #{materialName},
+            #{materialCode},
+            #{orderQty},
+            #{makeOrderDate},
+            #{createTime},
+            #{modifiedTime} )
+    </insert>
 </mapper>
