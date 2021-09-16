@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseLabelVariableMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseLabelVariable">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="label_variable_id" jdbcType="BIGINT" property="labelVariableId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="label_category_id" jdbcType="BIGINT" property="labelCategoryId" />
+    <result column="value1" jdbcType="VARCHAR" property="value1" />
+    <result column="value2" jdbcType="VARCHAR" property="value2" />
+    <result column="value3" jdbcType="VARCHAR" property="value3" />
+    <result column="value4" jdbcType="VARCHAR" property="value4" />
+    <result column="value5" jdbcType="VARCHAR" property="value5" />
+    <result column="value6" jdbcType="VARCHAR" property="value6" />
+    <result column="value7" jdbcType="VARCHAR" property="value7" />
+    <result column="value8" jdbcType="VARCHAR" property="value8" />
+    <result column="value9" jdbcType="VARCHAR" property="value9" />
+    <result column="value10" jdbcType="VARCHAR" property="value10" />
+    <result column="value11" jdbcType="VARCHAR" property="value11" />
+    <result column="value12" jdbcType="VARCHAR" property="value12" />
+    <result column="value13" jdbcType="VARCHAR" property="value13" />
+    <result column="value14" jdbcType="VARCHAR" property="value14" />
+    <result column="value15" jdbcType="VARCHAR" property="value15" />
+    <result column="value16" jdbcType="VARCHAR" property="value16" />
+    <result column="value17" jdbcType="VARCHAR" property="value17" />
+    <result column="value18" jdbcType="VARCHAR" property="value18" />
+    <result column="value19" jdbcType="VARCHAR" property="value19" />
+    <result column="value20" jdbcType="VARCHAR" property="value20" />
+    <result column="value21" jdbcType="VARCHAR" property="value21" />
+    <result column="value22" jdbcType="VARCHAR" property="value22" />
+    <result column="value23" jdbcType="VARCHAR" property="value23" />
+    <result column="value24" jdbcType="VARCHAR" property="value24" />
+    <result column="value25" jdbcType="VARCHAR" property="value25" />
+    <result column="value26" jdbcType="VARCHAR" property="value26" />
+    <result column="value27" jdbcType="VARCHAR" property="value27" />
+    <result column="value28" jdbcType="VARCHAR" property="value28" />
+    <result column="value29" jdbcType="VARCHAR" property="value29" />
+    <result column="value30" jdbcType="VARCHAR" property="value30" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.basic.BaseLabelVariableDto" extends="BaseResultMap">
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="label_category_code" jdbcType="VARCHAR" property="labelCategoryCode" />
+    <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    blv.label_variable_id,
+    blv.material_id,
+    blv.label_category_id,
+    blv.value1,
+    blv.value2,
+    blv.value3,
+    blv.value4,
+    blv.value5,
+    blv.value6,
+    blv.value7,
+    blv.value8,
+    blv.value9,
+    blv.value10,
+    blv.value11,
+    blv.value12,
+    blv.value13,
+    blv.value14,
+    blv.value15,
+    blv.value16,
+    blv.value17,
+    blv.value18,
+    blv.value19,
+    blv.value20,
+    blv.value21,
+    blv.value22,
+    blv.value23,
+    blv.value24,
+    blv.value25,
+    blv.value26,
+    blv.value27,
+    blv.value28,
+    blv.value29,
+    blv.value30,
+    blv.`status`,
+    blv.remark,
+    blv.org_id,
+    blv.create_user_id,
+    blv.create_time,
+    blv.modified_user_id,
+    blv.modified_time,
+    blv.is_delete,
+    blv.option1,
+    blv.option2,
+    blv.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select<include refid="Base_Column_List"/>,
+    bm.material_code,bm.material_name,blc.label_category_code,blc.label_category_name,
+    su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+    from fantech_imes_v2.base_label_variable blv
+    LEFT JOIN fantech_imes_v2.base_material bm ON blv.material_id = bm.material_id
+    LEFT JOIN fantech_imes_v2.base_label_category blc ON blv.label_category_id = blc.label_category_id
+    left join ocean_v2.sys_user su on blv.create_user_id = su.user_id
+    left join ocean_v2.sys_user sus on blv.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON blv.org_id = bo.organization_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(blv.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="materialCode != null and materialCode != ''">
+        and bm.material_code like CONCAT('%',#{materialCode},'%')
+      </if>
+      <if test="materialName != null and materialName != ''">
+        and bm.material_name like CONCAT('%',#{materialName},'%')
+      </if>
+      <if test="labelCategoryCode != null and labelCategoryCode != ''">
+        and blc.label_category_code like CONCAT('%',#{labelCategoryCode},'%')
+      </if>
+      <if test="labelCategoryName != null and labelCategoryName != ''">
+        and blc.label_category_name like CONCAT('%',#{labelCategoryName},'%')
+      </if>
+      <if test="status!=null">
+        and blv.status=#{status}
+      </if>
+      <if test="orgId!=null">
+        and blv.org_id=#{orgId}
+      </if>
+    </where>
+    order by blv.create_time desc
+  </select>
+</mapper>

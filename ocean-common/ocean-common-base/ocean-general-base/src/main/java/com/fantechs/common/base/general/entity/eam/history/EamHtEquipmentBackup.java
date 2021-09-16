@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.eam;
+package com.fantechs.common.base.general.entity.eam.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -16,20 +16,28 @@ import java.util.Date;
 ;
 
 /**
- * 设备备用件
- * eam_equipment_backup
+ * 设备备用件履历表
+ * eam_ht_equipment_backup
  * @author Dylan
- * @date 2021-09-16 16:57:13
+ * @date 2021-09-16 20:07:12
  */
 @Data
-@Table(name = "eam_equipment_backup")
-public class EamEquipmentBackup extends ValidGroup implements Serializable {
+@Table(name = "eam_ht_equipment_backup")
+public class EamHtEquipmentBackup extends ValidGroup implements Serializable {
+    /**
+     * 设备备用件履历ID
+     */
+    @ApiModelProperty(name="htEquipmentBackupId",value = "设备备用件履历ID")
+    @Excel(name = "设备备用件履历ID", height = 20, width = 30,orderNum="") 
+    @Id
+    @Column(name = "ht_equipment_backup_id")
+    private Long htEquipmentBackupId;
+
     /**
      * 设备备用件ID
      */
     @ApiModelProperty(name="equipmentBackupId",value = "设备备用件ID")
     @Excel(name = "设备备用件ID", height = 20, width = 30,orderNum="") 
-    @Id
     @Column(name = "equipment_backup_id")
     private Long equipmentBackupId;
 

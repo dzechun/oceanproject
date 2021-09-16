@@ -5,6 +5,10 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseProLine;
+import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -71,10 +75,21 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 mesPmWorkOrder.setMaterialId(baseMaterials.get(0).getMaterialId());
                 if(StringUtils.isNotEmpty(restapiWorkOrderApiDto.getGAMNG()))
                  mesPmWorkOrder.setWorkOrderQty(new BigDecimal(restapiWorkOrderApiDto.getGAMNG().trim()));
-                //目前还未同步产线
-                //mesPmWorkOrder.setProLineId(getProLine(restapiWorkOrderApiDto.getFEVOR()));
+                //产线
+                List<BaseProLine> proLines = getProLine(restapiWorkOrderApiDto.getFEVOR(), orgId);
+                if(StringUtils.isNotEmpty(proLines))
+                    mesPmWorkOrder.setProLineId(proLines.get(0).getProLineId());
+                //工艺路线
+                SearchBaseProductProcessRoute searchBaseProductProcessRoute = new SearchBaseProductProcessRoute();
+                searchBaseProductProcessRoute.setOrgId(orgId);
+                searchBaseProductProcessRoute.setMaterialCode(restapiWorkOrderApiDto.getMATNR());
+                List<BaseProductProcessRoute> productProcessRoute = baseFeignApi.findList(searchBaseProductProcessRoute).getData();
+                if(StringUtils.isNotEmpty(productProcessRoute) && productProcessRoute.size() == 1 )
+                    mesPmWorkOrder.setRouteId(productProcessRoute.get(0).getRouteId());
+
                 mesPmWorkOrder.setOrgId(orgId);
                 mesPmWorkOrder.setIsDelete((byte)1);
+                mesPmWorkOrder.setWorkOrderType((byte)0);
                 ResponseEntity<MesPmWorkOrder> mesPmWorkOrderResponseEntity = pmFeignApi.saveByApi(mesPmWorkOrder);
                 orderMap.put(restapiWorkOrderApiDto.getAUFNR(),mesPmWorkOrderResponseEntity.getData().getWorkOrderId());
             }
@@ -113,14 +128,12 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         return check;
     }
 
-    /*public Long getProLine(String proLineCode,Long orgId){
+    public List<BaseProLine> getProLine(String proLineCode,Long orgId){
         SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
         searchBaseProLine.setProCode(proLineCode);
         searchBaseProLine.setOrgId(orgId);
         ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);
-        if(StringUtils.isEmpty(list.getData()))
-            throw new BizErrorException("未查询到对应的产线："+proLineCode);
-        return list.getData().get(0).getProLineId();
-    }*/
+        return list.getData();
+    }
 
 }

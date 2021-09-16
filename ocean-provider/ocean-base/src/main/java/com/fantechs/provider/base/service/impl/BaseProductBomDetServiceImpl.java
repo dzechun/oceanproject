@@ -247,6 +247,8 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
                 ids = ids +","+ baseProductBomDetDto.getProductBomDetId();
             }
         }
-        return baseProductBomDetMapper.deleteByIds(ids);
+         if(StringUtils.isNotEmpty(ids))
+             baseProductBomDetMapper.deleteByIds(ids);
+        return 1;
     }
 }
