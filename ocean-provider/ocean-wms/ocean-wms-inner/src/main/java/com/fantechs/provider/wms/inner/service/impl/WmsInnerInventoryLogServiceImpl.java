@@ -59,8 +59,8 @@ public class WmsInnerInventoryLogServiceImpl extends BaseService<WmsInnerInvento
 
         record.setInventoryStatusName(wmsInnerInventoryLogMapper.findInvName(record.getInventoryStatusId()));
         //期初数量
-        Map<String,Object> map = paramUtil(record);
-        record.setInitialQty(wmsInnerInventoryLogMapper.findInv(map));
+//        Map<String,Object> map = paramUtil(record);
+//        record.setInitialQty(wmsInnerInventoryLogMapper.findInv(map));
         if(StringUtils.isEmpty(record.getInitialQty())){
             record.setInitialQty(BigDecimal.ZERO);
         }
