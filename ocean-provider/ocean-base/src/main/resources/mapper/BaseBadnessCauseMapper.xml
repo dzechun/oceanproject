@@ -63,6 +63,9 @@
       <if test="badnessCauseDesc != null and badnessCauseDesc != ''">
         and bbc.badness_cause_desc like CONCAT('%',#{badnessCauseDesc},'%')
       </if>
+      <if test="status!=null">
+        and bbc.status=#{status}
+      </if>
         <if test="orgId!=null">
             and bbc.org_id=#{orgId}
         </if>
