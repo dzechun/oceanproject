@@ -97,7 +97,7 @@
         and swa.warehouse_area_code like CONCAT('%', #{warehouseAreaCode}, '%')
       </if>
       <if test="warehouseAreaId!=null">
-        and bstp.warehouse_area_id=#{warehouseAreaId}
+        and swa.warehouse_area_id=#{warehouseAreaId}
       </if>
       <if test="storageCode!=null and storageCode!='' and codeQueryMark != 1">
         and bs.storage_code like CONCAT('%', #{storageCode}, '%')
