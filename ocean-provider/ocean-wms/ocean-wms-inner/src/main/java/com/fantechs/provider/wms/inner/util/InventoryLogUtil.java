@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public class InventoryLogUtil {
      * @param jobStatus 作业类型(1-收货，2-上架，3-移位，4-拣货，5-补货，6-调整，7-盘点，8-发运)
      * @param addOrSubtract 加减类型(1-加 2-减)
      */
-    public static void addLog(WmsInnerJobOrder wmsInnerJobOrder, WmsInnerJobOrderDet wmsInnerJobOrderDet, Byte jobStatus, Byte addOrSubtract){
+    public static void addLog(WmsInnerJobOrder wmsInnerJobOrder, WmsInnerJobOrderDet wmsInnerJobOrderDet,BigDecimal initQty,BigDecimal chaQty, Byte jobStatus, Byte addOrSubtract){
         WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
         wmsInnerInventoryLog.setAsnCode(wmsInnerJobOrder.getRelatedOrderCode());
         wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerJobOrder.getJobOrderCode());
@@ -68,7 +69,8 @@ public class InventoryLogUtil {
         wmsInnerInventoryLog.setBatchCode(wmsInnerJobOrderDet.getBatchCode());
         wmsInnerInventoryLog.setPalletCode(wmsInnerJobOrderDet.getPalletCode());
         wmsInnerInventoryLog.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
-        wmsInnerInventoryLog.setChangeQty(wmsInnerJobOrderDet.getActualQty());
+        wmsInnerInventoryLog.setInitialQty(initQty);
+        wmsInnerInventoryLog.setChangeQty(chaQty);
         wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerJobOrder.getMaterialOwnerId());
         inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
     }
