@@ -99,6 +99,12 @@
       <if test="repairOrderCode != null and repairOrderCode!=''">
         and msro.repair_order_code like CONCAT('%', #{repairOrderCode}, '%')
       </if>
+      <if test="barcode != null and barcode!=''">
+        and msro.barcode = #{barcode}
+      </if>
+      <if test="semiProductBarcode != null and semiProductBarcode!=''">
+        and msro.semi_product_barcode = #{semiProductBarcode}
+      </if>
       <if test="workOrderCode != null and workOrderCode!=''">
         and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
       </if>

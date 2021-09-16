@@ -6,9 +6,8 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcRepairOrderDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
+import com.fantechs.common.base.general.dto.mes.sfc.*;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRelevance;
 import com.fantechs.common.base.general.entity.basic.BaseFile;
 import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFile;
@@ -19,7 +18,9 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPheno
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPhenotypeRepair;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderSemiProduct;
 import com.fantechs.common.base.general.entity.mes.sfc.history.MesSfcHtRepairOrder;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -29,7 +30,6 @@ import com.fantechs.provider.mes.sfc.mapper.*;
 import com.fantechs.provider.mes.sfc.service.MesSfcRepairOrderService;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -61,6 +61,8 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     @Resource
     private MesSfcRepairOrderSemiProductMapper mesSfcRepairOrderSemiProductMapper;
     @Resource
+    private MesSfcKeyPartRelevanceMapper mesSfcKeyPartRelevanceMapper;
+    @Resource
     private RabbitProducer rabbitProducer;
 
     @Override
@@ -88,7 +90,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     }
 
     @Override
-    public MesPmWorkOrderDto getWorkOrder(String SNCode,String workOrderCode){
+    public MesSfcRepairOrderDto getWorkOrder(String SNCode,String workOrderCode,Integer SNCodeType){
         if(StringUtils.isNotEmpty(SNCode)) {
             //截取工单号
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -107,47 +109,90 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
             workOrderCode = SNCode.substring(beginIndex, endIndex);
         }
 
+        //查询工单信息
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+        searchMesPmWorkOrder.setCodeQueryMark(1);
         List<MesPmWorkOrderDto> pmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
         if (StringUtils.isEmpty(pmWorkOrderDtos)){
             throw new BizErrorException("找不到此工单");
         }
+        MesPmWorkOrderDto mesPmWorkOrderDto = pmWorkOrderDtos.get(0);
 
-        return pmWorkOrderDtos.get(0);
+        //获取半成品列表信息
+        List<MesSfcRepairOrderSemiProduct> mesSfcRepairOrderSemiProducts = new ArrayList<>();
+        if(SNCodeType == 1) {
+            SearchMesSfcKeyPartRelevance searchMesSfcKeyPartRelevance = new SearchMesSfcKeyPartRelevance();
+            searchMesSfcKeyPartRelevance.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+            List<MesSfcKeyPartRelevanceDto> keyPartRelevanceList = mesSfcKeyPartRelevanceMapper.findList(ControllerUtil.dynamicConditionByEntity(searchMesSfcKeyPartRelevance));
+            if (StringUtils.isNotEmpty(keyPartRelevanceList)) {
+                for (MesSfcKeyPartRelevanceDto mesSfcKeyPartRelevanceDto : keyPartRelevanceList) {
+                    MesSfcRepairOrderSemiProduct mesSfcRepairOrderSemiProduct = new MesSfcRepairOrderSemiProduct();
+                    mesSfcRepairOrderSemiProduct.setBarcode(mesSfcKeyPartRelevanceDto.getPartBarcode());
+                    mesSfcRepairOrderSemiProduct.setMaterialId(mesSfcKeyPartRelevanceDto.getMaterialId());
+                    mesSfcRepairOrderSemiProduct.setMaterialCode(mesSfcKeyPartRelevanceDto.getMaterialCode());
+                    mesSfcRepairOrderSemiProducts.add(mesSfcRepairOrderSemiProduct);
+                }
+            }
+        }
+
+
+        MesSfcRepairOrderDto mesSfcRepairOrderDto = new MesSfcRepairOrderDto();
+        mesSfcRepairOrderDto.setWorkOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
+        mesSfcRepairOrderDto.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+        if(SNCodeType == 1){
+            mesSfcRepairOrderDto.setBarcode(SNCode);
+        }else if(SNCodeType == 2){
+            mesSfcRepairOrderDto.setSemiProductBarcode(SNCode);
+        }
+        mesSfcRepairOrderDto.setMaterialId(mesPmWorkOrderDto.getMaterialId());
+        mesSfcRepairOrderDto.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
+        mesSfcRepairOrderDto.setMaterialDesc(mesPmWorkOrderDto.getMaterialDesc());
+        mesSfcRepairOrderDto.setProLineId(mesPmWorkOrderDto.getProLineId());
+        mesSfcRepairOrderDto.setProName(mesPmWorkOrderDto.getProName());
+        mesSfcRepairOrderDto.setRouteId(mesPmWorkOrderDto.getRouteId());
+        mesSfcRepairOrderDto.setRouteName(mesPmWorkOrderDto.getRouteName());
+        mesSfcRepairOrderDto.setMesSfcRepairOrderSemiProductList(mesSfcRepairOrderSemiProducts);
+
+        return mesSfcRepairOrderDto;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int print(Long repairOrderId) {
+    public int print(MesSfcRepairOrderPrintParam mesSfcRepairOrderPrintParam) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("repairOrderId",repairOrderId);
+        map.put("repairOrderId",mesSfcRepairOrderPrintParam.getRepairOrderId());
         List<MesSfcRepairOrderDto> list = mesSfcRepairOrderMapper.findList(map);
         MesSfcRepairOrderDto mesSfcRepairOrderDto = list.get(0);
 
         SearchBaseStation searchBaseStation = new SearchBaseStation();
         searchBaseStation.setProcessId(mesSfcRepairOrderDto.getBadProcessId());
         List<BaseStation> baseStations = baseFeignApi.findBaseStationList(searchBaseStation).getData();
-        BaseStation baseStation = baseStations.get(0);
+        BaseStation baseStation = new BaseStation();
+        if(StringUtils.isNotEmpty(baseStations)) {
+            baseStation = baseStations.get(0);
+        }
 
         List<MesSfcRepairOrderBadPhenotype> mesSfcRepairOrderBadPhenotypeList = mesSfcRepairOrderDto.getMesSfcRepairOrderBadPhenotypeList();
-        StringBuilder badnessPhenotypeCodes = new StringBuilder();
-        StringBuilder badnessPhenotypeDescs = new StringBuilder();
-        for (MesSfcRepairOrderBadPhenotype mesSfcRepairOrderBadPhenotype : mesSfcRepairOrderBadPhenotypeList){
-            badnessPhenotypeCodes.append(mesSfcRepairOrderBadPhenotype.getBadnessPhenotypeCode()).append(",");
-            badnessPhenotypeDescs.append(mesSfcRepairOrderBadPhenotype.getBadnessPhenotypeDesc()).append(",");
+        if(StringUtils.isEmpty(mesSfcRepairOrderBadPhenotypeList)){
+            throw new BizErrorException("维修单没有不良现象，无法打印");
         }
-        String badnessPhenotypeCode = badnessPhenotypeCodes.substring(0, badnessPhenotypeCodes.length() - 1);
-        String badnessPhenotypeDesc = badnessPhenotypeDescs.substring(0, badnessPhenotypeDescs.length() - 1);
+        String badnessPhenotypeCode = mesSfcRepairOrderBadPhenotypeList.get(0).getBadnessPhenotypeCode();
+        String badnessPhenotypeDesc = mesSfcRepairOrderBadPhenotypeList.get(0).getBadnessPhenotypeDesc();
 
-        PrintDto printDto = new PrintDto();
+
         PrintModel printModel = new PrintModel();
         List<PrintModel> printModelList = new ArrayList<>();
-        printModel.setSize(1);
+        printModel.setId(mesSfcRepairOrderPrintParam.getRepairOrderId());
+        //printModel.setSize(mesSfcRepairOrderPrintParam.getSize());
         printModel.setOption1(badnessPhenotypeCode);
         printModel.setOption2(badnessPhenotypeDesc);
-        printModel.setOption3(baseStation.getProcessCode());
+        printModel.setOption3(baseStation.getStationCode());
         printModelList.add(printModel);
+        PrintDto printDto = new PrintDto();
+        printDto.setPrintName(mesSfcRepairOrderPrintParam.getPrintName());
+        printDto.setLabelName(mesSfcRepairOrderPrintParam.getLabelName());
+        printDto.setLabelVersion("0.0.1");
         printDto.setPrintModelList(printModelList);
 
         rabbitProducer.sendPrint(printDto);
@@ -162,6 +207,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
 
         ifCodeRepeat(record,user);
 
+        record.setRepairOrderCode(CodeUtils.getId("WX-"));
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());

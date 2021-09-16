@@ -467,7 +467,6 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         if(StringUtils.isEmpty(inventoryStatus)){
             throw new BizErrorException("获取货主信息失败");
         }
-        List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
         for (Long id : ids) {
             EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(id);
 //            if(engPackingOrder.getOrderStatus()!=4){
@@ -475,7 +474,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
 //            }
             BigDecimal sumQty = BigDecimal.ZERO;
             List<EngPackingOrderSummaryDto> engPackingOrderSummaryDtos = engPackingOrderSummaryMapper.findList(ControllerUtil.dynamicCondition("packingOrderId", id));
-
+            List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
             if (engPackingOrder.getOrderStatus() == 3 || engPackingOrder.getOrderStatus() == 4) {
                 for (EngPackingOrderSummaryDto engPackingOrderSummaryDto : engPackingOrderSummaryDtos) {
                     //收货中及待上架才能进行创建上架单
@@ -498,20 +497,19 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                                 //可上架数量大于0创建上架单明细
                                 if (totalQty.compareTo(BigDecimal.ZERO) == 1) {
                                     //上架明细单
-                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = WmsInnerJobOrderDet.builder()
-                                            .sourceDetId(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId())
-                                            .warehouseId(warehouseId)
-                                            .outStorageId(engPackingOrderSummaryDetDto.getReceivingStorageId())
-                                            .inStorageId(engPackingOrderSummaryDetDto.getPutawayStorageId())
-                                            .materialId(engPackingOrderSummaryDetDto.getMaterialId())
-                                            .planQty(totalQty)
-                                            .distributionQty(totalQty)
-                                            .orderStatus((byte) 3)
-                                            .inventoryStatusId(inventoryStatus)
-                                            .option1(engPackingOrderSummaryDto.getCartonCode())
-                                            .orgId(sysUser.getOrganizationId())
-                                            .packingUnitName(engPackingOrderSummaryDetDto.getUnitName())
-                                            .build();
+                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                                    wmsInnerJobOrderDet.setSourceDetId(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId());
+                                    wmsInnerJobOrderDet.setWarehouseId(warehouseId);
+                                    wmsInnerJobOrderDet.setOutStorageId(engPackingOrderSummaryDetDto.getReceivingStorageId());
+                                    wmsInnerJobOrderDet.setInStorageId(engPackingOrderSummaryDetDto.getPutawayStorageId());
+                                    wmsInnerJobOrderDet.setMaterialId(engPackingOrderSummaryDetDto.getMaterialId());
+                                    wmsInnerJobOrderDet.setPlanQty(totalQty);
+                                    wmsInnerJobOrderDet.setDistributionQty(totalQty);
+                                    wmsInnerJobOrderDet.setOrderStatus((byte) 3);
+                                    wmsInnerJobOrderDet.setInventoryStatusId(inventoryStatus);
+                                    wmsInnerJobOrderDet.setOption1(engPackingOrderSummaryDto.getCartonCode());
+                                    wmsInnerJobOrderDet.setOrgId(sysUser.getOrganizationId());
+                                    wmsInnerJobOrderDet.setPackingUnitName(engPackingOrderSummaryDetDto.getUnitName());
                                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
 
                                     //状态为待上架且分配数量等于收货数量时 更新状态为完成
@@ -543,23 +541,21 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 }
             }
             if(wmsInnerJobOrderDets.size()>0){
-                WmsInnerJobOrder wmsInnerJobOrder = WmsInnerJobOrder.builder()
-                        .sourceOrderId(engPackingOrder.getPackingOrderId())
-                        .orderTypeId(Long.parseLong("9"))
-                        .jobOrderType((byte)3)
-                        .relatedOrderCode(engPackingOrder.getPackingOrderCode())
-                        .warehouseId(warehouseId)
-                        .planQty(sumQty)
-                        .orderStatus((byte) 3)
-                        .actualQty(new BigDecimal("0"))
-                        .wmsInPutawayOrderDets(wmsInnerJobOrderDets)
-                        .orgId(sysUser.getOrganizationId())
-                        .materialOwnerId(materialOwnerId)
-                        .build();
+                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceOrderId(engPackingOrder.getPackingOrderId());
+                wmsInnerJobOrder.setOrderTypeId(Long.parseLong("9"));
+                wmsInnerJobOrder.setJobOrderType((byte)3);
+                wmsInnerJobOrder.setRelatedOrderCode(engPackingOrder.getPackingOrderCode());
+                wmsInnerJobOrder.setWarehouseId(warehouseId);
+                wmsInnerJobOrder.setPlanQty(sumQty);
+                wmsInnerJobOrder .setOrderStatus((byte) 3);
+                wmsInnerJobOrder .setActualQty(new BigDecimal("0"));
+                wmsInnerJobOrder .setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
+                wmsInnerJobOrder .setOrgId(sysUser.getOrganizationId());
+                wmsInnerJobOrder .setMaterialOwnerId(materialOwnerId);
                 list.add(wmsInnerJobOrder);
             }
         }
-
         if(list.size()>0){
             ResponseEntity responseEntity = innerFeignApi.addList(list);
             if(responseEntity.getCode()!=0){
