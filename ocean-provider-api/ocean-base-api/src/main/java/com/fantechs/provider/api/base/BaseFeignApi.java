@@ -532,4 +532,9 @@ public interface BaseFeignApi {
     @ApiOperation("配送点列表")
     @PostMapping("/baseStorageTaskPoint/findList")
     ResponseEntity<List<BaseStorageTaskPoint>> findBaseStorageTaskPointList(@ApiParam(value = "查询对象")@RequestBody SearchBaseStorageTaskPoint searchBaseStorageTaskPoint);
+
+    @ApiOperation("列表")
+    @PostMapping("/baseProductProcessRoute/findList")
+    ResponseEntity<List<BaseProductProcessRoute>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessRoute searchBaseProductProcessRoute);
+
 }

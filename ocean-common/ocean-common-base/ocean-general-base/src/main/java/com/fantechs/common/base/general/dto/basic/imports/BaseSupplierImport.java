@@ -42,5 +42,5 @@ public class BaseSupplierImport implements Serializable {
      */
     @ApiModelProperty("状态(0无效，1有效)")
     @Excel(name = "状态(0无效，1有效)", height = 20, width = 30)
-    private Byte status;
+    private Integer status;
 }

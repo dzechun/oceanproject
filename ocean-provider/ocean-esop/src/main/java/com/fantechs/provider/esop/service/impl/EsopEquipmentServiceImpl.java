@@ -3,12 +3,22 @@ package com.fantechs.provider.esop.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseProcessImport;
 import com.fantechs.common.base.general.dto.esop.EsopEquipmentDto;
+import com.fantechs.common.base.general.dto.esop.imports.EsopEquipmentImport;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtProcess;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShop;
 import com.fantechs.common.base.general.entity.esop.EsopEquipment;
 import com.fantechs.common.base.general.entity.esop.history.EsopHtEquipment;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.esop.mapper.EsopEquipmentMapper;
 import com.fantechs.provider.esop.mapper.EsopHtEquipmentMapper;
 import com.fantechs.provider.esop.service.EsopEquipmentService;
@@ -18,9 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -33,6 +41,12 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
     private EsopEquipmentMapper esopEquipmentMapper;
     @Resource
     private EsopHtEquipmentMapper esopHtEquipmentMapper;
+    @Resource
+    private BaseFeignApi easeFeignApi;
+
+
+
+
 
     @Override
     public List<EsopEquipmentDto> findList(Map<String, Object> map) {
@@ -192,4 +206,124 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
         return user;
     }
 
+/*
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<EsopEquipmentImport> esopEquipmentImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<EsopEquipment> list = new LinkedList<>();
+        *//*LinkedList<EsopEquipmentImport> equipmentImports = new LinkedList<>();*//*
+        for (int i = 0; i < esopEquipmentImports.size(); i++) {
+            EsopEquipmentImport esopEquipmentImport = esopEquipmentImports.get(i);
+
+            String ip = esopEquipmentImport.getEquipmentIp();
+            String macAddress = esopEquipmentImport.getEquipmentMacAddress();
+            String seqNum = esopEquipmentImport.getEquipmentSeqNum();
+            String code = esopEquipmentImport.getEquipmentCode();
+            String name = esopEquipmentImport.getEquipmentName();
+            if (StringUtils.isEmpty(
+                    ip,macAddress,seqNum,code,name
+            )) {
+                fail.add(i + 4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(EsopEquipment.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+            criteria.andEqualTo("equipmentCode", code);
+            List<EsopEquipment> strList = esopEquipmentMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(strList)) {
+                fail.add(i + 4);
+                continue;
+            }
+            example.clear();
+            criteria = example.createCriteria();
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+            criteria.andEqualTo("equipmentMacAddress", macAddress);
+            List<EsopEquipment> strList1 = esopEquipmentMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(strList1)) {
+                fail.add(i + 4);
+                continue;
+            }
+
+            //判断产线是否存在
+            SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
+            searchBaseProLine.setOrgId(currentUser.getOrganizationId());
+            searchBaseProLine.setProName(esopEquipmentImport.getProLineName());
+            List<BaseProLine> proLineData = easeFeignApi.findList(searchBaseProLine).getData();
+            if (StringUtils.isEmpty(proLineData)) {
+                fail.add(i + 4);
+                continue;
+            }
+
+            //判断车间是否存在
+            SearchBaseWorkShop searchBaseWorkShop = new SearchBaseWorkShop();
+            searchBaseWorkShop.setOrgId(currentUser.getOrganizationId());
+            searchBaseWorkShop.setWorkShopName(esopEquipmentImport.getWorkShopName());
+            searchBaseWorkShop.setWorkShopId(proLineData.get(0).getWorkShopId());
+            List<BaseWorkShopDto> workShopData = easeFeignApi.findWorkShopList(searchBaseWorkShop).getData();
+            if (StringUtils.isEmpty(workShopData) ) {
+                fail.add(i + 4);
+                continue;
+            }
+
+
+
+            //判断工序是否存在
+            SearchBaseProcess searchBaseProcess = new SearchBaseProcess();
+            searchBaseProcess.setOrgId(currentUser.getOrganizationId());
+            searchBaseProcess.setProcessName(esopEquipmentImport.getProcessName());
+            List<BaseProcess>  processData = easeFeignApi.findProcessList(searchBaseProcess).getData();
+            if (StringUtils.isEmpty(processData)) {
+                fail.add(i + 4);
+                continue;
+            }
+
+            //判断集合中是否存在重复数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(esopEquipmentImports)){
+                for (EsopEquipmentImport esopImport : esopEquipmentImports) {
+                    if (esopImport.getEquipmentCode().equals(code)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i + 4);
+                continue;
+            }
+            EsopEquipment esopEquipment = new EsopEquipment();
+            BeanUtils.copyProperties(esopEquipmentImport, esopEquipment);
+            esopEquipment.setFactoryId(workShopData.get(0).getFactoryId());
+            esopEquipment.setWorkShopId(workShopData.get(0).getWorkShopId());
+            esopEquipment.setProLineId(proLineData.get(0).getProLineId());
+            esopEquipment.setProcessId(processData.get(0).getProcessId());
+            esopEquipment.setCreateTime(new Date());
+            esopEquipment.setCreateUserId(currentUser.getUserId());
+            esopEquipment.setModifiedTime(new Date());
+            esopEquipment.setModifiedUserId(currentUser.getUserId());
+            esopEquipment.setOrgId(currentUser.getOrganizationId());
+            esopEquipment.setStatus((byte)1);
+            list.add(esopEquipment);
+        }
+
+            success = esopEquipmentMapper.insertList(list);
+
+            *//*for (BaseProcess baseProcess : list) {
+                BaseHtProcess baseHtProcess = new BaseHtProcess();
+                BeanUtils.copyProperties(baseProcess, baseHtProcess);
+                htList.add(baseHtProcess);
+            }
+
+            baseHtProcessMapper.insertList(htList);*//*
+        resultMap.put("操作成功总数", success);
+        resultMap.put("操作失败行数", fail);
+        return resultMap;
+    }*/
 }

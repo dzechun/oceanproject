@@ -80,8 +80,8 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
             logsUtils.addlog((byte)1,(byte)1,orgIdList.get(0).getOrganizationId(),null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,orgIdList.get(0).getOrganizationId(),res.toString(),req.toString());
-            throw new BizErrorException("接口请求失败");
+            logsUtils.addlog((byte)0,(byte)1,orgIdList.get(0).getOrganizationId(),res.getMESSAGE(),req.getERSDA()+"-"+req.getERSDAEND());
+            throw new BizErrorException("接口请求失败,错误信息为："+res.getMESSAGE());
         }
     }
 

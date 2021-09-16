@@ -79,10 +79,19 @@ public class PDAWmsInnerJobOrderController {
         return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?0:1);
     }
 
+//    @ApiOperation("条码校验")
+//    @PostMapping("/checkBarcode")
+//    public ResponseEntity<Map<String,Object>> checkBarcode(@ApiParam(value = "条码")@RequestParam String barCode,
+//                                                   @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId){
+//        Map<String,Object> qty = wmsInnerJobOrderService.checkBarcode(barCode,jobOrderDetId);
+//        return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
+//    }
+
     @ApiOperation("条码校验")
     @PostMapping("/checkBarcode")
-    public ResponseEntity<Map<String,Object>> checkBarcode(@ApiParam(value = "条码")@RequestParam String barCode,
-                                                   @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId){
+    public ResponseEntity<Map<String,Object>> checkBarcode(@RequestBody Map<String ,Object> map){
+        String barCode = map.get("barCode").toString();
+        Long jobOrderDetId = Long.parseLong(map.get("jobOrderDetId").toString());
         Map<String,Object> qty = wmsInnerJobOrderService.checkBarcode(barCode,jobOrderDetId);
         return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
     }

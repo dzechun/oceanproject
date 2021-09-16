@@ -4,11 +4,13 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 @Data
 public class EngReportInnerJobOrderDto implements Serializable {
 
+    @Id
     @ApiModelProperty(name="jobOrderDetId",value = "移位单ID")
     @Column(name = "job_order_det_id")
     private String jobOrderDetId;

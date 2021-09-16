@@ -5,7 +5,11 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.imports.BaseShipmentEnterpriseImport;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
+import com.fantechs.common.base.general.dto.eam.imports.EamJigBarcodeImport;
+import com.fantechs.common.base.general.entity.basic.BaseShipmentEnterprise;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtShipmentEnterprise;
 import com.fantechs.common.base.general.entity.eam.EamJig;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.EamJigCategory;
@@ -140,6 +144,97 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
         eamHtJigBarcodeMapper.insertList(list);
 
         return eamJigBarcodeMapper.deleteByIds(ids);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<EamJigBarcodeImport> eamJigBarcodeImports,Long jigId) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<EamJigBarcode> list = new LinkedList<>();
+        LinkedList<EamHtJigBarcode> htList = new LinkedList<>();
+        for (int i = 0; i < eamJigBarcodeImports.size(); i++) {
+            EamJigBarcodeImport eamJigBarcodeImport = eamJigBarcodeImports.get(i);
+
+            String jigBarcode = eamJigBarcodeImport.getJigBarcode();
+            String assetCode = eamJigBarcodeImport.getAssetCode();
+            if (StringUtils.isEmpty(
+                    jigBarcode,assetCode
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(EamJigBarcode.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("jigBarcode",jigBarcode);
+            if (StringUtils.isNotEmpty(eamJigBarcodeMapper.selectOneByExample(example))){
+                fail.add(i+4);
+                continue;
+            }
+
+            example.clear();
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria1.andEqualTo("assetCode",assetCode);
+            if (StringUtils.isNotEmpty(eamJigBarcodeMapper.selectOneByExample(example))){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断集合中是否已经存在同样的数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(list)){
+                for (EamJigBarcode eamJigBarcode : list) {
+                    if (eamJigBarcode.getJigBarcode().equals(jigBarcode)||eamJigBarcode.getAssetCode().equals(assetCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
+
+
+            EamJigBarcode eamJigBarcode = new EamJigBarcode();
+            BeanUtils.copyProperties(eamJigBarcodeImport, eamJigBarcode);
+            eamJigBarcode.setJigId(jigId);
+            eamJigBarcode.setCreateTime(new Date());
+            eamJigBarcode.setCreateUserId(currentUser.getUserId());
+            eamJigBarcode.setModifiedTime(new Date());
+            eamJigBarcode.setModifiedUserId(currentUser.getUserId());
+            eamJigBarcode.setStatus((byte)1);
+            eamJigBarcode.setOrgId(currentUser.getOrganizationId());
+            eamJigBarcode.setUsageStatus((byte)2);
+            list.add(eamJigBarcode);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = eamJigBarcodeMapper.insertList(list);
+        }
+
+        for (EamJigBarcode eamJigBarcode : list) {
+            EamHtJigBarcode eamHtJigBarcode = new EamHtJigBarcode();
+            BeanUtils.copyProperties(eamJigBarcode, eamHtJigBarcode);
+            htList.add(eamHtJigBarcode);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            eamHtJigBarcodeMapper.insertList(htList);
+        }
+
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 
     @Override

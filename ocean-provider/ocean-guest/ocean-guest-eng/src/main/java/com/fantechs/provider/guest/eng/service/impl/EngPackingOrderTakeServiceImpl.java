@@ -401,8 +401,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             int count = list.stream().filter(li->li.getSummaryDetStatus()==3).collect(Collectors.toList()).size();
             if(list.stream().filter(li->li.getSummaryDetStatus()==1).collect(Collectors.toList()).size()==list.size()){
                 engPackingOrderSummary.setSummaryStatus((byte)1);
-            }
-            if(count<list.size()){
+            }else if(count<list.size()){
                 //收货中
                 engPackingOrderSummary.setSummaryStatus((byte)2);
             }else  if(count==list.size()){
@@ -415,8 +414,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             count = eng.stream().filter(li->li.getSummaryStatus()==3).collect(Collectors.toList()).size();
             if(eng.stream().filter(li->li.getSummaryStatus()==1).collect(Collectors.toList()).size()==eng.size()){
                 engPackingOrder.setOrderStatus((byte)2);
-            }
-            if(count<eng.size()){
+            }else if(count<eng.size()){
                 //收货中
                 engPackingOrder.setOrderStatus((byte)3);
             }else if(count==eng.size()){
@@ -499,20 +497,19 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                                 //可上架数量大于0创建上架单明细
                                 if (totalQty.compareTo(BigDecimal.ZERO) == 1) {
                                     //上架明细单
-                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = WmsInnerJobOrderDet.builder()
-                                            .sourceDetId(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId())
-                                            .warehouseId(warehouseId)
-                                            .outStorageId(engPackingOrderSummaryDetDto.getReceivingStorageId())
-                                            .inStorageId(engPackingOrderSummaryDetDto.getPutawayStorageId())
-                                            .materialId(engPackingOrderSummaryDetDto.getMaterialId())
-                                            .planQty(totalQty)
-                                            .distributionQty(totalQty)
-                                            .orderStatus((byte) 3)
-                                            .inventoryStatusId(inventoryStatus)
-                                            .option1(engPackingOrderSummaryDto.getCartonCode())
-                                            .orgId(sysUser.getOrganizationId())
-                                            .packingUnitName(engPackingOrderSummaryDetDto.getUnitName())
-                                            .build();
+                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                                    wmsInnerJobOrderDet.setSourceDetId(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId());
+                                    wmsInnerJobOrderDet.setWarehouseId(warehouseId);
+                                    wmsInnerJobOrderDet.setOutStorageId(engPackingOrderSummaryDetDto.getReceivingStorageId());
+                                    wmsInnerJobOrderDet.setInStorageId(engPackingOrderSummaryDetDto.getPutawayStorageId());
+                                    wmsInnerJobOrderDet.setMaterialId(engPackingOrderSummaryDetDto.getMaterialId());
+                                    wmsInnerJobOrderDet.setPlanQty(totalQty);
+                                    wmsInnerJobOrderDet.setDistributionQty(totalQty);
+                                    wmsInnerJobOrderDet.setOrderStatus((byte) 3);
+                                    wmsInnerJobOrderDet.setInventoryStatusId(inventoryStatus);
+                                    wmsInnerJobOrderDet.setOption1(engPackingOrderSummaryDto.getCartonCode());
+                                    wmsInnerJobOrderDet.setOrgId(sysUser.getOrganizationId());
+                                    wmsInnerJobOrderDet.setPackingUnitName(engPackingOrderSummaryDetDto.getUnitName());
                                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
 
                                     //状态为待上架且分配数量等于收货数量时 更新状态为完成
@@ -544,23 +541,21 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 }
             }
             if(wmsInnerJobOrderDets.size()>0){
-                WmsInnerJobOrder wmsInnerJobOrder = WmsInnerJobOrder.builder()
-                        .sourceOrderId(engPackingOrder.getPackingOrderId())
-                        .orderTypeId(Long.parseLong("9"))
-                        .jobOrderType((byte)3)
-                        .relatedOrderCode(engPackingOrder.getPackingOrderCode())
-                        .warehouseId(warehouseId)
-                        .planQty(sumQty)
-                        .orderStatus((byte) 3)
-                        .actualQty(new BigDecimal("0"))
-                        .wmsInPutawayOrderDets(wmsInnerJobOrderDets)
-                        .orgId(sysUser.getOrganizationId())
-                        .materialOwnerId(materialOwnerId)
-                        .build();
+                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceOrderId(engPackingOrder.getPackingOrderId());
+                wmsInnerJobOrder.setOrderTypeId(Long.parseLong("9"));
+                wmsInnerJobOrder.setJobOrderType((byte)3);
+                wmsInnerJobOrder.setRelatedOrderCode(engPackingOrder.getPackingOrderCode());
+                wmsInnerJobOrder.setWarehouseId(warehouseId);
+                wmsInnerJobOrder.setPlanQty(sumQty);
+                wmsInnerJobOrder .setOrderStatus((byte) 3);
+                wmsInnerJobOrder .setActualQty(new BigDecimal("0"));
+                wmsInnerJobOrder .setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
+                wmsInnerJobOrder .setOrgId(sysUser.getOrganizationId());
+                wmsInnerJobOrder .setMaterialOwnerId(materialOwnerId);
                 list.add(wmsInnerJobOrder);
             }
         }
-
         if(list.size()>0){
             ResponseEntity responseEntity = innerFeignApi.addList(list);
             if(responseEntity.getCode()!=0){
@@ -747,11 +742,13 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             map.put("storageId",wms.getStorageId());
             map.put("inventoryStatusId",wms.getInventoryStatusId());
             WmsInnerInventory wmsInnerInventory = innerFeignApi.selectOneByExample(map).getData();
+            BigDecimal qty = BigDecimal.ZERO;
             if(StringUtils.isEmpty(wmsInnerInventory)){
                 //添加库存
                 list.add(wms);
             }else{
                 //原库存
+                qty = wmsInnerInventory.getPackingQty();
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(wms.getPackingQty()));
                 ResponseEntity responseEntity =  innerFeignApi.updateByPrimaryKeySelective(wmsInnerInventory);
                 if(responseEntity.getCode()!=0){
@@ -759,7 +756,18 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 }
             }
             //添加库存日志
-            this.addLog(wms,engPackingOrder);
+            Byte addOrSub = 1;
+            BigDecimal chaQty = BigDecimal.ZERO;
+            if(wmsInnerInventory.getPackingQty().signum()==-1){
+                //减
+                addOrSub = ((byte)2);
+                chaQty = qty.subtract(wmsInnerInventory.getPackingQty());
+            }else {
+                //加
+                addOrSub = ((byte)1);
+                chaQty = wms.getPackingQty();
+            }
+            this.addLog(engPackingOrder,wms,qty,chaQty,addOrSub);
         }
         if(list.size()>0){
             //批量新增库存明细
@@ -776,7 +784,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
      * @param wmsInnerInventory
      * @param engPackingOrder
      */
-    private void addLog(WmsInnerInventory wmsInnerInventory,EngPackingOrder engPackingOrder){
+    private void addLog(EngPackingOrder engPackingOrder,WmsInnerInventory wmsInnerInventory,BigDecimal initQty,BigDecimal chQty,Byte addOrSub){
         WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
         BeanUtil.copyProperties(wmsInnerInventory,wmsInnerInventoryLog);
 //        wmsInnerInventoryLog.setPurchaseReqOrderCode(wmsInnerInventory.getPurchaseReqOrderCode());
@@ -784,18 +792,16 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
 //        wmsInnerInventoryLog.setContractCode(wmsInnerInventory.getContractCode());
         //收货
         wmsInnerInventoryLog.setJobOrderType((byte)1);
-        if(wmsInnerInventory.getPackingQty().signum()==-1){
-            wmsInnerInventoryLog.setAddOrSubtract((byte)2);
-        }else {
-            wmsInnerInventoryLog.setAddOrSubtract((byte)1);
-        }
+        wmsInnerInventoryLog.setAddOrSubtract(addOrSub);
         wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerInventory.getRelevanceOrderCode());
+        wmsInnerInventoryLog.setAsnCode(engPackingOrder.getPackingOrderCode());
         wmsInnerInventoryLog.setSupplierId(engPackingOrder.getSupplierId());
         wmsInnerInventoryLog.setWarehouseId(wmsInnerInventory.getWarehouseId());
         wmsInnerInventoryLog.setStorageId(wmsInnerInventory.getStorageId());
         wmsInnerInventoryLog.setMaterialId(wmsInnerInventory.getMaterialId());
         wmsInnerInventoryLog.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
-        wmsInnerInventoryLog.setChangeQty(wmsInnerInventory.getPackingQty());
+        wmsInnerInventoryLog.setInitialQty(initQty);
+        wmsInnerInventoryLog.setChangeQty(chQty);
         ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryLog);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());

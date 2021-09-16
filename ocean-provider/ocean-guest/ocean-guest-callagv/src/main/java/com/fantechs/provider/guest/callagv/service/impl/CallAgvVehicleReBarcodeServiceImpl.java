@@ -16,10 +16,7 @@ import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleReBarcode;
 import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvVehicleReBarcode;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.BeanUtils;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.RedisUtil;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.agv.AgvFeignApi;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
@@ -155,9 +152,12 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         }
         positionCodeList.add(baseStorageTaskPointList.get(0).getXyzCode());
 
+        String taskCode = CodeUtils.getId("CAD-");
+
         temVehicle.setStorageTaskPointId(0l);
         temVehicle.setModifiedUserId(user.getUserId());
         temVehicle.setModifiedTime(new Date());
+        temVehicle.setRemark(taskCode);
         temVehicleFeignApi.update(temVehicle);
 
         BaseStorageTaskPoint baseStorageTaskPointUpdate = baseStorageTaskPointList.get(0);
@@ -182,7 +182,6 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             callAgvVehicleLogMapper.insertSelective(callAgvVehicleLog);
         }
 
-        String taskCode = "";
         String message = "";
         try {
             if (type == 1) {
@@ -192,7 +191,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             } else {
                 message = "空货架返回";
             }
-            taskCode = genAgvSchedulingTask(temVehicle.getAgvTaskTemplate(), positionCodeList);
+//            taskCode = genAgvSchedulingTask(temVehicle.getAgvTaskTemplate(), positionCodeList);
             log.info("==========启动agv执行" + message + "作业任务==============\r\n");
             baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
             baseStorageTaskPoint.setModifiedUserId(user.getUserId());

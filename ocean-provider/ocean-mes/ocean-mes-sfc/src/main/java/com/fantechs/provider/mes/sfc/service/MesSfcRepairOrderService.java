@@ -1,7 +1,7 @@
 package com.fantechs.provider.mes.sfc.service;
 
-import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcRepairOrderDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcRepairOrderPrintParam;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.history.MesSfcHtRepairOrder;
 import com.fantechs.common.base.support.IService;
@@ -19,7 +19,7 @@ public interface MesSfcRepairOrderService extends IService<MesSfcRepairOrder> {
 
     List<MesSfcHtRepairOrder> findHtList(Map<String, Object> map);
 
-    MesPmWorkOrderDto getWorkOrder(String SNCode, String workOrderCode);
+    MesSfcRepairOrderDto getWorkOrder(String SNCode, String workOrderCode, Integer SNCodeType);
 
-    int print(Long repairOrderId);
+    int print(MesSfcRepairOrderPrintParam mesSfcRepairOrderPrintParam);
 }

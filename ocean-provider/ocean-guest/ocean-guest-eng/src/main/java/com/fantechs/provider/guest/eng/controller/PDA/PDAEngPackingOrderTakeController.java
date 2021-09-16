@@ -90,6 +90,12 @@ public class PDAEngPackingOrderTakeController {
     @PostMapping("/onlyCancel")
     public ResponseEntity onlyCancel(@RequestBody List<EngPackingOrderSummaryDetDto> engPackingOrderSummaryDetDtos){
         //return ControllerUtil.returnCRUD(engPackingOrderTakeService.onlyCancel(engPackingOrderSummaryDetDto));
-        return ControllerUtil.returnCRUD(1);
+        int num = 0;
+        for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : engPackingOrderSummaryDetDtos) {
+            engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDetDto.getReceivingQty());
+            engPackingOrderSummaryDetDto.setButtonType((byte)1);
+            num+= engPackingOrderTakeService.onlyTask(engPackingOrderSummaryDetDto);
+        }
+        return ControllerUtil.returnCRUD(num);
     }
 }

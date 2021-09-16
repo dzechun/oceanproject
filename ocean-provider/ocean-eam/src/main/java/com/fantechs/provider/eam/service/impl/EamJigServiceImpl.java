@@ -226,6 +226,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         if(StringUtils.isNotEmpty(eamJigBarcodeList)) {
             for (EamJigBarcode eamJigBarcode : eamJigBarcodeList) {
                 if (StringUtils.isNotEmpty(eamJigBarcode.getJigBarcodeId())) {
+                    eamJigBarcode.setCurrentUsageDays(null);
                     eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
                     jigBarcodeIdList.add(eamJigBarcode.getJigBarcodeId());
                 }

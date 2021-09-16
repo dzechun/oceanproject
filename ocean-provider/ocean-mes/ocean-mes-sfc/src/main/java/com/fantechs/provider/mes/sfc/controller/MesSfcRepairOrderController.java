@@ -3,6 +3,7 @@ package com.fantechs.provider.mes.sfc.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcRepairOrderDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcRepairOrderPrintParam;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcRepairOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.history.MesSfcHtRepairOrder;
@@ -65,16 +66,17 @@ public class MesSfcRepairOrderController {
 
     @ApiOperation(value = "打印",notes = "打印")
     @PostMapping("/print")
-    public ResponseEntity print(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
-        return ControllerUtil.returnCRUD(mesSfcRepairOrderService.print(id));
+    public ResponseEntity print(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesSfcRepairOrderPrintParam mesSfcRepairOrderPrintParam) {
+        return ControllerUtil.returnCRUD(mesSfcRepairOrderService.print(mesSfcRepairOrderPrintParam));
     }
 
     @ApiOperation("获取工单")
     @PostMapping("/getWorkOrder")
-    public ResponseEntity<MesPmWorkOrderDto> getWorkOrder(@ApiParam(value = "序列号",required = true)@RequestParam String SNCode,
-                                                          @ApiParam(value = "工单号",required = true)@RequestParam String workOrderCode) {
-        MesPmWorkOrderDto workOrder = mesSfcRepairOrderService.getWorkOrder(SNCode, workOrderCode);
-        return  ControllerUtil.returnDataSuccess(workOrder,StringUtils.isEmpty(workOrder)?0:1);
+    public ResponseEntity<MesSfcRepairOrderDto> getWorkOrder(@ApiParam(value = "序列号")@RequestParam String SNCode,
+                                                          @ApiParam(value = "工单号")@RequestParam String workOrderCode,
+                                                          @ApiParam(value = "序列号类别（1-成品序列号 2-半成品序列号）")@RequestParam Integer SNCodeType) {
+        MesSfcRepairOrderDto repairOrderDto = mesSfcRepairOrderService.getWorkOrder(SNCode, workOrderCode,SNCodeType);
+        return  ControllerUtil.returnDataSuccess(repairOrderDto,StringUtils.isEmpty(repairOrderDto)?0:1);
     }
 
     @ApiOperation("列表")

@@ -190,7 +190,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
             omSalesReturnOrderDet.setModifiedUserId(sysUser.getUserId());
             omSalesReturnOrderDet.setOrgId(sysUser.getOrganizationId());
         }
-        if(record.getOmSalesReturnOrderDets().size()>0){
+        if(StringUtils.isEmpty(record.getOmSalesReturnOrderDets()) && record.getOmSalesReturnOrderDets().size()>0){
             num+=omSalesReturnOrderDetMapper.insertList(record.getOmSalesReturnOrderDets());
         }
         num+=this.addHt(record, record.getOmSalesReturnOrderDets());

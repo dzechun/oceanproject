@@ -67,7 +67,7 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
             return 1;
         }else{
             logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
-            throw new BizErrorException("接口请求失败");
+            throw new BizErrorException("接口请求失败,错误信息为："+res.getMESSAGE());
         }
     }
 
