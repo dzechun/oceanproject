@@ -24,5 +24,5 @@ public interface EsopEquipmentService extends IService<EsopEquipment> {
 
     List<EsopEquipmentDto> findNoGroup(Map<String, Object> map);
 
-    Map<String, Object> importExcel(List<EsopEquipmentImport> equipmentImports);
+ //   Map<String, Object> importExcel(List<EsopEquipmentImport> equipmentImports);
 }

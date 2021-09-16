@@ -206,7 +206,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
         return user;
     }
 
-
+/*
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<EsopEquipmentImport> esopEquipmentImports) {
@@ -216,7 +216,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<EsopEquipment> list = new LinkedList<>();
-        /*LinkedList<EsopEquipmentImport> equipmentImports = new LinkedList<>();*/
+        *//*LinkedList<EsopEquipmentImport> equipmentImports = new LinkedList<>();*//*
         for (int i = 0; i < esopEquipmentImports.size(); i++) {
             EsopEquipmentImport esopEquipmentImport = esopEquipmentImports.get(i);
 
@@ -315,15 +315,15 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
 
             success = esopEquipmentMapper.insertList(list);
 
-            /*for (BaseProcess baseProcess : list) {
+            *//*for (BaseProcess baseProcess : list) {
                 BaseHtProcess baseHtProcess = new BaseHtProcess();
                 BeanUtils.copyProperties(baseProcess, baseHtProcess);
                 htList.add(baseHtProcess);
             }
 
-            baseHtProcessMapper.insertList(htList);*/
+            baseHtProcessMapper.insertList(htList);*//*
         resultMap.put("操作成功总数", success);
         resultMap.put("操作失败行数", fail);
         return resultMap;
-    }
+    }*/
 }
