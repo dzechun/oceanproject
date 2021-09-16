@@ -824,12 +824,12 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 log.info("===========发送消息给打印客户端打印整、零标签完成===============");
             }
         } catch (Exception e) {
+            redisUtil.del(vehicleCode);
+            log.info("打印失败，redis释放集货位：" + vehicleCode);
+            redisUtil.del(relatedOrderCode);
+            log.info("打印失败，redis释放拣货单：" + relatedOrderCode);
             throw new Exception(e.getMessage());
         } finally {
-            redisUtil.del(vehicleCode);
-            log.info("打印完成，redis释放集货位：" + vehicleCode);
-            redisUtil.del(relatedOrderCode);
-            log.info("打印完成，redis释放拣货单：" + relatedOrderCode);
             redisUtil.unlock(lockKey, lockValue);
             log.info("=====================释放了:" + lockKey + "--->redisKEY");
         }

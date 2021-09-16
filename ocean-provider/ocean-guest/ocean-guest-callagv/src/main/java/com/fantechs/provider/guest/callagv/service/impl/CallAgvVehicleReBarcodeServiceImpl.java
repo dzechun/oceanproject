@@ -5,6 +5,7 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.agv.dto.PositionCodePath;
 import com.fantechs.common.base.agv.dto.RcsResponseDTO;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleBarcodeDTO;
 import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleReBarcodeDto;
 import com.fantechs.common.base.general.dto.callagv.RequestBarcodeUnboundDTO;
@@ -13,7 +14,6 @@ import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleLog;
 import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleReBarcode;
-import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvVehicleReBarcode;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
@@ -64,25 +64,25 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     @Override
     @Transactional
     @LcnTransaction
-    public int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws Exception {
+    public int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         TemVehicle temVehicle = temVehicleFeignApi.detail(requestCallAgvStockDTO.getVehicleId()).getData();
         if (temVehicle.getStatus() != 1) {
-            throw new Exception("货架不是空闲状态，不能进行备料！");
+            throw new BizErrorException("货架不是空闲状态，不能进行备料！");
         }
         BaseStorageTaskPoint baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(requestCallAgvStockDTO.getStorageTaskPointId()).getData();
         if (baseStorageTaskPoint.getStorageTaskPointStatus() != 1) {
-            throw new Exception("当前库位配送点不是空闲状态，不能进行备料！");
+            throw new BizErrorException("当前库位配送点不是空闲状态，不能进行备料！");
         }
         Map<String, Object> map = new HashMap<>();
-        map.put("barCodeIdList", requestCallAgvStockDTO.getBarcodeIdList());
+        map.put("barcodeIdList", requestCallAgvStockDTO.getBarcodeIdList());
         List<CallAgvVehicleReBarcodeDto> callAgvVehicleReBarcodeDtoList = findList(map);
         if (!callAgvVehicleReBarcodeDtoList.isEmpty()) {
             List<String> barCodeList = new LinkedList<>();
             for (CallAgvVehicleReBarcodeDto callAgvVehicleReBarcodeDto : callAgvVehicleReBarcodeDtoList) {
                 barCodeList.add(callAgvVehicleReBarcodeDto.getBarcode());
             }
-            throw new Exception("条码：" + barCodeList.toString() + "已绑定其他货架，不能重复备料！");
+            throw new BizErrorException("条码：" + barCodeList.toString() + "已绑定其他货架，不能重复备料！");
         }
         for (Long id : requestCallAgvStockDTO.getBarcodeIdList()) {
             CallAgvVehicleReBarcode callAgvVehicleReBarcode = new CallAgvVehicleReBarcode();
@@ -120,22 +120,25 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     @Override
     @Transactional
     @LcnTransaction
-    public String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Integer type) throws Exception {
+    public String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Integer type) throws BizErrorException {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<String> positionCodeList = new LinkedList<>();
         TemVehicle temVehicle = temVehicleFeignApi.detail(vehicleId).getData();
         if (StringUtils.isEmpty(temVehicle.getAgvTaskTemplate())) {
-            throw new Exception("请先维护该货架对应的AGV任务模板");
+            throw new BizErrorException("请先维护该货架对应的AGV任务模板");
         }
         if (type == 2 && temVehicle.getVehicleStatus() == 1) {
-            throw new Exception("空货架不能进行叫料");
+            throw new BizErrorException("空货架不能进行叫料");
         }
         if (type == 3 && temVehicle.getVehicleStatus() != 1) {
-            throw new Exception("非空货架不能进行空货架返回操作");
+            throw new BizErrorException("非空货架不能进行空货架返回操作");
+        }
+        if (StringUtils.isEmpty(temVehicle.getStorageTaskPointId()) || temVehicle.getStorageTaskPointId() == 0) {
+            throw new BizErrorException("货架没有绑定当前的配送点，无法进行配送");
         }
         BaseStorageTaskPoint baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(temVehicle.getStorageTaskPointId()).getData();
         if (type == 1 && baseStorageTaskPoint.getTaskPointType() == 2) {
-            throw new Exception("该货架已经位于存料区域，无需进行配送");
+            throw new BizErrorException("该货架已经位于存料区域，无需进行配送");
         }
         positionCodeList.add(baseStorageTaskPoint.getXyzCode());
 
@@ -147,8 +150,8 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         searchBaseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
         searchBaseStorageTaskPoint.setIfOrderByUsePriority(1);
         List<BaseStorageTaskPoint> baseStorageTaskPointList = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint).getData();
-        if (StringUtils.isEmpty(baseStorageTaskPoint)) {
-            throw new Exception("目的区域没有空闲的库位，请稍后再试");
+        if (StringUtils.isEmpty(baseStorageTaskPointList)) {
+            throw new BizErrorException("目的区域没有空闲的库位，请稍后再试");
         }
         positionCodeList.add(baseStorageTaskPointList.get(0).getXyzCode());
 
@@ -200,10 +203,10 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
             temVehicle.setStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
             temVehicle.setModifiedUserId(user.getUserId());
-            redisUtil.set("2-" + taskCode, JSONObject.toJSONString(baseStorageTaskPoint));
+            redisUtil.set("2-" + taskCode, JSONObject.toJSONString(temVehicle));
             log.info("=========记录当前" + message + "作业载具对应的目的配送点 : key : " + "2-" + taskCode + " value : " + JSONObject.toJSONString(temVehicle) + "\r\n");
-        } catch (Exception e) {
-            throw new Exception("启动agv执行" + message + "作业任务失败" + e.getMessage());
+        } catch (BizErrorException e) {
+            throw new BizErrorException("启动agv执行" + message + "作业任务失败" + e.getMessage());
         }
 
         return taskCode;
@@ -262,6 +265,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             map.remove("groupByVehicle");
             List<CallAgvVehicleReBarcodeDto> callAgvVehicleReBarcodeDtoList = callAgvVehicleReBarcodeMapper.findList(map);
             callAgvVehicleBarcodeDTO.setCallAgvVehicleReBarcodeDtoList(callAgvVehicleReBarcodeDtoList);
+            callAgvVehicleBarcodeDTOList.add(callAgvVehicleBarcodeDTO);
         }
 
         return callAgvVehicleBarcodeDTOList;
@@ -271,7 +275,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
      * @param taskTyp          任务类型
      * @param positionCodeList 坐标列表
      * @return agv任务单号
-     * @throws Exception
+     * @throws BizErrorException
      */
     @Override
     public String genAgvSchedulingTask(String taskTyp, List<String> positionCodeList) throws Exception {
@@ -295,7 +299,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         }.getType());
         String taskCode = rcsResponseDTO.getData();
         if (!"0".equals(rcsResponseDTO.getCode())) {
-            throw new Exception("请求AGV失败：" + AGVResult);
+            throw new BizErrorException("请求AGV失败：" + AGVResult);
         }
 
         return taskCode;
