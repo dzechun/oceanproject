@@ -5,9 +5,11 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtRoute;
 import com.fantechs.common.base.general.dto.basic.imports.BaseRouteImport;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseRoute;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.ClassCompareUtil;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -184,6 +186,7 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int configureRout(BaseRoute baseRoute) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
         // 删除上一次配置的工艺路线
         Example example = new Example(BaseRouteProcess.class);
@@ -191,21 +194,17 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
         criteria.andEqualTo("routeId", baseRoute.getRouteId());
         baseRouteProcessMapper.deleteByExample(example);
 
-        //获取维修工序的对象
-        example =  new Example(BaseProcessCategory.class);
-        criteria = example.createCriteria();
-        criteria.andEqualTo("processCategoryCode","repair");
-        BaseProcessCategory baseProcessCategory = baseProcessCategoryMapper.selectOneByExample(example);
-
         //已检验工序
         List<Long> processIds= new ArrayList<>();
         List<BaseRouteProcess> baseRouteProcesses = baseRoute.getBaseRouteProcesses();
         if (StringUtils.isNotEmpty(baseRouteProcesses)){
             for(BaseRouteProcess baseRouteProcess : baseRouteProcesses){
                 //当前工序
-                BaseProcess baseProcess = baseProcessMapper.selectByPrimaryKey(baseRouteProcess.getProcessId());
+                SearchBaseProcess searchBaseProcess = new SearchBaseProcess();
+                searchBaseProcess.setProcessId(baseRouteProcess.getProcessId());
+                BaseProcess baseProcess = baseProcessMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProcess)).get(0);
                 //是否维修工序
-                if(baseProcess.getProcessCategoryId()== baseProcessCategory.getProcessCategoryId()){
+                if("repair".equals(baseProcess.getProcessCategoryCode())){
                     if(!processIds.contains(baseRouteProcess.getNextProcessId())){
                         throw new BizErrorException("维修工序返回工序有误");
                     }
