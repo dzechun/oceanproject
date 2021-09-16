@@ -52,7 +52,6 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
     private String url = "http://xbqms.donlim.com:8081/qms/qualitiy/esop/order"; //新宝工单接口地址
 
     @Override
-    @LcnTransaction
     public MesPmWorkOrder getWorkOrder(String proCode) {
         if (StringUtils.isEmpty(proCode)) throw new BizErrorException("产线id不能为空");
         String result = null;
@@ -114,7 +113,7 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
                         mesPmWorkOrderResponse = pmFeignApi.saveByApi(mesPmWorkOrder);
                     }
                 }
-                logsUtils.addlog((byte)1,(byte)1,orgId,result,proCode);
+            //    logsUtils.addlog((byte)1,(byte)1,orgId,result,proCode);
                 if(StringUtils.isNotEmpty(mesPmWorkOrderResponse))
                     return mesPmWorkOrderResponse.getData();
                 else
@@ -147,7 +146,7 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
     @Override
     public int getAllWorkOrder(SearchBaseProLine searchBaseProLine) {
         searchBaseProLine.setOrgId(baseUtils.getOrId());
-        searchBaseProLine.setPageSize(5000);
+       // searchBaseProLine.setPageSize(5000);
         ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);
         if(StringUtils.isNotEmpty(list.getData())){
             for(BaseProLine baseProLine : list.getData()){

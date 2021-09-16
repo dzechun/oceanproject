@@ -50,7 +50,6 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
     private String url = "http://xbqms.donlim.com:8081/qms/qualitiy/esop/defect"; //新宝工单接口地址
 
     @Override
-    @LcnTransaction
     public int getIssue(String materialCode) {
         if (StringUtils.isEmpty(materialCode)) throw new BizErrorException("物料（产品）编码不能为空");
         String result = null;
@@ -87,7 +86,7 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
                     }
                     esopFeignApi.batchAdd(esopIssues);
                 }
-            //    logsUtils.addlog((byte)1,(byte)1,orgId,result,materialCode);
+        //        logsUtils.addlog((byte)1,(byte)1,orgId,result,materialCode);
                 return 1;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -115,7 +114,7 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
 
     @Override
     public int getAllIssue(SearchBaseMaterial searchBaseMaterial) {
-        searchBaseMaterial.setOrgId(baseUtils.getOrId());
+        searchBaseMaterial.setOrganizationId(baseUtils.getOrId());
         ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
         if(StringUtils.isNotEmpty(list.getData())){
             for(BaseMaterial baseMaterial : list.getData()){

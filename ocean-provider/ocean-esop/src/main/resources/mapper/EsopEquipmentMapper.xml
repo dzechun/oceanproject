@@ -160,6 +160,18 @@
       <if test="equipmentMacAddress != null and equipmentMacAddress!=''">
         and ee.equipment_mac_address = #{equipmentMacAddress}
       </if>
+      <if test="onlineStatus!=null">
+        and ee.online_status = #{onlineStatus}
+      </if>
+      <if test="usageStatus!=null">
+        and ee.usage_status = #{usageStatus}
+      </if>
+      <if test="proLineId!=null">
+        and ee.pro_line_id=#{proLineId}
+      </if>
+      <if test="workShopId!=null">
+        and ee.work_shop_id=#{workShopId}
+      </if>
     </where>
     order by ee.modified_time desc
   </select>
