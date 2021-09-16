@@ -5,12 +5,8 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessPhenotypeImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWorkingAreaImport;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessPhenotype;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
-import com.fantechs.common.base.general.entity.basic.BaseWorkingArea;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessPhenotype;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkingArea;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -219,4 +215,26 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
         return resultMap;
     }
 
+    @Override
+    public int saveByApi(List<BaseBadnessPhenotype> baseBadnessPhenotypes) {
+        List<BaseBadnessPhenotype> ins = new ArrayList<>();
+        for(BaseBadnessPhenotype baseBadnessPhenotype : baseBadnessPhenotypes) {
+            Example example = new Example(BaseBadnessPhenotype.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("badnessPhenotypeCode", baseBadnessPhenotype.getBadnessPhenotypeCode());
+            criteria.andEqualTo("orgId", baseBadnessPhenotype.getOrgId());
+            // baseBadnessCauseMapper.deleteByExample(example);
+            BaseBadnessPhenotype phenotype = baseBadnessPhenotypeMapper.selectOneByExample(example);
+            if (StringUtils.isEmpty(phenotype)) {
+                baseBadnessPhenotype.setCreateTime(new Date());
+              //  i = baseBadnessPhenotypeMapper.insertSelective(baseBadnessPhenotype);
+                ins.add(baseBadnessPhenotype);
+            } else {
+                baseBadnessPhenotype.setBadnessPhenotypeId(phenotype.getBadnessPhenotypeId());
+                baseBadnessPhenotypeMapper.updateByPrimaryKeySelective(baseBadnessPhenotype);
+            }
+        }
+        int i = baseBadnessPhenotypeMapper.insertList(ins);
+        return  i;
+    }
 }
