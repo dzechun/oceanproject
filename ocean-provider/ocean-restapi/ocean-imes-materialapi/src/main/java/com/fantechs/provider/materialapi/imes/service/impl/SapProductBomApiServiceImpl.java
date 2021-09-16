@@ -112,10 +112,10 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                     }
                 }
             }
-            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
+            logsUtils.addlog((byte)1,(byte)1,orgId,null,req.getMATNR());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
+            logsUtils.addlog((byte)0,(byte)1,orgId,res.getTYPE()+"--"+res.getMESSAGE(),req.getMATNR());
             throw new BizErrorException("接口请求失败");
         }
     }

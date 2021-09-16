@@ -1,6 +1,7 @@
 package com.fantechs.provider.esop.service;
 
 import com.fantechs.common.base.general.dto.esop.EsopEquipmentDto;
+import com.fantechs.common.base.general.dto.esop.imports.EsopEquipmentImport;
 import com.fantechs.common.base.general.entity.esop.EsopEquipment;
 import com.fantechs.common.base.general.entity.esop.history.EsopHtEquipment;
 import com.fantechs.common.base.support.IService;
@@ -22,4 +23,6 @@ public interface EsopEquipmentService extends IService<EsopEquipment> {
     EsopEquipment detailByIp(String ip);
 
     List<EsopEquipmentDto> findNoGroup(Map<String, Object> map);
+
+    Map<String, Object> importExcel(List<EsopEquipmentImport> equipmentImports);
 }
