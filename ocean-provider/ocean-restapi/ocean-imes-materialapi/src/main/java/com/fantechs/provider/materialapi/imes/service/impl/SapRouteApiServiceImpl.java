@@ -117,8 +117,8 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
             logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
             return 1;
         }else{
-            logsUtils.addlog((byte)0,(byte)1,orgId,res.toString(),req.toString());
-            throw new BizErrorException("接口请求失败");
+            logsUtils.addlog((byte)0,(byte)1,orgId,res.getMESSAGE(),req.toString());
+            throw new BizErrorException("接口请求失败,错误信息为："+res.getMESSAGE());
         }
     }
 
