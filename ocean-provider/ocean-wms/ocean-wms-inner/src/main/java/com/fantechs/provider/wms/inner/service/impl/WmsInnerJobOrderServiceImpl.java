@@ -702,6 +702,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wms.setOrderStatus((byte) 5);
                 wms.setWorkStartTime(new Date());
                 wms.setWorkEndTime(new Date());
+                wms.setWorkEndTime(new Date());
                 num += wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wms);
                 jobOrderDetId = wms.getJobOrderDetId();
 
@@ -719,6 +720,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInPutawayOrderDet.setOrderStatus((byte) 5);
                 wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
                 wmsInPutawayOrderDet.setModifiedTime(new Date());
+                wmsInPutawayOrderDet.setWorkStartTime(new Date());
+                wmsInPutawayOrderDet.setWorkEndTime(new Date());
                 num += wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
                 jobOrderDetId = wmsInPutawayOrderDet.getJobOrderDetId();
             }
@@ -992,6 +995,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmss.setPlanQty(qty);
             wmss.setDistributionQty(qty);
             wmss.setOrderStatus((byte) 5);
+            wmss.setWorkStartTime(new Date());
+            wmss.setWorkEndTime(new Date());
             num += wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wmss);
             jobOrderDetId = wmss.getJobOrderDetId();
 
@@ -1011,6 +1016,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsInnerJobOrderDet.setOrderStatus((byte) 5);
             wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setModifiedTime(new Date());
+            wmsInnerJobOrderDet.setWorkStartTime(new Date());
+            wmsInnerJobOrderDet.setWorkEndTime(new Date());
             num += wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
         }
         if (num == 0) {
@@ -1026,13 +1033,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //更改库存
         num = this.Inventory(oldDto, wmsInnerJobOrderDetDto.get(0));
         //是否条码上架
-        if(StringUtils.isEmpty(barcode)){
-            barcode = InBarcodeUtil.getWorkBarCodeList(wmsInnerJobOrderDto.getJobOrderId());
-        }
-        String[] code = barcode.split(",");
-        for (String s : code) {
-            //更新库存明细
-            num += this.addInventoryDet(wmsInnerJobOrderDto.getSourceOrderId(), wmsInnerJobOrderDto.getJobOrderCode(), wmsInnerJobOrderDet, s);
+        if(wmsInnerJobOrderDto.getOrderTypeId()!=9L) {
+            if (StringUtils.isEmpty(barcode)) {
+                barcode = InBarcodeUtil.getWorkBarCodeList(wmsInnerJobOrderDto.getJobOrderId());
+            }
+            String[] code = barcode.split(",");
+            for (String s : code) {
+                //更新库存明细
+                num += this.addInventoryDet(wmsInnerJobOrderDto.getSourceOrderId(), wmsInnerJobOrderDto.getJobOrderCode(), wmsInnerJobOrderDet, s);
+            }
         }
         WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
         wms.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
@@ -1076,13 +1085,20 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
         }
-        //反写完工入库单
-        ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
-                .putawayQty(qty)
-                .asnOrderDetId(oldDto.getSourceDetId())
-                .build());
-        if (responseEntity.getCode() != 0) {
-            throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+        if(StringUtils.isNotEmpty(wmsInnerJobOrderDto.getOrderTypeId()) && wmsInnerJobOrderDto.getOrderTypeId()==9L){
+            ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),wmsInnerJobOrderDet.getActualQty());
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
+        }else {
+            //反写完工入库单
+            ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                    .putawayQty(qty)
+                    .asnOrderDetId(oldDto.getSourceDetId())
+                    .build());
+            if (responseEntity.getCode() != 0) {
+                throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+            }
         }
         return wmsInnerJobOrderDet;
     }
