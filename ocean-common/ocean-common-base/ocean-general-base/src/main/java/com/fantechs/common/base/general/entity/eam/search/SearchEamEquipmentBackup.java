@@ -36,6 +36,6 @@ public class SearchEamEquipmentBackup extends BaseQuery implements Serializable 
      * 状态
      */
     @ApiModelProperty(name="status",value = "状态")
-    private String status;
+    private Byte status;
 
 }

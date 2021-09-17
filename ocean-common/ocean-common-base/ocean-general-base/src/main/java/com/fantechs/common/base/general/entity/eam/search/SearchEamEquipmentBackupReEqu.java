@@ -11,12 +11,12 @@ public class SearchEamEquipmentBackupReEqu extends BaseQuery implements Serializ
      * 设备id
      */
     @ApiModelProperty(name="equipmentId",value = "设备id")
-    private String equipmentId;
+    private Long equipmentId;
 
     /**
      * 状态
      */
     @ApiModelProperty(name="status",value = "状态")
-    private String status;
+    private Byte status;
 
 }
