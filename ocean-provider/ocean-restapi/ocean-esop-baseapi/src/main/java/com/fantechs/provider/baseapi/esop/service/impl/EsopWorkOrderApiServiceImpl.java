@@ -113,7 +113,7 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
                         mesPmWorkOrderResponse = pmFeignApi.saveByApi(mesPmWorkOrder);
                     }
                 }
-            //    logsUtils.addlog((byte)1,(byte)1,orgId,result,proCode);
+                logsUtils.addlog((byte)1,(byte)1,orgId,result,proCode);
                 if(StringUtils.isNotEmpty(mesPmWorkOrderResponse))
                     return mesPmWorkOrderResponse.getData();
                 else
@@ -144,7 +144,9 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
     }
 
     @Override
-    public int getAllWorkOrder(SearchBaseProLine searchBaseProLine) {
+    public int getAllWorkOrder() {
+        log.info("----------开始同步工单-------------");
+        SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
         searchBaseProLine.setOrgId(baseUtils.getOrId());
        // searchBaseProLine.setPageSize(5000);
         ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);

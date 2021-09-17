@@ -36,8 +36,8 @@ public class EsopWorkOrderApiController {
 
     @ApiOperation("同步全部工单信息")
     @PostMapping("/getAllWorkOrder")
-    public ResponseEntity getAllWorkOrder(@ApiParam(value = "",required = true)@RequestBody SearchBaseProLine searchBaseProLine) {
-        int i = esopWorkOrderApiService.getAllWorkOrder(searchBaseProLine);
+    public ResponseEntity getAllWorkOrder() {
+        int i = esopWorkOrderApiService.getAllWorkOrder();
         return ControllerUtil.returnCRUD(i);
     }
 

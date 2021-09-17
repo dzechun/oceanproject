@@ -7,5 +7,5 @@ public interface EsopIssueApiService {
 
     int getIssue(String materialCode);
 
-    int getAllIssue(SearchBaseMaterial searchBaseMaterial);
+    int getAllIssue();
 }

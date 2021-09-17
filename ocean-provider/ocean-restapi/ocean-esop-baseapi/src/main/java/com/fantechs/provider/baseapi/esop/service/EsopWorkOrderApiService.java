@@ -8,5 +8,5 @@ public interface EsopWorkOrderApiService {
 
     MesPmWorkOrder getWorkOrder(String proCode);
 
-    int getAllWorkOrder(SearchBaseProLine searchBaseProLine);
+    int getAllWorkOrder();
 }
