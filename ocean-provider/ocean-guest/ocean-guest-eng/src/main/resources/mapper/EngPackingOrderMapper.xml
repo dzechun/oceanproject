@@ -156,6 +156,6 @@ spo.ago_confirm_user_id
   </select>
   <select id="findMaterialPurpose" resultType="java.lang.String">
     select material_purpose FROM eng_contract_qty_order where contract_code=#{contractCode} and device_code=#{deviceCode}
-and dominant_term_code=#{dominantTermCode} and location_num=#{locationNum} and material_code=#{materialCode}
+and dominant_term_code=#{dominantTermCode} and location_num=#{locationNum} and material_code=#{materialCode} and supplier_id=#{supplierId}
   </select>
 </mapper>

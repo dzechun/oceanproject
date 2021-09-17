@@ -251,6 +251,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int writeQty(WmsInAsnOrderDet wmsInAsnOrderDet) {
         WmsInAsnOrderDet wms = wmsInAsnOrderDetMapper.selectByPrimaryKey(wmsInAsnOrderDet.getAsnOrderDetId());
         WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(wms.getAsnOrderId());

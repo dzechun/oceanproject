@@ -150,8 +150,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                     wmsInnerInventory.setOption1(engPackingOrderSummaryDetDto.getDeviceCode());
                     wmsInnerInventory.setOption2(engPackingOrderSummaryDetDto.getDominantTermCode());
                     wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummaryDto.getContractCode(),
-                            "deviceCode",engPackingOrderSummaryDetDto.getDeviceCode(),"dominantTermCode",engPackingOrderSummaryDetDto.getDominantTermCode(),
-                            "locationNum",engPackingOrderSummaryDetDto.getLocationNum(),"materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode())));
+                            "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"supplierId",engPackingOrder.getSupplierId())));
                     wmsInnerInventories.add(wmsInnerInventory);
 
                     //收货数量
@@ -241,8 +240,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 wmsInnerInventory.setOption1(engPackingOrderSummaryDetDto.getDeviceCode());
                 wmsInnerInventory.setOption2(engPackingOrderSummaryDetDto.getDominantTermCode());
                 wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummaryDto.getContractCode(),
-                        "deviceCode",engPackingOrderSummaryDetDto.getDeviceCode(),"dominantTermCode",engPackingOrderSummaryDetDto.getDominantTermCode(),
-                        "locationNum",engPackingOrderSummaryDetDto.getLocationNum(),"materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode())));
+                        "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"supplierId",engPackingOrder.getSupplierId())));
                 wmsInnerInventories.add(wmsInnerInventory);
 
                 //收货数量
@@ -363,8 +361,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             wmsInnerInventory.setOption1(engPackingOrderSummaryDet.getDeviceCode());
             wmsInnerInventory.setOption2(engPackingOrderSummaryDet.getDominantTermCode());
             wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummary.getContractCode(),
-                    "deviceCode",engPackingOrderSummary.getDeviceCode(),"dominantTermCode",engPackingOrderSummaryDet.getDominantTermCode(),
-                    "locationNum",engPackingOrderSummaryDet.getLocationNum(),"materialCode",engPackingOrderSummaryDet.getRawMaterialCode())));
+                    "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"supplierId",engPackingOrder.getSupplierId())));
             wmsInnerInventories.add(wmsInnerInventory);
         }
 

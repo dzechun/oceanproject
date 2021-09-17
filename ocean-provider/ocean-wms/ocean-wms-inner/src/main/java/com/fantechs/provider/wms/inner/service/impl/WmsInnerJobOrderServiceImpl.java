@@ -512,6 +512,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int allReceiving(String ids) {
         SysUser sysUser = currentUser();
         String[] arrId = ids.split(",");
@@ -665,7 +666,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(innerJobOrder);
 
             //返写移位接口（五环）
-            if("2".equals(innerJobOrder.getJobOrderType().toString())){
+            if("2".equals(wmsInnerJobOrder.getJobOrderType().toString())){
                 engFeignApi.writePackingLists(innerJobOrder);
             }
 
@@ -675,6 +676,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int singleReceiving(List<WmsInnerJobOrderDet> wmsInPutawayOrderDets) {
         SysUser sysUser = currentUser();
         int num = 0;
@@ -1592,8 +1594,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         wmsIn.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerJobOrderDet.getDistributionQty()));
         int num = wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsIn);
 
-        //添加库存日志
-        InventoryLogUtil.addLog(wmsInnerJobOrderDto,wmsInnerJobOrderDet,wmsInnerInventory.getPackingQty(),wmsInnerJobOrderDet.getDistributionQty(),(byte)2,(byte)2);
+//        //添加库存日志
+//        InventoryLogUtil.addLog(wmsInnerJobOrderDto,wmsInnerJobOrderDet,wmsInnerInventory.getPackingQty(),wmsInnerJobOrderDet.getDistributionQty(),(byte)2,(byte)2);
 
         example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria1 = example.createCriteria();
@@ -1662,6 +1664,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         wmsIn.setPackingQty(wmsInnerInventory.getPackingQty().subtract(newDto.getActualQty()));
         int num = wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsIn);
 
+        //添加扣减库存日志
+        oldDto.setInStorageId(oldDto.getOutStorageId());
+        InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),newDto.getActualQty(),(byte)2,(byte)2);
+
 
         example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria1 = example.createCriteria();
@@ -1706,7 +1712,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
         }
         //记录库存日志
-        InventoryLogUtil.addLog(wmsInnerJobOrder,newDto,qty,newDto.getActualQty(),(byte)2,(byte)2);
+        InventoryLogUtil.addLog(wmsInnerJobOrder,newDto,qty,newDto.getActualQty(),(byte)2,(byte)1);
         return num;
     }
 
