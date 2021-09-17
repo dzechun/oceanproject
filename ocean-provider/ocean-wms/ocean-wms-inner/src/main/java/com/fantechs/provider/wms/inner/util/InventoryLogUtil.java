@@ -76,13 +76,6 @@ public class InventoryLogUtil {
         wmsInnerInventoryLog.setInitialQty(initQty);
         wmsInnerInventoryLog.setChangeQty(chaQty);
         wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerJobOrder.getMaterialOwnerId());
-        if(wmsInnerInventoryLog.getAddOrSubtract()==(byte)1){
-            wmsInnerInventoryLog.setCreateTime(new Date());
-            Calendar time = Calendar.getInstance();
-            time.setTime(wmsInnerInventoryLog.getCreateTime());
-            time.add(Calendar.SECOND,10);
-            wmsInnerInventoryLog.setCreateTime(time.getTime());
-        }
         inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
     }
 

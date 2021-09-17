@@ -51,9 +51,7 @@ public class WmsInnerInventoryLogServiceImpl extends BaseService<WmsInnerInvento
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(WmsInnerInventoryLog record) {
         SysUser sysUser = currentUser();
-        if(StringUtils.isEmpty(record.getCreateTime())){
-            record.setCreateTime(new Date());
-        }
+        record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
