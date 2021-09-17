@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.eam;
+package com.fantechs.common.base.general.entity.eam.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -16,38 +16,54 @@ import java.util.Date;
 ;
 
 /**
- * 设备备用件设备关系表
- * eam_equipment_backup_re_equ
- * @author Dylan
- * @date 2021-09-16 16:57:13
+ * 备用件类别履历表
+ * eam_ht_spare_part_category
+ * @author admin
+ * @date 2021-09-17 16:00:52
  */
 @Data
-@Table(name = "eam_equipment_backup_re_equ")
-public class EamEquipmentBackupReEqu extends ValidGroup implements Serializable {
+@Table(name = "eam_ht_spare_part_category")
+public class EamHtSparePartCategory extends ValidGroup implements Serializable {
     /**
-     * 设备备用件设备关系表ID
+     * 备用件类别履历ID
      */
-    @ApiModelProperty(name="equipmentBackupReEquId",value = "设备备用件设备关系表ID")
-    @Excel(name = "设备备用件设备关系表ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="htSparePartCategoryId",value = "备用件类别履历ID")
+    @Excel(name = "备用件类别履历ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "equipment_backup_re_equ_id")
-    private Long equipmentBackupReEquId;
+    @Column(name = "ht_spare_part_category_id")
+    private Long htSparePartCategoryId;
 
     /**
-     * 设备ID
+     * 备用件类别ID
      */
-    @ApiModelProperty(name="equipmentId",value = "设备ID")
-    @Excel(name = "设备ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "equipment_id")
-    private Long equipmentId;
+    @ApiModelProperty(name="sparePartCategoryId",value = "备用件类别ID")
+    @Excel(name = "备用件类别ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "spare_part_category_id")
+    private Long sparePartCategoryId;
 
     /**
-     * 设备备用件ID
+     * 备用件类别编码
      */
-    @ApiModelProperty(name="equipmentBackupId",value = "设备备用件ID")
-    @Excel(name = "设备备用件ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "equipment_backup_id")
-    private Long equipmentBackupId;
+    @ApiModelProperty(name="sparePartCategoryCode",value = "备用件类别编码")
+    @Excel(name = "备用件类别编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "spare_part_category_code")
+    private String sparePartCategoryCode;
+
+    /**
+     * 备用件类别名称
+     */
+    @ApiModelProperty(name="sparePartCategoryName",value = "备用件类别名称")
+    @Excel(name = "备用件类别名称", height = 20, width = 30,orderNum="") 
+    @Column(name = "spare_part_category_name")
+    private String sparePartCategoryName;
+
+    /**
+     * 备用件类别描述
+     */
+    @ApiModelProperty(name="sparePartCategoryDesc",value = "备用件类别描述")
+    @Excel(name = "备用件类别描述", height = 20, width = 30,orderNum="") 
+    @Column(name = "spare_part_category_desc")
+    private String sparePartCategoryDesc;
 
     /**
      * 状态(0无效，1有效)

@@ -3,10 +3,7 @@ package com.fantechs.provider.eam.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamEquMaintainOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
-import com.fantechs.common.base.general.dto.eam.EamJigBackupDto;
+import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJig;
@@ -42,7 +39,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     @Resource
     private EamEquipmentAttachmentMapper eamEquipmentAttachmentMapper;
     @Resource
-    private EamEquipmentBackupMapper eamEquipmentBackupMapper;
+    private EamSparePartReEquMapper eamSparePartReEquMapper;
 
     @Override
     public List<EamEquipmentDto> findList(Map<String, Object> map) {
@@ -132,9 +129,9 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         }
 
         //备用件列表
-        List<EamEquipmentBackup> eamEquipmentBackupList = record.getEamEquipmentBackupList();
+        List<EamSparePartReEquDto> eamEquipmentBackupList = record.getEamEquipmentBackupList();
         if(StringUtils.isNotEmpty(eamEquipmentBackupList)){
-            for (EamEquipmentBackup eamEquipmentBackup : eamEquipmentBackupList){
+            for (EamSparePartReEquDto eamEquipmentBackup : eamEquipmentBackupList){
                 eamEquipmentBackup.setEquipmentId(record.getEquipmentId());
                 eamEquipmentBackup.setCreateUserId(user.getUserId());
                 eamEquipmentBackup.setCreateTime(new Date());
@@ -143,7 +140,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                 eamEquipmentBackup.setStatus(StringUtils.isEmpty(eamEquipmentBackup.getStatus())?1: eamEquipmentBackup.getStatus());
                 eamEquipmentBackup.setOrgId(user.getOrganizationId());
             }
-            eamEquipmentBackupMapper.insertList(eamEquipmentBackupList);
+            eamSparePartReEquMapper.insertList(eamEquipmentBackupList);
         }
 
         return i;
@@ -228,15 +225,15 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         }
 
         //删除原备用件
-        Example example3 = new Example(EamEquipmentBackup.class);
+        Example example3 = new Example(EamSparePartReEqu.class);
         Example.Criteria criteria3 = example3.createCriteria();
         criteria3.andEqualTo("equipmentId", entity.getEquipmentId());
-        eamEquipmentBackupMapper.deleteByExample(example3);
+        eamSparePartReEquMapper.deleteByExample(example3);
 
         //备用件列表
-        List<EamEquipmentBackup> eamEquipmentBackupList = entity.getEamEquipmentBackupList();
+        List<EamSparePartReEquDto> eamEquipmentBackupList = entity.getEamEquipmentBackupList();
         if(StringUtils.isNotEmpty(eamEquipmentBackupList)){
-            for (EamEquipmentBackup eamEquipmentBackup : eamEquipmentBackupList){
+            for (EamSparePartReEquDto eamEquipmentBackup : eamEquipmentBackupList){
                 eamEquipmentBackup.setEquipmentId(entity.getEquipmentId());
                 eamEquipmentBackup.setCreateUserId(user.getUserId());
                 eamEquipmentBackup.setCreateTime(new Date());
@@ -245,7 +242,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                 eamEquipmentBackup.setStatus(StringUtils.isEmpty(eamEquipmentBackup.getStatus())?1: eamEquipmentBackup.getStatus());
                 eamEquipmentBackup.setOrgId(user.getOrganizationId());
             }
-            eamEquipmentBackupMapper.insertList(eamEquipmentBackupList);
+            eamSparePartReEquMapper.insertList(eamEquipmentBackupList);
         }
 
         return i;
@@ -272,7 +269,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             Example example1 = new Example(EamEquipmentBarcode.class);
             Example.Criteria criteria1 = example1.createCriteria();
             criteria1.andEqualTo("equipmentId", id);
-            eamEquipmentBackupMapper.deleteByExample(example1);
+            eamEquipmentBarcodeMapper.deleteByExample(example1);
 
             //删除原附件
             Example example2 = new Example(EamEquipmentAttachment.class);
@@ -281,10 +278,10 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             eamEquipmentAttachmentMapper.deleteByExample(example2);
 
             //删除原备用件
-            Example example3 = new Example(EamEquipmentBackup.class);
+            Example example3 = new Example(EamSparePartReEqu.class);
             Example.Criteria criteria3 = example3.createCriteria();
             criteria3.andEqualTo("equipmentId",id);
-            eamEquipmentBackupMapper.deleteByExample(example3);
+            eamSparePartReEquMapper.deleteByExample(example3);
         }
 
         eamHtEquipmentMapper.insertList(htList);

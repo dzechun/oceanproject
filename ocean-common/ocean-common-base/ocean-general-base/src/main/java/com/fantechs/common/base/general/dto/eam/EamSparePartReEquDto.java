@@ -1,14 +1,13 @@
 package com.fantechs.common.base.general.dto.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentBackup;
+import com.fantechs.common.base.general.entity.eam.EamSparePartReEqu;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
-@Data
-public class EamEquipmentBackupDto extends EamEquipmentBackup implements Serializable {
+
+public class EamSparePartReEquDto extends EamSparePartReEqu implements Serializable {
     /**
      * 创建用户名称
      */
@@ -33,6 +32,34 @@ public class EamEquipmentBackupDto extends EamEquipmentBackup implements Seriali
     private String organizationName;
 
     /**
+     * 备用件编码
+     */
+    @Transient
+    @ApiModelProperty(name = "equipmentBackupCode",value = "备用件编码")
+    private String equipmentBackupCode;
+
+    /**
+     * 备用件描述
+     */
+    @ApiModelProperty(name="equipmentBackupDesc",value = "备用件描述")
+    @Transient
+    private String equipmentBackupDesc;
+
+    /**
+     * 备用件名称
+     */
+    @Transient
+    @ApiModelProperty(name = "equipmentBackupName",value = "备用件名称")
+    private String equipmentBackupName;
+
+    /**
+     * 数量
+     */
+    @ApiModelProperty(name="qty",value = "数量")
+    @Transient
+    private Integer qty;
+
+    /**
      * 仓库名称
      */
     @Transient
@@ -52,13 +79,6 @@ public class EamEquipmentBackupDto extends EamEquipmentBackup implements Seriali
     @Transient
     @ApiModelProperty(name = "storageCode",value = "库位名称")
     private String storageCode;
-
-    /**
-     * 库位名称
-     */
-    @Transient
-    @ApiModelProperty(name = "storageName",value = "库位名称")
-    private String storageName;
 
     /**
      * 工作区编码
