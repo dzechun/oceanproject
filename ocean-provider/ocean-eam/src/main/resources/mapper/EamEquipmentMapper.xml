@@ -57,8 +57,8 @@
     <collection property="eamEquipmentAttachmentList" ofType="com.fantechs.common.base.general.entity.eam.EamEquipmentAttachment"
                 column="{equipmentId=equipment_id}" select="com.fantechs.provider.eam.mapper.EamEquipmentAttachmentMapper.findList">
     </collection>
-    <collection property="eamEquipmentBackupList" ofType="com.fantechs.common.base.general.entity.eam.EamEquipmentBackup"
-                column="{equipmentId=equipment_id}" select="com.fantechs.provider.eam.mapper.EamEquipmentBackupMapper.findList">
+    <collection property="eamEquipmentBackupList" ofType="com.fantechs.common.base.general.dto.eam.EamSparePartReEquDto"
+                column="{equipmentId=equipment_id}" select="com.fantechs.provider.eam.mapper.EamSparePartReEquMapper.findList">
     </collection>
   </resultMap>
 

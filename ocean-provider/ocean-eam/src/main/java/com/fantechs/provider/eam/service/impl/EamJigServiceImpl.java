@@ -6,10 +6,8 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigBackupDto;
 import com.fantechs.common.base.general.dto.eam.EamJigDto;
 import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectItemDto;
-import com.fantechs.common.base.general.entity.eam.EamJig;
-import com.fantechs.common.base.general.entity.eam.EamJigAttachment;
-import com.fantechs.common.base.general.entity.eam.EamJigBackup;
-import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
+import com.fantechs.common.base.general.dto.eam.EamSparePartReJigDto;
+import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJig;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -44,7 +42,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     @Resource
     private EamJigAttachmentMapper eamJigAttachmentMapper;
     @Resource
-    private EamJigBackupMapper eamJigBackupMapper;
+    private EamSparePartReJigMapper eamSparePartReJigMapper;
 
     @Override
     public List<EamJigDto> findList(Map<String, Object> map) {
@@ -124,18 +122,18 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         }
 
         //备用件列表
-        List<EamJigBackupDto> eamJigBackupDtoList = record.getEamJigBackupDtoList();
+        List<EamSparePartReJigDto> eamJigBackupDtoList = record.getEamJigBackupDtoList();
         if(StringUtils.isNotEmpty(eamJigBackupDtoList)){
-            for (EamJigBackupDto eamJigBackupDto : eamJigBackupDtoList){
-                eamJigBackupDto.setJigId(record.getJigId());
-                eamJigBackupDto.setCreateUserId(user.getUserId());
-                eamJigBackupDto.setCreateTime(new Date());
-                eamJigBackupDto.setModifiedUserId(user.getUserId());
-                eamJigBackupDto.setModifiedTime(new Date());
-                eamJigBackupDto.setStatus(StringUtils.isEmpty(eamJigBackupDto.getStatus())?1: eamJigBackupDto.getStatus());
-                eamJigBackupDto.setOrgId(user.getOrganizationId());
+            for (EamSparePartReJigDto eamSparePartReJigDto : eamJigBackupDtoList){
+                eamSparePartReJigDto.setJigId(record.getJigId());
+                eamSparePartReJigDto.setCreateUserId(user.getUserId());
+                eamSparePartReJigDto.setCreateTime(new Date());
+                eamSparePartReJigDto.setModifiedUserId(user.getUserId());
+                eamSparePartReJigDto.setModifiedTime(new Date());
+                eamSparePartReJigDto.setStatus(StringUtils.isEmpty(eamSparePartReJigDto.getStatus())?1: eamSparePartReJigDto.getStatus());
+                eamSparePartReJigDto.setOrgId(user.getOrganizationId());
             }
-            eamJigBackupMapper.insertList(eamJigBackupDtoList);
+            eamSparePartReJigMapper.insertList(eamJigBackupDtoList);
         }
 
         //履历
@@ -284,24 +282,24 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         }
 
         //删除原备用件
-        Example example3 = new Example(EamJigBackup.class);
+        Example example3 = new Example(EamSparePartReJig.class);
         Example.Criteria criteria3 = example3.createCriteria();
         criteria3.andEqualTo("jigId", entity.getJigId());
-        eamJigBackupMapper.deleteByExample(example3);
+        eamSparePartReJigMapper.deleteByExample(example3);
 
         //备用件列表
-        List<EamJigBackupDto> eamJigBackupDtoList = entity.getEamJigBackupDtoList();
+        List<EamSparePartReJigDto> eamJigBackupDtoList = entity.getEamJigBackupDtoList();
         if(StringUtils.isNotEmpty(eamJigBackupDtoList)){
-            for (EamJigBackupDto eamJigBackupDto : eamJigBackupDtoList){
-                eamJigBackupDto.setJigId(entity.getJigId());
-                eamJigBackupDto.setCreateUserId(user.getUserId());
-                eamJigBackupDto.setCreateTime(new Date());
-                eamJigBackupDto.setModifiedUserId(user.getUserId());
-                eamJigBackupDto.setModifiedTime(new Date());
-                eamJigBackupDto.setStatus(StringUtils.isEmpty(eamJigBackupDto.getStatus())?1: eamJigBackupDto.getStatus());
-                eamJigBackupDto.setOrgId(user.getOrganizationId());
+            for (EamSparePartReJigDto eamSparePartReJigDto : eamJigBackupDtoList){
+                eamSparePartReJigDto.setJigId(entity.getJigId());
+                eamSparePartReJigDto.setCreateUserId(user.getUserId());
+                eamSparePartReJigDto.setCreateTime(new Date());
+                eamSparePartReJigDto.setModifiedUserId(user.getUserId());
+                eamSparePartReJigDto.setModifiedTime(new Date());
+                eamSparePartReJigDto.setStatus(StringUtils.isEmpty(eamSparePartReJigDto.getStatus())?1: eamSparePartReJigDto.getStatus());
+                eamSparePartReJigDto.setOrgId(user.getOrganizationId());
             }
-            eamJigBackupMapper.insertList(eamJigBackupDtoList);
+            eamSparePartReJigMapper.insertList(eamJigBackupDtoList);
         }
 
         EamHtJig eamHtJig = new EamHtJig();
@@ -344,10 +342,10 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
             eamJigAttachmentMapper.deleteByExample(example2);
 
             //删除备用件
-            Example example3 = new Example(EamJigBackup.class);
+            Example example3 = new Example(EamSparePartReJig.class);
             Example.Criteria criteria3 = example3.createCriteria();
             criteria3.andEqualTo("jigId", id);
-            eamJigBackupMapper.deleteByExample(example3);
+            eamSparePartReJigMapper.deleteByExample(example3);
         }
 
         eamHtJigMapper.insertList(list);
