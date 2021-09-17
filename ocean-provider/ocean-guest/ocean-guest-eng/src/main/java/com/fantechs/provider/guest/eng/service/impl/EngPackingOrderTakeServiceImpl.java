@@ -585,51 +585,53 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         if(StringUtils.isEmpty(inventoryStatus)){
             throw new BizErrorException("获取货主信息失败");
         }
-        EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDtos.get(0).getPackingOrderSummaryId());
-        EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrderSummary.getPackingOrderId());
         List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
         BigDecimal sumQty = BigDecimal.ZERO;
+        EngPackingOrder engPackingOrder = null;
+        EngPackingOrderSummary engPackingOrderSummary = null;
         for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : engPackingOrderSummaryDetDtos) {
-            //边上边收 收货中及待上架状态
-            if (StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getReceivingQty()) && (engPackingOrderSummaryDetDto.getSummaryDetStatus() == 2 || engPackingOrderSummaryDetDto.getSummaryDetStatus() == 3)) {
-                //可上架数量=(收货数量-分配数量)
-                BigDecimal totalQty = engPackingOrderSummaryDetDto.getReceivingQty();
-                if (StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getDistributionQty())) {
-                    totalQty = (engPackingOrderSummaryDetDto.getReceivingQty().subtract(engPackingOrderSummaryDetDto.getDistributionQty()));
+            engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
+            engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrderSummary.getPackingOrderId());
+                //边上边收 收货中及待上架状态
+                if (StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getReceivingQty()) && (engPackingOrderSummaryDetDto.getSummaryDetStatus() == 2 || engPackingOrderSummaryDetDto.getSummaryDetStatus() == 3)) {
+                    //可上架数量=(收货数量-分配数量)
+                    BigDecimal totalQty = engPackingOrderSummaryDetDto.getReceivingQty();
+                    if (StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getDistributionQty())) {
+                        totalQty = (engPackingOrderSummaryDetDto.getReceivingQty().subtract(engPackingOrderSummaryDetDto.getDistributionQty()));
 
-                    //分配数量.add（可上架数量）
-                    engPackingOrderSummaryDetDto.setDistributionQty(engPackingOrderSummaryDetDto.getDistributionQty().add(totalQty));
-                } else {
-                    engPackingOrderSummaryDetDto.setDistributionQty(totalQty);
-                }
-                //可上架数量大于0创建上架单明细
-                if (totalQty.compareTo(BigDecimal.ZERO) == 1) {
-                    //上架明细单
-                    WmsInnerJobOrderDet wmsInnerJobOrderDet = WmsInnerJobOrderDet.builder()
-                            .sourceDetId(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId())
-                            .warehouseId(warehouseId)
-                            .outStorageId(engPackingOrderSummaryDetDto.getReceivingStorageId())
-                            .inStorageId(engPackingOrderSummaryDetDto.getPutawayStorageId())
-                            .materialId(engPackingOrderSummaryDetDto.getMaterialId())
-                            .planQty(totalQty)
-                            .distributionQty(totalQty)
-                            .orderStatus((byte) 3)
-                            .inventoryStatusId(inventoryStatus)
-                            .option1(engPackingOrderSummary.getCartonCode())
-                            .orgId(sysUser.getOrganizationId())
-                            .build();
-                    wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
-
-                    //状态为待上架且分配数量等于收货数量时 更新状态为完成
-                    if (engPackingOrderSummaryDetDto.getSummaryDetStatus() == 3 && engPackingOrderSummaryDetDto.getDistributionQty().compareTo(engPackingOrderSummaryDetDto.getReceivingQty()) == 0) {
-                        engPackingOrderSummaryDetDto.setSummaryDetStatus((byte) 4);
+                        //分配数量.add（可上架数量）
+                        engPackingOrderSummaryDetDto.setDistributionQty(engPackingOrderSummaryDetDto.getDistributionQty().add(totalQty));
+                    } else {
+                        engPackingOrderSummaryDetDto.setDistributionQty(totalQty);
                     }
-                    engPackingOrderSummaryDetDto.setModifiedUserId(sysUser.getUserId());
-                    engPackingOrderSummaryDetDto.setModifiedTime(new Date());
-                    engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDetDto);
-                    sumQty = sumQty.add(totalQty);
+                    //可上架数量大于0创建上架单明细
+                    if (totalQty.compareTo(BigDecimal.ZERO) == 1) {
+                        //上架明细单
+                        WmsInnerJobOrderDet wmsInnerJobOrderDet = WmsInnerJobOrderDet.builder()
+                                .sourceDetId(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId())
+                                .warehouseId(warehouseId)
+                                .outStorageId(engPackingOrderSummaryDetDto.getReceivingStorageId())
+                                .inStorageId(engPackingOrderSummaryDetDto.getPutawayStorageId())
+                                .materialId(engPackingOrderSummaryDetDto.getMaterialId())
+                                .planQty(totalQty)
+                                .distributionQty(totalQty)
+                                .orderStatus((byte) 3)
+                                .inventoryStatusId(inventoryStatus)
+                                .option1(engPackingOrderSummary.getCartonCode())
+                                .orgId(sysUser.getOrganizationId())
+                                .build();
+                        wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
+
+                        //状态为待上架且分配数量等于收货数量时 更新状态为完成
+                        if (engPackingOrderSummaryDetDto.getSummaryDetStatus() == 3 && engPackingOrderSummaryDetDto.getDistributionQty().compareTo(engPackingOrderSummaryDetDto.getReceivingQty()) == 0) {
+                            engPackingOrderSummaryDetDto.setSummaryDetStatus((byte) 4);
+                        }
+                        engPackingOrderSummaryDetDto.setModifiedUserId(sysUser.getUserId());
+                        engPackingOrderSummaryDetDto.setModifiedTime(new Date());
+                        engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDetDto);
+                        sumQty = sumQty.add(totalQty);
+                    }
                 }
-            }
         }
         //查询是否整箱收货完成
         List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetMapper.findList(ControllerUtil.dynamicCondition("packingOrderSummaryId",engPackingOrderSummary.getPackingOrderSummaryId()));
