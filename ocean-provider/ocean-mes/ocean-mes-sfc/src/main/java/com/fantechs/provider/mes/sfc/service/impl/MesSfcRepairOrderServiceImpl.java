@@ -106,6 +106,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                     endIndex = Integer.parseInt(arry[1]);
                 }
             }
+
             workOrderCode = SNCode.substring(beginIndex, endIndex);
         }
 
@@ -205,7 +206,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     public int save(MesSfcRepairOrder record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        ifCodeRepeat(record,user);
+        //ifCodeRepeat(record,user);
 
         record.setRepairOrderCode(CodeUtils.getId("WX-"));
         record.setCreateUserId(user.getUserId());
@@ -213,6 +214,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         record.setModifiedUserId(user.getUserId());
         record.setModifiedTime(new Date());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
+        record.setOrderStatus(StringUtils.isEmpty(record.getOrderStatus())?1: record.getOrderStatus());
         record.setOrgId(user.getOrganizationId());
         mesSfcRepairOrderMapper.insertUseGeneratedKeys(record);
 
@@ -241,10 +243,10 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                 mesSfcRepairOrderBadPhenotype.setModifiedTime(new Date());
                 mesSfcRepairOrderBadPhenotype.setStatus(StringUtils.isEmpty(mesSfcRepairOrderBadPhenotype.getStatus())?1: mesSfcRepairOrderBadPhenotype.getStatus());
                 mesSfcRepairOrderBadPhenotype.setOrgId(user.getOrganizationId());
+                mesSfcRepairOrderBadPhenotypeMapper.insertUseGeneratedKeys(mesSfcRepairOrderBadPhenotype);
                 //保存维修信息
                 saveBadPhenotypeRepair(mesSfcRepairOrderBadPhenotype,user);
             }
-            mesSfcRepairOrderBadPhenotypeMapper.insertList(mesSfcRepairOrderBadPhenotypeList);
         }
 
         //半成品
@@ -270,7 +272,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     public int update(MesSfcRepairOrder entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        ifCodeRepeat(entity,user);
+        //ifCodeRepeat(entity,user);
 
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());

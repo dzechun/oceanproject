@@ -21,6 +21,12 @@ public class SearchMesSfcRepairOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name = "orderStatus", value = "单据状态(1、待维修 2、已维修)")
     private Byte orderStatus;
 
+    @ApiModelProperty(name = "materialProperty", value = "物料属性(0.半成品，1.成品)")
+    private Byte materialProperty;
+
     @ApiModelProperty(name = "workOrderCode", value = "工单号")
     private String workOrderCode;
+
+    @ApiModelProperty(name = "SNCode", value = "序列号")
+    private String SNCode;
 }
