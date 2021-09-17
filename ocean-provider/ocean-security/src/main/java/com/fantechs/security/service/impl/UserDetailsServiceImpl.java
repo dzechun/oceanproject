@@ -1,11 +1,9 @@
 package com.fantechs.security.service.impl;
 
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.mapper.SysRoleMapper;
 import com.fantechs.security.mapper.SysUserMapper;
@@ -13,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,13 +49,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 , s).orEqualTo("userCode",s);
         SysUser user = sysUserMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011011,s);
+            throw new BadCredentialsException("找不到用户");
         }
         SysUserDto userDto  = new SysUserDto();
         BeanUtils.copyProperties(user,userDto);
         List<SysRole> rolesByUserId= sysRoleMapper.findRolesByUserId(userDto.getUserId());
         if(StringUtils.isEmpty(rolesByUserId)){
-            throw new BizErrorException(ErrorCodeEnum.GL99990401);
+            throw new BadCredentialsException("无访问权限");
         }
         userDto.setRoles(rolesByUserId);
         return userDto;

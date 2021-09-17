@@ -52,12 +52,13 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
         String organizationid = details.getOrganizationid();
         String type=details.getType();
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
+
         SysUserDto userDto = (SysUserDto) userDetails;
         if(StringUtils.isEmpty(userDto)){
             log.warn("找不到用户");
             throw new BadCredentialsException("找不到用户");
         }
+        BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
         boolean f = bcryptPasswordEncoder.matches(password,userDetails.getPassword());
 
         //新宝刷卡登录（免密）
