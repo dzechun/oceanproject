@@ -60,6 +60,13 @@ public class MesSfcRepairOrderDto extends MesSfcRepairOrder implements Serializa
     private String materialDesc;
 
     /**
+     * 物料属性(0.半成品，1.成品)
+     */
+    @Transient
+    @ApiModelProperty(name = "materialProperty",value = "物料属性(0.半成品，1.成品)")
+    private Byte materialProperty;
+
+    /**
      * 产线名称
      */
     @Transient

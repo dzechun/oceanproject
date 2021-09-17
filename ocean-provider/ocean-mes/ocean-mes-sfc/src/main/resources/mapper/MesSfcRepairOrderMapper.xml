@@ -43,6 +43,7 @@
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="material_property" jdbcType="TINYINT" property="materialProperty"/>
     <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
     <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
     <result column="bad_process_name" jdbcType="VARCHAR" property="badProcessName"/>
@@ -77,7 +78,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="BaseColumnList"/>,
-    mpwo.work_order_code,bm.material_code,bm.material_code,bm.material_desc,
+    mpwo.work_order_code,bm.material_code,bm.material_code,bm.material_desc,bmt.material_property,
     bpl.pro_name,br.route_name,bbp.process_name as bad_process_name,cbp.process_name as current_process_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
@@ -85,6 +86,7 @@
     FROM mes_sfc_repair_order msro
     left join fantech_imes_v2.mes_pm_work_order mpwo ON msro.work_order_id = mpwo.work_order_id
     left join fantech_imes_v2.base_material bm ON msro.material_id = bm.material_id
+    left join fantech_imes_v2.base_material_tab bmt ON msro.material_id = bmt.material_id
     left join fantech_imes_v2.base_pro_line bpl ON msro.pro_line_id = bpl.pro_line_id
     left join fantech_imes_v2.base_route br ON msro.route_id = br.route_id
     left join fantech_imes_v2.base_process bbp ON msro.bad_process_id = bbp.process_id
@@ -119,6 +121,12 @@
       </if>
       <if test="orgId!=null">
         and msro.org_id=#{orgId}
+      </if>
+      <if test="materialProperty != null">
+        and bmt.material_property = #{materialProperty}
+      </if>
+      <if test="SNCode != null and SNCode!=''">
+        and ( mpwo.barcode = #{SNCode} or mpwo.semi_product_barcode = #{SNCode} )
       </if>
     </where>
     order by msro.create_time desc
