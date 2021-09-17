@@ -80,9 +80,9 @@ public class ImportDataServiceImpl implements ImportDataService {
             String s5=s4.replaceAll("备注","remark");
             String s6=s5.replaceAll("装置号","deviceCode");
             String s7=s6.replaceAll("主项号","dominantTermCode");
-            String s8=s7.replaceAll("PPGUID","option1");
-            String s9=s8.replaceAll("PSGUID","option2");
-            String s10=s9.replaceAll("RDGUID","option3");
+            String s8=s7.replaceAll("PPGUID","option1");//合同明细id
+            String s9=s8.replaceAll("PSGUID","option2");//合同头id
+            String s10=s9.replaceAll("RDGUID","option3");//请购单明细ID
             String s11=s10.replaceAll("专业","professionName");
             String s12=s11.replaceAll("企业中文名称","professionCode");
 
@@ -533,7 +533,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             String s12=s11.replaceAll("材料用途","materialPurpose");
             String s13=s12.replaceAll("采购说明","purchaseExplain");
             String s14=s13.replaceAll("RSGUID","option2");
-            String s15=s14.replaceAll("RDGUID","option3");
+            String s15=s14.replaceAll("RDGUID","option3");//请购单明细ID
 
             //同步到数据库
             int indexb=s15.indexOf("[");
