@@ -48,8 +48,8 @@
     <collection property="eamJigAttachmentList" ofType="com.fantechs.common.base.general.entity.eam.EamJigAttachment"
                 column="{jigId=jig_id}" select="com.fantechs.provider.eam.mapper.EamJigAttachmentMapper.findList">
     </collection>
-    <collection property="eamJigBackupDtoList" ofType="com.fantechs.common.base.general.dto.eam.EamJigBackupDto"
-                column="{jigId=jig_id}" select="com.fantechs.provider.eam.mapper.EamJigBackupMapper.findList">
+    <collection property="eamJigBackupDtoList" ofType="com.fantechs.common.base.general.dto.eam.EamSparePartReJigDto"
+                column="{jigId=jig_id}" select="com.fantechs.provider.eam.mapper.EamSparePartReJigMapper.findList">
     </collection>
   </resultMap>
 

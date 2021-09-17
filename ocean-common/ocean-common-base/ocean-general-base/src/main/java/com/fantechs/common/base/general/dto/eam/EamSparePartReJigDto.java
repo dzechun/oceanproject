@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.dto.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.eam.EamSparePartReEqu;
+import com.fantechs.common.base.general.entity.eam.EamSparePartReJig;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,7 +10,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
-public class EamSparePartReEquDto extends EamSparePartReEqu implements Serializable {
+public class EamSparePartReJigDto extends EamSparePartReJig implements Serializable {
     /**
      * 创建用户名称
      */
