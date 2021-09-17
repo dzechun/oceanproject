@@ -4,7 +4,6 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessPhenotypeImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWorkerImport;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessPhenotype;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessPhenotype;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBadnessPhenotype;
@@ -125,5 +124,12 @@ public class BaseBadnessPhenotypeController {
             log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
+    }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/saveByApi")
+    public ResponseEntity saveByApi(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated List<BaseBadnessPhenotype> baseBadnessPhenotypes) {
+        int i = baseBadnessPhenotypeService.saveByApi(baseBadnessPhenotypes);
+        return ControllerUtil.returnCRUD(i);
     }
 }

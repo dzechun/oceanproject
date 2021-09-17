@@ -212,6 +212,8 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     public List<WmsInnerInventoryDto> findInvStorage(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
         map.put("isStorage","1");
         return wmsInnerInventoryMapper.findList(map);
     }

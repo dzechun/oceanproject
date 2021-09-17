@@ -537,4 +537,8 @@ public interface BaseFeignApi {
     @PostMapping("/baseProductProcessRoute/findList")
     ResponseEntity<List<BaseProductProcessRoute>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessRoute searchBaseProductProcessRoute);
 
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/saveByApi")
+    ResponseEntity saveByApi(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated List<BaseBadnessPhenotype> baseBadnessPhenotypes);
+
 }

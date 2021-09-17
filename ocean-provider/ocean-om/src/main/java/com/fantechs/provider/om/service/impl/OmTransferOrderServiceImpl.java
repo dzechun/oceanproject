@@ -230,7 +230,11 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             omTransferOrderDet.setModifiedUserId(sysUser.getUserId());
             omTransferOrderDet.setOrgId(sysUser.getOrganizationId());
         }
-        int num = omTransferOrderDetMapper.insertList(entity.getOmTransferOrderDets());
+        int num = 0;
+        if(StringUtils.isNotEmpty(entity.getOmTransferOrderDets())){
+            num= omTransferOrderDetMapper.insertList(entity.getOmTransferOrderDets());
+        }
+
         num+=omTransferOrderMapper.updateByPrimaryKeySelective(entity);
 
         this.addHt(entity,entity.getOmTransferOrderDets());

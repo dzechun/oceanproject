@@ -118,8 +118,8 @@
         <if test="workShopName!=null and workShopName!=''">
             and bws.work_shop_name  like CONCAT('%', #{workShopName}, '%')
         </if>
-        <if test="proLineName!=null and proLineName!=''">
-            and bws.pro_line_name  like CONCAT('%', #{proLineName}, '%')
+        <if test="proName!=null and proName!=''">
+            and bpl.pro_name  like CONCAT('%', #{proName}, '%')
         </if>
     </where>
       order by ewr.modified_time desc

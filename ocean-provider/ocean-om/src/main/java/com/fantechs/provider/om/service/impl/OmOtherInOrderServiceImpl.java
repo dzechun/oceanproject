@@ -238,7 +238,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             omOtherInOrderDet.setModifiedUserId(sysUser.getUserId());
             omOtherInOrderDet.setOrgId(sysUser.getOrganizationId());
         }
-        int num=omOtherInOrderDetMapper.insertList(entity.getOmOtherInOrderDets());
+        int num = 0;
+        if(StringUtils.isNotEmpty(entity.getOmOtherInOrderDets())){
+            num=omOtherInOrderDetMapper.insertList(entity.getOmOtherInOrderDets());
+        }
         num+=omOtherInOrderMapper.updateByPrimaryKeySelective(entity);
         num+=this.addHt(entity, entity.getOmOtherInOrderDets());
         return num;

@@ -9,4 +9,6 @@ import java.util.Map;
 
 public interface CallAgvBarcodeService extends IService<CallAgvBarcode> {
     List<CallAgvBarcodeDto> findList(Map<String, Object> map);
+
+    int save(CallAgvBarcode callAgvBarcode);
 }
