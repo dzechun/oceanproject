@@ -68,7 +68,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 
 	private static final String CLIENT_URI = "/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder,/ocean-wanbao-api/wanbaoSyncData/syncMaterialData," +
 			"/ocean-wanbao-api/wanbaoSyncData/syncOrderData,/ocean-wanbao-api/wanbaoSyncData/syncSaleOrderData,/ocean-wanbao-api/wanbaoSyncData/syncOutDeliveryData," +
-			"/ocean-guest-callagv/RCSAPI/agvCallback";
+			"/ocean-guest-callagv/RCSAPI/agvCallback,/ocean-imes-materialapi/productBomApi,/ocean-esop-baseapi/getIssue/getAllIssue,/ocean-esop-baseapi/getWorkOrder/getAllWorkOrder";
 
 	/**
 	 * Filter type string.
