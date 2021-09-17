@@ -68,6 +68,9 @@
         left join ocean_v2.sys_user s on sp.modified_user_id=s.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON sp.org_id = bo.organization_id
         <where>
+            <if test="processId!=null">
+                and sp.process_id=#{processId}
+            </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>

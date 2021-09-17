@@ -35,7 +35,7 @@
     tv.vehicle_code as vehicleCode, tv.vehicle_name as vehicleName,
     bstp.task_point_code as taskPointCode, bstp.task_point_name as taskPointName, bstp.xyz_code as xyzCode,
     bs.storage_code as storageCode, bs.storage_name as storageName,
-    cab.barcode, cab.product_model as productModel, cab.batch_code, cab.qty
+    cab.barcode, cab.product_model as productModel, cab.batch_code as batchCode, cab.qty
     from call_agv_vehicle_re_barcode cavrb
     left join call_agv_barcode cab on cavrb.barcode_id = cab.barcode_id
     left join tem_vehicle tv on cavrb.vehicle_id = tv.vehicle_id

@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.callagv.service;
 
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleBarcodeDTO;
 import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleReBarcodeDto;
 import com.fantechs.common.base.general.dto.callagv.RequestBarcodeUnboundDTO;
@@ -17,9 +18,9 @@ import java.util.Map;
 public interface CallAgvVehicleReBarcodeService extends IService<CallAgvVehicleReBarcode> {
     List<CallAgvVehicleReBarcodeDto> findList(Map<String, Object> map);
 
-    int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws Exception;
+    int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException;
 
-    String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Integer type) throws Exception;
+    String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Integer type) throws BizErrorException;
 
     String genAgvSchedulingTask(String taskTyp, List<String> positionCodeList) throws Exception;
 

@@ -15,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ import java.util.List;
 @Api(tags = "木林森条码控制器")
 @RequestMapping("/callAgvBarcode")
 @Validated
+@Slf4j
 public class CallAgvBarcodeController {
 
     @Resource
