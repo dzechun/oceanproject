@@ -3,18 +3,9 @@ package com.fantechs.provider.esop.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseProcessImport;
 import com.fantechs.common.base.general.dto.esop.EsopEquipmentDto;
-import com.fantechs.common.base.general.dto.esop.imports.EsopEquipmentImport;
-import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtProcess;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShop;
 import com.fantechs.common.base.general.entity.esop.EsopEquipment;
 import com.fantechs.common.base.general.entity.esop.history.EsopHtEquipment;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -28,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
