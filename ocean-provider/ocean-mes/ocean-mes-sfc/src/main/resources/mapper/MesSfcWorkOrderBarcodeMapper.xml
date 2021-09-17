@@ -18,6 +18,8 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="print_time" jdbcType="TIMESTAMP" property="printTime"/>
+        <result column="create_barcode_time" jdbcType="TIMESTAMP" property="createBarcodeTime"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
@@ -55,6 +57,8 @@
         mswob.create_time,
         mswob.modified_user_id,
         mswob.modified_time,
+mswob.print_time,
+mswob.create_barcode_time,
         mswob.is_delete
     </sql>
     <select id="findList" resultMap="BaseResultDtoMap"
