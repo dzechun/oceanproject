@@ -50,4 +50,29 @@ public class SearchEsopEquipment extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="equipmentModel",value = "设备型号")
     private String equipmentModel;
+
+    /**
+     * 使用状态(1-使用中 2-空闲)
+     */
+    @ApiModelProperty(name="usageStatus",value = "使用状态(1-使用中 2-空闲)")
+    private Byte usageStatus;
+
+    /**
+     * 线上状态(0-离线 1-在线)
+     */
+    @ApiModelProperty(name="onlineStatus",value = "线上状态(0-离线 1-在线 2-已登录 3-中心异常)")
+    private Byte onlineStatus;
+
+
+    /**
+     * 产线ID
+     */
+    @ApiModelProperty(name="proLineId",value = "产线ID")
+    private Long proLineId;
+
+    /**
+     * 车间ID
+     */
+    @ApiModelProperty(name="workShopId",value = "车间ID")
+    private Long workShopId;
 }

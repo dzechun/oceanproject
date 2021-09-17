@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.eam.EamSparePartReEquDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -363,7 +364,7 @@ public class EamEquipment extends ValidGroup implements Serializable {
      * 备用件信息
      */
     @ApiModelProperty(name="eamEquipmentBackupList",value = "备用件信息")
-    private List<EamEquipmentBackup> eamEquipmentBackupList = new ArrayList<>();
+    private List<EamSparePartReEquDto> eamEquipmentBackupList = new ArrayList<>();
 
     private String option1;
 

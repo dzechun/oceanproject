@@ -218,7 +218,10 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
             omSalesReturnOrderDet.setModifiedUserId(sysUser.getUserId());
             omSalesReturnOrderDet.setOrgId(sysUser.getOrganizationId());
         }
-        int num=omSalesReturnOrderDetMapper.insertList(entity.getOmSalesReturnOrderDets());
+        int num = 0;
+        if(StringUtils.isEmpty(entity.getOmSalesReturnOrderDets()) && entity.getOmSalesReturnOrderDets().size()>0){
+            num+=omSalesReturnOrderDetMapper.insertList(entity.getOmSalesReturnOrderDets());
+        }
         num+=omSalesReturnOrderMapper.updateByPrimaryKeySelective(entity);
         num+=this.addHt(entity, entity.getOmSalesReturnOrderDets());
         return num;

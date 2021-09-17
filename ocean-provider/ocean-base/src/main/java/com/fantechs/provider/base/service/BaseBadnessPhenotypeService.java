@@ -17,4 +17,6 @@ public interface BaseBadnessPhenotypeService extends IService<BaseBadnessPhenoty
     List<BaseBadnessPhenotypeDto> findList(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<BaseBadnessPhenotypeImport> baseBadnessPhenotypeImports);
+
+    int saveByApi(List<BaseBadnessPhenotype> baseBadnessPhenotypes);
 }

@@ -132,6 +132,22 @@ public class MesSfcWorkOrderBarcode extends ValidGroup implements Serializable {
     private Date modifiedTime;
 
     /**
+     * 打印时间
+     */
+    @ApiModelProperty(name="printTime",value = "打印时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "print_time")
+    private Date printTime;
+
+    /**
+     * 生成时间
+     */
+    @ApiModelProperty(name="createBarcodeTime",value = "生成时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "create_barcode_time")
+    private Date createBarcodeTime;
+
+    /**
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")

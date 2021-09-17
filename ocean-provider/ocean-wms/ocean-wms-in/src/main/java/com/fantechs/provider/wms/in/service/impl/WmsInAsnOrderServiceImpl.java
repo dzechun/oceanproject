@@ -378,7 +378,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
     public int createInnerJobOrder(Long asnOrderId) {
         WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
         if(StringUtils.isEmpty(wmsInAsnOrder)){

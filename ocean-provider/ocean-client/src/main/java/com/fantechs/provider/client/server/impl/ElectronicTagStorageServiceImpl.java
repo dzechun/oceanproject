@@ -681,7 +681,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         List<PtlJobOrderDetDto> ptlJobOrderDetDtoList1 = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet1).getData();
         String lockKey = ptlJobOrderDetDtoList1.get(0).getWarehouseAreaCode() + "_lock";
         String lockValue = "";
-        String vehicleCode = "";
+        String endVehicleCode = "";
         String relatedOrderCode = "";
         try {
             if (redisUtil.lock(lockKey)) {
@@ -693,10 +693,10 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             String queueName = RabbitConfig.TOPIC_QUEUE_PRINT;
             for (String jobOrderId : jobOrderIds) {
                 PtlJobOrder ptlJobOrder = electronicTagFeignApi.ptlJobOrderDetail(Long.valueOf(jobOrderId)).getData();
-                relatedOrderCode = ptlJobOrder.getRelatedOrderCode();
 //        if (ptlJobOrder.getIfAlreadyPrint() == 1) {
 //            throw new Exception("该任务单已打印过标签，请不要重复操作");
 //        }
+                String vehicleCode = "";
                 if (StringUtils.isNotEmpty(ptlJobOrder.getVehicleId())) {
                     TemVehicle temVehicle = temVehicleFeignApi.detail(ptlJobOrder.getVehicleId()).getData();
                     vehicleCode = temVehicle.getVehicleCode();
@@ -722,8 +722,10 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                             vehicleCode = temVehicleDto.getVehicleCode();
                             redisUtil.set(temVehicleDto.getVehicleCode(), 1, 5);
                             log.info("开始打印，redis锁定集货位：" + vehicleCode);
+                            endVehicleCode = vehicleCode;
                             redisUtil.set(ptlJobOrder.getRelatedOrderCode(), temVehicleDto.getVehicleCode(), 5);
                             log.info("开始打印，redis锁定拣货单：" + ptlJobOrder.getRelatedOrderCode());
+                            relatedOrderCode = ptlJobOrder.getRelatedOrderCode();
 
                             TemVehicle temVehicle = new TemVehicle();
                             temVehicle.setVehicleId(temVehicleDto.getVehicleId());
@@ -824,12 +826,12 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 log.info("===========发送消息给打印客户端打印整、零标签完成===============");
             }
         } catch (Exception e) {
+            redisUtil.del(endVehicleCode);
+            log.info("打印失败，redis释放集货位：" + endVehicleCode);
+            redisUtil.del(relatedOrderCode);
+            log.info("打印失败，redis释放拣货单：" + relatedOrderCode);
             throw new Exception(e.getMessage());
         } finally {
-            redisUtil.del(vehicleCode);
-            log.info("打印完成，redis释放集货位：" + vehicleCode);
-            redisUtil.del(relatedOrderCode);
-            log.info("打印完成，redis释放拣货单：" + relatedOrderCode);
             redisUtil.unlock(lockKey, lockValue);
             log.info("=====================释放了:" + lockKey + "--->redisKEY");
         }

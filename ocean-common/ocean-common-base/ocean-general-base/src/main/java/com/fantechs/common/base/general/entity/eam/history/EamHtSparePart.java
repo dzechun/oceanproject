@@ -1,4 +1,4 @@
-package com.fantechs.common.base.general.entity.eam;
+package com.fantechs.common.base.general.entity.eam.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,62 +17,70 @@ import java.util.Date;
 ;
 
 /**
- * 设备备用件
- * eam_equipment_backup
- * @author Dylan
- * @date 2021-09-16 16:57:13
+ * 备用件履历表
+ * eam_ht_spare_part
+ * @author admin
+ * @date 2021-09-17 16:00:52
  */
 @Data
-@Table(name = "eam_equipment_backup")
-public class EamEquipmentBackup extends ValidGroup implements Serializable {
+@Table(name = "eam_ht_spare_part")
+public class EamHtSparePart extends ValidGroup implements Serializable {
     /**
-     * 设备备用件ID
+     * 备用件履历ID
      */
-    @ApiModelProperty(name="equipmentBackupId",value = "设备备用件ID")
-    @Excel(name = "设备备用件ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="htSparePartId",value = "备用件履历ID")
+    @Excel(name = "备用件履历ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "equipment_backup_id")
-    private Long equipmentBackupId;
+    @Column(name = "ht_spare_part_id")
+    private Long htSparePartId;
 
     /**
-     * 设备ID
+     * 备用件ID
      */
-    @ApiModelProperty(name="equipmentId",value = "设备ID")
-    @Excel(name = "设备ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "equipment_id")
-    private Long equipmentId;
+    @ApiModelProperty(name="sparePartId",value = "备用件ID")
+    @Excel(name = "备用件ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "spare_part_id")
+    private Long sparePartId;
 
     /**
      * 备用件编码
      */
-    @ApiModelProperty(name="equipmentBackupCode",value = "备用件编码")
+    @ApiModelProperty(name="sparePartCode",value = "备用件编码")
     @Excel(name = "备用件编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "equipment_backup_code")
-    private String equipmentBackupCode;
+    @Column(name = "spare_part_code")
+    private String sparePartCode;
 
     /**
      * 备用件名称
      */
-    @ApiModelProperty(name="equipmentBackupName",value = "备用件名称")
+    @ApiModelProperty(name="sparePartName",value = "备用件名称")
     @Excel(name = "备用件名称", height = 20, width = 30,orderNum="") 
-    @Column(name = "equipment_backup_name")
-    private String equipmentBackupName;
+    @Column(name = "spare_part_name")
+    private String sparePartName;
 
     /**
      * 备用件描述
      */
-    @ApiModelProperty(name="equipmentBackupDesc",value = "备用件描述")
+    @ApiModelProperty(name="sparePartDesc",value = "备用件描述")
     @Excel(name = "备用件描述", height = 20, width = 30,orderNum="") 
-    @Column(name = "equipment_backup_desc")
-    private String equipmentBackupDesc;
+    @Column(name = "spare_part_desc")
+    private String sparePartDesc;
 
     /**
      * 备用件型号
      */
-    @ApiModelProperty(name="equipmentBackupModel",value = "备用件型号")
+    @ApiModelProperty(name="sparePartModel",value = "备用件型号")
     @Excel(name = "备用件型号", height = 20, width = 30,orderNum="") 
-    @Column(name = "equipment_backup_model")
-    private String equipmentBackupModel;
+    @Column(name = "spare_part_model")
+    private String sparePartModel;
+
+    /**
+     * 备用件类别ID
+     */
+    @ApiModelProperty(name="sparePartCategoryId",value = "备用件类别ID")
+    @Excel(name = "备用件类别ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "spare_part_category_id")
+    private Long sparePartCategoryId;
 
     /**
      * 仓库ID
@@ -195,6 +204,64 @@ public class EamEquipmentBackup extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    /**
+     * 创建用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
+    private String createUserName;
+
+    /**
+     * 修改用户名称
+     */
+    @Transient
+    @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
+    private String modifiedUserName;
+
+    /**
+     * 组织名称
+     */
+    @Transient
+    @ApiModelProperty(name = "organizationName",value = "组织名称")
+    private String organizationName;
+
+    /**
+     * 备用件类别名称
+     */
+    @Transient
+    @ApiModelProperty(name = "sparePartCategoryName",value = "备用件类别名称")
+    private String sparePartCategoryName;
+
+    /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    private String warehouseName;
+
+    /**
+     * 仓库区域名称
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseAreaName" ,value="仓库区域名称")
+    private String warehouseAreaName;
+
+    /**
+     * 库位编码
+     */
+    @Transient
+    @ApiModelProperty(name = "storageCode",value = "库位名称")
+    private String storageCode;
+
+    /**
+     * 工作区编码
+     */
+    @Transient
+    @ApiModelProperty(name = "workingAreaCode",value = "工作区编码")
+    private String workingAreaCode;
 
     private String option1;
 

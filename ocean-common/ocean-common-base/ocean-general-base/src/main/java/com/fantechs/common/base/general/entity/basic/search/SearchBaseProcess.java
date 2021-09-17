@@ -14,6 +14,12 @@ public class SearchBaseProcess extends BaseQuery implements Serializable {
     private static final long serialVersionUID = -6658723130549341427L;
 
     /**
+     * 工序id
+     */
+    @ApiModelProperty(name="processId" ,value="工序id")
+    private Long processId;
+
+    /**
      * 工序代码
      */
     @ApiModelProperty(name="processCode" ,value="工序代码")

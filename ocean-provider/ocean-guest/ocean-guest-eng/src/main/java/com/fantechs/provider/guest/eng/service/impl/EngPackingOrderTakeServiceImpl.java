@@ -150,8 +150,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                     wmsInnerInventory.setOption1(engPackingOrderSummaryDetDto.getDeviceCode());
                     wmsInnerInventory.setOption2(engPackingOrderSummaryDetDto.getDominantTermCode());
                     wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummaryDto.getContractCode(),
-                            "deviceCode",engPackingOrderSummaryDetDto.getDeviceCode(),"dominantTermCode",engPackingOrderSummaryDetDto.getDominantTermCode(),
-                            "locationNum",engPackingOrderSummaryDetDto.getLocationNum(),"materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode())));
+                            "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"supplierId",engPackingOrder.getSupplierId())));
                     wmsInnerInventories.add(wmsInnerInventory);
 
                     //收货数量
@@ -241,8 +240,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 wmsInnerInventory.setOption1(engPackingOrderSummaryDetDto.getDeviceCode());
                 wmsInnerInventory.setOption2(engPackingOrderSummaryDetDto.getDominantTermCode());
                 wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummaryDto.getContractCode(),
-                        "deviceCode",engPackingOrderSummaryDetDto.getDeviceCode(),"dominantTermCode",engPackingOrderSummaryDetDto.getDominantTermCode(),
-                        "locationNum",engPackingOrderSummaryDetDto.getLocationNum(),"materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode())));
+                        "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"supplierId",engPackingOrder.getSupplierId())));
                 wmsInnerInventories.add(wmsInnerInventory);
 
                 //收货数量
@@ -363,8 +361,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             wmsInnerInventory.setOption1(engPackingOrderSummaryDet.getDeviceCode());
             wmsInnerInventory.setOption2(engPackingOrderSummaryDet.getDominantTermCode());
             wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummary.getContractCode(),
-                    "deviceCode",engPackingOrderSummary.getDeviceCode(),"dominantTermCode",engPackingOrderSummaryDet.getDominantTermCode(),
-                    "locationNum",engPackingOrderSummaryDet.getLocationNum(),"materialCode",engPackingOrderSummaryDet.getRawMaterialCode())));
+                    "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"supplierId",engPackingOrder.getSupplierId())));
             wmsInnerInventories.add(wmsInnerInventory);
         }
 
@@ -408,6 +405,10 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 //待上架
                 engPackingOrderSummary.setSummaryStatus((byte)3);
             }
+        //更新包装清单明细
+        engPackingOrderSummary.setModifiedTime(new Date());
+        engPackingOrderSummary.setModifiedUserId(sysUser.getUserId());
+        engPackingOrderSummaryMapper.updateByPrimaryKeySelective(engPackingOrderSummary);
 
             //查询包箱明细
             List<EngPackingOrderSummaryDto> eng = engPackingOrderSummaryMapper.findList(ControllerUtil.dynamicCondition("packingOrderId",engPackingOrder.getPackingOrderId()));
@@ -421,10 +422,6 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 //待上架
                 engPackingOrder.setOrderStatus((byte)4);
             }
-        //更新包装清单明细
-        engPackingOrderSummary.setModifiedTime(new Date());
-        engPackingOrderSummary.setModifiedUserId(sysUser.getUserId());
-        engPackingOrderSummaryMapper.updateByPrimaryKeySelective(engPackingOrderSummary);
 
         //更新包装清单
         engPackingOrder.setModifiedTime(new Date());
@@ -689,7 +686,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         int num = 0;
         for (Long id : ids) {
             EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(id);
-            List<EngPackingOrderSummaryDto> engPackingOrderSummaryDtos = engPackingOrderSummaryMapper.findList(ControllerUtil.dynamicCondition("PackingOrderId",engPackingOrder.getPackingOrderId()));
+            List<EngPackingOrderSummaryDto> engPackingOrderSummaryDtos = engPackingOrderSummaryMapper.findList(ControllerUtil.dynamicCondition("packingOrderId",engPackingOrder.getPackingOrderId()));
             for (EngPackingOrderSummaryDto engPackingOrderSummaryDto : engPackingOrderSummaryDtos) {
                 List<EngPackingOrderSummaryDetDto> engPackingOrderSummaryDetDtos = engPackingOrderSummaryDetMapper.findList(ControllerUtil.dynamicCondition("packingOrderSummaryId", engPackingOrderSummaryDto.getPackingOrderSummaryId()));
                 for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : engPackingOrderSummaryDetDtos) {
@@ -709,6 +706,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int onlyCancel(EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto) {
         engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDetDto.getReceivingQty());
         engPackingOrderSummaryDetDto.setButtonType((byte)1);
@@ -717,6 +715,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int writeQty(Long id, BigDecimal qty) {
         EngPackingOrderSummaryDet engPackingOrderSummaryDet = engPackingOrderSummaryDetMapper.selectByPrimaryKey(id);
         if(StringUtils.isEmpty(engPackingOrderSummaryDet.getPutawayQty())){
@@ -743,6 +742,11 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             map.put("inventoryStatusId",wms.getInventoryStatusId());
             WmsInnerInventory wmsInnerInventory = innerFeignApi.selectOneByExample(map).getData();
             BigDecimal qty = BigDecimal.ZERO;
+            if((wms.getPackingQty().signum()==-1)){
+                if(StringUtils.isEmpty(wmsInnerInventory) || wmsInnerInventory.getPackingQty().compareTo(BigDecimal.ZERO)<1){
+                    throw new BizErrorException("未查询到库存");
+                }
+            }
             if(StringUtils.isEmpty(wmsInnerInventory)){
                 //添加库存
                 list.add(wms);
@@ -758,7 +762,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             //添加库存日志
             Byte addOrSub = 1;
             BigDecimal chaQty = BigDecimal.ZERO;
-            if(wmsInnerInventory.getPackingQty().signum()==-1){
+            if(StringUtils.isNotEmpty(wmsInnerInventory) && wms.getPackingQty().signum()==-1){
                 //减
                 addOrSub = ((byte)2);
                 chaQty = qty.subtract(wmsInnerInventory.getPackingQty());

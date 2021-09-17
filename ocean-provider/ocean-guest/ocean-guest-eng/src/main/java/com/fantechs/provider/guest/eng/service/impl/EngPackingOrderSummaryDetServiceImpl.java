@@ -294,10 +294,10 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             Example.Criteria qtyCriteria = qtyExample.createCriteria();
             qtyCriteria.andEqualTo("contractCode",contractCode);
             qtyCriteria.andEqualTo("dominantTermCode",dominantTermCode);
-            if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getMaterialCode())){
-                qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDetImport.getMaterialCode());
-            }else if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
+            if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
                 qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDetImport.getRawMaterialCode());
+            }else if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getMaterialCode())){
+                qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDetImport.getMaterialCode());
             }
             qtyCriteria.andEqualTo("deviceCode",deviceCode);
             List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
@@ -435,10 +435,10 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         Example.Criteria qtyCriteria = qtyExample.createCriteria();
         qtyCriteria.andEqualTo("contractCode",engPackingOrderSummary.getContractCode());
         qtyCriteria.andEqualTo("dominantTermCode",dto.getDominantTermCode());
-        if(StringUtils.isNotEmpty(dto.getMaterialCode())){
-            qtyCriteria.andEqualTo("materialCode",dto.getMaterialCode());
-        }else if(StringUtils.isNotEmpty(dto.getRawMaterialCode())){
+        if(StringUtils.isNotEmpty(dto.getRawMaterialCode())){
             qtyCriteria.andEqualTo("materialCode",dto.getRawMaterialCode());
+        }else if(StringUtils.isNotEmpty(dto.getMaterialCode())){
+            qtyCriteria.andEqualTo("materialCode",dto.getMaterialCode());
         }
         qtyCriteria.andEqualTo("deviceCode",dto.getDeviceCode());
         List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);

@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.general.dto.eam.EamJigBackupDto;
+import com.fantechs.common.base.general.dto.eam.EamSparePartReJigDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -291,7 +292,7 @@ public class EamJig extends ValidGroup implements Serializable {
      * 备用件信息
      */
     @ApiModelProperty(name="eamJigBackupDtoList",value = "备用件信息")
-    private List<EamJigBackupDto> eamJigBackupDtoList = new ArrayList<>();
+    private List<EamSparePartReJigDto> eamJigBackupDtoList = new ArrayList<>();
 
     private String option1;
 
