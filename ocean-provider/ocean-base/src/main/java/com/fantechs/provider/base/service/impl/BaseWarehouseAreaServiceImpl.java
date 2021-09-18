@@ -75,7 +75,7 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
         baseWarehouseArea.setCreateTime(new Date());
         baseWarehouseArea.setModifiedUserId(currentUser.getUserId());
         baseWarehouseArea.setModifiedTime(new Date());
-        baseWarehouseArea.setOrganizationId(currentUser.getOrganizationId());
+        baseWarehouseArea.setOrgId(currentUser.getOrganizationId());
         baseWarehouseAreaMapper.insertUseGeneratedKeys(baseWarehouseArea);
 
         //新增历史记录
@@ -106,7 +106,7 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
         int i=0;
         baseWarehouseArea.setModifiedUserId(currentUser.getUserId());
         baseWarehouseArea.setModifiedTime(new Date());
-        baseWarehouseArea.setOrganizationId(currentUser.getOrganizationId());
+        baseWarehouseArea.setOrgId(currentUser.getOrganizationId());
         i= baseWarehouseAreaMapper.updateByPrimaryKeySelective(baseWarehouseArea);
 
         //新增历史记录
@@ -229,7 +229,7 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
                 baseWarehouseArea.setCreateUserId(currentUser.getUserId());
                 baseWarehouseArea.setModifiedTime(new Date());
                 baseWarehouseArea.setModifiedUserId(currentUser.getUserId());
-                baseWarehouseArea.setOrganizationId(currentUser.getOrganizationId());
+                baseWarehouseArea.setOrgId(currentUser.getOrganizationId());
                 baseWarehouseArea.setStatus((byte)1);
                 list.add(baseWarehouseArea);
             }

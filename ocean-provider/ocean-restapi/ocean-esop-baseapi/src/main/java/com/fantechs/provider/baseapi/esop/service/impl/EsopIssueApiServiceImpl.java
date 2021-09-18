@@ -86,7 +86,7 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
                     }
                     esopFeignApi.batchAdd(esopIssues);
                 }
-        //        logsUtils.addlog((byte)1,(byte)1,orgId,result,materialCode);
+                logsUtils.addlog((byte)1,(byte)1,orgId,result,materialCode);
                 return 1;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -113,7 +113,9 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
     }
 
     @Override
-    public int getAllIssue(SearchBaseMaterial searchBaseMaterial) {
+    public int getAllIssue() {
+        log.info("----------开始同步问题清单-------------");
+        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
         searchBaseMaterial.setOrganizationId(baseUtils.getOrId());
         ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
         if(StringUtils.isNotEmpty(list.getData())){

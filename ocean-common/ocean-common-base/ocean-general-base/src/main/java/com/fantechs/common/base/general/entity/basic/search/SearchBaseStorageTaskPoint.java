@@ -10,6 +10,12 @@ import java.io.Serializable;
 public class SearchBaseStorageTaskPoint extends BaseQuery implements Serializable {
 
     /**
+     * 库位配送点ID
+     */
+    @ApiModelProperty(name="storageTaskPointId",value = "库位配送点ID")
+    private Long storageTaskPointId;
+
+    /**
      * 配送点编码
      */
     @ApiModelProperty(name="taskPointCode",value = "配送点编码")

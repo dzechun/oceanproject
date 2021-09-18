@@ -5,11 +5,8 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryImport;
-import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.eng.*;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrderSummary;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -74,7 +71,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         if(StringUtils.isNotEmpty(engPackingOrder)){
             engPackingOrderSummaryDto.setPackingOrderSummaryId(engPackingOrder.getPackingOrderId());
         }else{
-            throw new BizErrorException("添加失败，未查询到上级数据");
+            throw new BizErrorException("添加失败，未查询到上级数据"+engPackingOrder.getPackingOrderCode());
         }
 
         engPackingOrderSummaryDto.setCreateTime(new Date());
@@ -105,7 +102,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             if(StringUtils.isNotEmpty(engPackingOrder)){
                 dto.setPackingOrderId(engPackingOrder.getPackingOrderId());
             }else{
-                 throw new BizErrorException("添加失败，未查询到上级数据");
+                 throw new BizErrorException("添加失败，未查询到"+dto.getCartonCode()+"的上级数据");
             }
             //规则校验
             check(dto,user,engPackingOrder);
@@ -248,7 +245,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
             criteria.andEqualTo("cartonCode",cartonCode);
             criteria.andEqualTo("packingOrderId",packingOrderId);
             if (StringUtils.isNotEmpty(engPackingOrderSummaryMapper.selectOneByExample(example))){
-                throw new BizErrorException("添加失败，编码重复,"+"错误行数为:"+(i+2));
+                throw new BizErrorException("添加失败，编码"+cartonCode+"重复,"+"错误行数为:"+(i+2));
                 /*fail.add(i+2);
                 continue;*/
             }
@@ -360,6 +357,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         Example orderExample = new Example(EngPurchaseReqOrder.class);
         Example.Criteria orderCriteria = orderExample.createCriteria();
         orderCriteria.andEqualTo("purchaseReqOrderCode",dto.getPurchaseReqOrderCode());
+        orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
         List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
         if(StringUtils.isEmpty(engPurchaseReqOrders))
             throw new BizErrorException("添加失败，合同量单与请购单号未匹配到请购单");

@@ -31,6 +31,7 @@ import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.guest.eng.mapper.*;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderSummaryDetService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -84,7 +85,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         if(StringUtils.isNotEmpty(engPackingOrderSummary)){
             engPackingOrderSummaryDetDto.setPackingOrderSummaryId(engPackingOrderSummary.getPackingOrderSummaryId());
         }else{
-            throw new BizErrorException("添加失败，未查询到上级数据");
+            throw new BizErrorException("添加失败，未查询到上级数据"+engPackingOrderSummary.getCartonCode());
         }
 
         int i = engPackingOrderSummaryDetMapper.insertUseGeneratedKeys(engPackingOrderSummaryDetDto);
@@ -109,7 +110,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             if(StringUtils.isNotEmpty(engPackingOrderSummary)) {
                 getMaterial(det, user, engPackingOrderSummary);
             }else{
-                throw new BizErrorException("添加失败，未查询到上级数据");
+                throw new BizErrorException("添加失败，未查询到上级数据"+engPackingOrderSummary.getCartonCode());
             }
             if(StringUtils.isNotEmpty(det.getPackingOrderSummaryDetId())){
                 int i = engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(det);
@@ -362,6 +363,27 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
+    }
+
+    @Override
+    public List<EngPackingOrderSummaryDetDto> findListByIds(String ids) {
+        SysUser user = getUser();
+        List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
+        String[] idsArr = ids.split(",");
+        for (String id : idsArr) {
+            Map map = new HashMap();
+            map.put("packingOrderSummaryId",id);
+            map.put("orgId",user.getOrganizationId());
+            List<EngPackingOrderSummaryDetDto> eEngPackingOrderSummaryDetDtos = engPackingOrderSummaryDetMapper.findList(map);
+            if(StringUtils.isNotEmpty(eEngPackingOrderSummaryDetDtos)){
+                for(EngPackingOrderSummaryDetDto det :eEngPackingOrderSummaryDetDtos){
+                    list.add(det);
+                }
+
+            }
+
+        }
+        return list;
     }
 
     public EngPackingOrderSummary getEngPackingOrderSummary(Long userId, String code,Long packingOrderId){

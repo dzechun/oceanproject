@@ -70,9 +70,14 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         if (temVehicle.getStatus() != 1) {
             throw new BizErrorException("货架不是空闲状态，不能进行备料！");
         }
-        BaseStorageTaskPoint baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(requestCallAgvStockDTO.getStorageTaskPointId()).getData();
-        if (baseStorageTaskPoint.getStorageTaskPointStatus() != 1) {
-            throw new BizErrorException("当前库位配送点不是空闲状态，不能进行备料！");
+
+        SearchBaseStorageTaskPoint searchBaseStorageTaskPoint = new SearchBaseStorageTaskPoint();
+        searchBaseStorageTaskPoint.setStorageTaskPointId(requestCallAgvStockDTO.getStorageTaskPointId());
+        List<BaseStorageTaskPoint> baseStorageTaskPointList = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint).getData();
+        BaseStorageTaskPoint baseStorageTaskPoint = baseStorageTaskPointList.get(0);
+        if (baseStorageTaskPoint.getStorageTaskPointStatus() != 1 && StringUtils.isNotEmpty(baseStorageTaskPoint.getVehicleId())
+                && !requestCallAgvStockDTO.getVehicleId().equals(baseStorageTaskPoint.getVehicleId())) {
+            throw new BizErrorException("当前库位配送点已绑定相应的货架，请重新扫码备料！");
         }
         Map<String, Object> map = new HashMap<>();
         map.put("barcodeIdList", requestCallAgvStockDTO.getBarcodeIdList());
@@ -120,7 +125,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     @Override
     @Transactional
     @LcnTransaction
-    public String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Integer type) throws BizErrorException {
+    public String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Integer type) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<String> positionCodeList = new LinkedList<>();
         TemVehicle temVehicle = temVehicleFeignApi.detail(vehicleId).getData();
@@ -155,12 +160,9 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         }
         positionCodeList.add(baseStorageTaskPointList.get(0).getXyzCode());
 
-        String taskCode = CodeUtils.getId("CAD-");
-
         temVehicle.setStorageTaskPointId(0l);
         temVehicle.setModifiedUserId(user.getUserId());
         temVehicle.setModifiedTime(new Date());
-        temVehicle.setRemark(taskCode);
         temVehicleFeignApi.update(temVehicle);
 
         BaseStorageTaskPoint baseStorageTaskPointUpdate = baseStorageTaskPointList.get(0);
@@ -186,6 +188,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         }
 
         String message = "";
+        String taskCode = "";
         try {
             if (type == 1) {
                 message = "备料配送";
@@ -194,7 +197,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             } else {
                 message = "空货架返回";
             }
-//            taskCode = genAgvSchedulingTask(temVehicle.getAgvTaskTemplate(), positionCodeList);
+            taskCode = genAgvSchedulingTask(temVehicle.getAgvTaskTemplate(), positionCodeList);
             log.info("==========启动agv执行" + message + "作业任务==============\r\n");
             baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
             baseStorageTaskPoint.setModifiedUserId(user.getUserId());
@@ -203,6 +206,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
             temVehicle.setStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
             temVehicle.setModifiedUserId(user.getUserId());
+            temVehicle.setRemark(taskCode);
             redisUtil.set("2-" + taskCode, JSONObject.toJSONString(temVehicle));
             log.info("=========记录当前" + message + "作业载具对应的目的配送点 : key : " + "2-" + taskCode + " value : " + JSONObject.toJSONString(temVehicle) + "\r\n");
         } catch (BizErrorException e) {
@@ -263,6 +267,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             callAgvVehicleBarcodeDTO.setVehicleName(callAgvVehicleReBarcodeDto.getVehicleName());
 
             map.remove("groupByVehicle");
+            map.put("vehicleId", callAgvVehicleReBarcodeDto.getVehicleId());
             List<CallAgvVehicleReBarcodeDto> callAgvVehicleReBarcodeDtoList = callAgvVehicleReBarcodeMapper.findList(map);
             callAgvVehicleBarcodeDTO.setCallAgvVehicleReBarcodeDtoList(callAgvVehicleReBarcodeDtoList);
             callAgvVehicleBarcodeDTOList.add(callAgvVehicleBarcodeDTO);

@@ -34,8 +34,8 @@ public class EsopIssueApiController {
 
     @ApiOperation("同步全部问题清单")
     @PostMapping("/getAllIssue")
-    public ResponseEntity getAllWorkOrder(@ApiParam(value = "",required = true)@RequestBody SearchBaseMaterial searchBaseMaterial) {
-        int i = esopIssueApiService.getAllIssue(searchBaseMaterial);
+    public ResponseEntity getAllWorkOrder() {
+        int i = esopIssueApiService.getAllIssue();
         return ControllerUtil.returnCRUD(i);
     }
 

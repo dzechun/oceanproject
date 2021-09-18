@@ -85,6 +85,14 @@ public class EngPackingOrderSummaryDetController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("列表")
+    @PostMapping("/findListByIds")
+    public ResponseEntity<List<EngPackingOrderSummaryDetDto>> findListByIds(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        Page<Object> page = PageHelper.startPage(20,1000);
+        List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetService.findListByIds(ids);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<EngHtPackingOrderSummaryDetDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchEngPackingOrderSummaryDet searchEngPackingOrderSummaryDet) {

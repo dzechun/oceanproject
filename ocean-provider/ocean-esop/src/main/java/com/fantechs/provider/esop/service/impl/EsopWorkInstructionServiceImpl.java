@@ -405,6 +405,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
             //判断编码是否重复
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(EsopWiBom.getMaterialCode());
+            searchBaseMaterial.setOrganizationId(user.getOrganizationId());
             ResponseEntity<List<BaseMaterial>> baseMaterials = baseFeignApi.findList(searchBaseMaterial);
             if(StringUtils.isNotEmpty(baseMaterials.getData())) {
                 Example example = new Example(EsopWiBom.class);
@@ -444,9 +445,16 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
             Row r = sht.getRow(i);
             if(r != null && r.getCell(0)!= null && !r.getCell(0).getCellType().equals(CellType.BLANK)) {
                 EsopWiBom EsopWiBom = new EsopWiBom();
-                String strValue = r.getCell(0).getStringCellValue();
-                if (StringUtils.isNotEmpty(strValue))
-                    EsopWiBom.setMaterialCode(strValue);
+
+                if(r.getCell(0).getCellType().equals(CellType.STRING)){
+                    String strValue = r.getCell(0).getStringCellValue();
+                    if (StringUtils.isNotEmpty(strValue))
+                        EsopWiBom.setMaterialCode(strValue);
+                }else if(r.getCell(0).getCellType().equals(CellType.NUMERIC)){
+                    Double strValue = r.getCell(0).getNumericCellValue();
+                    if (StringUtils.isNotEmpty(strValue))
+                        EsopWiBom.setMaterialCode(strValue.toString());
+                }
 
                 String strValue1 = r.getCell(1).getStringCellValue();
                 if (StringUtils.isNotEmpty(strValue1))
@@ -586,6 +594,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
             }
 
             EsopWiQualityStandards wiQualityStandards = new EsopWiQualityStandards();
+            BeanUtils.copyProperties(EsopWiQualityStandards,wiQualityStandards);
             wiQualityStandards.setCreateTime(new Date());
             wiQualityStandards.setCreateUserId(user.getUserId());
             wiQualityStandards.setModifiedTime(new Date());

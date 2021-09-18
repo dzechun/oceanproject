@@ -105,6 +105,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         }
         engPackingOrder.setModifiedUserId(user.getUserId());
         engPackingOrder.setModifiedTime(new Date());
+
         int i = engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
 
         EngHtPackingOrder engHtPackingOrder =new EngHtPackingOrder();
@@ -240,10 +241,10 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                 Example.Criteria detcriteria = detexample.createCriteria();
                 detcriteria.andEqualTo("packingOrderSummaryId",engPackingOrderSummary.getPackingOrderSummaryId());
                 List<EngPackingOrderSummaryDet> engPackingOrderSummaryDets = engPackingOrderSummaryDetMapper.selectByExample(detexample);
-                if(StringUtils.isEmpty(engPackingOrderSummaryDets))  throw new BizErrorException("提交失败，装箱汇总明细信息不能为空");
+                if(StringUtils.isEmpty(engPackingOrderSummaryDets))  throw new BizErrorException("提交失败，装箱汇总"+engPackingOrderSummary.getCartonCode()+"的明细信息不能为空");
             }
         }else{
-            throw new BizErrorException("提交失败，未查询到装箱汇总信息");
+            throw new BizErrorException("提交失败，未查询到"+engPackingOrder.getPackingOrderCode()+"相关的装箱汇总信息");
         }
     }
 

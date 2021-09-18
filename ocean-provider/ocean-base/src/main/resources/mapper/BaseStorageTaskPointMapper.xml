@@ -81,6 +81,9 @@
     left join ocean_v2.sys_user s on bstp.modified_user_id=s.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON bstp.org_id = bo.organization_id
     <where>
+      <if test="storageTaskPointId != null">
+        and bstp.storage_task_point_id = #{storageTaskPointId}
+      </if>
       <if test="taskPointCode!=null and taskPointCode!=''">
         and bstp.task_point_code like CONCAT('%', #{taskPointCode}, '%')
       </if>
