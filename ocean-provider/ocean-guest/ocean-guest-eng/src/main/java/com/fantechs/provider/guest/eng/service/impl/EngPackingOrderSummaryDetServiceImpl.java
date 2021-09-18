@@ -20,6 +20,8 @@ import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
 import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrderSummaryDet;
+import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrderSummaryDet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -371,12 +373,13 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
-            Map map = new HashMap();
-            map.put("packingOrderSummaryId",id);
-            map.put("orgId",user.getOrganizationId());
-            List<EngPackingOrderSummaryDetDto> eEngPackingOrderSummaryDetDtos = engPackingOrderSummaryDetMapper.findList(map);
-            if(StringUtils.isNotEmpty(eEngPackingOrderSummaryDetDtos)){
-                for(EngPackingOrderSummaryDetDto det :eEngPackingOrderSummaryDetDtos){
+            SearchEngPackingOrderSummaryDet searchEngPackingOrderSummaryDet = new SearchEngPackingOrderSummaryDet();
+            searchEngPackingOrderSummaryDet.setPackingOrderSummaryId(Long.parseLong(id));
+            searchEngPackingOrderSummaryDet.setOrgId(user.getOrganizationId());
+            searchEngPackingOrderSummaryDet.setPageSize(20);
+            List<EngPackingOrderSummaryDetDto> engPackingOrderSummaryDetDtos = engPackingOrderSummaryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrderSummaryDet));
+            if(StringUtils.isNotEmpty(engPackingOrderSummaryDetDtos)){
+                for(EngPackingOrderSummaryDetDto det :engPackingOrderSummaryDetDtos){
                     list.add(det);
                 }
 

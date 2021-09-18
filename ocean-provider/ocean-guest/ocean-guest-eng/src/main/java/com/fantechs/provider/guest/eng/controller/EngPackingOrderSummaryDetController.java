@@ -96,9 +96,8 @@ public class EngPackingOrderSummaryDetController {
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<EngHtPackingOrderSummaryDetDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchEngPackingOrderSummaryDet searchEngPackingOrderSummaryDet) {
-        Page<Object> page = PageHelper.startPage(searchEngPackingOrderSummaryDet.getStartPage(),searchEngPackingOrderSummaryDet.getPageSize());
         List<EngHtPackingOrderSummaryDetDto> list = engHtPackingOrderSummaryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrderSummaryDet));
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
     @PostMapping(value = "/export")
