@@ -65,7 +65,11 @@ public class InventoryLogUtil {
         //收货
         wmsInnerInventoryLog.setJobOrderType(jobStatus);
         wmsInnerInventoryLog.setAddOrSubtract(addOrSubtract);
-        wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getInStorageId());
+        if(jobStatus==3 && addOrSubtract==1){
+            wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
+        }else {
+            wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getInStorageId());
+        }
         wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrderDet.getWarehouseId());
         wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
         wmsInnerInventoryLog.setProductionDate(wmsInnerJobOrderDet.getProductionDate());

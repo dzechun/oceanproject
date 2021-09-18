@@ -588,9 +588,8 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
         BigDecimal sumQty = BigDecimal.ZERO;
         EngPackingOrder engPackingOrder = null;
-        EngPackingOrderSummary engPackingOrderSummary = null;
         for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : engPackingOrderSummaryDetDtos) {
-            engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
+            EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
             engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrderSummary.getPackingOrderId());
                 //边上边收 收货中及待上架状态
                 if (StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getReceivingQty()) && (engPackingOrderSummaryDetDto.getSummaryDetStatus() == 2 || engPackingOrderSummaryDetDto.getSummaryDetStatus() == 3)) {
@@ -632,23 +631,23 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                         sumQty = sumQty.add(totalQty);
                     }
                 }
-        }
-        //查询是否整箱收货完成
-        List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetMapper.findList(ControllerUtil.dynamicCondition("packingOrderSummaryId",engPackingOrderSummary.getPackingOrderSummaryId()));
-        //判断是否已经收货完成
-        if (engPackingOrderSummary.getSummaryStatus() == 3 && (list.stream().filter(li -> li.getSummaryDetStatus() == 4).collect(Collectors.toList()).size() == list.size())) {
-            engPackingOrderSummary.setSummaryStatus((byte) 4);
-            engPackingOrderSummary.setModifiedUserId(sysUser.getUserId());
-            engPackingOrderSummary.setModifiedTime(new Date());
-            engPackingOrderSummaryMapper.updateByPrimaryKeySelective(engPackingOrderSummary);
-        }
-        List<EngPackingOrderSummaryDto> engPackingOrderSummaryDtos = engPackingOrderSummaryMapper.findList(ControllerUtil.dynamicCondition("packingOrderId",engPackingOrder.getPackingOrderId()));
-        //更新表头状态
-        if(engPackingOrder.getOrderStatus()==3 && (engPackingOrderSummaryDtos.size()==engPackingOrderSummaryDtos.stream().filter(li->li.getSummaryStatus()==4).collect(Collectors.toList()).size())){
-            engPackingOrder.setOrderStatus((byte)5);
-            engPackingOrder.setModifiedUserId(sysUser.getUserId());
-            engPackingOrder.setModifiedTime(new Date());
-            engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
+            //查询是否整箱收货完成
+            List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetMapper.findList(ControllerUtil.dynamicCondition("packingOrderSummaryId",engPackingOrderSummary.getPackingOrderSummaryId()));
+            //判断是否已经收货完成
+            if (engPackingOrderSummary.getSummaryStatus() == 3 && (list.stream().filter(li -> li.getSummaryDetStatus() == 4).collect(Collectors.toList()).size() == list.size())) {
+                engPackingOrderSummary.setSummaryStatus((byte) 4);
+                engPackingOrderSummary.setModifiedUserId(sysUser.getUserId());
+                engPackingOrderSummary.setModifiedTime(new Date());
+                engPackingOrderSummaryMapper.updateByPrimaryKeySelective(engPackingOrderSummary);
+            }
+            List<EngPackingOrderSummaryDto> engPackingOrderSummaryDtos = engPackingOrderSummaryMapper.findList(ControllerUtil.dynamicCondition("packingOrderId",engPackingOrder.getPackingOrderId()));
+            //更新表头状态
+            if(engPackingOrder.getOrderStatus()==4 && (engPackingOrderSummaryDtos.size()==engPackingOrderSummaryDtos.stream().filter(li->li.getSummaryStatus()==4).collect(Collectors.toList()).size())){
+                engPackingOrder.setOrderStatus((byte)5);
+                engPackingOrder.setModifiedUserId(sysUser.getUserId());
+                engPackingOrder.setModifiedTime(new Date());
+                engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
+            }
         }
         if(wmsInnerJobOrderDets.size()>0){
             List<WmsInnerJobOrder> wmsInnerJobOrders = new ArrayList<>();

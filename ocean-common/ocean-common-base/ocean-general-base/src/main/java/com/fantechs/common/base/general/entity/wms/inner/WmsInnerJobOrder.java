@@ -125,6 +125,14 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     private BigDecimal actualQty;
 
     /**
+     * 分配数量
+     */
+    @Transient
+    @ApiModelProperty(name="distributionQty",value = "分配数量")
+    @Excel(name = "分配数量", height = 20, width = 30,orderNum="")
+    private BigDecimal distributionQty;
+
+    /**
      * 作业开始时间
      */
     @ApiModelProperty(name="workStartTime",value = "作业开始时间")
