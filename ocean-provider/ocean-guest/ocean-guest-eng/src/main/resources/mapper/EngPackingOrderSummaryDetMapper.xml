@@ -135,6 +135,9 @@ sposd.summary_det_status
     <if test="rawMaterialCode!=null and rawMaterialCode!=''">
       and sposd.raw_material_code like CONCAT('%',#{rawMaterialCode},'%')
     </if>
+    <if test="materialCode!=null and materialCode!=''">
+      and bm.material_code like CONCAT('%',#{materialCode},'%')
+    </if>
     </where>
     order by sposd.create_time desc
   </select>
