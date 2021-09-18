@@ -2,7 +2,6 @@ package com.fantechs.provider.guest.eng.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
-import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderDto;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngContractQtyOrderAndPurOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -52,7 +51,7 @@ public class EngContractQtyOrderAndPurOrderController {
     List<EngContractQtyOrderAndPurOrderDto> list = engContractQtyOrderAndPurOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchEngContractQtyOrderAndPurOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "EngContractQtyOrderAndPurOrder信息", EngContractQtyOrderDto.class, "EngContractQtyOrderAndPurOrder.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "EngContractQtyOrderAndPurOrder信息", EngContractQtyOrderAndPurOrderDto.class, "EngContractQtyOrderAndPurOrder.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

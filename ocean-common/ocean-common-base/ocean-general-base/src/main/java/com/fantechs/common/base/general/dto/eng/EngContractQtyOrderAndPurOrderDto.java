@@ -17,6 +17,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     @Id
     @ApiModelProperty(name="contractQtyOrderId",value = "合同量单ID")
+    @Excel(name = "合同量单ID", height = 20, width = 30,orderNum="")
     @Column(name = "contract_qty_order_id")
     private Long contractQtyOrderId;
 
@@ -311,5 +312,5 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
     @Column(name = "organization_name")
     private String organizationName;
 
-
+    private static final long serialVersionUID = 1L;
 }
