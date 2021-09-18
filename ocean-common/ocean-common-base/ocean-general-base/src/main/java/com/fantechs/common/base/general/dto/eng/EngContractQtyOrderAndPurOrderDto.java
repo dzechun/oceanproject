@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.dto.eng;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      * 请购单号
      */
     @ApiModelProperty(name="purchaseReqOrderCode",value = "请购单号")
+    @Excel(name = "请购单号", height = 20, width = 30,orderNum="")
     @Column(name = "purchase_req_order_code")
     private String purchaseReqOrderCode;
 
@@ -31,6 +33,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="purchaseReqOrderName",value = "请购单名称")
+    @Excel(name = "请购单名称", height = 20, width = 30,orderNum="")
     @Column(name = "purchase_req_order_name")
     private String purchaseReqOrderName;
 
@@ -39,6 +42,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="contractCode",value = "合同号")
+    @Excel(name = "合同号", height = 20, width = 30,orderNum="")
     @Column(name = "contract_code")
     private String contractCode;
 
@@ -47,6 +51,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="professionCode",value = "专业编码")
+    @Excel(name = "专业编码", height = 20, width = 30,orderNum="")
     @Column(name = "profession_code")
     private String professionCode;
 
@@ -55,6 +60,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="professionName",value = "专业名称")
+    @Excel(name = "专业名称", height = 20, width = 30,orderNum="")
     @Column(name = "profession_name")
     private String professionName;
 
@@ -63,6 +69,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="materialCode",value = "材料编码")
+    @Excel(name = "材料编码", height = 20, width = 30,orderNum="")
     @Column(name = "material_code")
     private String materialCode;
 
@@ -71,6 +78,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="materialName",value = "材料名称")
+    @Excel(name = "材料名称", height = 20, width = 30,orderNum="")
     @Column(name = "material_name")
     private String materialName;
 
@@ -79,6 +87,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="designQty",value = "设计量")
+    @Excel(name = "设计量", height = 20, width = 30,orderNum="")
     @Column(name = "design_qty")
     private String designQty;
 
@@ -87,6 +96,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="surplusQty",value = "余量")
+    @Excel(name = "余量", height = 20, width = 30,orderNum="")
     @Column(name = "surplus_qty")
     private String surplusQty;
 
@@ -95,6 +105,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="purchaseReqQty",value = "请购量")
+    @Excel(name = "请购量", height = 20, width = 30,orderNum="")
     @Column(name = "purchase_req_qty")
     private String purchaseReqQty;
 
@@ -103,6 +114,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="purQty",value = "采购量")
+    @Excel(name = "采购量", height = 20, width = 30,orderNum="")
     @Column(name = "pur_qty")
     private String purQty;
 
@@ -111,6 +123,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="materialGrade",value = "材料等级")
+    @Excel(name = "材料等级", height = 20, width = 30,orderNum="")
     @Column(name = "material_grade")
     private String materialGrade;
 
@@ -119,6 +132,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="materialPurpose",value = "材料用途")
+    @Excel(name = "材料用途", height = 20, width = 30,orderNum="")
     @Column(name = "material_purpose")
     private String materialPurpose;
 
@@ -127,6 +141,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="locationNum",value = "位号")
+    @Excel(name = "位号", height = 20, width = 30,orderNum="")
     @Column(name = "location_num")
     private String locationNum;
 
@@ -135,6 +150,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="deviceCode",value = "装置码")
+    @Excel(name = "装置码", height = 20, width = 30,orderNum="")
     @Column(name = "device_code")
     private String deviceCode;
 
@@ -143,6 +159,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="dominantTermCode",value = "主项号")
+    @Excel(name = "主项号", height = 20, width = 30,orderNum="")
     @Column(name = "dominant_term_code")
     private String dominantTermCode;
 
@@ -159,6 +176,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name = "supplierName",value = "供应商名称")
+    @Excel(name = "供应商名称", height = 20, width = 30,orderNum="")
     @Column(name = "supplier_name")
     private String supplierName;
 
@@ -167,6 +185,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="purchaseReqExplain",value = "请购说明")
+    @Excel(name = "请购说明", height = 20, width = 30,orderNum="")
     @Column(name = "purchase_req_explain")
     private String purchaseReqExplain;
 
@@ -175,6 +194,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="purchaseExplain",value = "采购说明")
+    @Excel(name = "采购说明", height = 20, width = 30,orderNum="")
     @Column(name = "purchase_explain")
     private String purchaseExplain;
 
@@ -183,6 +203,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="")
     @Column(name = "remark")
     private String remark;
 
@@ -218,6 +239,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
     
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
     @Column(name = "create_user_name")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="")
     private String createUserName;
 
     /**
@@ -225,6 +247,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="createTime",value = "创建时间")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -242,6 +265,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="")
     @Column(name = "modified_user_name")
     private String modifiedUserName;
 
@@ -250,6 +274,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
