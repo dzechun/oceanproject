@@ -15,21 +15,63 @@ import java.math.BigDecimal;
 @Data
 public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet implements Serializable {
 
+    /**
+     * 装箱单号
+     */
+    @ApiModelProperty(name="packingOrderCode",value = "装箱单号")
+    @Excel(name = "装箱单号", height = 20, width = 30,orderNum="1")
+    private String packingOrderCode;
+
+    /**
+     * 供应商名称
+     */
+    @Transient
+    @ApiModelProperty(name = "supplierName",value = "供应商名称")
+    @Excel(name = "供应商名称", height = 20, width = 30,orderNum="2")
+    private String supplierName;
+
+    /**
+     * 发运批次
+     */
+    @ApiModelProperty(name="despatchBatchs",value = "发运批次")
+    @Excel(name = "发运批次", height = 20, width = 30,orderNum="3")
+    private String despatchBatchs;
+
+    /**
+     * 请购单号
+     */
+    @ApiModelProperty(name = "purchaseReqOrderCode",value = "请购单号")
+    @Excel(name = "请购单号", height = 20, width = 30,orderNum="4")
+    private String purchaseReqOrderCode;
+
+
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(name="contractCode",value = "合同号")
+    @Excel(name = "合同号", height = 20, width = 30,orderNum="5")
+    private String contractCode;
+
+    /**
+     * 专业名称
+     */
+    @ApiModelProperty(name="professionName",value = "专业")
+    @Excel(name = "专业", height = 20, width = 30,orderNum="6")
+    private String professionName;
+
 
     /**
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30)
-    @Column(name = "material_code")
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="12")
     private String materialCode;
 
     /**
      * 物料名称
      */
     @ApiModelProperty(name="materialName",value = "物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30)
-    @Column(name = "material_name")
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="15")
     private String materialName;
 
 
@@ -89,4 +131,7 @@ public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet impl
      */
     @ApiModelProperty(name = "packingOrderId",value = "装箱清单id")
     private Long packingOrderId;
+
+
+
 }

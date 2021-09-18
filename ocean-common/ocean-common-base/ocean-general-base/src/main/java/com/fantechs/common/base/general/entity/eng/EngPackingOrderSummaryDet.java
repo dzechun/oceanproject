@@ -46,7 +46,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 包装箱号
      */
     @ApiModelProperty(name="cartonCode",value = "包装箱号")
-    @Excel(name = "包装箱号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "包装箱号", height = 20, width = 30,orderNum="7")
     @Column(name = "carton_code")
     private String cartonCode;
 
@@ -54,7 +54,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 内箱号
      */
     @ApiModelProperty(name="innerCartonCode",value = "内箱号")
-    @Excel(name = "内箱号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "内箱号", height = 20, width = 30,orderNum="8")
     @Column(name = "inner_carton_code")
     private String innerCartonCode;
 
@@ -62,7 +62,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 位号
      */
     @ApiModelProperty(name="locationNum",value = "位号")
-    @Excel(name = "位号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "位号", height = 20, width = 30,orderNum="9")
     @Column(name = "location_num")
     private String locationNum;
 
@@ -70,7 +70,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 装置码
      */
     @ApiModelProperty(name="deviceCode",value = "装置码")
-    @Excel(name = "装置码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "装置码", height = 20, width = 30,orderNum="11")
     @Column(name = "device_code")
     private String deviceCode;
 
@@ -78,7 +78,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 主项号
      */
     @ApiModelProperty(name="dominantTermCode",value = "主项号")
-    @Excel(name = "主项号", height = 20, width = 30,orderNum="")
+    @Excel(name = "主项号", height = 20, width = 30,orderNum="10")
     @Column(name = "dominant_term_code")
     private String dominantTermCode;
 
@@ -104,7 +104,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 图号
      */
     @ApiModelProperty(name="drawingNumber",value = "图号")
-    @Excel(name = "图号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "图号", height = 20, width = 30,orderNum="13")
     @Column(name = "drawing_number")
     private String drawingNumber;
 
@@ -112,7 +112,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 件号
      */
     @ApiModelProperty(name="partNumber",value = "件号")
-    @Excel(name = "件号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "件号", height = 20, width = 30,orderNum="14")
     @Column(name = "part_number")
     private String partNumber;
 
@@ -120,7 +120,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 数量
      */
     @ApiModelProperty(name="qty",value = "数量")
-    @Excel(name = "数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "数量", height = 20, width = 30,orderNum="17")
     private BigDecimal qty;
 
     /**
@@ -135,7 +135,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 原材料编码
      */
     @ApiModelProperty(name="rawMaterialCode",value = "原材料编码")
-    @Excel(name = "原材料编码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "原材料编码", height = 20, width = 30,orderNum="18")
     @Column(name = "raw_material_code")
     private String rawMaterialCode;
 
@@ -152,7 +152,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 规格
      */
     @ApiModelProperty(name="spec",value = "规格")
-    @Excel(name = "规格", height = 20, width = 30,orderNum="")
+    @Excel(name = "规格", height = 20, width = 30,orderNum="16")
     @Column(name = "spec")
     private String spec;
 
@@ -168,7 +168,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备注", height = 20, width = 30,orderNum="19")
     private String remark;
 
     /**

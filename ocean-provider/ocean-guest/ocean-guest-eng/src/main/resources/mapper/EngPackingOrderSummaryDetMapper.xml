@@ -45,6 +45,12 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="packing_order_code" jdbcType="VARCHAR" property="packingOrderCode" />
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+    <result column="despatch_batchs" jdbcType="VARCHAR" property="despatchBatchs" />
+    <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode" />
+    <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+    <result column="profession_name" jdbcType="VARCHAR" property="professionName" />
   </resultMap>
 
 
@@ -85,7 +91,10 @@ sposd.summary_det_status
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"/>,
-    bm.material_name as material_name,bm.material_code as material_code,
+    bm.material_name as material_name,bm.material_code as material_code,spo.packing_order_code as packing_order_code,
+    bsp.supplier_name as supplier_name,spo.despatch_batch as despatch_batchs,spos.contract_code as contract_code,
+    spos.contract_code as contract_code,spos.profession_name as profession_name,
+
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name,
@@ -94,6 +103,7 @@ sposd.summary_det_status
     from eng_packing_order_summary_det sposd
     LEFT JOIN eng_packing_order_summary spos ON sposd.packing_order_summary_id = spos.packing_order_summary_id
     LEFT JOIN eng_packing_order spo ON spos.packing_order_id = spo.packing_order_id
+    LEFT JOIN base_supplier bsp ON sposd.supplier_id = bsp.supplier_id
     left join base_material bm on sposd.material_id=bm.material_id
     LEFT JOIN base_storage bs on sposd.receiving_storage_id = bs.storage_id
     LEFT JOIn base_storage bss on sposd.putaway_storage_id = bss.storage_id

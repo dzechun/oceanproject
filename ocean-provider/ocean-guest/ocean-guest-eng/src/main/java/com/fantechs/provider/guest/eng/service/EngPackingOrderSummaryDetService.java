@@ -21,4 +21,7 @@ public interface EngPackingOrderSummaryDetService extends IService<EngPackingOrd
     int save(EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto);
 
     Map<String, Object> importExcel(List<EngPackingOrderSummaryDetImport> engPackingOrderSummaryDetImports, Long packingOrderSummaryId);
+
+    List<EngPackingOrderSummaryDetDto> findListByIds(String ids);
+
 }
