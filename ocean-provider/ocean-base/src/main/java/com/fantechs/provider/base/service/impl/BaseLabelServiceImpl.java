@@ -76,10 +76,22 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         if(StringUtils.isEmpty(file.getOriginalFilename()) || file.getOriginalFilename().equals("")){
             throw new BizErrorException("请规范标签文件名称");
         }
-
+        Matcher matcher = Pattern.compile("[a-zA-Z]+").matcher(baseLabel.getLabelCode());
+        if(!matcher.find()){
+            throw new BizErrorException("编码输入不正确，只能含字母");
+        }
+//        String regEx="[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+//        Matcher matcher = Pattern.compile(regEx).matcher(baseLabel.getLabelCode());
+//        if(matcher.find()){
+//            throw new BizErrorException("编码不能含有特殊字符及中文");
+//        }
+//        matcher = Pattern.compile("[\\u4e00-\\u9fa5]").matcher(baseLabel.getLabelCode());
+//        if(matcher.find()){
+//            throw new BizErrorException("编码不能包含中文");
+//        }
         //匹配文件后缀
         String reg = ".+(.btw|.BTW)$";
-        Matcher matcher = Pattern.compile(reg).matcher(file.getOriginalFilename());
+        matcher = Pattern.compile(reg).matcher(file.getOriginalFilename());
         if(!matcher.find()){
             throw new BizErrorException("标签模版文件格式不正确");
         }
@@ -125,6 +137,26 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
         BeanUtils.copyProperties(baseLabel, baseHtLabel);
         baseHtLabelMapper.insertSelective(baseHtLabel);
         return num;
+    }
+
+    /**
+     * 判定输入的是否是汉字
+     *
+     * @param c
+     * 被校验的字符
+     * @return true代表是汉字
+     */
+    public static boolean isChinese(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+            || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+            || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+            || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+            || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+            || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+            return true;
+        }
+        return false;
     }
 
     @Override

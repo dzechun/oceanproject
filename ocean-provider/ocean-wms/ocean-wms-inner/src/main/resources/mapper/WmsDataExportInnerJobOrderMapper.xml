@@ -37,7 +37,11 @@
     eposdet.dominant_term_code,
     eposdet.device_code,
     eposdet.putaway_qty,
-    bs.storage_code
+    bs.storage_code,
+    epo.arrival_time AS inner_time,
+    epo.arrival_time AS inner_sure_time,
+    wijod.create_time AS record_time,
+    wijod.create_user_id AS record_user
   </sql>
 
   <select id="findExportData" parameterType="map" resultMap="BaseResultMapDto">
@@ -45,11 +49,11 @@
     FROM wms_inner_job_order_det wijod
     JOIN eng_packing_order_summary_det eposdet ON wijod.source_det_id=eposdet.packing_order_summary_det_id
     LEFT JOIN eng_packing_order_summary epos ON eposdet.packing_order_summary_id=epos.packing_order_summary_id
+    LEFT JOIN eng_packing_order epo ON epos.packing_order_id=epo.packing_order_id
     LEFT JOIN base_material bm ON eposdet.material_id=bm.material_id
     LEFT JOIN eng_purchase_req_order epro ON epos.purchase_req_order_code=epro.purchase_req_order_code AND bm.material_code=epro.material_code
     LEFT JOIN eng_contract_qty_order ecqo ON epro.option3=ecqo.option3
     LEFT JOIN base_storage bs ON eposdet.putaway_storage_id=bs.storage_id
-
     <where>
       <if test="jobOrderId!=null and jobOrderId!=''">
         and wijod.job_order_id = #{jobOrderId}

@@ -182,6 +182,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 //                }
 //            }
             mesSfcWorkOrderBarcode.setBarcodeStatus((byte)0);
+            mesSfcWorkOrderBarcode.setPrintTime(new Date());
             this.update(mesSfcWorkOrderBarcode);
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
             PrintDto printDto = new PrintDto();
@@ -343,6 +344,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             record.setModifiedTime(new Date());
             record.setModifiedUserId(sysUser.getUserId());
             record.setOrgId(sysUser.getOrganizationId());
+            record.setCreateBarcodeTime(new Date());
             mesSfcWorkOrderBarcodeMapper.insertUseGeneratedKeys(record);
 
             MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = new MesSfcWorkOrderBarcode();
