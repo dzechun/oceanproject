@@ -63,7 +63,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         baseStorage.setCreateTime(new Date());
         baseStorage.setModifiedUserId(currentUser.getUserId());
         baseStorage.setModifiedTime(new Date());
-        baseStorage.setOrganizationId(currentUser.getOrganizationId());
+        baseStorage.setOrgId(currentUser.getOrganizationId());
         baseStorageMapper.insertUseGeneratedKeys(baseStorage);
 
         //新增库位历史信息
@@ -141,7 +141,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
 
         storage.setModifiedUserId(currentUser.getUserId());
         storage.setModifiedTime(new Date());
-        storage.setOrganizationId(currentUser.getOrganizationId());
+        storage.setOrgId(currentUser.getOrganizationId());
         int i = baseStorageMapper.updateByPrimaryKeySelective(storage);
 
         //新增库位历史信息
@@ -202,7 +202,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             //判断仓库区域是否存在
             Example example1 = new Example(BaseWarehouseArea.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
+            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria1.andEqualTo("warehouseAreaCode",warehouseAreaCode);
             BaseWarehouseArea baseWarehouseArea = baseWarehouseAreaMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseWarehouseArea)){
@@ -235,7 +235,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             baseStorage.setCreateUserId(currentUser.getUserId());
             baseStorage.setModifiedTime(new Date());
             baseStorage.setModifiedUserId(currentUser.getUserId());
-            baseStorage.setOrganizationId(currentUser.getOrganizationId());
+            baseStorage.setOrgId(currentUser.getOrganizationId());
             baseStorage.setStorageType(baseStorageImport.getStorageType().byteValue());
             list.add(baseStorage);
         }
@@ -319,7 +319,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         Example example = new Example(BaseStorage.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageCode",baseStorage.getStorageCode());
-        criteria.andEqualTo("organizationId",baseStorage.getOrganizationId());
+        criteria.andEqualTo("organizationId",baseStorage.getOrgId());
         BaseStorage baseStorageExist = baseStorageMapper.selectOneByExample(example);
         int i= 0;
         if(StringUtils.isEmpty(baseStorageExist)) {
