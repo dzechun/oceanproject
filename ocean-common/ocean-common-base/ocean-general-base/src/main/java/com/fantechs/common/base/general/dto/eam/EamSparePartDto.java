@@ -15,7 +15,7 @@ public class EamSparePartDto extends EamSparePart implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="8")
     private String createUserName;
 
     /**
@@ -23,7 +23,7 @@ public class EamSparePartDto extends EamSparePart implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="10")
     private String modifiedUserName;
 
     /**
@@ -38,6 +38,7 @@ public class EamSparePartDto extends EamSparePart implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "sparePartCategoryName",value = "备用件类别名称")
+    @Excel(name = "备用件类别名称", height = 20, width = 30,orderNum="5")
     private String sparePartCategoryName;
 
     /**
