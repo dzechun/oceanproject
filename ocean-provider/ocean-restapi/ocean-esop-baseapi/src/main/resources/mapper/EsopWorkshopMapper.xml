@@ -31,7 +31,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     SELECT<include refid="BaseColumnList"/>
-    FROM xinbao_esop.base_workshop xebw
+    FROM qms.base_workshop xebw
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(xebw.modify_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

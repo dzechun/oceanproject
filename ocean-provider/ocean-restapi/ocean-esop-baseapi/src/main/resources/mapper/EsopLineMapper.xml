@@ -38,7 +38,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     SELECT<include refid="BaseColumnList"/>
-    FROM xinbao_esop.base_line xebl
+    FROM qms.base_line xebl
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(xebl.modify_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
