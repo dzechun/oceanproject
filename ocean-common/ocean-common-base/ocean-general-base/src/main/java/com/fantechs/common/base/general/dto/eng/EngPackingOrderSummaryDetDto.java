@@ -80,7 +80,6 @@ public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet impl
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="")
     private String createUserName;
 
     /**
@@ -88,7 +87,6 @@ public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet impl
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="")
     private String modifiedUserName;
 
     /**

@@ -29,7 +29,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 装箱汇总明细ID
      */
     @ApiModelProperty(name="packingOrderSummaryDetId",value = "装箱汇总明细ID")
-    @Excel(name = "装箱汇总明细ID", height = 20, width = 30,orderNum="")
     @Id
     @Column(name = "packing_order_summary_det_id")
     private Long packingOrderSummaryDetId;
@@ -38,7 +37,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 装箱汇总ID
      */
     @ApiModelProperty(name="packingOrderSummaryId",value = "装箱汇总ID")
-    @Excel(name = "装箱汇总ID", height = 20, width = 30,orderNum="") 
     @Column(name = "packing_order_summary_id")
     private Long packingOrderSummaryId;
 
@@ -87,7 +85,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="") 
     @Column(name = "material_id")
     private Long materialId;
 
@@ -95,7 +92,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 供应商ID
      */
     @ApiModelProperty(name="supplierId",value = "供应商ID")
-    @Excel(name = "供应商ID", height = 20, width = 30,orderNum="")
     @Column(name = "supplier_id")
     private Long supplierId;
 
@@ -127,7 +123,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 单位名称
      */
     @ApiModelProperty(name="unitName",value = "单位名称")
-    @Excel(name = "单位名称", height = 20, width = 30,orderNum="") 
     @Column(name = "unit_name")
     private String unitName;
 
@@ -144,7 +139,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 发运批次
      */
     @ApiModelProperty(name="despatchBatch",value = "发运批次")
-    @Excel(name = "发运批次", height = 20, width = 30,orderNum="")
     @Column(name = "despatch_batch")
     private String despatchBatch;
 
@@ -161,7 +155,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
@@ -175,7 +168,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -183,7 +175,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -191,7 +182,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -200,7 +190,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -208,7 +197,6 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
