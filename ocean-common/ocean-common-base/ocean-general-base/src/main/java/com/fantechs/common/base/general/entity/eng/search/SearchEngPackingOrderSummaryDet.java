@@ -27,9 +27,9 @@ public class SearchEngPackingOrderSummaryDet extends BaseQuery implements Serial
     private List<Byte> summaryDetStatus;
 
     /**
-     * 材料编码
+     * 原材料编码
      */
-    @ApiModelProperty(name="rawMaterialCode",value = "材料编码")
+    @ApiModelProperty(name="rawMaterialCode",value = "原材料编码")
     private String rawMaterialCode;
 
     /**
@@ -37,4 +37,10 @@ public class SearchEngPackingOrderSummaryDet extends BaseQuery implements Serial
      */
     @ApiModelProperty(name = "packingOrderId",value = "装箱清单id")
     private Long packingOrderId;
+
+    /**
+     * 材料编码
+     */
+    @ApiModelProperty(name = "materialCode",value = "材料编码")
+    private String materialCode;
 }

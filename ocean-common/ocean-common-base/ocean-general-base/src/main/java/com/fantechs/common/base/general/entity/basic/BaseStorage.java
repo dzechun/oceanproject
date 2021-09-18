@@ -242,9 +242,9 @@ public class BaseStorage extends ValidGroup implements Serializable {
     /**
      * 组织id
      */
-    @ApiModelProperty(name="organizationId",value = "组织id")
+    @ApiModelProperty(name="orgId",value = "组织id")
     @Column(name = "org_id")
-    private Long organizationId;
+    private Long orgId;
 
     /**
      * 组织名称

@@ -129,6 +129,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 inventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
                 if(entity.getType()==(byte) 2){
                     inventoryVerificationDet.setStockUserId(sysUser.getUserId());
+                    inventoryVerificationDet.setIfRegister((byte)1);
                 }
             }
             int num = wmsInventoryVerificationDetMapper.insertList(entity.getInventoryVerificationDets());

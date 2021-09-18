@@ -383,7 +383,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             }
 
             for (BaseStorage baseStorage : listBC) {
-                baseStorage.setOrganizationId(1004L);
+                baseStorage.setOrgId(1004L);
                 baseStorage.setStorageType((byte)1);//库位类型
                 baseStorage.setWorkingAreaId(responseEntityList.getData().get(0).getWorkingAreaId());//工作区ID
                 baseStorage.setRoadway(1);//项道
