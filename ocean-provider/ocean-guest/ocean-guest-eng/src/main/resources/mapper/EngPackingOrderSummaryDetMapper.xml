@@ -93,7 +93,7 @@ sposd.summary_det_status
     select <include refid="Base_Column_List"/>,
     bm.material_name as material_name,bm.material_code as material_code,spo.packing_order_code as packing_order_code,
     bsp.supplier_name as supplier_name,spo.despatch_batch as despatch_batchs,spos.contract_code as contract_code,
-    spos.contract_code as contract_code,spos.profession_name as profession_name,
+    spos.purchase_req_order_code as purchase_req_order_code,spos.profession_name as profession_name,
 
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
