@@ -25,6 +25,7 @@ import com.fantechs.provider.guest.eng.mapper.EngPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryMapper;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderTakeService;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +69,9 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         int num = 0;
         for (Long id : ids) {
             EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(id);
+            if(engPackingOrder.getOrderStatus()>1){
+                throw new BizErrorException("重复操作");
+            }
             engPackingOrder.setOrderStatus((byte)2);
             engPackingOrder.setArrivalTime(new Date());
             engPackingOrder.setAgoConfirmUserId(sysUser.getUserId());
@@ -113,6 +117,12 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         int num = 0;
         for (Long id : ids) {
             EngPackingOrder engPackingOrder  = engPackingOrderMapper.selectByPrimaryKey(id);
+            if(engPackingOrder.getOrderStatus()==5){
+                throw new BizErrorException("单据已完成");
+            }
+            if(engPackingOrder.getOrderStatus()==4){
+                throw new BizErrorException("收货已完成，重复操作");
+            }
             if(engPackingOrder.getOrderStatus()==3){
                 throw new BizErrorException("收货中，无法整单收货");
             }
@@ -300,7 +310,9 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         EngPackingOrderSummaryDet engPackingOrderSummaryDet = engPackingOrderSummaryDetMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId());
         EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
         EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrderSummary.getPackingOrderId());
-
+        if(StringUtils.isEmpty(engPackingOrderSummaryDet.getCartonCode()) && engPackingOrderSummaryDet.getSummaryDetStatus()!=2){
+            throw new BizErrorException("收货完成，重复收货");
+        }
         if(StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getCancelQty())){
 
             if(StringUtils.isEmpty(engPackingOrderSummaryDet.getReceivingQty()) || (engPackingOrderSummaryDet.getReceivingQty().subtract(engPackingOrderSummaryDetDto.getCancelQty()).compareTo(BigDecimal.ZERO))==-1){
@@ -466,6 +478,9 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         }
         for (Long id : ids) {
             EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(id);
+            if(engPackingOrder.getOrderStatus()==5){
+                throw new BizErrorException("单据已完成");
+            }
 //            if(engPackingOrder.getOrderStatus()!=4){
 //                throw new BizErrorException("单据收货中，无法整单创建上架单");
 //            }
@@ -812,4 +827,38 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
         }
     }
+
+//    private void check(EngPackingOrder engPackingOrder,EngPackingOrderSummary engPackingOrderSummary,EngPackingOrderSummaryDet engPackingOrderSummaryDet,Byte type){
+//        switch (type){
+//            //到场登记
+//            case 1:
+//                if(engPackingOrder.getOrderStatus()>1){
+//                    throw new BizErrorException("单据已登记，重复操作");
+//                }
+//                break;
+//                //收货
+//            case 2:
+//                if(engPackingOrder.getOrderStatus()<2){
+//                    throw new BizErrorException("单据未登记");
+//                }
+//                if(engPackingOrder.getOrderStatus()>=4){
+//                    throw new BizErrorException("单据已收货完成");
+//                }
+//                if(engPackingOrderSummary.getSummaryStatus()>3){
+//                    throw new BizErrorException("装箱收货已完成");
+//                }
+//                if(engPackingOrderSummaryDet.getSummaryDetStatus()>3){
+//                    throw new BizErrorException("货品收货已完成");
+//                }
+//                break;
+//                //创建上架作业单
+//            case 3:
+//                if(engPackingOrder.getOrderStatus()==5){
+//
+//                }
+//        }
+//        if(engPackingOrder.getOrderStatus()==4){
+//            throw new BizErrorException("单据收货已完成");
+//        }
+//    }
 }
