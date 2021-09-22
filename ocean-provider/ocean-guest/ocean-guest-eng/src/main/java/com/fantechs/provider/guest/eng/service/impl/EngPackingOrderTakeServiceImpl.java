@@ -310,7 +310,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         EngPackingOrderSummaryDet engPackingOrderSummaryDet = engPackingOrderSummaryDetMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId());
         EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
         EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrderSummary.getPackingOrderId());
-        if(StringUtils.isEmpty(engPackingOrderSummaryDet.getCartonCode()) && engPackingOrderSummaryDet.getSummaryDetStatus()!=2){
+        if(StringUtils.isEmpty(engPackingOrderSummaryDetDto.getCancelQty()) && engPackingOrderSummaryDet.getSummaryDetStatus()>=3){
             throw new BizErrorException("收货完成，重复收货");
         }
         if(StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getCancelQty())){
