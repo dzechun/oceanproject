@@ -31,6 +31,7 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProducti
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -424,7 +425,7 @@ public class BarcodeUtils {
      */
     public static void printBarCode(PrintCarCodeDto dto) {
         LabelRuteDto labelRuteDto = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findRule(dto.getLabelTypeCode(), dto.getWorkOrderId());
-//        PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(dto.getBarcodeType(), dto.getWorkOrderId());
+        //PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(ControllerUtil.dynamicCondition("labelCode",labelRuteDto.getLabelCode(),"id",dto.getWorkOrderId(),"labelCategoryId",labelRuteDto.getLabelCategoryId()));
         PrintModel printModel = new PrintModel();
         printModel.setQrCode(dto.getBarcode());
         PrintDto printDto = new PrintDto();

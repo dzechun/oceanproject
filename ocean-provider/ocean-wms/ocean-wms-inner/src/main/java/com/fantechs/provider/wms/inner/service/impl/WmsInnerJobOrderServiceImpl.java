@@ -937,7 +937,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             map.put("SN", "true");
             map.put("qty", qty);
         }else{
-            throw new BizErrorException("作业单与该条码不匹配");
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"作业单与该条码不匹配");
         }
         return map;
     }
@@ -1101,7 +1101,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
         }
         if(StringUtils.isNotEmpty(wmsInnerJobOrderDto.getOrderTypeId()) && wmsInnerJobOrderDto.getOrderTypeId()==9L){
-            ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),wmsInnerJobOrderDet.getActualQty());
+            ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),qty);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
             }
