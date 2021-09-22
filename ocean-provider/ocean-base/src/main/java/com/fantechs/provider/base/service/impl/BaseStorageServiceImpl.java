@@ -52,7 +52,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
 
         Example example = new Example(BaseStorage.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("storageCode", baseStorage.getStorageCode());
         List<BaseStorage> baseStorages = baseStorageMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseStorages)) {
@@ -130,7 +130,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
 
         Example example = new Example(BaseStorage.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("storageCode", storage.getStorageCode());
 
         BaseStorage baseStorage = baseStorageMapper.selectOneByExample(example);
@@ -319,7 +319,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         Example example = new Example(BaseStorage.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageCode",baseStorage.getStorageCode());
-        criteria.andEqualTo("organizationId",baseStorage.getOrgId());
+        criteria.andEqualTo("orgId",baseStorage.getOrgId());
         BaseStorage baseStorageExist = baseStorageMapper.selectOneByExample(example);
         int i= 0;
         if(StringUtils.isEmpty(baseStorageExist)) {

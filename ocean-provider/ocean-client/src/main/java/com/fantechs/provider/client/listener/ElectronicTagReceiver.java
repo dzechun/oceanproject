@@ -227,14 +227,6 @@ public class ElectronicTagReceiver {
                     electronicTagStorageService.fanoutSender(1015, rabbitMQDTOArea, null);
                     log.info("===========发送给客户端控制通道灯灭灯===============");
                 }
-                if (!listC.isEmpty()) {
-                    electronicTagStorageService.fanoutSender(1007, null, listC);
-                    log.info("===========发送消息给客户端控制另一个中文标签亮灯完成===============");
-                }
-                if (!listE.isEmpty()) {
-                    electronicTagStorageService.fanoutSender(1008, null, listE);
-                    log.info("===========发送消息给客户端控制另一个英文标签亮灯完成===============");
-                }
                 if (finishBoolean) {
                     electronicTagStorageService.updateJobOrderSeq(ptlJobOrderDetDtoList.get(0).getWarehouseAreaId(), ptlJobOrderDetDtoList.get(0).getJobOrderCode());
                 }
@@ -245,6 +237,15 @@ public class ElectronicTagReceiver {
                 for (String redisKey : delRedis) {
                     log.info("删除当前电子标签redisKey：" + redisKey + ", 值为：" + redisUtil.get(redisKey));
                     redisUtil.del(redisKey);
+                }
+                if (!listC.isEmpty()) {
+                    wait(200);
+                    electronicTagStorageService.fanoutSender(1007, null, listC);
+                    log.info("===========发送消息给客户端控制另一个中文标签亮灯完成===============");
+                }
+                if (!listE.isEmpty()) {
+                    electronicTagStorageService.fanoutSender(1008, null, listE);
+                    log.info("===========发送消息给客户端控制另一个英文标签亮灯完成===============");
                 }
 
 //                if (StringUtils.isNotEmpty(endRabbitMQDTO)) {
