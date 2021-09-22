@@ -195,7 +195,7 @@ public class BaseStorageTaskPointServiceImpl extends BaseService<BaseStorageTask
             //库位
             Example example1 = new Example(BaseStorage.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("organizationId", user.getOrganizationId());
+            criteria1.andEqualTo("orgId", user.getOrganizationId());
             criteria1.andEqualTo("storageCode",storageCode);
             BaseStorage baseStorage = baseStorageMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseStorage)){
