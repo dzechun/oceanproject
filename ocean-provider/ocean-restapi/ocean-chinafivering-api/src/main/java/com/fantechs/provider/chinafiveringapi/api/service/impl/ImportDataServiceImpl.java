@@ -2,6 +2,7 @@ package com.fantechs.provider.chinafiveringapi.api.service.impl;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
@@ -66,9 +67,15 @@ public class ImportDataServiceImpl implements ImportDataService {
 
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
+            ResponseEntity<List<BaseOrganizationDto>> responseEntityOrg=this.getOrId();
+            if(StringUtils.isEmpty(responseEntityOrg.getData())){
+                throw new BizErrorException("找不到相应组织");
+            }
+            Long orgId=responseEntityOrg.getData().get(0).getOrganizationId();
+
             baseExecuteResultDto= callWebService(address,"getPoDetails",projectID);
             if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             //转换为实体类集合
             String strResult=baseExecuteResultDto.getExecuteResult().toString();
@@ -94,14 +101,14 @@ public class ImportDataServiceImpl implements ImportDataService {
             for (EngContractQtyOrder engContractQtyOrder : listPO) {
                 //通过供应商名称找供应商ID
                 SearchBaseSupplier searchBaseSupplier=new SearchBaseSupplier();
-                searchBaseSupplier.setOrganizationId(1004L);
+                searchBaseSupplier.setOrganizationId(orgId);
                 searchBaseSupplier.setSupplierName(engContractQtyOrder.getProfessionCode());
                 ResponseEntity<List<BaseSupplier>> responseEntityL=baseFeignApi.findSupplierList(searchBaseSupplier);
                 if(StringUtils.isNotEmpty(responseEntityL.getData())){
                     engContractQtyOrder.setSupplierId(responseEntityL.getData().get(0).getSupplierId());
                 }
                 engContractQtyOrder.setProfessionCode("");
-                engContractQtyOrder.setOrgId(1004L);
+                engContractQtyOrder.setOrgId(orgId);
                 engFeignApi.saveByApi(engContractQtyOrder);
             }
 
@@ -127,9 +134,15 @@ public class ImportDataServiceImpl implements ImportDataService {
     public BaseExecuteResultDto getIssueDetails(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try{
+            ResponseEntity<List<BaseOrganizationDto>> responseEntityOrg=this.getOrId();
+            if(StringUtils.isEmpty(responseEntityOrg.getData())){
+                throw new BizErrorException("找不到相应组织");
+            }
+            Long orgId=responseEntityOrg.getData().get(0).getOrganizationId();
+
             baseExecuteResultDto= callWebService(address,"getIssueDetails",projectID);
             if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             String strResult=baseExecuteResultDto.getExecuteResult().toString();
             String s0=strResult.replaceAll("领料单号","deliveryOrderCode");
@@ -171,7 +184,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             for (String key:result.keySet()) {
                 WmsOutDeliveryOrder wmsOutDeliveryOrder=new WmsOutDeliveryOrder();
                 wmsOutDeliveryOrder.setOrderTypeId(8L);//单据类型 领料出库=8
-                wmsOutDeliveryOrder.setOrgId(1004L);
+                wmsOutDeliveryOrder.setOrgId(orgId);
                 wmsOutDeliveryOrder.setMaterialOwnerId(153L);
                 wmsOutDeliveryOrder.setOrderDate(new Date());
                 wmsOutDeliveryOrder.setStatus((byte) 1);
@@ -197,7 +210,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                         SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
                         searchBaseSupplier.setSupplierCode(tempDto.getCustomerCode());
                         searchBaseSupplier.setSupplierType((byte) 2);// 1 是供应商 2 是客户
-                        searchBaseSupplier.setOrganizationId(1004L);
+                        searchBaseSupplier.setOrganizationId(orgId);
                         ResponseEntity<List<BaseSupplier>> supplierList = baseFeignApi.findSupplierList(searchBaseSupplier);
                         if (StringUtils.isNotEmpty(supplierList.getData())) {
                             customerId = supplierList.getData().get(0).getSupplierId();
@@ -211,7 +224,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                     String materialCode=tempDto.getMaterialCode();
                     SearchBaseMaterial searchBaseMaterial=new SearchBaseMaterial();
                     searchBaseMaterial.setMaterialCode(materialCode);
-                    searchBaseMaterial.setOrganizationId(1004L);
+                    searchBaseMaterial.setOrganizationId(orgId);
                     ResponseEntity<List<BaseMaterial>> baseList=baseFeignApi.findList(searchBaseMaterial);
                     if(StringUtils.isEmpty(baseList.getData())){
                         //throw new BizErrorException("找不到物料编码的信息-->"+materialCode);
@@ -256,7 +269,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                     //发货库位和发货仓库
                     SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
                     searchBaseStorage.setStorageCode("default");
-                    searchBaseStorage.setOrgId(1004L);
+                    searchBaseStorage.setOrgId(orgId);
                     ResponseEntity<List<BaseStorage>> listStorage=baseFeignApi.findList(searchBaseStorage);
                     if(StringUtils.isNotEmpty(listStorage.getData())){
                         detDto.setStorageId(listStorage.getData().get(0).getStorageId());
@@ -304,9 +317,15 @@ public class ImportDataServiceImpl implements ImportDataService {
     public BaseExecuteResultDto getPartNoInfo(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
+            ResponseEntity<List<BaseOrganizationDto>> responseEntityOrg=this.getOrId();
+            if(StringUtils.isEmpty(responseEntityOrg.getData())){
+                throw new BizErrorException("找不到相应组织");
+            }
+            Long orgId=responseEntityOrg.getData().get(0).getOrganizationId();
+
             baseExecuteResultDto = callWebService(address, "getPartNoInfo", projectID);
             if (baseExecuteResultDto.getIsSuccess() == false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             //转换为实体类集合
             String strResult=baseExecuteResultDto.getExecuteResult().toString();
@@ -323,7 +342,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             String str=s5.substring(indexb,indexe+1);
             List<BaseMaterial> listBM= BeanUtils.jsonToListObject(str,BaseMaterial.class);
             for (BaseMaterial baseMaterial : listBM) {
-                baseMaterial.setOrganizationId(1004L);
+                baseMaterial.setOrganizationId(orgId);
                 baseMaterial.setStatus((byte)1);
                 baseFeignApi.saveByApi(baseMaterial);
             }
@@ -348,9 +367,15 @@ public class ImportDataServiceImpl implements ImportDataService {
     public BaseExecuteResultDto getShelvesNo(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
+            ResponseEntity<List<BaseOrganizationDto>> responseEntityOrg=this.getOrId();
+            if(StringUtils.isEmpty(responseEntityOrg.getData())){
+                throw new BizErrorException("找不到相应组织");
+            }
+            Long orgId=responseEntityOrg.getData().get(0).getOrganizationId();
+
             baseExecuteResultDto= callWebService(address,"getShelvesNo",projectID);
             if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             //转换为实体类集合
             String strResult=baseExecuteResultDto.getExecuteResult().toString();
@@ -367,7 +392,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             //取工作区编码为default的ID
             SearchBaseWorkingArea searchBaseWorkingArea=new SearchBaseWorkingArea();
             searchBaseWorkingArea.setWorkingAreaCode("default");
-            searchBaseWorkingArea.setOrgId(1004L);
+            searchBaseWorkingArea.setOrgId(orgId);
             ResponseEntity<List<BaseWorkingAreaDto>> responseEntityList=baseFeignApi.findWorkingAreaList(searchBaseWorkingArea);
             if(StringUtils.isEmpty(responseEntityList.getData())){
                 throw new BizErrorException("default工作区编码不存在");
@@ -376,14 +401,14 @@ public class ImportDataServiceImpl implements ImportDataService {
             //取库区编码为default的ID base_warehouse_area
             SearchBaseWarehouseArea searchBaseWarehouseArea=new SearchBaseWarehouseArea();
             searchBaseWarehouseArea.setWarehouseAreaCode("default");
-            searchBaseWarehouseArea.setOrgId(1004L);
+            searchBaseWarehouseArea.setOrgId(orgId);
             ResponseEntity<List<BaseWarehouseAreaDto>> responseEntityListWA=baseFeignApi.findWarehouseAreaList(searchBaseWarehouseArea);
             if(StringUtils.isEmpty(responseEntityListWA.getData())){
                 throw new BizErrorException("default库区编码不存在");
             }
 
             for (BaseStorage baseStorage : listBC) {
-                baseStorage.setOrgId(1004L);
+                baseStorage.setOrgId(orgId);
                 baseStorage.setStorageType((byte)1);//库位类型
                 baseStorage.setWorkingAreaId(responseEntityList.getData().get(0).getWorkingAreaId());//工作区ID
                 baseStorage.setRoadway(1);//项道
@@ -424,9 +449,15 @@ public class ImportDataServiceImpl implements ImportDataService {
     public BaseExecuteResultDto getSubcontractor(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
+            ResponseEntity<List<BaseOrganizationDto>> responseEntityOrg=this.getOrId();
+            if(StringUtils.isEmpty(responseEntityOrg.getData())){
+                throw new BizErrorException("找不到相应组织");
+            }
+            Long orgId=responseEntityOrg.getData().get(0).getOrganizationId();
+
             baseExecuteResultDto= callWebService(address,"getSubcontractor",projectID);
             if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             //转换为实体类集合
             String strResult=baseExecuteResultDto.getExecuteResult().toString();
@@ -439,7 +470,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             String str=s1.substring(indexb,indexe+1);
             List<BaseSupplier> listBC= BeanUtils.jsonToListObject(str,BaseSupplier.class);
             for (BaseSupplier baseSupplier : listBC) {
-                baseSupplier.setOrganizationId(1004L);
+                baseSupplier.setOrganizationId(orgId);
                 baseSupplier.setStatus((byte)1);
                 //客户供应商用同一个表 SupplierType=2 表示客户
                 baseSupplier.setSupplierType((byte)2);
@@ -468,9 +499,15 @@ public class ImportDataServiceImpl implements ImportDataService {
     public BaseExecuteResultDto getVendor() throws Exception{
         BaseExecuteResultDto baseExecuteResultDto = new BaseExecuteResultDto();
         try {
+            ResponseEntity<List<BaseOrganizationDto>> responseEntityOrg=this.getOrId();
+            if(StringUtils.isEmpty(responseEntityOrg.getData())){
+                throw new BizErrorException("找不到相应组织");
+            }
+            Long orgId=responseEntityOrg.getData().get(0).getOrganizationId();
+
             baseExecuteResultDto = callWebService(address, "getVendor", "");
             if (baseExecuteResultDto.getIsSuccess() == false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             String strResult = baseExecuteResultDto.getExecuteResult().toString();
             String s0 = strResult.replaceAll("企业中文名称", "supplierName");
@@ -483,7 +520,7 @@ public class ImportDataServiceImpl implements ImportDataService {
 
             //同步到数据库
             for (BaseSupplier baseSupplier : listSu) {
-                baseSupplier.setOrganizationId(1004L);
+                baseSupplier.setOrganizationId(orgId);
                 baseSupplier.setStatus((byte)1);
                 //客户供应商用同一个表 SupplierType=1 表示供应商
                 baseSupplier.setSupplierType((byte)1);
@@ -512,9 +549,15 @@ public class ImportDataServiceImpl implements ImportDataService {
     public BaseExecuteResultDto getReqDetails(String projectID) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try{
+            ResponseEntity<List<BaseOrganizationDto>> responseEntityOrg=this.getOrId();
+            if(StringUtils.isEmpty(responseEntityOrg.getData())){
+                throw new BizErrorException("找不到相应组织");
+            }
+            Long orgId=responseEntityOrg.getData().get(0).getOrganizationId();
+
             baseExecuteResultDto= callWebService(address,"getReqDetails",projectID);
             if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             //转换为实体类集合
             String strResult=baseExecuteResultDto.getExecuteResult().toString();
@@ -541,7 +584,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             String str=s15.substring(indexb,indexe+1);
             List<EngPurchaseReqOrder> listPO= BeanUtils.jsonToListObject(str,EngPurchaseReqOrder.class);
             for (EngPurchaseReqOrder engPurchaseReqOrder : listPO) {
-                engPurchaseReqOrder.setOrgId(1004L);
+                engPurchaseReqOrder.setOrgId(orgId);
                 engFeignApi.saveByApi(engPurchaseReqOrder);
             }
 
@@ -624,6 +667,21 @@ public class ImportDataServiceImpl implements ImportDataService {
         }
 
         return baseExecuteResultDto;
+    }
+
+
+    /**
+     * create by: Dylan
+     * description: 获取组织
+     * create time:
+     * @return
+     */
+    public ResponseEntity<List<BaseOrganizationDto>> getOrId() {
+        ResponseEntity<List<BaseOrganizationDto>> baseOrganizationDtoList=null;
+        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+        searchBaseOrganization.setOrganizationCode("3919");
+        baseOrganizationDtoList = baseFeignApi.findOrganizationList(searchBaseOrganization);
+        return baseOrganizationDtoList;
     }
 
 }
