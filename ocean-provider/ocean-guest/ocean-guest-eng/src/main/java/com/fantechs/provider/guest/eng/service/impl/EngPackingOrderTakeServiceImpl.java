@@ -306,10 +306,13 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         }
         //取消收货实体
         List<EngPackingOrderTakeCancel> engPackingOrderTakeCancelList = new ArrayList<>();
-
+        BigDecimal calQty = engPackingOrderSummaryDetDto.getCancelQty();
         EngPackingOrderSummaryDet engPackingOrderSummaryDet = engPackingOrderSummaryDetMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId());
         EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
         EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrderSummary.getPackingOrderId());
+        if(StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getIsCal()) && engPackingOrderSummaryDetDto.getIsCal()==1){
+            engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDet.getReceivingQty());
+        }
         if(StringUtils.isEmpty(engPackingOrderSummaryDetDto.getCancelQty()) && engPackingOrderSummaryDet.getSummaryDetStatus()>=3){
             throw new BizErrorException("收货完成，重复收货");
         }
@@ -335,7 +338,13 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                             engPackingOrderTakeCancel.setPackingOrderCode(engPackingOrder.getPackingOrderCode());
                             //计算需要扣减分配的数量=(分配数量-(实收数量-取消数量))
                             engPackingOrderTakeCancel.setQty(engPackingOrderSummaryDet.getDistributionQty().subtract((engPackingOrderSummaryDet.getReceivingQty().subtract(engPackingOrderSummaryDetDto.getCancelQty()))));
-                            engPackingOrderTakeCancelList.add(engPackingOrderTakeCancel);
+                            if(StringUtils.isNotEmpty(engPackingOrderTakeCancel.getQty()) && engPackingOrderTakeCancel.getQty().compareTo(BigDecimal.ZERO)>-1){
+                                engPackingOrderTakeCancelList.add(engPackingOrderTakeCancel);
+                                engPackingOrderSummaryDetDto.setDistributionQty(engPackingOrderSummaryDet.getDistributionQty().subtract(engPackingOrderTakeCancel.getQty()));
+
+                                //计算需要扣减的收货数量=(总取消数量-已减分配数量)
+                                engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDetDto.getCancelQty().subtract(engPackingOrderTakeCancel.getQty()));
+                            }
                         }else{
                             throw new BizErrorException("可取消收货数量不足,无法取消");
                         }
@@ -344,7 +353,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             }
             engPackingOrderSummaryDetDto.setReceivingQty(engPackingOrderSummaryDetDto.getCancelQty().negate());
         }
-        if(StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getReceivingQty())){
+        if(StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getReceivingQty()) && (engPackingOrderSummaryDetDto.getReceivingQty().compareTo(BigDecimal.ZERO)==-1 || engPackingOrderSummaryDetDto.getReceivingQty().compareTo(BigDecimal.ZERO)==1)){
             //创建收货库存
             WmsInnerInventory wmsInnerInventory = new WmsInnerInventory();
             wmsInnerInventory.setMaterialOwnerId(materialOwnerId);
@@ -376,7 +385,9 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                     "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"supplierId",engPackingOrder.getSupplierId())));
             wmsInnerInventories.add(wmsInnerInventory);
         }
-
+        if(StringUtils.isNotEmpty(calQty)){
+            engPackingOrderSummaryDetDto.setReceivingQty(calQty.negate());
+        }
         //收货数量
         if(StringUtils.isNotEmpty(engPackingOrderSummaryDet.getReceivingQty()) && StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getReceivingQty())){
             engPackingOrderSummaryDetDto.setReceivingQty(engPackingOrderSummaryDet.getReceivingQty().add(engPackingOrderSummaryDetDto.getReceivingQty()));
@@ -402,7 +413,12 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 engPackingOrderSummaryDetDto.setSummaryDetStatus((byte) 2);
             }
         }else if(engPackingOrderSummaryDetDto.getButtonType()==2){
-            engPackingOrderSummaryDetDto.setSummaryDetStatus((byte)3);
+            //判断分配数量是否等于收货数量
+            if(StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getReceivingQty(),engPackingOrderSummaryDetDto.getDistributionQty()) && engPackingOrderSummaryDetDto.getReceivingQty().compareTo(engPackingOrderSummaryDet.getDistributionQty())==0){
+                engPackingOrderSummaryDetDto.setSummaryDetStatus((byte)4);
+            }else {
+                engPackingOrderSummaryDetDto.setSummaryDetStatus((byte)3);
+            }
         }
         int num = engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDetDto);
             //查询是否已经全部收货完成
@@ -724,7 +740,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
     public int onlyCancel(EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto) {
-        engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDetDto.getReceivingQty());
+//        engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDetDto.getCancelQty());
         engPackingOrderSummaryDetDto.setButtonType((byte)1);
         return this.onlyTask(engPackingOrderSummaryDetDto);
     }

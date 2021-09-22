@@ -68,4 +68,10 @@ public class EngPackingOrderSummaryDto extends EngPackingOrderSummary implements
     @ApiModelProperty(name="despatchBatch",value = "发运批次")
     private String despatchBatch;
 
+    /**
+     * 预上架库位
+     */
+    @Transient
+    @ApiModelProperty(name = "putawayStorageName",value = "预上架库位")
+    private String putawayStorageName;
 }

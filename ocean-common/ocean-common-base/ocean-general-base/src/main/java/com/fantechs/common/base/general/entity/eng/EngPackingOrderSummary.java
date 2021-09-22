@@ -252,5 +252,12 @@ public class EngPackingOrderSummary extends ValidGroup implements Serializable {
     @Column(name = "summary_status")
     private Byte summaryStatus;
 
+    /**
+     * 预上架库位
+     */
+    @ApiModelProperty(name = "putawayStorageId",value = "预上架库位")
+    @Column(name = "putaway_storage_id")
+    private Long putawayStorageId;
+
     private static final long serialVersionUID = 1L;
 }
