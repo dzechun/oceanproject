@@ -45,9 +45,6 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
     @Override
     public List<BaseMaterialOwnerDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         List<BaseMaterialOwnerDto> baseMaterialOwnerDtos = baseMaterialOwnerMapper.findList(map);
@@ -61,6 +58,15 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
             }
         }
         return baseMaterialOwnerDtos;
+    }
+
+    @Override
+    public List<BaseMaterialOwnerDto> findAll() {
+        Map<String, Object> map = new HashMap<>();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId", user.getOrganizationId());
+
+        return baseMaterialOwnerMapper.findList(map);
     }
 
     @Override

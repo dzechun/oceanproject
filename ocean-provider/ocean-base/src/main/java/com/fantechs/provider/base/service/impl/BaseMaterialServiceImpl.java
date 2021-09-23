@@ -135,6 +135,19 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     }
 
     @Override
+    public List<BaseMaterialDto> findAll(Map<String, Object> map) {
+        if(StringUtils.isEmpty(map.get("organizationId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+
+            map.put("organizationId", user.getOrganizationId());
+        }
+        return baseMaterialMapper.findList(map);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseMaterial baseMaterial) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -163,12 +176,17 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
 
         //新增物料页签信息
         BaseTab baseTab = baseMaterial.getBaseTabDto();
-        if (0 >= baseTab.getTransferQuantity()){
-            throw new BizErrorException("转移批量必须大于0");
-        }
-        if (StringUtils.isNotEmpty(baseTab.getNetWeight(),baseTab.getGrossWeight())
-                &&baseTab.getNetWeight().compareTo(baseTab.getGrossWeight())==1){
-            throw new BizErrorException("净重不能大于毛重");
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("wanbaoSyncData");
+        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if (specItems.isEmpty()){
+            if (0 >= baseTab.getTransferQuantity()){
+                throw new BizErrorException("转移批量必须大于0");
+            }
+            if (StringUtils.isNotEmpty(baseTab.getNetWeight(),baseTab.getGrossWeight())
+                    &&baseTab.getNetWeight().compareTo(baseTab.getGrossWeight())==1){
+                throw new BizErrorException("净重不能大于毛重");
+            }
         }
         baseTab.setMaterialId(baseMaterial.getMaterialId());
         baseTabMapper.insertSelective(baseTab);
@@ -206,15 +224,20 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
 
         BaseTab baseTab = baseMaterial.getBaseTabDto();
         if (StringUtils.isNotEmpty(baseTab)){
-            if (StringUtils.isEmpty(baseTab.getTransferQuantity())){
-                throw new BizErrorException("转移批量不能为空");
-            }
-            if (0 >= baseTab.getTransferQuantity()){
-                throw new BizErrorException("转移批量必须大于0");
-            }
-            if (StringUtils.isNotEmpty(baseTab.getNetWeight(),baseTab.getGrossWeight())
-               &&baseTab.getNetWeight().compareTo(baseTab.getGrossWeight())==1){
-                throw new BizErrorException("净重不能大于毛重");
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoSyncData");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (specItems.isEmpty()){
+                if (StringUtils.isEmpty(baseTab.getTransferQuantity())){
+                    throw new BizErrorException("转移批量不能为空");
+                }
+                if (0 >= baseTab.getTransferQuantity()){
+                    throw new BizErrorException("转移批量必须大于0");
+                }
+                if (StringUtils.isNotEmpty(baseTab.getNetWeight(),baseTab.getGrossWeight())
+                        &&baseTab.getNetWeight().compareTo(baseTab.getGrossWeight())==1){
+                    throw new BizErrorException("净重不能大于毛重");
+                }
             }
             //判断该物料的页签是否存在
             Example example1 = new Example(BaseTab.class);

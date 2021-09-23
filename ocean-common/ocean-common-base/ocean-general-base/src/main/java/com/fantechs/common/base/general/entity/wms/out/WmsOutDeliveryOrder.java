@@ -365,6 +365,36 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="option10",value = "扩展字段10")
     private String option10;
 
+    /**
+     * 扩展字段11
+     */
+    @ApiModelProperty(name="option11",value = "扩展字段11")
+    private String option11;
+
+    /**
+     * 扩展字段12
+     */
+    @ApiModelProperty(name="option12",value = "扩展字段12")
+    private String option12;
+
+    /**
+     * 扩展字段13
+     */
+    @ApiModelProperty(name="option13",value = "扩展字段13")
+    private String option13;
+
+    /**
+     * 扩展字段14
+     */
+    @ApiModelProperty(name="option14",value = "扩展字段14")
+    private String option14;
+
+    /**
+     * 扩展字段15
+     */
+    @ApiModelProperty(name="option15",value = "扩展字段15")
+    private String option15;
+
     @ApiModelProperty(name="wmsOutDeliveryOrderDetList",value = "出库单明细")
     private List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = new ArrayList<>();
 }
