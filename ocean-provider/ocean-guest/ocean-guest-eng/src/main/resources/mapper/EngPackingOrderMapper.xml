@@ -135,6 +135,9 @@ spo.ago_confirm_user_id
       <if test="shipmentEnterpriseId!=null">
         and spo.shipment_enterprise_id=#{shipmentEnterpriseId}
       </if>
+    <if test="agoConfirmUserName!=null and agoConfirmUserName!=''">
+      and su.user_name like CONCAT('%',#{agoConfirmUserName},'%')
+    </if>
     </where>
     order by spo.create_time desc
   </select>

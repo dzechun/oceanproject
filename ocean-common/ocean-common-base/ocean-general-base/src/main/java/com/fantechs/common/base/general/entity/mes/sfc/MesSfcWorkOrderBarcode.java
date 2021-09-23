@@ -63,10 +63,10 @@ public class MesSfcWorkOrderBarcode extends ValidGroup implements Serializable {
     private String workOrderCode;
 
     /**
-     * 流转卡状态(0-待投产 1-投产中 2-已完成 3-待打印)
+     * 条码状态(0-待投产 1-投产中 2-已完成 3-待打印)
      */
-    @ApiModelProperty(name="barcodeStatus",value = "流转卡状态(0-待投产 1-投产中 2-已完成 3-待打印)")
-    @Excel(name = "流转卡状态(0-待投产 1-投产中 2-已完成 3-待打印)", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="barcodeStatus",value = "条码状态(0-待投产 1-投产中 2-已完成 3-待打印)")
+    @Excel(name = "条码状态(0-待投产 1-投产中 2-已完成 3-待打印)", height = 20, width = 30,orderNum="")
     @Column(name = "barcode_status")
     private Byte barcodeStatus;
 

@@ -45,4 +45,11 @@ public class MesSfcWorkOrderBarcodeDto extends MesSfcWorkOrderBarcode implements
     private Long materialId;
 
     private String materialName;
+
+    /**
+     * 条码类别名称
+     */
+    @Transient
+    @ApiModelProperty(name = "labelCategoryName",value = "条码类别")
+    private String labelCategoryName;
 }

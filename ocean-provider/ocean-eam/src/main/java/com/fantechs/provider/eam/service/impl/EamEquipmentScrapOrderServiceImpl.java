@@ -129,8 +129,13 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
         record.setOrderStatus(StringUtils.isEmpty(record.getOrderStatus())?1: record.getOrderStatus());
         eamEquipmentScrapOrderMapper.insertUseGeneratedKeys(record);
 
-        //报废单明细
         List<EamEquipmentScrapOrderDetDto> list = record.getList();
+        //确认报废单时修改设备状态为报废
+        if(record.getOrderStatus() == 2){
+            updateEquipmentStatus(list);
+        }
+
+        //报废单明细
         if(StringUtils.isNotEmpty(list)){
             for (EamEquipmentScrapOrderDetDto eamEquipmentScrapOrderDetDto : list){
                 eamEquipmentScrapOrderDetDto.setEquipmentScrapOrderId(record.getEquipmentScrapOrderId());
@@ -165,6 +170,12 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
         entity.setModifiedTime(new Date());
         eamEquipmentScrapOrderMapper.updateByPrimaryKeySelective(entity);
 
+        List<EamEquipmentScrapOrderDetDto> list = entity.getList();
+        //确认报废单时修改设备状态为报废
+        if(entity.getOrderStatus() == 2){
+            updateEquipmentStatus(list);
+        }
+
         //删除原报废单明细
         Example example1 = new Example(EamEquipmentScrapOrderDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
@@ -172,7 +183,6 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
         eamEquipmentScrapOrderDetMapper.deleteByExample(example1);
 
         //报废单明细
-        List<EamEquipmentScrapOrderDetDto> list = entity.getList();
         if(StringUtils.isNotEmpty(list)){
             for (EamEquipmentScrapOrderDetDto eamEquipmentScrapOrderDetDto : list){
                 eamEquipmentScrapOrderDetDto.setEquipmentScrapOrderId(entity.getEquipmentScrapOrderId());
@@ -190,6 +200,16 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
         BeanUtils.copyProperties(entity,eamHtEquipmentScrapOrder);
         int i = eamHtEquipmentScrapOrderMapper.insert(eamHtEquipmentScrapOrder);
 
+        return i;
+    }
+
+    public int updateEquipmentStatus(List<EamEquipmentScrapOrderDetDto> list){
+        int i = 0;
+        for (EamEquipmentScrapOrderDetDto eamEquipmentScrapOrderDetDto : list){
+            EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodeMapper.selectByPrimaryKey(eamEquipmentScrapOrderDetDto.getEquipmentBarcodeId());
+            eamEquipmentBarcode.setEquipmentStatus((byte)9);
+            i += eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+        }
         return i;
     }
 
