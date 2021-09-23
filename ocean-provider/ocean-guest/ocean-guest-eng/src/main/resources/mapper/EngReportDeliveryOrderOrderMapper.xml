@@ -16,15 +16,20 @@
 
 
   <select id="findDeliveryOrderOrder" parameterType="map" resultMap="BaseResultMapDto">
-    select
-    wodod.delivery_order_det_id,wodod.option2,wodod.option11,wodod.remark,
-    wodod.create_time,u.user_name as create_user_name
-    FROM wms_out_delivery_order wodo
-    left join ocean_v2.sys_user u on wodo.create_user_id=u.user_id
-    left join wms_out_delivery_order_det wodod on wodo.delivery_order_id= wodod.delivery_order_id
+    SELECT wodod.delivery_order_det_id,
+    wodod.option1,
+    wodod.option2,
+    wijod.actual_qty AS option11,
+    IFNULL(wodod.remark,'') AS remark,
+    wodod.create_time,
+    u.user_name AS create_user_name
+    FROM wms_inner_job_order_det wijod
+    JOIN wms_inner_job_order wijo ON wijod.job_order_id=wijo.job_order_id
+    JOIN wms_out_delivery_order_det wodod ON wijod.source_det_id=wodod.delivery_order_det_id
+    LEFT JOIN ocean_v2.sys_user u ON wijo.modified_user_id=u.user_id
     <where>
-      <if test="deliveryOrderId!=null and deliveryOrderId!=''">
-        and wodo.delivery_order_id = #{deliveryOrderId}
+      <if test="jobOrderId!=null and jobOrderId!=''">
+        and wijo.job_order_id = #{jobOrderId}
       </if>
     </where>
 

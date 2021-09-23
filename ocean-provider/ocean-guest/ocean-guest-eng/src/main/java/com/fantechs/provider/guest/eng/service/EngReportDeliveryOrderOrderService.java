@@ -1,6 +1,6 @@
 package com.fantechs.provider.guest.eng.service;
 
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 
 /**
  *
@@ -9,5 +9,5 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 
 public interface EngReportDeliveryOrderOrderService {
 
-    String reportDeliveryOrderOrder(WmsOutDeliveryOrder wmsOutDeliveryOrder);
+    String reportDeliveryOrderOrder(WmsInnerJobOrder wmsInnerJobOrder);
 }

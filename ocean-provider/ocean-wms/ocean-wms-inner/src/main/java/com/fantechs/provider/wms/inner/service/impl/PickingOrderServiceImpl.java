@@ -26,6 +26,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
@@ -69,6 +70,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private EngFeignApi engFeignApi;
 
     private String REDIS_KEY = "PICKINGID:";
 
@@ -501,6 +504,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
                 return this.PickingConfirmation(wmsInnerJobOrder,1);
+
             }
 
 
@@ -548,6 +552,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         .workStartTime(new Date())
                         .workEndtTime(new Date())
                         .build());
+
             }
         return num;
     }
@@ -1177,6 +1182,11 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
         }
         num+=wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
+
+        //领料出库回传接口（五环）
+        if(wmsInnerJobOrder.getOrderStatus()==(byte)5) {
+            engFeignApi.reportDeliveryOrderOrder(wmsInnerJobOrder);
+        }
         return num;
     }
 

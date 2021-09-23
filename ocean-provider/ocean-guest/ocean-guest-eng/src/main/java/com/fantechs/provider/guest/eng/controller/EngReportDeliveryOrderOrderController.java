@@ -1,6 +1,6 @@
 package com.fantechs.provider.guest.eng.controller;
 
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.guest.eng.service.EngReportDeliveryOrderOrderService;
@@ -28,8 +28,8 @@ public class EngReportDeliveryOrderOrderController {
 
     @ApiOperation("返写领料出库")
     @PostMapping("/writeQty")
-    public ResponseEntity<String> writePackingLists(WmsOutDeliveryOrder wmsOutDeliveryOrder) {
-        String result = engReportDeliveryOrderOrderService.reportDeliveryOrderOrder(wmsOutDeliveryOrder);
+    public ResponseEntity<String> writePackingLists(WmsInnerJobOrder wmsInnerJobOrder) {
+        String result = engReportDeliveryOrderOrderService.reportDeliveryOrderOrder(wmsInnerJobOrder);
         return ControllerUtil.returnDataSuccess(result,1);
     }
 

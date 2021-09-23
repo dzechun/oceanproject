@@ -5,7 +5,6 @@ import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -40,7 +39,7 @@ public interface EngFeignApi {
 
     @ApiOperation("返写领料出库")
     @PostMapping("/reportDeliveryOrderOrder/writeQty")
-    ResponseEntity<String> reportDeliveryOrderOrder(WmsOutDeliveryOrder wmsOutDeliveryOrder);
+    ResponseEntity<String> reportDeliveryOrderOrder(WmsInnerJobOrder wmsInnerJobOrder);
 
     @ApiOperation("返写移位")
     @PostMapping("/reportInnerJobOrder/writeQty")

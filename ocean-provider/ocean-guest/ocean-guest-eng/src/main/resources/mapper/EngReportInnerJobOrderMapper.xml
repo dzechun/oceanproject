@@ -24,15 +24,28 @@
 
   <select id="findInnerJobOrder" parameterType="map" resultMap="BaseResultMapDto">
     select
-    wijod.job_order_det_id ,ecqo.option1 ,ecqo.option2,ecqo.contract_code,epro.purchase_req_order_code,bm.material_code,ecqo.location_num,
-    ecqo.dominant_term_code,ecqo.device_code,wijod.out_storage_id as old_torageId,wijod.in_storage_id as new_storageId,
-    wijod.create_time,u.user_name as create_user_name
+    wijod.job_order_det_id,
+    ecqo.option1,
+    ecqo.option2,
+    ecqo.contract_code,
+    epro.purchase_req_order_code,
+    bm.material_code,
+    ecqo.location_num,
+    ecqo.dominant_term_code,
+    ecqo.device_code,
+    bsout.option1 AS old_torageId,
+    bsin.option1 AS new_storageId,
+    wijod.create_time,
+    u.user_name as create_user_name
     FROM wms_inner_job_order_det wijod
+    JOIN wms_inner_inventory wii ON wijod.source_det_id=wii.inventory_id
     left join ocean_v2.sys_user u on wijod.create_user_id=u.user_id
     left join wms_inner_job_order wijo on wijod.job_order_id= wijo.job_order_id
     left join base_material bm on wijod.material_id= bm.material_id
-    left join eng_purchase_req_order epro on epro.purchase_req_order_code=epro.purchase_req_order_code and bm.material_code=epro.material_code
+    left join eng_purchase_req_order epro on epro.purchase_req_order_code=wii.purchase_req_order_code and bm.material_code=epro.material_code
     left join eng_contract_qty_order ecqo on epro.option3=ecqo.option3
+    LEFT JOIN base_storage bsout ON wijod.out_storage_id=bsout.storage_id
+    LEFT JOIN base_storage bsin ON wijod.in_storage_id=bsin.storage_id
     <where>
       <if test="jobOrderId!=null and jobOrderId!=''">
         and wijo.job_order_id = #{jobOrderId}

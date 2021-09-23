@@ -460,10 +460,10 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
         if(total1.equals(totalCount1)){
             //更新调拨出库单状态
             num+=wmsOutDespatchOrderReJoMapper.writeOutQty((byte)5,wmsOutDeliveryOrder.getDeliveryOrderId());
-            //领料出库回传接口（五环）
-            if(wmsOutDeliveryOrder.getOrderTypeId().toString().equals("8")){
-                engFeignApi.reportDeliveryOrderOrder(wmsOutDeliveryOrder);
-            }
+            //领料出库回传接口（五环） 在拣货作业单完成时回传
+//            if(wmsOutDeliveryOrder.getOrderTypeId().toString().equals("8")){
+//                engFeignApi.reportDeliveryOrderOrder(wmsOutDeliveryOrder);
+//            }
 
         }else{
             num+=wmsOutDespatchOrderReJoMapper.writeOutQty((byte)4,wmsOutDeliveryOrder.getDeliveryOrderId());
