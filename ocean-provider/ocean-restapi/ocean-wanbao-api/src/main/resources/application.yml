@@ -9,16 +9,16 @@ spring:
     name: @pom.artifactId@
   datasource:
     primary:
-      jdbc-url: jdbc:oracle:thin:@192.168.204.160:1521:ORCL
+      jdbc-url: jdbc:oracle:thin:@192.168.5.32:1521:dev
       type: com.alibaba.druid.pool.DruidDataSource
-      username: smt
-      password: smt
+      username: apps
+      password: apps
       driverClassName: oracle.jdbc.driver.OracleDriver
     secondary:
-      jdbc-url: jdbc:oracle:thin:@192.168.204.160:1521:ORCL
+      jdbc-url: jdbc:oracle:thin:@192.168.5.88:1521:ORCL
       type: com.alibaba.druid.pool.DruidDataSource
-      username: smt
-      password: smt
+      username: k3wms
+      password: k3wms
       driverClassName: oracle.jdbc.driver.OracleDriver
 
 logging:

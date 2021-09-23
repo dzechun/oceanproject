@@ -40,9 +40,6 @@ public class BaseConsigneeServiceImpl extends BaseService<BaseConsignee> impleme
     @Override
     public List<BaseConsigneeDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseConsigneeMapper.findList(map);
     }

@@ -14,6 +14,8 @@ public interface BaseMaterialService extends IService<BaseMaterial>{
 
     List<BaseMaterialDto> findList(Map<String, Object> map);
 
+    List<BaseMaterialDto> findAll(Map<String, Object> map);
+
     //根据编码进行批量更新
     int batchUpdateByCode(List<BaseMaterial> baseMaterials);
 

@@ -11,6 +11,7 @@
     <result column="schedule_qty" jdbcType="DECIMAL" property="scheduleQty" />
     <result column="finished_qty" jdbcType="DECIMAL" property="finishedQty" />
     <result column="plan_time" jdbcType="TIMESTAMP" property="planTime" />
+    <result column="if_order_inserting" jdbcType="TINYINT" property="ifOrderInserting" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -31,6 +32,7 @@
     mphdp.schedule_qty,
     mphdp.finished_qty,
     mphdp.plan_time,
+    mphdp.if_order_inserting,
     mphdp.status,
     mphdp.create_time
   </sql>
@@ -39,9 +41,12 @@
   <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan"
           resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    mpwo.work_order_id,mpwo.material_id,mpwo.work_order_qty,mpwo.production_qty,mpwo.output_qty,
-    mpwo.work_order_status,mpwo.pro_line_id,mpwo.output_qty,mpwo.scheduled_qty,mpwo.pro_line_id,
-    bpl.pro_name,bm.material_name
+    mpwo.material_id,mpwo.work_order_qty AS work_order_qty,mpwo.production_qty,mpwo.output_qty,
+    mpwo.work_order_status,mpwo.pro_line_id,mpwo.scheduled_qty,bpl.pro_name AS proName,
+    date_format(mphdp.plan_time, '%Y-%m-%d') AS planDate,mpwo.work_order_code as work_order_code,
+    bpl.pro_name as pro_name,bm.material_name as material_name,bm.material_code as material_code,bm.material_desc as material_desc,
+    bm.material_version as material_version,
+    (mpwo.work_order_qty-mphdp.schedule_qty) AS no_schedule_qty
     from mes_pm_ht_daily_plan mphdp
     LEFT JOIN mes_pm_work_order mpwo ON mphdp.work_order_id = mpwo.work_order_id
     LEFT JOIN base_pro_line bpl ON  mpwo.pro_line_id =bpl.pro_line_id
@@ -59,15 +64,21 @@
       <if test="proLineId!=null and proLineId!=''">
         and mpwo.pro_line_id = #{proLineId}
       </if>
-      <if test="status!=null and status!=''">
+      <if test="workOrderCode!=null and workOrderCode!=''">
+        and mpwo.work_order_code = #{workOrderCode}
+      </if>
+      <if test="workOrderStatus!=null and workOrderStatus!=''">
+        and mpwo.work_order_status = #{workOrderStatus}
+      </if>
+      <if test="status!=null">
         and mphdp.status = #{status}
       </if>
-      <if test="planTime!=null and planTime!=''">
-        and date_format(mphdp.plan_time, '%Y-%m-%d') = #{planTime}
+      <if test="ifOrderInserting!=null">
+        and mphdp.if_order_inserting = #{ifOrderInserting}
       </if>
-      <!-- <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
-         and date_format(mphdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-       </if>-->
+      <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+        and date_format(mphdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
     </where>
     order by mphdp.create_time desc
   </select>

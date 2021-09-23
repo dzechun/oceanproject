@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wanbao.api.mapper.MiddleOutDeliveryOrderMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.provider.wanbao.api.entity.MiddleOutDeliveryOrder">
+        <id column="delivery_order_id" jdbcType="VARCHAR" property="deliveryOrderId"/>
+        <result column="delivery_order_code" jdbcType="VARCHAR" property="deliveryOrderCode" />
+        <result column="plan_despatch_date" jdbcType="VARCHAR" property="planDespatchDate"/>
+        <result column="actual_despatch_date" jdbcType="VARCHAR" property="actualDespatchDate"/>
+        <result column="customer_code" jdbcType="VARCHAR" property="customerCode"/>
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="audit_status" jdbcType="VARCHAR" property="auditStatus" />
+        <result column="order_status" jdbcType="VARCHAR" property="orderStatus" />
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+        <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
+        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+        <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+        <result column="picking_qty" jdbcType="DECIMAL" property="pickingQty"/>
+        <result column="dispatch_qty" jdbcType="DECIMAL" property="dispatchQty"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1" />
+        <result column="option2" jdbcType="VARCHAR" property="option2" />
+        <result column="option3" jdbcType="VARCHAR" property="option3" />
+        <result column="option4" jdbcType="VARCHAR" property="option4" />
+        <result column="option5" jdbcType="VARCHAR" property="option5" />
+        <result column="option6" jdbcType="VARCHAR" property="option6" />
+        <result column="option7" jdbcType="VARCHAR" property="option7" />
+        <result column="option8" jdbcType="VARCHAR" property="option8" />
+        <result column="option9" jdbcType="VARCHAR" property="option9" />
+        <result column="option10" jdbcType="VARCHAR" property="option10" />
+        <result column="option11" jdbcType="VARCHAR" property="option11" />
+        <result column="option12" jdbcType="VARCHAR" property="option12" />
+        <result column="option13" jdbcType="VARCHAR" property="option13" />
+        <result column="option14" jdbcType="VARCHAR" property="option14" />
+    </resultMap>
+
+    <select id="setPolicy" >
+        begin
+        mo_global.set_policy_context('S',81);
+        end;
+    </select>
+
+    <select id="findSaleOrderData" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        sh.so_number AS delivery_order_code,
+        sh.schedule_ship_date AS plan_despatch_date,
+        sh.actual_ship_date AS actual_despatch_date,
+        sh.cancel_number AS option1,
+        sh.customer_number AS customer_code,
+        sh.customer_name AS customer_name,
+        sh.payment_type_name AS option2,
+        sh.oa_days AS option3,
+        sh.bn_number AS option4,
+        sh.virtual_container_no AS option5,
+        sh.so_type_name AS option6,
+        sh.container_type_name AS option7,
+        sh.salesname AS option8,
+        sh.export_country_name AS option9,
+        sh.status_name AS audit_status,
+        sh.delivery_status_name AS order_status,
+        sh.declaration_flag AS option10,
+        sl.mo_number AS work_order_code,
+        sl.qo_number AS option11,
+        sl.manual_number AS option12,
+        sl.version_number AS option13,
+        sl.po_number AS customer_order_code,
+        sl.lc_numbers AS option14,
+        sl.customer_model AS product_model_code,
+        sld.product_code AS material_code,
+        sld.product_name AS material_name,
+        sld.quantity_plan_ship AS picking_qty,
+        sld.quantity_load_container AS dispatch_qty
+        FROM
+        apps.oms_so_headers_v sh,
+        apps.oms_so_lines_v sl,
+        apps.oms_so_line_details_v sld
+        <where>
+            sh.so_header_id = sl.so_header_id
+            AND sld.so_line_id = sl.so_line_id
+            <if test="date != null and date != ''">
+                and mh.order_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
+            </if>
+        </where>
+        ORDER BY
+        sh.so_number,
+        sl.so_line_id,
+        sld.so_line_detail_id
+    </select>
+
+    <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleOutDeliveryOrder">
+        INSERT INTO "K3WMS"."middle_sale_order" (
+            "delivery_order_id",
+            "delivery_order_code",
+            "plan_despatch_date",
+            "actual_despatch_date",
+            "customer_code",
+            "customer_name",
+            "audit_status",
+            "order_status",
+            "work_order_code",
+            "customer_order_code",
+            "product_model_code",
+            "material_code",
+            "material_name",
+            "picking_qty",
+            "dispatch_qty",
+            "option1",
+            "option2",
+            "option3",
+            "option4",
+            "option5",
+            "option6" ,
+            "option7",
+            "option8",
+            "option9" ,
+            "option10",
+            "option11",
+            "option12" ,
+            "option13",
+            "option14"
+        )
+        VALUES
+        (#{deliveryOrderId},
+         #{deliveryOrderCode},
+         #{planDespatchDate},
+         #{actualDespatchDate},
+         #{customerCode},
+         #{customerName},
+         #{auditStatus},
+         #{orderStatus},
+         #{workOrderCode},
+         #{customerOrderCode},
+         #{productModelCode},
+         #{materialCode},
+         #{materialName},
+         #{pickingQty},
+         #{dispatchQty},
+         #{option1},
+         #{option2},
+         #{option3},
+         #{option4},
+         #{option5},
+         #{option6},
+         #{option7},
+         #{option8},
+         #{option9},
+         #{option10},
+         #{option11},
+         #{option12},
+         #{option13},
+         #{option14})
+    </insert>
+</mapper>

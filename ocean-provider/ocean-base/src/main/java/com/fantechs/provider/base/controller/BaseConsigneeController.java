@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -72,6 +73,13 @@ public class BaseConsigneeController {
         Page<Object> page = PageHelper.startPage(searchBaseConsignee.getStartPage(),searchBaseConsignee.getPageSize());
         List<BaseConsigneeDto> list = baseConsigneeService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseConsignee));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("查询所有")
+    @PostMapping("/findAll")
+    public ResponseEntity<List<BaseConsigneeDto>> findAll() {
+        List<BaseConsigneeDto> list = baseConsigneeService.findList(new HashMap<>());
+        return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
     @ApiOperation("历史列表")

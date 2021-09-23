@@ -62,7 +62,7 @@ public class BaseMaterialController {
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/getAll")
     public ResponseEntity<List<BaseMaterialDto>> getAll(){
-        List<BaseMaterialDto> smtMaterials = baseMaterialService.findList(new HashMap<>());
+        List<BaseMaterialDto> smtMaterials = baseMaterialService.findAll(new HashMap<>());
         return ControllerUtil.returnDataSuccess(smtMaterials, smtMaterials.size());
     }
 
