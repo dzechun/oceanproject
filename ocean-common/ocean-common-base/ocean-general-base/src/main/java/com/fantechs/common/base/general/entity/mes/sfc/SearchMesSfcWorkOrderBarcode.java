@@ -41,4 +41,10 @@ public class SearchMesSfcWorkOrderBarcode extends BaseQuery implements Serializa
     private Byte barcodeType;
 
     private Long orgId;
+
+    /**
+     * 条码状态(0-待投产 1-投产中 2-已完成 3-待打印)
+     */
+    @ApiModelProperty(name = "barcodeStatus",value = "条码状态(0-待投产 1-投产中 2-已完成 3-待打印)")
+    private Byte barcodeStatus;
 }

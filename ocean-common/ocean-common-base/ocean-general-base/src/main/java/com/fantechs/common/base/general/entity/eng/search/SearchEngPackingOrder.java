@@ -120,4 +120,10 @@ public class SearchEngPackingOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="shipmentEnterpriseName",value = "物流商ID")
     private String shipmentEnterpriseName;
+
+    /**
+     * 确认人员
+     */
+    @ApiModelProperty(name = "agoConfirmUserName",value = "确认人员")
+    private String agoConfirmUserName;
 }

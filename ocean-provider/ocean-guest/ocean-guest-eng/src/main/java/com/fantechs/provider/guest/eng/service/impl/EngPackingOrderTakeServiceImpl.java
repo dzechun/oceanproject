@@ -436,6 +436,9 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             }else  if(count==list.size()){
                 //待上架
                 engPackingOrderSummary.setSummaryStatus((byte)3);
+            }else if(list.size()==list.stream().filter(li->li.getSummaryDetStatus()==4).collect(Collectors.toList()).size()){
+                //完成
+                engPackingOrderSummary.setSummaryStatus((byte)4);
             }
         //更新包装清单明细
         engPackingOrderSummary.setModifiedTime(new Date());
@@ -453,6 +456,8 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             }else if(count==eng.size()){
                 //待上架
                 engPackingOrder.setOrderStatus((byte)4);
+            }else if(eng.size()==eng.stream().filter(en->en.getSummaryStatus()==4).collect(Collectors.toList()).size()){
+                engPackingOrder.setOrderStatus((byte)5);
             }
 
         //更新包装清单
@@ -653,6 +658,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                                 .inventoryStatusId(inventoryStatus)
                                 .option1(engPackingOrderSummary.getCartonCode())
                                 .orgId(sysUser.getOrganizationId())
+                                .packingUnitName(engPackingOrderSummaryDetDto.getUnitName())
                                 .build();
                         wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
 
