@@ -38,12 +38,16 @@
     epro.dominant_term_code,
     epro.device_code,
     epro.material_purpose,
+    epro.remark,
+    epos.modified_user_id AS record_user,
+    epo.modified_time AS record_time,
     SUM(eposdet.qty) AS ch_qty
   </sql>
 
   <select id="findExportData" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>
     FROM eng_packing_order_summary epos
+    LEFT JOIN eng_packing_order epo ON epos.packing_order_id=epo.packing_order_id
     LEFT JOIN eng_packing_order_summary_det eposdet ON epos.packing_order_summary_id=eposdet.packing_order_summary_id
     LEFT JOIN base_material bm ON eposdet.material_id=bm.material_id
     LEFT JOIN eng_purchase_req_order epro ON epos.purchase_req_order_code=epro.purchase_req_order_code AND bm.material_code=epro.material_code
@@ -56,7 +60,7 @@
     </where>
     GROUP BY epos.packing_order_id,ecqo.option2,epro.material_code,bm.material_name,eposdet.spec,eposdet.unit_name,
     epro.location_num,epro.design_qty,epro.surplus_qty,epro.purchase_req_qty,
-    epro.dominant_term_code,epro.device_code,epro.material_purpose
+    epro.dominant_term_code,epro.device_code,epro.material_purpose,epro.remark,record_user,record_time
     HAVING ecqo.option2 IS NOT NULL
   </select>
 </mapper>
