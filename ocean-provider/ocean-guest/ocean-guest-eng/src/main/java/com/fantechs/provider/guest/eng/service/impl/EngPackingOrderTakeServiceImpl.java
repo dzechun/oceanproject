@@ -306,13 +306,13 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         }
         //取消收货实体
         List<EngPackingOrderTakeCancel> engPackingOrderTakeCancelList = new ArrayList<>();
-        BigDecimal calQty = engPackingOrderSummaryDetDto.getCancelQty();
         EngPackingOrderSummaryDet engPackingOrderSummaryDet = engPackingOrderSummaryDetMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId());
         EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
         EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrderSummary.getPackingOrderId());
         if(StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getIsCal()) && engPackingOrderSummaryDetDto.getIsCal()==1){
             engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDet.getReceivingQty());
         }
+        BigDecimal calQty = engPackingOrderSummaryDetDto.getCancelQty();
         if(StringUtils.isEmpty(engPackingOrderSummaryDetDto.getCancelQty()) && engPackingOrderSummaryDet.getSummaryDetStatus()>=3){
             throw new BizErrorException("收货完成，重复收货");
         }
@@ -326,28 +326,32 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 BigDecimal totalQty = engPackingOrderSummaryDet.getReceivingQty().subtract(engPackingOrderSummaryDet.getDistributionQty());
                 //判断取消数量是否大于可收货数量同时
                 if(engPackingOrderSummaryDetDto.getCancelQty().compareTo(totalQty)==1){
-                    if(StringUtils.isNotEmpty(engPackingOrderSummaryDet.getPutawayQty())){
+                    if(StringUtils.isEmpty(engPackingOrderSummaryDet.getPutawayQty())) {
+                        engPackingOrderSummaryDet.setPutawayQty(BigDecimal.ZERO);
+                    }
+                    //可取消数量=（收货数量-上架数量）
+                    //判断取消数量数否大于可取消数量
+                    BigDecimal canQty = (engPackingOrderSummaryDet.getReceivingQty().subtract(engPackingOrderSummaryDet.getPutawayQty()));
+                    if(canQty.compareTo(engPackingOrderSummaryDetDto.getCancelQty())>-1){
                         //计算可取消的分配数量=(分配数量-上架数量)
-                        BigDecimal disQty = engPackingOrderSummaryDet.getDistributionQty().subtract(engPackingOrderSummaryDet.getPutawayQty());
-                        //可取消分配数量大于等于取消数量
-                        if(disQty.compareTo(engPackingOrderSummaryDetDto.getCancelQty())>-1){
-                            EngPackingOrderTakeCancel engPackingOrderTakeCancel = new EngPackingOrderTakeCancel();
-                            engPackingOrderTakeCancel = new EngPackingOrderTakeCancel();
-                            engPackingOrderTakeCancel.setPackingOrderId(engPackingOrder.getPackingOrderId());
-                            engPackingOrderTakeCancel.setPackingOrderSummaryDetId(engPackingOrderSummaryDet.getPackingOrderSummaryDetId());
-                            engPackingOrderTakeCancel.setPackingOrderCode(engPackingOrder.getPackingOrderCode());
-                            //计算需要扣减分配的数量=(分配数量-(实收数量-取消数量))
-                            engPackingOrderTakeCancel.setQty(engPackingOrderSummaryDet.getDistributionQty().subtract((engPackingOrderSummaryDet.getReceivingQty().subtract(engPackingOrderSummaryDetDto.getCancelQty()))));
-                            if(StringUtils.isNotEmpty(engPackingOrderTakeCancel.getQty()) && engPackingOrderTakeCancel.getQty().compareTo(BigDecimal.ZERO)>-1){
-                                engPackingOrderTakeCancelList.add(engPackingOrderTakeCancel);
-                                engPackingOrderSummaryDetDto.setDistributionQty(engPackingOrderSummaryDet.getDistributionQty().subtract(engPackingOrderTakeCancel.getQty()));
+                        //BigDecimal disQty = engPackingOrderSummaryDet.getDistributionQty().subtract(engPackingOrderSummaryDet.getPutawayQty());
+                        EngPackingOrderTakeCancel engPackingOrderTakeCancel = new EngPackingOrderTakeCancel();
+                        engPackingOrderTakeCancel = new EngPackingOrderTakeCancel();
+                        engPackingOrderTakeCancel.setPackingOrderId(engPackingOrder.getPackingOrderId());
+                        engPackingOrderTakeCancel.setPackingOrderSummaryDetId(engPackingOrderSummaryDet.getPackingOrderSummaryDetId());
+                        engPackingOrderTakeCancel.setPackingOrderCode(engPackingOrder.getPackingOrderCode());
+                        //计算需要扣减分配的数量=(分配数量-(实收数量-取消数量))
+                        engPackingOrderTakeCancel.setQty(engPackingOrderSummaryDet.getDistributionQty().subtract((engPackingOrderSummaryDet.getReceivingQty().subtract(engPackingOrderSummaryDetDto.getCancelQty()))));
+                        if(StringUtils.isNotEmpty(engPackingOrderTakeCancel.getQty()) && engPackingOrderTakeCancel.getQty().compareTo(BigDecimal.ZERO)>-1){
+                            engPackingOrderTakeCancelList.add(engPackingOrderTakeCancel);
+                            engPackingOrderSummaryDetDto.setDistributionQty(engPackingOrderSummaryDet.getDistributionQty().subtract(engPackingOrderTakeCancel.getQty()));
 
-                                //计算需要扣减的收货数量=(总取消数量-已减分配数量)
-                                engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDetDto.getCancelQty().subtract(engPackingOrderTakeCancel.getQty()));
-                            }
-                        }else{
-                            throw new BizErrorException("可取消收货数量不足,无法取消");
+                            //计算需要扣减的收货数量=(总取消数量-已减分配数量)
+                            engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDetDto.getCancelQty().subtract(engPackingOrderTakeCancel.getQty()));
                         }
+                    }else{
+                        //
+                        throw new BizErrorException("可取消收货数量不足,无法取消");
                     }
                 }
             }
@@ -359,7 +363,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             wmsInnerInventory.setMaterialOwnerId(materialOwnerId);
             wmsInnerInventory.setInventoryStatusId(inventoryStatus);
             wmsInnerInventory.setPackingQty(engPackingOrderSummaryDetDto.getReceivingQty());
-            wmsInnerInventory.setRelevanceOrderCode(engPackingOrderSummaryDetDto.getCartonCode());
+            wmsInnerInventory.setRelevanceOrderCode(engPackingOrderSummaryDet.getCartonCode());
             wmsInnerInventory.setMaterialId(engPackingOrderSummaryDetDto.getMaterialId());
             wmsInnerInventory.setWarehouseId(warehouseId);
             //收货库位
@@ -402,7 +406,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         if(engPackingOrderSummaryDetDto.getButtonType()==1){
             //实收数量为0时状态更改为待收货
             if(StringUtils.isNotEmpty(engPackingOrderSummaryDetDto.getCancelQty())) {
-                if ((engPackingOrderSummaryDet.getReceivingQty().subtract(engPackingOrderSummaryDetDto.getCancelQty())).compareTo(BigDecimal.ZERO) == 0) {
+                if (engPackingOrderSummaryDetDto.getReceivingQty().compareTo(BigDecimal.ZERO) == 0) {
                     engPackingOrderSummaryDetDto.setSummaryDetStatus((byte) 1);
                 } else {
                     //收货中

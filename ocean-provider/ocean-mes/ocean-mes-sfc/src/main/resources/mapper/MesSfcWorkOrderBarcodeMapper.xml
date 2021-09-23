@@ -120,8 +120,10 @@ order by mswob.create_time desc
         select * FROM ${labelCode}
         <where>
             id = #{id}
-            <if test="labelCategoryId!=null and labelCategoryId！=''">
-                and label_category_id = #{labelCategoryId}
+            <if test="_parameter.containsKey('labelCategoryId')">
+                <if test="labelCategoryId!=null and labelCategoryId！=''">
+                    and label_category_id = #{labelCategoryId}
+                </if>
             </if>
         </where>
     </select>

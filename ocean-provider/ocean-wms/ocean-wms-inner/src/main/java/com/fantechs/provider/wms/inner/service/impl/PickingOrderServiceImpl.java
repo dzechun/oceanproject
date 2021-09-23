@@ -1061,6 +1061,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("stockRequisition");
         List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(itemList.size()<1){
+            throw new BizErrorException("领料拣货配置项获取失败");
+        }
         Map<String ,String> map = JSONArray.parseObject(itemList.get(0).getParaValue(), Map.class);
             for (WmsInnerJobOrderDet wmsInPutawayOrderDet : wmsInnerJobOrder.getWmsInPutawayOrderDets()) {
                 if (allOrder == 1){

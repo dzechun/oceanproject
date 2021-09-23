@@ -1194,6 +1194,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int addList(List<WmsInnerJobOrder> list){
         SysUser sysUser = currentUser();
         for (WmsInnerJobOrder wmsInnerJobOrder : list) {
@@ -1276,6 +1277,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int cancelJobOrder(List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         int num=0;
@@ -1317,10 +1319,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                         num+=wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
                         num+=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
-                        totalQty = BigDecimal.ZERO;
 
                         //添加库存日志
                         InventoryLogUtil.addLog(wmsInnerJobOrder,wmsInnerJobOrderDet,qty,totalQty,(byte)1,(byte)2);
+                        totalQty = BigDecimal.ZERO;
 
                     }else if(wmsInnerJobOrderDet.getDistributionQty().compareTo(totalQty)<1){
                         //删除库存
