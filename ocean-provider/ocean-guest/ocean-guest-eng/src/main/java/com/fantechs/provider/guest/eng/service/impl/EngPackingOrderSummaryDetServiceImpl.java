@@ -382,9 +382,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 for(EngPackingOrderSummaryDetDto det :engPackingOrderSummaryDetDtos){
                     list.add(det);
                 }
-
             }
-
         }
         return list;
     }

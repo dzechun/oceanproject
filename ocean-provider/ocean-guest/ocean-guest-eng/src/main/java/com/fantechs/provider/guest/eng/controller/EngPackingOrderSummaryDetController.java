@@ -89,9 +89,9 @@ public class EngPackingOrderSummaryDetController {
     @ApiOperation("列表")
     @PostMapping("/findListByIds")
     public ResponseEntity<List<EngPackingOrderSummaryDetDto>> findListByIds(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
-        Page<Object> page = PageHelper.startPage(20,1000);
+       // Page<Object> page = PageHelper.startPage(20,1000);
         List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetService.findListByIds(ids);
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
     @ApiOperation("历史列表")
@@ -105,10 +105,8 @@ public class EngPackingOrderSummaryDetController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchEngPackingOrder searchEngPackingOrder){
-        log.info("---searchEngPackingOrder-------"+searchEngPackingOrder);
         searchEngPackingOrder.setPageSize(5000);
     List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrder));
-        log.info("---list-------"+list);
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "EngPackingOrderSummaryDet信息", EngPackingOrderSummaryDetDto.class, "EngPackingOrderSummaryDet.xls", response);
