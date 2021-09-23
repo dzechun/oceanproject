@@ -90,9 +90,6 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
             throw new BizErrorException("查不到此设备条码");
         }
         EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodes.get(0);
-        //修改设备状态为保养中
-        eamEquipmentBarcode.setEquipmentStatus((byte)7);
-        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
 
         EamEquipment eamEquipment = eamEquipmentMapper.selectByPrimaryKey(eamEquipmentBarcode.getEquipmentId());
 
@@ -194,6 +191,12 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
             // 批量新增保养单明细及其履历
             eamEquipmentMaintainOrderDetService.batchSave(maintainOrderDets);
         }
+
+        //修改设备状态为保养中
+        EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodeMapper.selectByPrimaryKey(eamEquipmentMaintainOrder.getEquipmentBarcodeId());
+        eamEquipmentBarcode.setEquipmentStatus((byte)7);
+        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+
         return i;
     }
 

@@ -148,6 +148,21 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
 
         sum += eamJigReturnService.batchSave(eamJigReturnList);
 
+        //治具达到最大次数（天数）是否能继续使用,若否则限制不能领用
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("IsJigCanContinueUse");
+        List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(Integer.parseInt(sysSpecItemList.get(0).getParaValue()) == 0) {
+            EamJig eamJig = eamJigMapper.selectByPrimaryKey(list.get(0).getJigId());
+            for(EamJigRequisition eamJigRequisition : list) {
+                EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(eamJigRequisition.getJigBarcodeId());
+                if (StringUtils.isNotEmpty(eamJigBarcode.getCurrentUsageTime(), eamJig.getMaxUsageTime()) && eamJig.getMaxUsageTime() != 0
+                        && eamJigBarcode.getCurrentUsageTime().intValue() >= eamJig.getMaxUsageTime().intValue()) {
+                    throw new BizErrorException("该治具已使用次数已达到治具最大使用次数");
+                }
+            }
+        }
+
         //保存领用记录
         sum +=this.batchSave(list);
 

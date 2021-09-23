@@ -47,9 +47,9 @@ public class EamEquipmentMaintainOrderDetDto extends EamEquipmentMaintainOrderDe
      * 保养事项描述
      */
     @Transient
-    @ApiModelProperty(name = "equipmenMmaintainProjectDesc",value = "保养事项描述")
+    @ApiModelProperty(name = "equipmentMaintainProjectDesc",value = "保养事项描述")
     @Excel(name = "保养事项描述", height = 20, width = 30,orderNum="6")
-    private String equipmenMmaintainProjectDesc;
+    private String equipmentMaintainProjectDesc;
 
     /**
      * 判定类别(1-定性 2-定量)

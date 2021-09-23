@@ -186,10 +186,10 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         PrintModel printModel = new PrintModel();
         List<PrintModel> printModelList = new ArrayList<>();
         printModel.setId(mesSfcRepairOrderPrintParam.getRepairOrderId());
-        //printModel.setSize(mesSfcRepairOrderPrintParam.getSize());
+        printModel.setSize(mesSfcRepairOrderPrintParam.getSize());
         printModel.setOption1(badnessPhenotypeCode);
         printModel.setOption2(badnessPhenotypeDesc);
-        printModel.setOption3(baseStation.getStationCode());
+        printModel.setOption3(StringUtils.isEmpty(baseStation.getStationCode())?"":baseStation.getStationCode());
         printModelList.add(printModel);
         PrintDto printDto = new PrintDto();
         printDto.setPrintName(mesSfcRepairOrderPrintParam.getPrintName());

@@ -81,9 +81,6 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
             throw new BizErrorException("查不到此治具条码");
         }
         EamJigBarcodeDto eamJigBarcodeDto = eamJigBarcodeDtos.get(0);
-        //修改治具状态为点检中
-        eamJigBarcodeDto.setUsageStatus((byte)3);
-        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcodeDto);
 
 
         //查治具对应的点检项目
@@ -153,7 +150,14 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        this.ifScrap(record);
+        //报废无法新增点检单
+        EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(record.getJigBarcodeId());
+        if(eamJigBarcode.getUsageStatus()!=1&&eamJigBarcode.getUsageStatus()!=2){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"治具非空闲或使用中无法新建点检单");
+        }
+        //修改该治具使用状态
+        eamJigBarcode.setUsageStatus((byte)3);
+        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
 
         //this.codeIfRepeat(record);
         //获取点检单号编码规则 jigPointInspectionOrderCodeRule
@@ -246,13 +250,6 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         int i = eamHtJigPointInspectionOrderMapper.insert(eamHtJigPointInspectionOrder);
 
         return i;
-    }
-
-    public void ifScrap(EamJigPointInspectionOrder eamJigPointInspectionOrder){
-        EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(eamJigPointInspectionOrder.getJigBarcodeId());
-        if(eamJigBarcode.getUsageStatus()==6){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"治具已报废无法添加点检单");
-        }
     }
 
     @Override

@@ -93,9 +93,6 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
             throw new BizErrorException("查不到此设备条码");
         }
         EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodes.get(0);
-        //修改设备状态为点检中
-        eamEquipmentBarcode.setEquipmentStatus((byte)6);
-        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
 
         EamEquipment eamEquipment = eamEquipmentMapper.selectByPrimaryKey(eamEquipmentBarcode.getEquipmentId());
 
@@ -194,6 +191,12 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
             // 批量新增点检单明细及其履历
             eamEquPointInspectionOrderDetService.batchSave(inspectionOrderDets);
         }
+
+        //修改设备状态为点检中
+        EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodeMapper.selectByPrimaryKey(eamEquPointInspectionOrder.getEquipmentBarcodeId());
+        eamEquipmentBarcode.setEquipmentStatus((byte)6);
+        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+
         return i;
     }
 
