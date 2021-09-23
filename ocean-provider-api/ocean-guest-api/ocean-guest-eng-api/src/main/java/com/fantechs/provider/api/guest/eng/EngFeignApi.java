@@ -35,14 +35,14 @@ public interface EngFeignApi {
 
     @ApiOperation("返写盘点单")
     @PostMapping("/reportStockOrder/writeQty")
-    ResponseEntity writePackingLists(@ApiParam(value = "对象，Id必传",required = true)@RequestParam List<WmsInnerStockOrderDet> WmsInnerStockOrderDets,
+    ResponseEntity reportStockOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestParam List<WmsInnerStockOrderDet> WmsInnerStockOrderDets,
                                      @ApiParam(value = "对象，Id必传",required = true)@RequestBody WmsInnerStockOrder wmsInnerStockOrder);
 
     @ApiOperation("返写领料出库")
     @PostMapping("/reportDeliveryOrderOrder/writeQty")
-    ResponseEntity<String> writePackingLists(WmsOutDeliveryOrder wmsOutDeliveryOrder);
+    ResponseEntity<String> reportDeliveryOrderOrder(WmsOutDeliveryOrder wmsOutDeliveryOrder);
 
     @ApiOperation("返写移位")
     @PostMapping("/reportInnerJobOrder/writeQty")
-    ResponseEntity<String> writePackingLists(WmsInnerJobOrder wmsInnerJobOrder);
+    ResponseEntity<String> reportInnerJobOrder(WmsInnerJobOrder wmsInnerJobOrder);
 }
