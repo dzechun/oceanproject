@@ -98,7 +98,6 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
                     eamEquipmentScrapOrderDetDto.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
                     eamEquipmentScrapOrderDetDtos.add(eamEquipmentScrapOrderDetDto);
 
-                    eamEquipmentScrapOrderDto.setEquipmentScrapOrderCode(CodeUtils.getId("SBBF-"));
                     eamEquipmentScrapOrderDto.setOrderStatus((byte) 1);
                     eamEquipmentScrapOrderDto.setList(eamEquipmentScrapOrderDetDtos);
 
@@ -118,14 +117,16 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        this.codeIfRepeat(record);
+        //this.codeIfRepeat(record);
 
+        record.setEquipmentScrapOrderCode(CodeUtils.getId("SBBF-"));
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
         record.setModifiedTime(new Date());
         record.setOrgId(user.getOrganizationId());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
+        record.setOrderStatus(StringUtils.isEmpty(record.getOrderStatus())?1: record.getOrderStatus());
         eamEquipmentScrapOrderMapper.insertUseGeneratedKeys(record);
 
         //报废单明细
@@ -158,7 +159,7 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        this.codeIfRepeat(entity);
+        //this.codeIfRepeat(entity);
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());

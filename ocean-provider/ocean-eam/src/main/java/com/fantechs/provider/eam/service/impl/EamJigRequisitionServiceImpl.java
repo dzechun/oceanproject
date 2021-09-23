@@ -191,7 +191,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             throw new BizErrorException("该治具条码不属于此治具");
         }
 
-        if(eamJigBarcode.getUsageStatus()==(byte)1){
+        if(eamJigBarcode.getUsageStatus()==(byte)2){
             throw new BizErrorException("该治具正在使用中");
         }
 
@@ -282,7 +282,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             //修改治具使用状态
             EamJigBarcode eamJigBarcode = new EamJigBarcode();
             eamJigBarcode.setJigBarcodeId(eamJigRequisition.getJigBarcodeId());
-            eamJigBarcode.setUsageStatus((byte)1);
+            eamJigBarcode.setUsageStatus((byte)2);
             eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
         }
 

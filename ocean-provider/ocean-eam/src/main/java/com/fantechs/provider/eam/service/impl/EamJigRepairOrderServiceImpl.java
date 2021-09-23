@@ -66,8 +66,8 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
             throw new BizErrorException("查不到此治具条码");
         }
         EamJigBarcode eamJigBarcode = eamJigBarcodes.get(0);
-        //修改治具状态为停用
-        eamJigBarcode.setUsageStatus((byte)3);
+        //修改治具状态为维修中
+        eamJigBarcode.setUsageStatus((byte)5);
         eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
 
 

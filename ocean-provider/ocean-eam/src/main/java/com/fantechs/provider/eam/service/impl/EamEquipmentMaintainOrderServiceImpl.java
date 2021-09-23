@@ -119,7 +119,6 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
         EamEquipmentMaintainOrder eamEquipmentMaintainOrder = new EamEquipmentMaintainOrder();
         List<EamEquipmentMaintainOrderDetDto> eamEquipmentMaintainOrderDets = new ArrayList<>();
 
-        eamEquipmentMaintainOrder.setEquipmentMaintainOrderCode(CodeUtils.getId("SBBY-"));
         eamEquipmentMaintainOrder.setEquipmentId(eamEquipmentBarcode.getEquipmentId());
         eamEquipmentMaintainOrder.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
         eamEquipmentMaintainOrder.setEquipmentMaintainProjectId(eamEquipmentMaintainProjectDto.getEquipmentMaintainProjectId());
@@ -164,6 +163,7 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
         SysUser user = getUser();
 
         // 新增保养单
+        eamEquipmentMaintainOrder.setEquipmentMaintainOrderCode(CodeUtils.getId("SBBY-"));
         eamEquipmentMaintainOrder.setCreateUserId(user.getUserId());
         eamEquipmentMaintainOrder.setCreateTime(new Date());
         eamEquipmentMaintainOrder.setModifiedUserId(user.getUserId());
