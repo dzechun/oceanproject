@@ -81,7 +81,7 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
             throw new BizErrorException("查不到此治具条码");
         }
         EamJigBarcodeDto eamJigBarcodeDto = eamJigBarcodeDtos.get(0);
-        //修改治具状态为停用
+        //修改治具状态为点检中
         eamJigBarcodeDto.setUsageStatus((byte)3);
         eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcodeDto);
 
@@ -109,7 +109,6 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         EamJigPointInspectionOrder eamJigPointInspectionOrder = new EamJigPointInspectionOrder();
         List<EamJigPointInspectionOrderDetDto> eamJigPointInspectionOrderDetList = new ArrayList<>();
 
-        eamJigPointInspectionOrder.setJigPointInspectionOrderCode(CodeUtils.getId("DJ-"));
         eamJigPointInspectionOrder.setJigId(eamJigBarcodeDto.getJigId());
         eamJigPointInspectionOrder.setJigBarcodeId(eamJigBarcodeDto.getJigBarcodeId());
         eamJigPointInspectionOrder.setJigPointInspectionProjectId(eamJigPointInspectionProjectDto.getJigPointInspectionProjectId());
@@ -139,7 +138,7 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         //修改该治具使用状态
         EamJigBarcode eamJigBarcode = new EamJigBarcode();
         eamJigBarcode.setJigBarcodeId(eamJigPointInspectionOrder.getJigBarcodeId());
-        eamJigBarcode.setUsageStatus((byte)2);
+        eamJigBarcode.setUsageStatus((byte)1);
         eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
 
         return i;
@@ -153,6 +152,8 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        this.ifScrap(record);
 
         //this.codeIfRepeat(record);
         //获取点检单号编码规则 jigPointInspectionOrderCodeRule
@@ -213,7 +214,7 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        this.codeIfRepeat(entity);
+        //this.codeIfRepeat(entity);
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
@@ -245,6 +246,13 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         int i = eamHtJigPointInspectionOrderMapper.insert(eamHtJigPointInspectionOrder);
 
         return i;
+    }
+
+    public void ifScrap(EamJigPointInspectionOrder eamJigPointInspectionOrder){
+        EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(eamJigPointInspectionOrder.getJigBarcodeId());
+        if(eamJigBarcode.getUsageStatus()==6){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"治具已报废无法添加点检单");
+        }
     }
 
     @Override

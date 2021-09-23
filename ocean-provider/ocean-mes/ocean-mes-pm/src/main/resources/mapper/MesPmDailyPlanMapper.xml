@@ -10,6 +10,7 @@
     <result column="schedule_qty" jdbcType="DECIMAL" property="scheduleQty" />
     <result column="finished_qty" jdbcType="DECIMAL" property="finishedQty" />
     <result column="plan_time" jdbcType="TIMESTAMP" property="planTime" />
+    <result column="if_order_inserting" jdbcType="TINYINT" property="ifOrderInserting" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -29,6 +30,7 @@
     mpdp.schedule_qty,
     mpdp.finished_qty,
     mpdp.plan_time,
+    mpdp.if_order_inserting,
     mpdp.status,
     mpdp.create_time
   </sql>
@@ -78,6 +80,9 @@
       </if>
       <if test="status!=null">
         and mpdp.status = #{status}
+      </if>
+      <if test="ifOrderInserting!=null">
+        and mpdp.if_order_inserting = #{ifOrderInserting}
       </if>
       <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
         and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

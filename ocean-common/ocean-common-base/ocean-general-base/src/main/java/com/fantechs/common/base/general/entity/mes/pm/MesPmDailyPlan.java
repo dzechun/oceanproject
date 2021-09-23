@@ -64,6 +64,15 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     private Date planTime;
 
     /**
+     * 是否插单(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifOrderInserting",value = "是否插单(0-否 1-是)")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="")
+    @Column(name = "if_order_inserting")
+    private Byte ifOrderInserting;
+
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

@@ -14,9 +14,9 @@ import com.fantechs.provider.base.service.BaseHtMaterialOwnerService;
 import com.fantechs.provider.base.service.BaseMaterialOwnerService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +28,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 
 /**
@@ -79,6 +78,13 @@ public class BaseMaterialOwnerController {
         Page<Object> page = PageHelper.startPage(searchBaseMaterialOwner.getStartPage(),searchBaseMaterialOwner.getPageSize());
         List<BaseMaterialOwnerDto> list = baseMaterialOwnerService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialOwner));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("列表")
+    @PostMapping("/findAll")
+    public ResponseEntity<List<BaseMaterialOwnerDto>> findAll() {
+        List<BaseMaterialOwnerDto> list = baseMaterialOwnerService.findAll();
+        return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
     @ApiOperation("历史列表")

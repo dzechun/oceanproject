@@ -84,7 +84,7 @@ public class EsopLineServiceImpl extends BaseService<EsopLine> implements EsopLi
 
         baseProLine.setCreateTime(esopLine.getCreatedTime());
         baseProLine.setModifiedTime(esopLine.getModifyTime());
-        baseProLine.setIsDelete(esopLine.getIsDeleted());
+        baseProLine.setIsDelete((byte)1);
         baseProLine.setStatus(1);
         baseProLine.setOrganizationId(orgId);
         return baseProLine;

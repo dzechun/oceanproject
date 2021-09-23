@@ -242,9 +242,6 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     @Override
     public List<OmSalesOrderDto> findList(Map<String, Object> map) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         map.put("orgId",currentUserInfo.getOrganizationId());
         List<OmSalesOrderDto> omSalesOrderDtoList = omSalesOrderMapper.findList(map);
@@ -253,6 +250,15 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             omSalesOrderDetMap.put("salesOrderId", omSalesOrderDto.getSalesOrderId());
             omSalesOrderDto.setOmSalesOrderDetDtoList(omSalesOrderDetService.findList(omSalesOrderDetMap));
         }
+        return omSalesOrderDtoList;
+    }
+
+    @Override
+    public List<OmSalesOrderDto> findAll() {
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
+        Map<String, Object> map = new HashMap<>();
+        map.put("orgId",currentUserInfo.getOrganizationId());
+        List<OmSalesOrderDto> omSalesOrderDtoList = omSalesOrderMapper.findList(map);
         return omSalesOrderDtoList;
     }
 

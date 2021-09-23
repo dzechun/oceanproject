@@ -55,6 +55,15 @@
 <if test="supplierName!=null and supplierName!=''">
     and bs.supplier_name like CONCAT('%',#{supplierName},'%')
 </if>
+<if test="partNumber!=null and partNumber!=''">
+    and eposd.part_number like CONCAT('%',#{partNumber},'%')
+</if>
+<if test="drawingNumber!=null and drawingNumber!=''">
+    and eposd.drawing_number like CONCAT('%',#{drawingNumber},'%')
+</if>
+<if test="shipmentEnterpriseName!=null and shipmentEnterpriseName!=''">
+   and  bse.shipment_enterprise_name like CONCAT('%',#{shipmentEnterpriseName},'%')
+</if>
 <if test="orgId!=null and orgId!=''">
     and epo.org_id=#{orgId}
 </if>

@@ -32,6 +32,17 @@ public class SearchEngPackingOrderPrint extends BaseQuery implements Serializabl
     private String locationNum;
     @ApiModelProperty(name = "materialName",value = "物料名称")
     private String materialName;
+
     @ApiModelProperty(name = "supplierName",value = "供应商名称")
     private String supplierName;
+
+    @ApiModelProperty(name = "partNumber",value = "件号")
+
+    private String partNumber;
+
+    @ApiModelProperty(name = "drawingNumber",value = "图号")
+    private String drawingNumber;
+
+    @ApiModelProperty(name = "shipmentEnterpriseName",value = "物流商")
+    private String shipmentEnterpriseName;
 }

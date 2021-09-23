@@ -92,7 +92,7 @@ public class PDAEngPackingOrderTakeController {
         //return ControllerUtil.returnCRUD(engPackingOrderTakeService.onlyCancel(engPackingOrderSummaryDetDto));
         int num = 0;
         for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : engPackingOrderSummaryDetDtos) {
-            engPackingOrderSummaryDetDto.setCancelQty(engPackingOrderSummaryDetDto.getReceivingQty());
+            engPackingOrderSummaryDetDto.setIsCal((byte)1);
             engPackingOrderSummaryDetDto.setButtonType((byte)1);
             num+= engPackingOrderTakeService.onlyTask(engPackingOrderSummaryDetDto);
         }

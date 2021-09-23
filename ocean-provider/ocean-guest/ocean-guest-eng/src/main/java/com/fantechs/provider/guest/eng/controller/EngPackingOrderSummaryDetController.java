@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.eng.EngHtPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryDetImport;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
+import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrderSummaryDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -88,9 +89,9 @@ public class EngPackingOrderSummaryDetController {
     @ApiOperation("列表")
     @PostMapping("/findListByIds")
     public ResponseEntity<List<EngPackingOrderSummaryDetDto>> findListByIds(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
-        Page<Object> page = PageHelper.startPage(20,1000);
+       // Page<Object> page = PageHelper.startPage(20,1000);
         List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetService.findListByIds(ids);
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
     @ApiOperation("历史列表")
@@ -103,8 +104,9 @@ public class EngPackingOrderSummaryDetController {
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchEngPackingOrderSummaryDet searchEngPackingOrderSummaryDet){
-    List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrderSummaryDet));
+    @RequestBody(required = false) SearchEngPackingOrder searchEngPackingOrder){
+        searchEngPackingOrder.setPageSize(5000);
+    List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrder));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "EngPackingOrderSummaryDet信息", EngPackingOrderSummaryDetDto.class, "EngPackingOrderSummaryDet.xls", response);

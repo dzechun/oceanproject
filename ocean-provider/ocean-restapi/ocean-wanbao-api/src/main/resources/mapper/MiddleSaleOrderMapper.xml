@@ -5,6 +5,7 @@
         <id column="sale_order_id" jdbcType="VARCHAR" property="saleOrderId"/>
         <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
         <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName"/>
         <result column="supplier_id" jdbcType="VARCHAR" property="supplierId"/>
         <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
         <result column="order_type" jdbcType="VARCHAR" property="orderType" />
@@ -32,6 +33,7 @@
         SELECT
             mh.mo_number AS sales_order_code,
             mh.CUSTOMER_NUMBER AS supplier_code,
+            mh.salesperson_name AS make_order_user_name,
             mh.mo_status AS order_status,
             mh.order_type_name AS order_type,
             mld.factory_code AS factory_code,
@@ -47,10 +49,11 @@
             mh.creation_date AS create_time,
             mh.LAST_UPDATE_DATE AS modified_time
         FROM
-            oms_mo_headers_v mh
-            LEFT JOIN oms_mo_line_details_v mld ON mld.mo_header_id = mh.mo_header_id
+        oms_mo_headers_v mh
+        LEFT JOIN oms_mo_line_details_v mld ON mld.mo_header_id = mh.mo_header_id
         <where>
             mh.org_id = 81
+            AND mh.mo_number IS NOT null
             <if test="date != null and date != ''">
                 and mh.order_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>

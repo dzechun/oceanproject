@@ -77,22 +77,22 @@
         and eeb.equipment_id = #{equipmentId}
       </if>
       <if test="equipmentBarcode != null and equipmentBarcode!=''">
-        and eeb.equipment_barcode = #{equipmentBarcode}
+        and eeb.equipment_barcode like CONCAT('%', #{equipmentBarcode}, '%')
       </if>
       <if test="assetCode != null and assetCode!=''">
-        and eeb.asset_code = #{assetCode}
+        and eeb.asset_code like CONCAT('%', #{assetCode}, '%')
       </if>
       <if test="equipmentCode != null and equipmentCode!=''">
-        and ee.equipment_code = #{equipmentCode}
+        and ee.equipment_code like CONCAT('%', #{equipmentCode}, '%')
       </if>
       <if test="equipmentName != null and equipmentName!=''">
-        and ee.equipment_name = #{equipmentName}
+        and ee.equipment_name like CONCAT('%', #{equipmentName}, '%')
       </if>
       <if test="equipmentDesc != null and equipmentDesc!=''">
-        and ee.equipment_desc = #{equipmentDesc}
+        and ee.equipment_desc like CONCAT('%', #{equipmentDesc}, '%')
       </if>
       <if test="equipmentModel != null and equipmentModel!=''">
-        and ee.equipment_model = #{equipmentModel}
+        and ee.equipment_model like CONCAT('%', #{equipmentModel}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(eeb.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

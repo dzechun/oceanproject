@@ -36,6 +36,7 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
     <result column="summary_status" jdbcType="TINYINT" property="summaryStatus"/>
+    <result column="putaway_storage_id" jdbcType="BIGINT" property="putawayStorageId"/>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto">
@@ -77,7 +78,8 @@
     spos.option1,
     spos.option2,
     spos.option3,
-spos.summary_status
+spos.summary_status,
+spos.putaway_storage_id
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
@@ -87,11 +89,13 @@ spos.summary_status
     s.user_name as modified_user_name,
     bo.organization_name,
     bs.supplier_name as 'supplierName',
-    spo.despatch_batch as 'despatchBatch'
+    spo.despatch_batch as 'despatchBatch',
+    bss.storage_name as 'putawayStorageName'
     from eng_packing_order_summary spos
     LEFT JOIN eng_packing_order spo on spos.packing_order_id = spo.packing_order_id
     left join base_supplier bs on spo.supplier_id=bs.supplier_id
     left join base_material bm on spos.material_id=bm.material_id
+    left join base_storage bss on spos.putaway_storage_id = bss.storage_id
     left join ocean_v2.sys_user u on spos.create_user_id=u.user_id
     left join ocean_v2.sys_user s on spos.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON spos.org_id = bo.organization_id

@@ -41,6 +41,10 @@ public class MiddleSaleOrder implements Serializable {
     @Column(name = "factory_code")
     private String factoryCode;
 
+    @ApiModelProperty(name="makeOrderUserName",value = "制单人员")
+    @Column(name = "make_order_user_name")
+    private String makeOrderUserName;
+
     @ApiModelProperty(name="materialId" ,value="物料id")
     @Column(name = "material_id")
     private String materialId;
@@ -77,11 +81,11 @@ public class MiddleSaleOrder implements Serializable {
     @Column(name = "sales_code_qty")
     private BigDecimal salesCodeQty;
 
-    @ApiModelProperty(name="makeOrderDate" ,value="修改时间")
+    @ApiModelProperty(name="makeOrderDate" ,value="制单日期")
     @Column(name = "make_order_date")
     private String makeOrderDate;
 
-    @ApiModelProperty(name="createTime" ,value="修改时间")
+    @ApiModelProperty(name="createTime" ,value="创建时间")
     @Column(name = "create_time")
     private String createTime;
 

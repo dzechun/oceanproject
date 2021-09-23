@@ -102,7 +102,7 @@ public class OmSalesOrderController {
     @ApiOperation("列表")
     @PostMapping("/findAll")
     public ResponseEntity<List<OmSalesOrderDto>> findAll() {
-        List<OmSalesOrderDto> list = omSalesOrderService.findList(new HashMap<>());
+        List<OmSalesOrderDto> list = omSalesOrderService.findAll();
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 

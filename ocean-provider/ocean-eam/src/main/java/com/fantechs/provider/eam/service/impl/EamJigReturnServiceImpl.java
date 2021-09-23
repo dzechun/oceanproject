@@ -117,7 +117,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
 
             //修改治具使用状态及使用次数
             EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(eamJigReturn.getJigBarcodeId());
-            eamJigBarcode.setUsageStatus((byte)2);
+            eamJigBarcode.setUsageStatus((byte)1);
             eamJigBarcode.setCurrentUsageTime(eamJigBarcode.getCurrentUsageTime()==null ?
                     eamJigReturn.getThisTimeUsageTime():
                     eamJigBarcode.getCurrentUsageTime()+eamJigReturn.getThisTimeUsageTime());
@@ -242,7 +242,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             throw new BizErrorException("该治具条码不属于此治具");
         }
 
-        if(eamJigBarcode.getUsageStatus()==(byte)2){
+        if(eamJigBarcode.getUsageStatus()==(byte)1){
             throw new BizErrorException("该治具处于空闲状态");
         }
 

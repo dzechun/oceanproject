@@ -107,10 +107,10 @@ public class EamJigBarcode extends ValidGroup implements Serializable {
     private Integer currentMaintainUsageDays;
 
     /**
-     * 使用状态(1-使用中 2-空闲 3-停用)
+     * 使用状态(1-空闲 2-使用中 3-点检中 4-点检中 5-维修中 6-已报废)
      */
-    @ApiModelProperty(name="usageStatus",value = "使用状态(1-使用中 2-空闲 3-停用)")
-    @Excel(name = "使用状态(1-使用中 2-空闲 3-停用)", height = 20, width = 30,orderNum="6")
+    @ApiModelProperty(name="usageStatus",value = "使用状态(1-空闲 2-使用中 3-点检中 4-点检中 5-维修中 6-已报废)")
+    @Excel(name = "使用状态(1-空闲 2-使用中 3-点检中 4-点检中 5-维修中 6-已报废)", height = 20, width = 30,orderNum="6")
     @Column(name = "usage_status")
     private Byte usageStatus;
 

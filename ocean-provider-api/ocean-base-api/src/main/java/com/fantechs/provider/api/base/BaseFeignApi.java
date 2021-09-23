@@ -5,10 +5,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -360,9 +357,17 @@ public interface BaseFeignApi {
     @PostMapping("/baseMaterialOwner/findList")
     ResponseEntity<List<BaseMaterialOwnerDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterialOwner searchBaseMaterialOwner);
 
+    @ApiOperation("查询货主列表")
+    @PostMapping("/baseMaterialOwner/findAll")
+    ResponseEntity<List<BaseMaterialOwnerDto>> findMaterialOwnerAll();
+
     @ApiOperation("根据条件查询收货人信息")
     @PostMapping("/baseConsignee/findList")
     ResponseEntity<List<BaseConsignee>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseConsignee searchBaseConsignee);
+
+    @ApiOperation("查询收货人信息")
+    @PostMapping("/baseConsignee/findAll")
+    ResponseEntity<List<BaseConsignee>> findConsigneeAll();
 
     @ApiOperation("查询对应抽样方案的AC和RE和样本数")
     @PostMapping("/baseSampleProcess/getAcReQty")
@@ -484,6 +489,10 @@ public interface BaseFeignApi {
     @ApiOperation("新增产品型号")
     @PostMapping("/baseProductModel/add")
     ResponseEntity add(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody BaseProductModel baseProductModel);
+
+    @ApiOperation("新增产品型号")
+    @PostMapping("/baseProductModel/addForReturnId")
+    ResponseEntity<String> addForReturnId(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody BaseProductModel baseProductModel);
 
     @ApiOperation("新增产品型号并返回对象")
     @PostMapping("/baseProductModel/addForReturn")
