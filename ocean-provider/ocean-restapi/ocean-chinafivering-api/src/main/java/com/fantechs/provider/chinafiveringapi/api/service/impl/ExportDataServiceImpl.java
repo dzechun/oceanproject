@@ -240,7 +240,7 @@ public class ExportDataServiceImpl implements ExportDataService {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Length", String.valueOf(actionBySOAP(method, JsonVoiceArray,projectID).getBytes().length));
-            conn.setRequestProperty("Content-Type", "text/xml; charset=GBK");
+            conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setConnectTimeout(20000);

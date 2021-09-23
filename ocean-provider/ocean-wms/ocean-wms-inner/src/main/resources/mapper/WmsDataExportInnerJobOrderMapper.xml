@@ -30,24 +30,25 @@
     ecqo.option1,
     epos.contract_code,
     epos.purchase_req_order_code,
-    IFNULL(eposdet.despatch_batch,'') AS despatch_batch,
+    IFNULL(epo.despatch_batch,'') AS despatch_batch,
     eposdet.carton_code,
     epro.material_code,
     IFNULL(eposdet.location_num,'') AS location_num,
     eposdet.dominant_term_code,
     eposdet.device_code,
     eposdet.putaway_qty,
-    IFNULL(bs.storage_code,'default') AS storage_code,
-    ecqo.remark,
+    IFNULL(bs.option1,'default') AS storage_code,
+    IFNULL(ecqo.remark,'') AS remark,
     IFNULL(epo.arrival_time,NOW()) AS inner_time,
     IFNULL(epo.arrival_time,NOW()) AS inner_sure_time,
-    wijod.create_time AS record_time,
-    wijod.create_user_id AS record_user
+    wijo.modified_time AS record_time,
+    u.user_name AS record_user
   </sql>
 
   <select id="findExportData" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>
     FROM wms_inner_job_order_det wijod
+    JOIN wms_inner_job_order wijo ON wijod.job_order_id=wijo.job_order_id
     JOIN eng_packing_order_summary_det eposdet ON wijod.source_det_id=eposdet.packing_order_summary_det_id
     LEFT JOIN eng_packing_order_summary epos ON eposdet.packing_order_summary_id=epos.packing_order_summary_id
     LEFT JOIN eng_packing_order epo ON epos.packing_order_id=epo.packing_order_id
@@ -55,10 +56,16 @@
     LEFT JOIN eng_purchase_req_order epro ON epos.purchase_req_order_code=epro.purchase_req_order_code AND bm.material_code=epro.material_code
     LEFT JOIN eng_contract_qty_order ecqo ON epro.option3=ecqo.option3
     LEFT JOIN base_storage bs ON eposdet.putaway_storage_id=bs.storage_id
+    LEFT JOIN ocean_v2.sys_user u ON wijo.modified_user_id=u.user_id
     <where>
       <if test="jobOrderId!=null and jobOrderId!=''">
         and wijod.job_order_id = #{jobOrderId}
       </if>
     </where>
+    GROUP BY eposdet.packing_order_summary_det_id,ecqo.option1,epos.contract_code,
+    epos.purchase_req_order_code,despatch_batch,eposdet.carton_code,
+    epro.material_code,location_num,eposdet.dominant_term_code,
+    eposdet.device_code,eposdet.putaway_qty,storage_code,ecqo.remark,
+    inner_time,inner_sure_time,record_time,record_user
   </select>
 </mapper>
