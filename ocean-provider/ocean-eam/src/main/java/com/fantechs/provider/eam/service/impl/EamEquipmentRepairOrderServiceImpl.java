@@ -124,6 +124,11 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
             eamEquRepairOrderReplacementMapper.insertList(list);
         }
 
+        //修改设备状态为维修中
+        EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodeMapper.selectByPrimaryKey(record.getEquipmentBarcodeId());
+        eamEquipmentBarcode.setEquipmentStatus((byte)8);
+        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+
         EamHtEquipmentRepairOrder eamHtEquipmentRepairOrder = new EamHtEquipmentRepairOrder();
         BeanUtils.copyProperties(record,eamHtEquipmentRepairOrder);
         int i = eamHtEquipmentRepairOrderMapper.insert(eamHtEquipmentRepairOrder);

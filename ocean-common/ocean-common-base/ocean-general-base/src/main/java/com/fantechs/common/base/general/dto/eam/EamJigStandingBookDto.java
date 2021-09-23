@@ -100,11 +100,11 @@ public class EamJigStandingBookDto extends EamJigStandingBook implements Seriali
     private String jigBarcode;
 
     /**
-     * 使用状态(1-空闲 2-使用中 3-点检中 4-点检中 5-维修中 6-已报废)
+     * 使用状态(1-空闲 2-使用中 3-点检中 4-保养中 5-维修中 6-已报废)
      */
     @Transient
-    @ApiModelProperty(name = "usageStatus",value = "使用状态(1-空闲 2-使用中 3-点检中 4-点检中 5-维修中 6-已报废)")
-    @Excel(name = "使用状态(1-空闲 2-使用中 3-点检中 4-点检中 5-维修中 6-已报废)", height = 20, width = 30,orderNum="11",needMerge = true)
+    @ApiModelProperty(name = "usageStatus",value = "使用状态(1-空闲 2-使用中 3-点检中 4-保养中 5-维修中 6-已报废)")
+    @Excel(name = "使用状态(1-空闲 2-使用中 3-点检中 4-保养中 5-维修中 6-已报废)", height = 20, width = 30,orderNum="11",needMerge = true)
     private Byte usageStatus;
 
 }

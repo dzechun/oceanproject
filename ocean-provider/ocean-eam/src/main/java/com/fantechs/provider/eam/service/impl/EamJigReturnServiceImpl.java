@@ -117,7 +117,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
 
             //修改治具使用状态及使用次数
             EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(eamJigReturn.getJigBarcodeId());
-            eamJigBarcode.setUsageStatus((byte)1);
+            eamJigBarcode.setUsageStatus(eamJigBarcode.getUsageStatus()==3 ? (byte)3 : (byte)1);
             eamJigBarcode.setCurrentUsageTime(eamJigBarcode.getCurrentUsageTime()==null ?
                     eamJigReturn.getThisTimeUsageTime():
                     eamJigBarcode.getCurrentUsageTime()+eamJigReturn.getThisTimeUsageTime());
@@ -140,7 +140,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
                         eamJigScrapOrderDetDto.setJigBarcodeId(eamJigBarcode.getJigBarcodeId());
                         eamJigScrapOrderDetDtos.add(eamJigScrapOrderDetDto);
 
-                        eamJigScrapOrderDto.setJigScrapOrderCode(CodeUtils.getId("BF-"));
+                        eamJigScrapOrderDto.setJigScrapOrderCode(CodeUtils.getId("ZJBF-"));
                         eamJigScrapOrderDto.setOrderStatus((byte) 1);
                         eamJigScrapOrderDto.setList(eamJigScrapOrderDetDtos);
 

@@ -27,7 +27,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="equipment_maintain_project_name" jdbcType="VARCHAR" property="equipmentMaintainProjectName"/>
-    <result column="equipment_maintain_project_desc" jdbcType="VARCHAR" property="equipmenMmaintainProjectDesc"/>
+    <result column="equipment_maintain_project_desc" jdbcType="VARCHAR" property="equipmentMaintainProjectDesc"/>
     <result column="judge_type" jdbcType="TINYINT" property="judgeType"/>
     <result column="ration_floor" jdbcType="DECIMAL" property="rationFloor"/>
     <result column="ration_upper_limit" jdbcType="DECIMAL" property="rationUpperLimit"/>

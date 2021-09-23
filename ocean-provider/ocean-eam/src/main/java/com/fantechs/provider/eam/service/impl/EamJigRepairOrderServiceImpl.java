@@ -66,9 +66,6 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
             throw new BizErrorException("查不到此治具条码");
         }
         EamJigBarcode eamJigBarcode = eamJigBarcodes.get(0);
-        //修改治具状态为维修中
-        eamJigBarcode.setUsageStatus((byte)5);
-        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
 
 
         SearchEamJigRepairOrder searchEamJigRepairOrder1 = new SearchEamJigRepairOrder();
@@ -101,6 +98,15 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
+
+        //报废无法新增维修单
+        EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(record.getJigBarcodeId());
+        if(eamJigBarcode.getUsageStatus()==6){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"治具非空闲无法新建维修单");
+        }
+        //修改该治具使用状态
+        eamJigBarcode.setUsageStatus((byte)5);
+        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
 
         record.setJigRepairOrderCode(CodeUtils.getId("ZJWX-"));
         record.setRequestForRepairTime(new Date());

@@ -78,9 +78,6 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
             throw new BizErrorException("查不到此治具条码");
         }
         EamJigBarcodeDto eamJigBarcodeDto = eamJigBarcodeDtos.get(0);
-        //修改治具状态为保养中
-        eamJigBarcodeDto.setUsageStatus((byte)4);
-        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcodeDto);
 
 
         //查治具对应的保养项目
@@ -151,7 +148,13 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        this.check(record);
+        EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(record.getJigBarcodeId());
+        if(eamJigBarcode.getUsageStatus()!=1){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"治具非空闲状态无法新建保养单");
+        }
+        //修改该治具使用状态
+        eamJigBarcode.setUsageStatus((byte)4);
+        eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
 
         //this.codeIfRepeat(record);
 
@@ -247,15 +250,6 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
         return i;
     }
 
-    public void check(EamJigMaintainOrder eamJigMaintainOrder){
-        EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(eamJigMaintainOrder.getJigBarcodeId());
-        if(eamJigBarcode.getUsageStatus()==6){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"治具已报废无法添加保养单");
-        }
-        if(eamJigBarcode.getUsageStatus()==2){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"治具使用中无法添加保养单");
-        }
-    }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
