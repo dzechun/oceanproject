@@ -46,6 +46,7 @@
       <if test="code != null and code!=''">
         and xebl.code = #{code}
       </if>
+        and xebd.is_deleted = 0
     </where>
   </select>
 

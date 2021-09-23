@@ -39,6 +39,7 @@
       <if test="code != null and code!=''">
         and xebw.code = #{code}
       </if>
+        and xebd.is_deleted = 0
     </where>
   </select>
 </mapper>
