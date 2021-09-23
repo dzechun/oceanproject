@@ -78,7 +78,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchSave(List<MesPmDailyPlan> list) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        int i = 0;
+        int i = 1;
         if (StringUtils.isNotEmpty(list)){
             Example example = new Example(MesPmDailyPlan.class);
             List<MesPmDailyPlan> addList = new ArrayList<>();
@@ -92,19 +92,34 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                //判断当日是否有工单，有则作为插单
+                Example example1 = new Example(MesPmDailyPlan.class);
+                example1.createCriteria().andEqualTo("planTime",mesPmDailyPlan.getPlanDate());
+                List<MesPmDailyPlan> mesPmDailyPlan2 = mesPmDailyPlanMapper.selectByExample(example1);
                 if(StringUtils.isNotEmpty(mesPmDailyPlan1)) {
-                    mesPmDailyPlan.setModifiedUserId(user.getUserId());
+                    mesPmDailyPlan.setDailyPlanId(mesPmDailyPlan1.getDailyPlanId());
+                    if(StringUtils.isNotEmpty(mesPmDailyPlan2))
+                        mesPmDailyPlan.setIfOrderInserting((byte)1);
+                    else
+                        mesPmDailyPlan.setIfOrderInserting((byte)0);
+                    mesPmDailyPlan.setStatus((byte)1);
                     mesPmDailyPlanMapper.updateByPrimaryKeySelective(mesPmDailyPlan);
                     //TODO添加到履历表
-                   // mesPmDailyPlanMapper.deleteByExample(example);
                 }else{
+                    if(StringUtils.isNotEmpty(mesPmDailyPlan2))
+                        mesPmDailyPlan.setIfOrderInserting((byte)1);
+                    else
+                        mesPmDailyPlan.setIfOrderInserting((byte)0);
+                    mesPmDailyPlan.setStatus((byte)1);
                     mesPmDailyPlan.setCreateUserId(user.getUserId());
                     mesPmDailyPlan.setModifiedUserId(user.getUserId());
                     addList.add(mesPmDailyPlan);
                 }
                 example.clear();
                 }
-           i = mesPmDailyPlanMapper.insertList(addList);
+            if(StringUtils.isNotEmpty(addList)) {
+                i = mesPmDailyPlanMapper.insertList(addList);
+            }
         }
         return i;
     }
