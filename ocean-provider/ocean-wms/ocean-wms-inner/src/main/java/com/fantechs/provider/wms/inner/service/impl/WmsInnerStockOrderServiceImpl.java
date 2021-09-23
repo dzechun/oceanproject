@@ -405,7 +405,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             num +=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
             //返写盘点数据（五环）
-            engFeignApi.writePackingLists(wmsInventoryVerificationDets,wmsInventoryVerification);
+            engFeignApi.reportStockOrder(wmsInventoryVerificationDets,wmsInventoryVerification);
         }
         return num;
     }
@@ -447,7 +447,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
             //返写盘点数据（五环）
-            engFeignApi.writePackingLists(wmsInventoryVerificationDets,wmsInventoryVerification);
+            engFeignApi.reportStockOrder(wmsInventoryVerificationDets,wmsInventoryVerification);
         }
         return num;
     }
