@@ -17,8 +17,6 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
@@ -79,6 +77,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     private PickingOrderService pickingOrderService;
     @Resource
     private EngFeignApi engFeignApi;
+    @Resource
+    private WmsDataExportInnerJobOrderService wmsDataExportInnerJobOrderService;
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
@@ -672,6 +672,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //更改表头为作业完成状态
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(innerJobOrder);
 
+            //回写上架完成接口(五环入库完成)
+            if("3".equals(wmsInnerJobOrder.getJobOrderType().toString())){
+                wmsDataExportInnerJobOrderService.writeDeliveryDetails(innerJobOrder);
+            }
+
             //返写移位接口（五环）
             if("2".equals(wmsInnerJobOrder.getJobOrderType().toString())){
                 engFeignApi.reportInnerJobOrder(innerJobOrder);
@@ -856,6 +861,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //返写移位接口（五环）
                 if("2".equals(ws.getJobOrderType().toString())){
                     engFeignApi.reportInnerJobOrder(ws);
+                }
+
+                //回写上架完成接口(五环入库完成)
+                if("3".equals(wmsInnerJobOrder.getJobOrderType().toString())){
+                    wmsDataExportInnerJobOrderService.writeDeliveryDetails(ws);
                 }
 
             } else {

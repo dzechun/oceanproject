@@ -25,7 +25,7 @@ public interface EngFeignApi {
     @PostMapping("/engContractQtyOrder/saveByApi")
     ResponseEntity saveByApi(@ApiParam(value = "必传：contractCode、dominantTermCode",required = true)@RequestBody @Validated EngContractQtyOrder engContractQtyOrder);
 
-    @ApiOperation("接口新增或修改合同量单信息")
+    @ApiOperation("接口新增或修改请购单信息")
     @PostMapping("/engPurchaseReqOrder/saveByApi")
     ResponseEntity saveByApi(@ApiParam(value = "必传：purchaseReqOrderCode、materialCode",required = true)@RequestBody @Validated EngPurchaseReqOrder engPurchaseReqOrder);
 
