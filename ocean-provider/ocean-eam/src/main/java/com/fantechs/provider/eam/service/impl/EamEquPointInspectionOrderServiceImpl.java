@@ -122,7 +122,6 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
         EamEquPointInspectionOrder eamEquPointInspectionOrder = new EamEquPointInspectionOrder();
         List<EamEquPointInspectionOrderDetDto> eamEquPointInspectionOrderDets = new ArrayList<>();
 
-        eamEquPointInspectionOrder.setEquPointInspectionOrderCode(CodeUtils.getId("SBDJ-"));
         eamEquPointInspectionOrder.setEquipmentId(eamEquipmentBarcode.getEquipmentId());
         eamEquPointInspectionOrder.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
         eamEquPointInspectionOrder.setEquPointInspectionProjectId(eamEquPointInspectionProjectDto.getEquPointInspectionProjectId());
@@ -164,6 +163,7 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
         SysUser user = getUser();
 
         // 新增点检单
+        eamEquPointInspectionOrder.setEquPointInspectionOrderCode(CodeUtils.getId("SBDJ-"));
         eamEquPointInspectionOrder.setCreateUserId(user.getUserId());
         eamEquPointInspectionOrder.setCreateTime(new Date());
         eamEquPointInspectionOrder.setModifiedUserId(user.getUserId());

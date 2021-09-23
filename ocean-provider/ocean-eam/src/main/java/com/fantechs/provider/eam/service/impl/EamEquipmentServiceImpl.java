@@ -104,7 +104,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                 eamEquipmentBarcode.setCreateTime(new Date());
                 eamEquipmentBarcode.setModifiedUserId(user.getUserId());
                 eamEquipmentBarcode.setModifiedTime(new Date());
-                eamEquipmentBarcode.setStatus(StringUtils.isEmpty(eamEquipmentBarcode.getStatus())?1: eamEquipmentBarcode.getStatus());
+                eamEquipmentBarcode.setStatus(record.getStatus());
                 eamEquipmentBarcode.setOrgId(user.getOrganizationId());
                 eamEquipmentBarcode.setEquipmentStatus((byte)5);
             }
@@ -168,6 +168,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         if(StringUtils.isNotEmpty(eamEquipmentBarcodeList)) {
             for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodeList) {
                 if (StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentBarcodeId())) {
+                    eamEquipmentBarcode.setStatus(entity.getStatus());
                     eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
                     equipmentBarcodeIdList.add(eamEquipmentBarcode.getEquipmentBarcodeId());
                 }
@@ -196,7 +197,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                 eamEquipmentBarcode.setCreateTime(new Date());
                 eamEquipmentBarcode.setModifiedUserId(user.getUserId());
                 eamEquipmentBarcode.setModifiedTime(new Date());
-                eamEquipmentBarcode.setStatus(StringUtils.isEmpty(eamEquipmentBarcode.getStatus())?1: eamEquipmentBarcode.getStatus());
+                eamEquipmentBarcode.setStatus(entity.getStatus());
                 eamEquipmentBarcode.setOrgId(user.getOrganizationId());
                 eamEquipmentBarcode.setEquipmentStatus((byte)5);
                 eamEquipmentBarcodeMapper.insert(eamEquipmentBarcode);
@@ -290,10 +291,11 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     }
 
     public void check(EamEquipment entity){
-        getUser();
+        SysUser user = getUser();
         Example example = new Example(EamEquipment.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentCode", entity.getEquipmentCode());
+        criteria.andEqualTo("equipmentCode", entity.getEquipmentCode())
+                .andEqualTo("orgId",user.getOrganizationId());
         if(StringUtils.isNotEmpty(entity.getEquipmentId())){
             criteria.andNotEqualTo("equipmentId",entity.getEquipmentId());
         }

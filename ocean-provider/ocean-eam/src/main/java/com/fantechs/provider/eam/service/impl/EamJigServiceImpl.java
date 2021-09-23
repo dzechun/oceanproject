@@ -64,21 +64,8 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(EamJig.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigCode", record.getJigCode());
-        EamJig eamJig = eamJigMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamJig)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
-
-        example.clear();
-        Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("jigName",record.getJigName());
-        EamJig eamJig1 = eamJigMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamJig1)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"名称重复");
-        }
+        //编码是否重复
+        this.check(record,user);
 
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
@@ -99,9 +86,9 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
                 eamJigBarcode.setCreateTime(new Date());
                 eamJigBarcode.setModifiedUserId(user.getUserId());
                 eamJigBarcode.setModifiedTime(new Date());
-                eamJigBarcode.setStatus(StringUtils.isEmpty(eamJigBarcode.getStatus())?1: eamJigBarcode.getStatus());
+                eamJigBarcode.setStatus(record.getStatus());
                 eamJigBarcode.setOrgId(user.getOrganizationId());
-                eamJigBarcode.setUsageStatus((byte)2);
+                eamJigBarcode.setUsageStatus((byte)1);
             }
             eamJigBarcodeMapper.insertList(eamJigBarcodeList);
         }
@@ -196,23 +183,8 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        Example example = new Example(EamJig.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigCode", entity.getJigCode())
-                .andNotEqualTo("jigId",entity.getJigId());
-        EamJig eamJig = eamJigMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamJig)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-        }
-
-        example.clear();
-        Example.Criteria criteria4 = example.createCriteria();
-        criteria4.andEqualTo("jigName",entity.getJigName())
-                 .andNotEqualTo("jigId",entity.getJigId());
-        EamJig eamJig1 = eamJigMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(eamJig1)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"名称重复");
-        }
+        //编码是否重复
+        this.check(entity,user);
 
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
@@ -225,6 +197,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
             for (EamJigBarcode eamJigBarcode : eamJigBarcodeList) {
                 if (StringUtils.isNotEmpty(eamJigBarcode.getJigBarcodeId())) {
                     eamJigBarcode.setCurrentUsageDays(null);
+                    eamJigBarcode.setStatus(entity.getStatus());
                     eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
                     jigBarcodeIdList.add(eamJigBarcode.getJigBarcodeId());
                 }
@@ -253,9 +226,9 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
                 eamJigBarcode.setCreateTime(new Date());
                 eamJigBarcode.setModifiedUserId(user.getUserId());
                 eamJigBarcode.setModifiedTime(new Date());
-                eamJigBarcode.setStatus(StringUtils.isEmpty(eamJigBarcode.getStatus())?1: eamJigBarcode.getStatus());
+                eamJigBarcode.setStatus(entity.getStatus());
                 eamJigBarcode.setOrgId(user.getOrganizationId());
-                eamJigBarcode.setUsageStatus((byte)2);
+                eamJigBarcode.setUsageStatus((byte)1);
                 eamJigBarcodeMapper.insert(eamJigBarcode);
             }
         }
@@ -307,6 +280,33 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         eamHtJigMapper.insert(eamHtJig);
 
         return i;
+    }
+
+    public void check(EamJig eamJig,SysUser user){
+
+        Example example = new Example(EamJig.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("jigCode", eamJig.getJigCode())
+                .andEqualTo("orgId",user.getOrganizationId());
+        if(StringUtils.isNotEmpty(eamJig.getJigId())){
+            criteria.andNotEqualTo("jigId",eamJig.getJigId());
+        }
+        EamJig jig = eamJigMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(jig)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        example.clear();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("jigName",eamJig.getJigName())
+                .andEqualTo("orgId",user.getOrganizationId());
+        if(StringUtils.isNotEmpty(eamJig.getJigId())){
+            criteria1.andNotEqualTo("jigId",eamJig.getJigId());
+        }
+        EamJig jig1 = eamJigMapper.selectOneByExample(example);
+        if (StringUtils.isNotEmpty(jig1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"名称重复");
+        }
     }
 
     @Override

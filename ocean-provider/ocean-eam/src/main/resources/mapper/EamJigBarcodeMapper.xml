@@ -83,22 +83,22 @@
         and ejb.jig_id = #{jigId}
       </if>
       <if test="jigBarcode != null and jigBarcode!=''">
-        and ejb.jig_barcode = #{jigBarcode}
+        and ejb.jig_barcode like CONCAT('%', #{jigBarcode}, '%')
       </if>
       <if test="assetCode != null and assetCode!=''">
-        and ejb.asset_code = #{assetCode}
+        and ejb.asset_code like CONCAT('%', #{assetCode}, '%')
       </if>
       <if test="jigCode != null and jigCode!=''">
-        and ej.jig_code = #{jigCode}
+        and ej.jig_code like CONCAT('%', #{jigCode}, '%')
       </if>
       <if test="jigName != null and jigName!=''">
-        and ej.jig_name = #{jigName}
+        and ej.jig_name like CONCAT('%', #{jigName}, '%')
       </if>
       <if test="jigDesc != null and jigDesc!=''">
-        and ej.jig_desc = #{jigDesc}
+        and ej.jig_desc like CONCAT('%', #{jigDesc}, '%')
       </if>
       <if test="jigModel != null and jigModel!=''">
-        and ej.jig_model = #{jigModel}
+        and ej.jig_model like CONCAT('%', #{jigModel}, '%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ejb.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
