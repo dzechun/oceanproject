@@ -96,7 +96,8 @@ order by mswob.create_time desc
     </select>
     <!--查询条码解析码及标签模版（工单条码打印）-->
     <select id="findRule" resultMap="BaseRuleMap">
-        SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',bl.label_code as 'labelCode', bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode',lm.once_print_count as 'oncePrintQty'
+        SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',bl.label_code as 'labelCode', bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode',lm.once_print_count as 'oncePrintQty',
+        lc.label_category_id as 'labelCategoryId'
         FROM mes_pm_work_order mpwo
                  left join base_barcode_rule_set_det brs on brs.barcode_rule_set_id = mpwo.barcode_rule_set_id
                  LEFT JOIN base_barcode_rule br ON brs.barcode_rule_id = br.barcode_rule_id
@@ -119,6 +120,9 @@ order by mswob.create_time desc
         select * FROM ${labelCode}
         <where>
             id = #{id}
+            <if test="labelCategoryId!=null and labelCategoryId！=''">
+                and label_category_id = #{labelCategoryId}
+            </if>
         </where>
     </select>
     <select id="findByOneLabel" resultType="java.lang.String">

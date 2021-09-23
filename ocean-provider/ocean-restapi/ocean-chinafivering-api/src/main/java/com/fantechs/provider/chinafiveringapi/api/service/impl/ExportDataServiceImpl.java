@@ -36,7 +36,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         try{
             baseExecuteResultDto= callWebService(address,"writeDeliveryDetails",jsonVoiceArray,projectID);
             if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             //success
             str=baseExecuteResultDto.getExecuteResult().toString();
@@ -72,7 +72,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         try{
             baseExecuteResultDto= callWebService(address,"writeMakeInventoryDetails",jsonVoiceArray,projectID);
             if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             //success
             str=baseExecuteResultDto.getExecuteResult().toString();
@@ -108,7 +108,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         try{
             baseExecuteResultDto= callWebService(address,"writeIssueDetails",jsonVoiceArray,projectID);
             if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             //success
             str=baseExecuteResultDto.getExecuteResult().toString();
@@ -144,7 +144,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         try{
             baseExecuteResultDto= callWebService(address,"writeMoveInventoryDetails",jsonVoiceArray,projectID);
             if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             //success
             str=baseExecuteResultDto.getExecuteResult().toString();
@@ -180,7 +180,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         try{
             baseExecuteResultDto= callWebService(address,"writePackingLists",jsonVoiceArray,projectID);
             if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
             //success
             str=baseExecuteResultDto.getExecuteResult().toString();
             if(str.contains("success")){

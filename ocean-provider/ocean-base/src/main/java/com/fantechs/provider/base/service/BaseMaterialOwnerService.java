@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.service;
 
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
-import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterialOwner;
 import com.fantechs.common.base.support.IService;
 
@@ -14,5 +13,6 @@ import java.util.Map;
 
 public interface BaseMaterialOwnerService extends IService<BaseMaterialOwner> {
     List<BaseMaterialOwnerDto> findList(Map<String, Object> map);
+    List<BaseMaterialOwnerDto> findAll();
     Map<String, Object> importExcel(List<BaseMaterialOwnerDto> baseMaterialOwnerDtos);
 }

@@ -31,7 +31,7 @@ public class WanbaoSyncDataController {
         return ControllerUtil.returnSuccess();
     }
 
-    @ApiOperation(value = "万宝-v",notes = "万宝-工单信息同步")
+    @ApiOperation(value = "万宝-工单信息同步",notes = "万宝-工单信息同步")
     @PostMapping("/syncOrderData")
     public ResponseEntity syncOrderData(){
         syncDataService.syncOrderData();

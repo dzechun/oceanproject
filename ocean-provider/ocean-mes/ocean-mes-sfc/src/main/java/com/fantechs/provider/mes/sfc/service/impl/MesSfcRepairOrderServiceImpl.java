@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -203,6 +204,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int save(MesSfcRepairOrder record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -269,6 +271,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int update(MesSfcRepairOrder entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -321,27 +324,6 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                 //保存维修信息
                 saveBadPhenotypeRepair(mesSfcRepairOrderBadPhenotype,user);
             }
-        }
-
-        //删除原半成品
-        Example example3 = new Example(MesSfcRepairOrderSemiProduct.class);
-        Example.Criteria criteria3 = example3.createCriteria();
-        criteria3.andEqualTo("repairOrderId", entity.getRepairOrderId());
-        mesSfcRepairOrderSemiProductMapper.deleteByExample(example3);
-
-        //半成品
-        List<MesSfcRepairOrderSemiProduct> mesSfcRepairOrderSemiProductList = entity.getMesSfcRepairOrderSemiProductList();
-        if(StringUtils.isNotEmpty(mesSfcRepairOrderSemiProductList)){
-            for (MesSfcRepairOrderSemiProduct mesSfcRepairOrderSemiProduct : mesSfcRepairOrderSemiProductList){
-                mesSfcRepairOrderSemiProduct.setRepairOrderId(entity.getRepairOrderId());
-                mesSfcRepairOrderSemiProduct.setCreateUserId(user.getUserId());
-                mesSfcRepairOrderSemiProduct.setCreateTime(new Date());
-                mesSfcRepairOrderSemiProduct.setModifiedUserId(user.getUserId());
-                mesSfcRepairOrderSemiProduct.setModifiedTime(new Date());
-                mesSfcRepairOrderSemiProduct.setStatus(StringUtils.isEmpty(mesSfcRepairOrderSemiProduct.getStatus())?1: mesSfcRepairOrderSemiProduct.getStatus());
-                mesSfcRepairOrderSemiProduct.setOrgId(user.getOrganizationId());
-            }
-            mesSfcRepairOrderSemiProductMapper.insertList(mesSfcRepairOrderSemiProductList);
         }
 
         return i;

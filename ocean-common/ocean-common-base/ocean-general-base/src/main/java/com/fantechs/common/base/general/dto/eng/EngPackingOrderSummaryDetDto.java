@@ -130,6 +130,5 @@ public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet impl
     @ApiModelProperty(name = "packingOrderId",value = "装箱清单id")
     private Long packingOrderId;
 
-
-
+    private Byte isCal;
 }

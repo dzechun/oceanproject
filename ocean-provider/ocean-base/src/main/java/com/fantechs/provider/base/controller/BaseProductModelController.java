@@ -75,6 +75,13 @@ public class BaseProductModelController {
         return ControllerUtil.returnCRUD(baseProductModelService.save(baseProductModel));
     }
 
+    @ApiOperation("新增产品型号")
+    @PostMapping("/addForReturnId")
+    public ResponseEntity<String> addForReturnId(@ApiParam(value = "必传：productModelCode、productModelName", required = true) @RequestBody @Validated BaseProductModel baseProductModel) {
+        int id = baseProductModelService.save(baseProductModel);
+        return ControllerUtil.returnSuccess("成功", String.valueOf(id));
+    }
+
     @ApiOperation("新增产品型号并返回对象")
     @PostMapping("/addForReturn")
     public ResponseEntity<BaseProductModel> addForReturn(@ApiParam(value = "必传：productModelCode、productModelName", required = true) @RequestBody @Validated BaseProductModel baseProductModel) {
