@@ -92,7 +92,7 @@ mswob.create_barcode_time,
         <if test="barcodeType!=null and barcodeType!=''">
             <choose>
                 <when test="barcodeType==1">
-                    blc.label_category_name = '工单流转卡'
+                    and blc.label_category_name = '工单流转卡'
                 </when>
                 <when test="barcodeType==2">
                     and blc.label_category_name = '产品条码'
@@ -101,7 +101,7 @@ mswob.create_barcode_time,
                     and blc.label_category_name = '客户条码'
                 </when>
                 <when test="barcodeType==4">
-                    and blc.label_category_name = '销售条码'
+                    and blc.label_category_name = '销售订单条码'
                 </when>
             </choose>
         </if>
