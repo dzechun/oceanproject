@@ -33,6 +33,7 @@
     ecqo.location_num,
     ecqo.dominant_term_code,
     ecqo.device_code,
+    wijod.actual_qty AS plan_qty,
     bsout.option1 AS old_torageId,
     bsin.option1 AS new_storageId,
     wijod.create_time,
@@ -51,6 +52,19 @@
         and wijo.job_order_id = #{jobOrderId}
       </if>
     </where>
-
+    GROUP BY wijod.job_order_det_id,
+    ecqo.option1,
+    ecqo.option2,
+    ecqo.contract_code,
+    epro.purchase_req_order_code,
+    bm.material_code,
+    ecqo.location_num,
+    ecqo.dominant_term_code,
+    ecqo.device_code,
+    plan_qty,
+    old_torageId,
+    new_storageId,
+    wijod.create_time,
+    create_user_name
   </select>
 </mapper>
