@@ -813,15 +813,19 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     wmsInnerInventoryMapper.insertSelective(inv);
                     wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(actualQty));
                     wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
+
+                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),actualQty,(byte)3,(byte)2);
+                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),actualQty,(byte)3,(byte)1);
                 } else {
                     wmsInnerInventory_old.setPackingQty(wmsInnerInventory_old.getPackingQty() != null ? wmsInnerInventory_old.getPackingQty().add(wmsInnerInventory.getPackingQty()) : wmsInnerInventory.getPackingQty());
                     wmsInnerInventory_old.setRelevanceOrderCode(wmsInnerInventory.getRelevanceOrderCode());
                     wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory_old);
                     wmsInnerInventory.setPackingQty(BigDecimal.ZERO);
                     wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
+
+                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),actualQty,(byte)3,(byte)2);
+                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory_old.getPackingQty(),actualQty,(byte)3,(byte)1);
                 }
-                InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),actualQty,(byte)3,(byte)2);
-                InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory_old.getPackingQty(),actualQty,(byte)3,(byte)1);
                 //更新库存明细
                 Example example1 = new Example(WmsInnerJobOrderDetBarcode.class);
                 example1.createCriteria().andEqualTo("jobOrderDetId", oldDto.getJobOrderDetId());
@@ -993,7 +997,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if (StringUtils.isEmpty(wmsInnerInventoryDet)) {
             throw new BizErrorException("未查询到收货条码");
         }
-        wmsInnerInventoryDet.setAsnCode(jobOrderCode);
+        //wmsInnerInventoryDet.setAsnCode(jobOrderCode);
         wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
         wmsInnerInventoryDet.setReceivingDate(new Date());
         wmsInnerInventoryDet.setBarcodeStatus((byte)3);
