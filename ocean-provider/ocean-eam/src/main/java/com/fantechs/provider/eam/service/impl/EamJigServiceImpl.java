@@ -1,18 +1,29 @@
 package com.fantechs.provider.eam.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
+import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamJigBackupDto;
+import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
+import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
 import com.fantechs.common.base.general.dto.eam.EamJigDto;
-import com.fantechs.common.base.general.dto.eam.EamJigPointInspectionProjectItemDto;
 import com.fantechs.common.base.general.dto.eam.EamSparePartReJigDto;
+import com.fantechs.common.base.general.dto.eam.imports.EamJigImport;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouseArea;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkingArea;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJig;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.fileserver.service.FileFeignApi;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamJigService;
 import org.springframework.beans.BeanUtils;
@@ -21,10 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  *
@@ -43,6 +52,12 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     private EamJigAttachmentMapper eamJigAttachmentMapper;
     @Resource
     private EamSparePartReJigMapper eamSparePartReJigMapper;
+    @Resource
+    private EamJigCategoryMapper eamJigCategoryMapper;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<EamJigDto> findList(Map<String, Object> map) {
@@ -351,5 +366,189 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         eamHtJigMapper.insertList(list);
 
         return eamJigMapper.deleteByIds(ids);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<EamJigImport> eamJigImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<EamJig> list = new LinkedList<>();
+        LinkedList<EamHtJig> htList = new LinkedList<>();
+        LinkedList<EamJigImport> eamJigImportList = new LinkedList<>();
+
+        for (int i = 0; i < eamJigImports.size(); i++) {
+            EamJigImport eamJigImport = eamJigImports.get(i);
+            String jigCode = eamJigImport.getJigCode();
+            String jigName = eamJigImport.getJigName();
+            String jigCategoryCode = eamJigImport.getJigCategoryCode();
+
+            if (StringUtils.isEmpty(
+                    jigCode,jigName,jigCategoryCode
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(EamJig.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("jigCode",jigCode);
+            if (StringUtils.isNotEmpty(eamJigMapper.selectOneByExample(example))){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断集合中是否存在该条数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(eamJigImportList)){
+                for (EamJigImport jigImport: eamJigImportList) {
+                    if (jigCode.equals(jigImport.getJigCode())){
+                        tag = true;
+                        break;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
+
+            //治具类别信息
+            Example example1 = new Example(EamJigCategory.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orgId", currentUser.getOrganizationId())
+                     .andEqualTo("jigCategoryCode",jigCategoryCode);
+            EamJigCategory eamJigCategory = eamJigCategoryMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(eamJigCategory)){
+                fail.add(i+4);
+                continue;
+            }
+            eamJigImport.setJigCategoryId(eamJigCategory.getJigCategoryId());
+
+            //治具管理员
+            String userCode = eamJigImport.getUserCode();
+            if(StringUtils.isNotEmpty(userCode)){
+                SearchSysUser searchSysUser = new SearchSysUser();
+                searchSysUser.setUserCode(userCode);
+                List<SysUser> sysUsers = securityFeignApi.selectUsers(searchSysUser).getData();
+                if (StringUtils.isEmpty(sysUsers)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamJigImport.setUserId(sysUsers.get(0).getUserId());
+            }
+
+            //仓库
+            String warehouseCode = eamJigImport.getWarehouseCode();
+            if(StringUtils.isNotEmpty(warehouseCode)){
+                SearchBaseWarehouse searchBaseWarehouse = new SearchBaseWarehouse();
+                searchBaseWarehouse.setWarehouseCode(warehouseCode);
+                searchBaseWarehouse.setOrgId(currentUser.getOrganizationId());
+                List<BaseWarehouse> baseWarehouses = baseFeignApi.findList(searchBaseWarehouse).getData();
+                if (StringUtils.isEmpty(baseWarehouses)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamJigImport.setWarehouseId(baseWarehouses.get(0).getWarehouseId());
+            }
+
+            //库区
+            String warehouseAreaCode = eamJigImport.getWarehouseAreaCode();
+            if(StringUtils.isNotEmpty(warehouseAreaCode)){
+                SearchBaseWarehouseArea searchBaseWarehouseArea = new SearchBaseWarehouseArea();
+                searchBaseWarehouseArea.setWarehouseAreaCode(warehouseAreaCode);
+                searchBaseWarehouseArea.setOrgId(currentUser.getOrganizationId());
+                List<BaseWarehouseAreaDto> baseWarehouseAreaDtos = baseFeignApi.findWarehouseAreaList(searchBaseWarehouseArea).getData();
+                if (StringUtils.isEmpty(baseWarehouseAreaDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamJigImport.setWarehouseAreaId(baseWarehouseAreaDtos.get(0).getWarehouseAreaId());
+            }
+
+            //工作区
+            String workingAreaCode = eamJigImport.getWorkingAreaCode();
+            if(StringUtils.isNotEmpty(workingAreaCode)){
+                SearchBaseWorkingArea searchBaseWorkingArea = new SearchBaseWorkingArea();
+                searchBaseWorkingArea.setWorkingAreaCode(workingAreaCode);
+                searchBaseWorkingArea.setOrgId(currentUser.getOrganizationId());
+                List<BaseWorkingAreaDto> baseWorkingAreaDtos = baseFeignApi.findWorkingAreaList(searchBaseWorkingArea).getData();
+                if (StringUtils.isEmpty(baseWorkingAreaDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamJigImport.setWorkingAreaId(baseWorkingAreaDtos.get(0).getWorkingAreaId());
+            }
+
+            //库区
+            String storageCode = eamJigImport.getStorageCode();
+            if(StringUtils.isNotEmpty(storageCode)){
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setStorageCode(storageCode);
+                searchBaseStorage.setOrgId(currentUser.getOrganizationId());
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if (StringUtils.isEmpty(baseStorages)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamJigImport.setStorageId(baseStorages.get(0).getStorageId());
+            }
+
+            //配置项：最大使用次数和最大使用天数是否都可填
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("IfBoth");
+            List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if(Integer.parseInt(sysSpecItemList.get(0).getParaValue()) == 0){
+                if(StringUtils.isNotEmpty(eamJigImport.getMaxUsageTime(),eamJigImport.getWarningTime())){
+                    eamJigImport.setMaxUsageDays(0);
+                    eamJigImport.setWarningDays(0);
+                }
+            }
+
+            //根据长宽高计算体积
+            if(StringUtils.isNotEmpty(eamJigImport.getLength(),eamJigImport.getWidth(),eamJigImport.getHeight())){
+                BigDecimal volume = eamJigImport.getLength().multiply(eamJigImport.getWidth()).multiply(eamJigImport.getHeight());
+                eamJigImport.setVolume(volume);
+            }
+
+            eamJigImportList.add(eamJigImport);
+        }
+
+        if (StringUtils.isNotEmpty(eamJigImportList)){
+
+            for (EamJigImport eamJigImport : eamJigImportList) {
+                EamJig eamJig = new EamJig();
+                BeanUtils.copyProperties(eamJigImport,eamJig);
+                eamJig.setCreateTime(new Date());
+                eamJig.setCreateUserId(currentUser.getUserId());
+                eamJig.setModifiedTime(new Date());
+                eamJig.setModifiedUserId(currentUser.getUserId());
+                eamJig.setOrgId(currentUser.getOrganizationId());
+                eamJig.setStatus((byte)1);
+                list.add(eamJig);
+            }
+            success = eamJigMapper.insertList(list);
+
+            if(StringUtils.isNotEmpty(list)){
+                for (EamJig eamJig : list) {
+                    EamHtJig eamHtJig = new EamHtJig();
+                    BeanUtils.copyProperties(eamJig, eamHtJig);
+                    htList.add(eamHtJig);
+                }
+                eamHtJigMapper.insertList(htList);
+            }
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }
