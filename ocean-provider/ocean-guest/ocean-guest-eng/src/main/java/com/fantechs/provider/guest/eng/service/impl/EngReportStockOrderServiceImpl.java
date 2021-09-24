@@ -1,33 +1,19 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
-import cn.hutool.core.date.DateUtil;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.restapi.EngReportStockOrderDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStockOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
-import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
-import com.fantechs.provider.api.wms.inner.InnerFeignApi;
-import com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderMapper;
-import com.fantechs.provider.guest.eng.mapper.EngDataExportEngPackingOrderMapper;
+import com.fantechs.provider.guest.eng.mapper.EngReportStockOrderMapper;
 import com.fantechs.provider.guest.eng.service.EngReportStockOrderService;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -37,22 +23,21 @@ import java.util.List;
 public class EngReportStockOrderServiceImpl  implements EngReportStockOrderService {
 
     @Resource
-    private EngDataExportEngPackingOrderMapper engDataExportEngPackingOrderMapper;
-    @Resource
     private FiveringFeignApi fiveringFeignApi;
     @Resource
-    private EngContractQtyOrderMapper engContractQtyOrderMapper;
-    @Resource
-    private BaseFeignApi baseFeignApi;
-    @Resource
-    private InnerFeignApi innerFeignApi;
+    private EngReportStockOrderMapper engReportStockOrderMapper;
 
 
     @Override
-    public String reportStockOrder(List<WmsInnerStockOrderDet> WmsInnerStockOrderDets , WmsInnerStockOrder wmsInnerStockOrder ){
+    public String reportStockOrder(WmsInnerStockOrder wmsInnerStockOrder ){
         String jsonVoiceArray="";
         String projectID="3919";
-        SearchWmsInnerStockOrder searchWmsInnerStockOrder = new SearchWmsInnerStockOrder();
+
+        Map<String, Object> map=new HashMap<>();
+        map.put("stockOrderId",wmsInnerStockOrder.getStockOrderId());
+        List<EngReportStockOrderDto> stockOrders = engReportStockOrderMapper.findStockOrder(map);
+
+       /* SearchWmsInnerStockOrder searchWmsInnerStockOrder = new SearchWmsInnerStockOrder();
         searchWmsInnerStockOrder.setStockOrderCode(wmsInnerStockOrder.getStockOrderCode());
         List<WmsInnerStockOrderDto> wmsInnerStockOrderDto = innerFeignApi.findList(searchWmsInnerStockOrder).getData();
         List<EngReportStockOrderDto> engReportStockOrderDtos = new ArrayList<>();
@@ -98,9 +83,9 @@ public class EngReportStockOrderServiceImpl  implements EngReportStockOrderServi
             dto.setCreateTime(DateUtil.formatTime(wmsInnerStockOrder.getCreateTime()));
 
             engReportStockOrderDtos.add(dto);
-        }
+        }*/
 
-        jsonVoiceArray= JsonUtils.objectToJson(engReportStockOrderDtos);
+        jsonVoiceArray= JsonUtils.objectToJson(stockOrders);
         String s0=jsonVoiceArray.replaceAll("stockOrderDetId","WMSKey");
         String s1=s0.replaceAll("option1","PPGUID");
         String s2=s1.replaceAll("option2","PSGUID");
@@ -116,8 +101,9 @@ public class EngReportStockOrderServiceImpl  implements EngReportStockOrderServi
         String s11=s10.replaceAll("createTime","登记时间");
         String s12=s11.replaceAll("createUserName","登记人");
 
-
+        System.out.println("--------s12--------"+s12);
         ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeMakeInventoryDetails(s12,projectID);
+
 
         return responseEntityResult.getData();
     }

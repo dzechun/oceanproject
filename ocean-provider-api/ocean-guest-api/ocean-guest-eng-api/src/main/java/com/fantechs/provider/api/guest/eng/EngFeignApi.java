@@ -4,7 +4,6 @@ import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @FeignClient(name = "ocean-guest-eng")
 public interface EngFeignApi {
@@ -34,8 +32,7 @@ public interface EngFeignApi {
 
     @ApiOperation("返写盘点单")
     @PostMapping("/reportStockOrder/writeQty")
-    ResponseEntity reportStockOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestParam List<WmsInnerStockOrderDet> WmsInnerStockOrderDets,
-                                     @ApiParam(value = "对象，Id必传",required = true)@RequestBody WmsInnerStockOrder wmsInnerStockOrder);
+    ResponseEntity reportStockOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody WmsInnerStockOrder wmsInnerStockOrder);
 
     @ApiOperation("返写领料出库")
     @PostMapping("/reportDeliveryOrderOrder/writeQty")

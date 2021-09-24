@@ -10,10 +10,7 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -88,5 +85,7 @@ public interface SFCFeignApi {
     @PostMapping("/mesSfcScanBarcode/snDataTransfer")
     ResponseEntity<BaseExecuteResultDto> snDataTransfer(@ApiParam(value = "过站参数")@RequestBody RestapiSNDataTransferApiDto restapiSNDataTransferApiDto);
 
-
+    @ApiOperation("更新产品条码过站表")
+    @PostMapping("/mesSfcBarcodeProcess/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesSfcBarcodeProcess mesSfcBarcodeProcess);
 }
