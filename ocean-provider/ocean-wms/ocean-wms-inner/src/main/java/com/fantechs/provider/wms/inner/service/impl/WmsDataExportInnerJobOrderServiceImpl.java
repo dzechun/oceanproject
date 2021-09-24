@@ -45,7 +45,7 @@ public class WmsDataExportInnerJobOrderServiceImpl extends BaseService<WmsDataEx
         String s2=s1.replaceAll("contractCode","合同号");
         String s3=s2.replaceAll("purchaseReqOrderCode","请购单号");
         String s4=s3.replaceAll("despatchBatch","物流批次号");
-        String s5=s4.replaceAll("cartonCode","包装箱号");
+        String s5=s4.replaceAll("cartonCode","箱号");
         String s6=s5.replaceAll("materialCode","材料编码");
         String s7=s6.replaceAll("locationNum","位号");
         String s8=s7.replaceAll("dominantTermCode","主项号");

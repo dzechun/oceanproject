@@ -3,7 +3,9 @@ package com.fantechs.provider.wms.inner.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.basic.JobRuleDto;
@@ -32,6 +34,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.*;
@@ -77,6 +80,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     private PickingOrderService pickingOrderService;
     @Resource
     private EngFeignApi engFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
     @Resource
     private WmsDataExportInnerJobOrderService wmsDataExportInnerJobOrderService;
 
@@ -672,16 +677,26 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //更改表头为作业完成状态
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(innerJobOrder);
 
-            //回写上架完成接口(五环入库完成)
-            if("3".equals(wmsInnerJobOrder.getJobOrderType().toString())){
-                wmsDataExportInnerJobOrderService.writeDeliveryDetails(innerJobOrder);
+            //回传接口（五环）
+            //获取程序配置项
+            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+            if(itemListFiveRing.size()<1){
+                throw new BizErrorException("配置项 FiveRing 获取失败");
             }
+            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+            if("1".equals(sysSpecItem.getParaValue())) {
+                //回写上架完成接口(五环入库完成)
+                if("3".equals(wmsInnerJobOrder.getJobOrderType().toString())){
+                    wmsDataExportInnerJobOrderService.writeDeliveryDetails(innerJobOrder);
+                }
 
-            //返写移位接口（五环）
-            if("2".equals(wmsInnerJobOrder.getJobOrderType().toString())){
-                engFeignApi.reportInnerJobOrder(innerJobOrder);
+                //返写移位接口（五环）
+                if("2".equals(wmsInnerJobOrder.getJobOrderType().toString())){
+                    engFeignApi.reportInnerJobOrder(innerJobOrder);
+                }
             }
-
         }
         return num;
     }

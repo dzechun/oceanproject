@@ -17,7 +17,7 @@ import java.net.URL;
 @Service
 public class ExportDataServiceImpl implements ExportDataService {
 
-    // 接口地址
+    // 接口地址 http://mattest.cwcec.com/LocWebServices/WebService1.asmx
     private final String address = "http://mattest.cwcec.com/LocWebServices/WebService1.asmx";
     @Resource
     LogsUtils logsUtils;

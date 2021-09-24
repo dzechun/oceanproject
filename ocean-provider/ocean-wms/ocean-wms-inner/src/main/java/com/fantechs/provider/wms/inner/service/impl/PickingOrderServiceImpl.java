@@ -1184,8 +1184,18 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         num+=wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
 
         //领料出库回传接口（五环）
-        if(wmsInnerJobOrder.getOrderStatus()==(byte)5) {
-            engFeignApi.reportDeliveryOrderOrder(wmsInnerJobOrder);
+        //获取程序配置项
+        SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+        searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+        List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+        if(itemListFiveRing.size()<1){
+            throw new BizErrorException("配置项 FiveRing 获取失败");
+        }
+        SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+        if("1".equals(sysSpecItem.getParaValue())) {
+            if (wmsInnerJobOrder.getOrderStatus() == (byte) 5) {
+                engFeignApi.reportDeliveryOrderOrder(wmsInnerJobOrder);
+            }
         }
         return num;
     }
