@@ -12,4 +12,5 @@ import org.springframework.stereotype.Component;
 public class DBProperties {
     private HikariDataSource primary;
     private HikariDataSource secondary;
+    private HikariDataSource thirdary;
 }
