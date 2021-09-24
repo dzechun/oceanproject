@@ -41,6 +41,9 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
 
         //日历为空，先添加一个日历
         if (StringUtils.isEmpty(baseCalendarWorkShift.getCalendarId())){
+            if(StringUtils.isEmpty(baseCalendarWorkShift.getProLineId())){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"没有选择产线无法绑定");
+            }
             BaseCalendar baseCalendar = new BaseCalendar();
             baseCalendar.setDate(baseCalendarWorkShift.getDate());
             baseCalendar.setProLineId(baseCalendarWorkShift.getProLineId());

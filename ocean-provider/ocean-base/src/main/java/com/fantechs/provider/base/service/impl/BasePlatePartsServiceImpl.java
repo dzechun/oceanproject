@@ -89,6 +89,12 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
         List<BasePlatePartsDetDto> list = basePlateParts.getList();
         if (StringUtils.isNotEmpty(list)) {
             for (BasePlatePartsDet basePlatePartsDet : list) {
+                if(StringUtils.isEmpty(basePlatePartsDet.getPartsInformationId())){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"部件不能为空");
+                }
+                if(StringUtils.isEmpty(basePlatePartsDet.getRouteId())){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"工艺路线不能为空");
+                }
                 basePlatePartsDet.setPlatePartsId(basePlateParts.getPlatePartsId());
             }
             basePlatePartsDetMapper.insertList(list);
