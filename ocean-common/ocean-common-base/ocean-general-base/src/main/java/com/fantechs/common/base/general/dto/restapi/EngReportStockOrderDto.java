@@ -17,6 +17,9 @@ public class EngReportStockOrderDto implements Serializable {
     @ApiModelProperty(name="option2",value = "option2")
     private String option2;
 
+    @ApiModelProperty(name="DHGUID",value = "DHGUID")
+    private String DHGUID;
+
     @ApiModelProperty(name="contractCode",value = "合同号")
     private String contractCode;
 

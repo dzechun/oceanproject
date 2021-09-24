@@ -12,30 +12,27 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseRoute;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.wanbao.api.config.DynamicDataSourceHolder;
-import com.fantechs.provider.wanbao.api.entity.MiddleMaterial;
-import com.fantechs.provider.wanbao.api.entity.MiddleOrder;
-import com.fantechs.provider.wanbao.api.entity.MiddleOutDeliveryOrder;
-import com.fantechs.provider.wanbao.api.entity.MiddleSaleOrder;
-import com.fantechs.provider.wanbao.api.mapper.MiddleMaterialMapper;
-import com.fantechs.provider.wanbao.api.mapper.MiddleOrderMapper;
-import com.fantechs.provider.wanbao.api.mapper.MiddleOutDeliveryOrderMapper;
-import com.fantechs.provider.wanbao.api.mapper.MiddleSaleOrderMapper;
+import com.fantechs.provider.wanbao.api.entity.*;
+import com.fantechs.provider.wanbao.api.mapper.*;
 import com.fantechs.provider.wanbao.api.service.SyncDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -65,6 +62,9 @@ public class SyncDataServiceImpl implements SyncDataService {
     private MiddleOutDeliveryOrderMapper middleOutDeliveryOrderMapper;
 
     @Resource
+    private MiddleProductMapper middleProductMapper;
+
+    @Resource
     private BaseFeignApi baseFeignApi;
 
     @Resource
@@ -78,6 +78,9 @@ public class SyncDataServiceImpl implements SyncDataService {
 
     @Resource
     private SecurityFeignApi securityFeignApi;
+
+    @Resource
+    private SFCFeignApi sfcFeignApi;
 
     // endregion
 
@@ -601,4 +604,80 @@ public class SyncDataServiceImpl implements SyncDataService {
             securityFeignApi.add(apiLog);
         }
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public void syncBarcodeData() {
+
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        /*SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("wanbaoSyncData");
+        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();*/
+
+        // 记录日志
+        SysApiLog apiLog = new SysApiLog();
+        apiLog.setCreateTime(new Date());
+        apiLog.setThirdpartySysName("万宝数据库对接");
+        apiLog.setCallType((byte) 1);
+        apiLog.setCallResult((byte) 0);
+        apiLog.setApiModule("ocean-wanbao-api");
+        apiLog.setApiUrl("查询数据库-同步产品条码");
+        apiLog.setOrgId(sysUser.getOrganizationId());
+
+       /* if (StringUtils.isEmpty(specItems)) {
+            // 记录日志
+            apiLog.setResponseData("获取平台同步数据配置项不存在，不同步数据");
+            securityFeignApi.add(apiLog);
+            return;
+        }*/
+        Map<String, Object> map = new HashMap<>();
+       /* JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
+        if ("0".equals(jsonObject.get("all"))) {
+            map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+        }*/
+        map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+        // 执行查询
+        DynamicDataSourceHolder.putDataSouce("thirdary");
+        List<MiddleProduct> barcodeDatas = middleProductMapper.findBarcodeData(map);
+        DynamicDataSourceHolder.removeDataSource();
+
+
+        if (StringUtils.isNotEmpty(barcodeDatas)) {
+            // 记录日志
+           long start = System.currentTimeMillis();
+           for(MiddleProduct middleProduct : barcodeDatas){
+               SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
+               searchMesSfcBarcodeProcess.setBarcode(middleProduct.getBarcode());
+               List<MesSfcBarcodeProcess> mesSfcBarcodeProcess = sfcFeignApi.findBarcode(searchMesSfcBarcodeProcess).getData();
+               if(StringUtils.isNotEmpty(mesSfcBarcodeProcess)){
+                   if(StringUtils.isEmpty(mesSfcBarcodeProcess.get(0).getCustomerBarcode()))
+                       mesSfcBarcodeProcess.get(0).setCustomerBarcode(middleProduct.getCustomerBarcode());
+                       sfcFeignApi.update(mesSfcBarcodeProcess.get(0));
+               }else{
+                   apiLog.setResponseData(middleProduct.getBarcode() + "，此产品条码未匹配到对应的过站数据，不同步此条数据");
+                   securityFeignApi.add(apiLog);
+                   continue;
+               }
+
+           }
+
+           // 保存中间库
+           DynamicDataSourceHolder.putDataSouce("secondary");
+           for(MiddleProduct middleProduct : barcodeDatas){
+                middleProductMapper.save(middleProduct);
+           }
+           DynamicDataSourceHolder.removeDataSource();
+
+            apiLog.setRequestTime(new Date());
+            apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
+            securityFeignApi.add(apiLog);
+        }
+
+
+
+    }
+
+
 }

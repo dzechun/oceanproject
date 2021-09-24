@@ -41,8 +41,9 @@ public class MesSfcRepairOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesSfcRepairOrder mesSfcRepairOrder) {
-        return ControllerUtil.returnCRUD(mesSfcRepairOrderService.save(mesSfcRepairOrder));
+    public ResponseEntity<MesSfcRepairOrder> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesSfcRepairOrder mesSfcRepairOrder) {
+        MesSfcRepairOrder repairOrder = mesSfcRepairOrderService.add(mesSfcRepairOrder);
+        return ControllerUtil.returnDataSuccess(repairOrder,StringUtils.isEmpty(repairOrder)?0:1);
     }
 
     @ApiOperation("删除")

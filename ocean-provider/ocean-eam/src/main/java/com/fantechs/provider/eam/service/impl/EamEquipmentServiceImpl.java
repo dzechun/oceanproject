@@ -1,15 +1,30 @@
 package com.fantechs.provider.eam.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
+import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
+import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
+import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
+import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
 import com.fantechs.common.base.general.dto.eam.*;
+import com.fantechs.common.base.general.dto.eam.imports.EamEquipmentImport;
+import com.fantechs.common.base.general.dto.eam.imports.EamJigImport;
+import com.fantechs.common.base.general.entity.basic.BaseProLine;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJig;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamEquipmentService;
 import org.springframework.beans.BeanUtils;
@@ -18,10 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  *
@@ -40,6 +53,12 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     private EamEquipmentAttachmentMapper eamEquipmentAttachmentMapper;
     @Resource
     private EamSparePartReEquMapper eamSparePartReEquMapper;
+    @Resource
+    private EamEquipmentCategoryMapper eamEquipmentCategoryMapper;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<EamEquipmentDto> findList(Map<String, Object> map) {
@@ -378,6 +397,176 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         return user;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<EamEquipmentImport> eamEquipmentImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<EamEquipment> list = new LinkedList<>();
+        LinkedList<EamHtEquipment> htList = new LinkedList<>();
+        LinkedList<EamEquipmentImport> eamEquipmentImportList = new LinkedList<>();
+
+        for (int i = 0; i < eamEquipmentImports.size(); i++) {
+            EamEquipmentImport eamEquipmentImport = eamEquipmentImports.get(i);
+            String equipmentCode = eamEquipmentImport.getEquipmentCode();
+            String equipmentName = eamEquipmentImport.getEquipmentName();
+            String equipmentCategoryCode = eamEquipmentImport.getEquipmentCategoryCode();
+
+            if (StringUtils.isEmpty(
+                    equipmentCode,equipmentName,equipmentCategoryCode
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断编码是否重复
+            Example example = new Example(EamEquipment.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("equipmentCode",equipmentCode);
+            if (StringUtils.isNotEmpty(eamEquipmentMapper.selectOneByExample(example))){
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断集合中是否存在该条数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(eamEquipmentImportList)){
+                for (EamEquipmentImport equipmentImport: eamEquipmentImportList) {
+                    if (equipmentCode.equals(equipmentImport.getEquipmentCode())){
+                        tag = true;
+                        break;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
+                continue;
+            }
+
+            //设备类别信息
+            Example example1 = new Example(EamEquipmentCategory.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orgId", currentUser.getOrganizationId())
+                    .andEqualTo("equipmentCategoryCode",equipmentCategoryCode);
+            EamEquipmentCategory eamEquipmentCategory = eamEquipmentCategoryMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(eamEquipmentCategory)){
+                fail.add(i+4);
+                continue;
+            }
+            eamEquipmentImport.setEquipmentCategoryId(eamEquipmentCategory.getEquipmentCategoryId());
+
+            //设备管理员
+            String userCode = eamEquipmentImport.getUserCode();
+            if(StringUtils.isNotEmpty(userCode)){
+                SearchSysUser searchSysUser = new SearchSysUser();
+                searchSysUser.setUserCode(userCode);
+                List<SysUser> sysUsers = securityFeignApi.selectUsers(searchSysUser).getData();
+                if (StringUtils.isEmpty(sysUsers)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamEquipmentImport.setEquipmentMgtUserId(sysUsers.get(0).getUserId());
+            }
+
+            //工厂
+            String factoryCode = eamEquipmentImport.getFactoryCode();
+            if(StringUtils.isNotEmpty(factoryCode)){
+                SearchBaseFactory searchBaseFactory = new SearchBaseFactory();
+                searchBaseFactory.setFactoryCode(factoryCode);
+                searchBaseFactory.setOrgId(currentUser.getOrganizationId());
+                List<BaseFactoryDto> factoryDtos = baseFeignApi.findFactoryList(searchBaseFactory).getData();
+                if (StringUtils.isEmpty(factoryDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamEquipmentImport.setFactoryId(factoryDtos.get(0).getFactoryId());
+            }
+
+            //车间
+            String workShopCode = eamEquipmentImport.getWorkShopCode();
+            if(StringUtils.isNotEmpty(workShopCode)){
+                SearchBaseWorkShop searchBaseWorkShop = new SearchBaseWorkShop();
+                searchBaseWorkShop.setWorkShopCode(workShopCode);
+                searchBaseWorkShop.setOrgId(currentUser.getOrganizationId());
+                List<BaseWorkShopDto> workShopDtos = baseFeignApi.findWorkShopList(searchBaseWorkShop).getData();
+                if (StringUtils.isEmpty(workShopDtos)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamEquipmentImport.setWorkShopId(workShopDtos.get(0).getWorkShopId());
+            }
+
+            //产线
+            String proLineCode = eamEquipmentImport.getProLineCode();
+            if(StringUtils.isNotEmpty(proLineCode)){
+                SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
+                searchBaseProLine.setProCode(proLineCode);
+                searchBaseProLine.setOrgId(currentUser.getOrganizationId());
+                List<BaseProLine> baseProLines = baseFeignApi.findList(searchBaseProLine).getData();
+                if (StringUtils.isEmpty(baseProLines)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamEquipmentImport.setProLineId(baseProLines.get(0).getProLineId());
+            }
+
+            //配置项：最大使用次数和最大使用天数是否都可填
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("IfBoth");
+            List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if(Integer.parseInt(sysSpecItemList.get(0).getParaValue()) == 0){
+                if(StringUtils.isNotEmpty(eamEquipmentImport.getMaxUsageTime(),eamEquipmentImport.getWarningTime())){
+                    eamEquipmentImport.setMaxUsageDays(0);
+                    eamEquipmentImport.setWarningDays(0);
+                }
+            }
+
+            //根据长宽高计算体积
+            if(StringUtils.isNotEmpty(eamEquipmentImport.getLength(),eamEquipmentImport.getWidth(),eamEquipmentImport.getHeight())){
+                BigDecimal volume = eamEquipmentImport.getLength().multiply(eamEquipmentImport.getWidth()).multiply(eamEquipmentImport.getHeight());
+                eamEquipmentImport.setVolume(volume);
+            }
+
+            eamEquipmentImportList.add(eamEquipmentImport);
+        }
+
+        if (StringUtils.isNotEmpty(eamEquipmentImportList)){
+
+            for (EamEquipmentImport eamEquipmentImport : eamEquipmentImportList) {
+                EamEquipment eamEquipment = new EamEquipment();
+                BeanUtils.copyProperties(eamEquipmentImport,eamEquipment);
+                eamEquipment.setCreateTime(new Date());
+                eamEquipment.setCreateUserId(currentUser.getUserId());
+                eamEquipment.setModifiedTime(new Date());
+                eamEquipment.setModifiedUserId(currentUser.getUserId());
+                eamEquipment.setOrgId(currentUser.getOrganizationId());
+                eamEquipment.setStatus((byte)1);
+                list.add(eamEquipment);
+            }
+            success = eamEquipmentMapper.insertList(list);
+
+            if(StringUtils.isNotEmpty(list)){
+                for (EamEquipment eamEquipment : list) {
+                    EamHtEquipment eamHtEquipment = new EamHtEquipment();
+                    BeanUtils.copyProperties(eamEquipment, eamHtEquipment);
+                    htList.add(eamHtEquipment);
+                }
+                eamHtEquipmentMapper.insertList(htList);
+            }
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 
 }

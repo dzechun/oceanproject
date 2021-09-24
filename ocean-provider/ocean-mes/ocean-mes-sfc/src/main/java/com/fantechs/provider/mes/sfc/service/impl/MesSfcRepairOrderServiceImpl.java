@@ -167,6 +167,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         List<MesSfcRepairOrderDto> list = mesSfcRepairOrderMapper.findList(map);
         MesSfcRepairOrderDto mesSfcRepairOrderDto = list.get(0);
 
+        //工位
         SearchBaseStation searchBaseStation = new SearchBaseStation();
         searchBaseStation.setProcessId(mesSfcRepairOrderDto.getBadProcessId());
         List<BaseStation> baseStations = baseFeignApi.findBaseStationList(searchBaseStation).getData();
@@ -175,6 +176,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
             baseStation = baseStations.get(0);
         }
 
+        //不良现象
         List<MesSfcRepairOrderBadPhenotype> mesSfcRepairOrderBadPhenotypeList = mesSfcRepairOrderDto.getMesSfcRepairOrderBadPhenotypeList();
         if(StringUtils.isEmpty(mesSfcRepairOrderBadPhenotypeList)){
             throw new BizErrorException("维修单没有不良现象，无法打印");
@@ -182,18 +184,24 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         String badnessPhenotypeCode = mesSfcRepairOrderBadPhenotypeList.get(0).getBadnessPhenotypeCode();
         String badnessPhenotypeDesc = mesSfcRepairOrderBadPhenotypeList.get(0).getBadnessPhenotypeDesc();
 
+        //获取打印机名称
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("repairOrderPrintName");
+        List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        String printName = sysSpecItemList.get(0).getParaValue();
+
 
         PrintModel printModel = new PrintModel();
         List<PrintModel> printModelList = new ArrayList<>();
         printModel.setId(mesSfcRepairOrderPrintParam.getRepairOrderId());
-        printModel.setSize(mesSfcRepairOrderPrintParam.getSize());
-        printModel.setOption1(badnessPhenotypeCode);
-        printModel.setOption2(badnessPhenotypeDesc);
+        printModel.setSize(StringUtils.isEmpty(mesSfcRepairOrderPrintParam.getSize())?1:mesSfcRepairOrderPrintParam.getSize());
+        printModel.setOption1(StringUtils.isEmpty(badnessPhenotypeCode)?"":badnessPhenotypeCode);
+        printModel.setOption2(StringUtils.isEmpty(badnessPhenotypeDesc)?"":badnessPhenotypeDesc);
         printModel.setOption3(StringUtils.isEmpty(baseStation.getStationCode())?"":baseStation.getStationCode());
         printModelList.add(printModel);
         PrintDto printDto = new PrintDto();
-        printDto.setPrintName(mesSfcRepairOrderPrintParam.getPrintName());
-        printDto.setLabelName(mesSfcRepairOrderPrintParam.getLabelName());
+        printDto.setPrintName(printName);
+        printDto.setLabelName("不良现象.prn");
         printDto.setLabelVersion("0.0.1");
         printDto.setPrintModelList(printModelList);
 
@@ -205,7 +213,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public int save(MesSfcRepairOrder record) {
+    public MesSfcRepairOrder add(MesSfcRepairOrder record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         //ifCodeRepeat(record,user);
@@ -266,7 +274,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
             mesSfcRepairOrderSemiProductMapper.insertList(mesSfcRepairOrderSemiProductList);
         }
 
-        return i;
+        return record;
     }
 
     @Override

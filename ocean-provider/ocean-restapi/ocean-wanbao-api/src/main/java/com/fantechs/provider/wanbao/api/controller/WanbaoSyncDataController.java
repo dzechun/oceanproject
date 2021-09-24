@@ -51,4 +51,11 @@ public class WanbaoSyncDataController {
         syncDataService.syncOutDeliveryData();
         return ControllerUtil.returnSuccess();
     }
+
+    @ApiOperation(value = "万宝-产品条码信息同步",notes = "万宝-产品条码信息同步")
+    @PostMapping("/syncBarcodeData")
+    public ResponseEntity syncBarcodeData(){
+        syncDataService.syncBarcodeData();
+        return ControllerUtil.returnSuccess();
+    }
 }

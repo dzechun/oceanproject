@@ -89,9 +89,9 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
         int i = baseWarningMapper.insertUseGeneratedKeys(baseWarning);
 
         //新增预警信息履历
-        BaseHtWarning baseHtWarning = new BaseHtWarning();
+       /* BaseHtWarning baseHtWarning = new BaseHtWarning();
         BeanUtils.copyProperties(baseWarning,baseHtWarning);
-        baseHtWarningMapper.insertSelective(baseHtWarning);
+        baseHtWarningMapper.insertSelective(baseHtWarning);*/
 
         //新增预警人员信息
         List<BaseWarningPersonnelDto> baseWarningPersonnelDtoList = baseWarning.getBaseWarningPersonnelDtoList();
@@ -133,9 +133,9 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
         int i = baseWarningMapper.updateByPrimaryKeySelective(baseWarning);
 
         //新增履历
-        BaseHtWarning baseHtWarning = new BaseHtWarning();
+       /* BaseHtWarning baseHtWarning = new BaseHtWarning();
         BeanUtils.copyProperties(baseWarning,baseHtWarning);
-        baseHtWarningMapper.insertSelective(baseHtWarning);
+        baseHtWarningMapper.insertSelective(baseHtWarning);*/
 
         //更新预警人员信息
         //删除原有绑定关系
@@ -184,7 +184,7 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
             baseWarningPersonnelMapper.deleteByExample(example);
         }
 
-        baseHtWarningMapper.insertList(baseHtWarnings);
+        //baseHtWarningMapper.insertList(baseHtWarnings);
         return baseWarningMapper.deleteByIds(ids);
     }
 }

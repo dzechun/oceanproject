@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.restapi.EngReportStockOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
@@ -88,7 +89,11 @@ public class EngReportStockOrderServiceImpl  implements EngReportStockOrderServi
             dto.setDeviceCode(contractQtyOrders.get(0).getDeviceCode());
             dto.setVarianceQty(det.getVarianceQty().toString());
             dto.setInventoryStatusName(wmsInnerInventoryDtos.get(0).getInventoryStatusName());
-            dto.setStorageId(det.getStorageId());
+
+            ResponseEntity<BaseStorage> baseStorageResponseEntity=baseFeignApi.detail(det.getStorageId());
+            if(StringUtils.isNotEmpty(baseStorageResponseEntity.getData()))
+                dto.setDHGUID(baseStorageResponseEntity.getData().getOption1());
+            //dto.setStorageId(det.getStorageId());
             dto.setCreateUserName(wmsInnerStockOrderDto.get(0).getCreateUserName());
             dto.setCreateTime(DateUtil.formatTime(wmsInnerStockOrder.getCreateTime()));
 
@@ -107,12 +112,12 @@ public class EngReportStockOrderServiceImpl  implements EngReportStockOrderServi
         String s8=s7.replaceAll("deviceCode","装置号");
         String s9=s8.replaceAll("varianceQty","变化量");
         String s10=s9.replaceAll("inventoryStatusName","材料状态");
-        String s11=s10.replaceAll("storageId","DHGUID");
-        String s12=s11.replaceAll("createTime","登记时间");
-        String s13=s12.replaceAll("createUserName","登记人");
+        //String s11=s10.replaceAll("storageId","DHGUID");
+        String s11=s10.replaceAll("createTime","登记时间");
+        String s12=s11.replaceAll("createUserName","登记人");
 
 
-        ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeMakeInventoryDetails(s13,projectID);
+        ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeMakeInventoryDetails(s12,projectID);
 
         return responseEntityResult.getData();
     }

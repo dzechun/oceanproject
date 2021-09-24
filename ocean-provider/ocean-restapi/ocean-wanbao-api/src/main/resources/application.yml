@@ -8,18 +8,43 @@ spring:
   application:
     name: @pom.artifactId@
   datasource:
+   # primary:
+    #  jdbc-url: jdbc:oracle:thin:@192.168.5.32:1521:dev
+   #   type: com.alibaba.druid.pool.DruidDataSource
+   #   username: apps
+   #   password: apps
+   #   driverClassName: oracle.jdbc.driver.OracleDriver
+    #secondary:
+      #jdbc-url: jdbc:oracle:thin:@192.168.5.88:1521:ORCL
+      #type: com.alibaba.druid.pool.DruidDataSource
+      #username: k3wms
+      #password: k3wms
+      #driverClassName: oracle.jdbc.driver.OracleDriver
+      #thirdary:
+      #jdbc-url: jdbc:oracle:thin:@192.168.180.241:1521:master
+      #type: com.alibaba.druid.pool.DruidDataSource
+      #username: sa
+      #password: 2020@WB
+      #driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
     primary:
-      jdbc-url: jdbc:oracle:thin:@192.168.5.32:1521:dev
+      jdbc-url: jdbc:mysql://192.168.204.164:3306/fantech_imes_v2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
       type: com.alibaba.druid.pool.DruidDataSource
-      username: apps
-      password: apps
-      driverClassName: oracle.jdbc.driver.OracleDriver
+      username: root
+      password: 123456
+      driver-class-name: com.mysql.cj.jdbc.Driver
     secondary:
-      jdbc-url: jdbc:oracle:thin:@192.168.5.88:1521:ORCL
+      jdbc-url: jdbc:oracle:thin:@192.168.204.160:1521:ORCL
       type: com.alibaba.druid.pool.DruidDataSource
-      username: k3wms
-      password: k3wms
-      driverClassName: oracle.jdbc.driver.OracleDriver
+      username: smt
+      password: smt
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+    thirdary:
+      jdbc-url: jdbc:sqlserver://192.168.204.150:1433;DatabaseName=SridaFramework
+      #jdbc-url: jdbc:sqlserver://192.168.204.150:1433:SridaFramework
+      type: com.alibaba.druid.pool.DruidDataSource
+      username: sa
+      password: Jf@2020
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
 logging:
   file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
