@@ -17,7 +17,7 @@ public class BaseWarningDto extends BaseWarning implements Serializable {
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
     @Excel(name = "组织名称", height = 20, width = 30)
-    private Long organizationName;
+    private String organizationName;
 
     /**
      * 创建用户名称

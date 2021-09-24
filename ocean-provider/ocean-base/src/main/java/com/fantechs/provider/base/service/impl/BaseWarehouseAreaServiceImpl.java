@@ -65,7 +65,7 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
         int i=0;
         Example example = new Example(BaseWarehouseArea.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("warehouseAreaCode", baseWarehouseArea.getWarehouseAreaCode());
         List<BaseWarehouseArea> baseWarehouseAreaList = baseWarehouseAreaMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(baseWarehouseAreaList)){
@@ -95,7 +95,7 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
 
         Example example = new Example(BaseWarehouseArea.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("warehouseAreaCode", baseWarehouseArea.getWarehouseAreaCode())
                 .andNotEqualTo("warehouseAreaId",baseWarehouseArea.getWarehouseAreaId());
         List<BaseWarehouseArea> baseWarehouseAreaList = baseWarehouseAreaMapper.selectByExample(example);
@@ -183,7 +183,7 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
             //判断编码是否重复
             Example example = new Example(BaseWarehouseArea.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("warehouseAreaCode",warehouseAreaCode);
             if (StringUtils.isNotEmpty(baseWarehouseAreaMapper.selectOneByExample(example))){
                 fail.add(i+4);
@@ -193,7 +193,7 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
             //判断仓库信息是否存在
             Example example1 = new Example(BaseWarehouse.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("organizationId", currentUser.getOrganizationId());
+            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria1.andEqualTo("warehouseCode", warehouseCode);
             BaseWarehouse baseWarehouse = baseWarehouseMapper.selectOneByExample(example1);
             if (StringUtils.isEmpty(baseWarehouse)) {

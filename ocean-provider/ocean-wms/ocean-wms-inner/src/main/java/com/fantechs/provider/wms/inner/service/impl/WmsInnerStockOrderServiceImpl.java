@@ -2,7 +2,9 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
@@ -12,6 +14,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderDetMapper;
@@ -44,6 +47,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
     @Resource
     private EngFeignApi engFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<WmsInnerStockOrderDto> findList(Map<String, Object> map) {
@@ -405,7 +410,18 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             num +=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
             //返写盘点数据（五环）
-            engFeignApi.reportStockOrder(wmsInventoryVerificationDets,wmsInventoryVerification);
+            //获取程序配置项
+            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+            if(itemListFiveRing.size()<1){
+                throw new BizErrorException("配置项 FiveRing 获取失败");
+            }
+            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+            if("1".equals(sysSpecItem.getParaValue())) {
+                engFeignApi.reportStockOrder(wmsInventoryVerificationDets,wmsInventoryVerification);
+            }
+
         }
         return num;
     }

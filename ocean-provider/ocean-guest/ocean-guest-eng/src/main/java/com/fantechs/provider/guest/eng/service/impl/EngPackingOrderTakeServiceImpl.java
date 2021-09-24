@@ -2,6 +2,7 @@ package com.fantechs.provider.guest.eng.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
@@ -195,18 +196,17 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         //获取收货库存信息
         Long warehouseId = engPackingOrderMapper.findWarehouse(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
         if(StringUtils.isEmpty(warehouseId)){
-            throw new BizErrorException("获取仓库信息失败");
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取仓库信息失败");
         }
         //获取库存状态信息
         Long inventoryStatus = engPackingOrderMapper.findInventoryStatus(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId(),"warehouseId",warehouseId));
         if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取库位信息失败");
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取库位信息失败");
         }
-
         //获取货主信息
         Long materialOwnerId = engPackingOrderMapper.findMaterialOwner(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
         if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取货主信息失败");
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取货主信息失败");
         }
         EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrderSummaryDtos.get(0).getPackingOrderId());
         if(engPackingOrder.getOrderStatus()==(4)){

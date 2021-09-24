@@ -17,7 +17,7 @@ import java.net.URL;
 @Service
 public class ExportDataServiceImpl implements ExportDataService {
 
-    // 接口地址
+    // 接口地址 http://mattest.cwcec.com/LocWebServices/WebService1.asmx
     private final String address = "http://mattest.cwcec.com/LocWebServices/WebService1.asmx";
     @Resource
     LogsUtils logsUtils;
@@ -240,10 +240,11 @@ public class ExportDataServiceImpl implements ExportDataService {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Length", String.valueOf(actionBySOAP(method, JsonVoiceArray,projectID).getBytes().length));
-            conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
+            conn.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setConnectTimeout(20000);
+
             // 请求输入内容
             OutputStream output = conn.getOutputStream();
             output.write(actionBySOAP(method,JsonVoiceArray, projectID).getBytes());
