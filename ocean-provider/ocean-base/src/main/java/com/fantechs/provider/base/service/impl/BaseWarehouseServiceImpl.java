@@ -2,20 +2,16 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
-import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerReWhDto;
-import com.fantechs.common.base.general.dto.basic.imports.BasePackageSpecificationImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseUnitPriceImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
-import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtPackageSpecification;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwnerReWh;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehousePersonnel;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerReWhDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
+import com.fantechs.common.base.general.entity.basic.BaseMaterialOwner;
+import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwnerReWh;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -75,7 +71,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         baseWarehouse.setCreateTime(new Date());
         baseWarehouse.setModifiedUserId(currentUser.getUserId());
         baseWarehouse.setModifiedTime(new Date());
-        baseWarehouse.setOrganizationId(currentUser.getOrganizationId());
+        baseWarehouse.setOrgId(currentUser.getOrganizationId());
         baseWarehouseMapper.insertUseGeneratedKeys(baseWarehouse);
 
         //新增货主和仓库关系
@@ -160,7 +156,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
 
         baseWarehouse.setModifiedUserId(currentUser.getUserId());
         baseWarehouse.setModifiedTime(new Date());
-        baseWarehouse.setOrganizationId(currentUser.getOrganizationId());
+        baseWarehouse.setOrgId(currentUser.getOrganizationId());
         int i= baseWarehouseMapper.updateByPrimaryKeySelective(baseWarehouse);
 
         //删除原有绑定关系
@@ -292,7 +288,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
                 baseWarehouse.setCreateUserId(currentUser.getUserId());
                 baseWarehouse.setModifiedUserId(currentUser.getUserId());
                 baseWarehouse.setModifiedTime(new Date());
-                baseWarehouse.setOrganizationId(currentUser.getOrganizationId());
+                baseWarehouse.setOrgId(currentUser.getOrganizationId());
                 baseWarehouse.setStatus(1);
                 success += baseWarehouseMapper.insertUseGeneratedKeys(baseWarehouse);
 
