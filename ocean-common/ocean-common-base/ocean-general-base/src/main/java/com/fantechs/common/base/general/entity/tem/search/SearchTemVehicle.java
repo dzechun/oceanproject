@@ -17,4 +17,10 @@ public class SearchTemVehicle extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="vehicleStatus",value = "周转工具状态(1-空闲 2-出库中 3-使用中 4-入库中)")
     private Byte vehicleStatus;
+
+    @ApiModelProperty(name="warehouseAreaId",value = "库区ID")
+    private Long warehouseAreaId;
+
+    @ApiModelProperty(name="workingAreaId",value = "工作区ID")
+    private Long workingAreaId;
 }

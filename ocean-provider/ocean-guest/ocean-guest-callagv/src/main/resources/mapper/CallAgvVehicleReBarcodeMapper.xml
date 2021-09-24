@@ -59,7 +59,7 @@
         </foreach>
       </if>
       <if test="productModel != null and productModel != ''">
-        and cab.product_model = #{productModel}
+        and cab.product_model like CONCAT('%', #{productModel}, '%')
       </if>
       <if test="vehicleCode != null and vehicleCode != ''">
           and tv.vehicle_code = #{vehicleCode}
