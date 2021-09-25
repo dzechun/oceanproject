@@ -3,6 +3,7 @@ package com.fantechs.provider.eam.service;
 import com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamEquMaintainOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
+import com.fantechs.common.base.general.dto.eam.imports.EamEquipmentImport;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
 import com.fantechs.common.base.support.IService;
@@ -38,4 +39,6 @@ public interface EamEquipmentService extends IService<EamEquipment> {
      * @return
      */
     List<EamEquMaintainOrderDto> findListForMaintainOrder(Map<String,Object> map);
+
+    Map<String, Object> importExcel(List<EamEquipmentImport> eamEquipmentImports);
 }

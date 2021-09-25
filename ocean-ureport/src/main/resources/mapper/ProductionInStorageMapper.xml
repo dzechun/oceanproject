@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.ProductionInStorageMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.entity.ProductionInStorage">
+        <result column="organization_name" jdbcType="VARCHAR" property="orgName"/>
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
+        <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
+    </resultMap>
+    <resultMap id="BaseResultOmMap" type="com.fantechs.entity.OmInStorage">
+        <result column="organization_name" jdbcType="VARCHAR" property="orgName"/>
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
+    </resultMap>
+    <resultMap id="BaseResultProDetMap" extends="BaseResultMap" type="com.fantechs.entity.ProductionInStorageDet">
+
+    </resultMap>
+    <select id="findProList" resultMap="BaseResultMap">
+        SELECT
+                (@i:=@i+1) 'serialNumber',
+                bo.organization_name,
+                mpwo.work_order_code,
+                oso.sales_order_code,
+                bws.work_shop_name,
+                bpl.pro_name,
+                bw.warehouse_name,
+                bwa.warehouse_area_code,
+                bs.storage_code,
+                bm.material_code,
+                bm.material_name,
+                sum(wijod.actual_qty) as 'qty',
+                wiaod.packing_unit_name
+        FROM wms_inner_job_order_det wijod
+                LEFT JOIN wms_inner_job_order wijo ON wijod.job_order_id = wijo.job_order_id
+                LEFT JOIN wms_in_asn_order_det wiaod ON wiaod.asn_order_det_id = wijod.source_det_id
+                LEFT JOIN wms_in_asn_order wiao ON wiaod.asn_order_id = wiao.asn_order_id
+                 LEFT JOIN mes_pm_work_order mpwo ON wiaod.source_order_id = mpwo.work_order_id
+                 LEFT JOIN base_pro_line bpl ON mpwo.pro_line_id = bpl.pro_line_id
+                 left JOIN base_work_shop bws ON bpl.work_shop_id = bws.work_shop_id
+                 left JOIN om_sales_order oso ON mpwo.sales_order_id = oso.sales_order_id
+                 LEFT JOIN base_warehouse bw ON wijod.warehouse_id = bw.warehouse_id
+                 LEFT JOIN base_storage bs ON wijod.in_storage_id = bs.storage_id
+                 LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
+                 LEFT JOIN base_material bm ON wijod.material_id = bm.material_id
+                 LEFT JOIN fantech_imes_v2.base_organization bo ON wijod.org_id = bo.organization_id,(SELECT @i:=0)j
+        <where>
+            wiao.order_type_id = 4 AND wijo.order_type_id=4 AND wijo.order_status=5
+            <if test="warehouseId!=null and warehouseId!=''">
+                and bw.warehouse_id =#{warehouseId}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and bm.material_id like = #{materialId}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and bo.organization_id =#{orgId}
+            </if>
+            <if test="workShopId!=null and workShopId!=''">
+               and bws.work_shop_id #{workShopId}
+            </if>
+            <if test="proId!=null and proId!=''">
+                and bpl.pro_id =#{proId}
+            </if>
+        <if test="workOrderId!=null and workOrderId!=''">
+            and mpwo.work_order_id = #{workOrderId}
+        </if>
+        <if test="salesOrderId!=null and salesOrderId!=''">
+            and oso.sales_order_code =#{salesOrderId}
+        </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(wijod.work_end_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        GROUP BY wiaod.org_id,mpwo.work_order_id,bw.warehouse_id,bwa.warehouse_area_id,bm.material_id
+    </select>
+    <select id="findOmList" resultMap="BaseResultOmMap">
+        SELECT
+        (@i:=@i+1) 'serialNumber',
+        bo.organization_name,
+        oso.sales_order_code,
+        bw.warehouse_name,
+        bwa.warehouse_area_code,
+        bs.storage_code,
+        bm.material_code,
+        bm.material_name,
+        sum(wijod.actual_qty) as 'qty',
+        wiaod.packing_unit_name
+        FROM wms_inner_job_order_det wijod
+        LEFT JOIN wms_inner_job_order wijo ON wijod.job_order_id = wijo.job_order_id
+        LEFT JOIN wms_in_asn_order_det wiaod ON wiaod.asn_order_det_id = wijod.source_det_id
+        LEFT JOIN wms_in_asn_order wiao ON wiaod.asn_order_id = wiao.asn_order_id
+        LEFT JOIN mes_pm_work_order mpwo ON wiaod.source_order_id = mpwo.work_order_id
+        left JOIN om_sales_order oso ON mpwo.sales_order_id = oso.sales_order_id
+        LEFT JOIN base_warehouse bw ON wijod.warehouse_id = bw.warehouse_id
+        LEFT JOIN base_storage bs ON wijod.in_storage_id = bs.storage_id
+        LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
+        LEFT JOIN base_material bm ON wijod.material_id = bm.material_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON wijod.org_id = bo.organization_id,(SELECT @i:=0)j
+        <where>
+            wiao.order_type_id = 4 AND wijo.order_type_id=4 AND wijo.order_status=5
+            <if test="warehouseId!=null and warehouseId!=''">
+                and bw.warehouse_id =#{warehouseId}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and bm.material_id like = #{materialId}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and bo.organization_id =#{orgId}
+            </if>
+            <if test="salesOrderId!=null and salesOrderId!=''">
+                and oso.sales_order_code =#{salesOrderId}
+            </if>
+            <if test="supplierId!=null and supplierId!=''">
+                and oso.supplier_id = #{supplierId}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(wijod.work_end_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        GROUP BY wiaod.org_id,oso.sales_order_id,bw.warehouse_id,bwa.warehouse_area_id,bm.material_id
+    </select>
+
+    <select id="findProDetList" resultMap="BaseResultProDetMap">
+        SELECT
+            (@i:=@i+1) 'serialNumber',
+                bo.organization_name,
+                mpwo.work_order_code,
+                oso.sales_order_code,
+                bws.work_shop_name,
+                bpl.pro_name,
+                bw.warehouse_name,
+                bwa.warehouse_area_code,
+                bs.storage_code,
+                bm.material_code,
+                bm.material_name,
+                wiid.material_qty as 'qty',
+                wiaod.packing_unit_name,
+                wiid.barcode 'inPlantBarCode',
+                mskpr.part_barcode 'marketBarCode',
+                mspcd.create_time as 'packageTime',
+                msppd.create_time as 'putInStorageTime'
+        FROM wms_inner_job_order_det wijod
+                 LEFT JOIN wms_inner_job_order wijo ON wijod.job_order_id = wijo.job_order_id
+                 LEFT JOIN wms_in_asn_order_det wiaod ON wiaod.asn_order_det_id = wijod.source_det_id
+                 LEFT JOIN wms_in_asn_order wiao ON wiaod.asn_order_id = wiao.asn_order_id
+                 left JOIN wms_inner_inventory_det wiid ON wiao.asn_code = wiid.asn_code AND wiid.material_id = wijod.material_id
+                 LEFT JOIN mes_sfc_work_order_barcode mswob ON wiid.barcode = mswob.barcode
+                 LEFT JOIN mes_sfc_key_part_relevance mskpr ON mswob.work_order_barcode_id = mskpr.work_order_barcode_id AND mskpr.part_barcode IS NOT NULL
+                 LEFT JOIN mes_sfc_product_carton_det mspcd ON mswob.work_order_barcode_id = mspcd.work_order_barcode_id
+                 LEFT JOIN mes_sfc_product_pallet_det msppd ON mswob.work_order_barcode_id = msppd.work_order_barcode_id
+                 LEFT JOIN mes_pm_work_order mpwo ON wiaod.source_order_id = mpwo.work_order_id
+                 LEFT JOIN base_pro_line bpl ON mpwo.pro_line_id = bpl.pro_line_id
+                 left JOIN base_work_shop bws ON bpl.work_shop_id = bws.work_shop_id
+                 left JOIN om_sales_order oso ON mpwo.sales_order_id = oso.sales_order_id
+                 LEFT JOIN base_warehouse bw ON wijod.warehouse_id = bw.warehouse_id
+                 LEFT JOIN base_storage bs ON wijod.in_storage_id = bs.storage_id
+                 LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
+                 LEFT JOIN base_material bm ON wijod.material_id = bm.material_id
+                LEFT JOIN fantech_imes_v2.base_organization bo ON wijod.org_id = bo.organization_id,(SELECT @i:=0)j
+        <where>
+            wiao.order_type_id = 4 AND wijo.order_type_id=4 AND wijod.order_status=5 AND wiid.barcode IS NOT NULL
+            <if test="warehouseId!=null and warehouseId!=''">
+                and bw.warehouse_id =#{warehouseId}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and bm.material_id like = #{materialId}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and bo.organization_id =#{orgId}
+            </if>
+            <if test="workShopId!=null and workShopId!=''">
+                and bws.work_shop_id #{workShopId}
+            </if>
+            <if test="proId!=null and proId!=''">
+                and bpl.pro_id =#{proId}
+            </if>
+            <if test="workOrderId!=null and workOrderId!=''">
+                and mpwo.work_order_id = #{workOrderId}
+            </if>
+            <if test="salesOrderId!=null and salesOrderId!=''">
+                and oso.sales_order_code =#{salesOrderId}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(wijod.work_end_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        GROUP BY wiid.barcode
+    </select>
+</mapper>

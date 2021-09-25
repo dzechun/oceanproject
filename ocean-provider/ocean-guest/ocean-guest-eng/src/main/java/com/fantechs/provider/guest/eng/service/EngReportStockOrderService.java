@@ -1,9 +1,6 @@
 package com.fantechs.provider.guest.eng.service;
 
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
-
-import java.util.List;
 
 /**
  *
@@ -12,5 +9,5 @@ import java.util.List;
 
 public interface EngReportStockOrderService {
 
-    String reportStockOrder(List<WmsInnerStockOrderDet> WmsInnerStockOrderDets , WmsInnerStockOrder wmsInnerStockOrder );
+    String reportStockOrder(WmsInnerStockOrder wmsInnerStockOrder );
 }

@@ -25,4 +25,10 @@ public interface SyncDataService {
      * @return
      */
     void syncOutDeliveryData();
+
+    /**
+     * 万宝-产品条码同步同步
+     * @return
+     */
+    void syncBarcodeData();
 }

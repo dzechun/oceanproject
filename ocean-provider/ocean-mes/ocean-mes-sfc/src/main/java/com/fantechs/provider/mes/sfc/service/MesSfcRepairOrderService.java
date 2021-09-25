@@ -22,4 +22,6 @@ public interface MesSfcRepairOrderService extends IService<MesSfcRepairOrder> {
     MesSfcRepairOrderDto getWorkOrder(String SNCode, String workOrderCode, Integer SNCodeType);
 
     int print(MesSfcRepairOrderPrintParam mesSfcRepairOrderPrintParam);
+
+    MesSfcRepairOrder add(MesSfcRepairOrder record);
 }

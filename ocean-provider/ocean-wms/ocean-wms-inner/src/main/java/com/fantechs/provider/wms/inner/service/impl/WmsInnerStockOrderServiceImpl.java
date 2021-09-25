@@ -419,7 +419,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             }
             SysSpecItem sysSpecItem = itemListFiveRing.get(0);
             if("1".equals(sysSpecItem.getParaValue())) {
-                engFeignApi.reportStockOrder(wmsInventoryVerificationDets,wmsInventoryVerification);
+                engFeignApi.reportStockOrder(wmsInventoryVerification);
             }
 
         }
@@ -463,7 +463,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
             //返写盘点数据（五环）
-            engFeignApi.reportStockOrder(wmsInventoryVerificationDets,wmsInventoryVerification);
+            engFeignApi.reportStockOrder(wmsInventoryVerification);
         }
         return num;
     }
