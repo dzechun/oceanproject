@@ -51,7 +51,9 @@ public class EngReportInnerJobOrderServiceImpl implements EngReportInnerJobOrder
         String s12=s11.replaceAll("createTime","登记时间");
         String s13=s12.replaceAll("createUserName","登记人");
 
-        ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeIssueDetails (s13,projectID);
+        //ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeIssueDetails (s13,projectID);
+        ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeMoveInventoryDetails (s13,projectID);
+
 
         return responseEntityResult.getData();
     }

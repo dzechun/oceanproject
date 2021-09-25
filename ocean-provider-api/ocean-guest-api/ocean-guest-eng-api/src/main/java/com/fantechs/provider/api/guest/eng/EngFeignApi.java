@@ -32,13 +32,13 @@ public interface EngFeignApi {
 
     @ApiOperation("返写盘点单")
     @PostMapping("/reportStockOrder/writeQty")
-    ResponseEntity reportStockOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody WmsInnerStockOrder wmsInnerStockOrder);
+    ResponseEntity reportStockOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated WmsInnerStockOrder wmsInnerStockOrder);
 
     @ApiOperation("返写领料出库")
-    @PostMapping("/reportDeliveryOrderOrder/writeQty")
-    ResponseEntity<String> reportDeliveryOrderOrder(WmsInnerJobOrder wmsInnerJobOrder);
+    @PostMapping("/reportIssueDetails/writeQty")
+    ResponseEntity<String> reportIssueDetails(@ApiParam(value = "对象，jobOrderId 必传",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInnerJobOrder);
 
     @ApiOperation("返写移位")
     @PostMapping("/reportInnerJobOrder/writeQty")
-    ResponseEntity<String> reportInnerJobOrder(WmsInnerJobOrder wmsInnerJobOrder);
+    ResponseEntity<String> reportInnerJobOrder(@ApiParam(value = "对象，jobOrderId 必传",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInnerJobOrder);
 }

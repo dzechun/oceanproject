@@ -37,7 +37,7 @@
     eposdet.dominant_term_code,
     eposdet.device_code,
     eposdet.putaway_qty,
-    IFNULL(bs.option1,'default') AS storage_code,
+    IFNULL(bs.storage_code,'default') AS storage_code,
     IFNULL(ecqo.remark,'') AS remark,
     IFNULL(epo.arrival_time,NOW()) AS inner_time,
     IFNULL(epo.arrival_time,NOW()) AS inner_sure_time,
@@ -53,8 +53,10 @@
     LEFT JOIN eng_packing_order_summary epos ON eposdet.packing_order_summary_id=epos.packing_order_summary_id
     LEFT JOIN eng_packing_order epo ON epos.packing_order_id=epo.packing_order_id
     LEFT JOIN base_material bm ON eposdet.material_id=bm.material_id
-    LEFT JOIN eng_purchase_req_order epro ON epos.purchase_req_order_code=epro.purchase_req_order_code AND bm.material_code=epro.material_code
-    LEFT JOIN eng_contract_qty_order ecqo ON epro.option3=ecqo.option3
+    LEFT JOIN eng_contract_qty_order ecqo ON epos.contract_code=ecqo.contract_code
+    AND epos.device_code=ecqo.device_code
+    AND bm.material_code=ecqo.material_code
+    LEFT JOIN eng_purchase_req_order epro ON epro.option3=ecqo.option3
     LEFT JOIN base_storage bs ON eposdet.putaway_storage_id=bs.storage_id
     LEFT JOIN ocean_v2.sys_user u ON wijo.modified_user_id=u.user_id
     <where>

@@ -7,7 +7,7 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
  * Created by leifengzhi on 2021/09/01.
  */
 
-public interface EngReportDeliveryOrderOrderService {
+public interface EngReportIssueDetailsService {
 
-    String reportDeliveryOrderOrder(WmsInnerJobOrder wmsInnerJobOrder);
+    String reportIssueDetails(WmsInnerJobOrder wmsInnerJobOrder);
 }

@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface EngReportDeliveryOrderOrderMapper extends MyMapper<EngReportDeliveryOrderDto> {
+public interface EngReportIssueDetailsMapper extends MyMapper<EngReportDeliveryOrderDto> {
     List<EngReportDeliveryOrderDto> findDeliveryOrderOrder(Map<String, Object> map);
 }

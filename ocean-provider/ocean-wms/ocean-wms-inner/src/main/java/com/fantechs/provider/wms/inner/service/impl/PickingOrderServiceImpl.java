@@ -1194,7 +1194,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         SysSpecItem sysSpecItem = itemListFiveRing.get(0);
         if("1".equals(sysSpecItem.getParaValue())) {
             if (wmsInnerJobOrder.getOrderStatus() == (byte) 5) {
-                engFeignApi.reportDeliveryOrderOrder(wmsInnerJobOrder);
+                engFeignApi.reportIssueDetails(wmsInnerJobOrder);
             }
         }
         return num;

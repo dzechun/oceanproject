@@ -694,7 +694,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                 //返写移位接口（五环）
                 if("2".equals(wmsInnerJobOrder.getJobOrderType().toString())){
-                    engFeignApi.reportInnerJobOrder(innerJobOrder);
+                    //engFeignApi.reportInnerJobOrder(innerJobOrder);
+                    engFeignApi.reportInnerJobOrder(wmsInnerJobOrder);
                 }
             }
         }

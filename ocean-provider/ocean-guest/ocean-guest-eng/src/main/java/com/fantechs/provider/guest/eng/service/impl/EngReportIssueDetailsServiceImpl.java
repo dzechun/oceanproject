@@ -5,8 +5,8 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
-import com.fantechs.provider.guest.eng.mapper.EngReportDeliveryOrderOrderMapper;
-import com.fantechs.provider.guest.eng.service.EngReportDeliveryOrderOrderService;
+import com.fantechs.provider.guest.eng.mapper.EngReportIssueDetailsMapper;
+import com.fantechs.provider.guest.eng.service.EngReportIssueDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,21 +19,21 @@ import java.util.Map;
  * Created by leifengzhi on 2021/09/01.
  */
 @Service
-public class EngReportDeliveryOrderOrderServiceImpl implements EngReportDeliveryOrderOrderService {
+public class EngReportIssueDetailsServiceImpl implements EngReportIssueDetailsService {
 
     @Resource
-    private EngReportDeliveryOrderOrderMapper engReportDeliveryOrderOrderMapper;
+    private EngReportIssueDetailsMapper engReportIssueDetailsMapper;
     @Resource
     private FiveringFeignApi fiveringFeignApi;
 
 
     @Override
-    public String reportDeliveryOrderOrder(WmsInnerJobOrder wmsInnerJobOrder){
+    public String reportIssueDetails(WmsInnerJobOrder wmsInnerJobOrder){
         String jsonVoiceArray="";
         String projectID="3919";
         Map<String, Object> map=new HashMap<>();
         map.put("jobOrderId",wmsInnerJobOrder.getJobOrderId());
-        List<EngReportDeliveryOrderDto> deliveryOrderOrder = engReportDeliveryOrderOrderMapper.findDeliveryOrderOrder(map);
+        List<EngReportDeliveryOrderDto> deliveryOrderOrder = engReportIssueDetailsMapper.findDeliveryOrderOrder(map);
 
 
         jsonVoiceArray= JsonUtils.objectToJson(deliveryOrderOrder);
