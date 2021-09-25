@@ -19,7 +19,7 @@
     SELECT wodod.delivery_order_det_id,
     wodod.option1,
     wodod.option2,
-    wijod.actual_qty AS option11,
+    wijod.distribution_qty AS option11,
     IFNULL(wodod.remark,'') AS remark,
     wodod.create_time,
     u.user_name AS create_user_name

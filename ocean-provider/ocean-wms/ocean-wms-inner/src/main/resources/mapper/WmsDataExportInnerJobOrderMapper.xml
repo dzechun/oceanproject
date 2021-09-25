@@ -36,7 +36,7 @@
     IFNULL(eposdet.location_num,'') AS location_num,
     eposdet.dominant_term_code,
     eposdet.device_code,
-    eposdet.putaway_qty,
+    wijod.distribution_qty AS putaway_qty,
     IFNULL(bs.storage_code,'default') AS storage_code,
     IFNULL(ecqo.remark,'') AS remark,
     IFNULL(epo.arrival_time,NOW()) AS inner_time,
@@ -67,7 +67,7 @@
     GROUP BY eposdet.packing_order_summary_det_id,ecqo.option1,epos.contract_code,
     epos.purchase_req_order_code,despatch_batch,eposdet.carton_code,
     epro.material_code,location_num,eposdet.dominant_term_code,
-    eposdet.device_code,eposdet.putaway_qty,storage_code,ecqo.remark,
+    eposdet.device_code,wijod.distribution_qty,storage_code,ecqo.remark,
     inner_time,inner_sure_time,record_time,record_user
   </select>
 </mapper>

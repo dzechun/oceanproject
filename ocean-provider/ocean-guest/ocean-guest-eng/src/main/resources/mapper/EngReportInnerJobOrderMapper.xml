@@ -33,7 +33,7 @@
     ecqo.location_num,
     ecqo.dominant_term_code,
     ecqo.device_code,
-    wijod.actual_qty AS plan_qty,
+    wijod.distribution_qty AS plan_qty,
     bsout.option1 AS old_torageId,
     bsin.option1 AS new_storageId,
     wijod.create_time,
