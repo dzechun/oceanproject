@@ -44,10 +44,9 @@
     FROM wms_inner_stock_order_det wisod
     left join ocean_v2.sys_user u on wisod.create_user_id=u.user_id
     left join wms_inner_stock_order wiso on wisod.stock_order_id= wiso.stock_order_id
-    left join wms_inner_inventory wii on wisod.batch_code= wii.batch_code
-    left join wms_inner_inventory wiis on wisod.material_id= wiis.material_id
-    left join wms_inner_inventory wiiss on wiso.warehouse_id= wiiss.warehouse_id
-    left join wms_inner_inventory wiisss on wisod.storage_id= wiisss.storage_id
+    LEFT JOIN wms_inner_inventory wiisss ON wisod.storage_id= wiisss.storage_id
+    AND wisod.material_id=wiisss.material_id
+    AND IFNULL(wisod.batch_code,'')= IFNULL(wiisss.batch_code,'')
     left join base_inventory_status iis on wiisss.inventory_status_id= iis.inventory_status_id
     left join base_material bm on wisod.material_id= bm.material_id
     left join base_storage bs on wisod.storage_id= bs.storage_id
@@ -58,7 +57,6 @@
       </if>
       and wiisss.job_status =1
     </where>
-    GROUP BY wisod.stock_order_det_id
 
   </select>
 </mapper>

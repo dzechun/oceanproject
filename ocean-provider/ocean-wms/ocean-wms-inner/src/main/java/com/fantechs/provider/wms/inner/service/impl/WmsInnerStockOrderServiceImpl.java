@@ -409,17 +409,19 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             wmsInventoryVerification.setModifiedUserId(sysUser.getUserId());
             num +=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
-            //返写盘点数据（五环）
+            //返写盘点数据（五环） 复盘确认时才回写
             //获取程序配置项
-            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-            if(itemListFiveRing.size()<1){
-                throw new BizErrorException("配置项 FiveRing 获取失败");
-            }
-            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if("1".equals(sysSpecItem.getParaValue())) {
-                engFeignApi.reportStockOrder(wmsInventoryVerification);
+            if(wmsInventoryVerification.getProjectType()==(byte)2) {
+                SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+                searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+                List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+                if (itemListFiveRing.size() < 1) {
+                    throw new BizErrorException("配置项 FiveRing 获取失败");
+                }
+                SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+                if ("1".equals(sysSpecItem.getParaValue())) {
+                    engFeignApi.reportStockOrder(wmsInventoryVerification);
+                }
             }
 
         }
