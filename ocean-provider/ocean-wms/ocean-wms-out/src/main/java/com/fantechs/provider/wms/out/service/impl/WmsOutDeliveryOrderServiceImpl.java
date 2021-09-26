@@ -556,6 +556,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }else{
             wmsOutDeliveryOrder.setDeliveryOrderId(outDeliveryOrder.getDeliveryOrderId());
             wmsOutDeliveryOrder.setModifiedTime(new Date());
+            wmsOutDeliveryOrder.setOrderStatus(outDeliveryOrder.getOrderStatus());
             wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
 
             //明细
