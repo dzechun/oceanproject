@@ -414,7 +414,11 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 }
             }else {
                 //收货中
-                engPackingOrderSummaryDetDto.setSummaryDetStatus((byte) 2);
+                if(engPackingOrderSummaryDetDto.getReceivingQty().compareTo(engPackingOrderSummaryDet.getQty())>-1){
+                    engPackingOrderSummaryDetDto.setSummaryDetStatus((byte)3);
+                }else {
+                    engPackingOrderSummaryDetDto.setSummaryDetStatus((byte) 2);
+                }
             }
         }else if(engPackingOrderSummaryDetDto.getButtonType()==2){
             //判断分配数量是否等于收货数量
@@ -758,12 +762,16 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
-    public int writeQty(Long id, BigDecimal qty) {
+    public int writeQty(Long id, BigDecimal qty,Byte type) {
         EngPackingOrderSummaryDet engPackingOrderSummaryDet = engPackingOrderSummaryDetMapper.selectByPrimaryKey(id);
         if(StringUtils.isEmpty(engPackingOrderSummaryDet.getPutawayQty())){
             engPackingOrderSummaryDet.setPutawayQty(BigDecimal.ZERO);
         }
-        engPackingOrderSummaryDet.setPutawayQty(engPackingOrderSummaryDet.getPutawayQty().add(qty));
+        if(type==1){
+            engPackingOrderSummaryDet.setPutawayQty(engPackingOrderSummaryDet.getPutawayQty().add(qty));
+        }else {
+            engPackingOrderSummaryDet.setDistributionQty(engPackingOrderSummaryDet.getDistributionQty().add(qty));
+        }
         return engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDet);
     }
 

@@ -14,10 +14,7 @@ import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFile;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStation;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrder;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPhenotype;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPhenotypeRepair;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderSemiProduct;
+import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.mes.sfc.history.MesSfcHtRepairOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -65,6 +62,8 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     private MesSfcKeyPartRelevanceMapper mesSfcKeyPartRelevanceMapper;
     @Resource
     private RabbitProducer rabbitProducer;
+    @Resource
+    private MesSfcWorkOrderBarcodeMapper mesSfcWorkOrderBarcodeMapper;
 
     @Override
     public List<MesSfcRepairOrderDto> findList(Map<String, Object> map) {
@@ -92,9 +91,11 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
 
     @Override
     public MesSfcRepairOrderDto getWorkOrder(String SNCode,String workOrderCode,Integer SNCodeType){
+        MesSfcRepairOrderDto mesSfcRepairOrderDto = new MesSfcRepairOrderDto();
+
         if(StringUtils.isNotEmpty(SNCode)) {
             //截取工单号
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+           /* SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("WorkOrderPositionOnBarcode");
             List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
             String paraValue = sysSpecItemList.get(0).getParaValue();
@@ -108,7 +109,18 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                 }
             }
 
-            workOrderCode = SNCode.substring(beginIndex, endIndex);
+            workOrderCode = SNCode.substring(beginIndex, endIndex);*/
+
+            Example example = new Example(MesSfcWorkOrderBarcode.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("barcode",SNCode);
+            MesSfcWorkOrderBarcode workOrderBarcode = mesSfcWorkOrderBarcodeMapper.selectOneByExample(example);
+            if (StringUtils.isEmpty(workOrderBarcode)){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"找不到此工单条码");
+            }
+
+            workOrderCode = workOrderBarcode.getWorkOrderCode();
+            mesSfcRepairOrderDto.setWorkOrderBarcodeId(workOrderBarcode.getWorkOrderBarcodeId());
         }
 
         //查询工单信息
@@ -117,7 +129,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         searchMesPmWorkOrder.setCodeQueryMark(1);
         List<MesPmWorkOrderDto> pmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
         if (StringUtils.isEmpty(pmWorkOrderDtos)){
-            throw new BizErrorException("找不到此工单");
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"找不到此工单");
         }
         MesPmWorkOrderDto mesPmWorkOrderDto = pmWorkOrderDtos.get(0);
 
@@ -139,7 +151,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         }
 
 
-        MesSfcRepairOrderDto mesSfcRepairOrderDto = new MesSfcRepairOrderDto();
+        //设值返回
         mesSfcRepairOrderDto.setWorkOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
         mesSfcRepairOrderDto.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
         if(SNCodeType == 1){
