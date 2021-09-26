@@ -44,4 +44,6 @@ public class SearchBaseMaterialOwner extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "asc",value = "顺序")
     private Byte asc;
+
+
 }

@@ -180,46 +180,6 @@
         </where>
         order by wipo.create_time desc
     </select>
-
-    <select id="findStorage" resultType="java.lang.Long">
-        SELECT storage_id
-        FROM base_storage_material
-        WHERE material_id = #{materialId} and org_id=#{orgId}
-    </select>
-    <select id="SelectStorage" resultType="java.lang.Long">
-        SELECT storage_id
-        FROM base_storage
-        WHERE surplus_can_put_salver > 0
-        ORDER BY putaway_move_line_no, picking_move_line_no DESC LIMIT 1
-    </select>
-
-    <select id="findStorageName" resultType="java.lang.String">
-        select storage_name
-        From base_storage
-        where storage_id = #{storageId}
-    </select>
-    <select id="findWarehouseName" resultType="java.lang.String">
-        select warehouse_name
-        FROM base_warehouse
-        where warehouse_id = #{warehouseId}
-    </select>
-    <select id="findAsnCode" resultType="java.lang.String" parameterType="java.lang.Long">
-        select asn_code
-        FROM wms_in_asn_order
-        where asn_order_id = #{asnOrderId}
-    </select>
-    <select id="findOmWarehouseId" resultType="java.lang.Long">
-        select in_warehouse_id
-        FROM om_transfer_order
-        where transfer_order_id = #{sourceId}
-    </select>
-
-    <select id="findStorageId" resultType="java.lang.Long">
-        select storage_id From base_storage where warehouse_id = #{warehouseId} and storage_type=#{storageType} and org_id=#{orgId} limit 1
-    </select>
-    <select id="findMaterialCode" resultType="java.lang.String">
-        select material_code FROM base_material where material_id = #{materialId} and org_id=#{orgId}
-    </select>
     <select id="workBarCodeList" resultType="java.lang.String">
         SELECT msfwo.barcode FROM mes_sfc_product_pallet_det msfpd
         LEFT JOIN mes_sfc_work_order_barcode msfwo ON msfpd.work_order_barcode_id = msfwo.work_order_barcode_id

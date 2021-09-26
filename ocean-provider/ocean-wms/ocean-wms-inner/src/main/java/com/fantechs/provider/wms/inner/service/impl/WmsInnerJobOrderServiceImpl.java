@@ -16,7 +16,9 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
@@ -1079,7 +1081,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             materialId = wms.getMaterialId();
         }
 
-        String materialCode = wmsInPutawayOrderMapper.findMaterialCode(materialId,sysUser.getOrganizationId());
+        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+        searchBaseMaterial.setMaterialId(materialId);
+        List<BaseMaterial> baseMaterialList = baseFeignApi.findList(searchBaseMaterial).getData();
+        String materialCode = null;
+        if(StringUtils.isNotEmpty(baseMaterialList)){
+            materialCode = baseMaterialList.get(0).getMaterialCode();
+        }
         if (StringUtils.isNotEmpty(materialCode) && materialCode.equals(barCode)) {
             map.put("SN", "false");
             return map;
@@ -1100,7 +1108,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     private int addInventoryDet(Long asnOrderId, String jobOrderCode, WmsInnerJobOrderDet wmsInnerJobOrderDet, String barcode) {
         //获取完工入库单单号
-        String asnOrderCode = wmsInPutawayOrderMapper.findAsnCode(asnOrderId);
+        List<WmsInAsnOrderDto> wmsInAsnOrderDtoList = inFeignApi.findList(SearchWmsInAsnOrder.builder()
+                .asnOrderId(asnOrderId)
+                .build()).getData();
+        if(StringUtils.isEmpty(wmsInAsnOrderDtoList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404);
+        }
+        String asnOrderCode = wmsInAsnOrderDtoList.get(0).getSourceOrderCode();
         Example example = new Example(WmsInnerInventoryDet.class);
         example.createCriteria().andEqualTo("asnCode", asnOrderCode).andEqualTo("storageId", wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId", wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcode", barcode).andEqualTo("barcodeStatus",2).andEqualTo("orgId",wmsInnerJobOrderDet.getOrgId());
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);

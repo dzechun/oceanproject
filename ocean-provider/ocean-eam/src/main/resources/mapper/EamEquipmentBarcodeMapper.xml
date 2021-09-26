@@ -61,7 +61,8 @@
     select <include refid="Base_Column_List"></include>,
     ee.equipment_code,ee.equipment_name,ee.equipment_desc,ee.equipment_model,
     eec.equipment_category_name,eec.equipment_category_id,
-    DATEDIFF(NOW(),eeb.create_time) as current_usage_days,
+    IF(eeb.current_usage_days is null,DATEDIFF(NOW(),eeb.create_time),DATEDIFF(NOW(),eeb.create_time)+eeb.current_usage_days)
+    as current_usage_days,
     DATEDIFF(NOW(),eeb.last_time_maintain_time) as current_maintain_usage_days,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
