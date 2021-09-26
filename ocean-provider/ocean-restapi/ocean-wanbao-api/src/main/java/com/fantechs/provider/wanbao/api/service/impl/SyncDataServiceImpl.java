@@ -637,32 +637,25 @@ public class SyncDataServiceImpl implements SyncDataService {
         if ("0".equals(jsonObject.get("all"))) {
             map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
         }
-       // map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
         // 执行查询
         DynamicDataSourceHolder.putDataSouce("thirdary");
         List<MiddleProduct> barcodeDatas = middleProductMapper.findBarcodeData(map);
+        log.info("------barcodeDatas----------"+barcodeDatas);
         DynamicDataSourceHolder.removeDataSource();
 
-        if (StringUtils.isNotEmpty()) {
+        if (StringUtils.isNotEmpty(barcodeDatas)) {
             // 记录日志
            long start = System.currentTimeMillis();
            for(MiddleProduct middleProduct : barcodeDatas){
                if(StringUtils.isEmpty(middleProduct) || StringUtils.isEmpty(middleProduct.getCustomerBarcode()) || StringUtils.isEmpty(middleProduct.getBarcode())){
                    continue;
                }
-             //  log.info("------场内码、产品条码查询记录："+middleProduct);
                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
                searchMesSfcBarcodeProcess.setBarcode(middleProduct.getBarcode());
                List<MesSfcBarcodeProcess> mesSfcBarcodeProcess = sfcFeignApi.findBarcode(searchMesSfcBarcodeProcess).getData();
                if(StringUtils.isNotEmpty(mesSfcBarcodeProcess) && StringUtils.isEmpty(mesSfcBarcodeProcess.get(0).getCustomerBarcode())){
-                   /*if(StringUtils.isNotEmpty(middleProduct.getCustomerBarcode())) {*/
                        mesSfcBarcodeProcess.get(0).setCustomerBarcode(middleProduct.getCustomerBarcode());
                        sfcFeignApi.update(mesSfcBarcodeProcess.get(0));
-                   /*}else{
-                       apiLog.setResponseData(middleProduct.getBarcode() + "，查询到的三星产品唯一码为空，不同步此条数据");
-                       securityFeignApi.add(apiLog);
-                       continue;
-                   }*/
                }else{
                    apiLog.setResponseData(middleProduct.getBarcode() + "，此产品条码未匹配到对应的过站数据，不同步此条数据");
                    securityFeignApi.add(apiLog);
@@ -686,6 +679,5 @@ public class SyncDataServiceImpl implements SyncDataService {
 
 
     }
-
 
 }

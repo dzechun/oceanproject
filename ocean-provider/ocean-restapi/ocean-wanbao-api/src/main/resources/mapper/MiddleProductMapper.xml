@@ -26,7 +26,8 @@
         LEFT JOIN  ProductTrace PT ON P.Id= pt.ProductId
         <where>
             pt.Status= '1'
-            --AND pt.StationId= '5eccf61c-de83-4380-ab99-3e722141ebe3'
+            AND  PP.PlanName= 'ZA2107-0098' AND
+            pt.StationId= '5eccf61c-de83-4380-ab99-3e722141ebe3'
             <!--<if test="date != null and date != ''">
                 AND wdj.scheduled_start_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>-->
@@ -34,7 +35,7 @@
     </select>
 
     <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleProduct">
-        INSERT INTO "K3WMS"."middle_product" (  "product_id", "plan_name", "barcode", "customer_barcode", "station_id", "status", "create_time")
+        INSERT INTO "SJ"."middle_product" (  "product_id", "plan_name", "barcode", "customer_barcode", "station_id", "status", "create_time")
         VALUES
             (
             #{productId},

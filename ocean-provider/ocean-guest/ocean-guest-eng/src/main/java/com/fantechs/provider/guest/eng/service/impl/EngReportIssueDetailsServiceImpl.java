@@ -39,8 +39,8 @@ public class EngReportIssueDetailsServiceImpl implements EngReportIssueDetailsSe
         jsonVoiceArray= JsonUtils.objectToJson(deliveryOrderOrder);
         String s0=jsonVoiceArray.replaceAll("deliveryOrderDetId","WMSKey");
         String s1=s0.replaceAll("option2","ISGUID");
-        String s2=s1.replaceAll("option1","IDGUID");
-        String s3=s2.replaceAll("option11","实发量");
+        String s2=s1.replaceAll("option11","实发量");
+        String s3=s2.replaceAll("option1","IDGUID");
         String s4=s3.replaceAll("remark","发料备注");
         String s5=s4.replaceAll("createTime","登记时间");
         String s6=s5.replaceAll("createUserName","登记人");

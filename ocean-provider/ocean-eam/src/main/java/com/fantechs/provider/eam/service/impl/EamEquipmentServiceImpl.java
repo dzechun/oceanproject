@@ -594,8 +594,9 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                     eamEquipmentBarcode.setModifiedTime(new Date());
                     barcodeList.add(eamEquipmentBarcode);
                 }
-                eamEquipmentBarcodeMapper.insertList(barcodeList);
-
+                if(StringUtils.isNotEmpty(barcodeList)) {
+                    eamEquipmentBarcodeMapper.insertList(barcodeList);
+                }
 
                 LinkedList<EamSparePartReEqu> sparePartReEqus = new LinkedList<>();
                 for (EamEquipmentImport eamEquipmentImport : eamEquipmentImports1) {
@@ -609,7 +610,9 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                     eamSparePartReEqu.setOrgId(currentUser.getOrganizationId());
                     sparePartReEqus.add(eamSparePartReEqu);
                 }
-                eamSparePartReEquMapper.insertList(sparePartReEqus);
+                if(StringUtils.isNotEmpty(sparePartReEqus)) {
+                    eamSparePartReEquMapper.insertList(sparePartReEqus);
+                }
             }
 
             /*for (EamEquipmentImport eamEquipmentImport : eamEquipmentImportList) {

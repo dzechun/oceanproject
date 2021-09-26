@@ -6,5 +6,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface DataSource {
-    String value() default "secondary";
+    String value() default "thirdary";
 }

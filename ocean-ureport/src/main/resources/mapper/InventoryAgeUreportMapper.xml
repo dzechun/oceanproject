@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.InventoryAgeUreportMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.entity.InventoryAge">
+        <id column="inventory_id" jdbcType="BIGINT" property="inventoryId" />
+        <result column="serial_number" jdbcType="INTEGER" property="serialNumber"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="qty" jdbcType="DECIMAL" property="qty"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
+    </resultMap>
+
+    <select id="findList" resultMap="BaseResultMap">
+        SELECT
+                (@i:=@i+1) as serial_number,
+                bo.organization_name,
+                bw.warehouse_name,
+                bwa.warehouse_area_code,
+                bs.storage_code,
+                bm.material_code,
+                bm.material_name,
+                wii.packing_unit_name,
+                wii.inventory_id
+        FROM wms_inner_inventory wii
+                 LEFT JOIN base_warehouse bw ON wii.warehouse_id = bw.warehouse_id
+                 LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
+                 LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
+                 LEFT JOIN base_material bm ON wii.material_id = bm.material_id
+                 LEFT JOIN fantech_imes_v2.base_organization bo ON wii.org_id = bo.organization_id,(SELECT @i:=0)j
+        <where>
+            <if test="warehouseId!=null and warehouseId!=''">
+                and bw.warehouse_id =#{warehouseId}
+            </if>
+            <if test="storageId!=null and storageId!=''">
+                and bs.storage_id =#{storageId}
+            </if>
+            <if test="warehouseAreaId!=null and warehouseAreaId!=''">
+                and bwa.warehouse_area_id =#{warehouseAreaId}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and bm.material_id like = #{materialId}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and bo.organization_id =#{orgId}
+            </if>
+        </where>
+        order by wii.create_time desc
+    </select>
+</mapper>
