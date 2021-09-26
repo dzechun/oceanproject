@@ -1,14 +1,17 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
 import com.fantechs.common.base.general.dto.restapi.EngDataExportEngPackingOrderDto;
+import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
+import com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngDataExportEngPackingOrderMapper;
 import com.fantechs.provider.guest.eng.service.EngDataExportEngPackingOrderService;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -25,6 +28,8 @@ public class EngDataExportEngPackingOrderServiceImpl extends BaseService<EngData
     @Resource
     private EngDataExportEngPackingOrderMapper engDataExportEngPackingOrderMapper;
     @Resource
+    private EngContractQtyOrderMapper engContractQtyOrderMapper;
+    @Resource
     FiveringFeignApi fiveringFeignApi;
 
     @Override
@@ -39,6 +44,16 @@ public class EngDataExportEngPackingOrderServiceImpl extends BaseService<EngData
         Map<String, Object> map=new HashMap<>();
         map.put("packingOrderId",engPackingOrder.getPackingOrderId());
         List<EngDataExportEngPackingOrderDto> listDto=findExportData(map);
+        for (EngDataExportEngPackingOrderDto item : listDto) {
+            Example example = new Example(EngContractQtyOrder.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("contractCode",item.getContractCode());
+            List<EngContractQtyOrder> listOrder=engContractQtyOrderMapper.selectByExample(example);
+            if(listOrder.size()>0){
+                item.setOption2(listOrder.get(0).getOption2());
+            }
+        }
+
         jsonVoiceArray= JsonUtils.objectToJson(listDto);
         String s0=jsonVoiceArray.replaceAll("option2","PSGUID");
         String s1=s0.replaceAll("materialCode","材料编码");

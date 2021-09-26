@@ -19,6 +19,10 @@ public class EngDataExportEngPackingOrderDto implements Serializable {
     @Column(name = "option2")
     private String option2;
 
+    @ApiModelProperty(name="contractCode",value = "合同号")
+    @Column(name = "contract_code")
+    private String contractCode;
+
     @ApiModelProperty(name="materialCode",value = "材料编码")
     @Column(name = "material_code")
     private String materialCode;

@@ -46,9 +46,6 @@ public class EngReportStockOrderDto implements Serializable {
     @ApiModelProperty(name="inventoryStatusName",value = "库存状态名称")
     private String inventoryStatusName;  //材料状态
 
-    @ApiModelProperty(name="storageId",value = "库位id")
-    private Long storageId;
-
     @ApiModelProperty(name="createTime",value = "登记时间")
     private String createTime;
 

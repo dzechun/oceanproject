@@ -57,7 +57,7 @@
     AND epos.device_code=ecqo.device_code
     AND bm.material_code=ecqo.material_code
     LEFT JOIN eng_purchase_req_order epro ON epro.option3=ecqo.option3
-    LEFT JOIN base_storage bs ON eposdet.putaway_storage_id=bs.storage_id
+    LEFT JOIN base_storage bs ON wijod.in_storage_id=bs.storage_id
     LEFT JOIN ocean_v2.sys_user u ON wijo.modified_user_id=u.user_id
     <where>
       <if test="jobOrderId!=null and jobOrderId!=''">
