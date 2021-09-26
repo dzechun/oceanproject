@@ -27,18 +27,18 @@
   <sql id="Base_Column_List">
     epos.packing_order_id,
     ecqo.option2,
-    epro.material_code,
+    ecqo.material_code,
     bm.material_name,
     eposdet.spec,
     eposdet.unit_name,
-    epro.location_num,
-    epro.design_qty,
-    epro.surplus_qty,
-    epro.purchase_req_qty,
+    ecqo.location_num,
+    IFNULL(epro.design_qty,0) AS design_qty,
+    IFNULL(epro.surplus_qty,0) AS surplus_qty,
+    IFNULL(epro.purchase_req_qty,0) AS purchase_req_qty,
     ecqo.dominant_term_code,
     ecqo.device_code,
-    epro.material_purpose,
-    epro.remark,
+    ecqo.material_purpose,
+    ecqo.remark,
     epos.modified_user_id AS record_user,
     epo.modified_time AS record_time,
     SUM(eposdet.qty) AS ch_qty
@@ -60,9 +60,9 @@
         and epos.packing_order_id = #{packingOrderId}
       </if>
     </where>
-    GROUP BY epos.packing_order_id,ecqo.option2,epro.material_code,bm.material_name,eposdet.spec,eposdet.unit_name,
-    epro.location_num,epro.design_qty,epro.surplus_qty,epro.purchase_req_qty,
-    ecqo.dominant_term_code,ecqo.device_code,epro.material_purpose,epro.remark,record_user,record_time
+    GROUP BY epos.packing_order_id,ecqo.option2,ecqo.material_code,bm.material_name,eposdet.spec,eposdet.unit_name,
+    ecqo.location_num,epro.design_qty,epro.surplus_qty,epro.purchase_req_qty,
+    ecqo.dominant_term_code,ecqo.device_code,ecqo.material_purpose,ecqo.remark,record_user,record_time
     HAVING ecqo.option2 IS NOT NULL
   </select>
 </mapper>
