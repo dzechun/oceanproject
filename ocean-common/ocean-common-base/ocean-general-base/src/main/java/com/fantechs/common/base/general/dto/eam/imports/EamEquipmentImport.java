@@ -201,4 +201,45 @@ public class EamEquipmentImport implements Serializable {
     @ApiModelProperty(name="maintainWarningDays",value = "保养警告天数")
     @Excel(name = "保养警告天数", height = 20, width = 30)
     private Integer maintainWarningDays;
+
+    /**
+     * 资产编码
+     */
+    @Excel(name = "资产编码",  height = 20, width = 30)
+    @ApiModelProperty(name="assetCode" ,value="资产编码")
+    private String assetCode;
+
+    /**
+     * 设备条码
+     */
+    @Excel(name = "设备条码", height = 20, width = 30)
+    @ApiModelProperty(name="equipmentBarcode" ,value="治具条码")
+    private String equipmentBarcode;
+
+    /**
+     * 已使用次数
+     */
+    @Excel(name = "已使用次数", height = 20, width = 30)
+    @ApiModelProperty(name="currentUsageTime" ,value="已使用次数")
+    private Integer currentUsageTime;
+
+    /**
+     * 已使用天数
+     */
+    @Excel(name = "已使用天数", height = 20, width = 30)
+    @ApiModelProperty(name="currentUsageDays" ,value="已使用天数")
+    private Integer currentUsageDays;
+
+    /**
+     * 备用件编码
+     */
+    @Excel(name = "备用件编码",  height = 20, width = 30)
+    @ApiModelProperty(name="sparePartCode" ,value="备用件编码")
+    private String sparePartCode;
+
+    /**
+     * 备用件ID
+     */
+    @ApiModelProperty(name="sparePartId" ,value="备用件ID")
+    private Long sparePartId;
 }

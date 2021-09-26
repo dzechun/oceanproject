@@ -159,6 +159,14 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
     public int save(EamEquPointInspectionOrder eamEquPointInspectionOrder) {
         SysUser user = getUser();
 
+        //修改设备状态为点检中
+        EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodeMapper.selectByPrimaryKey(eamEquPointInspectionOrder.getEquipmentBarcodeId());
+        if(eamEquipmentBarcode.getEquipmentStatus() == 6){
+            throw new BizErrorException("点检中的设备不能新建点检单");
+        }
+        eamEquipmentBarcode.setEquipmentStatus((byte)6);
+        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+
         // 新增点检单
         eamEquPointInspectionOrder.setEquPointInspectionOrderCode(CodeUtils.getId("SBDJ-"));
         eamEquPointInspectionOrder.setCreateUserId(user.getUserId());
@@ -192,10 +200,6 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
             eamEquPointInspectionOrderDetService.batchSave(inspectionOrderDets);
         }
 
-        //修改设备状态为点检中
-        EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodeMapper.selectByPrimaryKey(eamEquPointInspectionOrder.getEquipmentBarcodeId());
-        eamEquipmentBarcode.setEquipmentStatus((byte)6);
-        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
 
         return i;
     }
@@ -266,6 +270,21 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
             // 批量删除点检单明细
             eamEquPointInspectionOrderDetService.batchDelete(projectItems);
         }
+
+        //修改设备状态为待生产
+        List<EamEquPointInspectionOrder> eamEquPointInspectionOrders = eamEquPointInspectionOrderMapper.selectByIds(ids);
+        List<Long> barcodeIds = eamEquPointInspectionOrders.stream().map(EamEquPointInspectionOrder::getEquipmentBarcodeId).collect(Collectors.toList());
+        Example example = new Example(EamEquipmentBarcode.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("equipmentBarcodeId",barcodeIds);
+        List<EamEquipmentBarcode> eamEquipmentBarcodes = eamEquipmentBarcodeMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(eamEquipmentBarcodes)) {
+            for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodes) {
+                eamEquipmentBarcode.setEquipmentStatus((byte) 5);
+                eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+            }
+        }
+
         // 批量删除点检单
         return eamEquPointInspectionOrderMapper.deleteByIds(ids);
     }
