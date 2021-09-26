@@ -173,6 +173,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                 engPackingOrderSummaryDetDto.setModifiedUserId(user.getUserId());
                 engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDetDto);
             }
+            engPackingOrderSummaryDto.setPutawayStorageId(putStorageId);
             engPackingOrderSummaryDto.setSummaryStatus((byte)1);
             engPackingOrderSummaryDto.setModifiedTime(new Date());
             engPackingOrderSummaryDto.setModifiedUserId(user.getUserId());

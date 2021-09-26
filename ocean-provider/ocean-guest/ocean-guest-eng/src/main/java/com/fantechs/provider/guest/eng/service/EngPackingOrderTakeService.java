@@ -78,7 +78,8 @@ public interface EngPackingOrderTakeService {
      * 上架数量反写
      * @param id
      * @param qty
+     * @param type 1-上架数量 2-分配数量
      * @return
      */
-    int writeQty(Long id, BigDecimal qty);
+    int writeQty(Long id, BigDecimal qty,Byte type);
 }

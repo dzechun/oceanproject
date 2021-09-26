@@ -28,7 +28,7 @@ public interface EngFeignApi {
 
     @ApiOperation("收货作业反写上架数量")
     @PostMapping("/engPackingOrderTask/writeQty")
-    ResponseEntity writeQty(@RequestParam Long id, @RequestParam BigDecimal qty);
+    ResponseEntity writeQty(@RequestParam Long id, @RequestParam BigDecimal qty,@RequestParam Byte type);
 
     @ApiOperation("返写盘点单")
     @PostMapping("/reportStockOrder/writeQty")
