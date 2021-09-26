@@ -266,9 +266,11 @@ public class ImportDataServiceImpl implements ImportDataService {
                     detDto.setPickingQty(new BigDecimal(0));
                     //包装单位 packing_unit_name option2
                     detDto.setPackingUnitName(baseList.getData().get(0).getOption2());
-                    //发货库位和发货仓库
+                    //发货库位和发货仓库 库位类型为发货的 storageType=3
                     SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
-                    searchBaseStorage.setStorageCode("default");
+                    //searchBaseStorage.setStorageCode("default");
+                    //storageType
+                    searchBaseStorage.setStorageType((byte)3);
                     searchBaseStorage.setOrgId(orgId);
                     ResponseEntity<List<BaseStorage>> listStorage=baseFeignApi.findList(searchBaseStorage);
                     if(StringUtils.isNotEmpty(listStorage.getData())){

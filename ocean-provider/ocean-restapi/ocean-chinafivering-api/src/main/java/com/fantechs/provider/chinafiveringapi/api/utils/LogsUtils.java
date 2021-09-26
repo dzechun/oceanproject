@@ -20,7 +20,7 @@ public class LogsUtils {
      * @param responseData
      * @param requestParameter
      */
-    public void  addlog(Byte result,Byte type,Long orgId,String responseData,String requestParameter){
+    public void  addlog(Byte result,Byte type,Long orgId,String responseData,String requestParameter,String remark){
         SysApiLog sysApiLog = new SysApiLog();
         sysApiLog.setThirdpartySysName("五环回传接口");
         sysApiLog.setCallResult(result);
@@ -31,6 +31,7 @@ public class LogsUtils {
         sysApiLog.setResponseTime(new Date());
         sysApiLog.setResponseData(responseData);
         sysApiLog.setRequestParameter(requestParameter);
+        sysApiLog.setRemark(remark);
         securityFeignApi.add(sysApiLog);
     }
 }

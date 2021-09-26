@@ -54,7 +54,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         }
 
         //记录日志
-        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray);
+        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray,"writeDeliveryDetails");
         return baseExecuteResultDto;
     }
 
@@ -90,7 +90,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         }
 
         //记录日志
-        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray);
+        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray,"writeMakeInventoryDetails");
         return baseExecuteResultDto;
     }
 
@@ -126,7 +126,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         }
 
         //记录日志
-        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray);
+        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray,"writeIssueDetails");
         return baseExecuteResultDto;
     }
 
@@ -162,7 +162,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         }
 
         //记录日志
-        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray);
+        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray,"writeMoveInventoryDetails");
         return baseExecuteResultDto;
     }
 
@@ -197,7 +197,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         }
 
         //记录日志
-        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray);
+        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray,"writePackingLists");
 
         return baseExecuteResultDto;
     }
