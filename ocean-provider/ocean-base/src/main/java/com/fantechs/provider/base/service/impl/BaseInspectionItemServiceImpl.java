@@ -256,7 +256,6 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
         LinkedList<BaseInspectionItem> list = new LinkedList<>();
         LinkedList<BaseHtInspectionItem> htList = new LinkedList<>();
         LinkedList<BaseInspectionItemImport> inspectionItemImports = new LinkedList<>();
-        LinkedList<BaseInspectionItem> detList = new LinkedList<>();
 
         for (int i = 0; i < baseInspectionItemImports.size(); i++) {
             BaseInspectionItemImport baseInspectionItemImport = baseInspectionItemImports.get(i);
@@ -329,6 +328,7 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
                 htList.add(baseHtInspectionItem);
 
                 //新增检验项目明细数据
+                LinkedList<BaseInspectionItem> detList = new LinkedList<>();
                 for (BaseInspectionItemImport baseInspectionItemImport : baseInspectionItemImports1) {
                     BaseInspectionItem inspectionItem = new BaseInspectionItem();
                     inspectionItem.setParentId(baseInspectionItem.getInspectionItemId());

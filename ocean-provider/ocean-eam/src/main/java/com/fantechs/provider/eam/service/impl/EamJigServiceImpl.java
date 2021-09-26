@@ -8,9 +8,12 @@ import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
 import com.fantechs.common.base.general.dto.eam.EamJigDto;
 import com.fantechs.common.base.general.dto.eam.EamSparePartReJigDto;
 import com.fantechs.common.base.general.dto.eam.imports.EamJigImport;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionStandardDet;
+import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
@@ -23,6 +26,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.fileserver.service.FileFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamJigService;
@@ -32,8 +36,10 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -58,6 +64,8 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     private SecurityFeignApi securityFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private EamSparePartMapper eamSparePartMapper;
 
     @Override
     public List<EamJigDto> findList(Map<String, Object> map) {
@@ -407,7 +415,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
             }
 
             //判断集合中是否存在该条数据
-            boolean tag = false;
+           /* boolean tag = false;
             if (StringUtils.isNotEmpty(eamJigImportList)){
                 for (EamJigImport jigImport: eamJigImportList) {
                     if (jigCode.equals(jigImport.getJigCode())){
@@ -419,7 +427,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
             if (tag){
                 fail.add(i+4);
                 continue;
-            }
+            }*/
 
             //治具类别信息
             Example example1 = new Example(EamJigCategory.class);
@@ -519,12 +527,82 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
                 eamJigImport.setVolume(volume);
             }
 
+            //备用件
+            String sparePartCode = eamJigImport.getSparePartCode();
+            if(StringUtils.isNotEmpty(sparePartCode)){
+                Example example2 = new Example(EamSparePart.class);
+                Example.Criteria criteria2 = example2.createCriteria();
+                criteria2.andEqualTo("orgId",currentUser.getOrganizationId())
+                        .andEqualTo("sparePartCode",sparePartCode);
+                EamSparePart eamSparePart = eamSparePartMapper.selectOneByExample(example2);
+                if (StringUtils.isEmpty(eamSparePart)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamJigImport.setSparePartId(eamSparePart.getSparePartId());
+            }
+
             eamJigImportList.add(eamJigImport);
         }
 
         if (StringUtils.isNotEmpty(eamJigImportList)){
+            HashMap<String, List<EamJigImport>> map = eamJigImportList.stream().collect(Collectors.groupingBy(EamJigImport::getJigCode, HashMap::new, Collectors.toList()));
+            Set<String> codeList = map.keySet();
+            for (String code : codeList) {
+                //主表
+                List<EamJigImport> eamJigImports1 = map.get(code);
+                EamJig eamJig = new EamJig();
+                BeanUtils.copyProperties(eamJigImports1.get(0),eamJig);
+                eamJig.setCreateTime(new Date());
+                eamJig.setCreateUserId(currentUser.getUserId());
+                eamJig.setModifiedTime(new Date());
+                eamJig.setModifiedUserId(currentUser.getUserId());
+                eamJig.setOrgId(currentUser.getOrganizationId());
+                eamJig.setStatus((byte)1);
+                list.add(eamJig);
+                success += eamJigMapper.insertUseGeneratedKeys(eamJig);
 
-            for (EamJigImport eamJigImport : eamJigImportList) {
+                //明细
+                LinkedList<EamJigBarcode> barcodeList = new LinkedList<>();
+                for (EamJigImport eamJigImport : eamJigImports1) {
+                    if (StringUtils.isEmpty(eamJigImport.getAssetCode(),eamJigImport.getJigBarcode())) {
+                        continue;
+                    }
+                    EamJigBarcode eamJigBarcode = new EamJigBarcode();
+                    BeanUtils.copyProperties(eamJigImport, eamJigBarcode);
+                    eamJigBarcode.setCurrentUsageDays(StringUtils.isEmpty(eamJigBarcode.getCurrentUsageDays())?0:eamJigBarcode.getCurrentUsageDays());
+                    eamJigBarcode.setCurrentUsageTime(StringUtils.isEmpty(eamJigBarcode.getCurrentUsageTime())?0:eamJigBarcode.getCurrentUsageTime());
+                    eamJigBarcode.setJigId(eamJig.getJigId());
+                    eamJigBarcode.setStatus((byte) 1);
+                    eamJigBarcode.setUsageStatus((byte)1);
+                    eamJigBarcode.setCreateUserId(currentUser.getUserId());
+                    eamJigBarcode.setCreateTime(new Date());
+                    eamJigBarcode.setModifiedUserId(currentUser.getUserId());
+                    eamJigBarcode.setModifiedTime(new Date());
+                    barcodeList.add(eamJigBarcode);
+                }
+                if(StringUtils.isNotEmpty(barcodeList)) {
+                    eamJigBarcodeMapper.insertList(barcodeList);
+                }
+
+                LinkedList<EamSparePartReJig> sparePartReJigs = new LinkedList<>();
+                for (EamJigImport eamJigImport : eamJigImports1) {
+                    if (StringUtils.isEmpty(eamJigImport.getSparePartCode())) {
+                        continue;
+                    }
+                    EamSparePartReJig eamSparePartReJig = new EamSparePartReJig();
+                    BeanUtils.copyProperties(eamJigImport, eamSparePartReJig);
+                    eamSparePartReJig.setJigId(eamJig.getJigId());
+                    eamSparePartReJig.setStatus((byte) 1);
+                    eamSparePartReJig.setOrgId(currentUser.getOrganizationId());
+                    sparePartReJigs.add(eamSparePartReJig);
+                }
+                if(StringUtils.isNotEmpty(sparePartReJigs)) {
+                    eamSparePartReJigMapper.insertList(sparePartReJigs);
+                }
+            }
+
+            /*for (EamJigImport eamJigImport : eamJigImportList) {
                 EamJig eamJig = new EamJig();
                 BeanUtils.copyProperties(eamJigImport,eamJig);
                 eamJig.setCreateTime(new Date());
@@ -535,7 +613,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
                 eamJig.setStatus((byte)1);
                 list.add(eamJig);
             }
-            success = eamJigMapper.insertList(list);
+            success = eamJigMapper.insertList(list);*/
 
             if(StringUtils.isNotEmpty(list)){
                 for (EamJig eamJig : list) {

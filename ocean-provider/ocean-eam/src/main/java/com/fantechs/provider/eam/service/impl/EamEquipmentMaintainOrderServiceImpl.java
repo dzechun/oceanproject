@@ -163,6 +163,14 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
     public int save(EamEquipmentMaintainOrder eamEquipmentMaintainOrder) {
         SysUser user = getUser();
 
+        //修改设备状态为保养中
+        EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodeMapper.selectByPrimaryKey(eamEquipmentMaintainOrder.getEquipmentBarcodeId());
+        if(eamEquipmentBarcode.getEquipmentStatus() == 7){
+            throw new BizErrorException("保养中的设备不能新建保养单");
+        }
+        eamEquipmentBarcode.setEquipmentStatus((byte)7);
+        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+
         // 新增保养单
         eamEquipmentMaintainOrder.setEquipmentMaintainOrderCode(CodeUtils.getId("SBBY-"));
         eamEquipmentMaintainOrder.setCreateUserId(user.getUserId());
@@ -196,10 +204,6 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
             eamEquipmentMaintainOrderDetService.batchSave(maintainOrderDets);
         }
 
-        //修改设备状态为保养中
-        EamEquipmentBarcode eamEquipmentBarcode = eamEquipmentBarcodeMapper.selectByPrimaryKey(eamEquipmentMaintainOrder.getEquipmentBarcodeId());
-        eamEquipmentBarcode.setEquipmentStatus((byte)7);
-        eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
 
         return i;
     }

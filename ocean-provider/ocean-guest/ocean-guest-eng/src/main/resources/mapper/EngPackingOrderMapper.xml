@@ -141,22 +141,6 @@ spo.ago_confirm_user_id
     </where>
     order by spo.create_time desc
   </select>
-
-  <select id="findWarehouse" resultType="java.lang.Long">
-    select warehouse_id FROM base_warehouse where org_id=#{orgId}
-  </select>
-  <select id="findStorage" resultType="java.lang.Long">
-    select storage_id FROM base_storage where storage_type=2 and org_id=#{orgId} and warehouse_id=#{warehouseId}
-  </select>
-  <select id="findPutStorage" resultType="java.lang.Long">
-    select storage_id FROM base_storage where storage_type=1 and org_id=#{orgId} and warehouse_id=#{warehouseId} ORDER BY storage_id DESC LIMIT 1
-  </select>
-  <select id="findInventoryStatus" resultType="java.lang.Long">
-    select inventory_status_id FROM  base_inventory_status where org_id=#{orgId} and warehouse_id=#{warehouseId}
-  </select>
-  <select id="findMaterialOwner" resultType="java.lang.Long">
-    select material_owner_id FROM base_material_owner where org_id=#{orgId}
-  </select>
   <select id="findMaterialPurpose" resultType="java.lang.String">
     select material_purpose FROM eng_contract_qty_order where contract_code=#{contractCode} and device_code=#{deviceCode}
 and dominant_term_code=#{dominantTermCode} and location_num=#{locationNum} and material_code=#{materialCode} and supplier_id=#{supplierId}

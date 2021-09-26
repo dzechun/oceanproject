@@ -66,7 +66,8 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
     ej.jig_code,ej.jig_name,ej.jig_desc,ej.jig_model,ejc.jig_category_name,ejc.jig_category_id,su.user_name,
-    DATEDIFF(NOW(),ejb.create_time)+ejb.current_usage_days as current_usage_days,
+    IF(ejb.current_usage_days is null,DATEDIFF(NOW(),ejb.create_time),DATEDIFF(NOW(),ejb.create_time)+ejb.current_usage_days)
+    as current_usage_days,
     DATEDIFF(NOW(),ejb.last_time_maintain_time) as current_maintain_usage_days,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
