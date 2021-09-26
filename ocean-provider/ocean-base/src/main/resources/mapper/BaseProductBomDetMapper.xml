@@ -121,11 +121,12 @@
     <select id="findNextLevelProductBomDet" parameterType="long" resultMap="BaseResultMapDto">
         select <include refid="Base_Column_List"/>,
         sm.material_code as material_code,sm.material_name as material_name,sm.material_version as material_version,
-        sm.material_desc as material_desc,sp.process_name as process_name ,sp.process_code as process_code,
-        sp.process_desc as process_desc ,u.user_name as create_user_name,
-        s.user_name as modified_user_name,bo.organization_name
+        sm.material_desc as material_desc,sp.process_name as process_name ,sp.process_code as process_code, sp.process_desc as process_desc ,
+        m.material_code as sub_material_code,m.material_name as sub_material_name,m.material_version as sub_material_version,m.material_desc as sub_material_desc,
+        u.user_name as create_user_name,s.user_name as modified_user_name,bo.organization_name
         from base_product_bom_det spbd
         left join base_material sm on spbd.material_id=sm.material_id
+        left join base_material m on spbd.sub_material_id=m.material_id
         left join base_process sp on spbd.process_id=sp.process_id
         left join ocean_v2.sys_user u on spbd.create_user_id=u.user_id
         left join ocean_v2.sys_user s on spbd.modified_user_id=s.user_id
