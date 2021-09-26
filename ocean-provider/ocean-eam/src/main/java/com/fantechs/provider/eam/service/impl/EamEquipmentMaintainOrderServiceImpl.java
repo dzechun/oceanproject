@@ -4,10 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.*;
+import com.fantechs.common.base.general.dto.eam.EamEquMaintainOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainOrderDetDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainProjectDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentMaintainOrder;
-import com.fantechs.common.base.general.entity.eam.search.*;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaintainOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaintainProject;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -266,6 +270,21 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
             // 批量删除保养单明细
             eamEquipmentMaintainOrderDetService.batchDelete(projectItems);
         }
+
+        //修改设备状态为待生产
+        List<EamEquipmentMaintainOrder> eamEquipmentMaintainOrders = eamEquipmentMaintainOrderMapper.selectByIds(ids);
+        List<Long> barcodeIds = eamEquipmentMaintainOrders.stream().map(EamEquipmentMaintainOrder::getEquipmentBarcodeId).collect(Collectors.toList());
+        Example example = new Example(EamEquipmentBarcode.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("equipmentBarcodeId",barcodeIds);
+        List<EamEquipmentBarcode> eamEquipmentBarcodes = eamEquipmentBarcodeMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(eamEquipmentBarcodes)) {
+            for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodes) {
+                eamEquipmentBarcode.setEquipmentStatus((byte) 5);
+                eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+            }
+        }
+
         // 批量删除保养单
         return eamEquipmentMaintainOrderMapper.deleteByIds(ids);
     }

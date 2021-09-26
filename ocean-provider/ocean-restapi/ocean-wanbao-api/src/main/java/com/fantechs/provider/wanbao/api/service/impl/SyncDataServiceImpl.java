@@ -612,9 +612,9 @@ public class SyncDataServiceImpl implements SyncDataService {
 
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        /*SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("wanbaoSyncData");
-        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();*/
+        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
 
         // 记录日志
         SysApiLog apiLog = new SysApiLog();
@@ -626,35 +626,43 @@ public class SyncDataServiceImpl implements SyncDataService {
         apiLog.setApiUrl("查询数据库-同步产品条码");
         apiLog.setOrgId(sysUser.getOrganizationId());
 
-       /* if (StringUtils.isEmpty(specItems)) {
+        if (StringUtils.isEmpty(specItems)) {
             // 记录日志
             apiLog.setResponseData("获取平台同步数据配置项不存在，不同步数据");
             securityFeignApi.add(apiLog);
             return;
-        }*/
+        }
         Map<String, Object> map = new HashMap<>();
-       /* JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
+        JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
         if ("0".equals(jsonObject.get("all"))) {
             map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-        }*/
-        map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+        }
+       // map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
         // 执行查询
         DynamicDataSourceHolder.putDataSouce("thirdary");
         List<MiddleProduct> barcodeDatas = middleProductMapper.findBarcodeData(map);
         DynamicDataSourceHolder.removeDataSource();
 
-
-        if (StringUtils.isNotEmpty(barcodeDatas)) {
+        if (StringUtils.isNotEmpty()) {
             // 记录日志
            long start = System.currentTimeMillis();
            for(MiddleProduct middleProduct : barcodeDatas){
+               if(StringUtils.isEmpty(middleProduct) || StringUtils.isEmpty(middleProduct.getCustomerBarcode()) || StringUtils.isEmpty(middleProduct.getBarcode())){
+                   continue;
+               }
+             //  log.info("------场内码、产品条码查询记录："+middleProduct);
                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
                searchMesSfcBarcodeProcess.setBarcode(middleProduct.getBarcode());
                List<MesSfcBarcodeProcess> mesSfcBarcodeProcess = sfcFeignApi.findBarcode(searchMesSfcBarcodeProcess).getData();
-               if(StringUtils.isNotEmpty(mesSfcBarcodeProcess)){
-                   if(StringUtils.isEmpty(mesSfcBarcodeProcess.get(0).getCustomerBarcode()))
+               if(StringUtils.isNotEmpty(mesSfcBarcodeProcess) && StringUtils.isEmpty(mesSfcBarcodeProcess.get(0).getCustomerBarcode())){
+                   /*if(StringUtils.isNotEmpty(middleProduct.getCustomerBarcode())) {*/
                        mesSfcBarcodeProcess.get(0).setCustomerBarcode(middleProduct.getCustomerBarcode());
                        sfcFeignApi.update(mesSfcBarcodeProcess.get(0));
+                   /*}else{
+                       apiLog.setResponseData(middleProduct.getBarcode() + "，查询到的三星产品唯一码为空，不同步此条数据");
+                       securityFeignApi.add(apiLog);
+                       continue;
+                   }*/
                }else{
                    apiLog.setResponseData(middleProduct.getBarcode() + "，此产品条码未匹配到对应的过站数据，不同步此条数据");
                    securityFeignApi.add(apiLog);
@@ -664,11 +672,11 @@ public class SyncDataServiceImpl implements SyncDataService {
            }
 
            // 保存中间库
-           DynamicDataSourceHolder.putDataSouce("secondary");
+          /* DynamicDataSourceHolder.putDataSouce("secondary");
            for(MiddleProduct middleProduct : barcodeDatas){
                 middleProductMapper.save(middleProduct);
            }
-           DynamicDataSourceHolder.removeDataSource();
+           DynamicDataSourceHolder.removeDataSource();*/
 
             apiLog.setRequestTime(new Date());
             apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));

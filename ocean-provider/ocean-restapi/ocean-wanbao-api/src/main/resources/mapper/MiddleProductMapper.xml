@@ -6,7 +6,7 @@
         <result column="plan_name" jdbcType="VARCHAR" property="planName" />
         <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
         <result column="customer_barcode" jdbcType="VARCHAR" property="customerBarcode"/>
-        <result column="Station_id" jdbcType="TINYINT" property="stationId" />
+        <result column="station_id" jdbcType="TINYINT" property="stationId" />
         <result column="status" jdbcType="VARCHAR" property="status" />
         <result column="create_time" jdbcType="VARCHAR" property="createTime" />
     </resultMap>
@@ -14,19 +14,19 @@
 
     <select id="findBarcodeData" parameterType="map" resultMap="BaseResultMap">
         SELECT
-        PP.PlanName,
-        P.FactoryCode AS '万宝厂内码',
-        p.ProductCode AS '三星产品唯一码',
-        pt.StationId AS '工站',
-        pt.Status AS '过站状态',
-        pt.CreateOn AS '创建时间'
+        PP.PlanName AS plan_name,
+        P.FactoryCode AS barcode,
+        p.ProductCode AS customer_barcode,
+        pt.StationId AS station_id,
+        pt.Status AS status,
+        pt.CreateOn AS create_time
         FROM
-        SridaFramework.Product P
-        LEFT JOIN  SridaFramework.ProductPlan PP ON pp.Id= p.PlaneId
-        LEFT JOIN  SridaFramework.ProductTrace PT ON P.Id= pt.ProductId
+        Product P
+        LEFT JOIN  ProductPlan PP ON pp.Id= p.PlaneId
+        LEFT JOIN  ProductTrace PT ON P.Id= pt.ProductId
         <where>
             pt.Status= '1'
-            AND pt.StationId= '5eccf61c-de83-4380-ab99-3e722141ebe3'
+            --AND pt.StationId= '5eccf61c-de83-4380-ab99-3e722141ebe3'
             <!--<if test="date != null and date != ''">
                 AND wdj.scheduled_start_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>-->
@@ -34,7 +34,7 @@
     </select>
 
     <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleProduct">
-        INSERT INTO "SJ"."middle_product" (  "product_id", "plan_name", "barcode", "customer_barcode", "station_id", "status", "create_time")
+        INSERT INTO "K3WMS"."middle_product" (  "product_id", "plan_name", "barcode", "customer_barcode", "station_id", "status", "create_time")
         VALUES
             (
             #{productId},

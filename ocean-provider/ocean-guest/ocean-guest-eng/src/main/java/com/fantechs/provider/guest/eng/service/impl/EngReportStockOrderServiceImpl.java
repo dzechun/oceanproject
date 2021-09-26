@@ -2,7 +2,6 @@ package com.fantechs.provider.guest.eng.service.impl;
 
 import com.fantechs.common.base.general.dto.restapi.EngReportStockOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
@@ -37,54 +36,6 @@ public class EngReportStockOrderServiceImpl  implements EngReportStockOrderServi
         map.put("stockOrderId",wmsInnerStockOrder.getStockOrderId());
         List<EngReportStockOrderDto> stockOrders = engReportStockOrderMapper.findStockOrder(map);
 
-       /* SearchWmsInnerStockOrder searchWmsInnerStockOrder = new SearchWmsInnerStockOrder();
-        searchWmsInnerStockOrder.setStockOrderCode(wmsInnerStockOrder.getStockOrderCode());
-        List<WmsInnerStockOrderDto> wmsInnerStockOrderDto = innerFeignApi.findList(searchWmsInnerStockOrder).getData();
-        List<EngReportStockOrderDto> engReportStockOrderDtos = new ArrayList<>();
-        for(WmsInnerStockOrderDet det : WmsInnerStockOrderDets){
-            SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
-            searchWmsInnerInventory.setMaterialId(det.getMaterialId());
-            searchWmsInnerInventory.setBatchCode(det.getBatchCode());
-            searchWmsInnerInventory.setJobStatus((byte)1);
-            searchWmsInnerInventory.setWarehouseId(wmsInnerStockOrder.getWarehouseId());
-            searchWmsInnerInventory.setStorageId(det.getStorageId());
-            List<WmsInnerInventoryDto> wmsInnerInventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
-            if(StringUtils.isEmpty(wmsInnerInventoryDtos)) throw new BizErrorException("未查询到盘点单中对应的库存信息");
-
-            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-            searchBaseMaterial.setMaterialId(wmsInnerInventoryDtos.get(0).getMaterialId());
-            List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
-            if(StringUtils.isEmpty(baseMaterials)) throw new BizErrorException("未查询到盘点单中对应的物料信息");
-
-            Example comtractExample = new Example(EngContractQtyOrder.class);
-            comtractExample.createCriteria().andEqualTo("contractCode",wmsInnerInventoryDtos.get(0).getContractCode())
-                    .andEqualTo("materialCode",baseMaterials.get(0).getMaterialCode());
-            List<EngContractQtyOrder> contractQtyOrders = engContractQtyOrderMapper.selectByExample(comtractExample);
-            if(StringUtils.isEmpty(contractQtyOrders)) throw new BizErrorException("未查询到盘点单中对应的合同量单");
-
-            EngReportStockOrderDto dto = new EngReportStockOrderDto();
-            dto.setStockOrderDetId(det.getStockOrderDetId());
-            dto.setOption1(contractQtyOrders.get(0).getOption1());
-            dto.setOption2(contractQtyOrders.get(0).getOption2());
-            dto.setContractCode(contractQtyOrders.get(0).getContractCode());
-            dto.setPurchaseReqOrderCode(wmsInnerInventoryDtos.get(0).getPurchaseReqOrderCode());
-            dto.setMaterialCode(contractQtyOrders.get(0).getMaterialCode());
-            dto.setLocationNum(contractQtyOrders.get(0).getLocationNum());
-            dto.setDominantTermCode(contractQtyOrders.get(0).getDominantTermCode());
-            dto.setDeviceCode(contractQtyOrders.get(0).getDeviceCode());
-            dto.setVarianceQty(det.getVarianceQty().toString());
-            dto.setInventoryStatusName(wmsInnerInventoryDtos.get(0).getInventoryStatusName());
-
-            ResponseEntity<BaseStorage> baseStorageResponseEntity=baseFeignApi.detail(det.getStorageId());
-            if(StringUtils.isNotEmpty(baseStorageResponseEntity.getData()))
-                dto.setDHGUID(baseStorageResponseEntity.getData().getOption1());
-            //dto.setStorageId(det.getStorageId());
-            dto.setCreateUserName(wmsInnerStockOrderDto.get(0).getCreateUserName());
-            dto.setCreateTime(DateUtil.formatTime(wmsInnerStockOrder.getCreateTime()));
-
-            engReportStockOrderDtos.add(dto);
-        }*/
-
         jsonVoiceArray= JsonUtils.objectToJson(stockOrders);
         String s0=jsonVoiceArray.replaceAll("stockOrderDetId","WMSKey");
         String s1=s0.replaceAll("option1","PPGUID");
@@ -101,10 +52,7 @@ public class EngReportStockOrderServiceImpl  implements EngReportStockOrderServi
         String s11=s10.replaceAll("createTime","登记时间");
         String s12=s11.replaceAll("createUserName","登记人");
 
-        System.out.println("--------s12--------"+s12);
         ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeMakeInventoryDetails(s12,projectID);
-
-
         return responseEntityResult.getData();
     }
 
