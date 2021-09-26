@@ -195,4 +195,14 @@ sposd.summary_det_status
     order by sposd.create_time desc
   </select>
 
+  <select id="findExistCount" resultType="java.lang.Long">
+    SELECT  COUNT(*)
+    FROM eng_packing_order_summary epos
+    LEFT JOIN eng_packing_order epo ON epos.packing_order_id=epo.packing_order_id
+    LEFT JOIN eng_packing_order_summary_det eposdet ON epos.packing_order_summary_id=eposdet.packing_order_summary_id
+    LEFT JOIN base_material bm ON eposdet.material_id=bm.material_id
+    WHERE epos.packing_order_id=#{packingOrderId}
+    AND LOCATE('-',bm.material_code)>0
+  </select>
+
 </mapper>

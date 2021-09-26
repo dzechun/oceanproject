@@ -108,7 +108,7 @@ public class EngPackingOrderTakeController {
 
     @ApiIgnore
     @PostMapping("/writeQty")
-    public ResponseEntity writeQty(@RequestParam Long id, @RequestParam BigDecimal qty){
-        return ControllerUtil.returnCRUD(engPackingOrderTakeService.writeQty(id, qty));
+    public ResponseEntity writeQty(@RequestParam Long id, @RequestParam BigDecimal qty,@RequestParam Byte type){
+        return ControllerUtil.returnCRUD(engPackingOrderTakeService.writeQty(id, qty,type));
     }
 }

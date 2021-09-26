@@ -213,12 +213,22 @@ public class ExportDataServiceImpl implements ExportDataService {
                     "</soapenv:Envelope>";
         }
         else {
-            str = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +
+//            str = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +
+//                    "   <soapenv:Header/>\n" +
+//                    "   <soapenv:Body>\n" +
+//                    "      <tem:" + method + ">\n" +
+//                    "         <tem:JsonVoiceArray>" + JsonVoiceArray + "</tem:JsonVoiceArray>\n" +
+//                    "         <tem:ProjectID>" + projectID + "</tem:ProjectID>\n" +
+//                    "      </tem:" + method + ">\n" +
+//                    "   </soapenv:Body>\n" +
+//                    "</soapenv:Envelope>";
+
+            str="<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +
                     "   <soapenv:Header/>\n" +
                     "   <soapenv:Body>\n" +
                     "      <tem:" + method + ">\n" +
-                    "         <tem:JsonVoiceArray>" + JsonVoiceArray + "</tem:JsonVoiceArray>\n" +
-                    "         <tem:projectID>" + projectID + "</tem:projectID>\n" +
+                    "         <tem:JsonVoiceArray>"+JsonVoiceArray+"</tem:JsonVoiceArray>\n" +
+                    "         <tem:ProjectID>3919</tem:ProjectID>\n" +
                     "      </tem:" + method + ">\n" +
                     "   </soapenv:Body>\n" +
                     "</soapenv:Envelope>";

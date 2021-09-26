@@ -173,6 +173,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                 engPackingOrderSummaryDetDto.setModifiedUserId(user.getUserId());
                 engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDetDto);
             }
+            engPackingOrderSummaryDto.setPutawayStorageId(putStorageId);
             engPackingOrderSummaryDto.setSummaryStatus((byte)1);
             engPackingOrderSummaryDto.setModifiedTime(new Date());
             engPackingOrderSummaryDto.setModifiedUserId(user.getUserId());
@@ -187,7 +188,10 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
 
         //审核通过回传
         if(engPackingOrder.getAuditStatus()==(byte)3 && i>0) {
-            String result = engDataExportEngPackingOrderService.writePackingLists(engPackingOrder);
+            Long ifCan=engPackingOrderSummaryDetMapper.findExistCount(engPackingOrder.getPackingOrderId());
+            if(ifCan>0) {
+                String result = engDataExportEngPackingOrderService.writePackingLists(engPackingOrder);
+            }
         }
 
         return i;
