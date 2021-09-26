@@ -12,15 +12,5 @@ import java.util.Map;
 public interface EngPackingOrderMapper extends MyMapper<EngPackingOrder> {
     List<EngPackingOrderDto> findList(Map<String, Object> map);
 
-    Long findWarehouse(Map<String ,Object> map);
-
-    Long findStorage(Map<String ,Object> map);
-
-    Long findPutStorage(Map<String,Object> map);
-
-    Long findInventoryStatus(Map<String ,Object> map);
-
-    Long findMaterialOwner(Map<String,Object> map);
-
     String findMaterialPurpose(Map<String,Object> map);
 }

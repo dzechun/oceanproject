@@ -10,7 +10,9 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
@@ -219,7 +221,14 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
         Map<String ,Object> map  = new HashMap<>();
-        String materialCode = wmsInnerJobOrderMapper.findMaterialCode(wmsInnerJobOrderDet.getMaterialId(),sysUser.getOrganizationId());
+
+        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+        searchBaseMaterial.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
+        List<BaseMaterial> baseMaterialList = baseFeignApi.findList(searchBaseMaterial).getData();
+        String materialCode = null;
+        if(StringUtils.isNotEmpty(baseMaterialList)){
+            materialCode = baseMaterialList.get(0).getMaterialCode();
+        }
         if(StringUtils.isNotEmpty(materialCode) && materialCode.equals(barCode)){
             map.put("SN","false");
             return map;

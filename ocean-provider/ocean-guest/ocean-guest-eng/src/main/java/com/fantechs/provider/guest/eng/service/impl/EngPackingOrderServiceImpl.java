@@ -6,8 +6,12 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
@@ -142,25 +146,28 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
 
         //审核通过给包装清单货品明细赋值默认收货库位及上架库位
         //获取收货库存信息
-        Long warehouseId = engPackingOrderMapper.findWarehouse(ControllerUtil.dynamicCondition("orgId",user.getOrganizationId()));
-        if(StringUtils.isEmpty(warehouseId)){
-            throw new BizErrorException("获取仓库信息失败");
+        List<BaseWarehouse> warehouseList = baseFeignApi.findList(new SearchBaseWarehouse()).getData();
+        if(StringUtils.isEmpty(warehouseList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取仓库信息失败");
         }
+        Long warehouseId = warehouseList.get(0).getWarehouseId();
         //获取库位信息
-        Long storageId = engPackingOrderMapper.findStorage(ControllerUtil.dynamicCondition("orgId",user.getOrganizationId(),"warehouseId",warehouseId));
-        if(StringUtils.isEmpty(storageId)){
-            throw new BizErrorException("获取库位信息失败");
+        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+        searchBaseStorage.setWarehouseId(warehouseId);
+        searchBaseStorage.setStorageType((byte)2);
+        List<BaseStorage> baseStorageList = baseFeignApi.findList(searchBaseStorage).getData();
+        if(StringUtils.isEmpty(baseStorageList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取库位信息失败");
         }
+        Long storageId = baseStorageList.get(0).getStorageId();
+
         //获取默认上架库位
-        Long putStorageId = engPackingOrderMapper.findPutStorage(ControllerUtil.dynamicCondition("orgId",user.getOrganizationId(),"warehouseId",warehouseId));
-        if(StringUtils.isEmpty(storageId)){
-            throw new BizErrorException("获取库位信息失败");
+        searchBaseStorage.setStorageType((byte)1);
+        baseStorageList = baseFeignApi.findList(searchBaseStorage).getData();
+        if(StringUtils.isEmpty(baseStorageList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取预上架库位信息失败");
         }
-        //获取库存状态信息
-        Long inventoryStatus = engPackingOrderMapper.findInventoryStatus(ControllerUtil.dynamicCondition("orgId",user.getOrganizationId(),"warehouseId",warehouseId));
-        if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取库位信息失败");
-        }
+        Long putStorageId = baseStorageList.get(0).getStorageId();
         List<EngPackingOrderSummaryDto> list = engPackingOrderSummaryMapper.findList(ControllerUtil.dynamicCondition("packingOrderId",engPackingOrder.getPackingOrderId()));
         for (EngPackingOrderSummaryDto engPackingOrderSummaryDto : list) {
             //查询包箱货品明细

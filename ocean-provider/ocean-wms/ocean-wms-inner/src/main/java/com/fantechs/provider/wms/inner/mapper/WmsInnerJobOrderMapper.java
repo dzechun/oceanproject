@@ -14,28 +14,12 @@ import java.util.Map;
 public interface WmsInnerJobOrderMapper extends MyMapper<WmsInnerJobOrder> {
     List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder);
 
-    Long findStorage(@Param("materialId")Long materialId,@Param("warehouseId")Long warehouseId,@Param("orgId")Long orgId);
-
-    Long SelectStorage();
-
-    String findStorageName(@Param("storageId")Long storageId);
-
-    String findWarehouseName(@Param("warehouseId")Long warehouseId);
-
-    String findAsnCode(@Param("asnOrderId")Long asnOrderId);
-
-    Long findOmWarehouseId(@Param("sourceId")Long sourceId);
-
     /**
      * 移位单查询
      * @param map
      * @return
      */
     List<WmsInnerJobOrderDto> findShiftList(Map<String, Object> map);
-
-    Long findStorageId(Map<String,Object> map);
-
-    String findMaterialCode(@Param("materialId") Long materialId,@Param("orgId")Long orgId);
 
     List<String> workBarCodeList(@Param("productPalletId")Long productPalletId);
 }

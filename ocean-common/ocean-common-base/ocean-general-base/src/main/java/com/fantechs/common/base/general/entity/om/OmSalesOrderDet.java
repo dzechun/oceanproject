@@ -40,6 +40,13 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     private Long salesOrderId;
 
     /**
+     * 行号
+     */
+    @ApiModelProperty(name = "lineNumber",value = "行号")
+    @Column(name = "line_number")
+    private String lineNumber;
+
+    /**
      * 客户订单行号
      */
     @ApiModelProperty(name="customerOrderLineNumber",value = "客户订单行号")

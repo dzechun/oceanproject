@@ -35,6 +35,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -59,6 +60,8 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     private SecurityFeignApi securityFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private EamSparePartMapper eamSparePartMapper;
 
     @Override
     public List<EamEquipmentDto> findList(Map<String, Object> map) {
@@ -187,6 +190,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         if(StringUtils.isNotEmpty(eamEquipmentBarcodeList)) {
             for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodeList) {
                 if (StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentBarcodeId())) {
+                    eamEquipmentBarcode.setCurrentUsageDays(null);
                     eamEquipmentBarcode.setStatus(entity.getStatus());
                     eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
                     equipmentBarcodeIdList.add(eamEquipmentBarcode.getEquipmentBarcodeId());
@@ -438,7 +442,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             }
 
             //判断集合中是否存在该条数据
-            boolean tag = false;
+            /*boolean tag = false;
             if (StringUtils.isNotEmpty(eamEquipmentImportList)){
                 for (EamEquipmentImport equipmentImport: eamEquipmentImportList) {
                     if (equipmentCode.equals(equipmentImport.getEquipmentCode())){
@@ -450,7 +454,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             if (tag){
                 fail.add(i+4);
                 continue;
-            }
+            }*/
 
             //设备类别信息
             Example example1 = new Example(EamEquipmentCategory.class);
@@ -536,12 +540,79 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                 eamEquipmentImport.setVolume(volume);
             }
 
+            //备用件
+            String sparePartCode = eamEquipmentImport.getSparePartCode();
+            if(StringUtils.isNotEmpty(sparePartCode)){
+                Example example2 = new Example(EamSparePart.class);
+                Example.Criteria criteria2 = example2.createCriteria();
+                criteria2.andEqualTo("orgId",currentUser.getOrganizationId())
+                        .andEqualTo("sparePartCode",sparePartCode);
+                EamSparePart eamSparePart = eamSparePartMapper.selectOneByExample(example2);
+                if (StringUtils.isEmpty(eamSparePart)){
+                    fail.add(i+4);
+                    continue;
+                }
+                eamEquipmentImport.setSparePartId(eamSparePart.getSparePartId());
+            }
+
             eamEquipmentImportList.add(eamEquipmentImport);
         }
 
         if (StringUtils.isNotEmpty(eamEquipmentImportList)){
+            HashMap<String, List<EamEquipmentImport>> map = eamEquipmentImportList.stream().collect(Collectors.groupingBy(EamEquipmentImport::getEquipmentCode, HashMap::new, Collectors.toList()));
+            Set<String> codeList = map.keySet();
+            for (String code : codeList) {
+                //主表
+                List<EamEquipmentImport> eamEquipmentImports1 = map.get(code);
+                EamEquipment eamEquipment = new EamEquipment();
+                BeanUtils.copyProperties(eamEquipmentImports1.get(0),eamEquipment);
+                eamEquipment.setCreateTime(new Date());
+                eamEquipment.setCreateUserId(currentUser.getUserId());
+                eamEquipment.setModifiedTime(new Date());
+                eamEquipment.setModifiedUserId(currentUser.getUserId());
+                eamEquipment.setOrgId(currentUser.getOrganizationId());
+                eamEquipment.setStatus((byte)1);
+                list.add(eamEquipment);
+                success += eamEquipmentMapper.insertUseGeneratedKeys(eamEquipment);
 
-            for (EamEquipmentImport eamEquipmentImport : eamEquipmentImportList) {
+                //明细
+                LinkedList<EamEquipmentBarcode> barcodeList = new LinkedList<>();
+                for (EamEquipmentImport eamEquipmentImport : eamEquipmentImports1) {
+                    if (StringUtils.isEmpty(eamEquipmentImport.getAssetCode(),eamEquipmentImport.getEquipmentBarcode())) {
+                        continue;
+                    }
+                    EamEquipmentBarcode eamEquipmentBarcode = new EamEquipmentBarcode();
+                    BeanUtils.copyProperties(eamEquipmentImport, eamEquipmentBarcode);
+                    eamEquipmentBarcode.setCurrentUsageDays(StringUtils.isEmpty(eamEquipmentBarcode.getCurrentUsageDays())?0:eamEquipmentBarcode.getCurrentUsageDays());
+                    eamEquipmentBarcode.setCurrentUsageTime(StringUtils.isEmpty(eamEquipmentBarcode.getCurrentUsageTime())?0:eamEquipmentBarcode.getCurrentUsageTime());
+                    eamEquipmentBarcode.setEquipmentId(eamEquipment.getEquipmentId());
+                    eamEquipmentBarcode.setStatus((byte) 1);
+                    eamEquipmentBarcode.setEquipmentStatus((byte)5);
+                    eamEquipmentBarcode.setCreateUserId(currentUser.getUserId());
+                    eamEquipmentBarcode.setCreateTime(new Date());
+                    eamEquipmentBarcode.setModifiedUserId(currentUser.getUserId());
+                    eamEquipmentBarcode.setModifiedTime(new Date());
+                    barcodeList.add(eamEquipmentBarcode);
+                }
+                eamEquipmentBarcodeMapper.insertList(barcodeList);
+
+
+                LinkedList<EamSparePartReEqu> sparePartReEqus = new LinkedList<>();
+                for (EamEquipmentImport eamEquipmentImport : eamEquipmentImports1) {
+                    if (StringUtils.isEmpty(eamEquipmentImport.getSparePartCode())) {
+                        continue;
+                    }
+                    EamSparePartReEqu eamSparePartReEqu = new EamSparePartReEqu();
+                    BeanUtils.copyProperties(eamEquipmentImport, eamSparePartReEqu);
+                    eamSparePartReEqu.setEquipmentId(eamEquipment.getEquipmentId());
+                    eamSparePartReEqu.setStatus((byte) 1);
+                    eamSparePartReEqu.setOrgId(currentUser.getOrganizationId());
+                    sparePartReEqus.add(eamSparePartReEqu);
+                }
+                eamSparePartReEquMapper.insertList(sparePartReEqus);
+            }
+
+            /*for (EamEquipmentImport eamEquipmentImport : eamEquipmentImportList) {
                 EamEquipment eamEquipment = new EamEquipment();
                 BeanUtils.copyProperties(eamEquipmentImport,eamEquipment);
                 eamEquipment.setCreateTime(new Date());
@@ -552,7 +623,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                 eamEquipment.setStatus((byte)1);
                 list.add(eamEquipment);
             }
-            success = eamEquipmentMapper.insertList(list);
+            success = eamEquipmentMapper.insertList(list);*/
 
             if(StringUtils.isNotEmpty(list)){
                 for (EamEquipment eamEquipment : list) {
