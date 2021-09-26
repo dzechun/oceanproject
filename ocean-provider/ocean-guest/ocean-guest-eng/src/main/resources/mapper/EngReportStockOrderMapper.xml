@@ -36,7 +36,7 @@
     wiisss.option2 as dominant_term_code,
     wiisss.option1 as device_code,
     wisod.variance_qty AS variance_qty,
-    iis.inventory_status_name AS inventory_status_name,
+    CASE WHEN wisod.variance_qty>0 THEN '多余' ELSE '丢失' END AS inventory_status_name,
     wisod.storage_id AS storage_id,
     wisod.create_time,
     u.user_name as create_user_name,

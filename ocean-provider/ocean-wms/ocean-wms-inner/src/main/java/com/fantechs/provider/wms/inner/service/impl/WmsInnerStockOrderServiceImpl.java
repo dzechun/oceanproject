@@ -411,7 +411,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
 
             //返写盘点数据（五环） 复盘确认时才回写
             //获取程序配置项
-            if(wmsInventoryVerification.getProjectType()==(byte)2) {
+            if(wmsInventoryVerification.getProjectType()==(byte)2 && StringUtils.isNotEmpty(id)) {
                 SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
                 searchSysSpecItemFiveRing.setSpecCode("FiveRing");
                 List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
