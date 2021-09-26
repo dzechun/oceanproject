@@ -58,6 +58,7 @@
             and wii.org_id=#{orgId}
         </if>
 </where>
-        group by wii.warehouse_id,wii.storage_id,wii.material_id,wii.packing_unit_name,wii.inventory_status_id,wii.lock_status,wii.stock_lock,wii.qc_lock
+        group by wii.warehouse_id,wii.storage_id,wii.material_id,wii.packing_unit_name,wii.inventory_status_id,
+        wii.lock_status,wii.stock_lock,wii.qc_lock,wii.packing_qty,wii.package_specification_quantity
     </select>
 </mapper>
