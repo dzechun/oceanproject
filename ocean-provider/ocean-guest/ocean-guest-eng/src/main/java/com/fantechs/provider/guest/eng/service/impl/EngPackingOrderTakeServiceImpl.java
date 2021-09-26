@@ -5,11 +5,17 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
+import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
@@ -21,12 +27,12 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryMapper;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderTakeService;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +55,8 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
     private EngPackingOrderSummaryDetMapper engPackingOrderSummaryDetMapper;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
@@ -95,26 +103,27 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<WmsInnerInventory> wmsInnerInventories = new ArrayList<>();
         //获取收货库存信息
-        Long warehouseId = engPackingOrderMapper.findWarehouse(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
-        if(StringUtils.isEmpty(warehouseId)){
-            throw new BizErrorException("获取仓库信息失败");
+        List<BaseWarehouse> warehouseList = baseFeignApi.findList(new SearchBaseWarehouse()).getData();
+        if(StringUtils.isEmpty(warehouseList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取仓库信息失败");
         }
-//        //获取库位信息
-//        Long storageId = engPackingOrderMapper.findStorage(ControllerUtil.dynamicCondition("orgId",user.getOrganizationId(),"warehouseId",warehouseId));
-//        if(StringUtils.isEmpty(storageId)){
-//            throw new BizErrorException("获取库位信息失败");
-//        }
+        Long warehouseId = warehouseList.get(0).getWarehouseId();
+
         //获取库存状态信息
-        Long inventoryStatus = engPackingOrderMapper.findInventoryStatus(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId(),"warehouseId",warehouseId));
-        if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取库位信息失败");
+        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+        searchBaseInventoryStatus.setWarehouseId(warehouseId);
+        List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
+        if(StringUtils.isEmpty(inventoryStatusList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取库位信息失败");
         }
+        Long inventoryStatus = inventoryStatusList.get(0).getInventoryStatusId();
 
         //获取货主信息
-        Long materialOwnerId = engPackingOrderMapper.findMaterialOwner(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
-        if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取货主信息失败");
+        List<BaseMaterialOwnerDto> materialOwnerDtoList = baseFeignApi.findList(new SearchBaseMaterialOwner()).getData();
+        if(StringUtils.isEmpty(materialOwnerDtoList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取货主信息失败");
         }
+        Long materialOwnerId = materialOwnerDtoList.get(0).getMaterialOwnerId();
         int num = 0;
         for (Long id : ids) {
             EngPackingOrder engPackingOrder  = engPackingOrderMapper.selectByPrimaryKey(id);
@@ -194,20 +203,29 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<WmsInnerInventory> wmsInnerInventories = new ArrayList<>();
         //获取收货库存信息
-        Long warehouseId = engPackingOrderMapper.findWarehouse(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
-        if(StringUtils.isEmpty(warehouseId)){
+        List<BaseWarehouse> warehouseList = baseFeignApi.findList(new SearchBaseWarehouse()).getData();
+        if(StringUtils.isEmpty(warehouseList)){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取仓库信息失败");
         }
+        Long warehouseId = warehouseList.get(0).getWarehouseId();
+
         //获取库存状态信息
-        Long inventoryStatus = engPackingOrderMapper.findInventoryStatus(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId(),"warehouseId",warehouseId));
-        if(StringUtils.isEmpty(inventoryStatus)){
+        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+        searchBaseInventoryStatus.setWarehouseId(warehouseId);
+        List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
+        if(StringUtils.isEmpty(inventoryStatusList)){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取库位信息失败");
         }
+        Long inventoryStatus = inventoryStatusList.get(0).getInventoryStatusId();
+
         //获取货主信息
-        Long materialOwnerId = engPackingOrderMapper.findMaterialOwner(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
-        if(StringUtils.isEmpty(inventoryStatus)){
+        List<BaseMaterialOwnerDto> materialOwnerDtoList = baseFeignApi.findList(new SearchBaseMaterialOwner()).getData();
+        if(StringUtils.isEmpty(materialOwnerDtoList)){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取货主信息失败");
         }
+        Long materialOwnerId = materialOwnerDtoList.get(0).getMaterialOwnerId();
+
+
         EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrderSummaryDtos.get(0).getPackingOrderId());
         if(engPackingOrder.getOrderStatus()==(4)){
             throw new BizErrorException("单据已收货完成");
@@ -290,20 +308,27 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<WmsInnerInventory> wmsInnerInventories = new ArrayList<>();
         //获取收货库存信息
-        Long warehouseId = engPackingOrderMapper.findWarehouse(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
-        if(StringUtils.isEmpty(warehouseId)){
-            throw new BizErrorException("获取仓库信息失败");
+        List<BaseWarehouse> warehouseList = baseFeignApi.findList(new SearchBaseWarehouse()).getData();
+        if(StringUtils.isEmpty(warehouseList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取仓库信息失败");
         }
+        Long warehouseId = warehouseList.get(0).getWarehouseId();
+
         //获取库存状态信息
-        Long inventoryStatus = engPackingOrderMapper.findInventoryStatus(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId(),"warehouseId",warehouseId));
-        if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取库位信息失败");
+        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+        searchBaseInventoryStatus.setWarehouseId(warehouseId);
+        List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
+        if(StringUtils.isEmpty(inventoryStatusList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取库位信息失败");
         }
+        Long inventoryStatus = inventoryStatusList.get(0).getInventoryStatusId();
+
         //获取货主信息
-        Long materialOwnerId = engPackingOrderMapper.findMaterialOwner(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
-        if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取货主信息失败");
+        List<BaseMaterialOwnerDto> materialOwnerDtoList = baseFeignApi.findList(new SearchBaseMaterialOwner()).getData();
+        if(StringUtils.isEmpty(materialOwnerDtoList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取货主信息失败");
         }
+        Long materialOwnerId = materialOwnerDtoList.get(0).getMaterialOwnerId();
         //取消收货实体
         List<EngPackingOrderTakeCancel> engPackingOrderTakeCancelList = new ArrayList<>();
         EngPackingOrderSummaryDet engPackingOrderSummaryDet = engPackingOrderSummaryDetMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryDetId());
@@ -490,21 +515,30 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
     public int createInnerJobOrder(List<Long> ids) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<WmsInnerJobOrder> list = new ArrayList<>();
+
         //获取收货库存信息
-        Long warehouseId = engPackingOrderMapper.findWarehouse(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
-        if(StringUtils.isEmpty(warehouseId)){
-            throw new BizErrorException("获取仓库信息失败");
+        List<BaseWarehouse> warehouseList = baseFeignApi.findList(new SearchBaseWarehouse()).getData();
+        if(StringUtils.isEmpty(warehouseList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取仓库信息失败");
         }
+        Long warehouseId = warehouseList.get(0).getWarehouseId();
         //获取库存状态信息
-        Long inventoryStatus = engPackingOrderMapper.findInventoryStatus(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId(),"warehouseId",warehouseId));
-        if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取库位信息失败");
+        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+        searchBaseInventoryStatus.setWarehouseId(warehouseId);
+        List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
+        if(StringUtils.isEmpty(inventoryStatusList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取库位信息失败");
         }
+        Long inventoryStatus = inventoryStatusList.get(0).getInventoryStatusId();
+
         //获取货主信息
-        Long materialOwnerId = engPackingOrderMapper.findMaterialOwner(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
-        if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取货主信息失败");
+        List<BaseMaterialOwnerDto> materialOwnerDtoList = baseFeignApi.findList(new SearchBaseMaterialOwner()).getData();
+        if(StringUtils.isEmpty(materialOwnerDtoList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取货主信息失败");
         }
+        Long materialOwnerId = materialOwnerDtoList.get(0).getMaterialOwnerId();
+
+
         for (Long id : ids) {
             EngPackingOrder engPackingOrder = engPackingOrderMapper.selectByPrimaryKey(id);
             if(engPackingOrder.getOrderStatus()==5){
@@ -615,20 +649,29 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
         //获取收货库存信息
-        Long warehouseId = engPackingOrderMapper.findWarehouse(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
-        if(StringUtils.isEmpty(warehouseId)){
-            throw new BizErrorException("获取仓库信息失败");
+        List<BaseWarehouse> warehouseList = baseFeignApi.findList(new SearchBaseWarehouse()).getData();
+        if(StringUtils.isEmpty(warehouseList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取仓库信息失败");
         }
+        Long warehouseId = warehouseList.get(0).getWarehouseId();
+
         //获取库存状态信息
-        Long inventoryStatus = engPackingOrderMapper.findInventoryStatus(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId(),"warehouseId",warehouseId));
-        if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取库位信息失败");
+        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+        searchBaseInventoryStatus.setWarehouseId(warehouseId);
+        List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
+        if(StringUtils.isEmpty(inventoryStatusList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取库位信息失败");
         }
+        Long inventoryStatus = inventoryStatusList.get(0).getInventoryStatusId();
+
         //获取货主信息
-        Long materialOwnerId = engPackingOrderMapper.findMaterialOwner(ControllerUtil.dynamicCondition("orgId",sysUser.getOrganizationId()));
-        if(StringUtils.isEmpty(inventoryStatus)){
-            throw new BizErrorException("获取货主信息失败");
+        List<BaseMaterialOwnerDto> materialOwnerDtoList = baseFeignApi.findList(new SearchBaseMaterialOwner()).getData();
+        if(StringUtils.isEmpty(materialOwnerDtoList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取货主信息失败");
         }
+        Long materialOwnerId = materialOwnerDtoList.get(0).getMaterialOwnerId();
+
+
         List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
         BigDecimal sumQty = BigDecimal.ZERO;
         EngPackingOrder engPackingOrder = null;

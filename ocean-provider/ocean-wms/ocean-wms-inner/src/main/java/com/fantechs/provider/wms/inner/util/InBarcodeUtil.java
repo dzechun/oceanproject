@@ -6,9 +6,11 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
+import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -17,6 +19,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
@@ -48,6 +51,8 @@ public class InBarcodeUtil {
     private WmsInnerJobOrderMapper wmsInnerJobOrderMapper;
     @Resource
     private WmsInnerJobOrderReMsppMapper wmsInnerJobOrderReMsppMapper;
+    @Resource
+    private InFeignApi inFeignApi;
 
     private static InBarcodeUtil inBarcodeUtil;
 
@@ -59,6 +64,7 @@ public class InBarcodeUtil {
         inBarcodeUtil.wmsInnerInventoryDetMapper = wmsInnerInventoryDetMapper;
         inBarcodeUtil.wmsInnerJobOrderMapper = wmsInnerJobOrderMapper;
         inBarcodeUtil.wmsInnerJobOrderReMsppMapper = wmsInnerJobOrderReMsppMapper;
+        inBarcodeUtil.inFeignApi = inFeignApi;
     }
 
     /**
@@ -131,7 +137,13 @@ public class InBarcodeUtil {
      */
     public static BigDecimal getInventoryDetQty(Long asnOrderId,Long materialId,String barCode){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        String asnOrderCode = inBarcodeUtil.wmsInnerJobOrderMapper.findAsnCode(asnOrderId);
+        List<WmsInAsnOrderDto> wmsInAsnOrderDtoList = inBarcodeUtil.inFeignApi.findList(SearchWmsInAsnOrder.builder()
+                .asnOrderId(asnOrderId)
+                .build()).getData();
+        if(StringUtils.isEmpty(wmsInAsnOrderDtoList)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404);
+        }
+        String asnOrderCode = wmsInAsnOrderDtoList.get(0).getSourceOrderCode();
         //查询库存明细是否存在改条码
         Example example = new Example(WmsInnerInventoryDet.class);
         example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode).andEqualTo("asnCode",asnOrderCode).andEqualTo("orgId",sysUser.getOrganizationId());
