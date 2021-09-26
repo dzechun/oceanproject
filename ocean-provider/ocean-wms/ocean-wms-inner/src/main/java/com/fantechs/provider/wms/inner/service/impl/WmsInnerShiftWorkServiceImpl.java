@@ -411,7 +411,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory_old);
             wmsInnerInventory.setPackingQty(BigDecimal.ZERO);
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
-//            wmsInnerInventoryService.delete(wmsInnerInventory);
+            //wmsInnerInventoryService.delete(wmsInnerInventory);
         }
 
         //更新库存明细

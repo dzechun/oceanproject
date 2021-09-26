@@ -911,7 +911,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     BeanUtil.copyProperties(wmsInnerInventory, inv);
                     inv.setStorageId(oldDto.getInStorageId());
                     inv.setWarehouseId(oldDto.getWarehouseId());
-                    inv.setPackingQty(actualQty);
+                    inv.setPackingQty(aqty);
                     inv.setJobStatus((byte) 1);
                     inv.setBatchCode(oldDto.getBatchCode());
                     inv.setJobOrderDetId(oldDto.getJobOrderDetId());
@@ -922,12 +922,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     inv.setModifiedUserId(sysUser.getUserId());
                     inv.setOrgId(sysUser.getOrganizationId());
                     inv.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                    inv.setJobOrderDetId(null);
                     wmsInnerInventoryMapper.insertSelective(inv);
-                    wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(actualQty));
+                    wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(aqty));
                     wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
 
-                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),actualQty,(byte)3,(byte)2);
-                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),actualQty,(byte)3,(byte)1);
+                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),aqty,(byte)3,(byte)2);
+                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),aqty,(byte)3,(byte)1);
                 } else {
                     wmsInnerInventory_old.setPackingQty(wmsInnerInventory_old.getPackingQty() != null ? wmsInnerInventory_old.getPackingQty().add(wmsInnerInventory.getPackingQty()) : wmsInnerInventory.getPackingQty());
                     wmsInnerInventory_old.setRelevanceOrderCode(wmsInnerInventory.getRelevanceOrderCode());
@@ -935,8 +936,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     wmsInnerInventory.setPackingQty(BigDecimal.ZERO);
                     wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
 
-                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),actualQty,(byte)3,(byte)2);
-                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory_old.getPackingQty(),actualQty,(byte)3,(byte)1);
+                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),aqty,(byte)3,(byte)2);
+                    InventoryLogUtil.addLog(wmsInnerJobOrder,oldDto,wmsInnerInventory_old.getPackingQty(),aqty,(byte)3,(byte)1);
                 }
                 //更新库存明细
                 Example example1 = new Example(WmsInnerJobOrderDetBarcode.class);
@@ -1944,6 +1945,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             inv.setModifiedTime(new Date());
             inv.setModifiedUserId(sysUser.getUserId());
             inv.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
+            inv.setJobOrderDetId(null);
             num+=wmsInnerInventoryMapper.insertSelective(inv);
         } else {
             qty = wmsInnerInventorys.getPackingQty();
