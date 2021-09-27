@@ -34,7 +34,7 @@
     IFNULL(ecqo.location_num,'') AS location_num,
     IFNULL(wiisss.option2,'') AS dominant_term_code,
     IFNULL(wiisss.option1,'') AS device_code,
-    wisod.variance_qty AS variance_qty,
+    ABS(wisod.variance_qty) AS variance_qty,
     CASE WHEN wisod.variance_qty>0 THEN '多余' ELSE '丢失' END AS inventory_status_name,
     wisod.create_time,
     u.user_name as create_user_name
