@@ -1,12 +1,15 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
 import com.fantechs.common.base.general.dto.restapi.EngDataExportEngPackingOrderDto;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderAndPurOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderMapper;
@@ -43,6 +46,9 @@ public class EngDataExportEngPackingOrderServiceImpl extends BaseService<EngData
 
     @Override
     public String writePackingLists(EngPackingOrder engPackingOrder) {
+        //获取当前操作用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
         String jsonVoiceArray="";
         String projectID="3919";
         Map<String, Object> map=new HashMap<>();
@@ -67,6 +73,11 @@ public class EngDataExportEngPackingOrderServiceImpl extends BaseService<EngData
             List<EngContractQtyOrderAndPurOrderDto> listEngOrder=engContractQtyOrderAndPurOrderMapper.findList(mapPur);
             if(listEngOrder.size()>0){
                 item.setMaterialPurpose(listEngOrder.get(0).getMaterialPurpose());
+            }
+
+            //设置登记人
+            if(StringUtils.isNotEmpty(user)) {
+                item.setRecordUser(user.getUserName());
             }
         }
 

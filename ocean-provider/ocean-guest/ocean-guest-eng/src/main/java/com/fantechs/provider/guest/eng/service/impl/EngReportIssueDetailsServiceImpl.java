@@ -1,9 +1,12 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.restapi.EngReportDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngReportIssueDetailsMapper;
 import com.fantechs.provider.guest.eng.service.EngReportIssueDetailsService;
@@ -29,12 +32,21 @@ public class EngReportIssueDetailsServiceImpl implements EngReportIssueDetailsSe
 
     @Override
     public String reportIssueDetails(WmsInnerJobOrder wmsInnerJobOrder){
+        //获取当前操作用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
         String jsonVoiceArray="";
         String projectID="3919";
         Map<String, Object> map=new HashMap<>();
         map.put("jobOrderId",wmsInnerJobOrder.getJobOrderId());
         List<EngReportDeliveryOrderDto> deliveryOrderOrder = engReportIssueDetailsMapper.findDeliveryOrderOrder(map);
 
+        for (EngReportDeliveryOrderDto item : deliveryOrderOrder) {
+            //设置登记人
+            if(StringUtils.isNotEmpty(user)) {
+                item.setCreateUserName(user.getUserName());
+            }
+        }
 
         jsonVoiceArray= JsonUtils.objectToJson(deliveryOrderOrder);
         String s0=jsonVoiceArray.replaceAll("deliveryOrderDetId","WMSKey");
