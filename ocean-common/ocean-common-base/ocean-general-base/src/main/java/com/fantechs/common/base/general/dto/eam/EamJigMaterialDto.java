@@ -45,6 +45,13 @@ public class EamJigMaterialDto extends EamJigMaterial implements Serializable {
     private String warehouseStorage;
 
     /**
+     * 设备名称
+     */
+    @Transient
+    @ApiModelProperty(name = "equipmentName",value = "设备名称")
+    private String equipmentName;
+
+    /**
      * 治具编码
      */
     @Transient
