@@ -170,7 +170,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                     wmsInnerInventory.setOption1(engPackingOrderSummaryDetDto.getDeviceCode());
                     wmsInnerInventory.setOption2(engPackingOrderSummaryDetDto.getDominantTermCode());
                     wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummaryDto.getContractCode(),
-                            "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"supplierId",engPackingOrder.getSupplierId())));
+                            "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"deviceCode",engPackingOrderSummaryDto.getDeviceCode())));
                     wmsInnerInventory.setOption4(engPackingOrderSummaryDetDto.getLocationNum());
                     wmsInnerInventories.add(wmsInnerInventory);
 
@@ -269,7 +269,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 wmsInnerInventory.setOption1(engPackingOrderSummaryDetDto.getDeviceCode());
                 wmsInnerInventory.setOption2(engPackingOrderSummaryDetDto.getDominantTermCode());
                 wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummaryDto.getContractCode(),
-                        "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"supplierId",engPackingOrder.getSupplierId())));
+                        "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"deviceCode",engPackingOrderSummaryDto.getDeviceCode())));
                 wmsInnerInventory.setOption4(engPackingOrderSummaryDetDto.getLocationNum());
                 wmsInnerInventories.add(wmsInnerInventory);
 
@@ -849,6 +849,10 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             }else{
                 //原库存
                 qty = wmsInnerInventory.getPackingQty();
+                wmsInnerInventory.setOption1(wms.getOption1());
+                wmsInnerInventory.setOption2(wms.getOption2());
+                wmsInnerInventory.setOption3(wms.getOption3());
+                wmsInnerInventory.setOption4(wms.getOption4());
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(wms.getPackingQty()));
                 ResponseEntity responseEntity =  innerFeignApi.updateByPrimaryKeySelective(wmsInnerInventory);
                 if(responseEntity.getCode()!=0){
