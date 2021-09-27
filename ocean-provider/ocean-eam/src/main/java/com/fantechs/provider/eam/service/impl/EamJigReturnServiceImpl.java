@@ -256,7 +256,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             throw new BizErrorException("查无此工单下该治具的领用记录");
         }
 
-        Example example2 = new Example(EamJigReturn.class);
+        /*Example example2 = new Example(EamJigReturn.class);
         Example.Criteria criteria2 = example2.createCriteria();
         criteria2.andEqualTo("jigBarcodeId",eamJigBarcode.getJigBarcodeId())
                 .andEqualTo("jigId",jigId)
@@ -264,7 +264,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
         List<EamJigReturn> eamJigReturns = eamJigReturnMapper.selectByExample(example2);
         if(StringUtils.isNotEmpty(eamJigReturns)){
             throw new BizErrorException("此工单下该治具已归还");
-        }
+        }*/
 
         return eamJigBarcode;
     }
