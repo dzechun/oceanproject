@@ -7,10 +7,12 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
-import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryDetImport;
-import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -25,7 +27,6 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -33,7 +34,6 @@ import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.guest.eng.mapper.*;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderSummaryDetService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -297,9 +297,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             Example.Criteria qtyCriteria = qtyExample.createCriteria();
             qtyCriteria.andEqualTo("contractCode",contractCode);
             qtyCriteria.andEqualTo("dominantTermCode",dominantTermCode);
-            if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getRawMaterialCode())){
-                qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDetImport.getRawMaterialCode());
-            }else if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getMaterialCode())){
+             if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getMaterialCode())){
                 qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDetImport.getMaterialCode());
             }
             qtyCriteria.andEqualTo("deviceCode",deviceCode);
@@ -458,9 +456,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         Example.Criteria qtyCriteria = qtyExample.createCriteria();
         qtyCriteria.andEqualTo("contractCode",engPackingOrderSummary.getContractCode());
         qtyCriteria.andEqualTo("dominantTermCode",dto.getDominantTermCode());
-        if(StringUtils.isNotEmpty(dto.getRawMaterialCode())){
-            qtyCriteria.andEqualTo("materialCode",dto.getRawMaterialCode());
-        }else if(StringUtils.isNotEmpty(dto.getMaterialCode())){
+        if(StringUtils.isNotEmpty(dto.getMaterialCode())){
             qtyCriteria.andEqualTo("materialCode",dto.getMaterialCode());
         }
         qtyCriteria.andEqualTo("deviceCode",dto.getDeviceCode());
