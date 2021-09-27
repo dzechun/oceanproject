@@ -23,7 +23,6 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
@@ -32,10 +31,8 @@ import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Huangshuijun
@@ -254,7 +251,7 @@ public class DeviceInterFaceUtils {
         return baseBadnessPhenotypeDtoList;
     }
 
-    public void  addLog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) throws Exception {
+    public void  addLog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) {
         SysApiLog sysApiLog = new SysApiLog();
         sysApiLog.setThirdpartySysName("雷赛设备过站接口");
         sysApiLog.setCallResult(result);
@@ -265,7 +262,7 @@ public class DeviceInterFaceUtils {
         sysApiLog.setResponseTime(new Date());
         sysApiLog.setResponseData(responseData);
         sysApiLog.setRequestParameter(requestParameter);
-        securityFeignApi.add(sysApiLog);
+    //    securityFeignApi.add(sysApiLog);
     }
 
 }
