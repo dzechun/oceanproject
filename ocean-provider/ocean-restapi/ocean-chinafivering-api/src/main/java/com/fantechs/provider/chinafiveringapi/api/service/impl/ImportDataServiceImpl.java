@@ -278,7 +278,8 @@ public class ImportDataServiceImpl implements ImportDataService {
                         detDto.setWarehouseId(listStorage.getData().get(0).getWarehouseId());
                     }
                     //拣货库位 拣货库位为“DHGUID”的库位 库位信息option1栏位存DHGUID
-                    searchBaseStorage.setStorageCode("");
+                    //searchBaseStorage.setStorageCode("");
+                    searchBaseStorage.setOrgId(orgId);
                     searchBaseStorage.setOption1(tempDto.getOption5());
                     listStorage=baseFeignApi.findList(searchBaseStorage);
                     if(StringUtils.isNotEmpty(listStorage.getData())){

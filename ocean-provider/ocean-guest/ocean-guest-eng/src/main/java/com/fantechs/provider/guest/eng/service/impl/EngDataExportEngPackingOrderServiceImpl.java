@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
+import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
 import com.fantechs.common.base.general.dto.restapi.EngDataExportEngPackingOrderDto;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
@@ -7,6 +8,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
+import com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderAndPurOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngDataExportEngPackingOrderMapper;
 import com.fantechs.provider.guest.eng.service.EngDataExportEngPackingOrderService;
@@ -31,6 +33,8 @@ public class EngDataExportEngPackingOrderServiceImpl extends BaseService<EngData
     private EngContractQtyOrderMapper engContractQtyOrderMapper;
     @Resource
     FiveringFeignApi fiveringFeignApi;
+    @Resource
+    private EngContractQtyOrderAndPurOrderMapper engContractQtyOrderAndPurOrderMapper;
 
     @Override
     public List<EngDataExportEngPackingOrderDto> findExportData(Map<String, Object> map) {
@@ -45,12 +49,24 @@ public class EngDataExportEngPackingOrderServiceImpl extends BaseService<EngData
         map.put("packingOrderId",engPackingOrder.getPackingOrderId());
         List<EngDataExportEngPackingOrderDto> listDto=findExportData(map);
         for (EngDataExportEngPackingOrderDto item : listDto) {
+            //设置合同号表头ID
             Example example = new Example(EngContractQtyOrder.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("contractCode",item.getContractCode());
             List<EngContractQtyOrder> listOrder=engContractQtyOrderMapper.selectByExample(example);
             if(listOrder.size()>0){
                 item.setOption2(listOrder.get(0).getOption2());
+            }
+
+            //设置材料用途
+            Map<String, Object> mapPur=new HashMap<>();
+            mapPur.put("contractCode",item.getContractCode());
+            mapPur.put("purchaseReqOrderCode",item.getPurchaseReqOrderCode());
+            mapPur.put("deviceCode",item.getDeviceCode());
+            mapPur.put("dominantTermCode",item.getDominantTermCode());
+            List<EngContractQtyOrderAndPurOrderDto> listEngOrder=engContractQtyOrderAndPurOrderMapper.findList(mapPur);
+            if(listEngOrder.size()>0){
+                item.setMaterialPurpose(listEngOrder.get(0).getMaterialPurpose());
             }
         }
 
