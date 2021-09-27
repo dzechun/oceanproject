@@ -251,7 +251,7 @@ public class DeviceInterFaceUtils {
         return baseBadnessPhenotypeDtoList;
     }
 
-    public void  addLog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) {
+    public void  addLog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) throws Exception {
         SysApiLog sysApiLog = new SysApiLog();
         sysApiLog.setThirdpartySysName("雷赛设备过站接口");
         sysApiLog.setCallResult(result);
@@ -262,7 +262,7 @@ public class DeviceInterFaceUtils {
         sysApiLog.setResponseTime(new Date());
         sysApiLog.setResponseData(responseData);
         sysApiLog.setRequestParameter(requestParameter);
-    //    securityFeignApi.add(sysApiLog);
+        //securityFeignApi.add(sysApiLog);
     }
 
 }

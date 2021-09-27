@@ -31,10 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -51,6 +48,8 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
     private EamJigRequisitionMapper eamJigRequisitionMapper;
     @Resource
     private EamJigMaterialMapper eamJigMaterialMapper;
+    @Resource
+    private EamEquipmentJigListMapper eamEquipmentJigListMapper;
     @Resource
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
@@ -212,6 +211,19 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             criteria2.andEqualTo("jigId",jigId);
             int returnQty = eamJigReturnMapper.selectCountByExample(example2);
             eamJigMaterialDto.setReturnQty(returnQty);
+
+            //设备名称
+            Map<String,Object> map = new HashMap<>();
+            map.put("jigId",eamJigMaterialDto.getJigId());
+            List<EamEquipmentJigListDto> eamEquipmentJigListDtos = eamEquipmentJigListMapper.findList(map);
+            if(StringUtils.isNotEmpty(eamEquipmentJigListDtos)) {
+                StringBuilder sb = new StringBuilder();
+                for (EamEquipmentJigListDto eamEquipmentJigListDto : eamEquipmentJigListDtos) {
+                    sb.append(eamEquipmentJigListDto.getEquipmentName()).append(";");
+                }
+                String equipmentName = sb.toString().substring(0, sb.toString().length() - 1);
+                eamJigMaterialDto.setEquipmentName(equipmentName);
+            }
 
             list.add(eamJigMaterialDto);
         }

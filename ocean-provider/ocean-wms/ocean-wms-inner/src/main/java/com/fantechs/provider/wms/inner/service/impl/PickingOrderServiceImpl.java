@@ -1014,10 +1014,32 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         if(list.size()<1){
             throw new BizErrorException("出库单已完成或未拣货");
         }
-        //领料拣货单只有作业中状态
-//        if(list.size()>list.stream().filter(li->li.getOrderStatus()==(orderTypeId==8?(byte)4:(byte)5)).collect(Collectors.toList()).size()){
-//            throw new BizErrorException("拣货未完成,发运失败");
-//        }
+
+        if(list.get(0).getOrderTypeId()==8){
+            //获取程序配置项
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("stockRequisition");
+            List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if(itemList.size()<1){
+                throw new BizErrorException("领料拣货配置项获取失败");
+            }
+            Map<String ,String> map = JSONArray.parseObject(itemList.get(0).getParaValue(), Map.class);
+            if(map.get("lack").equals("false") && map.get("beyond").equals("false")){
+                if(list.size()>list.stream().filter(li->li.getOrderStatus()==(byte)5).collect(Collectors.toList()).size()){
+                    throw new BizErrorException("拣货未完成,发运失败");
+                }
+            }else {
+                //领料拣货单只有作业中状态
+                if(list.size()>list.stream().filter(li->li.getOrderStatus()==(orderTypeId==8?(byte)4:(byte)5)).collect(Collectors.toList()).size()){
+                    throw new BizErrorException("拣货未完成,发运失败");
+                }
+            }
+        }else {
+            //领料拣货单只有作业中状态
+            if(list.size()>list.stream().filter(li->li.getOrderStatus()==(byte)5).collect(Collectors.toList()).size()){
+                throw new BizErrorException("拣货未完成,发运失败");
+            }
+        }
         //出库装车单
         WmsOutDespatchOrder wmsOutDespatchOrder = new WmsOutDespatchOrder();
         List<WmsOutDespatchOrderReJo> wmsOutDespatchOrderReJos = new ArrayList<>();

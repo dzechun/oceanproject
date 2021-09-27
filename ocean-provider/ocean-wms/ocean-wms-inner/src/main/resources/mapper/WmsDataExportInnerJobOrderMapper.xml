@@ -32,7 +32,7 @@
     epos.purchase_req_order_code,
     IFNULL(epo.despatch_batch,'') AS despatch_batch,
     eposdet.carton_code,
-    epro.material_code,
+    bm.material_code,
     IFNULL(eposdet.location_num,'') AS location_num,
     eposdet.dominant_term_code,
     eposdet.device_code,
@@ -66,7 +66,7 @@
     </where>
     GROUP BY eposdet.packing_order_summary_det_id,ecqo.option1,epos.contract_code,
     epos.purchase_req_order_code,despatch_batch,eposdet.carton_code,
-    epro.material_code,location_num,eposdet.dominant_term_code,
+    bm.material_code,location_num,eposdet.dominant_term_code,
     eposdet.device_code,wijod.distribution_qty,storage_code,ecqo.remark,
     inner_time,inner_sure_time,record_time,record_user
   </select>

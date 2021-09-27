@@ -5,10 +5,7 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
-import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
-import com.fantechs.common.base.general.dto.eam.EamJigRequisitionDto;
-import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
+import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRequisition;
@@ -31,10 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -49,6 +43,8 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     private EamHtJigRequisitionMapper eamHtJigRequisitionMapper;
     @Resource
     private EamJigMaterialMapper eamJigMaterialMapper;
+    @Resource
+    private EamEquipmentJigListMapper eamEquipmentJigListMapper;
     @Resource
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
@@ -68,7 +64,23 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         }
         map.put("orgId", user.getOrganizationId());
 
-        return eamJigRequisitionMapper.findList(map);
+        List<EamJigRequisitionDto> list = eamJigRequisitionMapper.findList(map);
+        for (EamJigRequisitionDto eamJigRequisitionDto : list){
+            //设备名称
+            Map<String,Object> EquipmentJigMap = new HashMap<>();
+            EquipmentJigMap.put("jigId",eamJigRequisitionDto.getJigId());
+            List<EamEquipmentJigListDto> eamEquipmentJigListDtos = eamEquipmentJigListMapper.findList(EquipmentJigMap);
+            if(StringUtils.isNotEmpty(eamEquipmentJigListDtos)) {
+                StringBuilder sb = new StringBuilder();
+                for (EamEquipmentJigListDto eamEquipmentJigListDto : eamEquipmentJigListDtos) {
+                    sb.append(eamEquipmentJigListDto.getEquipmentName()).append(";");
+                }
+                String equipmentName = sb.toString().substring(0, sb.toString().length() - 1);
+                eamJigRequisitionDto.setEquipmentName(equipmentName);
+            }
+        }
+
+        return list;
     }
 
     /**
@@ -250,6 +262,19 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             criteria.andEqualTo("jigId",eamJigMaterialDto.getJigId());
             int recordQty = eamJigRequisitionMapper.selectCountByExample(example);
             eamJigMaterialDto.setRecordQty(recordQty);
+
+            //设备名称
+            Map<String,Object> map = new HashMap<>();
+            map.put("jigId",eamJigMaterialDto.getJigId());
+            List<EamEquipmentJigListDto> eamEquipmentJigListDtos = eamEquipmentJigListMapper.findList(map);
+            if(StringUtils.isNotEmpty(eamEquipmentJigListDtos)) {
+                StringBuilder sb = new StringBuilder();
+                for (EamEquipmentJigListDto eamEquipmentJigListDto : eamEquipmentJigListDtos) {
+                    sb.append(eamEquipmentJigListDto.getEquipmentName()).append(";");
+                }
+                String equipmentName = sb.toString().substring(0, sb.toString().length() - 1);
+                eamJigMaterialDto.setEquipmentName(equipmentName);
+            }
         }
 
         eamJigRequisitionWorkOrderDto.setList(jigList);
@@ -327,10 +352,6 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         if(Integer.parseInt(sysSpecItemList.get(0).getParaValue()) == 1){
             if(usageQty != count){
                 throw new BizErrorException("治具已扫描数量必须与所需数量一致");
-            }
-        }else {
-            if(usageQty < count){
-                throw new BizErrorException("治具已扫描数量不能大于所需数量");
             }
         }
 

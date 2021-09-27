@@ -67,6 +67,38 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     private Long badnessPhenotypeId;
 
     /**
+     * 责任人名称
+     */
+    @ApiModelProperty(name="dutyUserName",value = "责任人名称")
+    @Excel(name = "责任人名称", height = 20, width = 30,orderNum="")
+    @Column(name = "duty_user_name")
+    private String dutyUserName;
+
+    /**
+     * 责任部门ID
+     */
+    @ApiModelProperty(name="dutyUserDeptId",value = "责任部门ID")
+    @Excel(name = "不良现象ID", height = 20, width = 30,orderNum="")
+    @Column(name = "duty_user_dept_id")
+    private Long dutyUserDeptId;
+
+    /**
+     * 原因分析
+     */
+    @ApiModelProperty(name="causeAnalyse",value = "原因分析")
+    @Excel(name = "原因分析", height = 20, width = 30,orderNum="")
+    @Column(name = "cause_analyse")
+    private String causeAnalyse;
+
+    /**
+     * 改善对策
+     */
+    @ApiModelProperty(name="improveMethod",value = "改善对策")
+    @Excel(name = "改善对策", height = 20, width = 30,orderNum="")
+    @Column(name = "improve_method")
+    private String improveMethod;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
@@ -166,6 +198,14 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     @Transient
     @ApiModelProperty(name = "badnessPhenotypeDesc",value = "不良现象描述")
     private String badnessPhenotypeDesc;
+
+    /**
+     * 责任部门名称
+     */
+    @Transient
+    @ApiModelProperty(name = "deptName",value = "责任部门名称")
+    @Excel(name = "责任部门名称", height = 20, width = 30,orderNum="13")
+    private String deptName;
 
     private String option1;
 

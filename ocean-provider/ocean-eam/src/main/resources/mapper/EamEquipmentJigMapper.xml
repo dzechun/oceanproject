@@ -59,6 +59,9 @@
     left join ocean_v2.sys_user s on eej.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON eej.org_id = bo.organization_id
     <where>
+      <if test="equipmentJigId!=null">
+        and eej.equipment_jig_id = #{equipmentJigId}
+      </if>
       <if test="equipmentCode != null and equipmentCode!=''">
         and ee.equipment_code like CONCAT('%', #{equipmentCode}, '%')
       </if>
