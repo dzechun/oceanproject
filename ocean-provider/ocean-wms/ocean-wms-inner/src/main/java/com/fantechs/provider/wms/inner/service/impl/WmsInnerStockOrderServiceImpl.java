@@ -139,7 +139,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 if(StringUtils.isEmpty(inventoryVerificationDet.getStockQty())){
                     inventoryVerificationDet.setStockQty(BigDecimal.ZERO);
                 }
-                inventoryVerificationDet.setVarianceQty(inventoryVerificationDet.getOriginalQty().subtract(inventoryVerificationDet.getStockQty()));
+                inventoryVerificationDet.setVarianceQty(inventoryVerificationDet.getStockQty().subtract(inventoryVerificationDet.getOriginalQty()));
             }
             int num = wmsInventoryVerificationDetMapper.insertList(entity.getInventoryVerificationDets());
         }else if(entity.getType()==(byte) 1){

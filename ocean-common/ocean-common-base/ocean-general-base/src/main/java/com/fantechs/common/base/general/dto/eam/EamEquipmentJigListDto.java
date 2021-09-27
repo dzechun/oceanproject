@@ -67,4 +67,18 @@ public class EamEquipmentJigListDto extends EamEquipmentJigList implements Seria
     @Transient
     private String jigModel;
 
+    /**
+     * 设备ID
+     */
+    @ApiModelProperty(name="equipmentId",value = "设备ID")
+    @Transient
+    private Long equipmentId;
+
+    /**
+     * 设备名称
+     */
+    @ApiModelProperty(name="equipmentName",value = "设备名称")
+    @Transient
+    private String equipmentName;
+
 }
