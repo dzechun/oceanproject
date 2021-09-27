@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.util;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.ctc.wstx.util.DataUtil;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
@@ -58,17 +59,18 @@ public class InventoryLogUtil {
      * @param jobStatus 作业类型(1-收货，2-上架，3-移位，4-拣货，5-补货，6-调整，7-盘点，8-发运)
      * @param addOrSubtract 加减类型(1-加 2-减)
      */
-    public static void addLog(WmsInnerJobOrder wmsInnerJobOrder, WmsInnerJobOrderDet wmsInnerJobOrderDet,BigDecimal initQty,BigDecimal chaQty, Byte jobStatus, Byte addOrSubtract){
+    public static void addLog(WmsInnerInventory wmsInnerInventory,WmsInnerJobOrder wmsInnerJobOrder, WmsInnerJobOrderDet wmsInnerJobOrderDet,BigDecimal initQty,BigDecimal chaQty, Byte jobStatus, Byte addOrSubtract){
         WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
+        BeanUtil.copyProperties(wmsInnerInventory,wmsInnerInventoryLog);
         wmsInnerInventoryLog.setAsnCode(wmsInnerJobOrder.getRelatedOrderCode());
         wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerJobOrder.getJobOrderCode());
         //收货
         wmsInnerInventoryLog.setJobOrderType(jobStatus);
         wmsInnerInventoryLog.setAddOrSubtract(addOrSubtract);
         if(jobStatus==3 && addOrSubtract==1){
-            wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
-        }else {
             wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getInStorageId());
+        }else {
+            wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
         }
         wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrderDet.getWarehouseId());
         wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDet.getMaterialId());

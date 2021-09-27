@@ -65,6 +65,8 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
         baseInventoryStatus.setCreateTime(new Date());
         baseInventoryStatus.setModifiedUserId(user.getUserId());
         baseInventoryStatus.setModifiedTime(new Date());
+        baseInventoryStatus.setIfCanStoreIssue(StringUtils.isEmpty(baseInventoryStatus.getIfCanStoreIssue())?0: baseInventoryStatus.getIfCanStoreIssue());
+        baseInventoryStatus.setIfDefaultStatus(StringUtils.isEmpty(baseInventoryStatus.getIfDefaultStatus())?0: baseInventoryStatus.getIfDefaultStatus());
         baseInventoryStatus.setStatus(StringUtils.isEmpty(baseInventoryStatus.getStatus())?1: baseInventoryStatus.getStatus());
         baseInventoryStatus.setOrgId(user.getOrganizationId());
         int i = baseInventoryStatusMapper.insertUseGeneratedKeys(baseInventoryStatus);
@@ -101,7 +103,7 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
 
 
     public void ifRepeat(BaseInventoryStatus baseInventoryStatus){
-        if(baseInventoryStatus.getIfDefaultStatus()==1) {
+        if(StringUtils.isNotEmpty(baseInventoryStatus.getIfDefaultStatus())&&baseInventoryStatus.getIfDefaultStatus()==1) {
             Example example = new Example(BaseInventoryStatus.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("materialOwnerId", baseInventoryStatus.getMaterialOwnerId())
