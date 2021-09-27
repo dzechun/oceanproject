@@ -806,12 +806,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                }
 
                 //单据类型是收货入库类型的才调接口
-                if("9".equals(wmsInnerJobOrder.getOrderTypeId().toString())){
+                if(wmsInnerJobOrder.getJobOrderId()==9L){
                     wmsDataExportInnerJobOrderService.writeDeliveryDetails(innerJobOrder);
                 }
 
                 //返写移位接口（五环）
-                if("2".equals(wmsInnerJobOrder.getJobOrderType().toString())){
+                if(wmsInnerJobOrder.getJobOrderType()==2){
                     //engFeignApi.reportInnerJobOrder(innerJobOrder);
                     engFeignApi.reportInnerJobOrder(wmsInnerJobOrder);
                 }
@@ -1014,12 +1014,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                    }
 
                     //单据类型是收货入库类型的才调接口
-                    if("9".equals(wmsInnerJobOrder.getOrderTypeId().toString())){
+                    if(wmsInnerJobOrder.getOrderTypeId()==9L){
                         wmsDataExportInnerJobOrderService.writeDeliveryDetails(ws);
                     }
 
                     //返写移位接口（五环）
-                    if("2".equals(wmsInnerJobOrder.getJobOrderType().toString())){
+                    if(wmsInnerJobOrder.getJobOrderType()==2){
                         engFeignApi.reportInnerJobOrder(ws);
                     }
                 }
@@ -1278,12 +1278,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             SysSpecItem sysSpecItem = itemListFiveRing.get(0);
             if("1".equals(sysSpecItem.getParaValue())) {
                 //回写上架完成接口(五环入库完成)
-                if("3".equals(wmsInnerJobOrderDto.getJobOrderType().toString())){
+                if(wmsInnerJobOrderDto.getJobOrderType()==3){
                     wmsDataExportInnerJobOrderService.writeDeliveryDetails(ws);
                 }
 
                 //返写移位接口（五环）
-                if("2".equals(wmsInnerJobOrderDto.getJobOrderType().toString())){
+                if(wmsInnerJobOrderDto.getJobOrderType()==2){
                     engFeignApi.reportInnerJobOrder(ws);
                 }
             }
@@ -1581,12 +1581,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                                 SysSpecItem sysSpecItem = itemListFiveRing.get(0);
                                 if("1".equals(sysSpecItem.getParaValue())) {
                                     //回写上架完成接口(五环入库完成)
-                                    if("3".equals(wmsInnerJobOrder.getJobOrderType().toString())){
+                                    if(wmsInnerJobOrder.getJobOrderType()==3){
                                         wmsDataExportInnerJobOrderService.writeDeliveryDetails(wmsInnerJobOrder);
                                     }
 
                                     //返写移位接口（五环）
-                                    if("2".equals(wmsInnerJobOrder.getJobOrderType().toString())){
+                                    if(wmsInnerJobOrder.getJobOrderType()==2){
                                         engFeignApi.reportInnerJobOrder(wmsInnerJobOrder);
                                     }
                                 }
