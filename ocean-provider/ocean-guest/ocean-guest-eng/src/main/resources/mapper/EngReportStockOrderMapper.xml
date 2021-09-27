@@ -8,7 +8,7 @@
     <id column="stock_order_det_id" jdbcType="VARCHAR" property="stockOrderDetId" />
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="base_storage_option1" jdbcType="VARCHAR" property="DHGUID" />
+    <result column="DHGUID" jdbcType="VARCHAR" property="DHGUID" />
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
@@ -17,7 +17,6 @@
     <result column="device_code" jdbcType="VARCHAR" property="deviceCode" />
     <result column="variance_qty" jdbcType="VARCHAR" property="varianceQty" />
     <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName" />
-    <result column="DHGUID" jdbcType="VARCHAR" property="DHGUID" />
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
   </resultMap>

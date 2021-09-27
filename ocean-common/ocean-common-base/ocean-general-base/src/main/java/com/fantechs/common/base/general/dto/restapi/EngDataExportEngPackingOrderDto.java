@@ -23,6 +23,10 @@ public class EngDataExportEngPackingOrderDto implements Serializable {
     @Column(name = "contract_code")
     private String contractCode;
 
+    @ApiModelProperty(name="purchaseReqOrderCode",value = "请购单号")
+    @Column(name = "purchase_req_order_code")
+    private String purchaseReqOrderCode;
+
     @ApiModelProperty(name="materialCode",value = "材料编码")
     @Column(name = "material_code")
     private String materialCode;

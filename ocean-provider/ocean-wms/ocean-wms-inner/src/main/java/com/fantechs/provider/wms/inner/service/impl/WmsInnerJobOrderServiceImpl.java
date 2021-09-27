@@ -1009,7 +1009,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 SysSpecItem sysSpecItem = itemListFiveRing.get(0);
                 if("1".equals(sysSpecItem.getParaValue())) {
                     //回写上架完成接口(五环入库完成)
-                    if("3".equals(wmsInnerJobOrder.getJobOrderType().toString())){
+//                    if("3".equals(wmsInnerJobOrder.getJobOrderType().toString())){
+//                        wmsDataExportInnerJobOrderService.writeDeliveryDetails(ws);
+//                    }
+
+                    //单据类型是收货入库类型的才调接口
+                    if("9".equals(wmsInnerJobOrder.getOrderTypeId().toString())){
                         wmsDataExportInnerJobOrderService.writeDeliveryDetails(ws);
                     }
 

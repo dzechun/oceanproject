@@ -533,9 +533,10 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         searchWmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrder.getDeliveryOrderCode());
         searchWmsInnerJobOrder.setOrgId(wmsOutDeliveryOrder.getOrgId());
         ResponseEntity<List<WmsInnerJobOrderDto>> responseEntityDto=innerFeignApi.findList(searchWmsInnerJobOrder);
-        if(StringUtils.isNotEmpty(responseEntityDto.getData().get(0).getJobOrderCode())){
+        if(StringUtils.isNotEmpty(responseEntityDto.getData())){
             //领料出库单已产生上架单 返回 不更新
-            return 0;
+            if(StringUtils.isNotEmpty(responseEntityDto.getData().get(0).getJobOrderCode()))
+                return 0;
         }
 
         Example example = new Example(WmsOutDeliveryOrder.class);

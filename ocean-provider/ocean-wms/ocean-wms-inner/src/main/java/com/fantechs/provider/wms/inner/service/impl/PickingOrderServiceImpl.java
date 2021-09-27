@@ -1015,9 +1015,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             throw new BizErrorException("出库单已完成或未拣货");
         }
         //领料拣货单只有作业中状态
-        if(list.size()>list.stream().filter(li->li.getOrderStatus()==(orderTypeId==8?(byte)4:(byte)5)).collect(Collectors.toList()).size()){
-            throw new BizErrorException("拣货未完成,发运失败");
-        }
+//        if(list.size()>list.stream().filter(li->li.getOrderStatus()==(orderTypeId==8?(byte)4:(byte)5)).collect(Collectors.toList()).size()){
+//            throw new BizErrorException("拣货未完成,发运失败");
+//        }
         //出库装车单
         WmsOutDespatchOrder wmsOutDespatchOrder = new WmsOutDespatchOrder();
         List<WmsOutDespatchOrderReJo> wmsOutDespatchOrderReJos = new ArrayList<>();
@@ -1058,7 +1058,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         //领料出库回传接口（五环）
         //获取程序配置项
-        if(orderTypeId==8) {
+        if(orderTypeId==(byte)8) {
             SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
             searchSysSpecItemFiveRing.setSpecCode("FiveRing");
             List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
