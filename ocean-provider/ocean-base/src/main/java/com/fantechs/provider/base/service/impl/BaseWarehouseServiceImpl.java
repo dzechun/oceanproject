@@ -60,7 +60,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
 
         Example example = new Example(BaseWarehouse.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("warehouseCode", baseWarehouse.getWarehouseCode());
         List<BaseWarehouse> baseWarehouses = baseWarehouseMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(baseWarehouses)){
@@ -146,7 +146,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
 
         Example example = new Example(BaseWarehouse.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("warehouseCode", baseWarehouse.getWarehouseCode())
                 .andNotEqualTo("warehouseId", baseWarehouse.getWarehouseId());
         BaseWarehouse warehouse = baseWarehouseMapper.selectOneByExample(example);
@@ -251,7 +251,7 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
             //判断编码是否重复
             Example example = new Example(BaseWarehouse.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
             criteria.andEqualTo("warehouseCode",warehouseCode);
             if (StringUtils.isNotEmpty(baseWarehouseMapper.selectOneByExample(example))){
                 fail.add(i+4);

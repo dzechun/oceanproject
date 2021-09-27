@@ -50,6 +50,7 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
 
     @Override
     public MesPmProductionKeyIssuesOrder PDAFindOne(String workOrderCode) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         MesPmProductionKeyIssuesOrder mesPmProductionKeyIssuesOrder = new MesPmProductionKeyIssuesOrder();
 
         SearchMesPmProductionKeyIssuesOrder searchMesPmProductionKeyIssuesOrder = new SearchMesPmProductionKeyIssuesOrder();
@@ -60,6 +61,7 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
         if(StringUtils.isEmpty(list)){
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
             searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+            searchMesPmWorkOrder.setOrgId(user.getOrganizationId());
             searchMesPmWorkOrder.setCodeQueryMark(1);
             List<MesPmWorkOrderDto> mesPmWorkOrderDtos = mesPmWorkOrderMapper.findList(searchMesPmWorkOrder);
             if(StringUtils.isEmpty(mesPmWorkOrderDtos)){
