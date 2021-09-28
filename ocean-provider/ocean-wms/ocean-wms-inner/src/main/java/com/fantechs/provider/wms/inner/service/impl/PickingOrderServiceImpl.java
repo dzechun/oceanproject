@@ -758,12 +758,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
                 acuQty = acuQty.subtract(innerInventory.getPackingQty());
                 //添加库存日志
-                InventoryLogUtil.addLog(wmsInnerJobOrder,wmsInnerJobOrderDetDto,innerInventory.getPackingQty(),innerInventory.getPackingQty(),(byte)4,(byte)2);
+                InventoryLogUtil.addLog(innerInventory,wmsInnerJobOrder,wmsInnerJobOrderDetDto,innerInventory.getPackingQty(),innerInventory.getPackingQty(),(byte)4,(byte)2);
 
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(innerInventory.getPackingQty()));
             }else{
                 //添加库存日志
-                InventoryLogUtil.addLog(wmsInnerJobOrder,wmsInnerJobOrderDetDto,innerInventory.getPackingQty(),acuQty,(byte)4,(byte)2);
+                InventoryLogUtil.addLog(innerInventory,wmsInnerJobOrder,wmsInnerJobOrderDetDto,innerInventory.getPackingQty(),acuQty,(byte)4,(byte)2);
 
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(acuQty));
                 if(bigDecimalMap.containsKey(innerInventory.getInventoryId())){
@@ -851,7 +851,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
         }
         //添加库存日志
-        InventoryLogUtil.addLog(wmsInnerJobOrder,wmsInnerJobOrderDetDto,qty,wmsInnerJobOrderDetDto.getActualQty(),(byte)4,(byte)1);
+        InventoryLogUtil.addLog(wmsInnerInventorys,wmsInnerJobOrder,wmsInnerJobOrderDetDto,qty,wmsInnerJobOrderDetDto.getActualQty(),(byte)4,(byte)1);
         return num;
     }
 

@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.out.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -155,6 +156,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
 
                     //添加库存日志
                     WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
+                    BeanUtil.copyProperties(wmsInnerInventory,wmsInnerInventoryLog);
                     wmsInnerInventoryLog.setAsnCode(wmsInnerJobOrder.getRelatedOrderCode());
                     wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerJobOrder.getJobOrderCode());
                     //发运

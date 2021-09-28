@@ -101,6 +101,13 @@ public class BaseProductProcessRoute extends ValidGroup implements Serializable 
     private String materialCode;
 
     /**
+     * 物料名称
+     */
+    @Transient
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
+
+    /**
      * 产品料号版本
      */
     @Transient

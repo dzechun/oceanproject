@@ -170,7 +170,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                     wmsInnerInventory.setOption1(engPackingOrderSummaryDetDto.getDeviceCode());
                     wmsInnerInventory.setOption2(engPackingOrderSummaryDetDto.getDominantTermCode());
                     wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummaryDto.getContractCode(),
-                            "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"deviceCode",engPackingOrderSummaryDto.getDeviceCode())));
+                            "materialCode",engPackingOrderSummaryDetDto.getMaterialCode(),"deviceCode",engPackingOrderSummaryDto.getDeviceCode())));
                     wmsInnerInventory.setOption4(engPackingOrderSummaryDetDto.getLocationNum());
                     wmsInnerInventories.add(wmsInnerInventory);
 
@@ -269,7 +269,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
                 wmsInnerInventory.setOption1(engPackingOrderSummaryDetDto.getDeviceCode());
                 wmsInnerInventory.setOption2(engPackingOrderSummaryDetDto.getDominantTermCode());
                 wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummaryDto.getContractCode(),
-                        "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"deviceCode",engPackingOrderSummaryDto.getDeviceCode())));
+                        "materialCode",engPackingOrderSummaryDetDto.getMaterialCode(),"deviceCode",engPackingOrderSummaryDto.getDeviceCode())));
                 wmsInnerInventory.setOption4(engPackingOrderSummaryDetDto.getLocationNum());
                 wmsInnerInventories.add(wmsInnerInventory);
 
@@ -413,7 +413,7 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             wmsInnerInventory.setOption1(engPackingOrderSummaryDet.getDeviceCode());
             wmsInnerInventory.setOption2(engPackingOrderSummaryDet.getDominantTermCode());
             wmsInnerInventory.setOption3(engPackingOrderMapper.findMaterialPurpose(ControllerUtil.dynamicCondition("contractCode",engPackingOrderSummary.getContractCode(),
-                    "materialCode",engPackingOrderSummaryDetDto.getRawMaterialCode(),"deviceCode",engPackingOrderSummary.getDeviceCode())));
+                    "materialCode",engPackingOrderSummaryDetDto.getMaterialCode(),"deviceCode",engPackingOrderSummary.getDeviceCode())));
             wmsInnerInventory.setOption4(engPackingOrderSummaryDet.getLocationNum());
             wmsInnerInventories.add(wmsInnerInventory);
         }
