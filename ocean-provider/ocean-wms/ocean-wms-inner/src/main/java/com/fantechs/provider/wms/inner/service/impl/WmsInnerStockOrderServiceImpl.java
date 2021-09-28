@@ -469,7 +469,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
             //返写盘点数据（五环）
-            engFeignApi.reportStockOrder(wmsInventoryVerification);
+            //engFeignApi.reportStockOrder(wmsInventoryVerification);
         }
         return num;
     }
