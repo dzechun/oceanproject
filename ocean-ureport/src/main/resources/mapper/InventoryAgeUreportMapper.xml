@@ -39,17 +39,17 @@
                 wii.inventory_id,
                 wii.inventory_status_id,
                 bis.inventory_status_name,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.warehouse_id and wiid.material_id = wii.material_id
+        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
         and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart1} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd1}) as detCount1,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.warehouse_id and wiid.material_id = wii.material_id
+        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
         and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart2} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd2}) as detCount2,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.warehouse_id and wiid.material_id = wii.material_id
+        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
         and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart3} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd3}) as detCount3,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.warehouse_id and wiid.material_id = wii.material_id
+        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
         and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart4} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd4}) as detCount4,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.warehouse_id and wiid.material_id = wii.material_id
+        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
         and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart5}) as detCount5,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.warehouse_id and wiid.material_id = wii.material_id
+        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
         and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart1}) as qty
                FROM wms_inner_inventory wii
                  LEFT JOIN base_warehouse bw ON wii.warehouse_id = bw.warehouse_id
