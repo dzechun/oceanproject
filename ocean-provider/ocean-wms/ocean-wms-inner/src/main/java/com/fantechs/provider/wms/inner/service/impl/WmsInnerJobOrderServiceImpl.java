@@ -257,6 +257,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             Long id = null;
             BigDecimal distributionQty = BigDecimal.ZERO;
             WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
+            if(wmsInnerJobOrder.getJobOrderType()==2){
+                if(wmsInPutawayOrderDet.getInStorageId().equals(wmsInPutawayOrderDet.getOutStorageId())){
+                    throw new BizErrorException("移入库位不能与当前库位相同");
+                }
+            }
             //当货品分配时未全部分配完时新增一条剩余待分配数量的记录
             if (StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty()) || wmsInPutawayOrderDet.getDistributionQty().compareTo(wmsInPutawayOrderDet.getPlanQty()) == -1) {
                 //分配中
