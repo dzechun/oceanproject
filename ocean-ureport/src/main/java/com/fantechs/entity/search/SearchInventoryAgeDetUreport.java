@@ -11,12 +11,7 @@ import java.io.Serializable;
  * @Date 2021/9/26
  */
 @Data
-public class SearchInventoryAgeUreport extends BaseQuery implements Serializable {
-    @ApiModelProperty(name = "warehouseId",value = "仓库id")
-    private Long warehouseId;
-
-    @ApiModelProperty(name = "warehouseAreaId",value = "库区id")
-    private Long warehouseAreaId;
+public class SearchInventoryAgeDetUreport extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name = "storageId",value = "库位id")
     private Long storageId;
@@ -24,7 +19,13 @@ public class SearchInventoryAgeUreport extends BaseQuery implements Serializable
     @ApiModelProperty(name = "materialId",value = "物料")
     private Long materialId;
 
-    @ApiModelProperty(name = "orgId",value = "组织")
-    private Long orgId;
+    @ApiModelProperty(name = "inventoryStatusId",value = "库存状态id")
+    private Long inventoryStatusId;
+
+    @ApiModelProperty(name = "rangeStart",value = "库龄范围起始值")
+    private Integer rangeStart;
+
+    @ApiModelProperty(name = "rangeEnd",value = "库龄范围结束值")
+    private Integer rangeEnd;
 
 }
