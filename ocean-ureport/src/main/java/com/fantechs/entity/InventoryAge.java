@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @Author lzw
@@ -51,11 +52,23 @@ public class InventoryAge implements Serializable {
     private String warehouseAreaCode;
 
     /**
+     *库位id
+     */
+    @ApiModelProperty(name = "storageId",value = "库位id")
+    private Long  storageId;
+
+    /**
      *库位
      */
     @ApiModelProperty(name = "storageCode",value = "库位")
     @Excel(name = "库位", height = 20, width = 30,orderNum="5")
     private String storageCode;
+
+    /**
+     *物料id
+     */
+    @ApiModelProperty(name = "materialId",value = "物料id")
+    private Long  materialId;
 
     /**
      *物料号
@@ -84,4 +97,51 @@ public class InventoryAge implements Serializable {
     @ApiModelProperty(name = "packingUnitName",value = "单位")
     @Excel(name = "单位", height = 20, width = 30,orderNum="9")
     private String  packingUnitName;
+
+    /**
+     *库存状态id
+     */
+    @ApiModelProperty(name = "inventoryStatusId",value = "库存状态id")
+    private Long  inventoryStatusId;
+
+    /**
+     *库存状态名称
+     */
+    @ApiModelProperty(name = "inventoryStatusName",value = "库存状态名称")
+    private String  inventoryStatusName;
+
+    /**
+     * 明细数量1
+     */
+    @ApiModelProperty(name = "detCount1",value = "明细数量1")
+    @Excel(name = "库存1-7天数量", height = 20, width = 30,orderNum="10")
+    private Integer detCount1;
+
+    /**
+     * 明细数量2
+     */
+    @ApiModelProperty(name = "detCount2",value = "明细数量2")
+    @Excel(name = "库存8-14天数量", height = 20, width = 30,orderNum="11")
+    private Integer detCount2;
+
+    /**
+     * 明细数量3
+     */
+    @ApiModelProperty(name = "detCount3",value = "明细数量3")
+    @Excel(name = "库存15-30天数量", height = 20, width = 30,orderNum="12")
+    private Integer detCount3;
+
+    /**
+     * 明细数量4
+     */
+    @ApiModelProperty(name = "detCount4",value = "明细数量4")
+    @Excel(name = "库存31-90天数量", height = 20, width = 30,orderNum="13")
+    private Integer detCount4;
+
+    /**
+     * 明细数量5
+     */
+    @ApiModelProperty(name = "detCount5",value = "明细数量5")
+    @Excel(name = "库存91天以上数量", height = 20, width = 30,orderNum="14")
+    private Integer detCount5;
 }
