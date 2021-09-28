@@ -356,7 +356,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //有差异生成复盘单
             if(wmsInventoryVerification.getProjectType()==(byte)1){
                 //判断是否有差异记录
-                if(list.stream().filter(li->StringUtils.isNotEmpty(li.getVarianceQty())&&(li.getVarianceQty().compareTo(BigDecimal.ZERO)==0 || li.getVarianceQty().compareTo(BigDecimal.ZERO)==-1)).collect(Collectors.toList()).size()>0){
+                if(list.stream().filter(li->StringUtils.isNotEmpty(li.getVarianceQty())&&(li.getVarianceQty().compareTo(BigDecimal.ZERO)==1 || li.getVarianceQty().compareTo(BigDecimal.ZERO)==-1)).collect(Collectors.toList()).size()>0){
                     //新增复盘盘点单
                     WmsInnerStockOrder ws = new WmsInnerStockOrder();
                     BeanUtil.copyProperties(wmsInventoryVerification,ws);
@@ -372,7 +372,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     num += wmsInventoryVerificationMapper.insertUseGeneratedKeys(ws);
 
                     for (WmsInnerStockOrderDet wmsInventoryVerificationDet : list) {
-                        if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&(wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==0 || wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==-1)){
+                        if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&(wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==1 || wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==-1)){
                             WmsInnerStockOrderDet det = new WmsInnerStockOrderDet();
                             det.setStockOrderId(ws.getStockOrderId());
                             det.setSourceDetId(wmsInventoryVerificationDet.getStockOrderDetId());
