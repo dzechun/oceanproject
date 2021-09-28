@@ -469,7 +469,16 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
             //返写盘点数据（五环）
-            engFeignApi.reportStockOrder(wmsInventoryVerification);
+            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+            if (itemListFiveRing.size() < 1) {
+                throw new BizErrorException("配置项 FiveRing 获取失败");
+            }
+            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+            if ("1".equals(sysSpecItem.getParaValue())) {
+                engFeignApi.reportStockOrder(wmsInventoryVerification);
+            }
         }
         return num;
     }

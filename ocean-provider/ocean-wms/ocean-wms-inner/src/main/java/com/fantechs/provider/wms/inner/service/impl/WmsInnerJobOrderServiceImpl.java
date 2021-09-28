@@ -812,7 +812,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                }
 
                 //单据类型是收货入库类型的才调接口
-                if(wmsInnerJobOrder.getJobOrderId()==9L){
+                if(wmsInnerJobOrder.getOrderTypeId()==9L){
                     wmsDataExportInnerJobOrderService.writeDeliveryDetails(innerJobOrder);
                 }
 
