@@ -812,7 +812,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                }
 
                 //单据类型是收货入库类型的才调接口
-                if(wmsInnerJobOrder.getOrderTypeId()==9L){
+                if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) && wmsInnerJobOrder.getOrderTypeId()==9L){
                     wmsDataExportInnerJobOrderService.writeDeliveryDetails(innerJobOrder);
                 }
 
@@ -1023,7 +1023,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                    }
 
                     //单据类型是收货入库类型的才调接口
-                    if(wmsInnerJobOrder.getOrderTypeId()==9L){
+                    if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) && wmsInnerJobOrder.getOrderTypeId()==9L){
                         wmsDataExportInnerJobOrderService.writeDeliveryDetails(ws);
                     }
 
@@ -1287,7 +1287,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             SysSpecItem sysSpecItem = itemListFiveRing.get(0);
             if("1".equals(sysSpecItem.getParaValue())) {
                 //回写上架完成接口(五环入库完成)
-                if(wmsInnerJobOrderDto.getJobOrderType()==3){
+                if(StringUtils.isNotEmpty(wmsInnerJobOrderDto.getOrderTypeId()) && wmsInnerJobOrderDto.getOrderTypeId()==9L){
                     wmsDataExportInnerJobOrderService.writeDeliveryDetails(ws);
                 }
 
@@ -1590,7 +1590,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                                 SysSpecItem sysSpecItem = itemListFiveRing.get(0);
                                 if("1".equals(sysSpecItem.getParaValue())) {
                                     //回写上架完成接口(五环入库完成)
-                                    if(wmsInnerJobOrder.getJobOrderType()==3){
+                                    if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) && wmsInnerJobOrder.getOrderTypeId()==9L){
                                         wmsDataExportInnerJobOrderService.writeDeliveryDetails(wmsInnerJobOrder);
                                     }
 
