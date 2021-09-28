@@ -1,13 +1,15 @@
 package com.fantechs.provider.baseapi.esop.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.SkipHttpsUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -52,15 +54,19 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
     private String url = "http://xbqms.donlim.com:8081/qms/qualitiy/esop/order"; //新宝工单接口地址
 
     @Override
-    public MesPmWorkOrder getWorkOrder(String proCode) {
+    public MesPmWorkOrder getWorkOrder(String proCode,Long orgId) {
         if (StringUtils.isEmpty(proCode)) throw new BizErrorException("产线id不能为空");
+        if(StringUtils.isEmpty(orgId)){
+            // 在esop系统调用，有用户，直接获取
+            SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+            orgId = sysUser.getOrganizationId();
+        }
         String result = null;
         try {
             URL realUrl = new URL(url +"?lineId="+ proCode);
             CloseableHttpClient httpClient = SkipHttpsUtil.wrapClient();
             HttpGet get = new HttpGet(String.valueOf(realUrl));
             CloseableHttpResponse response = null;
-            Long orgId = baseUtils.getOrId();
             BaseMaterial material = null;
             ResponseEntity<MesPmWorkOrder> mesPmWorkOrderResponse = null;
             try {
@@ -75,7 +81,7 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
                     if(StringUtils.isNotEmpty(data) && StringUtils.isNotEmpty(data.get("product_model"))){
                         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
                         searchBaseMaterial.setMaterialCode((String)data.get("product_model"));
-                        searchBaseMaterial.setOrganizationId(baseUtils.getOrId());
+                        searchBaseMaterial.setOrganizationId(orgId);
                         ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
 
                         if(StringUtils.isEmpty(list.getData())) {
@@ -146,13 +152,15 @@ public class EsopWorkOrderApiServiceImpl implements EsopWorkOrderApiService {
     @Override
     public int getAllWorkOrder() {
         log.info("----------开始同步工单-------------");
-        SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
-        searchBaseProLine.setOrgId(baseUtils.getOrId());
-       // searchBaseProLine.setPageSize(5000);
-        ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);
-        if(StringUtils.isNotEmpty(list.getData())){
-            for(BaseProLine baseProLine : list.getData()){
-               this.getWorkOrder(baseProLine.getProCode());
+        List<BaseOrganizationDto> baseOrganizationDtos = baseUtils.getOrId();
+        for(BaseOrganizationDto dto : baseOrganizationDtos) {
+            SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
+            searchBaseProLine.setOrgId(dto.getOrganizationId());
+            ResponseEntity<List<BaseProLine>> list = baseFeignApi.findList(searchBaseProLine);
+            if (StringUtils.isNotEmpty(list.getData())) {
+                for (BaseProLine baseProLine : list.getData()) {
+                    this.getWorkOrder(baseProLine.getProCode(),dto.getOrganizationId());
+                }
             }
         }
         return 1;

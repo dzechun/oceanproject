@@ -2,6 +2,7 @@ package com.fantechs.provider.baseapi.esop.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShop;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
 import com.fantechs.common.base.general.entity.restapi.esop.EsopWorkshop;
@@ -42,14 +43,16 @@ public class EsopWorkshopServiceImpl extends BaseService<EsopWorkshop> implement
     public List<BaseWorkShop> addWorkshop(Map<String, Object> map) throws ParseException {
       List<EsopWorkshop> list = esopWorkshopMapper.findList(map);
       List<BaseWorkShop> baseWorkShops = new ArrayList<BaseWorkShop>();
-      Long orgId = baseUtils.getOrId();
-      if(StringUtils.isNotEmpty(list)){
-          for(EsopWorkshop esopWorkshop :list){
-              baseWorkShops.add(getBaseWorkshop(esopWorkshop,orgId));
+      List<BaseOrganizationDto> baseOrganizationDtos = baseUtils.getOrId();
+      if(StringUtils.isNotEmpty(list) && StringUtils.isNotEmpty(baseOrganizationDtos)){
+          for(BaseOrganizationDto dto : baseOrganizationDtos) {
+              for (EsopWorkshop esopWorkshop : list) {
+                  baseWorkShops.add(getBaseWorkshop(esopWorkshop, dto.getOrganizationId()));
+              }
           }
       }
       ResponseEntity<List<BaseWorkShop>> baseWorkShopList = baseFeignApi.batchAddWorkshop(baseWorkShops);
-      logsUtils.addlog((byte)1,(byte)1,orgId,null,null);
+  //    logsUtils.addlog((byte)1,(byte)1,orgId,null,null);
       return baseWorkShopList.getData();
   }
 

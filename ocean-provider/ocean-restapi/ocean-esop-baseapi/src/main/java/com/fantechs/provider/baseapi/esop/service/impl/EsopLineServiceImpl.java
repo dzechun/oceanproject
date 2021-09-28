@@ -1,6 +1,7 @@
 package com.fantechs.provider.baseapi.esop.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShop;
@@ -45,16 +46,20 @@ public class EsopLineServiceImpl extends BaseService<EsopLine> implements EsopLi
     public List<BaseProLine> addLine(Map<String, Object> map) throws ParseException {
         List<EsopLine> list = esopLineMapper.findList(map);
         List<BaseProLine> baseLines = new ArrayList<BaseProLine>();
-        Long orgId = baseUtils.getOrId();
-        if(StringUtils.isNotEmpty(list)){
-            for(EsopLine esopLine :list){
-                baseLines.add(getEsopLine(esopLine,orgId));
+        List<BaseOrganizationDto> baseOrganizationDtos = baseUtils.getOrId();
+        if(StringUtils.isNotEmpty(list) && StringUtils.isNotEmpty(baseOrganizationDtos)){
+            //根据目前需求，每个组织都需要基础数据，因此每个组织拷贝一份
+            for(BaseOrganizationDto dto : baseOrganizationDtos) {
+                for (EsopLine esopLine : list) {
+                    baseLines.add(getEsopLine(esopLine, dto.getOrganizationId()));
+                }
             }
         }
         ResponseEntity<List<BaseProLine>> baseProLineList = baseFeignApi.batchAddLine(baseLines);
-        logsUtils.addlog((byte)1,(byte)1,orgId,null,null);
+    //    logsUtils.addlog((byte)1,(byte)1,orgId,null,null);
         return baseProLineList.getData();
     }
+
 
     public BaseProLine getEsopLine(EsopLine esopLine,Long orgId ) throws ParseException {
         BaseProLine baseProLine = new BaseProLine();
@@ -70,17 +75,10 @@ public class EsopLineServiceImpl extends BaseService<EsopLine> implements EsopLi
         if(StringUtils.isNotEmpty(workShopList.getData())) {
             baseProLine.setWorkShopId(workShopList.getData().get(0).getWorkShopId());
             baseProLine.setFactoryId(workShopList.getData().get(0).getFactoryId());
+        }else{
+            logsUtils.addlog((byte)1,(byte)1,orgId,"未查询到id为"+orgId+"的组织对应的车间",
+                    esopLine.getWorkshopCode());
         }
-        /*else{
-            //数据库中没查到则通过code去esop库中同步
-            Map<String, Object> map = new HashMap();
-            map.put("workShopCode",esopLine.getWorkshopCode());
-            List<BaseWorkShop> baseWorkShops = esopWorkshopService.addWorkshop(map);
-            if(StringUtils.isNotEmpty(baseWorkShops)) {
-                baseProLine.setWorkShopId(baseWorkShops.get(0).getWorkShopId());
-                baseProLine.setFactoryId(baseWorkShops.get(0).getFactoryId());
-            }
-        }*/
 
         baseProLine.setCreateTime(esopLine.getCreatedTime());
         baseProLine.setModifiedTime(esopLine.getModifyTime());

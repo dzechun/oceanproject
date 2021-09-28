@@ -13,31 +13,31 @@ import java.util.List;
 public class EsopWorkInstructionDto extends EsopWorkInstruction implements Serializable {
 
     /**
-     * 产品料号
+     * 物料编码
      */
-    @ApiModelProperty(name="materialCode",value = "产品料号")
+    @ApiModelProperty(name="materialCode",value = "物料编码")
     @Excel(name = "产品料号", height = 20, width = 30,orderNum="4")
     @Transient
     private String materialCode;
 
     /**
-     * 产品名称
+     * 物料名称
      */
-    @ApiModelProperty(name="materialName",value = "产品名称")
+    @ApiModelProperty(name="materialName",value = "物料名称")
     @Transient
     private String materialName;
 
     /**
-     * 物料详情(规格)
+     * 物料规格
      */
-    @ApiModelProperty(name="materialDesc",value = "物料详情")
+    @ApiModelProperty(name="materialDesc",value = "物料规格")
     @Transient
     private String materialDesc;
 
     /**
-     * 产品描述
+     * 产品名称
      */
-    @ApiModelProperty(name="productModelName",value = "产品描述")
+    @ApiModelProperty(name="productModelName",value = "产品名称")
     @Excel(name = "产品描述", height = 20, width = 30,orderNum="5")
     @Transient
     private String productModelName;
@@ -49,6 +49,13 @@ public class EsopWorkInstructionDto extends EsopWorkInstruction implements Seria
     @Excel(name = "产品型号", height = 20, width = 30,orderNum="6")
     @Transient
     private String productModelCode;
+
+    /**
+     * 产品规格
+     */
+    @ApiModelProperty(name="productModelDesc",value = "产品规格")
+    @Transient
+    private String productModelDesc;
 
     /**
      * 工序名称
@@ -92,16 +99,16 @@ public class EsopWorkInstructionDto extends EsopWorkInstruction implements Seria
     private String modifiedUserName;
 
     /**
-     * 产品规格
+     * 体积
      */
-    @ApiModelProperty(name="specifications",value = "产品规格")
+    @ApiModelProperty(name="specifications",value = "体积")
     @Transient
     private String specifications;
 
     /**
-     * 产品规格
+     * 产线名称
      */
-    @ApiModelProperty(name="proName",value = "产品规格")
+    @ApiModelProperty(name="proName",value = "产线名称")
     @Transient
     private String proName;
 

@@ -2,6 +2,7 @@ package com.fantechs.provider.baseapi.esop.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseDept;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
 import com.fantechs.common.base.general.entity.restapi.esop.EsopDept;
@@ -45,10 +46,13 @@ public class EsopDeptServiceImpl extends BaseService<EsopDept> implements EsopDe
         map.put("isDeleted",0); //新宝0为未删除 1为已删除
         List<EsopDept> list = esopDeptMapper.findList(map);
         List<BaseDept> baseDepts = new ArrayList<BaseDept>();
-        Long orgId = baseUtils.getOrId();
-        if(StringUtils.isNotEmpty(list)){
-            for(EsopDept dept :list){
-                baseDepts.add(getBaseDepy(dept,orgId));
+        List<BaseOrganizationDto> baseOrganizationDtos = baseUtils.getOrId();
+        if(StringUtils.isNotEmpty(list) && StringUtils.isNotEmpty(baseOrganizationDtos)){
+            //根据目前需求，每个组织都需要基础数据，因此每个组织拷贝一份
+            for(BaseOrganizationDto dto : baseOrganizationDtos){
+                for(EsopDept dept :list){
+                    baseDepts.add(getBaseDepy(dept,dto.getOrganizationId()));
+                }
             }
         }
         ResponseEntity<List<BaseDept>> baseDeptlist = baseFeignApi.batchAddDept(baseDepts);

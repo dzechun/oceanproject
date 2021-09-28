@@ -145,12 +145,12 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int save(EsopWorkInstructionDto EsopWorkInstructionDto) {
+    public int save(EsopWorkInstructionDto esopWorkInstructionDto) {
         SysUser user = currentUser();
-        if(StringUtils.isEmpty(EsopWorkInstructionDto.getWorkInstructionCode())) throw new BizErrorException("Wi编码不能为空");
+        if(StringUtils.isEmpty(esopWorkInstructionDto.getWorkInstructionCode())) throw new BizErrorException("Wi编码不能为空");
         Example example = new Example(EsopWorkInstruction.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("workInstructionCode", EsopWorkInstructionDto.getWorkInstructionCode());
+        criteria.andEqualTo("workInstructionCode", esopWorkInstructionDto.getWorkInstructionCode());
         criteria.andEqualTo("orgId", user.getOrganizationId());
         EsopWorkInstruction EsopWorkInstruction = esopWorkInstructionMapper.selectOneByExample(example);
         example.clear();
@@ -159,27 +159,26 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         }
 
         //保存主表
-        EsopWorkInstructionDto.setCreateUserId(user.getUserId());
-        EsopWorkInstructionDto.setCreateTime(new Date());
-        EsopWorkInstructionDto.setModifiedUserId(user.getUserId());
-        EsopWorkInstructionDto.setModifiedTime(new Date());
-        EsopWorkInstructionDto.setStatus((byte)1);
-        EsopWorkInstructionDto.setWiStatus((byte)1);
-        EsopWorkInstructionDto.setOrgId(user.getOrganizationId());
-        esopWorkInstructionMapper.insertUseGeneratedKeys(EsopWorkInstructionDto);
+        esopWorkInstructionDto.setCreateUserId(user.getUserId());
+        esopWorkInstructionDto.setCreateTime(new Date());
+        esopWorkInstructionDto.setModifiedUserId(user.getUserId());
+        esopWorkInstructionDto.setModifiedTime(new Date());
+        esopWorkInstructionDto.setStatus((byte)1);
+        esopWorkInstructionDto.setWiStatus((byte)1);
+        esopWorkInstructionDto.setOrgId(user.getOrganizationId());
+        esopWorkInstructionMapper.insertUseGeneratedKeys(esopWorkInstructionDto);
 
-        EsopHtWorkInstruction EsopHtWorkInstruction = new EsopHtWorkInstruction();
-        BeanUtils.copyProperties(EsopWorkInstructionDto, EsopHtWorkInstruction);
-        int i = esopHtWorkInstructionMapper.insertUseGeneratedKeys(EsopHtWorkInstruction);
+        EsopHtWorkInstruction esopHtWorkInstruction = new EsopHtWorkInstruction();
+        BeanUtils.copyProperties(esopWorkInstructionDto, esopHtWorkInstruction);
+        int i = esopHtWorkInstructionMapper.insertUseGeneratedKeys(esopHtWorkInstruction);
 
-        saveBom(EsopWorkInstructionDto,EsopWorkInstructionDto.getWorkInstructionId(),user);
+        saveBom(esopWorkInstructionDto,esopWorkInstructionDto.getWorkInstructionId(),user);
 
-        saveTool(EsopWorkInstructionDto,EsopWorkInstructionDto.getWorkInstructionId(),user);
+        saveTool(esopWorkInstructionDto,esopWorkInstructionDto.getWorkInstructionId(),user);
 
-        saveStandards(EsopWorkInstructionDto,EsopWorkInstructionDto.getWorkInstructionId(),user);
+        saveStandards(esopWorkInstructionDto,esopWorkInstructionDto.getWorkInstructionId(),user);
 
-        saveFile(EsopWorkInstructionDto,EsopWorkInstructionDto.getWorkInstructionId(),user);
-
+        saveFile(esopWorkInstructionDto,esopWorkInstructionDto.getWorkInstructionId(),user);
 
         return i;
     }

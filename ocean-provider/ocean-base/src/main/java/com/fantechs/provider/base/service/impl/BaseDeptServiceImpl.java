@@ -1,13 +1,12 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseDeptImport;
 import com.fantechs.common.base.general.entity.basic.BaseDept;
 import com.fantechs.common.base.general.entity.basic.BaseFactory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtDept;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseDept;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -335,7 +334,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
 
         }
         if(StringUtils.isNotEmpty(ins)) {
-            int i = baseDeptMapper.insertList(ins);
+            baseDeptMapper.insertList(ins);
         }
         //新增部门历史信息
         if(StringUtils.isNotEmpty(baseHtDepts))
