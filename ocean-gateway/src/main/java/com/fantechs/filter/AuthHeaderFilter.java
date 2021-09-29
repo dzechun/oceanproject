@@ -55,7 +55,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 
 
 	//排除过滤的 uri 地址
-	private static final String LOGIN_URI = "/ocean-security/meslogin,/ocean-security/refreshtoken,/ocean-security/clientGetToken," +
+	private static final String LOGIN_URI = "/ocean-security/meslogin,/ocean-security/loginByOrgCode,/ocean-security/refreshtoken,/ocean-security/clientGetToken," +
 			"/ocean-security/userinfo,/ocean-security/logout,/ocean-fileserver/file/download,/ocean-fileserver/file/multipleFileBase64" +
 			",/ocean-fileserver/file/upload,/ocean-fileserver/file/uploadToSVG,/ocean-imes-materialapi/material/api" +
 			",/ocean-security/sysSpecItem/findList,/ocean-exhibition-client/RCSAPI/agvCallback,/ocean-base/baseOrganization/findList"+
@@ -67,6 +67,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 	private static final String SWAGGER_URI = "/v2/api-docs";
 
 	private static final String CLIENT_URI = "/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder,/ocean-wanbao-api/wanbaoSyncData/syncMaterialData," +
+			"/ocean-wanbao-api/wanbaoSyncData/syncOrderData,/ocean-wanbao-api/wanbaoSyncData/syncSaleOrderData,/ocean-wanbao-api/wanbaoSyncData/syncOutDeliveryData,/ocean-wanbao-api/wanbaoSyncData/syncBarcodeData," +
 			"/ocean-wanbao-api/wanbaoSyncData/syncOrderData,/ocean-wanbao-api/wanbaoSyncData/syncSaleOrderData,/ocean-wanbao-api/wanbaoSyncData/syncOutDeliveryData," +
 			"/ocean-chinafivering-api/webServiceImport/getVendor,/ocean-chinafivering-api/webServiceImport/getIssueDetails,"+
 			"/ocean-chinafivering-api/webServiceImport/getPoDetails,/ocean-chinafivering-api/webServiceImport/getPartNoInfo,"+

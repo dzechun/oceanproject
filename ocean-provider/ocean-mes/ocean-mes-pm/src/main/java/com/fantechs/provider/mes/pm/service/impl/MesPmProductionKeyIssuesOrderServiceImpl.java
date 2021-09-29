@@ -150,6 +150,7 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
         record.setModifiedUserId(user.getUserId());
         record.setOrgId(user.getOrganizationId());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?(byte)1:record.getStatus());
+        record.setOrderStatus(StringUtils.isEmpty(record.getOrderStatus())?(byte)1:record.getOrderStatus());
         int i = mesPmProductionKeyIssuesOrderMapper.insertUseGeneratedKeys(record);
 
         //新增履历

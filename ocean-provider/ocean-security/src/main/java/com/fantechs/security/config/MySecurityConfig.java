@@ -44,7 +44,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 
     private String[] white_list={
 //            "/*/**"
-            "/tologin","/meslogin","/pda/login","/eamlogin",
+            "/tologin","/meslogin","/loginByOrgCode","/pda/login","/eamlogin",
             "/index.html", "/static/**", "/favicon.ico",
             "/swagger-ui.html", "/swagger-resources/**", "/images/**", "/webjars/**", "/v2/api-docs", "/configuration/ui", "/configuration/security"
             ,"null/swagger-resources/**","/sysSpecItem/findList","/sysSpecItem/detail","/clientGetToken"

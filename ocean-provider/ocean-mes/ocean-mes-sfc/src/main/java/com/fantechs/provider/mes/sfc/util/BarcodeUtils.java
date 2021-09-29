@@ -960,7 +960,7 @@ public class BarcodeUtils {
                 throw new Exception("成品SN不能为空");
             }
             else{
-                List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList= barcodeUtils.deviceInterFaceUtils.getWorkOrderBarcode(barcodeCode);
+                List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList= barcodeUtils.deviceInterFaceUtils.getWorkOrderBarcode(barcodeCode,orgId);
                 if(StringUtils.isEmpty(mesSfcWorkOrderBarcodeDtoList)){
                     throw new Exception("成品SN不存在");
                 }
@@ -1078,12 +1078,12 @@ public class BarcodeUtils {
             Long partMaterialId=0L;//半成品物料ID
 
             //检查产品条码
-            baseExecuteResultDto=checkBarcodeStatus(productionSn);
+            baseExecuteResultDto=checkBarcodeStatus(productionSn,orgId,"");
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
 
             //检查半成品条码
-            baseExecuteResultDto=checkBarcodeStatus(halfProductionSn);
+            baseExecuteResultDto=checkBarcodeStatus(halfProductionSn,orgId,"");
             if(baseExecuteResultDto.getIsSuccess()==false) {
                 //获取配置项 工单在条码中的位置 WorkOrderPositionOnBarcode
                 String paraValue = getSysSpecItemValue("WorkOrderPositionOnBarcode");
@@ -1163,12 +1163,13 @@ public class BarcodeUtils {
     * 重载检查条码状态
     * 只传入条码
     */
-    private static BaseExecuteResultDto checkBarcodeStatus(String barCode) throws Exception {
+    private static BaseExecuteResultDto checkBarcodeStatus(String barCode,Long orgId,String type) throws Exception {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
             List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = barcodeUtils.mesSfcWorkOrderBarcodeService
                     .findList(SearchMesSfcWorkOrderBarcode.builder()
                             .barcode(barCode)
+                            .orgId(orgId)
                             .build());
             if (mesSfcWorkOrderBarcodeDtos.isEmpty()) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012000);

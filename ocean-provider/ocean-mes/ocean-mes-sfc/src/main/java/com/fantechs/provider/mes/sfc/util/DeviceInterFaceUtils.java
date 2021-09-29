@@ -152,10 +152,11 @@ public class DeviceInterFaceUtils {
     /*
      * 获取工单条码信息
      * */
-    public List<MesSfcWorkOrderBarcodeDto> getWorkOrderBarcode(String barcodeCode){
+    public List<MesSfcWorkOrderBarcodeDto> getWorkOrderBarcode(String barcodeCode,Long orgId){
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList=null;
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
         searchMesSfcWorkOrderBarcode.setBarcode(barcodeCode);
+        searchMesSfcWorkOrderBarcode.setOrgId(orgId);
         mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
         return mesSfcWorkOrderBarcodeDtoList;
     }
