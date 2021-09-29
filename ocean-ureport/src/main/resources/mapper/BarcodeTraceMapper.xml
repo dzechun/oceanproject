@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.BarcodeTraceMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.entity.BarcodeTraceModel">
+        <id column="work_order_id" jdbcType="VARCHAR" property="workOrderId" />
+        <result column="org_id" jdbcType="VARCHAR" property="orgId" />
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+        <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+        <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+        <result column="sale_barcode" jdbcType="VARCHAR" property="saleBarcode" />
+        <result column="work_create_time" jdbcType="VARCHAR" property="workCreateTime" />
+        <result column="sale_create_time" jdbcType="VARCHAR" property="saleCreateTime" />
+        <result column="work_print_time" jdbcType="VARCHAR" property="workPrintTime" />
+        <result column="sale_print_time" jdbcType="VARCHAR" property="salePrintTime" />
+        <result column="carton_scan_time" jdbcType="VARCHAR" property="cartonScanTime" />
+        <result column="pallet_scan_time" jdbcType="VARCHAR" property="palletScanTime" />
+        <result column="receiving_date" jdbcType="VARCHAR" property="receivingDate" />
+        <result column="deliver_date" jdbcType="VARCHAR" property="deliverDate" />
+        <result column="car_scan_time" jdbcType="VARCHAR" property="carScanTime" />
+        <result column="barcode_status" jdbcType="VARCHAR" property="barcodeStatus" />
+    </resultMap>
+    <select id="findList" resultMap="BaseResultMap">
+        SELECT
+        mpwo.work_order_id,-- 工单ID
+        mpwo.org_id,-- 组织
+        mpwo.work_order_code,-- 离散单号
+        oso.sales_order_code, -- 生产单号
+        bm.material_code,-- 制造编码
+        bm.material_name,-- 产品描述
+        mswob.barcode,-- 厂内码
+        makpr.part_barcode AS sale_barcode,-- 销售码
+        mswob.create_time AS work_create_time,-- 厂内码生成时间
+        mswobsale.create_time AS sale_create_time,-- 销售码生成时间
+        mswob.print_time AS work_print_time,-- 厂内码打印时间
+        mswobsale.print_time AS sale_print_time,-- 销售码打印时间
+        mfbpr.in_process_time AS carton_scan_time,-- 打包扫描时间
+        mfbprpallet.in_process_time AS pallet_scan_time,-- 入库下线扫描时间
+        wiid.receiving_date,-- 堆垛入库时间
+        wiid.deliver_date,-- 拣货出库时间
+        wiidout.modified_time AS car_scan_time,-- 装车扫描时间
+        CASE WHEN IFNULL(wiidout.barcode_status,'')=6 THEN '完成' ELSE '未完成' END AS barcode_status-- 条码状态
+        FROM mes_pm_work_order mpwo
+        LEFT JOIN om_sales_order oso ON mpwo.sales_order_id=oso.sales_order_id
+        LEFT JOIN base_material bm ON mpwo.material_id=bm.material_id
+        LEFT JOIN mes_sfc_work_order_barcode mswob ON mpwo.work_order_id=mswob.work_order_id AND label_category_id=56
+        LEFT JOIN mes_sfc_key_part_relevance makpr ON mswob.barcode=makpr.barcode_code
+        LEFT JOIN mes_sfc_work_order_barcode mswobsale ON makpr.part_barcode=mswobsale.barcode
+        LEFT JOIN mes_sfc_barcode_process_record mfbpr ON mswob.barcode=mfbpr.barcode AND IFNULL(mfbpr.carton_code,'') !='' AND IFNULL(mfbpr.pallet_code,'')=''
+        LEFT JOIN mes_sfc_barcode_process_record mfbprpallet ON mswob.barcode=mfbprpallet.barcode AND IFNULL(mfbprpallet.pallet_code,'') !=''
+        LEFT JOIN wms_inner_inventory_det wiid ON mswob.barcode=wiid.barcode
+        LEFT JOIN wms_inner_inventory_det wiidout ON mswob.barcode=wiidout.barcode AND wiidout.barcode_status=6
+<where>
+        <if test="orgId!=null and orgId!=''">
+            and wii.org_id=#{orgId}
+        </if>
+</where>
+    </select>
+</mapper>
