@@ -276,7 +276,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             EngPackingOrderSummaryDetDto dto = new EngPackingOrderSummaryDetDto();
             BeanUtils.copyProperties(engPackingOrderSummaryDetImport, dto);
 
-            if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getMaterialCode())){
+            if(StringUtils.isNotEmpty(engPackingOrderSummaryDetImport.getMaterialCode()) && !"-".equals(dto.getMaterialCode().substring(2,3))){
                 //校验合同量单
                 Example qtyExample = new Example(EngContractQtyOrder.class);
                 Example.Criteria qtyCriteria = qtyExample.createCriteria();
@@ -409,7 +409,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         if (!dto.getCartonCode().equals(engPackingOrderSummary.getCartonCode()))
             throw new BizErrorException("添加失败，包装箱号不一致");
 
-        if(StringUtils.isNotEmpty(dto.getMaterialCode())){
+        if(StringUtils.isNotEmpty(dto.getMaterialCode()) && !"-".equals(dto.getMaterialCode().substring(2,3))){
             //校验合同量单
             Example qtyExample = new Example(EngContractQtyOrder.class);
             Example.Criteria qtyCriteria = qtyExample.createCriteria();
