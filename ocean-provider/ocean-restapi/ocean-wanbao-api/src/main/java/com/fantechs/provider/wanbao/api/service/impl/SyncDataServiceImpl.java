@@ -10,6 +10,7 @@ import com.fantechs.common.base.entity.security.SysApiLog;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
@@ -17,6 +18,7 @@ import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseRoute;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
@@ -255,26 +257,55 @@ public class SyncDataServiceImpl implements SyncDataService {
             List<MesPmWorkOrderDto> workOrderDtos = pmFeignApi.findWorkOrderAll().getData();
             // 产线集合
             List<BaseProLine> proLines = baseFeignApi.findProLineAll().getData();
-            // 默认工艺路线
-            List<BaseRoute> baseRoutes = baseFeignApi.findRouteList(new SearchBaseRoute()).getData();
+            // 工艺路线
+            SearchBaseRoute baseRoute = new SearchBaseRoute();
+            baseRoute.setPageSize(9999);
+            List<BaseRoute> baseRoutes = baseFeignApi.findRouteList(baseRoute).getData();
             if(baseRoutes.isEmpty()){
                 // 记录日志
                 apiLog.setResponseData("平台默认工艺路线不存在，不同步工单数据");
                 securityFeignApi.add(apiLog);
                 return;
             }
+            // 条码规则集合
+            SearchBaseBarcodeRuleSet barcodeRuleSet = new SearchBaseBarcodeRuleSet();
+            barcodeRuleSet.setPageSize(9999);
+            List<BaseBarcodeRuleSetDto> ruleSetDtos = baseFeignApi.findBarcodeRuleSetList(barcodeRuleSet).getData();
+            if(ruleSetDtos.isEmpty()){
+                // 记录日志
+                apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
+                securityFeignApi.add(apiLog);
+                return;
+            }
 
-            List<BaseRouteProcess> routeProcessList = baseFeignApi.findConfigureRout(baseRoutes.get(0).getRouteId()).getData();
+            // 通过程序配置项取工艺路线、规则集合
+            Long routeId = 0L;
+            for (BaseRoute route : baseRoutes){
+                if (route.getRouteCode().equals(jsonObject.get("routeCode"))){
+                    routeId = route.getRouteId();
+                    break;
+                }
+            }
+            // 工艺路线工序关系
+            List<BaseRouteProcess> routeProcessList = baseFeignApi.findConfigureRout(routeId).getData();
 
+            Long ruleSetId = 0L;
+            for (BaseBarcodeRuleSetDto ruleSetDto : ruleSetDtos){
+                if (ruleSetDto.getBarcodeRuleSetCode().equals(jsonObject.get("ruleCode"))){
+                    ruleSetId = ruleSetDto.getBarcodeRuleSetId();
+                    break;
+                }
+            }
 
             List<MesPmWorkOrder> addList = new ArrayList<>();
             List<MesPmWorkOrder> updateList = new ArrayList<>();
             for (MiddleOrder order : workOrders) {
                 MesPmWorkOrder workOrder = new MesPmWorkOrder();
                 BeanUtil.copyProperties(order, workOrder);
-                workOrder.setRouteId(baseRoutes.get(0).getRouteId());
+                workOrder.setRouteId(routeId);
                 workOrder.setPutIntoProcessId(routeProcessList.get(0).getProcessId());
                 workOrder.setOutputProcessId(routeProcessList.get(routeProcessList.size()-1).getProcessId());
+                workOrder.setBarcodeRuleSetId(ruleSetId);
                 // 销售订单
                 if (StringUtils.isEmpty(order.getSalesOrderCode())) {
                     apiLog.setResponseData(order.getWorkOrderCode() + "此生产订单数据中销售订单号为空，不同步此条订单数据");

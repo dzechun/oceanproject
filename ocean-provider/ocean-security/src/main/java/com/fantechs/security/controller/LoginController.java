@@ -62,9 +62,9 @@ public class LoginController {
         return  responseEntity;
     }
 
-    @PostMapping("/meslogin")
+    @PostMapping("/loginByOrgCode")
     @ApiOperation(value = "登陆接口")
-    public ResponseEntity meslogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "orgCode") String orgCode){
+    public ResponseEntity loginByOrgCode(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "orgCode") String orgCode){
         SearchBaseOrganization organization = new SearchBaseOrganization();
         organization.setOrganizationCode(orgCode);
         List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(organization).getData();
