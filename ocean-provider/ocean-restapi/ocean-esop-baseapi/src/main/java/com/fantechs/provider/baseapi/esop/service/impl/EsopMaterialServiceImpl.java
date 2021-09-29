@@ -1,10 +1,14 @@
 package com.fantechs.provider.baseapi.esop.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseProductModel;
+import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductModel;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.SkipHttpsUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -49,11 +53,12 @@ public class EsopMaterialServiceImpl implements EsopMaterialService {
     public BaseMaterial getMaterial(String materialCode) {
         if (StringUtils.isEmpty(materialCode)) throw new BizErrorException("物料（产品）编码不能为空");
         String result = null;
-        Long orgId = baseUtils.getOrId();
+      //  物料在esop系统调用，有用户，直接获取
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         BaseMaterial material = null;
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
         searchBaseMaterial.setMaterialCode(materialCode);
-        searchBaseMaterial.setOrganizationId(orgId);
+        searchBaseMaterial.setOrganizationId(sysUser.getOrganizationId());
         List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
         if(StringUtils.isNotEmpty(baseMaterials)) {
             material = baseMaterials.get(0);
@@ -75,10 +80,20 @@ public class EsopMaterialServiceImpl implements EsopMaterialService {
                         baseMaterial.setMaterialName((String) data.get("name"));
                         baseMaterial.setMaterialCode((String) data.get("code"));
                         baseMaterial.setMaterialDesc((String) data.get("specs"));
-                        baseMaterial.setOrganizationId(orgId);
+                        baseMaterial.setOrganizationId(sysUser.getOrganizationId());
                         baseMaterial.setStatus((byte) 1);
                         baseMaterial.setIsDelete((byte) 1);
                         material = baseFeignApi.saveByApi(baseMaterial).getData();
+
+                        //绑定产品型号
+                        SearchBaseProductModel searchBaseProductModel = new SearchBaseProductModel();
+                        searchBaseProductModel.setProductModelCode((String) data.get("product_model"));
+                        List<BaseProductModel> baseProductModel = baseFeignApi.findList(searchBaseProductModel).getData();
+                        BaseTab tab = new BaseTab();
+                        tab.setMaterialId(material.getMaterialId());
+                        tab.setProductModelId(baseProductModel.get(0).getProductModelId());
+                        baseFeignApi.addTab(tab);
+
                     }
                //    logsUtils.addlog((byte) 1, (byte) 1, orgId, result, materialCode);
                 } catch (UnsupportedEncodingException e) {

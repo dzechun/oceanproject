@@ -61,13 +61,13 @@
                 and bw.warehouse_id =#{warehouseId}
             </if>
             <if test="materialId!=null and materialId!=''">
-                and bm.material_id like = #{materialId}
+                and bm.material_id = #{materialId}
             </if>
             <if test="orgId!=null and orgId!=''">
                 and bo.organization_id =#{orgId}
             </if>
             <if test="workShopId!=null and workShopId!=''">
-               and bws.work_shop_id #{workShopId}
+               and bws.work_shop_id =#{workShopId}
             </if>
             <if test="proId!=null and proId!=''">
                 and bpl.pro_id =#{proId}
@@ -113,7 +113,7 @@
                 and bw.warehouse_id =#{warehouseId}
             </if>
             <if test="materialId!=null and materialId!=''">
-                and bm.material_id like = #{materialId}
+                and bm.material_id  = #{materialId}
             </if>
             <if test="orgId!=null and orgId!=''">
                 and bo.organization_id =#{orgId}
@@ -174,13 +174,13 @@
                 and bw.warehouse_id =#{warehouseId}
             </if>
             <if test="materialId!=null and materialId!=''">
-                and bm.material_id like = #{materialId}
+                and bm.material_id = #{materialId}
             </if>
             <if test="orgId!=null and orgId!=''">
                 and bo.organization_id =#{orgId}
             </if>
             <if test="workShopId!=null and workShopId!=''">
-                and bws.work_shop_id #{workShopId}
+                and bws.work_shop_id =#{workShopId}
             </if>
             <if test="proId!=null and proId!=''">
                 and bpl.pro_id =#{proId}

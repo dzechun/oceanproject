@@ -1,9 +1,12 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.restapi.EngReportStockOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngReportStockOrderMapper;
 import com.fantechs.provider.guest.eng.service.EngReportStockOrderService;
@@ -29,12 +32,22 @@ public class EngReportStockOrderServiceImpl  implements EngReportStockOrderServi
 
     @Override
     public String reportStockOrder(WmsInnerStockOrder wmsInnerStockOrder ){
+        //获取当前操作用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
         String jsonVoiceArray="";
         String projectID="3919";
 
         Map<String, Object> map=new HashMap<>();
         map.put("stockOrderId",wmsInnerStockOrder.getStockOrderId());
         List<EngReportStockOrderDto> stockOrders = engReportStockOrderMapper.findStockOrder(map);
+
+        for (EngReportStockOrderDto item : stockOrders) {
+            //设置登记人
+            if(StringUtils.isNotEmpty(user)) {
+                item.setCreateUserName(user.getUserName());
+            }
+        }
 
         jsonVoiceArray= JsonUtils.objectToJson(stockOrders);
         String s0=jsonVoiceArray.replaceAll("stockOrderDetId","WMSKey");

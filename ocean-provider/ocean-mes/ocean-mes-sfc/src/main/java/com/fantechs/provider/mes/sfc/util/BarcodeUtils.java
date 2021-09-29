@@ -1,10 +1,7 @@
 package com.fantechs.provider.mes.sfc.util;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysAuthRole;
 import com.fantechs.common.base.entity.security.SysSpecItem;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.SysUserRole;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
@@ -31,7 +28,6 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProducti
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -41,7 +37,6 @@ import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
 
@@ -618,39 +613,63 @@ public class BarcodeUtils {
             }
 
             //验证用户账号和密码是否正确
-            ResponseEntity<List<SysUser>> sysUserlist = barcodeUtils.deviceInterFaceUtils.getSysUser(restapiChkLogUserInfoApiDto.getUserCode(), orgId);
-            if (StringUtils.isEmpty(sysUserlist.getData())) {
-                throw new Exception(fail + " 请求失败,登录用户帐号不存在");
-            } else {
-                SysUser sysUser = sysUserlist.getData().get(0);
-                Boolean isOK = new BCryptPasswordEncoder().matches(restapiChkLogUserInfoApiDto.getPassword(), sysUser.getPassword());
-                if (!isOK) {
-                    throw new Exception(fail + " 请求失败,登录用户密码不正确");
-                }
+            ResponseEntity responseEntityResult=barcodeUtils.deviceInterFaceUtils.checkLogin(restapiChkLogUserInfoApiDto.getUserCode(), restapiChkLogUserInfoApiDto.getPassword(),orgId);
+            if(responseEntityResult.getCode()>0)
+                throw new Exception(responseEntityResult.getMessage());
+            Long userId=0L;
+            Map<String,Object> map=(Map<String,Object>)responseEntityResult.getData();
+            if(map.containsKey("userName"))
+                userName=map.get("userName").toString();
+            if(map.containsKey("userId"))
+                userId=Long.valueOf(map.get("userId").toString());
 
-                //用户权限判断 判断是否有工序权限 只到菜单权限
-                boolean haveAuth=false;
-                ResponseEntity<List<SysUserRole>> reSysUserRoleList=barcodeUtils.deviceInterFaceUtils.findUserRoleList(sysUser.getUserId());
-                if(StringUtils.isEmpty(reSysUserRoleList)){
-                    throw new Exception(fail + " 请求失败,登录用户没有设置权限");
-                }
-                else {
-                    List<SysUserRole> sysUserRoleList=reSysUserRoleList.getData();
-                    for (SysUserRole sysUserRole : sysUserRoleList) {
-                        Long menuId=478L;//工序菜单id
-                        Long roleId=sysUserRole.getRoleId();
-                        ResponseEntity<SysAuthRole> reSysAuthRole=barcodeUtils.deviceInterFaceUtils.getSysAuthRole(roleId,menuId);
-                        if(StringUtils.isNotEmpty(reSysAuthRole)){
-                            haveAuth=true;
-                            break;
-                        }
-                    }
-                }
-                if(haveAuth==false){
-                    throw new Exception(fail + " 请求失败,登录用户没有工序权限");
-                }
-                userName = sysUser.getUserName();
-            }
+            //String result=responseEntityResult.getData().toString();
+
+
+//            String strName="";
+//            String[] str=result.split(",");
+//            for (String s : str) {
+//                if(s.indexOf("userName")>0){
+//                    strName=s;
+//                    break;
+//                }
+//            }
+//
+//            userName=strName.substring(strName.indexOf("=")+1);
+
+//            ResponseEntity<List<SysUser>> sysUserlist = barcodeUtils.deviceInterFaceUtils.getSysUser(restapiChkLogUserInfoApiDto.getUserCode(), orgId);
+//            if (StringUtils.isEmpty(sysUserlist.getData())) {
+//                throw new Exception(fail + " 请求失败,登录用户帐号不存在");
+//            } else {
+//                SysUser sysUser = sysUserlist.getData().get(0);
+//                Boolean isOK = new BCryptPasswordEncoder().matches(restapiChkLogUserInfoApiDto.getPassword(), sysUser.getPassword());
+//                if (!isOK) {
+//                    throw new Exception(fail + " 请求失败,登录用户密码不正确");
+//                }
+//
+//                //用户权限判断 判断是否有工序权限 只到菜单权限
+//                boolean haveAuth=false;
+//                ResponseEntity<List<SysUserRole>> reSysUserRoleList=barcodeUtils.deviceInterFaceUtils.findUserRoleList(userId);
+//                if(StringUtils.isEmpty(reSysUserRoleList)){
+//                    throw new Exception(fail + " 请求失败,登录用户没有设置权限");
+//                }
+//                else {
+//                    List<SysUserRole> sysUserRoleList=reSysUserRoleList.getData();
+//                    for (SysUserRole sysUserRole : sysUserRoleList) {
+//                        Long menuId=478L;//工序菜单id
+//                        Long roleId=sysUserRole.getRoleId();
+//                        ResponseEntity<SysAuthRole> reSysAuthRole=barcodeUtils.deviceInterFaceUtils.getSysAuthRole(roleId,menuId);
+//                        if(StringUtils.isNotEmpty(reSysAuthRole)){
+//                            haveAuth=true;
+//                            break;
+//                        }
+//                    }
+//                }
+//                if(haveAuth==false){
+//                    throw new Exception(fail + " 请求失败,登录用户没有工序权限");
+//                }
+//                userName = sysUser.getUserName();
+//            }
 
             baseExecuteResultDto.setIsSuccess(true);
             baseExecuteResultDto.setSuccessMsg(pass + ",验证通过,产线名称:" + proName + ",工序名称:" + processName + ",用户名称:" + userName);
@@ -661,7 +680,7 @@ public class BarcodeUtils {
         }
 
         //记录请求参数及结果
-        barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkLogUserInfoApiDto.toString());
+        //barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkLogUserInfoApiDto.toString());
 
         return baseExecuteResultDto;
     }
@@ -729,7 +748,7 @@ public class BarcodeUtils {
         }
 
         //记录请求参数及结果
-        barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkSNRoutingApiDto.toString());
+        //barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkSNRoutingApiDto.toString());
         return baseExecuteResultDto;
     }
 
@@ -823,7 +842,7 @@ public class BarcodeUtils {
         }
 
         //记录请求参数及结果
-        barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiSNDataTransferApiDto.toString());
+        //barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiSNDataTransferApiDto.toString());
         return baseExecuteResultDto;
     }
 
@@ -978,15 +997,17 @@ public class BarcodeUtils {
             }
 
             //检查用户
-            if (StringUtils.isNotEmpty(userCode)) {
-                ResponseEntity<List<SysUser>> sysUserList = barcodeUtils.deviceInterFaceUtils.getSysUser(userCode, orgId);
-                if (StringUtils.isEmpty(sysUserList.getData())) {
-                    throw new Exception("用户信息不存在");
-                }
+//            if (StringUtils.isNotEmpty(userCode)) {
+//                ResponseEntity<List<SysUser>> sysUserList = barcodeUtils.deviceInterFaceUtils.getSysUser(userCode, orgId);
+//                if (StringUtils.isEmpty(sysUserList.getData())) {
+//                    throw new Exception("用户信息不存在");
+//                }
+//
+//                //设置操作人员ID
+//                updateProcessDto.setOperatorUserId(sysUserList.getData().get(0).getUserId());
+//            }
 
-                //设置操作人员ID
-                updateProcessDto.setOperatorUserId(sysUserList.getData().get(0).getUserId());
-            }
+            updateProcessDto.setOperatorUserId(1L);
             //检查不良现象
             if (StringUtils.isNotEmpty(badnessPhenotypeCode)) {
                 ResponseEntity<List<BaseBadnessPhenotypeDto>> baseBadnessPhenotypeDtoList = barcodeUtils.deviceInterFaceUtils.getBadnessPhenotype(badnessPhenotypeCode, orgId);

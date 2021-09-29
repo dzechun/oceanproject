@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.dto.esop;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eam.EamIssue;
 import com.fantechs.common.base.general.entity.esop.EsopIssue;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -36,28 +35,42 @@ public class EsopIssueDto extends EsopIssue implements Serializable {
     private String organizationName;
 
     /**
-     * 产品编码
+     * 物料编码
      */
     @Transient
-    @ApiModelProperty(name = "materialCode",value = "产品编码")
+    @ApiModelProperty(name = "materialCode",value = "物料编码")
     @Excel(name = "产品编码", height = 20, width = 30,orderNum="4")
     private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @Transient
+    @ApiModelProperty(name = "materialName",value = "物料名称")
+    @Excel(name = "产品名称", height = 20, width = 30,orderNum="5")
+    private String materialName;
 
     /**
      * 产品名称
      */
     @Transient
-    @ApiModelProperty(name = "materialName",value = "产品名称")
-    @Excel(name = "产品名称", height = 20, width = 30,orderNum="5")
-    private String materialName;
+    @ApiModelProperty(name = "productModelName",value = "产品名称")
+    @Excel(name = "产品名称", height = 20, width = 30,orderNum="3")
+    private String productModelName;
 
     /**
      * 产品型号
      */
     @Transient
-    @ApiModelProperty(name = "productModelName",value = "产品型号")
-    @Excel(name = "产品型号", height = 20, width = 30,orderNum="3")
-    private String productModelName;
+    @ApiModelProperty(name = "productModelCode",value = "产品型号")
+    private String productModelCode;
+
+    /**
+     * 产品规格
+     */
+    @Transient
+    @ApiModelProperty(name = "productModelDesc",value = "产品规格")
+    private String productModelDesc;
 
     /**
      * 工序编码
@@ -65,5 +78,6 @@ public class EsopIssueDto extends EsopIssue implements Serializable {
     @Transient
     @ApiModelProperty(name = "processCode",value = "工序编码")
     private String processCode;
+
 
 }

@@ -1,10 +1,13 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.restapi.WmsDataExportInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsDataExportInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.WmsDataExportInnerJobOrderService;
@@ -34,11 +37,22 @@ public class WmsDataExportInnerJobOrderServiceImpl extends BaseService<WmsDataEx
 
     @Override
     public String writeDeliveryDetails(WmsInnerJobOrder wmsInnerJobOrder) {
+        //获取当前操作用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
         String jsonVoiceArray="";
         String projectID="3919";
         Map<String, Object> map=new HashMap<>();
         map.put("jobOrderId",wmsInnerJobOrder.getJobOrderId());
         List<WmsDataExportInnerJobOrderDto> listDto=findExportData(map);
+
+        for (WmsDataExportInnerJobOrderDto item : listDto) {
+            //设置登记人
+            if(StringUtils.isNotEmpty(user)) {
+                item.setRecordUser(user.getUserName());
+            }
+        }
+
         jsonVoiceArray= JsonUtils.objectToJson(listDto);
         String s0=jsonVoiceArray.replaceAll("packingOrderSummaryDetId","WMSKey");
         String s1=s0.replaceAll("option1","PPGUID");

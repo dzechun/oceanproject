@@ -32,7 +32,7 @@
     epos.purchase_req_order_code,
     IFNULL(epo.despatch_batch,'') AS despatch_batch,
     eposdet.carton_code,
-    epro.material_code,
+    bm.material_code,
     IFNULL(eposdet.location_num,'') AS location_num,
     eposdet.dominant_term_code,
     eposdet.device_code,
@@ -57,7 +57,7 @@
     AND epos.device_code=ecqo.device_code
     AND bm.material_code=ecqo.material_code
     LEFT JOIN eng_purchase_req_order epro ON epro.option3=ecqo.option3
-    LEFT JOIN base_storage bs ON eposdet.putaway_storage_id=bs.storage_id
+    LEFT JOIN base_storage bs ON wijod.in_storage_id=bs.storage_id
     LEFT JOIN ocean_v2.sys_user u ON wijo.modified_user_id=u.user_id
     <where>
       <if test="jobOrderId!=null and jobOrderId!=''">
@@ -66,7 +66,7 @@
     </where>
     GROUP BY eposdet.packing_order_summary_det_id,ecqo.option1,epos.contract_code,
     epos.purchase_req_order_code,despatch_batch,eposdet.carton_code,
-    epro.material_code,location_num,eposdet.dominant_term_code,
+    bm.material_code,location_num,eposdet.dominant_term_code,
     eposdet.device_code,wijod.distribution_qty,storage_code,ecqo.remark,
     inner_time,inner_sure_time,record_time,record_user
   </select>

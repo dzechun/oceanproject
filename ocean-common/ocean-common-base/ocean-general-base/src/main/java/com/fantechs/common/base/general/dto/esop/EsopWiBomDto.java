@@ -1,6 +1,5 @@
 package com.fantechs.common.base.general.dto.esop;
 
-import com.fantechs.common.base.general.entity.eam.EamWiBom;
 import com.fantechs.common.base.general.entity.esop.EsopWiBom;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,9 +11,9 @@ import java.io.Serializable;
 public class EsopWiBomDto extends EsopWiBom implements Serializable {
 
     /**
-     * 产品料号
+     * 物料编码
      */
-    @ApiModelProperty(name="materialCode",value = "产品料号")
+    @ApiModelProperty(name="materialCode",value = "物料编码")
     @Transient
     private String materialCode;
 
@@ -26,16 +25,16 @@ public class EsopWiBomDto extends EsopWiBom implements Serializable {
     private String materialName;
 
     /**
-     * 版本
+     * 物料版本
      */
-    @ApiModelProperty(name="materialVersion" ,value="版本")
+    @ApiModelProperty(name="materialVersion" ,value="物料版本")
     @Transient
     private String materialVersion;
 
     /**
-     * 规格
+     * 体积
      */
-    @ApiModelProperty(name="specifications" ,value="规格")
+    @ApiModelProperty(name="specifications" ,value="体积")
     @Transient
     private String specifications;
 }

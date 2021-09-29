@@ -135,4 +135,11 @@ public class EsopWiBom extends ValidGroup implements Serializable {
     @Excel(name = "物料版本", height = 20, width = 30 ,orderNum="3")
     @Transient
     private String materialVersion;
+
+    /**
+     * 物料规格
+     */
+    @ApiModelProperty(name="materialDesc" ,value="物料规格")
+    @Transient
+    private String materialDesc;
 }

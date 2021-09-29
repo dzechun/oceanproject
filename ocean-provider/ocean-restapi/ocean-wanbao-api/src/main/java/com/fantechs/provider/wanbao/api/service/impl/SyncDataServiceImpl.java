@@ -606,8 +606,8 @@ public class SyncDataServiceImpl implements SyncDataService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+//    @Transactional(rollbackFor = Exception.class)
+//    @LcnTransaction
     public void syncBarcodeData() {
 
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();

@@ -226,7 +226,6 @@ public class SocketServiceImpl implements SocketService {
                     }
                 }
 
-
                 newMap.put("code", 1202);
                 newMap.put("url", url+"/#/YunZhiESOP?ip=" + ip);
                 newList.add(newMap);

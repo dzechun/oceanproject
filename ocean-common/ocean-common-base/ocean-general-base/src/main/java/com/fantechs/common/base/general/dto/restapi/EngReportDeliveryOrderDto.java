@@ -17,7 +17,6 @@ public class EngReportDeliveryOrderDto implements Serializable {
 
     @ApiModelProperty(name="option2",value = "option2")
     @Column(name = "option2")
-
     private String option2;  //ISGUID
 
     @ApiModelProperty(name="option1",value = "option1")

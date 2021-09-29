@@ -13,13 +13,13 @@ spring:
       type: com.alibaba.druid.pool.DruidDataSource
       username: apps
       password: apps
-      driverClassName: oracle.jdbc.driver.OracleDriver
+      driverClassName: oracle.jdbc.OracleDriver
     secondary:
       jdbc-url: jdbc:oracle:thin:@192.168.5.88:1521:ORCL
       type: com.alibaba.druid.pool.DruidDataSource
       username: k3wms
       password: k3wms
-      driverClassName: oracle.jdbc.driver.OracleDriver
+      driverClassName: oracle.jdbc.OracleDriver
     thirdary:
       jdbc-url: jdbc:sqlserver://192.168.180.241:1433;DatabaseName=SridaFramework
       type: com.alibaba.druid.pool.DruidDataSource

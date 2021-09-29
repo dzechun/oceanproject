@@ -31,10 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -51,6 +48,8 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
     private EamJigRequisitionMapper eamJigRequisitionMapper;
     @Resource
     private EamJigMaterialMapper eamJigMaterialMapper;
+    @Resource
+    private EamEquipmentJigListMapper eamEquipmentJigListMapper;
     @Resource
     private EamJigBarcodeMapper eamJigBarcodeMapper;
     @Resource
@@ -213,6 +212,19 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             int returnQty = eamJigReturnMapper.selectCountByExample(example2);
             eamJigMaterialDto.setReturnQty(returnQty);
 
+            //设备名称
+            Map<String,Object> map = new HashMap<>();
+            map.put("jigId",eamJigMaterialDto.getJigId());
+            List<EamEquipmentJigListDto> eamEquipmentJigListDtos = eamEquipmentJigListMapper.findList(map);
+            if(StringUtils.isNotEmpty(eamEquipmentJigListDtos)) {
+                StringBuilder sb = new StringBuilder();
+                for (EamEquipmentJigListDto eamEquipmentJigListDto : eamEquipmentJigListDtos) {
+                    sb.append(eamEquipmentJigListDto.getEquipmentName()).append(";");
+                }
+                String equipmentName = sb.toString().substring(0, sb.toString().length() - 1);
+                eamJigMaterialDto.setEquipmentName(equipmentName);
+            }
+
             list.add(eamJigMaterialDto);
         }
         eamJigRequisitionWorkOrderDto.setList(list);
@@ -256,7 +268,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             throw new BizErrorException("查无此工单下该治具的领用记录");
         }
 
-        Example example2 = new Example(EamJigReturn.class);
+        /*Example example2 = new Example(EamJigReturn.class);
         Example.Criteria criteria2 = example2.createCriteria();
         criteria2.andEqualTo("jigBarcodeId",eamJigBarcode.getJigBarcodeId())
                 .andEqualTo("jigId",jigId)
@@ -264,7 +276,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
         List<EamJigReturn> eamJigReturns = eamJigReturnMapper.selectByExample(example2);
         if(StringUtils.isNotEmpty(eamJigReturns)){
             throw new BizErrorException("此工单下该治具已归还");
-        }
+        }*/
 
         return eamJigBarcode;
     }

@@ -528,6 +528,17 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int saveByApi(WmsOutDeliveryOrder wmsOutDeliveryOrder) {
+        //判断是否已产生上架单
+        SearchWmsInnerJobOrder searchWmsInnerJobOrder=new SearchWmsInnerJobOrder();
+        searchWmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrder.getDeliveryOrderCode());
+        searchWmsInnerJobOrder.setOrgId(wmsOutDeliveryOrder.getOrgId());
+        ResponseEntity<List<WmsInnerJobOrderDto>> responseEntityDto=innerFeignApi.findList(searchWmsInnerJobOrder);
+        if(StringUtils.isNotEmpty(responseEntityDto.getData())){
+            //领料出库单已产生上架单 返回 不更新
+            if(StringUtils.isNotEmpty(responseEntityDto.getData().get(0).getJobOrderCode()))
+                return 0;
+        }
+
         Example example = new Example(WmsOutDeliveryOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("deliveryOrderCode",wmsOutDeliveryOrder.getDeliveryOrderCode());

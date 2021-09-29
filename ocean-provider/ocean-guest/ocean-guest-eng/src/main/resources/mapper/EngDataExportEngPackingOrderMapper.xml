@@ -7,6 +7,8 @@
     -->
     <id column="packing_order_id" jdbcType="VARCHAR" property="packingOrderId" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+    <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="location_num" jdbcType="VARCHAR" property="locationNum" />
     <result column="design_qty" jdbcType="VARCHAR" property="designQty" />
@@ -26,20 +28,22 @@
 
   <sql id="Base_Column_List">
     epos.packing_order_id,
-    ecqo.option2,
-    ecqo.material_code,
-    bm.material_name,
-    eposdet.spec,
-    eposdet.unit_name,
-    ecqo.location_num,
-    IFNULL(epro.design_qty,0) AS design_qty,
-    IFNULL(epro.surplus_qty,0) AS surplus_qty,
-    IFNULL(epro.purchase_req_qty,0) AS purchase_req_qty,
-    ecqo.dominant_term_code,
-    ecqo.device_code,
-    ecqo.material_purpose,
-    ecqo.remark,
-    epos.modified_user_id AS record_user,
+    '' AS option2,
+    epos.contract_code,
+    epos.purchase_req_order_code,
+    IFNULL(bm.material_code,'') AS material_code,
+    IFNULL(bm.material_name,'') AS material_name,
+    IFNULL(eposdet.spec,'') AS spec,
+    IFNULL(eposdet.unit_name,'') AS unit_name,
+    IFNULL(epos.location_num,'') AS location_num,
+    0 AS design_qty,
+    0 AS surplus_qty,
+    0 AS purchase_req_qty,
+    IFNULL(eposdet.dominant_term_code,'') AS dominant_term_code,
+    IFNULL(epos.device_code,'') AS device_code,
+    '' AS material_purpose,
+    '' AS remark,
+    ouser.user_name AS record_user,
     epo.modified_time AS record_time,
     SUM(eposdet.qty) AS ch_qty
   </sql>
@@ -50,19 +54,15 @@
     LEFT JOIN eng_packing_order epo ON epos.packing_order_id=epo.packing_order_id
     LEFT JOIN eng_packing_order_summary_det eposdet ON epos.packing_order_summary_id=eposdet.packing_order_summary_id
     LEFT JOIN base_material bm ON eposdet.material_id=bm.material_id
-    LEFT JOIN eng_contract_qty_order ecqo ON epos.contract_code=ecqo.contract_code
-    AND epos.device_code=ecqo.device_code
-    AND bm.material_code=ecqo.material_code
-    LEFT JOIN eng_purchase_req_order epro ON epro.option3=ecqo.option3
-
+    LEFT JOIN ocean_v2.sys_user ouser ON epos.create_user_id=ouser.user_id
     <where>
       <if test="packingOrderId!=null and packingOrderId!=''">
         and epos.packing_order_id = #{packingOrderId}
       </if>
+      AND LOCATE('-',bm.material_code)>0
     </where>
-    GROUP BY epos.packing_order_id,ecqo.option2,ecqo.material_code,bm.material_name,eposdet.spec,eposdet.unit_name,
-    ecqo.location_num,epro.design_qty,epro.surplus_qty,epro.purchase_req_qty,
-    ecqo.dominant_term_code,ecqo.device_code,ecqo.material_purpose,ecqo.remark,record_user,record_time
-    HAVING ecqo.option2 IS NOT NULL
+    GROUP BY epos.packing_order_id,option2,epos.contract_code,epos.purchase_req_order_code,bm.material_code,
+    bm.material_name,eposdet.spec,eposdet.unit_name,epos.location_num,design_qty,surplus_qty,purchase_req_qty,
+    dominant_term_code,epos.device_code,material_purpose,remark,record_user,record_time
   </select>
 </mapper>

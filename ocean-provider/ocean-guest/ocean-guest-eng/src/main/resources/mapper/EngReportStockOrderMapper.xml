@@ -8,7 +8,7 @@
     <id column="stock_order_det_id" jdbcType="VARCHAR" property="stockOrderDetId" />
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="base_storage_option1" jdbcType="VARCHAR" property="DHGUID" />
+    <result column="DHGUID" jdbcType="VARCHAR" property="DHGUID" />
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
@@ -17,7 +17,6 @@
     <result column="device_code" jdbcType="VARCHAR" property="deviceCode" />
     <result column="variance_qty" jdbcType="VARCHAR" property="varianceQty" />
     <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName" />
-    <result column="storage_id" jdbcType="VARCHAR" property="storageId" />
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
   </resultMap>
@@ -26,21 +25,19 @@
   <select id="findStockOrder" parameterType="map" resultMap="BaseResultMapDto">
     select
     wisod.stock_order_det_id,
-    ecqo.option1,
-    ecqo.option2,
+    IFNULL(ecqo.option1,'') AS option1,
+    IFNULL(ecqo.option2,'') AS option2,
     bs.option1 as DHGUID,
-    wiisss.contract_code as contract_code,
-    wiisss.purchase_req_order_code as purchase_req_order_code,
+    IFNULL(wiisss.contract_code,'') as contract_code,
+    IFNULL(wiisss.purchase_req_order_code,'') as purchase_req_order_code,
     bm.material_code,
-    ecqo.location_num,
-    wiisss.option2 as dominant_term_code,
-    wiisss.option1 as device_code,
-    wisod.variance_qty AS variance_qty,
-    iis.inventory_status_name AS inventory_status_name,
-    wisod.storage_id AS storage_id,
+    IFNULL(ecqo.location_num,'') AS location_num,
+    IFNULL(wiisss.option2,'') AS dominant_term_code,
+    IFNULL(wiisss.option1,'') AS device_code,
+    ABS(wisod.variance_qty) AS variance_qty,
+    CASE WHEN wisod.variance_qty>0 THEN '多余' ELSE '丢失' END AS inventory_status_name,
     wisod.create_time,
-    u.user_name as create_user_name,
-    wiisss.inventory_id as inventory_id
+    u.user_name as create_user_name
     FROM wms_inner_stock_order_det wisod
     left join ocean_v2.sys_user u on wisod.create_user_id=u.user_id
     left join wms_inner_stock_order wiso on wisod.stock_order_id= wiso.stock_order_id

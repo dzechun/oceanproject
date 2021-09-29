@@ -29,6 +29,8 @@
     <result column="jig_name" jdbcType="VARCHAR" property="jigName"/>
     <result column="jig_desc" jdbcType="VARCHAR" property="jigDesc"/>
     <result column="jig_model" jdbcType="VARCHAR" property="jigModel"/>
+    <result column="equipment_id" jdbcType="BIGINT" property="equipmentId"/>
+    <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -50,11 +52,14 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
+    ee.equipment_id,ee.equipment_name,
     ej.jig_code,ej.jig_name,ej.jig_desc,ej.jig_model,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.eam_equipment_jig_list eejl
+    left join fantech_imes_v2.eam_equipment_jig eej ON eejl.equipment_jig_id = eej.equipment_jig_id
+    left join fantech_imes_v2.eam_equipment ee on eej.equipment_id=ee.equipment_id
     left join fantech_imes_v2.eam_jig ej ON eejl.jig_id = ej.jig_id
     left join ocean_v2.sys_user u on eejl.create_user_id=u.user_id
     left join ocean_v2.sys_user s on eejl.modified_user_id=s.user_id
@@ -62,6 +67,9 @@
     <where>
       <if test="equipmentJigId != null">
         and eejl.equipment_jig_id =  #{equipmentJigId}
+      </if>
+      <if test="jigId != null">
+        and eejl.jig_id =  #{jigId}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(eejl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

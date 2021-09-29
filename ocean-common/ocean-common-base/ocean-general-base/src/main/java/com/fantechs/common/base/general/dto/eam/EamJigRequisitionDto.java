@@ -127,6 +127,14 @@ public class EamJigRequisitionDto extends EamJigRequisition implements Serializa
     private String storageCode;
 
     /**
+     * 设备名称
+     */
+    @Transient
+    @ApiModelProperty(name = "equipmentName",value = "设备名称")
+    @Excel(name = "设备名称", height = 20, width = 30,orderNum="20")
+    private String equipmentName;
+
+    /**
      * 领用状态（0-已归还 1-已领用）
      */
     @Transient

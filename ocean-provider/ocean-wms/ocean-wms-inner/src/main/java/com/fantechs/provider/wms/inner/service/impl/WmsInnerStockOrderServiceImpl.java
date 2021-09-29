@@ -136,6 +136,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     inventoryVerificationDet.setStockUserId(sysUser.getUserId());
                     inventoryVerificationDet.setIfRegister((byte)1);
                 }
+                if(StringUtils.isEmpty(inventoryVerificationDet.getStockQty())){
+                    inventoryVerificationDet.setStockQty(BigDecimal.ZERO);
+                }
+                inventoryVerificationDet.setVarianceQty(inventoryVerificationDet.getStockQty().subtract(inventoryVerificationDet.getOriginalQty()));
             }
             int num = wmsInventoryVerificationDetMapper.insertList(entity.getInventoryVerificationDets());
         }else if(entity.getType()==(byte) 1){
@@ -352,7 +356,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //有差异生成复盘单
             if(wmsInventoryVerification.getProjectType()==(byte)1){
                 //判断是否有差异记录
-                if(list.stream().filter(li->StringUtils.isNotEmpty(li.getVarianceQty())&&li.getVarianceQty().compareTo(BigDecimal.ZERO)==1).collect(Collectors.toList()).size()>0){
+                if(list.stream().filter(li->StringUtils.isNotEmpty(li.getVarianceQty())&&(li.getVarianceQty().compareTo(BigDecimal.ZERO)==1 || li.getVarianceQty().compareTo(BigDecimal.ZERO)==-1)).collect(Collectors.toList()).size()>0){
                     //新增复盘盘点单
                     WmsInnerStockOrder ws = new WmsInnerStockOrder();
                     BeanUtil.copyProperties(wmsInventoryVerification,ws);
@@ -368,7 +372,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     num += wmsInventoryVerificationMapper.insertUseGeneratedKeys(ws);
 
                     for (WmsInnerStockOrderDet wmsInventoryVerificationDet : list) {
-                        if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==1){
+                        if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&(wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==1 || wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==-1)){
                             WmsInnerStockOrderDet det = new WmsInnerStockOrderDet();
                             det.setStockOrderId(ws.getStockOrderId());
                             det.setSourceDetId(wmsInventoryVerificationDet.getStockOrderDetId());
@@ -411,7 +415,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
 
             //返写盘点数据（五环） 复盘确认时才回写
             //获取程序配置项
-            if(wmsInventoryVerification.getProjectType()==(byte)2) {
+            if(wmsInventoryVerification.getProjectType()==(byte)2 && StringUtils.isNotEmpty(id)) {
                 SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
                 searchSysSpecItemFiveRing.setSpecCode("FiveRing");
                 List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
@@ -465,7 +469,16 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
             //返写盘点数据（五环）
-            engFeignApi.reportStockOrder(wmsInventoryVerification);
+//            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+//            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+//            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+//            if (itemListFiveRing.size() < 1) {
+//                throw new BizErrorException("配置项 FiveRing 获取失败");
+//            }
+//            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+//            if ("1".equals(sysSpecItem.getParaValue())) {
+//                engFeignApi.reportStockOrder(wmsInventoryVerification);
+//            }
         }
         return num;
     }
@@ -560,6 +573,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
             for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
                 wmsInnerInventory.setStockLock(lockType==(byte) 2?(byte)1:0);
+                wmsInnerInventory.setRelevanceOrderCode(wmsInventoryVerification.getStockOrderCode());
                 num+=wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
             }
 
@@ -598,6 +612,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             example.createCriteria().andEqualTo("warehouseId",wmsInnerStockOrder.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
                     .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
                     .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
+                    .andEqualTo("relevanceOrderCode",wmsInnerStockOrder.getStockOrderCode())
                     .andEqualTo("stockLock",0)
                     .andEqualTo("orgId",wmsInnerStockOrder.getOrganizationId())
                     .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
@@ -640,10 +655,13 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             if(wmsInnerInventory.getPackingQty().compareTo(wmsInnerStockOrderDet.getVarianceQty())==-1){
                 throw new BizErrorException("库存波动，请重新盘点");
             }
-
             wmsInnerInventoryLog = initLog(wmsInnerInventory);
             wmsInnerInventoryLog.setAddOrSubtract((byte)2);
             wmsInnerInventoryLog.setInitialQty(wmsInnerInventory.getPackingQty());
+            if(wmsInnerStockOrderDet.getVarianceQty().signum()==-1){
+                int qty = ~(wmsInnerStockOrderDet.getVarianceQty().intValue() - 1);
+                wmsInnerStockOrderDet.setVarianceQty(BigDecimal.valueOf(qty));
+            }
             wmsInnerInventoryLog.setChangeQty(wmsInnerStockOrderDet.getVarianceQty());
             //盘点数小于库存
             wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerStockOrderDet.getVarianceQty()));
@@ -680,6 +698,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
 
     private WmsInnerInventoryLog initLog(WmsInnerInventory wmsInnerInventory){
         WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
+        BeanUtil.copyProperties(wmsInnerInventory,wmsInnerInventoryLog);
         //收货
         wmsInnerInventoryLog.setJobOrderType((byte)7);
         wmsInnerInventoryLog.setProductionDate(wmsInnerInventory.getProductionDate());

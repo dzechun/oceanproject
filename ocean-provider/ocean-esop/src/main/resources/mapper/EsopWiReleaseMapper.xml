@@ -9,6 +9,7 @@
     <result column="wi_release_code" jdbcType="VARCHAR" property="wiReleaseCode" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
     <result column="route_id" jdbcType="BIGINT" property="routeId" />
     <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
     <result column="work_shop_id" jdbcType="BIGINT" property="workShopId" />
@@ -35,6 +36,7 @@
       <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
       <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
       <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+      <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
       <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
       <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
       <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
@@ -50,6 +52,7 @@
         ewr.wi_release_code,
         ewr.work_order_id,
         ewr.material_id,
+        ewr.product_model_id,
         ewr.route_id,
         ewr.pro_line_id,
         ewr.work_shop_id,
@@ -70,8 +73,8 @@
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT<include refid="BaseColumnList"/>,
     mpwo.work_order_code as work_order_code,mpwo.work_order_status as work_order_status,bm.material_code as material_code,
-    bpm.product_model_name as product_model_name,bpm.product_model_code as product_model_code,br.route_name as route_name,
-    bf.factory_name as factory_name,bws.work_shop_name as work_shop_name,bpl.pro_name as pro_line_name,
+    bpm.product_model_name as product_model_name,bpm.product_model_code as product_model_code,bpm.product_model_desc as product_model_desc,
+    br.route_name as route_name,bf.factory_name as factory_name,bws.work_shop_name as work_shop_name,bpl.pro_name as pro_line_name,
       u.user_name as create_user_name,
       s.user_name as modified_user_name,
       bo.organization_name
@@ -79,7 +82,7 @@
     LEFT JOIN mes_pm_work_order mpwo ON ewr.work_order_id = mpwo.work_order_id
     LEFT JOIN base_material bm ON ewr.material_id = bm.material_id
     LEFT JOIN base_material_tab bmt ON ewr.material_id=bmt.material_id
-    LEFT JOIN base_product_model bpm ON bmt.product_model_id=bpm.product_model_id
+    LEFT JOIN base_product_model bpm ON ewr.product_model_id=bpm.product_model_id
     LEFT JOIN base_route br ON ewr.route_id = br.route_id
     LEFT JOIN base_factory bf ON ewr.factory_id = bf.factory_id
     LEFT JOIN base_work_shop bws ON ewr.work_shop_id = bws.work_shop_id

@@ -163,6 +163,8 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
 
         //获取默认上架库位
         searchBaseStorage.setStorageType((byte)1);
+        searchBaseStorage.setStorageCode("default");
+        searchBaseStorage.setCodeQueryMark((byte)1);
         baseStorageList = baseFeignApi.findList(searchBaseStorage).getData();
         if(StringUtils.isEmpty(baseStorageList)){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取预上架库位信息失败");

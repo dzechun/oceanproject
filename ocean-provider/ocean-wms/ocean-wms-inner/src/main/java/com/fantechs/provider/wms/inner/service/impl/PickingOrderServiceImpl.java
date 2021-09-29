@@ -758,12 +758,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
                 acuQty = acuQty.subtract(innerInventory.getPackingQty());
                 //添加库存日志
-                InventoryLogUtil.addLog(wmsInnerJobOrder,wmsInnerJobOrderDetDto,innerInventory.getPackingQty(),innerInventory.getPackingQty(),(byte)4,(byte)2);
+                InventoryLogUtil.addLog(innerInventory,wmsInnerJobOrder,wmsInnerJobOrderDetDto,innerInventory.getPackingQty(),innerInventory.getPackingQty(),(byte)4,(byte)2);
 
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(innerInventory.getPackingQty()));
             }else{
                 //添加库存日志
-                InventoryLogUtil.addLog(wmsInnerJobOrder,wmsInnerJobOrderDetDto,innerInventory.getPackingQty(),acuQty,(byte)4,(byte)2);
+                InventoryLogUtil.addLog(innerInventory,wmsInnerJobOrder,wmsInnerJobOrderDetDto,innerInventory.getPackingQty(),acuQty,(byte)4,(byte)2);
 
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(acuQty));
                 if(bigDecimalMap.containsKey(innerInventory.getInventoryId())){
@@ -851,7 +851,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
         }
         //添加库存日志
-        InventoryLogUtil.addLog(wmsInnerJobOrder,wmsInnerJobOrderDetDto,qty,wmsInnerJobOrderDetDto.getActualQty(),(byte)4,(byte)1);
+        InventoryLogUtil.addLog(wmsInnerInventorys,wmsInnerJobOrder,wmsInnerJobOrderDetDto,qty,wmsInnerJobOrderDetDto.getActualQty(),(byte)4,(byte)1);
         return num;
     }
 
@@ -1014,9 +1014,31 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         if(list.size()<1){
             throw new BizErrorException("出库单已完成或未拣货");
         }
-        //领料拣货单只有作业中状态
-        if(list.size()>list.stream().filter(li->li.getOrderStatus()==(orderTypeId==8?(byte)4:(byte)5)).collect(Collectors.toList()).size()){
-            throw new BizErrorException("拣货未完成,发运失败");
+
+        if(list.get(0).getOrderTypeId()==8){
+            //获取程序配置项
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("stockRequisition");
+            List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if(itemList.size()<1){
+                throw new BizErrorException("领料拣货配置项获取失败");
+            }
+            Map<String ,String> map = JSONArray.parseObject(itemList.get(0).getParaValue(), Map.class);
+            if(map.get("lack").equals("false") && map.get("beyond").equals("false")){
+                if(list.size()>list.stream().filter(li->li.getOrderStatus()==(byte)5).collect(Collectors.toList()).size()){
+                    throw new BizErrorException("拣货未完成,发运失败");
+                }
+            }else {
+                //领料拣货单只有作业中状态
+                if(list.size()>list.stream().filter(li->li.getOrderStatus()==(orderTypeId==8?(byte)4:(byte)5)).collect(Collectors.toList()).size()){
+                    throw new BizErrorException("拣货未完成,发运失败");
+                }
+            }
+        }else {
+            //领料拣货单只有作业中状态
+            if(list.size()>list.stream().filter(li->li.getOrderStatus()==(byte)5).collect(Collectors.toList()).size()){
+                throw new BizErrorException("拣货未完成,发运失败");
+            }
         }
         //出库装车单
         WmsOutDespatchOrder wmsOutDespatchOrder = new WmsOutDespatchOrder();
@@ -1056,6 +1078,26 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         if(rs.getCode()!=0){
             throw new BizErrorException(rs.getMessage());
         }
+        //领料出库回传接口（五环）
+        //获取程序配置项
+        if(orderTypeId==(byte)8) {
+            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+            if (itemListFiveRing.size() < 1) {
+                throw new BizErrorException("配置项 FiveRing 获取失败");
+            }
+            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+            if ("1".equals(sysSpecItem.getParaValue())) {
+                for (WmsInnerJobOrder wmsInnerJobOrder : list) {
+                    engFeignApi.reportIssueDetails(wmsInnerJobOrder);
+                }
+//                if (wmsInnerJobOrder.getOrderStatus() == (byte) 5) {
+//                    engFeignApi.reportIssueDetails(wmsInnerJobOrder);
+//                }
+            }
+        }
+
         return 1;
     }
 
@@ -1192,20 +1234,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         num+=wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
 
-        //领料出库回传接口（五环）
-        //获取程序配置项
-        SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-        searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-        List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-        if(itemListFiveRing.size()<1){
-            throw new BizErrorException("配置项 FiveRing 获取失败");
-        }
-        SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-        if("1".equals(sysSpecItem.getParaValue())) {
-            if (wmsInnerJobOrder.getOrderStatus() == (byte) 5) {
-                engFeignApi.reportIssueDetails(wmsInnerJobOrder);
-            }
-        }
         return num;
     }
 

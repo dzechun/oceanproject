@@ -65,8 +65,6 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
-    private FileFeignApi fileFeignApi;
-    @Resource
     private EamSparePartMapper eamSparePartMapper;
 
     @Override
@@ -583,7 +581,9 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
                     eamJigBarcode.setModifiedTime(new Date());
                     barcodeList.add(eamJigBarcode);
                 }
-                eamJigBarcodeMapper.insertList(barcodeList);
+                if(StringUtils.isNotEmpty(barcodeList)) {
+                    eamJigBarcodeMapper.insertList(barcodeList);
+                }
 
                 LinkedList<EamSparePartReJig> sparePartReJigs = new LinkedList<>();
                 for (EamJigImport eamJigImport : eamJigImports1) {
@@ -597,8 +597,9 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
                     eamSparePartReJig.setOrgId(currentUser.getOrganizationId());
                     sparePartReJigs.add(eamSparePartReJig);
                 }
-                eamSparePartReJigMapper.insertList(sparePartReJigs);
-
+                if(StringUtils.isNotEmpty(sparePartReJigs)) {
+                    eamSparePartReJigMapper.insertList(sparePartReJigs);
+                }
             }
 
             /*for (EamJigImport eamJigImport : eamJigImportList) {
