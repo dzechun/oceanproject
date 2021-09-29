@@ -4,28 +4,46 @@ server:
 
 spring:
   profiles:
-    include: wanbao
+    include: dev
   application:
     name: @pom.artifactId@
   datasource:
+#    primary:
+#      jdbc-url: jdbc:oracle:thin:@192.168.5.32:1521:dev
+#      type: com.alibaba.druid.pool.DruidDataSource
+#      username: apps
+#      password: apps
+#      driverClassName: oracle.jdbc.driver.OracleDriver
+#    secondary:
+#      jdbc-url: jdbc:oracle:thin:@192.168.5.88:1521:ORCL
+#      type: com.alibaba.druid.pool.DruidDataSource
+#      username: k3wms
+#      password: k3wms
+#      driverClassName: oracle.jdbc.driver.OracleDriver
+#    thirdary:
+#      jdbc-url: jdbc:sqlserver://192.168.180.241:1433;DatabaseName=SridaFramework
+#      type: com.alibaba.druid.pool.DruidDataSource
+#      username: sa
+#      password: 2020@WB
+#      driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
     primary:
-      jdbc-url: jdbc:oracle:thin:@192.168.5.32:1521:dev
+      jdbc-url: jdbc:oracle:thin:@192.168.204.160:1521:ORCL
       type: com.alibaba.druid.pool.DruidDataSource
-      username: apps
-      password: apps
+      username: smt
+      password: smt
       driverClassName: oracle.jdbc.OracleDriver
     secondary:
-      jdbc-url: jdbc:oracle:thin:@192.168.5.88:1521:ORCL
+      jdbc-url: jdbc:oracle:thin:@192.168.204.160:1521:ORCL
       type: com.alibaba.druid.pool.DruidDataSource
-      username: k3wms
-      password: k3wms
+      username: smt
+      password: smt
       driverClassName: oracle.jdbc.OracleDriver
     thirdary:
-      jdbc-url: jdbc:sqlserver://192.168.180.241:1433;DatabaseName=SridaFramework
+      jdbc-url: jdbc:sqlserver://192.168.204.150:1433;DatabaseName=SridaFramework
       type: com.alibaba.druid.pool.DruidDataSource
       username: sa
-      password: 2020@WB
-      driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      password: Jf@2020
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
 
 logging:
