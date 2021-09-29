@@ -556,6 +556,9 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         record.setOrgId(sysUser.getOrganizationId());
         int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(record);
         for (WmsInAsnOrderDet wmsInAsnOrderDet : record.getWmsInAsnOrderDetList()) {
+            if(StringUtils.isEmpty(wmsInAsnOrderDet.getPackingQty()) || wmsInAsnOrderDet.getActualQty().compareTo(BigDecimal.ZERO)<1){
+                throw new BizErrorException("包装数量必须大于0");
+            }
             if(record.getOrderTypeId()==4){
                 MesPmWorkOrder mesPmWorkOrder = this.PmQty(wmsInAsnOrderDet.getPackingQty(),wmsInAsnOrderDet.getSourceOrderId());
                 mesPmWorkOrder.setInventoryQty(StringUtils.isEmpty(mesPmWorkOrder.getInventoryQty())?wmsInAsnOrderDet.getPackingQty():mesPmWorkOrder.getInventoryQty().add(wmsInAsnOrderDet.getPackingQty()));
