@@ -2,12 +2,16 @@ package com.fantechs.security.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.security.service.SysLoginByEquipmentService;
 import com.fantechs.security.service.SysUserService;
@@ -21,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 ;
 
@@ -44,6 +49,9 @@ public class LoginController {
     @Resource
     private SysLoginByEquipmentService sysLoginByEquipmentService;
 
+    @Resource
+    private BaseFeignApi baseFeignApi;
+
 
 
 
@@ -52,6 +60,19 @@ public class LoginController {
     public ResponseEntity meslogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId){
         ResponseEntity responseEntity = securityFeignApi.login(username, password,orgId,null);
         return  responseEntity;
+    }
+
+    @PostMapping("/meslogin")
+    @ApiOperation(value = "登陆接口")
+    public ResponseEntity meslogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "orgCode") String orgCode){
+        SearchBaseOrganization organization = new SearchBaseOrganization();
+        organization.setOrganizationCode(orgCode);
+        List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(organization).getData();
+        if (organizationDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404, "此组织编码不存在或已被删除，不可登录");
+        }
+        ResponseEntity responseEntity = securityFeignApi.login(username, password, organizationDtos.get(0).getOrganizationId(),null);
+        return responseEntity;
     }
 
     @GetMapping("/logout")
