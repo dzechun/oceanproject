@@ -52,13 +52,13 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(hf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-            <if test="factoryCode != null">
+            <if test="factoryCode != null and factoryCode !=''">
                 and hf.factory_code like CONCAT('%', #{factoryCode}, '%')
             </if>
-            <if test="factoryName != null">
+            <if test="factoryName != null and factoryName !=''">
                 and hf.factory_name like CONCAT('%', #{factoryName}, '%')
             </if>
-            <if test="factoryDesc != null">
+            <if test="factoryDesc != null and factoryDesc !=''">
                 and hf.factory_desc like CONCAT('%', #{factoryDesc}, '%')
             </if>
             <if test="orgId!=null">
