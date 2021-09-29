@@ -8,7 +8,7 @@
     <id column="ht_in_and_out_rule_id" jdbcType="BIGINT" property="htInAndOutRuleId" />
     <result column="in_and_out_rule_id" jdbcType="BIGINT" property="inAndOutRuleId" />
     <result column="in_and_out_rule_name" jdbcType="VARCHAR" property="inAndOutRuleName" />
-    <result column="warehouse_id" jdbcType="TINYINT" property="warehouseId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="category" jdbcType="TINYINT" property="category" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />

@@ -53,7 +53,7 @@ public class BaseInAndOutRule extends ValidGroup implements Serializable {
     @ApiModelProperty(name="warehouseId",value = "仓库ID")
     @Column(name = "warehouse_id")
     @NotNull(message = "仓库ID不能为空")
-    private Byte warehouseId;
+    private Long warehouseId;
 
     /**
      * 类型(1-入库 2-出库)
