@@ -1,7 +1,7 @@
 package com.fantechs.provider.baseapi.esop.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.esop.EsopIssue;
@@ -47,13 +47,12 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
     private BaseFeignApi baseFeignApi;
 
 
-    private String url = "http://xbqms.donlim.com:8081/qms/qualitiy/esop/defect"; //新宝工单接口地址
+    private String url = "http://xbqms.donlim.com:8081/qms/qualitiy/esop/defect"; //工序
 
     @Override
-    public int getIssue(String materialCode) {
+    public int getIssue(String materialCode,Long orgId) {
         if (StringUtils.isEmpty(materialCode)) throw new BizErrorException("物料（产品）编码不能为空");
         String result = null;
-        Long orgId = baseUtils.getOrId();
         try {
             URL realUrl = new URL(url +"?productModel="+ materialCode);
             CloseableHttpClient httpClient = SkipHttpsUtil.wrapClient();
@@ -63,7 +62,10 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
             searchBaseMaterial.setMaterialCode(materialCode);
             searchBaseMaterial.setOrganizationId(orgId);
             List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
-            if(StringUtils.isEmpty(baseMaterials))  throw new  BizErrorException("未查询到对应物料编码，请先同步物料");
+            if(StringUtils.isEmpty(baseMaterials)) {
+//                throw new BizErrorException("未查询到对应物料编码，请先同步物料");
+                logsUtils.addlog((byte)0,(byte)1,orgId,"未查询到id为"+orgId+"的组织对应物料编码",materialCode);
+            }
             try {
                 response = httpClient.execute(get);
                 if (response != null && response.getStatusLine().getStatusCode() == 200) {
@@ -114,13 +116,15 @@ public class EsopIssueApiServiceImpl implements EsopIssueApiService {
 
     @Override
     public int getAllIssue() {
-        log.info("----------开始同步问题清单-------------");
-        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-        searchBaseMaterial.setOrganizationId(baseUtils.getOrId());
-        ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
-        if(StringUtils.isNotEmpty(list.getData())){
-            for(BaseMaterial baseMaterial : list.getData()){
-                this.getIssue(baseMaterial.getMaterialCode());
+        List<BaseOrganizationDto> baseOrganizationDtos = baseUtils.getOrId();
+        for(BaseOrganizationDto dto : baseOrganizationDtos) {
+            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+            searchBaseMaterial.setOrganizationId(dto.getOrganizationId());
+            ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
+            if (StringUtils.isNotEmpty(list.getData())) {
+                for (BaseMaterial baseMaterial : list.getData()) {
+                    this.getIssue(baseMaterial.getMaterialCode(),dto.getOrganizationId());
+                }
             }
         }
         return 1;

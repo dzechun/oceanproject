@@ -28,7 +28,7 @@ public class LogsUtils {
     public void  addlog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) throws ParseException {
         SysApiLog sysApiLog = new SysApiLog();
         sysApiLog.setThirdpartySysName("新宝ESOP");
-        sysApiLog.setCallResult(result); //调用结果
+        sysApiLog.setCallResult(result); //调用结果 0-失败 1-成功
         sysApiLog.setCallType(type); //调用类型(1-主动 2-被动)
         sysApiLog.setApiModule("ocean-esop-baseapi");
         sysApiLog.setOrgId(orgId);

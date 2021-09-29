@@ -55,6 +55,13 @@ public class EsopWiRelease extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     *  产品型号ID
+     */
+    @Column(name = "product_model_id")
+    @ApiModelProperty(name="productModelId" ,value="产品型号ID")
+    private Long productModelId;
+
+    /**
      * 工艺路线ID
      */
     @ApiModelProperty(name="routeId",value = "工艺路线ID")

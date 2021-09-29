@@ -84,6 +84,14 @@ public class EsopWorkInstruction extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     *  产品型号ID
+     */
+    @Column(name = "product_model_id")
+    @ApiModelProperty(name="productModelId" ,value="产品型号ID")
+    private Long productModelId;
+
+
+    /**
      * 保密等级(1-内部 2-外部)
      */
     @ApiModelProperty(name="secrecyGrade",value = "保密等级(1-内部 2-外部)")

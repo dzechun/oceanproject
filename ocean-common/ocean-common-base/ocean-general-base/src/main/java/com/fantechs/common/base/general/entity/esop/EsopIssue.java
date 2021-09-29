@@ -62,6 +62,13 @@ public class EsopIssue extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     *  产品型号ID
+     */
+    @Column(name = "product_model_id")
+    @ApiModelProperty(name="productModelId" ,value="产品型号ID")
+    private Long productModelId;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

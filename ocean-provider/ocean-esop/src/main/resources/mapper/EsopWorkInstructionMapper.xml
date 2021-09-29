@@ -12,6 +12,7 @@
     <result column="work_instruction_seq_num" jdbcType="VARCHAR" property="workInstructionSeqNum" />
     <result column="process_id" jdbcType="BIGINT" property="processId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
     <result column="secrecy_grade" jdbcType="TINYINT" property="secrecyGrade" />
     <result column="wi_status" jdbcType="TINYINT" property="wiStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -41,6 +42,7 @@
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
     <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+    <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
     <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -71,6 +73,7 @@
         ewi.work_instruction_seq_num,
         ewi.process_id,
         ewi.material_id,
+        ewi.product_model_id,
         ewi.secrecy_grade,
         ewi.wi_status,
         ewi.manufacture_procedure,
@@ -96,13 +99,13 @@
 
     SELECT<include refid="BaseColumnList"/>,
     bm.material_code as material_code,bm.material_name as material_name,bm.material_desc as material_desc,spm.product_model_code as product_model_code,
-    spm.product_model_name as product_model_name,sp.process_name as process_name,sp.process_code as process_code,su.user_name AS create_user_name,
+    spm.product_model_name as product_model_name,spm.product_model_desc as product_model_desc,sp.process_name as process_name,sp.process_code as process_code,su.user_name AS create_user_name,
     CONCAT(bt.length,',',bt.width,',',bt.height) as specifications,bpl.pro_name as pro_name,
     sus.user_name AS modified_user_name,bo.organization_name AS organization_name
     FROM esop_work_instruction ewi
     LEFT JOIN base_material bm ON ewi.material_id = bm.material_id
     LEFT JOIN base_material_tab bt ON bm.material_id = bt.material_id
-    LEFT JOIN base_product_model spm ON bt.product_model_id = spm.product_model_id
+    LEFT JOIN base_product_model spm ON ewi.product_model_id = spm.product_model_id
     LEFT JOIN base_process sp ON ewi.process_id = sp.process_id
     LEFT JOIN ocean_v2.sys_user su ON ewi.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON ewi.modified_user_id = sus.user_id

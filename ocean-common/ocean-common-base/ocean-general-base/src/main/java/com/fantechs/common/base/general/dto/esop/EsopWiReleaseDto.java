@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.dto.esop;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eam.EamWiRelease;
 import com.fantechs.common.base.general.entity.esop.EsopWiRelease;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -53,10 +52,9 @@ public class EsopWiReleaseDto extends EsopWiRelease implements Serializable {
     private String materialCode;
 
     /**
-     * 产品描述
+     * 产品名称
      */
-    @ApiModelProperty(name="productModelName",value = "产品描述")
-    @Excel(name = "产品描述", height = 20, width = 30,orderNum="4")
+    @ApiModelProperty(name="productModelName",value = "productModelName")
     @Transient
     private String productModelName;
 
@@ -68,6 +66,12 @@ public class EsopWiReleaseDto extends EsopWiRelease implements Serializable {
     @Transient
     private String productModelCode;
 
+    /**
+     * 产品规格
+     */
+    @ApiModelProperty(name="productModelDesc",value = "产品规格")
+    @Transient
+    private String productModelDesc;
     /**
      * 工艺路线名称
      */

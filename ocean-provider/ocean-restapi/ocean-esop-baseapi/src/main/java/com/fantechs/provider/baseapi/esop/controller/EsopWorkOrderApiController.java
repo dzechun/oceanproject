@@ -1,6 +1,5 @@
 package com.fantechs.provider.baseapi.esop.controller;
 
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -10,7 +9,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
@@ -30,7 +32,7 @@ public class EsopWorkOrderApiController {
     @ApiOperation("同步单个工单信息")
     @PostMapping("/getWorkOrder")
     public ResponseEntity getWorkOrder(@ApiParam(value = "产线编码",required = true) @RequestParam String proCode) {
-        MesPmWorkOrder workOrder = esopWorkOrderApiService.getWorkOrder(proCode);
+        MesPmWorkOrder workOrder = esopWorkOrderApiService.getWorkOrder(proCode,null);
         return ControllerUtil.returnDataSuccess(workOrder, StringUtils.isEmpty(workOrder)?0:1);
     }
 
