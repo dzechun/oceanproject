@@ -5,7 +5,6 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.entity.security.SysApiLog;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -38,7 +37,6 @@ import com.fantechs.provider.wanbao.api.mapper.*;
 import com.fantechs.provider.wanbao.api.service.SyncDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -87,8 +85,8 @@ public class SyncDataServiceImpl implements SyncDataService {
     // endregion
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+//    @Transactional(rollbackFor = Exception.class)
+//    @LcnTransaction
     public void syncMaterialData() {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -126,13 +124,29 @@ public class SyncDataServiceImpl implements SyncDataService {
             // 1、保存平台库
             // 产品型号集合
             List<BaseProductModel> productModels = baseFeignApi.findProductModelAll().getData();
-            log.info("产品型号集合：" + productModels.size());
             // 物料集合
             List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
-            log.info("物料集合：" + baseMaterials.size());
             // 物料页签集合
             List<BaseTabDto> baseTabDtos = baseFeignApi.findTabAll().getData();
-            log.info("物料页签集合：" + baseTabDtos.size());
+
+            // 条码规则集合
+            SearchBaseBarcodeRuleSet barcodeRuleSet = new SearchBaseBarcodeRuleSet();
+            barcodeRuleSet.setPageSize(9999);
+            List<BaseBarcodeRuleSetDto> ruleSetDtos = baseFeignApi.findBarcodeRuleSetList(barcodeRuleSet).getData();
+            if(ruleSetDtos.isEmpty()){
+                // 记录日志
+                apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
+                securityFeignApi.add(apiLog);
+                return;
+            }
+
+            Long ruleSetId = 0L;
+            for (BaseBarcodeRuleSetDto ruleSetDto : ruleSetDtos){
+                if (ruleSetDto.getBarcodeRuleSetCode().equals(jsonObject.get("ruleCode"))){
+                    ruleSetId = ruleSetDto.getBarcodeRuleSetId();
+                    break;
+                }
+            }
 
             for (MiddleMaterial dto : middleMaterials) {
                 if (dto.getProductModelCode() != null) {
@@ -158,6 +172,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     BeanUtil.copyProperties(dto, material);
                     material.setOrganizationId(sysUser.getOrganizationId());
                     material.setStatus((byte) 1);
+                    material.setBarcodeRuleSetId(ruleSetId);
                     BaseMaterial baseMaterial = baseFeignApi.saveByApi(material).getData();
                     dto.setMaterialId(baseMaterial.getMaterialId().toString());
                     dto.setMiddleMaterialId(UUIDUtils.getUUID());
@@ -183,6 +198,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     BaseMaterial material = baseMaterials.stream().filter(item -> item.getMaterialCode().equals(dto.getMaterialCode())).findFirst().get();
                     material.setMaterialName(dto.getMaterialName());
                     material.setMaterialDesc(dto.getMaterialDesc());
+                    material.setBarcodeRuleSetId(ruleSetId);
                     dto.setMaterialId(material.getMaterialId().toString());
                     baseFeignApi.update(material);
 
@@ -214,8 +230,8 @@ public class SyncDataServiceImpl implements SyncDataService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+//    @Transactional(rollbackFor = Exception.class)
+//    @LcnTransaction
     public void syncOrderData() {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -400,8 +416,8 @@ public class SyncDataServiceImpl implements SyncDataService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+//    @Transactional(rollbackFor = Exception.class)
+//    @LcnTransaction
     public void syncSaleOrderData() {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -444,14 +460,31 @@ public class SyncDataServiceImpl implements SyncDataService {
             List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
             // 销售订单
             List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
+            // 条码规则集合
+            SearchBaseBarcodeRuleSet barcodeRuleSet = new SearchBaseBarcodeRuleSet();
+            barcodeRuleSet.setPageSize(9999);
+            List<BaseBarcodeRuleSetDto> ruleSetDtos = baseFeignApi.findBarcodeRuleSetList(barcodeRuleSet).getData();
+            if(ruleSetDtos.isEmpty()){
+                // 记录日志
+                apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
+                securityFeignApi.add(apiLog);
+                return;
+            }
+
             List<MiddleSaleOrder> list = new ArrayList<>();
             Map<String, List<MiddleSaleOrder>> collect = salesOrders.stream().collect(Collectors.groupingBy(MiddleSaleOrder::getSalesOrderCode));
             collect.forEach((key, value) -> {
                 OmSalesOrderDto omSalesOrder =  new OmSalesOrderDto();
-                List<OmSalesOrderDetDto> omSalesOrderDetDtoList = new ArrayList<>();
+                BeanUtil.copyProperties(value.get(0), omSalesOrder);
+                for (BaseBarcodeRuleSetDto ruleSetDto : ruleSetDtos){
+                    if (ruleSetDto.getBarcodeRuleSetCode().equals(jsonObject.get("ruleCode"))){
+                        omSalesOrder.setBarcodeRuleSetId(ruleSetDto.getBarcodeRuleSetId());
+                        break;
+                    }
+                }
 
+                List<OmSalesOrderDetDto> omSalesOrderDetDtoList = new ArrayList<>();
                 for (MiddleSaleOrder saleOrder : value) {
-                    BeanUtil.copyProperties(saleOrder, omSalesOrder);
                     // 客户编码
                     if (StringUtils.isEmpty(saleOrder.getSupplierCode())) {
                         // 记录日志
@@ -535,8 +568,8 @@ public class SyncDataServiceImpl implements SyncDataService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+//    @Transactional(rollbackFor = Exception.class)
+//    @LcnTransaction
     public void syncOutDeliveryData() {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
