@@ -1,10 +1,12 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
-import com.fantechs.common.base.general.dto.restapi.*;
+import com.fantechs.common.base.general.dto.restapi.DTMESSUPPLIER;
+import com.fantechs.common.base.general.dto.restapi.DTMESSUPPLIERQUERYREQ;
+import com.fantechs.common.base.general.dto.restapi.DTMESSUPPLIERQUERYRES;
+import com.fantechs.common.base.general.dto.restapi.SearchSapSupplierApi;
 import com.fantechs.common.base.general.entity.basic.BaseFactory;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
@@ -61,6 +63,7 @@ public class SapSupplierApiServiceImpl implements SapSupplierApiService {
                 baseSupplier.setStatus((byte)1);
                 baseSupplier.setSupplierType((byte)1);
                 baseSupplier.setIsDelete((byte)1);
+                baseSupplier.setOrganizationId(orgId);
                 baseFeignApi.saveByApi(baseSupplier);
             }
             logsUtils.addlog((byte)1,(byte)1,orgId,null,req.toString());
