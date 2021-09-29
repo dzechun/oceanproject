@@ -1715,7 +1715,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //拣货 领料拣货
         //创建已经分配领料拣货单
         //1、判断领料出库单所选库位是否库存不足 不足提示库存不足 创建领料拣货单失败
-        if((StringUtils.isNotEmpty(record.getOrderTypeId())&&record.getOrderTypeId()==8) && record.getJobOrderType()==4 && (StringUtils.isNotEmpty(record.getType())||record.getType()==1)){
+        if((StringUtils.isNotEmpty(record.getOrderTypeId())&&record.getOrderTypeId()==8) && record.getJobOrderType()==4 && (StringUtils.isNotEmpty(record.getType())&&record.getType()==1)){
             //创建已经分配的拣货单
             int i = pickingOrderService.handDistribution(record.getWmsInPutawayOrderDets());
             if(i<1){

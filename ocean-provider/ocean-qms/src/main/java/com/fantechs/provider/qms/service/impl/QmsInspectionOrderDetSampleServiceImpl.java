@@ -50,10 +50,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Resource
     private QmsInspectionOrderMapper qmsInspectionOrderMapper;
     @Resource
-    private QmsInspectionOrderService qmsInspectionOrderService;
-    @Resource
-    private BaseFeignApi baseFeignApi;
-    @Resource
     private SFCFeignApi sfcFeignApi;
     @Resource
     private PMFeignApi pmFeignApi;
@@ -123,7 +119,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         Map<String,Object> map = new HashMap();
         map.put("inspectionOrderDetId",inspectionOrderDetId);
         QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.findDetList(map).get(0);
-        QmsInspectionOrder inspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDet.getInspectionOrderId());
 
         //当已检验样本数等于样本数时，才计算不良数量、检验结果
         if(qmsInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(qmsInspectionOrderDetSampleList.size()))==0) {

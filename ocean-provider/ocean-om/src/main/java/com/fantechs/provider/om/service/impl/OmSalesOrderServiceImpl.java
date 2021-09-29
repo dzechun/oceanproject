@@ -2,6 +2,8 @@ package com.fantechs.provider.om.service.impl;
 
 
 import cn.hutool.core.date.DateTime;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -103,8 +105,13 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("wanbaoSyncData");
         List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        if(specItems.isEmpty()){
+        if (specItems.isEmpty()){
             omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
+        }else {
+            JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
+            if(jsonObject.get("enable").equals(1)){
+                omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
+            }
         }
         omSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
         omSalesOrder.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
