@@ -21,6 +21,8 @@
     <result column="scattered_unit_name" jdbcType="VARCHAR" property="scatteredUnitName" />
     <result column="spec" jdbcType="VARCHAR" property="spec" />
     <result column="job_status" jdbcType="TINYINT" property="jobStatus" />
+    <result column="if_hang_up" jdbcType="TINYINT" property="ifHangUp" />
+    <result column="light_out_time" jdbcType="TIMESTAMP" property="lightOutTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -37,8 +39,8 @@
   <sql id="Base_Column_List">
     pjod.job_order_det_id, pjod.job_order_id, pjod.storage_id, pjod.storage_code, pjod.material_id, pjod.material_code, pjod.material_name,
     pjod.unit_name, pjod.whole_or_scattered, pjod.qty, pjod.whole_qty, pjod.whole_unit_name, pjod.scattered_qty, pjod.scattered_unit_name, pjod.spec,
-    pjod.job_status, pjod.status, pjod.remark, pjod.org_id, pjod.create_user_id, pjod.create_time, pjod.modified_user_id, pjod.modified_time,
-    pjod.is_delete, pjod.option1, pjod.option2, pjod.option3
+    pjod.job_status, pjod.if_hang_up, pjod.light_out_time, pjod.status, pjod.remark, pjod.org_id, pjod.create_user_id, pjod.create_time, pjod.modified_user_id,
+    pjod.modified_time, pjod.is_delete, pjod.option1, pjod.option2, pjod.option3
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.electronic.dto.PtlJobOrderDetDto">
