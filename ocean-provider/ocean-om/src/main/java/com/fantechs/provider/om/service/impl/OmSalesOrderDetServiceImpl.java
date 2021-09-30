@@ -2,8 +2,12 @@ package com.fantechs.provider.om.service.impl;
 
 
 import cn.hutool.core.date.DateTime;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;
@@ -13,6 +17,7 @@ import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
 import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderDetService;
@@ -33,6 +38,8 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
     private OmSalesOrderDetMapper omSalesOrderDetMapper;
     @Resource
     private OmHtSalesOrderDetService omHtSalesOrderDetService;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public int saveDto(OmSalesOrderDetDto omSalesOrderDetDto, String customerOrderCode, Integer lineNumber, SysUser currentUserInfo) {
@@ -65,8 +72,18 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
 //        if(StringUtils.isEmpty(omSalesOrderDet.getSourceLineNumber())) {
 //            omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + String.format("%03d", lineNumber));
 //        }
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("wanbaoSyncData");
+        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if (specItems.isEmpty()){
+            omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + String.format("%03d", lineNumber));
+        }else {
+            JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
+            if(jsonObject.get("enable").equals(1)){
+                omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + String.format("%03d", lineNumber));
+            }
+        }
         omSalesOrderDet.setSourceLineNumber(String.format("%03d", lineNumber));
-        omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + String.format("%03d", lineNumber));
         omSalesOrderDet.setLineNumber(String.format("%02d",lineNumber));
 
         omSalesOrderDet.setOrgId(currentUserInfo.getOrganizationId());

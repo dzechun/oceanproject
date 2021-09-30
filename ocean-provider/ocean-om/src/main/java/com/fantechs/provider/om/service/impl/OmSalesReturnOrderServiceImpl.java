@@ -7,14 +7,14 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtSalesReturnOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
-import com.fantechs.common.base.general.entity.om.*;
+import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrder;
+import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrderDet;
+import com.fantechs.common.base.general.entity.om.OmSalesReturnOrder;
+import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -55,14 +55,14 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
     @Override
     public List<OmSalesReturnOrderDto> findList(Map<String, Object> map) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
         return omSalesReturnOrderMapper.findList(map);
     }
 
     @Override
     public List<OmHtSalesReturnOrderDto> findHtList(Map<String, Object> map) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
         return omHtSalesReturnOrderMapper.findList(map);
     }
@@ -76,7 +76,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
     public int packageAutoOutOrder(OmSalesReturnOrder omSalesReturnOrder) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         int num = 0;
         if(omSalesReturnOrder.getOmSalesReturnOrderDets().size()<1){
             throw new BizErrorException("请输入下发数量");
@@ -173,7 +173,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(OmSalesReturnOrder record) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         record.setSalesReturnOrderCode(CodeUtils.getId("XSTH-"));
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
@@ -200,7 +200,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(OmSalesReturnOrder entity) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(entity.getOrderStatus()>1){
             throw new BizErrorException("单据已被操作，无法修改");
         }
@@ -219,7 +219,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
             omSalesReturnOrderDet.setOrgId(sysUser.getOrganizationId());
         }
         int num = 0;
-        if(StringUtils.isEmpty(entity.getOmSalesReturnOrderDets()) && entity.getOmSalesReturnOrderDets().size()>0){
+        if(!entity.getOmSalesReturnOrderDets().isEmpty() && entity.getOmSalesReturnOrderDets().size()>0){
             num+=omSalesReturnOrderDetMapper.insertList(entity.getOmSalesReturnOrderDets());
         }
         num+=omSalesReturnOrderMapper.updateByPrimaryKeySelective(entity);
@@ -230,7 +230,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         String[] arrId = ids.split(",");
         for (String id : arrId) {
             OmSalesReturnOrder omSalesReturnOrder = omSalesReturnOrderMapper.selectByPrimaryKey(id);
@@ -288,18 +288,6 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         int num = omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
         num+=omSalesReturnOrderMapper.updateByPrimaryKeySelective(omSalesReturnOrder);
         return num;
-    }
-
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(sysUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return sysUser;
     }
 
 }
