@@ -1,6 +1,5 @@
 package com.fantechs.common.base.general.dto.mes.pm;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,13 +19,28 @@ public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
     @ApiModelProperty(name="workOrderQty",value = "生产数量")
     private BigDecimal workOrderQty;
 
-
     /**
      * 未排产数量
      */
     @Transient
     @ApiModelProperty(name="scheduleQty",value = "未排产数量")
     private BigDecimal noScheduleQty;
+
+    /**
+     * 投产数量
+     */
+    @ApiModelProperty(name="productionQty",value = "投产数量")
+    @Transient
+    private BigDecimal productionQty;
+
+
+    /**
+     * 当前排产数量
+     */
+    @ApiModelProperty(name="scheduledQty",value = "当前排产数量")
+    @Transient
+    private BigDecimal scheduledQty;
+
 
     /**
      * 物料名称.

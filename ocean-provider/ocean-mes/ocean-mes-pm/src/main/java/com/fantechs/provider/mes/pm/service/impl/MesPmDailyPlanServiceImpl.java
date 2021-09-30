@@ -5,12 +5,14 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.mapper.MesPmDailyPlanMapper;
+import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
 import com.fantechs.provider.mes.pm.service.MesPmDailyPlanService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,8 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
 
     @Resource
     private MesPmDailyPlanMapper mesPmDailyPlanMapper;
+    @Resource
+    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
 
     @Override
     public List<MesPmDailyPlanDto> findList(SearchMesPmDailyPlan searchMesPmDailyPlan) {
@@ -83,6 +87,11 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             for (MesPmDailyPlan mesPmDailyPlan : list) {
                 example.createCriteria().andEqualTo("workOrderId",mesPmDailyPlan.getWorkOrderId() == null ? -1 : mesPmDailyPlan.getWorkOrderId());
                 MesPmDailyPlan mesPmDailyPlan1 = mesPmDailyPlanMapper.selectOneByExample(example);
+                MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderMapper.selectOneByExample(example);
+
+                mesPmDailyPlan.setScheduleQty(mesPmWorkOrder.getScheduledQty());
+                mesPmDailyPlan.setFinishedQty(mesPmWorkOrder.getOutputQty());
+
                 Date strToDate = null;
                 try {
                     strToDate = DateUtils.getStrToDate(mesPmDailyPlan.getPlanDate());
