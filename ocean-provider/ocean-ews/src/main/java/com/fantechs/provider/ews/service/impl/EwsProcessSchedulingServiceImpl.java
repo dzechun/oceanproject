@@ -39,7 +39,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
 
     @Override
     public List<EwsProcessSchedulingDto> findList(SearchEwsProcessScheduling searchEwsProcessScheduling) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         searchEwsProcessScheduling.setOrgId(sysUser.getOrganizationId());
         return ewsProcessSchedulingMapper.findList(searchEwsProcessScheduling);
     }
@@ -47,7 +47,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int start(Long Id) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         EwsProcessScheduling ewsProcessScheduling = ewsProcessSchedulingMapper.selectByPrimaryKey(Id);
         ewsProcessScheduling.setProcessSchedulingId(Id);
         ewsProcessScheduling.setModifiedUserId(sysUser.getUserId());
@@ -70,7 +70,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int stop(Long Id) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         EwsProcessScheduling ewsProcessScheduling = ewsProcessSchedulingMapper.selectByPrimaryKey(Id);
         ewsProcessScheduling.setProcessSchedulingId(Id);
         ewsProcessScheduling.setModifiedUserId(sysUser.getUserId());
@@ -107,7 +107,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EwsProcessScheduling record) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
@@ -129,7 +129,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EwsProcessScheduling entity) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         entity.setModifiedUserId(sysUser.getUserId());
         entity.setModifiedTime(new Date());
         int num;
@@ -137,7 +137,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
         try {
             if(entity.getExecuteStatus()==(byte)1){
                 if(entity.getExecuteObjectType()==(byte)0){
-                    quartzManager.updateJob(entity.getProcessSchedulingId().toString(),DEFAULT_GROUP,entity.getCron(),null);
+                    quartzManager.updateJob(entity.getProcessSchedulingId().toString(),DEFAULT_GROUP,entity.getCron(),ControllerUtil.dynamicConditionByEntity(entity.getQuartzSearch()));
                 }
             }
             num = ewsProcessSchedulingMapper.updateByPrimaryKeySelective(entity);
@@ -150,7 +150,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         try {
             String[] arrayId = ids.split(",");
             for (String s : arrayId) {
@@ -168,16 +168,5 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
         return ewsProcessSchedulingMapper.deleteByIds(ids);
     }
 
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return user;
-    }
 
 }
