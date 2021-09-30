@@ -220,7 +220,15 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                                     }
                                     rabbitMQDTO.setMaterialDesc(materialDesc + materialDesc2);
                                 } else {
-                                    rabbitMQDTO.setMaterialDesc(intercepting(ptlJobOrderDetDto.getMaterialCode(), 8));
+                                    String materialCode = "";
+                                    while (ptlJobOrderDetDto.getMaterialCode().length() + materialCode.length() < 8) {
+                                        materialCode += " ";
+                                    }
+                                    materialCode += ptlJobOrderDetDto.getMaterialCode();
+                                    while (materialCode.length() > 8) {
+                                        materialCode = materialCode.substring(1);
+                                    }
+                                    rabbitMQDTO.setMaterialDesc(materialCode);
                                 }
                                 rabbitMQDTO.setOption1(ptlJobOrderDto.getOption1());
                                 rabbitMQDTO.setOption2("1");
@@ -260,7 +268,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 log.info("===========发送消息给客户端控制中文标签亮灯完成===============");
             }
             if (!listE.isEmpty()) {
-                fanoutSender(1008, null, listE);
+                fanoutSender(1007, null, listE);
                 log.info("===========发送消息给客户端控制英文标签亮灯完成===============");
             }
 
@@ -632,7 +640,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 log.info("===========发送消息给客户端控制另一个中文标签亮灯完成===============");
             }
             if (!listE.isEmpty()) {
-                fanoutSender(1008, null, listE);
+                fanoutSender(1007, null, listE);
                 log.info("===========发送消息给客户端控制另一个英文标签亮灯完成===============");
             }
             updateJobOrderSeq(ptlJobOrderDetDtoList.get(0).getWarehouseAreaId(), ptlJobOrderDto.getJobOrderCode());
@@ -693,6 +701,18 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             String queueName = RabbitConfig.TOPIC_QUEUE_PRINT;
             for (String jobOrderId : jobOrderIds) {
                 PtlJobOrder ptlJobOrder = electronicTagFeignApi.ptlJobOrderDetail(Long.valueOf(jobOrderId)).getData();
+                String color = "";
+                switch (ptlJobOrder.getOption1()) {
+                    case "0":
+                        color = "红色";
+                        break;
+                    case "1":
+                        color = "绿色";
+                        break;
+                    case "2":
+                        color = "黄色";
+                        break;
+                }
 //        if (ptlJobOrder.getIfAlreadyPrint() == 1) {
 //            throw new Exception("该任务单已打印过标签，请不要重复操作");
 //        }
@@ -763,8 +783,11 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                         PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
                         ptlJobOrderDetPrintDTO.setJobOrderId(ptlJobOrderDetDto.getJobOrderId());
                         ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getRelatedOrderCode());
-//                    ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
+                        ptlJobOrderDetPrintDTO.setDespatchOrderCode(color);
                         ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
+                        if (ptlJobOrder.getIfUrgent() == 1) {
+                            ptlJobOrderDetPrintDTO.setIfUrgent("急");
+                        }
                         ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
                         ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
                         ptlJobOrderDetPrintDTO.setSpec(ptlJobOrderDetDto.getSpec());
@@ -787,8 +810,11 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                             PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO = new PtlJobOrderDetPrintDTO();
                             ptlJobOrderDetPrintDTO.setJobOrderId(ptlJobOrderDetDto.getJobOrderId());
                             ptlJobOrderDetPrintDTO.setJobOrderCode(ptlJobOrder.getRelatedOrderCode());
-//                        ptlJobOrderDetPrintDTO.setDespatchOrderCode(ptlJobOrder.getDespatchOrderCode());
+                            ptlJobOrderDetPrintDTO.setDespatchOrderCode(color);
                             ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
+                            if (ptlJobOrder.getIfUrgent() == 1) {
+                                ptlJobOrderDetPrintDTO.setIfUrgent("急");
+                            }
                             ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
                             ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
                             ptlJobOrderDetPrintDTO.setSpec(ptlJobOrderDetDto.getSpec());
@@ -939,7 +965,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 log.info("===========发送消息给客户端控制另一个中文标签亮灯完成===============");
             }
             if (!listE.isEmpty()) {
-                fanoutSender(1008, null, listE);
+                fanoutSender(1007, null, listE);
                 log.info("===========发送消息给客户端控制另一个英文标签亮灯完成===============");
             }
             for (String key : map.keySet()) {
@@ -1241,7 +1267,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             log.info("===========发送消息给客户端控制另一个中文标签亮灯完成===============");
         }
         if (!listE.isEmpty()) {
-            fanoutSender(1008, null, listE);
+            fanoutSender(1007, null, listE);
             log.info("===========发送消息给客户端控制另一个英文标签亮灯完成===============");
         }
         updateJobOrderSeq(ptlJobOrderDetDtoList.get(0).getWarehouseAreaId(), ptlJobOrder.getJobOrderCode());
@@ -1490,7 +1516,15 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     }
                     rabbitMQDTO.setMaterialDesc(materialDesc + materialDesc2);
                 } else {
-                    rabbitMQDTO.setMaterialDesc(intercepting(ptlJobOrderDetDto.getMaterialCode(), 8));
+                    String materialCode = "";
+                    while (ptlJobOrderDetDto.getMaterialCode().length() + materialCode.length() < 8) {
+                        materialCode += " ";
+                    }
+                    materialCode += ptlJobOrderDetDto.getMaterialCode();
+                    while (materialCode.length() > 8) {
+                        materialCode = materialCode.substring(1);
+                    }
+                    rabbitMQDTO.setMaterialDesc(materialCode);
                 }
                 rabbitMQDTO.setOption1(ptlJobOrderNext.getOption1());
                 rabbitMQDTO.setOption2("1");

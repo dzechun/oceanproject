@@ -10,6 +10,7 @@
     <result column="job_order_type" jdbcType="TINYINT" property="jobOrderType" />
     <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
     <result column="despatch_order_code" jdbcType="VARCHAR" property="despatchOrderCode" />
+    <result column="if_urgent" jdbcType="TINYINT" property="ifUrgent" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
     <result column="vehicle_id" jdbcType="BIGINT" property="vehicleId" />
@@ -32,7 +33,7 @@
   </resultMap>
   
   <sql id="Base_Column_List">
-    pjo.job_order_id, pjo.job_order_code, pjo.job_order_type, pjo.related_order_code, pjo.despatch_order_code, pjo.warehouse_id, pjo.warehouse_name,
+    pjo.job_order_id, pjo.job_order_code, pjo.job_order_type, pjo.related_order_code, pjo.despatch_order_code, pjo.if_urgent, pjo.warehouse_id, pjo.warehouse_name,
     pjo.vehicle_id, pjo.worker_user_id, pjo.worker_user_name, pjo.order_status, pjo.pick_back_status, pjo.if_already_print, pjo.status, pjo.remark,
     pjo.org_id, pjo.create_user_id, pjo.create_time, pjo.modified_user_id, pjo.modified_time, pjo.is_delete, pjo.option1, pjo.option2, pjo.option3
   </sql>
@@ -94,6 +95,12 @@
       </if>
       <if test="(startTime == null or startTime == '') and (endTime == null or endTime == '') and type == 0">
         and TO_DAYS(pjo.create_time) = TO_DAYS(NOW())
+      </if>
+      <if test="materialCode != null and materialCode != ''">
+        pjod.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialName != null and materialName != ''">
+        pjod.material_name like CONCAT('%', #{materialName}, '%')
       </if>
       <if test="warehouseId != null">
         and bw.warehouse_id = #{warehouseId}

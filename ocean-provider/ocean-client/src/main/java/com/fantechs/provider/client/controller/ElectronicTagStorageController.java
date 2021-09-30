@@ -2,7 +2,6 @@ package com.fantechs.provider.client.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDto;
-import com.fantechs.common.base.electronic.entity.PtlJobOrder;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;

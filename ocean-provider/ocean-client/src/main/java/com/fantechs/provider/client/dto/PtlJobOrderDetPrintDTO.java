@@ -18,6 +18,9 @@ public class PtlJobOrderDetPrintDTO {
     @ApiModelProperty(name="relatedOrderCode",value = "拣货单号")
     private String relatedOrderCode;
 
+    @ApiModelProperty(name="ifUrgent",value = "是否加急")
+    private String ifUrgent;
+
     @ApiModelProperty(name="materialName",value = "商品名称")
     private String materialName;
 

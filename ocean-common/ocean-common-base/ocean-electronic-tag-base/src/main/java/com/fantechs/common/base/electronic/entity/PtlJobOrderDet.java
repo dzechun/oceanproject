@@ -1,14 +1,20 @@
 package com.fantechs.common.base.electronic.entity;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * PTL-作业单明细
@@ -140,6 +146,21 @@ public class PtlJobOrderDet extends ValidGroup implements Serializable {
     @Excel(name = "作业状态(1-待作业 2-作业中 3-已完成 4-挂起)", height = 20, width = 30,orderNum="10")
     @Column(name = "job_status")
     private Byte jobStatus;
+
+    /**
+     * 是否挂起(0-否 1-挂起)
+     */
+    @ApiModelProperty(name="ifHangUp",value = "是否挂起(0-否 1-挂起)")
+    @Column(name = "if_hang_up")
+    private Byte ifHangUp;
+
+    /**
+     * 拍灯时间
+     */
+    @ApiModelProperty(name="lightOutTime",value = "拍灯时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "light_out_time")
+    private Date lightOutTime;
 
     /**
      * 状态(0无效，1有效)
