@@ -729,11 +729,11 @@ public class SyncDataServiceImpl implements SyncDataService {
            }
 
            // 保存中间库
-          /* DynamicDataSourceHolder.putDataSouce("secondary");
+           DynamicDataSourceHolder.putDataSouce("secondary");
            for(MiddleProduct middleProduct : barcodeDatas){
                 middleProductMapper.save(middleProduct);
            }
-           DynamicDataSourceHolder.removeDataSource();*/
+           DynamicDataSourceHolder.removeDataSource();
 
             apiLog.setRequestTime(new Date());
             apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));

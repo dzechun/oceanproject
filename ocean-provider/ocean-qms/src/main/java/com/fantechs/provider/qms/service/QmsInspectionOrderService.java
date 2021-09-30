@@ -19,4 +19,5 @@ public interface QmsInspectionOrderService extends IService<QmsInspectionOrder> 
     int audit(QmsInspectionOrder qmsInspectionOrder);
     int autoAdd();
     int thirdInspection(QmsInspectionOrder qmsInspectionOrder);
+    int batchQualified(Long inspectionOrderId);
 }

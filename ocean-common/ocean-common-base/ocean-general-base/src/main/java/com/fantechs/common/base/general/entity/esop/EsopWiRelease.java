@@ -43,7 +43,6 @@ public class EsopWiRelease extends ValidGroup implements Serializable {
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @NotNull(message = "工单ID不能为空")
     @Column(name = "work_order_id")
     private Long workOrderId;
 

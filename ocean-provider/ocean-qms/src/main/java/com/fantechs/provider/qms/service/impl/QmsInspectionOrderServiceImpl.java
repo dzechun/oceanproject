@@ -89,6 +89,33 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public int batchQualified(Long inspectionOrderId){
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(inspectionOrderId);
+
+        Example example = new Example(QmsInspectionOrderDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("inspectionOrderId",inspectionOrderId);
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.selectByExample(example);
+
+        for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
+            //明细
+            qmsInspectionOrderDet.setBadnessQty(BigDecimal.ZERO);
+            qmsInspectionOrderDet.setInspectionResult((byte)1);
+            qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
+        }
+
+        qmsInspectionOrder.setInspectionStatus((byte)3);
+        qmsInspectionOrder.setInspectionResult((byte)1);
+        int i = qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
+
+        //处理库存
+        this.handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public int audit(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
@@ -318,65 +345,71 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             qmsInspectionOrder.setInspectionStatus((byte) 3);
             qmsInspectionOrder.setInspectionResult(unqualifiedCount==0 ? (byte)1 : (byte)0);
 
-            //检验结果返写回库存
-            SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
-            searchWmsInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
-            ResponseEntity<List<WmsInnerInventoryDto>> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory);
-            if(StringUtils.isEmpty(innerInventoryDtoList.getData())){
-                throw new BizErrorException("未查询到对应库存信息");
-            }
-            WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.getData().get(0);
-
-
-            SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
-            searchBaseInventoryStatus.setInventoryStatusName(unqualifiedCount==0 ? "合格" : "不合格");
-            searchBaseInventoryStatus.setNameQueryMark(1);
-            List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
-            if(StringUtils.isEmpty(inventoryStatusList)){
-                throw new BizErrorException("未查询到对应库存状态");
-            }
-
-            wmsInnerInventoryDto.setQcLock((byte)0);
-            wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
-            innerFeignApi.update(wmsInnerInventoryDto);
-
-            //合并库存
-            /*SearchWmsInnerInventory searchInnerInventory = new SearchWmsInnerInventory();
-            searchInnerInventory.setMaterialId(wmsInnerInventoryDto.getMaterialId());
-            searchInnerInventory.setWarehouseId(wmsInnerInventoryDto.getWarehouseId());
-            searchInnerInventory.setStorageId(wmsInnerInventoryDto.getStorageId());
-            searchInnerInventory.setBatchCode(wmsInnerInventoryDto.getBatchCode());
-            searchInnerInventory.setInventoryStatusId(wmsInnerInventoryDto.getInventoryStatusId());
-            searchInnerInventory.setJobStatus((byte)1);
-            searchInnerInventory.setLockStatus((byte)0);
-            searchInnerInventory.setQcLock((byte)0);
-            searchInnerInventory.setStockLock((byte)0);
-            List<WmsInnerInventoryDto> innerInventoryDtos = innerFeignApi.findList(searchInnerInventory).getData();
-            if(StringUtils.isNotEmpty(innerInventoryDtos)){
-                WmsInnerInventoryDto innerInventoryDto = innerInventoryDtos.get(0);
-                innerInventoryDto.setPackingQty(innerInventoryDto.getPackingQty().add(wmsInnerInventoryDto.getPackingQty()));
-                innerFeignApi.update(innerInventoryDto);
-                wmsInnerInventoryDto.setPackingQty(BigDecimal.ZERO);
-                innerFeignApi.update(wmsInnerInventoryDto);
-            }*/
-
-
-            //检验结果返写回库存明细
-            SearchWmsInnerInventoryDet  searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
-            searchWmsInnerInventoryDet.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
-            List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
-            if(StringUtils.isNotEmpty(inventoryDetDtos)) {
-                for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtos) {
-                    wmsInnerInventoryDetDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
-                    wmsInnerInventoryDetDto.setQcDate(new Date());
-                    innerFeignApi.update(wmsInnerInventoryDetDto);
-                }
-            }
+            this.handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
 
             i = qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
         }
 
         return i;
+    }
+
+    public int handleInventory(String inspectionOrderCode,Byte inspectionResult){
+        //检验结果返写回库存
+        SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
+        searchWmsInnerInventory.setInspectionOrderCode(inspectionOrderCode);
+        ResponseEntity<List<WmsInnerInventoryDto>> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory);
+        if(StringUtils.isEmpty(innerInventoryDtoList.getData())){
+            throw new BizErrorException("未查询到对应库存信息");
+        }
+        WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.getData().get(0);
+
+
+        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+        searchBaseInventoryStatus.setInventoryStatusName(inspectionResult==0 ? "不合格" : "合格");
+        searchBaseInventoryStatus.setNameQueryMark(1);
+        List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
+        if(StringUtils.isEmpty(inventoryStatusList)){
+            throw new BizErrorException("未查询到对应库存状态");
+        }
+
+        wmsInnerInventoryDto.setQcLock((byte)0);
+        wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
+        innerFeignApi.update(wmsInnerInventoryDto);
+
+        //合并库存
+        /*SearchWmsInnerInventory searchInnerInventory = new SearchWmsInnerInventory();
+        searchInnerInventory.setMaterialId(wmsInnerInventoryDto.getMaterialId());
+        searchInnerInventory.setWarehouseId(wmsInnerInventoryDto.getWarehouseId());
+        searchInnerInventory.setStorageId(wmsInnerInventoryDto.getStorageId());
+        searchInnerInventory.setBatchCode(wmsInnerInventoryDto.getBatchCode());
+        searchInnerInventory.setInventoryStatusId(wmsInnerInventoryDto.getInventoryStatusId());
+        searchInnerInventory.setJobStatus((byte) 1);
+        searchInnerInventory.setLockStatus((byte) 0);
+        searchInnerInventory.setQcLock((byte) 0);
+        searchInnerInventory.setStockLock((byte) 0);
+        List<WmsInnerInventoryDto> innerInventoryDtos = innerFeignApi.findList(searchInnerInventory).getData();
+        if (StringUtils.isNotEmpty(innerInventoryDtos)) {
+            WmsInnerInventoryDto innerInventoryDto = innerInventoryDtos.get(0);
+            innerInventoryDto.setPackingQty(innerInventoryDto.getPackingQty().add(wmsInnerInventoryDto.getPackingQty()));
+            innerFeignApi.update(innerInventoryDto);
+            wmsInnerInventoryDto.setPackingQty(BigDecimal.ZERO);
+            innerFeignApi.update(wmsInnerInventoryDto);
+        }*/
+
+
+        //检验结果返写回库存明细
+        SearchWmsInnerInventoryDet  searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setInspectionOrderCode(inspectionOrderCode);
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        if(StringUtils.isNotEmpty(inventoryDetDtos)) {
+            for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtos) {
+                wmsInnerInventoryDetDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
+                wmsInnerInventoryDetDto.setQcDate(new Date());
+                innerFeignApi.update(wmsInnerInventoryDetDto);
+            }
+        }
+
+        return 1;
     }
 
     @Override

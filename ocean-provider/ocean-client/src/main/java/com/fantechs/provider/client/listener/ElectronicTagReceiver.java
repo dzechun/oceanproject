@@ -2,7 +2,6 @@ package com.fantechs.provider.client.listener;
 
 import com.alibaba.fastjson.JSONObject;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.PtlElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDetDto;
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDto;
@@ -11,9 +10,7 @@ import com.fantechs.common.base.electronic.entity.PtlJobOrderDet;
 import com.fantechs.common.base.electronic.entity.search.SearchPtlElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchPtlJobOrder;
 import com.fantechs.common.base.electronic.entity.search.SearchPtlJobOrderDet;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.MQResponseEntity;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.RestTemplateUtil;
@@ -24,9 +21,7 @@ import com.fantechs.provider.client.dto.PtlJobOrderDTO;
 import com.fantechs.provider.client.dto.RabbitMQDTO;
 import com.fantechs.provider.client.dto.ResponseEntityDTO;
 import com.fantechs.provider.client.server.ElectronicTagStorageService;
-import com.fantechs.provider.client.server.impl.ElectronicTagStorageServiceImpl;
 import com.fantechs.provider.client.server.impl.FanoutSender;
-import com.google.gson.reflect.TypeToken;
 import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +33,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class ElectronicTagReceiver {
@@ -122,6 +117,7 @@ public class ElectronicTagReceiver {
                         ptlJobOrderDet.setJobOrderDetId(ptlJobOrderDetDtoList.get(0).getJobOrderDetId());
                         ptlJobOrderDet.setJobStatus((byte) 3);
                         ptlJobOrderDet.setModifiedTime(new Date());
+                        ptlJobOrderDet.setLightOutTime(new Date());
                         electronicTagFeignApi.updatePtlJobOrderDet(ptlJobOrderDet);
                         // 该储位对应的另一个电子标签灭灯
                         for (PtlJobOrderDetDto ptlJobOrderDetDto : ptlJobOrderDetDtoList) {
@@ -239,12 +235,15 @@ public class ElectronicTagReceiver {
                     redisUtil.del(redisKey);
                 }
                 if (!listC.isEmpty()) {
-                    wait(200);
+                    redisUtil.set(lockKey + "_" + electronicTagId, equipmentTagId, 100, TimeUnit.MILLISECONDS);
+                    log.info("##########延时发送指令控制标签重新亮灯开始##########");
+                    while (StringUtils.isNotEmpty(redisUtil.get(lockKey + "_" + electronicTagId))) { }
+                    log.info("---------延时发送指令控制标签重新亮灯结束-----------");
                     electronicTagStorageService.fanoutSender(1007, null, listC);
                     log.info("===========发送消息给客户端控制另一个中文标签亮灯完成===============");
                 }
                 if (!listE.isEmpty()) {
-                    electronicTagStorageService.fanoutSender(1008, null, listE);
+                    electronicTagStorageService.fanoutSender(1007, null, listE);
                     log.info("===========发送消息给客户端控制另一个英文标签亮灯完成===============");
                 }
 

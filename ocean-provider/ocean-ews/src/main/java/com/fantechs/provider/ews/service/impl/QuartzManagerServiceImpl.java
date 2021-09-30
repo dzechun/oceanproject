@@ -1,6 +1,7 @@
 package com.fantechs.provider.ews.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fantechs.provider.ews.config.QuartzDoInterface;
 import com.fantechs.provider.ews.service.QuartzManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
@@ -117,7 +118,8 @@ public class QuartzManagerServiceImpl implements QuartzManagerService {
      */
     @Override
     public void updateJob(String jobName, String jobGroupName, String cronExpression, Map<String, Object> argMap) throws Exception {
-        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroupName);
+    /*    TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroupName);
+        // 任务名，任务组，任务执行类
 
         CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
         if(cronExpression == null){
@@ -127,18 +129,38 @@ public class QuartzManagerServiceImpl implements QuartzManagerService {
         // 按新的cronExpression表达式重新构建trigger
         // 表达式调度构建器
         CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
-        trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
-
+        trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).startNow().build();
+       // JobDetail jobDetail = scheduler.getJobDetail(trigger.getJobKey());
         if(argMap != null){
             trigger.getJobDataMap().putAll(argMap);
         }
-        //修改map
-        // 按新的trigger重新设置job执行
-        //scheduler.scheduleJob(job, trigger);
-        //scheduler.rescheduleJob(triggerKey, trigger);
         scheduler.rescheduleJob(triggerKey, trigger);
-        log.info("任务已被重新执行");
 
+        log.info("任务已被重新执行");*/
+
+        //删除旧job
+        this.deleteJob(jobName,jobGroupName);
+
+        JobDetail job = JobBuilder.newJob(QuartzDoInterface.class).withIdentity(jobName, jobGroupName).build();
+        if(argMap != null){
+            job.getJobDataMap().putAll(argMap);
+        }
+        // 触发器
+        TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
+        // 触发器名,触发器组
+        triggerBuilder.withIdentity(jobName, jobGroupName);
+        triggerBuilder.startNow();
+        // 触发器时间设定
+        triggerBuilder.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression));
+        // 创建Trigger对象
+        CronTrigger trigger = (CronTrigger) triggerBuilder.build();
+        // 调度容器设置JobDetail和Trigger
+        scheduler.scheduleJob(job, trigger);
+        // 启动
+        if (!scheduler.isShutdown()) {
+            scheduler.start();
+        }
+        log.info("任务已被重新执行");
     }
 
     /**
