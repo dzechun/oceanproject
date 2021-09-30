@@ -239,6 +239,9 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrder.getWmsOutDeliveryOrderDetList();
         if(StringUtils.isNotEmpty(wmsOutDeliveryOrderDetList)){
             for (WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet : wmsOutDeliveryOrderDetList ) {
+                if(StringUtils.isEmpty(wmsOutDeliveryOrderDet.getPackingQty()) || wmsOutDeliveryOrderDet.getPackingQty().compareTo(BigDecimal.ZERO)<1){
+                    throw new BizErrorException("包装数量不能小于0");
+                }
                 //领料出库单查询库存
 //                if(wmsOutDeliveryOrder.getOrderTypeId()==8){
 //                    this.findInventory(wmsOutDeliveryOrderDet);

@@ -47,6 +47,12 @@ public class QmsInspectionOrderController {
         return ControllerUtil.returnCRUD(qmsInspectionOrderService.writeBack(inspectionOrderId));
     }
 
+    @ApiOperation("整批合格提交")
+    @PostMapping("/batchQualified")
+    public ResponseEntity<QmsInspectionOrder> batchQualified(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long inspectionOrderId) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.batchQualified(inspectionOrderId));
+    }
+
     @ApiOperation("审核")
     @PostMapping("/audit")
     public ResponseEntity audit(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsInspectionOrder.update.class) QmsInspectionOrder qmsInspectionOrder) {
