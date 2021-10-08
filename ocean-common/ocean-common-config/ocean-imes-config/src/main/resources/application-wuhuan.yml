@@ -57,8 +57,8 @@ eureka:
 ribbon:
   eureka:
     enabled: true
-  ConnectTimeout: 6000000
-  ReadTimeout: 6000000
+  ConnectTimeout: 60000
+  ReadTimeout: 60000
   MaxConnectionsPerHost: 50
   MaxTotalConnections: 200
 

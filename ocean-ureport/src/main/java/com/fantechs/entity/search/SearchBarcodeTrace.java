@@ -30,6 +30,12 @@ public class SearchBarcodeTrace extends BaseQuery {
     private String barcode;
 
     /**
+     * 销售码
+     */
+    @ApiModelProperty(name="partBarcode",value = "销售码")
+    private String partBarcode;
+
+    /**
      * 流程节点
      */
     @ApiModelProperty(name="prossPoint",value = "流程节点")

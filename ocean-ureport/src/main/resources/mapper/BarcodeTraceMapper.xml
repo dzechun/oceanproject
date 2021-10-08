@@ -62,6 +62,9 @@
             <if test="barcode!=null and barcode!=''">
                 and mswob.barcode=#{barcode}
             </if>
+            <if test="partBarcode!=null and partBarcode!=''">
+                and makpr.part_barcode=#{partBarcode}
+            </if>
             <if test="prossPoint!=null and prossPoint!='' and prossPoint=='A' and startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(mswob.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
