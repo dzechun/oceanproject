@@ -1,17 +1,20 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import javax.persistence.*;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+;
+;
 
 /**
  * 销售订单明细
@@ -347,6 +350,13 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @JSONField(format ="yyyy-MM-dd")
     @Column(name = "modified_time")
     private String modifiedTime;
+
+
+    // =========== 2021-09-29 新增 start ===========
+    @ApiModelProperty(name="salesCode" ,value="销售编码")
+    @Column(name = "sales_code")
+    private String salesCode;
+    // =========== 2021-09-29 新增 end ===========
 
     private static final long serialVersionUID = 1L;
 }

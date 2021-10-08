@@ -42,6 +42,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto">
