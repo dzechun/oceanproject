@@ -53,7 +53,7 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select
     <include refid="Base_Column_List"/>,
-    bs.supplier_code as supplierCode, bs.supplier_name as supplierName,
+    bs.supplier_code as supplierCode, bs.supplier_name as supplierName,bc.currency_name as currencyName,
     bd.dept_code as deptCode, bd.dept_name as deptName,
     supu.nick_name as purchaseUserName, supu.nick_name as makeOrderUserName, supu.nick_name as auditUserName, supu.nick_name as purchaseUserName
     from om_purchase_order opo
@@ -62,6 +62,7 @@
     left join ocean_v2.sys_user sumod on opo.modified_user_id = sumod.user_id
     left join base_supplier bs on opo.supplier_id = bs.supplier_id
     left join base_dept bd on opo.purchase_dept_id = bd.dept_id
+    left join base_currency bc on opo.currency_id = bc.currency_id
     left join ocean_v2.sys_user supu on opo.purchase_user_id = supu.user_id
     left join ocean_v2.sys_user sumou on opo.make_order_user_id = sumou.user_id
     left join ocean_v2.sys_user suau on opo.audit_user_id = suau.user_id

@@ -1,12 +1,9 @@
 package com.fantechs.common.base.general.dto.om;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
-import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
@@ -35,4 +32,7 @@ public class OmPurchaseOrderDto extends OmPurchaseOrder implements Serializable 
 
     @ApiModelProperty(name="modifiedUserName",value = "修改人员名称")
     private String modifiedUserName;
+
+    @ApiModelProperty(name="currencyName",value = "货币名称")
+    private String currencyName;
 }
