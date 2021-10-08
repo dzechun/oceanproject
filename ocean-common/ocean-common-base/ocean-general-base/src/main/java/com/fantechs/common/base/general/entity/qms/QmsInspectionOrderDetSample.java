@@ -44,6 +44,14 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     private Long inspectionOrderDetId;
 
     /**
+     * 检验单ID
+     */
+    @ApiModelProperty(name="inspectionOrderId",value = "检验单ID")
+    @Excel(name = "检验单ID", height = 20, width = 30,orderNum="")
+    @Column(name = "inspection_order_id")
+    private Long inspectionOrderId;
+
+    /**
      * 条码
      */
     @ApiModelProperty(name="barcode",value = "条码")
@@ -206,6 +214,13 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     @ApiModelProperty(name = "deptName",value = "责任部门名称")
     @Excel(name = "责任部门名称", height = 20, width = 30,orderNum="13")
     private String deptName;
+
+    /**
+     * 条码状态（0-不合格 1-合格）
+     */
+    @Transient
+    @ApiModelProperty(name = "barcodeStatus",value = "条码状态（0-不合格 1-合格）")
+    private Byte barcodeStatus;
 
     private String option1;
 

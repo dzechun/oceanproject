@@ -49,8 +49,14 @@ public class QmsInspectionOrderController {
 
     @ApiOperation("整批合格提交")
     @PostMapping("/batchQualified")
-    public ResponseEntity<QmsInspectionOrder> batchQualified(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long inspectionOrderId) {
+    public ResponseEntity batchQualified(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long inspectionOrderId) {
         return ControllerUtil.returnCRUD(qmsInspectionOrderService.batchQualified(inspectionOrderId));
+    }
+
+    @ApiOperation("整单提交")
+    @PostMapping("/batchSubmit")
+    public ResponseEntity batchSubmit(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long inspectionOrderId) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.batchSubmit(inspectionOrderId));
     }
 
     @ApiOperation("审核")

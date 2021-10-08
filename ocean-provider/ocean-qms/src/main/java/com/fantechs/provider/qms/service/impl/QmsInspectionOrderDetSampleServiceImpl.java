@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
 import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionWay;
@@ -13,6 +14,7 @@ import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDetSample;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -21,6 +23,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderMapper;
@@ -120,25 +123,22 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         map.put("inspectionOrderDetId",inspectionOrderDetId);
         QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.findDetList(map).get(0);
 
-        //当已检验样本数等于样本数时，才计算不良数量、检验结果
-        if(qmsInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(qmsInspectionOrderDetSampleList.size()))==0) {
-            qmsInspectionOrderDet.setBadnessQty(new BigDecimal(badnessQty));
-            if (qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getAcValue())) == -1
-                    || qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getAcValue())) == 0) {
-                qmsInspectionOrderDet.setInspectionResult((byte) 1);
-            } else if (qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getReValue())) == 0
-                    || qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getReValue())) == 1) {
-                qmsInspectionOrderDet.setInspectionResult((byte) 0);
-            }
-            qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
+        //返写不良数量、检验结果
+        qmsInspectionOrderDet.setBadnessQty(new BigDecimal(badnessQty));
+        if (qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getAcValue())) == -1
+                || qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getAcValue())) == 0) {
+            qmsInspectionOrderDet.setInspectionResult((byte) 1);
+        } else if (qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getReValue())) == 0
+                || qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getReValue())) == 1) {
+            qmsInspectionOrderDet.setInspectionResult((byte) 0);
+        }
+        qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
 
-            //更新检验状态
-            QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDet.getInspectionOrderId());
-            if(qmsInspectionOrder.getInspectionStatus()==(byte)1){
-                qmsInspectionOrder.setInspectionStatus((byte)2);
-                qmsInspectionOrder.setInspectionOrderId(qmsInspectionOrderDet.getInspectionOrderId());
-                qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
-            }
+        //更新检验状态
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDet.getInspectionOrderId());
+        if (qmsInspectionOrder.getInspectionStatus() == (byte) 1) {
+            qmsInspectionOrder.setInspectionStatus((byte) 2);
+            qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
         }
 
         return i;
@@ -150,17 +150,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
-        if(StringUtils.isNotEmpty(qmsInspectionOrderDetSample.getBarcode())) {
-            Example example = new Example(QmsInspectionOrderDetSample.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("barcode", qmsInspectionOrderDetSample.getBarcode())
-                    .andEqualTo("inspectionOrderDetId",qmsInspectionOrderDetSample.getInspectionOrderDetId());
-            List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example);
-            if (StringUtils.isNotEmpty(qmsInspectionOrderDetSamples)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012001);
-            }
         }
 
         qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());
@@ -187,5 +176,61 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
 
         return qmsInspectionOrderDetSampleMapper.updateByPrimaryKeySelective(qmsInspectionOrderDetSample);
     }
+
+    @Override
+    public List<QmsInspectionOrderDetSample> findBarcodes(Long inspectionOrderId){
+        HashMap<String, Object> map = new HashMap<>();
+        List<QmsInspectionOrderDetSample> detSamples = qmsInspectionOrderDetSampleMapper.findList(map);
+
+        map.put("inspectionOrderId",inspectionOrderId);
+        List<QmsInspectionOrderDetSample> list = qmsInspectionOrderDetSampleMapper.findList(map);
+
+        for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : list){
+            for (QmsInspectionOrderDetSample detSample : detSamples){
+                if (qmsInspectionOrderDetSample.getBarcode().equals(detSample.getBarcode()) && StringUtils.isNotEmpty(detSample.getBadnessPhenotypeId())) {
+                    qmsInspectionOrderDetSample.setBarcodeStatus((byte) 0);
+                }
+            }
+            if(StringUtils.isEmpty(qmsInspectionOrderDetSample.getBarcodeStatus())){
+                qmsInspectionOrderDetSample.setBarcodeStatus((byte) 1);
+            }
+        }
+
+        return list;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public QmsInspectionOrderDetSample checkAndSaveBarcode(QmsInspectionOrderDetSample qmsInspectionOrderDetSample) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDetSample.getInspectionOrderId());
+
+        MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(qmsInspectionOrderDetSample.getBarcode()).getData();
+        if (StringUtils.isEmpty(workOrderBarcode)) {
+            throw new BizErrorException("无该条码对应工单");
+        }
+        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+        searchMesPmWorkOrder.setWorkOrderId(workOrderBarcode.getWorkOrderId());
+        List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+        if (StringUtils.isEmpty(workOrderList)) {
+            throw new BizErrorException("无该条码对应工单");
+        }
+        MesPmWorkOrderDto mesPmWorkOrderDto = workOrderList.get(0);
+        if (!qmsInspectionOrder.getMaterialId().equals(mesPmWorkOrderDto.getMaterialId())) {
+            throw new BizErrorException("该条码对应的产品料号与检验单的产品料号不一致");
+        }
+
+        qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());
+        qmsInspectionOrderDetSample.setCreateTime(new Date());
+        qmsInspectionOrderDetSample.setModifiedUserId(user.getUserId());
+        qmsInspectionOrderDetSample.setModifiedTime(new Date());
+        qmsInspectionOrderDetSample.setStatus(StringUtils.isEmpty(qmsInspectionOrderDetSample.getStatus()) ? 1 : qmsInspectionOrderDetSample.getStatus());
+        qmsInspectionOrderDetSample.setOrgId(user.getOrganizationId());
+        qmsInspectionOrderDetSampleMapper.insertUseGeneratedKeys(qmsInspectionOrderDetSample);
+
+        return qmsInspectionOrderDetSample;
+    }
+
 
 }
