@@ -713,12 +713,15 @@ public class BarcodeUtils {
                 updateProcessDto=(UpdateProcessDto)baseExecuteResultDto.getExecuteResult();
                 orgId=updateProcessDto.getOrgId();
 
-                //检查产品条码与半成品条码关系
-                baseExecuteResultDto=checkProHalfProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),
-                        restapiChkSNRoutingApiDto.getPartBarcode(),updateProcessDto.getNowProcessId(),
-                        updateProcessDto.getWorkOrderId(),updateProcessDto.getMaterialId(),orgId);
-                if(baseExecuteResultDto.getIsSuccess()==false)
-                    throw new Exception(baseExecuteResultDto.getFailMsg());
+                //检查产品条码与半成品条码关系 根据配置项工序是否验证
+                String paraValue = getSysSpecItemValue("ProcessCheckProductHalfProductionRelation");
+                if(paraValue.equals(restapiChkSNRoutingApiDto.getProcessCode())) {
+                    baseExecuteResultDto = checkProHalfProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),
+                            restapiChkSNRoutingApiDto.getPartBarcode(), updateProcessDto.getNowProcessId(),
+                            updateProcessDto.getWorkOrderId(), updateProcessDto.getMaterialId(), orgId);
+                    if (baseExecuteResultDto.getIsSuccess() == false)
+                        throw new Exception(baseExecuteResultDto.getFailMsg());
+                }
 
                 //检查设备与产品绑定关系
                 baseExecuteResultDto=checkEquiProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),updateProcessDto.getEquipmentCode(),updateProcessDto.getMaterialId(),orgId);
@@ -784,12 +787,15 @@ public class BarcodeUtils {
             updateProcessDto=(UpdateProcessDto)baseExecuteResultDto.getExecuteResult();
             orgId=updateProcessDto.getOrgId();
 
-            //检查产品条码与半成品条码关系
-            baseExecuteResultDto=checkProHalfProRelation(restapiSNDataTransferApiDto.getBarCode(),
-                    restapiSNDataTransferApiDto.getPartBarcode(), updateProcessDto.getNowProcessId(),
-                    updateProcessDto.getWorkOrderId(),updateProcessDto.getMaterialId(),orgId);
-            if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+            //检查产品条码与半成品条码关系 根据配置项工序是否验证
+            String paraValue = getSysSpecItemValue("ProcessCheckProductHalfProductionRelation");
+            if(paraValue.equals(restapiSNDataTransferApiDto.getProcessCode())) {
+                baseExecuteResultDto = checkProHalfProRelation(restapiSNDataTransferApiDto.getBarCode(),
+                        restapiSNDataTransferApiDto.getPartBarcode(), updateProcessDto.getNowProcessId(),
+                        updateProcessDto.getWorkOrderId(), updateProcessDto.getMaterialId(), orgId);
+                if (baseExecuteResultDto.getIsSuccess() == false)
+                    throw new Exception(baseExecuteResultDto.getFailMsg());
+            }
 
             //获取半成品物料ID
             UpdateProcessDto updateProcessDto1=(UpdateProcessDto)baseExecuteResultDto.getExecuteResult();
@@ -1129,6 +1135,7 @@ public class BarcodeUtils {
             * 5 不存在半成品料号 报错
              */
             String workOrderCode=null;//半成品工单编码
+            String purchaseOrderCode=null;//采购单号
             Long partMaterialId=0L;//半成品物料ID
 
             //检查产品条码
@@ -1150,23 +1157,29 @@ public class BarcodeUtils {
                         endIndex = Integer.parseInt(arry[1]);
                     }
                 }
-                workOrderCode = halfProductionSn.substring(beginIndex, endIndex);
+                //半成品条码是外购 所以截取出来的是采购单号
+                purchaseOrderCode = halfProductionSn.substring(beginIndex, endIndex);
             }
-            else {
-                MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto=(MesSfcWorkOrderBarcodeDto)baseExecuteResultDto.getExecuteResult();
-                workOrderCode=mesSfcWorkOrderBarcodeDto.getWorkOrderCode();
-            }
-            if(StringUtils.isNotEmpty(workOrderCode)) {
-                SearchMesPmWorkOrder searchMesPmWorkOrder=new SearchMesPmWorkOrder();
-                searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
-                searchMesPmWorkOrder.setOrgId(orgId);
-                searchMesPmWorkOrder.setCodeQueryMark(1);
-                ResponseEntity<List<MesPmWorkOrderDto>> responseEntityWorkOrderList = barcodeUtils.deviceInterFaceUtils.getWorkOrderList(searchMesPmWorkOrder);
-                if (StringUtils.isEmpty(responseEntityWorkOrderList.getData()))
-                    throw new Exception("找不到半成品工单信息");
 
-                MesPmWorkOrderDto mesPmWorkOrderDto = responseEntityWorkOrderList.getData().get(0);
-                partMaterialId = mesPmWorkOrderDto.getMaterialId();
+            if(StringUtils.isNotEmpty(purchaseOrderCode)) {
+//                SearchMesPmWorkOrder searchMesPmWorkOrder=new SearchMesPmWorkOrder();
+//                searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+//                searchMesPmWorkOrder.setOrgId(orgId);
+//                searchMesPmWorkOrder.setCodeQueryMark(1);
+//                ResponseEntity<List<MesPmWorkOrderDto>> responseEntityWorkOrderList = barcodeUtils.deviceInterFaceUtils.getWorkOrderList(searchMesPmWorkOrder);
+//                if (StringUtils.isEmpty(responseEntityWorkOrderList.getData()))
+//                    throw new Exception("找不到半成品工单信息");
+//
+//                MesPmWorkOrderDto mesPmWorkOrderDto = responseEntityWorkOrderList.getData().get(0);
+//                partMaterialId = mesPmWorkOrderDto.getMaterialId();
+
+                //找采购订单物料 只有一个物料
+                ResponseEntity<Long> reMaterialId=barcodeUtils.deviceInterFaceUtils.findPurchaseMaterial(purchaseOrderCode);
+                if(StringUtils.isEmpty(reMaterialId.getData())){
+                    throw new Exception("找不到采购单号相应的物料ID-->"+purchaseOrderCode);
+                }
+
+                partMaterialId=reMaterialId.getData().longValue();
 
                 //partMaterialId=63249L;
 

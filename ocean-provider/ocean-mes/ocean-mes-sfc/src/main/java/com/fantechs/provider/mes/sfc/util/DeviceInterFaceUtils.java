@@ -26,6 +26,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import org.springframework.stereotype.Component;
@@ -49,6 +50,8 @@ public class DeviceInterFaceUtils {
     private PMFeignApi pmFeignApi;
     @Resource
     private EamFeignApi eamFeignApi;
+    @Resource
+    private OMFeignApi omFeignApi;
     @Resource
     private MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
 
@@ -257,6 +260,13 @@ public class DeviceInterFaceUtils {
         searchBaseBadnessPhenotype.setOrgId(orgId);
         baseBadnessPhenotypeDtoList = baseFeignApi.findBadnessPhenotypeDtoList(searchBaseBadnessPhenotype);
         return baseBadnessPhenotypeDtoList;
+    }
+
+    /*
+     * 获取采购单明细物料ID
+     * */
+    public ResponseEntity<Long> findPurchaseMaterial(String purchaseOrderCode){
+         return omFeignApi.findPurchaseMaterial(purchaseOrderCode);
     }
 
     public void  addLog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) throws Exception {
