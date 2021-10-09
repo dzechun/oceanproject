@@ -178,7 +178,7 @@ public class WmsOutDeliveryOrderController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<WmsOutDeliveryOrderImport> wmsOutDeliveryOrderImports = EasyPoiUtils.importExcel(file, 1, 0, WmsOutDeliveryOrderImport.class);
+            List<WmsOutDeliveryOrderImport> wmsOutDeliveryOrderImports = EasyPoiUtils.importExcel(file, 0, 1, WmsOutDeliveryOrderImport.class);
             Map<String, Object> resultMap = wmsOutDeliveryOrderService.importExcel(wmsOutDeliveryOrderImports);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
         }catch (RuntimeException e) {
