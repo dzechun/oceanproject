@@ -18,4 +18,6 @@ public interface OmPurchaseOrderService extends IService<OmPurchaseOrder> {
     OmPurchaseOrder saveByApi (OmPurchaseOrder omPurchaseOrder);
 
     int save(OmPurchaseOrder omPurchaseOrder);
+
+    long findPurchaseMaterial(String purchaseOrderCode);
 }

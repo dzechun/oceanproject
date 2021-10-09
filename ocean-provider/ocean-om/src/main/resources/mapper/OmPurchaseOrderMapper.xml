@@ -92,4 +92,11 @@
     </where>
     order by opo.modified_time desc
   </select>
+  <select id="findPurchaseMaterial" resultType="java.lang.Long">
+    SELECT material_id FROM om_purchase_order opm
+    LEFT JOIN om_purchase_order_det opod ON opm.purchase_order_id=opod.purchase_order_id
+    WHERE opm.purchase_order_code=#{purchaseOrderCode} LIMIT 1
+  </select>
+
+
 </mapper>
