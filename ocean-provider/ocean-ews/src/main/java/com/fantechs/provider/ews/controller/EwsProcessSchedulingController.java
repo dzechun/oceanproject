@@ -8,7 +8,6 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.ValidGroup;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.ews.service.EwsProcessSchedulingService;
-import com.fantechs.provider.ews.service.QuartzManagerService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -35,8 +34,7 @@ public class EwsProcessSchedulingController {
 
     @Resource
     private EwsProcessSchedulingService ewsProcessSchedulingService;
-    @Resource
-    QuartzManagerService quartzManagerService;
+
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -82,4 +80,13 @@ public class EwsProcessSchedulingController {
         List<Map<String, Object>> allJob = ewsProcessSchedulingService.detail(Id);
         return ControllerUtil.returnDataSuccess(allJob, StringUtils.isEmpty(allJob)?0:allJob.size());
     }
+
+    @ApiOperation("立即开始排程")
+    @GetMapping("/immediately")
+    public ResponseEntity immediately(@ApiParam(value = "Id",required = true)@RequestParam Long Id) throws SchedulerException {
+        return ControllerUtil.returnCRUD(ewsProcessSchedulingService.immediately(Id));
+    }
+
+
+
 }

@@ -18,6 +18,13 @@ public interface MesSfcBarcodeProcessService extends IService<MesSfcBarcodeProce
     List<MesSfcBarcodeProcess> findBarcode(SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess);
 
     /**
+     * 查找下一道工序为栈板作业的记录
+     * @param map
+     * @return
+     */
+    List<MesSfcBarcodeProcess> findNextProcessIsPallet(Map<String, Object> map);
+
+    /**
      * 批量修改
      * @param mesSfcBarcodeProcessList
      * @return
