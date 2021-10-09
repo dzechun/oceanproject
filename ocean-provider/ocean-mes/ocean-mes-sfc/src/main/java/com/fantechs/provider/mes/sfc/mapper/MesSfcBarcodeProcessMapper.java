@@ -13,6 +13,13 @@ public interface MesSfcBarcodeProcessMapper extends MyMapper<MesSfcBarcodeProces
     List<MesSfcBarcodeProcessDto> findList(Map<String, Object> map);
 
     /**
+     * 查找下一道工序为栈板作业的记录
+     * @param map
+     * @return
+     */
+    List<MesSfcBarcodeProcess> findNextProcessIsPallet(Map<String, Object> map);
+
+    /**
      * 批量修改
      * @param mesSfcBarcodeProcessList
      * @return

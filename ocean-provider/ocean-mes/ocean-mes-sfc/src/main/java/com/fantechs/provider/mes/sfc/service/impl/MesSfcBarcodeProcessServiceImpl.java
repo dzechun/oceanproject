@@ -50,6 +50,11 @@ public class MesSfcBarcodeProcessServiceImpl extends BaseService<MesSfcBarcodePr
     }
 
     @Override
+    public List<MesSfcBarcodeProcess> findNextProcessIsPallet(Map<String, Object> map) {
+        return mesSfcBarcodeProcessMapper.findNextProcessIsPallet(map);
+    }
+
+    @Override
     public int batchUpdate(List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList) {
         return mesSfcBarcodeProcessMapper.batchUpdate(mesSfcBarcodeProcessList);
     }
