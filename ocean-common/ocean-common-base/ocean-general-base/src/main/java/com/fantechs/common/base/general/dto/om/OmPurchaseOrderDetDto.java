@@ -26,4 +26,38 @@ public class OmPurchaseOrderDetDto extends OmPurchaseOrderDet implements Seriali
 
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
     private String warehouseName;
+
+    /**
+     *  产品型号名称
+     */
+    @ApiModelProperty(name="productModelName" ,value="产品型号名称")
+    private String productModelName;
+
+    /**
+     * 物料类别名称
+     */
+    @ApiModelProperty(name="materialCategoryName",value = "物料类别名称")
+    private String materialCategoryName;
+
+    /**
+     * 物料来源(0.自制件 1.虚拟件 2.采购件)
+     */
+    @ApiModelProperty(name="materialSource" ,value="物料来源(0.自制件 1.虚拟件 2.采购件)")
+    private Integer materialSource;
+
+
+    @ApiModelProperty(name="modifiedUserName",value = "修改人员名称")
+    private String modifiedUserName;
+
+    /**
+     * 创建名称
+     */
+    @ApiModelProperty(name = "createUserName",value = "创建名称")
+    private String createUserName;
+
+    /**
+     * 组织
+     */
+    @ApiModelProperty(name = "organizationName",value = "组织")
+    private String organizationName;
 }

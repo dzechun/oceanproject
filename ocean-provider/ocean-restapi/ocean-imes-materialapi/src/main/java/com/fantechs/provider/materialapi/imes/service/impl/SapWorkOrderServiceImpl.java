@@ -99,7 +99,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
 
                 MesPmWorkOrderBom bom = new MesPmWorkOrderBom();
                 if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getMENGE()))
-                bom.setUsageQty(new BigDecimal(restapiWorkOrderApiDto.getMENGE().trim()));
+                bom.setSingleQty(new BigDecimal(restapiWorkOrderApiDto.getMENGE().trim()));
                 bom.setOption1(restapiWorkOrderApiDto.getRSPOS());
                 bom.setWorkOrderId(orderMap.get(restapiWorkOrderApiDto.getAUFNR()));
                 List<BaseMaterial> baseMaterialss = baseUtils.getBaseMaterial(restapiWorkOrderApiDto.getZJMATNR(),orgId);

@@ -1,13 +1,11 @@
 package com.fantechs.common.base.general.dto.om;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
-import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class OmPurchaseOrderDto extends OmPurchaseOrder implements Serializable {
@@ -33,6 +31,27 @@ public class OmPurchaseOrderDto extends OmPurchaseOrder implements Serializable 
     @ApiModelProperty(name="auditUserName",value = "审核人员名称")
     private String auditUserName;
 
+    @ApiModelProperty(name="currencyName",value = "货币名称")
+    private String currencyName;
+
     @ApiModelProperty(name="modifiedUserName",value = "修改人员名称")
     private String modifiedUserName;
+
+    /**
+     * 创建名称
+     */
+    @ApiModelProperty(name = "createUserName",value = "创建名称")
+    private String createUserName;
+
+    /**
+     * 组织
+     */
+    @ApiModelProperty(name = "organizationName",value = "组织")
+    private String organizationName;
+
+    /**
+     * 总金额
+     */
+    @ApiModelProperty(name="TotalPrice",value = "总金额")
+    private BigDecimal totalPrice;
 }

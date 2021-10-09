@@ -47,24 +47,34 @@
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
 
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select
     <include refid="Base_Column_List"/>,
-    bs.supplier_code as supplierCode, bs.supplier_name as supplierName,
-    bd.dept_code as deptCode, bd.dept_name as deptName,
-    supu.nick_name as purchaseUserName, supu.nick_name as makeOrderUserName, supu.nick_name as auditUserName, supu.nick_name as purchaseUserName
+    bs.supplier_code as supplierCode, bs.supplier_name as supplierName,bc.currency_name as currencyName,
+    bd.dept_code as deptCode, bd.dept_name as deptName,sum(opod.material_total_price) as totalPrice,
+    supu.nick_name as purchaseUserName, supu.nick_name as makeOrderUserName, supu.nick_name as auditUserName,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
     from om_purchase_order opo
     left join ocean_v2.sys_user suc on opo.create_user_id = suc.user_id
-    left join base_organization bo on opo.org_id = bo.organization_id
     left join ocean_v2.sys_user sumod on opo.modified_user_id = sumod.user_id
     left join base_supplier bs on opo.supplier_id = bs.supplier_id
     left join base_dept bd on opo.purchase_dept_id = bd.dept_id
+    left join base_currency bc on opo.currency_id = bc.currency_id
+    LEFT JOIN om_purchase_order_det opod ON opo.purchase_order_id = opod.purchase_order_id
     left join ocean_v2.sys_user supu on opo.purchase_user_id = supu.user_id
     left join ocean_v2.sys_user sumou on opo.make_order_user_id = sumou.user_id
     left join ocean_v2.sys_user suau on opo.audit_user_id = suau.user_id
+    left join ocean_v2.sys_user u on opo.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on opo.modified_user_id=s.user_id
+    left join base_organization bo on opo.org_id = bo.organization_id
     <where>
 
       <if test="status != null">
@@ -90,6 +100,7 @@
         and date_format(opo.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
       </if>
     </where>
+    group by opo.purchase_order_id
     order by opo.modified_time desc
   </select>
   <select id="findPurchaseMaterial" resultType="java.lang.Long">
