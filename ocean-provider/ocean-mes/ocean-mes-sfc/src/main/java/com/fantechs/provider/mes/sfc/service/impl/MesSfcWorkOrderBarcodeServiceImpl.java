@@ -320,10 +320,15 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId())
 
             String lastBarCode = null;
-            boolean hasKey = redisUtil.hasKey(barcodeRulList.get(0).getBarcodeRule());
+            //boolean hasKey = redisUtil.hasKey(barcodeRulList.get(0).getBarcodeRule());
+            // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
+            String orgIDStr=sysUser.getOrganizationId().toString();
+            boolean hasKey = redisUtil.hasKey(barcodeRulList.get(0).getBarcodeRule()+orgIDStr);
             if(hasKey){
                 // 从redis获取上次生成条码
-                Object redisRuleData = redisUtil.get(barcodeRulList.get(0).getBarcodeRule());
+                //Object redisRuleData = redisUtil.get(barcodeRulList.get(0).getBarcodeRule());
+                // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
+                Object redisRuleData = redisUtil.get(barcodeRulList.get(0).getBarcodeRule()+orgIDStr);
                 lastBarCode = String.valueOf(redisRuleData);
             }
             //获取最大流水号
@@ -336,7 +341,9 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             record.setBarcode(rs.getData());
 
             // 更新redis最新条码
-            redisUtil.set(barcodeRulList.get(0).getBarcodeRule(), rs.getData());
+            // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
+            //redisUtil.set(barcodeRulList.get(0).getBarcodeRule(), rs.getData());
+            redisUtil.set(barcodeRulList.get(0).getBarcodeRule()+orgIDStr, rs.getData());
 
             //待打印状态
             record.setBarcodeStatus((byte)3);

@@ -1,8 +1,10 @@
 package com.fantechs.provider.api.qms;
 
+import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
 import com.fantechs.common.base.general.entity.om.*;
+import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -47,6 +49,14 @@ public interface OMFeignApi {
     @ApiOperation("新增或更新采购订单详情表信息")
     @PostMapping("/omPurchaseOrderDet/saveByApi")
     ResponseEntity saveByApi(@ApiParam(value = "必传:",required = true)@RequestBody List<OmPurchaseOrderDet> omPurchaseOrderDets);
+
+    @ApiOperation("采购订单列表")
+    @PostMapping("/omPurchaseOrder/findList")
+    ResponseEntity<List<OmPurchaseOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmPurchaseOrder searchOmPurchaseOrder);
+
+    @ApiOperation("获取采购单明细物料ID")
+    @PostMapping("/omPurchaseOrder/findPurchaseMaterial")
+    ResponseEntity<Long> findPurchaseMaterial(@ApiParam(value = "purchaseOrderCode",required = true)@RequestParam String purchaseOrderCode);
 
     @ApiOperation("修改单据状态")
     @PostMapping("/omTransferOrder/updateStatus")

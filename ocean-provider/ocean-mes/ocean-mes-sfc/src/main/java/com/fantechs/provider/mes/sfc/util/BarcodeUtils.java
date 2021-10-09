@@ -34,6 +34,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import org.springframework.beans.BeanUtils;
@@ -84,6 +85,8 @@ public class BarcodeUtils {
     private DeviceInterFaceUtils deviceInterFaceUtils;
     @Resource
     private EamFeignApi eamFeignApi;
+    @Resource
+    private MesSfcBarcodeProcessMapper mesSfcBarcodeProcessMapper;
 
     // endregion
 
@@ -105,6 +108,7 @@ public class BarcodeUtils {
         barcodeUtils.deviceInterFaceUtils=this.deviceInterFaceUtils;
         barcodeUtils.eamFeignApi=this.eamFeignApi;
         barcodeUtils.mesSfcKeyPartRelevanceService=this.mesSfcKeyPartRelevanceService;
+        barcodeUtils.mesSfcBarcodeProcessMapper=this.mesSfcBarcodeProcessMapper;
     }
 
 
@@ -698,7 +702,7 @@ public class BarcodeUtils {
         try {
                 Long orgId=0L;
                 //参数基础信息判断
-                baseExecuteResultDto=checkParameter(restapiChkSNRoutingApiDto.getProCode(),restapiChkSNRoutingApiDto.getProcessCode(),
+                baseExecuteResultDto=checkParameter(restapiChkSNRoutingApiDto.getWorkOrderCode(),restapiChkSNRoutingApiDto.getProCode(),restapiChkSNRoutingApiDto.getProcessCode(),
                         restapiChkSNRoutingApiDto.getBarcodeCode(),restapiChkSNRoutingApiDto.getPartBarcode(),
                         restapiChkSNRoutingApiDto.getEamJigBarCode(),restapiChkSNRoutingApiDto.getEquipmentBarCode(),
                         "","","","","1");
@@ -768,7 +772,7 @@ public class BarcodeUtils {
         try {
             Long orgId=0L;
             //参数基础信息判断
-            baseExecuteResultDto=checkParameter(restapiSNDataTransferApiDto.getProCode(),restapiSNDataTransferApiDto.getProcessCode(),
+            baseExecuteResultDto=checkParameter(restapiSNDataTransferApiDto.getWorkOrderCode(),restapiSNDataTransferApiDto.getProCode(),restapiSNDataTransferApiDto.getProcessCode(),
                     restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getPartBarcode(),
                     restapiSNDataTransferApiDto.getEamJigBarCode(),restapiSNDataTransferApiDto.getEquipmentBarCode(),
                     "",restapiSNDataTransferApiDto.getStationCode(),restapiSNDataTransferApiDto.getUserCode(),
@@ -858,7 +862,7 @@ public class BarcodeUtils {
        String userCode 员工编号
        String badnessPhenotypeCode 不良现象代码
      */
-    public static BaseExecuteResultDto checkParameter(String proCode,String processCode,String barcodeCode,String partBarcode,
+    public static BaseExecuteResultDto checkParameter(String workOrderCode,String proCode,String processCode,String barcodeCode,String partBarcode,
                 String eamJigBarCode,String equipmentBarCode, String sectionCode,String stationCode,String userCode,
                  String badnessPhenotypeCode,String checkType) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
@@ -951,36 +955,86 @@ public class BarcodeUtils {
             }
 
             //检查半成品SN
-            if("2".equals(checkType) && StringUtils.isEmpty(barcodeCode)){
+            if("2".equals(checkType) && StringUtils.isEmpty(partBarcode)){
                 throw new Exception("半成品SN不能为空");
             }
 
             //检查成品SN
-            if("2".equals(checkType) && StringUtils.isEmpty(partBarcode)){
+            if("2".equals(checkType) && StringUtils.isEmpty(barcodeCode)){
                 throw new Exception("成品SN不能为空");
             }
-            else{
-                List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList= barcodeUtils.deviceInterFaceUtils.getWorkOrderBarcode(barcodeCode,orgId);
-                if(StringUtils.isEmpty(mesSfcWorkOrderBarcodeDtoList)){
-                    throw new Exception("成品SN不存在");
+            //成品工单判断
+            MesPmWorkOrderDto mesPmWorkOrderDto=null;
+            if(StringUtils.isNotEmpty(workOrderCode)){
+                SearchMesPmWorkOrder searchMesPmWorkOrder=new SearchMesPmWorkOrder();
+                searchMesPmWorkOrder.setOrgId(orgId);
+                searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+                ResponseEntity<List<MesPmWorkOrderDto>> workOrderlist=barcodeUtils.pmFeignApi.findWorkOrderList(searchMesPmWorkOrder);
+                if(StringUtils.isEmpty(workOrderlist.getData())){
+                    throw new Exception("成品工单信息不存在-->"+workOrderCode);
                 }
 
-                //设置工单ID
-                updateProcessDto.setWorkOrderId(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId());
-                //设置工单编号
-                updateProcessDto.setWorkOrderCode(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderCode());
-                //设置工单条码ID
-                updateProcessDto.setWorkOrderBarcodeId(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId());
-                //设置产品物料ID
-                updateProcessDto.setMaterialId(mesSfcWorkOrderBarcodeDtoList.get(0).getMaterialId());
-                //获取工单
-                ResponseEntity<MesPmWorkOrder> responseEntityWorkOrder=barcodeUtils.pmFeignApi.workOrderDetail(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId());
-                if(StringUtils.isEmpty(responseEntityWorkOrder.getData()))
-                    throw new Exception("工单信息不存在");
+                mesPmWorkOrderDto=workOrderlist.getData().get(0);
 
+                //设置工单ID
+                updateProcessDto.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+                //设置工单编号
+                updateProcessDto.setWorkOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
+                //设置工单条码ID
+                //updateProcessDto.setWorkOrderBarcodeId(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId());
+                //设置产品物料ID
+                updateProcessDto.setMaterialId(mesPmWorkOrderDto.getMaterialId());
                 //设置流程ID
-                updateProcessDto.setRouteId(responseEntityWorkOrder.getData().getRouteId());
+                updateProcessDto.setRouteId(mesPmWorkOrderDto.getRouteId());
             }
+            //判断传参工单号与成品条码截取工单号是否相等
+            if(StringUtils.isNotEmpty(barcodeCode) && StringUtils.isNotEmpty(mesPmWorkOrderDto)){
+                //获取配置项 工单在条码中的位置 WorkOrderPositionOnBarcodeProduct
+                String paraValue = getSysSpecItemValue("WorkOrderPositionOnBarcodeProduct");
+                int beginIndex = 0;
+                int endIndex = 0;
+                if (StringUtils.isNotEmpty(paraValue)) {
+                    String[] arry = paraValue.split("-");
+                    if (arry.length == 2) {
+                        beginIndex = Integer.parseInt(arry[0]);
+                        endIndex = Integer.parseInt(arry[1]);
+                    }
+                }
+                String workOrderCodeExsit = barcodeCode.substring(beginIndex, endIndex);
+                if(workOrderCodeExsit.equals(workOrderCode)==false){
+                    throw new Exception("传参工单号-->"+workOrderCode+" 与成品条码截取工单号-->"+workOrderCodeExsit+" 不相等");
+                }
+            }
+            //检查半成品SN 不为空 检查是否已在条码表中 不存在则新增到条码表中
+            if(StringUtils.isNotEmpty(partBarcode) && StringUtils.isNotEmpty(mesPmWorkOrderDto)){
+//                baseExecuteResultDto=createWorkOrderBarcode(partBarcode,mesPmWorkOrderDto,orgId);
+//                if(baseExecuteResultDto.getIsSuccess()==false)
+//                    throw new Exception(baseExecuteResultDto.getFailMsg());
+
+
+            }
+//            else{
+//                List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList= barcodeUtils.deviceInterFaceUtils.getWorkOrderBarcode(barcodeCode,orgId);
+//                if(StringUtils.isEmpty(mesSfcWorkOrderBarcodeDtoList)){
+//                    throw new Exception("成品SN不存在");
+//                }
+//
+//                //设置工单ID
+//                updateProcessDto.setWorkOrderId(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId());
+//                //设置工单编号
+//                updateProcessDto.setWorkOrderCode(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderCode());
+//                //设置工单条码ID
+//                updateProcessDto.setWorkOrderBarcodeId(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId());
+//                //设置产品物料ID
+//                updateProcessDto.setMaterialId(mesSfcWorkOrderBarcodeDtoList.get(0).getMaterialId());
+//                //获取工单
+//                ResponseEntity<MesPmWorkOrder> responseEntityWorkOrder=barcodeUtils.pmFeignApi.workOrderDetail(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId());
+//                if(StringUtils.isEmpty(responseEntityWorkOrder.getData()))
+//                    throw new Exception("工单信息不存在");
+//
+//                //设置流程ID
+//                updateProcessDto.setRouteId(responseEntityWorkOrder.getData().getRouteId());
+//            }
 
             //设置过站条码
             updateProcessDto.setBarCode(barcodeCode);
@@ -1564,6 +1618,83 @@ public class BarcodeUtils {
                 if(StringUtils.isNotEmpty(equipmentBarCodeId)){
                     barcodeUtils.eamFeignApi.plusEamEquiCurrentUsageTime(equipmentBarCodeId,1);
                 }
+            }
+
+            baseExecuteResultDto.setIsSuccess(true);
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
+    }
+
+    /**
+     * 生成条码表记录
+     * create by: Dylan
+     * description: TODO
+     * create time:
+     * @return
+     */
+    public static BaseExecuteResultDto createWorkOrderBarcode(String barcode,MesPmWorkOrderDto mesPmWorkOrderDto,Long orgId) throws Exception{
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        try {
+            List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtoList= barcodeUtils.deviceInterFaceUtils.getWorkOrderBarcode(barcode,orgId);
+            if(StringUtils.isEmpty(workOrderBarcodeDtoList)){
+                MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode=new MesSfcWorkOrderBarcode();
+                mesSfcWorkOrderBarcode.setBarcode(barcode);
+                mesSfcWorkOrderBarcode.setLabelCategoryId(barcodeUtils.mesSfcWorkOrderBarcodeMapper.finByTypeId("产品条码"));
+                mesSfcWorkOrderBarcode.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+                mesSfcWorkOrderBarcode.setWorkOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
+                mesSfcWorkOrderBarcode.setBarcodeStatus((byte)1);//条码状态(0-待投产 1-投产中 2-已完成 3-待打印)
+                mesSfcWorkOrderBarcode.setOrgId(orgId);
+                mesSfcWorkOrderBarcode.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
+                mesSfcWorkOrderBarcode.setWorkOrderQty(mesPmWorkOrderDto.getWorkOrderQty());
+
+                mesSfcWorkOrderBarcode.setCreateTime(new Date());
+                mesSfcWorkOrderBarcode.setCreateUserId(1L);
+                mesSfcWorkOrderBarcode.setModifiedTime(new Date());
+                mesSfcWorkOrderBarcode.setModifiedUserId(1L);
+                mesSfcWorkOrderBarcode.setCreateBarcodeTime(new Date());
+                barcodeUtils.mesSfcWorkOrderBarcodeMapper.insertUseGeneratedKeys(mesSfcWorkOrderBarcode);
+
+                //生成条码过站记录
+                MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
+                mesSfcBarcodeProcess.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
+                mesSfcBarcodeProcess.setWorkOrderCode(mesSfcWorkOrderBarcode.getWorkOrderCode());
+                mesSfcBarcodeProcess.setWorkOrderBarcodeId(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
+                mesSfcBarcodeProcess.setBarcodeType((byte)2);
+                mesSfcBarcodeProcess.setBarcode(mesSfcWorkOrderBarcode.getBarcode());
+
+                mesSfcBarcodeProcess.setProLineId(mesPmWorkOrderDto.getProLineId());
+                mesSfcBarcodeProcess.setProcessCode(mesPmWorkOrderDto.getProCode());
+                mesSfcBarcodeProcess.setMaterialId(mesPmWorkOrderDto.getMaterialId());
+                mesSfcBarcodeProcess.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
+                mesSfcBarcodeProcess.setMaterialName(mesPmWorkOrderDto.getMaterialName());
+                mesSfcBarcodeProcess.setMaterialVer(mesPmWorkOrderDto.getMaterialVersion());
+                mesSfcBarcodeProcess.setRouteId(mesPmWorkOrderDto.getRouteId());
+                mesSfcBarcodeProcess.setRouteCode(mesPmWorkOrderDto.getRouteCode());
+                mesSfcBarcodeProcess.setRouteName(mesPmWorkOrderDto.getRouteName());
+
+                if(StringUtils.isEmpty(mesPmWorkOrderDto.getRouteId())){
+                    throw new BizErrorException("工单未选择工艺路线-->"+mesPmWorkOrderDto.getWorkOrderCode());
+                }
+                //查询工艺路线
+                ResponseEntity<List<BaseRouteProcess>> res = barcodeUtils.baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
+                if(res.getCode()!=0){
+                    throw new BizErrorException("工艺路线查询失败");
+                }
+                mesSfcBarcodeProcess.setProcessId(res.getData().get(0).getProcessId());
+                mesSfcBarcodeProcess.setProcessName(res.getData().get(0).getProcessName());
+                mesSfcBarcodeProcess.setNextProcessId(res.getData().get(0).getProcessId());
+                mesSfcBarcodeProcess.setNextProcessName(res.getData().get(0).getProcessName());
+                mesSfcBarcodeProcess.setSectionId(res.getData().get(0).getSectionId());
+                mesSfcBarcodeProcess.setSectionName(res.getData().get(0).getSectionName());
+                if(barcodeUtils.mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess)<1){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(),"条码过站失败-->"+barcode);
+                }
+
             }
 
             baseExecuteResultDto.setIsSuccess(true);

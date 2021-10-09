@@ -73,4 +73,11 @@ public class OmPurchaseOrderController {
         OmPurchaseOrder omPurchaseOrders = omPurchaseOrderService.saveByApi(omPurchaseOrder);
         return ControllerUtil.returnDataSuccess(omPurchaseOrders, StringUtils.isEmpty(omPurchaseOrders) ? 0 : 1);
     }
+
+    @ApiOperation("获取采购单明细物料ID")
+    @PostMapping("/findPurchaseMaterial")
+    public ResponseEntity<Long> findPurchaseMaterial(@ApiParam(value = "purchaseOrderCode",required = true)@RequestParam  @NotNull(message="purchaseOrderCode不能为空") String purchaseOrderCode) {
+        Long  materialId = omPurchaseOrderService.findPurchaseMaterial(purchaseOrderCode);
+        return  ControllerUtil.returnDataSuccess(materialId,1);
+    }
 }

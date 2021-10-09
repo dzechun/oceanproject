@@ -12,6 +12,6 @@ public class RestapiChkSNRoutingApiDto implements Serializable {
     protected String barcodeCode; //成品SN
     protected String partBarcode; //半成品SN 部件条码
     protected String eamJigBarCode; //治具SN
-    protected String equipmentBarCode; //设备编码
-
+    protected String equipmentBarCode; //设备条码
+    protected String workOrderCode; //成品工单号
 }
