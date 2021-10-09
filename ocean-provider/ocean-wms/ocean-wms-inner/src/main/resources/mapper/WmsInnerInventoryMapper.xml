@@ -219,6 +219,15 @@ wii.option5
       <if test="jobOrderDetId!=null and jobOrderDetId != ''">
         and wii.job_order_det_id = #{jobOrderDetId}
       </if>
+    <if test="contractCode!=null and contractCode!=''">
+      and wii.contract_code like CONCAT('%',#{contractCode},'%')
+    </if>
+    <if test="spec!=null and spec!=''">
+      and wii.spec like CONCAT('%',#{spec},'%')
+    </if>
+    <if test="purchaseReqOrderCode!=null and purchaseReqOrderCode!=''">
+      and wii.purchase_req_order_code like CONCAT('%',#{purchaseReqOrderCode},'%')
+    </if>
     </where>
     <if test="isStorage!=null and isStorage!='' and isStorage==1">
       group by wii.storage_id

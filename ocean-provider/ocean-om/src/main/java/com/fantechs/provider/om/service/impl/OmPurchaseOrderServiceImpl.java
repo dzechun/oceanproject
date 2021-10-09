@@ -4,9 +4,6 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
-import com.fantechs.common.base.general.entity.basic.BaseWorkshopSection;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.support.BaseService;
@@ -119,4 +116,8 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
         return 1;
     }
 
+    @Override
+    public long findPurchaseMaterial(String purchaseOrderCode) {
+        return omPurchaseOrderMapper.findPurchaseMaterial(purchaseOrderCode);
+    }
 }
