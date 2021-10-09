@@ -119,7 +119,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
 
         //开始任务
         try {
-            quartzManager.resumeJob(Id.toString(),DEFAULT_GROUP);
+            quartzManager.immediately(Id.toString(),DEFAULT_GROUP);
         }catch (Exception e){
             throw new BizErrorException("任务开始失败");
         }
