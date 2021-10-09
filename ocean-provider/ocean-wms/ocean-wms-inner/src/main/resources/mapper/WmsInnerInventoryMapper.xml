@@ -228,6 +228,9 @@ wii.option5
     <if test="purchaseReqOrderCode!=null and purchaseReqOrderCode!=''">
       and wii.purchase_req_order_code like CONCAT('%',#{purchaseReqOrderCode},'%')
     </if>
+      <if test="inventoryId!=null and inventoryId != ''">
+        and wii.inventory_id = #{inventoryId}
+      </if>
     </where>
     <if test="isStorage!=null and isStorage!='' and isStorage==1">
       group by wii.storage_id
