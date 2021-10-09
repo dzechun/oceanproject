@@ -105,6 +105,28 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
     }
 
     @Override
+    public int immediately(Long Id) {
+/*
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        EwsProcessScheduling ewsProcessScheduling = ewsProcessSchedulingMapper.selectByPrimaryKey(Id);
+        ewsProcessScheduling.setProcessSchedulingId(Id);
+        ewsProcessScheduling.setModifiedUserId(sysUser.getUserId());
+        ewsProcessScheduling.setModifiedTime(new Date());
+        ewsProcessScheduling.setExecuteStatus((byte)1);
+        ewsProcessScheduling.setOrgId(sysUser.getOrganizationId());
+        int num = ewsProcessSchedulingMapper.updateByPrimaryKeySelective(ewsProcessScheduling);
+*/
+
+        //开始任务
+        try {
+            quartzManager.resumeJob(Id.toString(),DEFAULT_GROUP);
+        }catch (Exception e){
+            throw new BizErrorException("任务开始失败");
+        }
+        return 1;
+    }
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EwsProcessScheduling record) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();

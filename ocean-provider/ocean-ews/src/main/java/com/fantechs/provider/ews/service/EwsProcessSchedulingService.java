@@ -41,4 +41,12 @@ public interface EwsProcessSchedulingService extends IService<EwsProcessScheduli
      * @return
      */
     List<Map<String, Object>> detail(Long Id);
+
+
+    /**
+     * 立即执行
+     * @param Id
+     * @return
+     */
+    int immediately(Long Id);
 }
