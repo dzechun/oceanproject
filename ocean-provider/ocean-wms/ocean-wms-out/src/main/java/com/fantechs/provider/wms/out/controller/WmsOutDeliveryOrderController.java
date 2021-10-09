@@ -3,7 +3,6 @@ package com.fantechs.provider.wms.out.controller;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryOrderImport;
@@ -179,7 +178,7 @@ public class WmsOutDeliveryOrderController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<WmsOutDeliveryOrderImport> wmsOutDeliveryOrderImports = EasyPoiUtils.importExcel(file, 2, 1, WmsOutDeliveryOrderImport.class);
+            List<WmsOutDeliveryOrderImport> wmsOutDeliveryOrderImports = EasyPoiUtils.importExcel(file, 1, 0, WmsOutDeliveryOrderImport.class);
             Map<String, Object> resultMap = wmsOutDeliveryOrderService.importExcel(wmsOutDeliveryOrderImports);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
         }catch (RuntimeException e) {
