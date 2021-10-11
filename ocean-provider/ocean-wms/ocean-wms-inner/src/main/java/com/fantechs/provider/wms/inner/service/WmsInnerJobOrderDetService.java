@@ -16,4 +16,6 @@ public interface WmsInnerJobOrderDetService extends IService<WmsInnerJobOrderDet
     List<WmsInnerJobOrderDetDto> findList(SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet);
 
     int batchUpdate(List<WmsInnerJobOrderDet> list);
+
+    int pickDisQty(List<WmsInnerJobOrderDet> wmsInnerJobOrderDets);
 }

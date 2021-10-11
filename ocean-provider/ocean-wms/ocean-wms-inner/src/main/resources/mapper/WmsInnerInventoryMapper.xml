@@ -126,6 +126,9 @@ wii.option5
       <if test="isStorage!=null and isStorage!='' and isStorage==1">
         and wii.lock_status=0 and wii.stock_lock=0 and wii.qc_lock=0 and wii.job_status=1
       </if>
+      <if test="inventoryStatusName!=null and inventoryStatusName != ''">
+        and bis.inventory_status_name = #{inventoryStatusName}
+      </if>
       <if test="storageType!=null and storageType != ''">
         and bs.storage_type = #{storageType}
       </if>

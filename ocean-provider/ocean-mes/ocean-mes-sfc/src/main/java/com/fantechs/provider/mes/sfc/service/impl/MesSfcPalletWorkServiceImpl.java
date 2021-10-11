@@ -390,7 +390,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if (nextProcessIsPallet.isEmpty()){
                 // 未满栈板自动提交
                 List<Long> palletIdList = new ArrayList<>();
-                palletIdList.add(palletWorkScanDto.getProductPalletId());
+                palletIdList.add(mesSfcProductPallet.getProductPalletId());
                 this.submitNoFullPallet(palletIdList, requestPalletWorkScanDto.getPrintBarcode(), requestPalletWorkScanDto.getPrintName());
             }
         }

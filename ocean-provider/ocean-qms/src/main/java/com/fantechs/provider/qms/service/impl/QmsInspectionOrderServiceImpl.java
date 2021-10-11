@@ -240,7 +240,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
+
         qmsInspectionOrder.setIfThirdInspection(StringUtils.isEmpty(qmsInspectionOrder.getIfThirdInspection()) ? 1 :qmsInspectionOrder.getIfThirdInspection());
+        qmsInspectionOrder.setInspectionStatus((byte)3);
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
         return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
