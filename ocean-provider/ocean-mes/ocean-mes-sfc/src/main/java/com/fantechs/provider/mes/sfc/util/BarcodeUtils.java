@@ -502,18 +502,12 @@ public class BarcodeUtils {
         }
         /*
         * 工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)
-        *
         */
         MesPmWorkOrder mesPmWorkOrder = pmWorkOrderResponseEntity.getData();
         if (4 == mesPmWorkOrder.getWorkOrderStatus() || 5 == mesPmWorkOrder.getWorkOrderStatus()) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012006);
         }
-        /*
-        * productionQty 投产数量
-        * workOrderQty 工单数量
-        * 投产数量可以=工单数量 此判断是否有问题?
-        */
-        if (mesPmWorkOrder.getProductionQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) > -1) {
+        if (mesPmWorkOrder.getProductionQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 1) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012007, mesPmWorkOrder.getWorkOrderCode());
         }
     }
