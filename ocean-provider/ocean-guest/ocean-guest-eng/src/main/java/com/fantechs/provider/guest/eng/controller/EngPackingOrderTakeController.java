@@ -1,13 +1,16 @@
 package com.fantechs.provider.guest.eng.controller;
 
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto;
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeDto;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrderSummaryDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderSummaryDetService;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderSummaryService;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderTakeService;
@@ -16,13 +19,16 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author mr.lei
@@ -46,6 +52,24 @@ public class EngPackingOrderTakeController {
         Page<Object> page = PageHelper.startPage(searchEngPackingOrder.getStartPage(),searchEngPackingOrder.getPageSize());
         List<EngPackingOrderDto> list = engPackingOrderTakeService.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchEngPackingOrder searchEngPackingOrder){
+        List<EngPackingOrderDto> list = engPackingOrderTakeService.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrder));
+        List<EngPackingOrderTakeDto> collect = list.stream().map(engPackingOrderDto -> {
+            EngPackingOrderTakeDto engPackingOrderTakeDto = new EngPackingOrderTakeDto();
+            BeanUtils.copyProperties(engPackingOrderDto, engPackingOrderTakeDto);
+            return engPackingOrderTakeDto;
+        }).collect(Collectors.toList());
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(collect, "导出信息", "收货入库信息", EngPackingOrderTakeDto.class, "收货入库信息.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
     }
 
     @ApiOperation("包装清单装箱明细")
