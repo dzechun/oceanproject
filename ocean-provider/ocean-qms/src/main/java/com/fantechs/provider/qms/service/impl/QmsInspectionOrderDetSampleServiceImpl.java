@@ -53,9 +53,7 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Resource
     private QmsInspectionOrderMapper qmsInspectionOrderMapper;
     @Resource
-    private SFCFeignApi sfcFeignApi;
-    @Resource
-    private PMFeignApi pmFeignApi;
+    private InnerFeignApi innerFeignApi;
 
     @Override
     public List<QmsInspectionOrderDetSample> findList(Map<String, Object> map) {
@@ -73,19 +71,12 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.selectByPrimaryKey(qmsInspectionOrderDetId);
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDet.getInspectionOrderId());
 
-        MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(barcode).getData();
-        if (StringUtils.isEmpty(workOrderBarcode)) {
-            throw new BizErrorException("无该条码对应工单");
-        }
-        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-        searchMesPmWorkOrder.setWorkOrderId(workOrderBarcode.getWorkOrderId());
-        List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
-        if (StringUtils.isEmpty(workOrderList)) {
-            throw new BizErrorException("无该条码对应工单");
-        }
-        MesPmWorkOrderDto mesPmWorkOrderDto = workOrderList.get(0);
-        if (!qmsInspectionOrder.getMaterialId().equals(mesPmWorkOrderDto.getMaterialId())) {
-            throw new BizErrorException("该条码对应的产品料号与检验单的产品料号不一致");
+        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setBarcode(barcode);
+        searchWmsInnerInventoryDet.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        if(StringUtils.isEmpty(inventoryDetDtos)){
+            throw new BizErrorException("该条码未与该检验单绑定");
         }
 
         return bool;
@@ -191,9 +182,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
                     qmsInspectionOrderDetSample.setBarcodeStatus((byte) 0);
                 }
             }
-            if(StringUtils.isEmpty(qmsInspectionOrderDetSample.getBarcodeStatus())){
-                qmsInspectionOrderDetSample.setBarcodeStatus((byte) 1);
-            }
         }
 
         return list;
@@ -206,19 +194,21 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
 
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDetSample.getInspectionOrderId());
 
-        MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(qmsInspectionOrderDetSample.getBarcode()).getData();
-        if (StringUtils.isEmpty(workOrderBarcode)) {
-            throw new BizErrorException("无该条码对应工单");
+        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setBarcode(qmsInspectionOrderDetSample.getBarcode());
+        searchWmsInnerInventoryDet.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        if(StringUtils.isEmpty(inventoryDetDtos)){
+            throw new BizErrorException("该条码未与该检验单绑定");
         }
-        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-        searchMesPmWorkOrder.setWorkOrderId(workOrderBarcode.getWorkOrderId());
-        List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
-        if (StringUtils.isEmpty(workOrderList)) {
-            throw new BizErrorException("无该条码对应工单");
-        }
-        MesPmWorkOrderDto mesPmWorkOrderDto = workOrderList.get(0);
-        if (!qmsInspectionOrder.getMaterialId().equals(mesPmWorkOrderDto.getMaterialId())) {
-            throw new BizErrorException("该条码对应的产品料号与检验单的产品料号不一致");
+
+        Example example = new Example(QmsInspectionOrderDetSample.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("barcode",qmsInspectionOrderDetSample.getBarcode())
+                .andEqualTo("inspectionOrderId",qmsInspectionOrderDetSample.getInspectionOrderId());
+        QmsInspectionOrderDetSample inspectionOrderDetSample = qmsInspectionOrderDetSampleMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(inspectionOrderDetSample)){
+            throw new BizErrorException("已存在该条码，请勿重复扫描");
         }
 
         qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());

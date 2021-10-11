@@ -46,6 +46,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 库位类型（1-存货 2-收货 3-发货）
      */
     @ApiModelProperty(name="storageType",value = "库位类型（1-存货 2-收货 3-发货）")
+    @Excel(name = "库位类型（1-存货 2-收货 3-发货）", height = 20, width = 30,orderNum="10",replace = {"存货_1","收货_2","发货_3"})
     @Transient
     private Byte storageType;
 
@@ -77,7 +78,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 组织名称
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30,orderNum = "28")
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum = "32")
     @Transient
     private String organizationName;
 
@@ -85,7 +86,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 创建人名称
      */
     @ApiModelProperty(name="createUserName",value = "创建人名称")
-    @Excel(name = "创建人名称", height = 20, width = 30,orderNum = "29")
+    @Excel(name = "创建人名称", height = 20, width = 30,orderNum = "33")
     @Transient
     private String createUserName;
 
@@ -93,7 +94,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 修改人名称
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人名称")
-    @Excel(name = "盘存转报废单号", height = 20, width = 30,orderNum = "31")
+    @Excel(name = "盘存转报废单号", height = 20, width = 30,orderNum = "35")
     @Transient
     private String modifiedUserName;
 
@@ -101,7 +102,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 库存状态名称
      */
     @ApiModelProperty(name="inventoryStatusName",value = "库存状态名称")
-    @Excel(name = "库存状态名称", height = 20, width = 30,orderNum = "31")
+    @Excel(name = "库存状态名称", height = 20, width = 30,orderNum = "37")
     @Transient
     private String inventoryStatusName;
 

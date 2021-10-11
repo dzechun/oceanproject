@@ -127,6 +127,9 @@
       <if test="materialCode != null and materialCode!=''">
         and ecqo.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
+      <if test="materialName != null and materialName!=''">
+        and bm.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
       <if test="materialPurpose != null and materialPurpose!=''">
         and ecqo.material_purpose = #{materialPurpose}
       </if>

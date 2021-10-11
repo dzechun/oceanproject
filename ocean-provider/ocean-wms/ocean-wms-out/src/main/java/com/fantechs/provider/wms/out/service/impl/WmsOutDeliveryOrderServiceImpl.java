@@ -762,6 +762,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     wmsOutDeliveryOrderDet.setStatus((byte) 1);
                     wmsOutDeliveryOrderDet.setOption1(wmsOutDeliveryOrderImport.getLIDCode());
                     wmsOutDeliveryOrderDet.setOption2(wmsOutDeliveryOrderImport.getBRCode());
+                    wmsOutDeliveryOrderDet.setOption3(wmsOutDeliveryOrder.getOption3());
                     detList.add(wmsOutDeliveryOrderDet);
                 }
                 wmsOutDeliveryOrderDetMapper.insertList(detList);

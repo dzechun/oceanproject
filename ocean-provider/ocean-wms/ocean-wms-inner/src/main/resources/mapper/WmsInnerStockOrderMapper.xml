@@ -76,8 +76,8 @@ wiv.modified_time
     <if test="projectType!=null and projectType!=''">
       and wiv.project_type = #{projectType}
     </if>
-    <if test="status!=null and status!=''">
-      and wiv.status = #{status}
+    <if test="orderStatus!=null and orderStatus!=''">
+      and wiv.order_status = #{orderStatus}
     </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wiv.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

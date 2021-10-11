@@ -80,4 +80,30 @@ public class SearchWmsInnerInventory extends BaseQuery {
      */
     @ApiModelProperty(name="qcLock",value = "质检锁(0-否 1-是)")
     private Byte qcLock;
+
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(name = "contractCode",value = "合同号")
+    private String contractCode;
+
+    /**
+     * 规格
+     */
+    @ApiModelProperty(name = "spec",value = "规格")
+    private String spec;
+
+    /**
+     * 请购单号
+     */
+    @ApiModelProperty(name = "purchaseReqOrderCode",value = "请购单号")
+    private String purchaseReqOrderCode;
+
+    private String option1;
+
+    private String option2;
+
+    private String option3;
+
+    private String option4;
 }

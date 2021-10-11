@@ -556,7 +556,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         record.setOrgId(sysUser.getOrganizationId());
         int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(record);
         for (WmsInAsnOrderDet wmsInAsnOrderDet : record.getWmsInAsnOrderDetList()) {
-            if(StringUtils.isEmpty(wmsInAsnOrderDet.getPackingQty()) || wmsInAsnOrderDet.getActualQty().compareTo(BigDecimal.ZERO)<1){
+            if(StringUtils.isEmpty(wmsInAsnOrderDet.getPackingQty()) || wmsInAsnOrderDet.getPackingQty().compareTo(BigDecimal.ZERO)<1){
                 throw new BizErrorException("包装数量必须大于0");
             }
             if(record.getOrderTypeId()==4){
@@ -671,7 +671,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         if(StringUtils.isEmpty(mesPmWorkOrder.getInventoryQty())){
             mesPmWorkOrder.setInventoryQty(BigDecimal.ZERO);
         }
-        if(PackingQty.compareTo(mesPmWorkOrder.getProductionQty())==1 || resultQty.compareTo(mesPmWorkOrder.getProductionQty())==1 ||mesPmWorkOrder.getInventoryQty().add(PackingQty).compareTo(mesPmWorkOrder.getProductionQty())==1){
+        if(PackingQty.compareTo(mesPmWorkOrder.getProductionQty())==1 || mesPmWorkOrder.getInventoryQty().add(PackingQty).compareTo(mesPmWorkOrder.getProductionQty())==1){
             throw new BizErrorException("超出工单数量范围");
         }
         return mesPmWorkOrder;

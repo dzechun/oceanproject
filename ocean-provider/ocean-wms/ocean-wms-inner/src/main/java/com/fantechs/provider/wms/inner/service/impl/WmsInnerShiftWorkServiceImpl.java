@@ -362,6 +362,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 .modifiedTime(new Date())
                 .shiftStorageStatus((byte) 4)
                 .modifiedUserId(sysUser.getUserId())
+                .workStartTime(new Date())
+                .workEndTime(new Date())
                 .build();
         int num = wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wms);
         if (num == 0) {
@@ -461,6 +463,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         ws.setWorkerId(workerDtos.get(0).getWorkerId());
         if (oCount == count) {
             ws.setOrderStatus((byte) 5);
+            if(StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())){
+                ws.setWorkStartTime(new Date());
+            }
+            ws.setWorkEndtTime(new Date());
         } else {
             ws.setOrderStatus((byte) 4);
             if (StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())) {

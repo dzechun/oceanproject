@@ -176,6 +176,9 @@
             <if test="sourceOrderId!=null and sourceOrderId!=''">
                 and wipo.source_order_id =#{sourceOrderId}
             </if>
+            <if test="jobOrderType!=null and jobOrderType!=''">
+                and wipo.job_order_type = #{jobOrderType}
+            </if>
             and wipo.is_delete = 1 and (wipo.order_status = 3 or wipo.order_status = 4)
         </where>
         order by wipo.create_time desc

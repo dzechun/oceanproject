@@ -102,4 +102,33 @@ public class WmsInnerInventoryModel implements Serializable {
     @Excel(name = "质检锁", height = 20, width = 30,orderNum="11",replace = {"否_1","是_1"})
     @Column(name = "qc_lock")
     private Byte qcLock;
+
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(name = "contractCode",value = "合同号")
+    @Column(name = "contract_code")
+    private String contractCode;
+
+    /**
+     * 规格
+     */
+    @ApiModelProperty(name = "spec",value = "规格")
+    @Column(name = "spec")
+    private String spec;
+
+    /**
+     * 请购单号
+     */
+    @ApiModelProperty(name = "purchaseReqOrderCode",value = "请购单号")
+    @Column(name = "purchase_req_order_code")
+    private String purchaseReqOrderCode;
+
+    private String option1;
+
+    private String option2;
+
+    private String option3;
+
+    private String option4;
 }

@@ -24,7 +24,7 @@ public class SearchWmsInnerStockOrder extends BaseQuery implements Serializable 
     @ApiModelProperty("计划类型")
     private Byte projectType;
     @ApiModelProperty("状态")
-    private Byte status;
+    private Byte orderStatus;
     @ApiModelProperty("创建人")
     private String createUserName;
     private boolean isPda;

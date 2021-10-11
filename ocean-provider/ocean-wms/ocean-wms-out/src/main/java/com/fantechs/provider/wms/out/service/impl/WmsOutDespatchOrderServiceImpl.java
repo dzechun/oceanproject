@@ -5,6 +5,7 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
@@ -19,6 +20,7 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryLog;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.*;
@@ -30,6 +32,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
@@ -70,6 +73,8 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
     private InFeignApi inFeignApi;
     @Resource
     private EngFeignApi engFeignApi;
+    @Resource
+    private RedisUtil redisUtil;
 
 
     @Override
@@ -206,6 +211,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public String add(WmsOutDespatchOrder record) {
         SysUser sysUser = currentUser();
         record.setDespatchOrderCode(CodeUtils.getId("TRUCK"));
@@ -222,9 +228,14 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
         int num = wmsOutDespatchOrderMapper.insertUseGeneratedKeys(record);
+        List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
         for (WmsOutDespatchOrderReJo wms : record.getWmsOutDespatchOrderReJo()) {
             SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
             searchWmsInnerJobOrderDet.setJobOrderId(wms.getJobOrderId());
+            List<Byte> byteList = new ArrayList<>();
+            byteList.add((byte)4);
+            byteList.add((byte)5);
+            searchWmsInnerJobOrderDet.setOrderStatusList(byteList);
             ResponseEntity<List<WmsInnerJobOrderDetDto>> responseEntity = innerFeignApi.findList(searchWmsInnerJobOrderDet);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);
@@ -238,18 +249,28 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
             wms.setOrgId(sysUser.getOrganizationId());
             wmsOutDespatchOrderReJoMapper.insertUseGeneratedKeys(wms);
             for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : list) {
-                WmsOutDespatchOrderReJoReDet wmsOutDespatchOrderReJoReDet = new WmsOutDespatchOrderReJoReDetDto();
-                wmsOutDespatchOrderReJoReDet.setJobOrderDetId(wmsInnerJobOrderDetDto.getJobOrderDetId());
-                wmsOutDespatchOrderReJoReDet.setDespatchOrderReJoId(wms.getDespatchOrderReJoId());
-                wmsOutDespatchOrderReJoReDet.setCreateTime(new Date());
-                wmsOutDespatchOrderReJoReDet.setCreateUserId(sysUser.getUserId());
-                wmsOutDespatchOrderReJoReDet.setModifiedTime(new Date());
-                wmsOutDespatchOrderReJoReDet.setModifiedUserId(sysUser.getUserId());
-                wmsOutDespatchOrderReJoReDet.setOrgId(sysUser.getOrganizationId());
-                num +=wmsOutDespatchOrderReJoReDetMapper.insertSelective(wmsOutDespatchOrderReJoReDet);
+                if(StringUtils.isNotEmpty(wmsInnerJobOrderDetDto.getActualQty()) && wmsInnerJobOrderDetDto.getActualQty().compareTo(BigDecimal.ZERO)==1){
+                    if(wmsInnerJobOrderDetDto.getActualQty().compareTo(wmsInnerJobOrderDetDto.getDistributionQty())==-1){
+                        wmsInnerJobOrderDets.add(wmsInnerJobOrderDetDto);
+                    }
+                    WmsOutDespatchOrderReJoReDet wmsOutDespatchOrderReJoReDet = new WmsOutDespatchOrderReJoReDetDto();
+                    wmsOutDespatchOrderReJoReDet.setJobOrderDetId(wmsInnerJobOrderDetDto.getJobOrderDetId());
+                    wmsOutDespatchOrderReJoReDet.setDespatchOrderReJoId(wms.getDespatchOrderReJoId());
+                    wmsOutDespatchOrderReJoReDet.setCreateTime(new Date());
+                    wmsOutDespatchOrderReJoReDet.setCreateUserId(sysUser.getUserId());
+                    wmsOutDespatchOrderReJoReDet.setModifiedTime(new Date());
+                    wmsOutDespatchOrderReJoReDet.setModifiedUserId(sysUser.getUserId());
+                    wmsOutDespatchOrderReJoReDet.setOrgId(sysUser.getOrganizationId());
+                    num +=wmsOutDespatchOrderReJoReDetMapper.insertSelective(wmsOutDespatchOrderReJoReDet);
+                }
             }
         }
-
+        if(wmsInnerJobOrderDets.size()>0){
+            ResponseEntity responseEntity = innerFeignApi.pickDisQty(wmsInnerJobOrderDets);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
+        }
         return record.getDespatchOrderId().toString();
     }
 
