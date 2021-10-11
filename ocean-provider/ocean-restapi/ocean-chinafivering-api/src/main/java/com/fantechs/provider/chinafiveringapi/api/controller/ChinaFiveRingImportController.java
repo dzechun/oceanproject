@@ -41,6 +41,7 @@ public class ChinaFiveRingImportController {
         BaseExecuteResultDto result = importDataService.getIssueDetails(projectID);
         String strResult= JsonUtils.objectToJson(result);
         return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
+        //return  ControllerUtil.returnSuccess();
     }
 
     @ApiOperation("获取材料信息")

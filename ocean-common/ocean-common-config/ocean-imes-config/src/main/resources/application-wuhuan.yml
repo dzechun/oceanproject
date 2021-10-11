@@ -82,7 +82,7 @@ feign:
 
 ##关闭hystrix 超时
 hystrix.command.default.execution.timeout.enabled: false
-hystrix.command.default.isolation.thread.timeoutInMilliseconds: 70000
+hystrix.command.default.isolation.thread.timeoutInMilliseconds: 700000
 
 zuul:
   host:
