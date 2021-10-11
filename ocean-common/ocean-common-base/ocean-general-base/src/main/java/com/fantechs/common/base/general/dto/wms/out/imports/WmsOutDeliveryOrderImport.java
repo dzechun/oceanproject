@@ -16,8 +16,8 @@ public class WmsOutDeliveryOrderImport implements Serializable {
     /**
      * 客户编码
      */
-    @Excel(name = "客户编码",  height = 20, width = 30, orderNum="1")
-    @ApiModelProperty(name="customerCode" ,value="客户编码")
+    @Excel(name = "客户编号",  height = 20, width = 30, orderNum="1")
+    @ApiModelProperty(name="customerCode" ,value="客户编号")
     private String customerCode;
 
     /**
@@ -51,8 +51,8 @@ public class WmsOutDeliveryOrderImport implements Serializable {
     /**
      * 预计发运日期(yyyy-MM-dd)(必填)
      */
-    @Excel(name = "预计发运日期(yyyy-MM-dd)(必填)",  height = 20, width = 30, orderNum="11")
-    @ApiModelProperty(name="planDespatchDate" ,value="预计发运日期(yyyy-MM-dd)(必填)")
+    @Excel(name = "计划发运时间",  height = 20, width = 30, orderNum="11")
+    @ApiModelProperty(name="planDespatchDate" ,value="计划发运时间")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date planDespatchDate;
 
