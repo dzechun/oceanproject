@@ -200,5 +200,11 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     @ApiModelProperty(name = "purchaseReqOrderCode",value = "请购单号")
     private String purchaseReqOrderCode;
 
+    /**
+     * 库存状态
+     */
+    @ApiModelProperty(name = "inventoryStatusName",value = "库存状态")
+    private String inventoryStatusName;
+
     private static final long serialVersionUID = 1L;
 }
