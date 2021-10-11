@@ -44,7 +44,7 @@
     and eposd.inner_carton_code like CONCAT('%',#{innerCartonCode},'%')
 </if>
 <if test="rawMaterialCode!=null and rawMaterialCode!=''">
-    and eposd.raw_material_code like CONCAT('%',#{rawMaterialCode},'%')
+    and bm.material_code like CONCAT('%',#{rawMaterialCode},'%')
 </if>
 <if test="deviceCode!=null and deviceCode!=''">
     and eposd.device_code like CONCAT('%',#{deviceCode},'%')

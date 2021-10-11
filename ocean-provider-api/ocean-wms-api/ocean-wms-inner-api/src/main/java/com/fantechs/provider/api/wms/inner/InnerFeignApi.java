@@ -99,4 +99,8 @@ public interface InnerFeignApi {
     @ApiOperation("列表")
     @PostMapping("/wmsInventoryVerification/findList")
     ResponseEntity<List<WmsInnerStockOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerStockOrder searchWmsInnerStockOrder);
+
+    @ApiOperation(value = "领料单发运校验",notes = "领料单发运校验")
+    @PostMapping("/wmsInnerJobOrderDet/pickDisQty")
+    ResponseEntity pickDisQty(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerJobOrderDet> wmsInPutawayOrderDet);
 }

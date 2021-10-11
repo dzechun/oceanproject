@@ -947,7 +947,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private void removeRedis(Long jobOrderDetId){
         if(redisUtil.hasKey(this.REDIS_KEY+jobOrderDetId)){
             Map<Long,BigDecimal> map = (Map<Long, BigDecimal>) redisUtil.get(this.REDIS_KEY+jobOrderDetId.toString());
-            //设置10秒后失效
+            //设置3秒后失效
             redisUtil.expire(this.REDIS_KEY+jobOrderDetId,3);
         }
     }
@@ -989,7 +989,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
 
     /**
-     * 调拨出库发运完成
+     * 快速发运完成
      * @param outDeliveryOrderId
      * @return
      */
@@ -1194,6 +1194,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         if(det.getActualQty().add(wmsInPutawayOrderDet.getActualQty()).compareTo(det.getPlanQty())==0) {
                             wmsInPutawayOrderDet.setOrderStatus((byte) 5);
                             wmsInPutawayOrderDet.setWorkEndTime(new Date());
+                        }else {
+                            wmsInPutawayOrderDet.setOrderStatus((byte)4);
                         }
                     }else {
                         wmsInPutawayOrderDet.setOrderStatus((byte)4);
@@ -1212,8 +1214,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 num+=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
                 //反写出库单拣货数量
                 num+=this.writeDeliveryOrderQty(wmsInPutawayOrderDet);
-                //清除redis
-                this.removeRedis(wmsInPutawayOrderDet.getJobOrderDetId());
+                if(wmsInPutawayOrderDet.getOrderStatus()==5){
+                    //清除redis
+                    this.removeRedis(wmsInPutawayOrderDet.getJobOrderDetId());
+                }
             }
             if(StringUtils.isEmpty(wmsInnerJobOrder.getWorkStartTime())){
                 wmsInnerJobOrder.setWorkStartTime(new Date());

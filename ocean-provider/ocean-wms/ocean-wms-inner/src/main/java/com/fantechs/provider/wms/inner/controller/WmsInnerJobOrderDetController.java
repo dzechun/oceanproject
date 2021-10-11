@@ -81,4 +81,10 @@ public class WmsInnerJobOrderDetController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation(value = "领料单发运校验",notes = "领料单发运校验")
+    @PostMapping("/pickDisQty")
+    public ResponseEntity pickDisQty(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerJobOrderDet> wmsInPutawayOrderDet) {
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderDetService.pickDisQty(wmsInPutawayOrderDet));
+    }
 }
