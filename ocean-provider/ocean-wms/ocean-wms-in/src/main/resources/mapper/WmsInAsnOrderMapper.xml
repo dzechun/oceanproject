@@ -169,6 +169,9 @@ wiao.storage_id,
           #{item}
         </foreach>
       </if>
+        <if test="orderStatus!=null and orderStatus!=''">
+          and wiao.order_status = #{orderStatus}
+        </if>
     <if test="orderTypeName!=null and orderTypeName!=''">
         and boy.order_type_name = #{orderTypeName}
     </if>

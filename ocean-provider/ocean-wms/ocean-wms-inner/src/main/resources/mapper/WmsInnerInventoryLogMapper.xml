@@ -119,9 +119,12 @@ wiil.option5
   <if test="materialName!=null and materialName != ''">
     and bm.material_name like CONCAT("%",#{materialName},"%")
   </if>
-  <if test="relevanceOrderCode!=null and relevanceOrderCode != ''">
-    and wiil.relevance_order_code like CONCAT("%",#{relevanceOrderCode},"%")
+  <if test="relatedOrderCode!=null and relatedOrderCode != ''">
+    and wiil.related_order_code like CONCAT("%",#{relatedOrderCode},"%")
   </if>
+    <if test="supplierName!=null and supplierName!=''">
+      and bss.supplier_name like CONCAT('%',#{supplierName},'%')
+    </if>
   <if test="palletCode!=null and palletCode != ''">
     and wiil.pallet_code like CONCAT("%",#{palletCode},"%")
   </if>
