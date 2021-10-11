@@ -313,6 +313,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 检验单号
      */
     @ApiModelProperty(name = "inspectionOrderCode",value = "检验单号")
+    @Excel(name = "检验单号", height = 20, width = 30,orderNum="33")
     @Column(name = "inspection_order_code")
     private String inspectionOrderCode;
 
@@ -320,6 +321,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 合同号
      */
     @ApiModelProperty(name = "contractCode",value = "合同号")
+    @Excel(name = "合同号", height = 20, width = 30,orderNum="34")
     @Column(name = "contract_code")
     private String contractCode;
 
@@ -327,6 +329,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 规格
      */
     @ApiModelProperty(name = "spec",value = "规格")
+    @Excel(name = "规格", height = 20, width = 30,orderNum="35")
     @Column(name = "spec")
     private String spec;
 
@@ -334,6 +337,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 请购单号
      */
     @ApiModelProperty(name = "purchaseReqOrderCode",value = "请购单号")
+    @Excel(name = "请购单号", height = 20, width = 30,orderNum="36")
     @Column(name = "purchase_req_order_code")
     private String purchaseReqOrderCode;
 

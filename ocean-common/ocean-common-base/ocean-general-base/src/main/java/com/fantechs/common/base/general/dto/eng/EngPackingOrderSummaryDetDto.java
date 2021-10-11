@@ -2,11 +2,9 @@ package com.fantechs.common.base.general.dto.eng;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
-import com.fantechs.common.base.general.entity.srm.SrmPackingOrderSummaryDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -64,14 +62,14 @@ public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet impl
      * 物料编码
      */
     @ApiModelProperty(name="materialCode",value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="12")
+    @Excel(name = "材料编码", height = 20, width = 30,orderNum="12")
     private String materialCode;
 
     /**
      * 物料名称
      */
     @ApiModelProperty(name="materialName",value = "物料名称")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="15")
+    @Excel(name = "货物名称", height = 20, width = 30,orderNum="15")
     private String materialName;
 
 
@@ -129,6 +127,14 @@ public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet impl
      */
     @ApiModelProperty(name = "packingOrderId",value = "装箱清单id")
     private Long packingOrderId;
+
+    /**
+     * 导出数量，要求为三位小数
+     */
+    @ApiModelProperty(name="exportQty",value = "导出数量")
+    @Transient
+    @Excel(name = "数量", height = 20, width = 30,orderNum="17")
+    private BigDecimal exportQty;
 
     private Byte isCal;
 }

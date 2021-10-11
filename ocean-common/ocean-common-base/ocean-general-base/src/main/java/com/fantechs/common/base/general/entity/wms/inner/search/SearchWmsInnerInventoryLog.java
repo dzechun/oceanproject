@@ -34,6 +34,8 @@ public class SearchWmsInnerInventoryLog extends BaseQuery implements Serializabl
     @ApiModelProperty(name = "relatedOrderCode",value = "相关单号")
     private String relatedOrderCode;
 
+    private String supplierName;
+
     /**
      * 作业类型(1-收货，2-上架，3-移位，4-拣货，5-补货，6-调整，7-盘点，8-发运)
      */
