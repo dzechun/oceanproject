@@ -241,6 +241,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         qmsInspectionOrder.setIfThirdInspection(StringUtils.isEmpty(qmsInspectionOrder.getIfThirdInspection()) ? 1 :qmsInspectionOrder.getIfThirdInspection());
+        qmsInspectionOrder.setInspectionStatus((byte)3);
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
         return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
