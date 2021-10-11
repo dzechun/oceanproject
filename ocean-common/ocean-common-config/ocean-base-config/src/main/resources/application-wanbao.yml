@@ -91,7 +91,7 @@ feign:
     enabled: false
   httpclient:
         enabled: true
-        connection-timeout: 60000
+        connection-timeout: 6000000
   compression:
     request:
       enabled: true
@@ -106,8 +106,8 @@ hystrix.command.default.isolation.thread.timeoutInMilliseconds: 70000
 
 zuul:
   host:
-    connect-timeout-millis: 60000
-    socket-timeout-millis: 60000
+    connect-timeout-millis: 6000000
+    socket-timeout-millis: 6000000
     max-per-route-connections: 20
     max-total-connections: 200
 

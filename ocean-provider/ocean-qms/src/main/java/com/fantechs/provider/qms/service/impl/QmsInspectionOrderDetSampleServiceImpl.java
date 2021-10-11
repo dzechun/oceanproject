@@ -208,7 +208,7 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
                 .andEqualTo("inspectionOrderId",qmsInspectionOrderDetSample.getInspectionOrderId());
         QmsInspectionOrderDetSample inspectionOrderDetSample = qmsInspectionOrderDetSampleMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(inspectionOrderDetSample)){
-            throw new BizErrorException("已存在改条码，请勿重复扫描");
+            throw new BizErrorException("已存在该条码，请勿重复扫描");
         }
 
         qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());
