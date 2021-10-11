@@ -193,7 +193,7 @@ wii.option5
         and wii.inspection_order_code like CONCAT("%",#{inspectionOrderCode},"%")
       </if>
       <if test="supplierName!=null and supplierName != ''">
-        and wii.supplier_name like CONCAT("%",#{supplierName},"%")
+        and bss.supplier_name like CONCAT("%",#{supplierName},"%")
       </if>
       <if test="status!=null">
         and wii.status=#{status}
@@ -228,6 +228,21 @@ wii.option5
     <if test="purchaseReqOrderCode!=null and purchaseReqOrderCode!=''">
       and wii.purchase_req_order_code like CONCAT('%',#{purchaseReqOrderCode},'%')
     </if>
+      <if test="option1!=null and option1!=''">
+        and wii.option1 like CONCAT('%',#{option1},'%')
+      </if>
+      <if test="option2!=null and option2!=''">
+        and wii.option2 like CONCAT('%',#{option2},'%')
+      </if>
+      <if test="option3!=null and option3!=''">
+        and wii.option3 like CONCAT('%',#{option3},'%')
+      </if>
+      <if test="option4!=null and option4!=''">
+        and wii.option4 like CONCAT('%',#{option4},'%')
+      </if>
+      <if test="inventoryId!=null and inventoryId != ''">
+        and wii.inventory_id = #{inventoryId}
+      </if>
     </where>
     <if test="isStorage!=null and isStorage!='' and isStorage==1">
       group by wii.storage_id

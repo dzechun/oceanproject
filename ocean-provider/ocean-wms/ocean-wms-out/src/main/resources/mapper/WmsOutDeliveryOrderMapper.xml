@@ -158,6 +158,9 @@ wodo.customer_id,
       <if test="orderStatus!=null">
         and wodo.order_status = #{orderStatus}
       </if>
+    <if test="customerName!=null and customerName!=''">
+      and sus.supplier_name like CONCAT('%',#{customerName},'%')
+    </if>
     </where>
     order by wodo.create_time desc
   </select>

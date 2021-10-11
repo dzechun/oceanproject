@@ -77,4 +77,7 @@ public class SearchWmsOutDeliveryOrder extends BaseQuery implements Serializable
     @ApiModelProperty(name="orderStatus",value = "单据状态(1-待拣货，2-拣货中，3-待发运、4-部分发运、5-发运完成)")
     private Integer orderStatus;
 
+    @ApiModelProperty(name = "customerName",value = "客户")
+    private String customerName;
+
 }

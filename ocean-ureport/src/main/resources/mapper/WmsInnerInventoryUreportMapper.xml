@@ -13,12 +13,16 @@
         <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
         <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
         <result column="package_specification_quantity" jdbcType="DECIMAL" property="packageSpecificationQuantity" />
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
+        <result column="spec" jdbcType="VARCHAR" property="spec"/>
+        <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
     </resultMap>
     <select id="findList" resultMap="BaseResultMap">
         select wii.lock_status,
                wii.stock_lock,
                wii.qc_lock,wii.packing_unit_name,
-               wii.packing_qty,wii.package_specification_quantity,bw.warehouse_name,bs.storage_code,bm.material_code,bm.material_name
+               wii.packing_qty,wii.package_specification_quantity,bw.warehouse_name,bs.storage_code,bm.material_code,bm.material_name,
+               wii.contract_code,wii.purchase_req_order_code,wii.spec,wii.option1,wii.option2,wii.option3,wii.option4
         ,bis.inventory_status_name
         from wms_inner_inventory wii
         LEFT JOIN base_warehouse bw ON wii.warehouse_id = bw.warehouse_id
@@ -57,8 +61,30 @@
         <if test="orgId!=null and orgId!=''">
             and wii.org_id=#{orgId}
         </if>
+        <if test="contractCode!=null and contractCode!=''">
+            and wii.contract_code like CONCAT('%',#{contractCode},'%')
+        </if>
+        <if test="spec!=null and spec!=''">
+            and wii.spec like CONCAT('%',#{spec},'%')
+        </if>
+        <if test="purchaseReqOrderCode!=null and purchaseReqOrderCode!=''">
+            and wii.purchase_req_order_code like CONCAT('%',#{purchaseReqOrderCode},'%')
+        </if>
+        <if test="option1!=null and option1!=''">
+            and wii.option1 like CONCAT('%',#{option1},'%')
+        </if>
+        <if test="option2!=null and option2!=''">
+            and wii.option2 like CONCAT('%',#{option2},'%')
+        </if>
+        <if test="option3!=null and option3!=''">
+            and wii.option3 like CONCAT('%',#{option3},'%')
+        </if>
+        <if test="option4!=null and option4!=''">
+            and wii.option4 like CONCAT('%',#{option4},'%')
+        </if>
 </where>
         group by wii.warehouse_id,wii.storage_id,wii.material_id,wii.packing_unit_name,wii.inventory_status_id,
-        wii.lock_status,wii.stock_lock,wii.qc_lock,wii.packing_qty,wii.package_specification_quantity
+        wii.lock_status,wii.stock_lock,wii.qc_lock,wii.packing_qty,wii.package_specification_quantity,
+        wii.contract_code,wii.purchase_req_order_code,wii.spec,wii.option1,wii.option2,wii.option3,wii.option4
     </select>
 </mapper>

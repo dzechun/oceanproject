@@ -76,7 +76,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			"/ocean-chinafivering-api/webServiceImport/getVendor,/ocean-chinafivering-api/webServiceImport/getIssueDetails,"+
 			"/ocean-chinafivering-api/webServiceImport/getPoDetails,/ocean-chinafivering-api/webServiceImport/getPartNoInfo,"+
 			"/ocean-chinafivering-api/webServiceImport/getShelvesNo,/ocean-chinafivering-api/webServiceImport/getSubcontractor,"+
-			"/ocean-chinafivering-api/webServiceImport/getReqDetails,"+
+			"/ocean-chinafivering-api/webServiceImport/getReqDetails,/ocean-qms/qmsInspectionOrder/autoAdd,"+
 			"/ocean-mes-sfc/mesSfcScanBarcode/chkLogUserInfo,/ocean-mes-sfc/mesSfcScanBarcode/chkSnRouting,/ocean-mes-sfc/mesSfcScanBarcode/snDataTransfer,"+
 			"/ocean-security/sysUser/findList,"+
 			"/ocean-guest-callagv/RCSAPI/agvCallback,/ocean-imes-materialapi/productBomApi,/ocean-esop-baseapi/getIssue/getAllIssue,/ocean-esop-baseapi/getWorkOrder/getAllWorkOrder";

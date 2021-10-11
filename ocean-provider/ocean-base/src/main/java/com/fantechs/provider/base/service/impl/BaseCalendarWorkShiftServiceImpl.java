@@ -139,7 +139,7 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
                 calendarWorkShift.setModifiedUserId(user.getUserId());
                 calendarWorkShift.setStatus(StringUtils.isEmpty(baseCalendarWorkShift.getStatus())?1:baseCalendarWorkShift.getStatus());
             }
-            baseCalendarWorkShiftMapper.insertList(baseCalendarWorkShifts);
+            i = baseCalendarWorkShiftMapper.insertList(baseCalendarWorkShifts);
         }
         return i;
     }
