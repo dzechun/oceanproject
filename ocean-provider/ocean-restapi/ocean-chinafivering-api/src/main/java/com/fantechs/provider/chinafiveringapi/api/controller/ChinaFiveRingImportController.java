@@ -9,14 +9,11 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.chinafiveringapi.api.service.ImportDataService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 
 @RestController
 @Api(tags = "中国五环")
@@ -28,7 +25,9 @@ public class ChinaFiveRingImportController {
 
     @ApiOperation("获取合同量单")
     @PostMapping("/getPoDetails")
-    public ResponseEntity<String> getPoDetails(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
+    //@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID
+    public ResponseEntity<String> getPoDetails() throws Exception {
+        String projectID="3919";
         BaseExecuteResultDto result = importDataService.getPoDetails(projectID);
         String strResult= JsonUtils.objectToJson(result);
         return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
@@ -36,7 +35,9 @@ public class ChinaFiveRingImportController {
 
     @ApiOperation("获取领料单")
     @PostMapping("/getIssueDetails")
-    public ResponseEntity<String> getIssueDetails(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
+    //@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID
+    public ResponseEntity<String> getIssueDetails() throws Exception {
+        String projectID="3919";
         BaseExecuteResultDto result = importDataService.getIssueDetails(projectID);
         String strResult= JsonUtils.objectToJson(result);
         return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
@@ -44,7 +45,9 @@ public class ChinaFiveRingImportController {
 
     @ApiOperation("获取材料信息")
     @PostMapping("/getPartNoInfo")
-    public ResponseEntity<String> getPartNoInfo(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
+    //@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID
+    public ResponseEntity<String> getPartNoInfo() throws Exception {
+        String projectID="3919";
         BaseExecuteResultDto result = importDataService.getPartNoInfo(projectID);
         String strResult= JsonUtils.objectToJson(result);
         return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
@@ -52,7 +55,9 @@ public class ChinaFiveRingImportController {
 
     @ApiOperation("获取货架信息")
     @PostMapping("/getShelvesNo")
-    public ResponseEntity<String> getShelvesNo(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
+    //@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID
+    public ResponseEntity<String> getShelvesNo() throws Exception {
+        String projectID="3919";
         BaseExecuteResultDto result = importDataService.getShelvesNo(projectID);
         String strResult= JsonUtils.objectToJson(result);
         return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
@@ -60,7 +65,9 @@ public class ChinaFiveRingImportController {
 
     @ApiOperation("获取施工单位信息")
     @PostMapping("/getSubcontractor")
-    public ResponseEntity<String> getSubcontractor(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
+    //@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID
+    public ResponseEntity<String> getSubcontractor() throws Exception {
+        String projectID="3919";
         BaseExecuteResultDto result = importDataService.getSubcontractor(projectID);
         String strResult= JsonUtils.objectToJson(result);
         return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
@@ -76,7 +83,9 @@ public class ChinaFiveRingImportController {
 
     @ApiOperation("获取请购单信息")
     @PostMapping("/getReqDetails")
-    public ResponseEntity<String> getReqDetails(@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
+    //@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID
+    public ResponseEntity<String> getReqDetails() throws Exception {
+        String projectID="3919";
         BaseExecuteResultDto result = importDataService.getReqDetails(projectID);
         String strResult= JsonUtils.objectToJson(result);
         return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
