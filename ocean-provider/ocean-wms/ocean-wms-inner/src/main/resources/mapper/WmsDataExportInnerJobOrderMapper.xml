@@ -61,8 +61,12 @@
     LEFT JOIN ocean_v2.sys_user u ON wijo.modified_user_id=u.user_id
     <where>
       <if test="jobOrderId!=null and jobOrderId!=''">
-        and wijod.job_order_id = #{jobOrderId}
+        and wijod.job_order_id = #{jobOrderId} and wijod.option3!='finish'
       </if>
+      <if test="jobOrderDetId!=null and jobOrderDetId!=''">
+        and wijod.job_order_det_id = #{jobOrderDetId}
+      </if>
+
     </where>
     GROUP BY eposdet.packing_order_summary_det_id,ecqo.option1,epos.contract_code,
     epos.purchase_req_order_code,despatch_batch,eposdet.carton_code,

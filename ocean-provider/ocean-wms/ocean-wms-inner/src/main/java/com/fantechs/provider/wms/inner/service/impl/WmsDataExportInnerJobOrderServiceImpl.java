@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.inner.service.impl;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.restapi.WmsDataExportInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -36,7 +37,7 @@ public class WmsDataExportInnerJobOrderServiceImpl extends BaseService<WmsDataEx
     }
 
     @Override
-    public String writeDeliveryDetails(WmsInnerJobOrder wmsInnerJobOrder) {
+    public String writeDeliveryDetails(WmsInnerJobOrder wmsInnerJobOrder, WmsInnerJobOrderDet wmsInnerJobOrderDet) {
         //获取当前操作用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -44,6 +45,7 @@ public class WmsDataExportInnerJobOrderServiceImpl extends BaseService<WmsDataEx
         String projectID="3919";
         Map<String, Object> map=new HashMap<>();
         map.put("jobOrderId",wmsInnerJobOrder.getJobOrderId());
+        map.put("jobOrderDetId",wmsInnerJobOrderDet.getJobOrderDetId());
         List<WmsDataExportInnerJobOrderDto> listDto=findExportData(map);
 
         for (WmsDataExportInnerJobOrderDto item : listDto) {
