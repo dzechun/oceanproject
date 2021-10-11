@@ -116,13 +116,14 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 数量
      */
     @ApiModelProperty(name="qty",value = "数量")
-    @Excel(name = "数量", height = 20, width = 30,orderNum="17")
+   // @Excel(name = "数量", height = 20, width = 30,orderNum="17")
     private BigDecimal qty;
 
     /**
      * 单位名称
      */
     @ApiModelProperty(name="unitName",value = "单位名称")
+    @Excel(name = "单位", height = 20, width = 30,orderNum="18")
     @Column(name = "unit_name")
     private String unitName;
 
@@ -130,7 +131,7 @@ public class EngPackingOrderSummaryDet extends ValidGroup implements Serializabl
      * 原材料编码
      */
     @ApiModelProperty(name="rawMaterialCode",value = "原材料编码")
-    @Excel(name = "原材料编码", height = 20, width = 30,orderNum="18")
+   // @Excel(name = "原材料编码", height = 20, width = 30,orderNum="18")
     @Column(name = "raw_material_code")
     private String rawMaterialCode;
 
