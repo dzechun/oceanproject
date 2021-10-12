@@ -16,9 +16,11 @@ spring:
     initialSize: 5
     minIdle: 5
     maxActive: 20
-    maxWait: 60000
+    maxWait: 600000
     timeBetweenEvictionRunsMillis: 60000
     minEvictableIdleTimeMillis: 300000
+    # 配置一个连接在池中最大生存的时间，单位是毫秒
+    maxEvictableIdleTimeMillis: 900000
     validationQuery: SELECT 1 FROM DUAL
     testWhileIdle: true
     testOnBorrow: false
@@ -57,8 +59,8 @@ eureka:
 ribbon:
   eureka:
     enabled: true
-  ConnectTimeout: 60000
-  ReadTimeout: 60000
+  ConnectTimeout: 600000
+  ReadTimeout: 600000
   MaxConnectionsPerHost: 50
   MaxTotalConnections: 200
 
