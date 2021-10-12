@@ -633,8 +633,8 @@ public class ImportDataServiceImpl implements ImportDataService {
         StringBuilder sb = new StringBuilder();
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
-            System.setProperty("sun.net.client.defaultConnectTimeout", "20000");
-            System.setProperty("sun.net.client.defaultReadTimeout", "20000");
+            System.setProperty("sun.net.client.defaultConnectTimeout", "300000");
+            System.setProperty("sun.net.client.defaultReadTimeout", "300000");
 
             // URL连接
             URL url = new URL(wsdl);
@@ -645,7 +645,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             conn.setRequestProperty("Content-Type", "text/xml; charset=GBK");
             conn.setDoOutput(true);
             conn.setDoInput(true);
-            conn.setConnectTimeout(20000);
+            conn.setConnectTimeout(300000);
             // 请求输入内容
             OutputStream output = conn.getOutputStream();
             output.write(actionBySOAP(method, projectID).getBytes());

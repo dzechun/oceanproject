@@ -19,7 +19,8 @@
     SELECT wodod.delivery_order_det_id,
     wodod.option1,
     wodod.option2,
-    wijod.distribution_qty AS option11,
+    -- wijod.distribution_qty AS option11,
+    (wodod.picking_qty-wodod.dispatch_qty) AS option11,
     IFNULL(wodod.remark,'') AS remark,
     wodod.create_time,
     u.user_name AS create_user_name
@@ -29,7 +30,7 @@
     LEFT JOIN ocean_v2.sys_user u ON wijo.modified_user_id=u.user_id
     <where>
       <if test="jobOrderId!=null and jobOrderId!=''">
-        and wijo.job_order_id = #{jobOrderId}
+        and wijo.job_order_id = #{jobOrderId} and wodod.picking_qty-wodod.dispatch_qty>0
       </if>
     </where>
 

@@ -52,6 +52,8 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
     @Resource
     private EamHtJigMaintainOrderMapper eamHtJigMaintainOrderMapper;
     @Resource
+    private EamJigPointInspectionOrderMapper eamJigPointInspectionOrderMapper;
+    @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
     private RedisUtil redisUtil;
@@ -97,6 +99,14 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
             throw new BizErrorException("已存在该治具待保养状态的单据");
         }
 
+        Example example = new Example(EamJigPointInspectionOrder.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("jigBarcodeId",eamJigBarcodeDto.getJigBarcodeId())
+                .andEqualTo("orderStatus",1);
+        EamJigPointInspectionOrder eamJigPointInspectionOrder = eamJigPointInspectionOrderMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(eamJigPointInspectionOrder)){
+            throw new BizErrorException("保养与点检不能同时进行");
+        }
 
         //保存保养单信息
         EamJigMaintainOrderDto eamJigMaintainOrderDto = new EamJigMaintainOrderDto();

@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.general.dto.restapi.WmsDataExportInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -44,8 +45,8 @@ public class WmsDataExportInnerJobOrderController {
 
     @ApiOperation("入库单回传")
     @PostMapping("/writeDeliveryDetails")
-    public ResponseEntity<String> writeDeliveryDetails(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= WmsInnerJobOrder.update.class) WmsInnerJobOrder wmsInnerJobOrder) {
-        String result = wmsDataExportInnerJobOrderService.writeDeliveryDetails(wmsInnerJobOrder);
+    public ResponseEntity<String> writeDeliveryDetails(@ApiParam(value = "对象，Id必传",required = true)@RequestBody WmsInnerJobOrder wmsInnerJobOrder,@ApiParam(value = "对象，Id必传",required = true)@RequestBody WmsInnerJobOrderDet wmsInnerJobOrderDet) {
+        String result = wmsDataExportInnerJobOrderService.writeDeliveryDetails(wmsInnerJobOrder,wmsInnerJobOrderDet);
         return ControllerUtil.returnDataSuccess(result,1);
     }
 
