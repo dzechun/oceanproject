@@ -78,7 +78,7 @@
     left join fantech_imes_v2.base_organization bo ON eepio.org_id = bo.organization_id
     <where>
       <if test="equipmentBarcodeId != null">
-        and eepip.equipment_barcode_id = #{equipmentBarcodeId}
+        and eepio.equipment_barcode_id = #{equipmentBarcodeId}
       </if>
       <if test="equipmentCategoryId != null">
         and eepip.equipment_category_id = #{equipmentCategoryId}
