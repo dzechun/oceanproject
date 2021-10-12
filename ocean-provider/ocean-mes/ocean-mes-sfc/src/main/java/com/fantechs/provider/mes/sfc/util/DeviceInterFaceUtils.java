@@ -268,6 +268,14 @@ public class DeviceInterFaceUtils {
     public ResponseEntity<Long> findPurchaseMaterial(String purchaseOrderCode){
          return omFeignApi.findPurchaseMaterial(purchaseOrderCode);
     }
+    /*
+     * 获取BOM下级信息
+     * */
+    public ResponseEntity<BaseProductBomDto> findNextLevelProductBomDet(SearchBaseProductBom searchBaseProductBom){
+        ResponseEntity<BaseProductBomDto> productBomDto=null;
+        productBomDto = baseFeignApi.findNextLevelProductBomDet(searchBaseProductBom);
+        return productBomDto;
+    }
 
     public void  addLog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) throws Exception {
         SysApiLog sysApiLog = new SysApiLog();

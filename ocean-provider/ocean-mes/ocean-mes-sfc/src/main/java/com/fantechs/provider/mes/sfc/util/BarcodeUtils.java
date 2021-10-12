@@ -45,6 +45,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -314,6 +315,12 @@ public class BarcodeUtils {
                 mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
             }
         }
+
+        //更新条码状态 产品条码状态(0-NG 1-OK)
+        if(StringUtils.isNotEmpty(dto.getOpResult()) && "NG".equals(dto.getOpResult()))
+            mesSfcBarcodeProcess.setBarcodeStatus((byte)0);
+        else if(StringUtils.isNotEmpty(dto.getOpResult()) && "OK".equals(dto.getOpResult()))
+            mesSfcBarcodeProcess.setBarcodeStatus((byte)1);
 
         mesSfcBarcodeProcess.setInProcessTime(new Date());
         mesSfcBarcodeProcess.setOutProcessTime(new Date());
@@ -781,6 +788,9 @@ public class BarcodeUtils {
             updateProcessDto=(UpdateProcessDto)baseExecuteResultDto.getExecuteResult();
             orgId=updateProcessDto.getOrgId();
 
+            //设置作业结果
+            updateProcessDto.setOpResult(restapiSNDataTransferApiDto.getOpResult());
+
             //检查产品条码与半成品条码关系 根据配置项工序是否验证
             String paraValue = getSysSpecItemValue("ProcessCheckProductHalfProductionRelation");
             if(paraValue.equals(restapiSNDataTransferApiDto.getProcessCode())) {
@@ -1179,33 +1189,39 @@ public class BarcodeUtils {
 
                 //设置半成品物料ID
                 updateProcessDto.setPartMaterialId(partMaterialId);
+                //展产品BOM找是否存在物料  如不存在 在工单BOM中找
+                Boolean isExist=findBomExistMaterialId(materialId,partMaterialId);
 
-                SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
-                searchMesPmWorkOrderBom.setWorkOrderId(workOrderId);
-                searchMesPmWorkOrderBom.setPartMaterialId(partMaterialId);
-                searchMesPmWorkOrderBom.setProcessId(processId);
-                ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = barcodeUtils.deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
-                if (StringUtils.isEmpty(responseEntityBom.getData())) {
-                    //工单BOM找不到半成品信息
-                    //通过配置项是否找产品BOM ProductBomCheckRelation
-                    String paraValue = getSysSpecItemValue("ProductBomCheckRelation");
-                    if ("1".equals(paraValue)) {
+                if(isExist==false) {
+                    SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
+                    searchMesPmWorkOrderBom.setWorkOrderId(workOrderId);
+                    searchMesPmWorkOrderBom.setPartMaterialId(partMaterialId);
+                    searchMesPmWorkOrderBom.setProcessId(processId);
+                    ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = barcodeUtils.deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
+                    if (StringUtils.isEmpty(responseEntityBom.getData())) {
+                        //工单BOM找不到半成品信息
+                        //通过配置项是否找产品BOM ProductBomCheckRelation
+//                    String paraValue = getSysSpecItemValue("ProductBomCheckRelation");
+//                    if ("1".equals(paraValue)) {
                         //产品BOM中是否存在物料
-                        SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
-                        searchBaseProductBom.setMaterialId(materialId);
-                        ResponseEntity<List<BaseProductBomDto>> responseEntityPB = barcodeUtils.deviceInterFaceUtils.getProductBomList(searchBaseProductBom);
-                        if (StringUtils.isNotEmpty(responseEntityPB.getData())) {
-                            List<BaseProductBomDetDto> baseProductBomDetDtos = responseEntityPB.getData().get(0).getBaseProductBomDetDtos();
-                            Long finalProcessId = processId;
-                            Long finalMaterialId = partMaterialId;
-                            Optional<BaseProductBomDetDto> productBomDetOptional = baseProductBomDetDtos.stream()
-                                    .filter(i -> finalProcessId.equals(i.getProcessId()) && finalMaterialId.equals(i.getMaterialId()))
-                                    .findFirst();
-                            if (!productBomDetOptional.isPresent()) {
-                                throw new Exception("当前工序找不到成品条码与半成品条码的关系");
-                            }
-                        }
+//                        SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
+//                        searchBaseProductBom.setMaterialId(materialId);
+//                        ResponseEntity<List<BaseProductBomDto>> responseEntityPB = barcodeUtils.deviceInterFaceUtils.getProductBomList(searchBaseProductBom);
+//                        if (StringUtils.isNotEmpty(responseEntityPB.getData())) {
+//                            List<BaseProductBomDetDto> baseProductBomDetDtos = responseEntityPB.getData().get(0).getBaseProductBomDetDtos();
+//                            Long finalProcessId = processId;
+//                            Long finalMaterialId = partMaterialId;
+//                            Optional<BaseProductBomDetDto> productBomDetOptional = baseProductBomDetDtos.stream()
+//                                    .filter(i -> finalProcessId.equals(i.getProcessId()) && finalMaterialId.equals(i.getMaterialId()))
+//                                    .findFirst();
+//                            if (!productBomDetOptional.isPresent()) {
+//                                throw new Exception("当前工序找不到成品条码与半成品条码的关系");
+//                            }
+//                        }
 
+//                    }
+
+                        throw new Exception("当前工序找不到成品条码与半成品条码的关系");
                     }
                 }
             }
@@ -1712,6 +1728,41 @@ public class BarcodeUtils {
         }
 
         return baseExecuteResultDto;
+    }
+
+    public static Boolean findBomExistMaterialId(Long materialId,Long partMaterialId){
+        SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
+        searchBaseProductBom.setMaterialId(materialId);
+        ResponseEntity<List<BaseProductBomDto>> responseEntityPB = barcodeUtils.deviceInterFaceUtils.getProductBomList(searchBaseProductBom);
+        if (StringUtils.isNotEmpty(responseEntityPB.getData())) {
+            BaseProductBomDto baseProductBomDto = responseEntityPB.getData().get(0);
+            long productBomId=baseProductBomDto.getProductBomId();
+            searchBaseProductBom.setProductBomId(productBomId);
+            ResponseEntity<BaseProductBomDto> responseEntityBom= barcodeUtils.deviceInterFaceUtils.findNextLevelProductBomDet(searchBaseProductBom);
+            if(StringUtils.isNotEmpty(responseEntityBom.getData())){
+                List<BaseProductBomDetDto> baseProductBomDetDtos = responseEntityBom.getData().getBaseProductBomDetDtos();
+                Long finalMaterialId = partMaterialId;
+                Optional<BaseProductBomDetDto> productBomDetOptional = baseProductBomDetDtos.stream()
+                        .filter(i -> finalMaterialId.equals(i.getMaterialId()))
+                        .findFirst();
+                if (!productBomDetOptional.isPresent()) {
+                    //throw new Exception("当前工序找不到成品条码与半成品条码的关系");
+                    List<BaseProductBomDetDto> productBomDetDtos=baseProductBomDetDtos.stream().filter(item -> item.getIfHaveLowerLevel().equals((byte)1)).collect(Collectors.toList());
+                    if(productBomDetDtos.size()>0){
+                        for (BaseProductBomDetDto item : productBomDetDtos) {
+                            findBomExistMaterialId(item.getMaterialId(),partMaterialId);
+                        }
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
