@@ -66,8 +66,8 @@ and wodor.despatch_order_id = #{despatchOrderId}
 </where>
     </select>
   <select id="findCountQty" resultType="java.lang.Integer">
-    SELECT COUNT(*)
-    FROM wms_in_asn_order WHERE source_order_id=#{sourceOrderId} AND order_type_id=#{orderTypeId}
+        SELECT COUNT(*)
+        FROM wms_in_asn_order WHERE source_order_id=#{sourceOrderId} AND order_type_id=#{orderTypeId}
   </select>
   <select id="findCount" resultType="java.lang.Integer">
     SELECT COUNT(*)

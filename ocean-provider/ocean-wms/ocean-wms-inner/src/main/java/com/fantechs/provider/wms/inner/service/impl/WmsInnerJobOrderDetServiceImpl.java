@@ -81,6 +81,7 @@ public class WmsInnerJobOrderDetServiceImpl extends BaseService<WmsInnerJobOrder
                 }
                 det.setPlanQty(det.getPlanQty().subtract(qty));
                 det.setDistributionQty(det.getDistributionQty().subtract(qty));
+                det.setWorkEndTime(new Date());
                 wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(det);
             }
         }

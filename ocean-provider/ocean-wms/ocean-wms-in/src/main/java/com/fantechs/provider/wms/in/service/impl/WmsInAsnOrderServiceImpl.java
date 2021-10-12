@@ -932,7 +932,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventoryDet.setReceivingDate(new Date());
             wmsInnerInventoryDet.setBarcodeStatus((byte)2);
             wmsInnerInventoryDet.setOrgId(wmsInAsnOrderDet.getOrgId());
-            wmsInnerInventoryDet.setInventoryStatusId(wmsInnerInventoryDet.getInventoryStatusId());
+            wmsInnerInventoryDet.setInventoryStatusId(wmsInAsnOrderDet.getInventoryStatusId());
             wmsInnerInventoryDets.add(wmsInnerInventoryDet);
             ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
             if(responseEntity.getCode()!=0){

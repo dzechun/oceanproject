@@ -44,18 +44,18 @@
             and bm.material_name like CONCAT('%',#{materialName},'%')
         </if>
         <if test="packingUnitName!=null and packingUnitName!=''">
-            and wii.packing_unit_name like CONCAT('%',#{packingUnitName},'#')
+            and wii.packing_unit_name like CONCAT('%',#{packingUnitName},'%')
         </if>
         <if test="inventoryStatusName!=null and inventoryStatusName!=''">
             and bis.inventory_status_name like CONCAT('%',#{inventoryStatusName},'%')
         </if>
-        <if test="lockStatus!=null and lockStatus!=''">
+        <if test="lockStatus!=null and lockStatus>=0">
             and wii.lock_status = #{lockStatus}
         </if>
-        <if test="stockLock!=null and stockLock!=''">
+        <if test="stockLock!=null and stockLock>=0">
             and wii.stock_lock = #{stockLock}
         </if>
-        <if test="qcLock!=null and qcLock!=''">
+        <if test="qcLock!=null and qcLock>=0">
             and wii.qc_lock = #{qcLock}
         </if>
         <if test="orgId!=null and orgId!=''">
@@ -82,9 +82,12 @@
         <if test="option4!=null and option4!=''">
             and wii.option4 like CONCAT('%',#{option4},'%')
         </if>
+        <if test="packingQty!=null and packingQty!=''">
+            and wii.packing_qty = #{packingQty}
+        </if>
 </where>
         group by wii.warehouse_id,wii.storage_id,wii.material_id,wii.packing_unit_name,wii.inventory_status_id,
-        wii.lock_status,wii.stock_lock,wii.qc_lock,wii.packing_qty,wii.package_specification_quantity,
+        wii.lock_status,wii.stock_lock,wii.qc_lock,wii.package_specification_quantity,
         wii.contract_code,wii.purchase_req_order_code,wii.spec,wii.option1,wii.option2,wii.option3,wii.option4
     </select>
 </mapper>

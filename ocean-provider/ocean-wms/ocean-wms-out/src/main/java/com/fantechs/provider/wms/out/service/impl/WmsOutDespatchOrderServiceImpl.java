@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderReJoReDetDto;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
@@ -228,7 +229,6 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
         int num = wmsOutDespatchOrderMapper.insertUseGeneratedKeys(record);
-        List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
         for (WmsOutDespatchOrderReJo wms : record.getWmsOutDespatchOrderReJo()) {
             SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
             searchWmsInnerJobOrderDet.setJobOrderId(wms.getJobOrderId());
@@ -250,9 +250,6 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
             wmsOutDespatchOrderReJoMapper.insertUseGeneratedKeys(wms);
             for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : list) {
                 if(StringUtils.isNotEmpty(wmsInnerJobOrderDetDto.getActualQty()) && wmsInnerJobOrderDetDto.getActualQty().compareTo(BigDecimal.ZERO)==1){
-                    if(wmsInnerJobOrderDetDto.getActualQty().compareTo(wmsInnerJobOrderDetDto.getDistributionQty())==-1){
-                        wmsInnerJobOrderDets.add(wmsInnerJobOrderDetDto);
-                    }
                     WmsOutDespatchOrderReJoReDet wmsOutDespatchOrderReJoReDet = new WmsOutDespatchOrderReJoReDetDto();
                     wmsOutDespatchOrderReJoReDet.setJobOrderDetId(wmsInnerJobOrderDetDto.getJobOrderDetId());
                     wmsOutDespatchOrderReJoReDet.setDespatchOrderReJoId(wms.getDespatchOrderReJoId());
@@ -263,12 +260,6 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     wmsOutDespatchOrderReJoReDet.setOrgId(sysUser.getOrganizationId());
                     num +=wmsOutDespatchOrderReJoReDetMapper.insertSelective(wmsOutDespatchOrderReJoReDet);
                 }
-            }
-        }
-        if(wmsInnerJobOrderDets.size()>0){
-            ResponseEntity responseEntity = innerFeignApi.pickDisQty(wmsInnerJobOrderDets);
-            if(responseEntity.getCode()!=0){
-                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
             }
         }
         return record.getDespatchOrderId().toString();
@@ -478,18 +469,35 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 break;
         }
         //查询出库单对应拣货单是否都已经发运完成
-        Integer total1 = wmsOutDespatchOrderReJoMapper.findCountQty(wmsOutDeliveryOrder.getDeliveryOrderId(),wmsOutDeliveryOrder.getOrderTypeId());
-        Integer totalCount1 = wmsOutDespatchOrderReJoMapper.findCount(wmsOutDeliveryOrder.getDeliveryOrderId(),wmsOutDeliveryOrder.getOrderTypeId());
-        if(total1.equals(totalCount1)){
-            //更新调拨出库单状态
-            num+=wmsOutDespatchOrderReJoMapper.writeOutQty((byte)5,wmsOutDeliveryOrder.getDeliveryOrderId());
-            //领料出库回传接口（五环） 在拣货作业单完成时回传
+        if(wmsOutDeliveryOrder.getOrderTypeId()==2) {
+            Integer total1 = wmsOutDespatchOrderReJoMapper.findCountQty(wmsOutDeliveryOrder.getDeliveryOrderId(), wmsOutDeliveryOrder.getOrderTypeId());
+            Integer totalCount1 = wmsOutDespatchOrderReJoMapper.findCount(wmsOutDeliveryOrder.getDeliveryOrderId(), wmsOutDeliveryOrder.getOrderTypeId());
+            if (total1.equals(totalCount1)) {
+                //更新调拨出库单状态
+                num += wmsOutDespatchOrderReJoMapper.writeOutQty((byte) 5, wmsOutDeliveryOrder.getDeliveryOrderId());
+                //领料出库回传接口（五环） 在拣货作业单完成时回传
 //            if(wmsOutDeliveryOrder.getOrderTypeId().toString().equals("8")){
 //                engFeignApi.reportDeliveryOrderOrder(wmsOutDeliveryOrder);
 //            }
 
-        }else{
-            num+=wmsOutDespatchOrderReJoMapper.writeOutQty((byte)4,wmsOutDeliveryOrder.getDeliveryOrderId());
+            } else {
+                num += wmsOutDespatchOrderReJoMapper.writeOutQty((byte) 4, wmsOutDeliveryOrder.getDeliveryOrderId());
+            }
+        }else {
+            Example example = new Example(WmsOutDeliveryOrderDet.class);
+            example.createCriteria().andEqualTo("deliveryOrderId",wmsOutDeliveryOrder.getDeliveryOrderId());
+            List<WmsOutDeliveryOrderDet> list = wmsOutDeliveryOrderDetMapper.selectByExample(example);
+            BigDecimal totalQty = list.stream().map(WmsOutDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal totalDisQty = list.stream().map(WmsOutDeliveryOrderDet::getDispatchQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            WmsOutDeliveryOrder wms =new WmsOutDeliveryOrder();
+            wms.setDeliveryOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
+            if(totalQty.compareTo(totalDisQty)==0){
+                wms.setOrderStatus((byte)5);
+
+            }else {
+                wms.setOrderStatus((byte)4);
+            }
+            wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wms);
         }
        return num;
     }

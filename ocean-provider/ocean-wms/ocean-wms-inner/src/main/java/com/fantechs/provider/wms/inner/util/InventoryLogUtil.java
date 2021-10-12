@@ -67,7 +67,7 @@ public class InventoryLogUtil {
         //收货
         wmsInnerInventoryLog.setJobOrderType(jobStatus);
         wmsInnerInventoryLog.setAddOrSubtract(addOrSubtract);
-        if(jobStatus==3 && addOrSubtract==1){
+        if(addOrSubtract==1){
             wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getInStorageId());
         }else {
             wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getOutStorageId());

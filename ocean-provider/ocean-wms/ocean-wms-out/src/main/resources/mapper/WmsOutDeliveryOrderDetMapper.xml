@@ -103,7 +103,7 @@ wodod.option10
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name,
-    CASE WHEN IFNULL(wodod.packing_unit_name,'')='' THEN bmtab.main_unit ELSE wodod.packing_unit_name END AS packing_unit_name
+    CASE WHEN IFNULL(wodod.packing_unit_name,'')='' THEN bmt.main_unit ELSE wodod.packing_unit_name END AS packing_unit_name
     from fantech_imes_v2.wms_out_delivery_order_det wodod
     LEFT JOIN fantech_imes_v2.base_material bm ON wodod.material_id = bm.material_id
     LEFT JOIN fantech_imes_v2.base_warehouse bw ON wodod.warehouse_id = bw.warehouse_id
@@ -113,7 +113,6 @@ wodod.option10
     LEFT JOIN ocean_v2.sys_user su ON wodod.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wodod.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON wodod.org_id = bo.organization_id
-    LEFT JOIN fantech_imes_v2.base_material_tab bmtab ON bm.material_id=bmtab.material_id
     <where>
       <if test="deliveryOrderId != null">
         and wodod.delivery_order_id = #{deliveryOrderId}
