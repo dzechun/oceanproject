@@ -151,10 +151,6 @@ public interface BaseFeignApi {
     @PostMapping("/baseStorageMaterial/detail")
     ResponseEntity<BaseStorageMaterial> detailStorageMaterial(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
-    @ApiOperation("根据条件查询产品BOM")
-    @PostMapping("/baseProductBom/findList")
-    ResponseEntity<List<BaseProductBomDto>> findProductBomList(@RequestBody SearchBaseProductBom searchBaseProductBom);
-
     @ApiOperation("获取工序的详情")
     @PostMapping("/baseProcess/detail")
     ResponseEntity<BaseProcess> processDetail(@ApiParam(value = "工序ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
@@ -549,5 +545,13 @@ public interface BaseFeignApi {
     @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
     @PostMapping("/saveByApi")
     ResponseEntity saveByApi(@ApiParam(value = "必传：routeCode、organizationId",required = true)@RequestBody @Validated List<BaseBadnessPhenotype> baseBadnessPhenotypes);
+
+    @ApiOperation("查询BOM下级明细")
+    @PostMapping("/baseProductBom/findNextLevelProductBomDet")
+    ResponseEntity<BaseProductBomDto> findNextLevelProductBomDet(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductBom searchBaseProductBom);
+
+    @ApiOperation("BOM列表")
+    @PostMapping("/baseProductBom/findList")
+    ResponseEntity<List<BaseProductBomDto>> findProductBomList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductBom searchBaseProductBom);
 
 }

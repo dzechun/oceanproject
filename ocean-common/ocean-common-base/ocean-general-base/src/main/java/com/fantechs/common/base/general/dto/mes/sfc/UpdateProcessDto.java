@@ -46,6 +46,8 @@ public class UpdateProcessDto implements Serializable {
     private String equipmentId;
     // 工艺路线ID
     private Long routeId;
+    // 作业结果
+    private String opResult;
     // 不良现象代码（检验结果是OK时不良现象代码写N/A）
     private String badnessPhenotypeCode;
     // 作业人员ID

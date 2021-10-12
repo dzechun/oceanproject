@@ -26,6 +26,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.*;
+import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -407,7 +408,16 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerInventory.setJobStatus((byte) 1);
             wmsInnerInventory.setStorageId(baseStorage.getStorageId());
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
+
+            //库存日志
+            InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrderDto,oldDto,wmsInnerInventory.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
+            InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrderDto,oldDto,BigDecimal.ZERO,wmsInnerInventory.getPackingQty(),(byte)3,(byte)1);
         } else {
+
+            //库存日志
+            InventoryLogUtil.addLog(wmsInnerInventory_old,wmsInnerJobOrderDto,oldDto,wmsInnerInventory.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
+            InventoryLogUtil.addLog(wmsInnerInventory_old,wmsInnerJobOrderDto,oldDto,wmsInnerInventory_old.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)1);
+
             wmsInnerInventory_old.setPackingQty(wmsInnerInventory_old.getPackingQty() != null ? wmsInnerInventory_old.getPackingQty().add(wmsInnerInventory.getPackingQty()) : wmsInnerInventory.getPackingQty());
             wmsInnerInventory_old.setRelevanceOrderCode(wmsInnerInventory.getRelevanceOrderCode());
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory_old);

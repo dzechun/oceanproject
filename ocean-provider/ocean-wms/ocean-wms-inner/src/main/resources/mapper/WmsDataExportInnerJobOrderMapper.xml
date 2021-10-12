@@ -61,7 +61,7 @@
     LEFT JOIN ocean_v2.sys_user u ON wijo.modified_user_id=u.user_id
     <where>
       <if test="jobOrderId!=null and jobOrderId!=''">
-        and wijod.job_order_id = #{jobOrderId} and wijod.option3!='finish'
+        and wijod.job_order_id = #{jobOrderId} and IFNULL(wijod.option3,'')!='finish'
       </if>
       <if test="jobOrderDetId!=null and jobOrderDetId!=''">
         and wijod.job_order_det_id = #{jobOrderDetId}

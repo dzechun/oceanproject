@@ -392,7 +392,6 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 || wmsOutDeliveryOrderDto.getTotalPickingQty().compareTo(wmsOutDeliveryOrderDto.getTotalPackingQty()) == 1){
             wmsOutDeliveryOrderDto.setOrderStatus((byte)3);
         }
-
         int i = 0;
         if(!wmsOutDeliveryOrderDto.getOrderStatus().equals(orderStatus)){
             i = wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDto);
