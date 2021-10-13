@@ -45,9 +45,12 @@ public class EngPurchaseReqOrderServiceImpl extends BaseService<EngPurchaseReqOr
     public int saveByApi(EngPurchaseReqOrder engPurchaseReqOrder) {
         Example example = new Example(EngPurchaseReqOrder.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("purchaseReqOrderCode",engPurchaseReqOrder.getPurchaseReqOrderCode());
-        criteria.andEqualTo("dominantTermCode",engPurchaseReqOrder.getDominantTermCode());
-        criteria.andEqualTo("materialCode",engPurchaseReqOrder.getMaterialCode());
+//        criteria.andEqualTo("purchaseReqOrderCode",engPurchaseReqOrder.getPurchaseReqOrderCode());
+//        criteria.andEqualTo("dominantTermCode",engPurchaseReqOrder.getDominantTermCode());
+//        criteria.andEqualTo("materialCode",engPurchaseReqOrder.getMaterialCode());
+
+        // option3 请购单明细ID
+        criteria.andEqualTo("option3",engPurchaseReqOrder.getOption3());
         criteria.andEqualTo("orgId",engPurchaseReqOrder.getOrgId());
 
         //根据合同号和主项次号查找现有数据 存在则更新 不存在则新增
