@@ -1,7 +1,9 @@
 package com.fantechs.provider.qms.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
@@ -17,6 +19,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderMapper;
@@ -45,7 +48,7 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
     @Resource
     private QmsIpqcInspectionOrderMapper qmsIpqcInspectionOrderMapper;
     @Resource
-    private SFCFeignApi sfcFeignApi;
+    private SecurityFeignApi securityFeignApi;
     @Resource
     private PMFeignApi pmFeignApi;
 
@@ -65,7 +68,7 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
         QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet = qmsIpqcInspectionOrderDetMapper.selectByPrimaryKey(qmsIpqcInspectionOrderDetId);
         QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.selectByPrimaryKey(qmsIpqcInspectionOrderDet.getIpqcInspectionOrderId());
 
-        MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(barcode).getData();
+       /* MesSfcWorkOrderBarcode workOrderBarcode = sfcFeignApi.findBarcode(barcode).getData();
         if(StringUtils.isNotEmpty(qmsIpqcInspectionOrder.getWorkOrderId())) {
             if (StringUtils.isEmpty(workOrderBarcode)) {
                 throw new BizErrorException("无该条码对应工单");
@@ -82,6 +85,35 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
             }
         }else if(StringUtils.isNotEmpty(qmsIpqcInspectionOrder.getMaterialId())) {
             bool = true;
+        }*/
+
+        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrder.getWorkOrderId())) {
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("WorkOrderPositionOnBarcodeProduct");
+            List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            String paraValue = sysSpecItemList.get(0).getParaValue();
+            int beginIndex = 0;
+            int endIndex = 0;
+            if (StringUtils.isNotEmpty(paraValue)) {
+                String[] arry = paraValue.split("-");
+                if (arry.length == 2) {
+                    beginIndex = Integer.parseInt(arry[0]);
+                    endIndex = beginIndex + Integer.parseInt(arry[1]);
+                }
+            }
+            String workOrderCode = barcode.substring(beginIndex, endIndex);
+
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
+            searchMesPmWorkOrder.setCodeQueryMark(1);
+            List<MesPmWorkOrderDto> workOrderList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
+            if (StringUtils.isEmpty(workOrderList)) {
+                throw new BizErrorException("查无此条码对应工单");
+            }
+            MesPmWorkOrderDto mesPmWorkOrderDto = workOrderList.get(0);
+            if (!qmsIpqcInspectionOrder.getWorkOrderId().equals(mesPmWorkOrderDto.getWorkOrderId())) {
+                throw new BizErrorException("该条码对应的工单号与检验单的工单号不一致");
+            }
         }
 
         return bool;

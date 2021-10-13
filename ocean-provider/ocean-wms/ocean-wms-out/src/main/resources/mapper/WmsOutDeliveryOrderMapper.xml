@@ -9,6 +9,7 @@
     <result column="source_order_id" jdbcType="BIGINT" property="deliveryOrderCode" />
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="platform_id" jdbcType="BIGINT" property="platformId"/>
     <result column="shipment_enterprise_id" jdbcType="BIGINT" property="shipmentEnterpriseId" />
     <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
@@ -30,6 +31,7 @@
     <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress" />
     <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
     <result column="descr" jdbcType="VARCHAR" property="descr" />
+    <result column="if_created_job_order" jdbcType="TINYINT" property="ifCreatedJobOrder"/>
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -55,6 +57,7 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="platform_name" jdbcType="VARCHAR" property="platformName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -62,11 +65,12 @@
     wodo.source_order_id,
     wodo.material_owner_id,
     wodo.supplier_id,
+    wodo.platform_id,
     wodo.shipment_enterprise_id,
     wodo.order_type_id,
     wodo.warehouse_id,
     wodo.storage_id,
-wodo.customer_id,
+    wodo.customer_id,
     wodo.delivery_order_code,
     wodo.customer_order_code,
     wodo.related_order_code_1,
@@ -83,6 +87,7 @@ wodo.customer_id,
     wodo.e_mail_address,
     wodo.detailed_address,
     wodo.descr,
+    wodo.if_created_job_order,
     wodo.order_status,
     wodo.audit_status,
     wodo.`status`,
@@ -105,6 +110,7 @@ wodo.customer_id,
     sus.user_name AS modified_user_name,
     bo.organization_name,
     su.supplier_name,
+    bp.platform_name,
     sus.supplier_name as 'customer_name'
     from fantech_imes_v2.wms_out_delivery_order wodo
     LEFT JOIN fantech_imes_v2.base_material_owner bmo ON wodo.material_owner_id = bmo.material_owner_id
@@ -112,6 +118,7 @@ wodo.customer_id,
     LEFT JOIN fantech_imes_v2.base_storage bs ON wodo.storage_id = bs.storage_id
     LEFT JOIN base_supplier su on  su.supplier_id = wodo.supplier_id
     LEFT JOIN base_supplier sus on  sus.supplier_id = wodo.customer_id
+    LEFT JOIN base_platform bp on bp.platform_id = wodo.platform_id
     LEFT JOIN ocean_v2.sys_user su ON wodo.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wodo.modified_user_id = sus.user_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON wodo.org_id = bo.organization_id

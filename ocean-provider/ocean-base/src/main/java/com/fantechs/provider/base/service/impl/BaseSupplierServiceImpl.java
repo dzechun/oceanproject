@@ -120,6 +120,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         }
         Example example = new Example(BaseSupplier.class);
         example.createCriteria().andEqualTo("supplierCode",record.getSupplierCode())
+                                .andEqualTo("supplierType",record.getSupplierType())
                                 .andEqualTo("organizationId", currentUser.getOrganizationId());
         List<BaseSupplier> list = baseSupplierMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(list)){
@@ -149,6 +150,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         }
         Example example = new Example(BaseSupplier.class);
         example.createCriteria().andEqualTo("supplierCode",entity.getSupplierCode())
+                                .andEqualTo("supplierType",entity.getSupplierType())
                                 .andEqualTo("organizationId", currentUser.getOrganizationId());
         BaseSupplier baseSupplier = baseSupplierMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(baseSupplier)&&!baseSupplier.getSupplierId().equals(entity.getSupplierId())){
@@ -247,6 +249,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("supplierCode",supplierCode);
+            criteria.andEqualTo("supplierType",supplierType);
             if (StringUtils.isNotEmpty(baseSupplierMapper.selectOneByExample(example))){
                 fail.add(i+4);
                 continue;

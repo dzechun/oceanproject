@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -54,13 +53,14 @@ public class EngContractQtyOrderServiceImpl extends BaseService<EngContractQtyOr
     public int saveByApi(EngContractQtyOrder engContractQtyOrder) {
         //设置已发量为0 未发量=采购量
         //engContractQtyOrder.setIssuedQty("0");
-        engContractQtyOrder.setNotIssueQty(new BigDecimal(engContractQtyOrder.getPurQty()));
-
+        engContractQtyOrder.setNotIssueQty(engContractQtyOrder.getPurQty());
         Example example = new Example(EngContractQtyOrder.class);
         Example.Criteria criteria = example.createCriteria();
 //        criteria.andEqualTo("contractCode",engContractQtyOrder.getContractCode());
 //        criteria.andEqualTo("dominantTermCode",engContractQtyOrder.getDominantTermCode());
 //        criteria.andEqualTo("materialCode",engContractQtyOrder.getMaterialCode());
+
+        // option1 合同量单明细ID
         criteria.andEqualTo("option1",engContractQtyOrder.getOption1());
         criteria.andEqualTo("orgId",engContractQtyOrder.getOrgId());
 

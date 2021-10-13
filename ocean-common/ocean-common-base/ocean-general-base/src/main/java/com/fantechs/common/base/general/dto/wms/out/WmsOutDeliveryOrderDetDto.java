@@ -74,4 +74,11 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
     @Transient
     @ApiModelProperty(name = "inventoryStatusName",value = "库存状态")
     private String inventoryStatusName;
+
+    /**
+     * 月台名称
+     */
+    @Transient
+    @ApiModelProperty(name = "platformName",value = "月台")
+    private String platformName;
 }

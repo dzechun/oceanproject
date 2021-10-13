@@ -97,10 +97,14 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         criteria.andEqualTo("inspectionOrderDetId",inspectionOrderDetId);
         qmsInspectionOrderDetSampleMapper.deleteByExample(example);
 
+        Map<String,Object> map = new HashMap();
+        map.put("inspectionOrderDetId",inspectionOrderDetId);
+        QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.findDetList(map).get(0);
+
         //未检验的条码默认ok
         Example example1 = new Example(QmsInspectionOrderDetSample.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("inspectionOrderId",qmsInspectionOrderDetSampleList.get(0).getInspectionOrderId());
+        criteria1.andEqualTo("inspectionOrderId",qmsInspectionOrderDet.getInspectionOrderId());
         List<QmsInspectionOrderDetSample> inspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
         if (inspectionOrderDetSamples.size() > qmsInspectionOrderDetSampleList.size()) {
             List<String> barcodes = new LinkedList<>();
@@ -114,6 +118,7 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
                     qmsInspectionOrderDetSample.setBarcode(inspectionOrderDetSample.getBarcode());
                     qmsInspectionOrderDetSample.setInspectionOrderDetId(inspectionOrderDetId);
                     qmsInspectionOrderDetSample.setSampleValue("OK");
+                    qmsInspectionOrderDetSample.setOrgId(user.getOrganizationId());
                     qmsInspectionOrderDetSampleList.add(qmsInspectionOrderDetSample);
                 }
             }
@@ -134,9 +139,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         }
         i = qmsInspectionOrderDetSampleMapper.insertList(qmsInspectionOrderDetSampleList);
 
-        Map<String,Object> map = new HashMap();
-        map.put("inspectionOrderDetId",inspectionOrderDetId);
-        QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.findDetList(map).get(0);
 
         //返写不良数量、检验结果
         qmsInspectionOrderDet.setBadnessQty(new BigDecimal(badnessQty));

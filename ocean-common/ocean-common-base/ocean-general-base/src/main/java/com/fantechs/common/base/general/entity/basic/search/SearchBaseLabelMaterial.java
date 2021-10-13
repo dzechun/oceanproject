@@ -21,6 +21,8 @@ public class SearchBaseLabelMaterial extends BaseQuery implements Serializable {
     private String materialId;
     @ApiModelProperty("标签类型")
     private String labelCategoryId;
+    @ApiModelProperty("标签类别编码")
+    private String labelCategoryCode;
     @ApiModelProperty("标签信息")
     private String labelId;
     @ApiModelProperty("工序")

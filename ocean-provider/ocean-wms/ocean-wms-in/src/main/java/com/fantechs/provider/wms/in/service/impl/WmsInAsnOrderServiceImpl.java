@@ -716,7 +716,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             //获取当前组织生成的
             //true
             if(asnMap.containsKey(sysUser.getOrganizationId())){
-                Long asnOrderId = Long.parseLong(redisUtil.get("pallet_id").toString());
+                Long asnOrderId = asnMap.get(sysUser.getOrganizationId());
                 WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
                 if(StringUtils.isEmpty(wmsInAsnOrder)){
                     throw new BizErrorException(ErrorCodeEnum.GL9999404);

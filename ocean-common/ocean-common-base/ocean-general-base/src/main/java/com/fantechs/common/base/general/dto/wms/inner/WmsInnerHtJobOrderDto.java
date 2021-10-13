@@ -64,4 +64,11 @@ public class WmsInnerHtJobOrderDto extends WmsInnerHtJobOrder implements Seriali
     @Transient
     @ApiModelProperty(name = "isPallet",value = "是否栈板自动生成(1-是，0-否) PDA标识字段")
     private Byte isPallet;
+
+    /**
+     * 月台名称
+     */
+    @Transient
+    @ApiModelProperty(name = "platformName",value = "月台")
+    private String platformName;
 }

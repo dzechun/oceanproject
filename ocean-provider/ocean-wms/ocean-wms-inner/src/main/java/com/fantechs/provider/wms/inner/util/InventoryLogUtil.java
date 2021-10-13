@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.utils.DateUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryLogService;
 import org.springframework.stereotype.Component;
 
@@ -72,7 +73,11 @@ public class InventoryLogUtil {
         }else {
             wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
         }
-        wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrderDet.getWarehouseId());
+        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getWarehouseId())){
+            wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+        }else {
+            wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrderDet.getWarehouseId());
+        }
         wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
         wmsInnerInventoryLog.setProductionDate(wmsInnerJobOrderDet.getProductionDate());
         wmsInnerInventoryLog.setExpiredDate(wmsInnerJobOrderDet.getExpiredDate());
