@@ -63,8 +63,8 @@ public class WmsOutDeliveryOrderController {
 
     @ApiOperation(value = "创建作业单",notes = "创建作业单")
     @PostMapping("/createJobOrder")
-    public ResponseEntity createJobOrder(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id) {
-        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.createJobOrder(id));
+    public ResponseEntity createJobOrder(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id,@RequestParam(required = false) Long platformId) {
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.createJobOrder(id,platformId));
     }
 
     @ApiOperation("删除")

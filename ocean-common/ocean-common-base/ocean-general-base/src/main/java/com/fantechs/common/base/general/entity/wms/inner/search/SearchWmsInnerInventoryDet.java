@@ -1,11 +1,13 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @Author mr.lei
@@ -58,4 +60,13 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
 
     @ApiModelProperty("检验单编码是否为空  0-否 1-是")
     private Integer ifInspectionOrderCodeNull;
+
+    @ApiModelProperty(name = "deliveryOrderCode",value = "发货单号")
+    private String deliveryOrderCode;
+
+    @ApiModelProperty(name = "barcodeStatus",value = "条码状态")
+    private String barcodeStatus;
+
+    @ApiModelProperty(name="qcDate",value = "质检日期")
+    private String qcDate;
 }

@@ -1,12 +1,12 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
+import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryDetImport;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
@@ -68,7 +68,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
 
     @Override
     public List<EngPackingOrderSummaryDetDto> findList(Map<String, Object> map) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
         return engPackingOrderSummaryDetMapper.findList(map);
     }
@@ -76,7 +76,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
     public int save(EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto) {
         if(StringUtils.isEmpty(engPackingOrderSummaryDetDto.getCartonCode()))
             throw new BizErrorException("包装箱号不能为空");
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         engPackingOrderSummaryDetDto.setStatus((byte)1);
         engPackingOrderSummaryDetDto.setOrgId(user.getOrganizationId());
         EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(engPackingOrderSummaryDetDto.getPackingOrderSummaryId());
@@ -102,7 +102,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
     public int batchAdd(List<EngPackingOrderSummaryDetDto> engPackingOrderSummaryDetDtos) {
         List<EngPackingOrderSummaryDet> ins = new ArrayList<EngPackingOrderSummaryDet>();
         List<EngHtPackingOrderSummaryDet> engHtPackingOrderSummaryDets = new ArrayList<EngHtPackingOrderSummaryDet>();
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         int result =1;
         for(EngPackingOrderSummaryDetDto det : engPackingOrderSummaryDetDtos) {
 
@@ -143,14 +143,6 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             return result;
 
 
-    }
-
-    public SysUser getUser(){
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return currentUser;
     }
 
     public List<BaseSupplierReUser> getSupplier(Long userId){
@@ -236,7 +228,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<EngPackingOrderSummaryDetImport> engPackingOrderSummaryDetImports,Long packingOrderSummaryId) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
@@ -330,7 +322,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
 
     @Override
     public List<EngPackingOrderSummaryDetDto> findListByIds(String ids) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
@@ -347,6 +339,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
         }
         return list;
     }
+
 
     public EngPackingOrderSummary getEngPackingOrderSummary(Long userId, String code,Long packingOrderId){
         Example example = new Example(EngPackingOrderSummary.class);
@@ -432,6 +425,49 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 throw new BizErrorException("添加失败，合同量单与请购单号未匹配到请购单");
             }
         }
+    }
+
+    @Override
+    public int addByContractQtyOrder(List<EngContractQtyOrderAndPurOrderDto> engContractQtyOrderAndPurOrderDtos,Long packingOrderSummaryId) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        EngPackingOrderSummary engPackingOrderSummary = engPackingOrderSummaryMapper.selectByPrimaryKey(packingOrderSummaryId);
+        List<EngPackingOrderSummaryDet> detList = new ArrayList<>();
+        List<EngHtPackingOrderSummaryDet> htList = new ArrayList<>();
+
+        int i = 0;
+        if(StringUtils.isNotEmpty(engContractQtyOrderAndPurOrderDtos)){
+            for(EngContractQtyOrderAndPurOrderDto dto: engContractQtyOrderAndPurOrderDtos) {
+                EngPackingOrderSummaryDet det = new EngPackingOrderSummaryDet();
+                det.setPackingOrderSummaryId(engPackingOrderSummary.getPackingOrderSummaryId());
+                det.setCartonCode(engPackingOrderSummary.getCartonCode());
+                det.setLocationNum(dto.getLocationNum());
+                det.setDominantTermCode(dto.getDominantTermCode());
+                det.setDeviceCode(dto.getDeviceCode());
+                det.setMaterialId(dto.getMaterialId());
+                det.setUnitName(dto.getMainUnit());
+                det.setQty(dto.getNotIssueQty());
+                det.setCreateTime(new Date());
+                det.setCreateUserId(user.getUserId());
+                det.setModifiedTime(new Date());
+                det.setModifiedUserId(user.getUserId());
+                det.setStatus((byte)1);
+                det.setOrgId(user.getOrganizationId());
+                detList.add(det);
+
+                EngHtPackingOrderSummaryDet ht = new EngHtPackingOrderSummaryDet();
+                BeanUtils.copyProperties(det,ht);
+                htList.add(ht);
+            }
+
+            if(StringUtils.isNotEmpty(detList)){
+                i = engPackingOrderSummaryDetMapper.insertList(detList);
+            }
+            if(StringUtils.isNotEmpty(htList)){
+                engHtPackingOrderSummaryDetMapper.insertList(htList);
+            }
+
+        }
+        return i;
     }
 
 }

@@ -7,6 +7,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
+import com.fantechs.common.base.general.dto.basic.BaseLabelMaterialDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
@@ -17,6 +18,8 @@ import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelMaterial;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
@@ -211,6 +214,26 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     public LabelRuteDto findLabelRute(Long workOrderId, Byte barcodeType) {
         LabelRuteDto labelRuteDto = null;
+        //查询工单是否绑定条码规则
+        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+        searchMesPmWorkOrder.setWorkOrderId(workOrderId);
+        MesPmWorkOrderDto mesPmWorkOrder = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
+        if(StringUtils.isEmpty(mesPmWorkOrder.getBarcodeRuleSetId())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404,"工单未绑定条码规则");
+        }
+        //查询物料是否绑定标签模版
+        SearchBaseLabelMaterial searchBaseLabelMaterial = new SearchBaseLabelMaterial();
+        searchBaseLabelMaterial.setMaterialId(mesPmWorkOrder.getMaterialId().toString());
+        if(barcodeType==2){
+            searchBaseLabelMaterial.setLabelCategoryCode("01");
+        }else if(barcodeType==4){
+            searchBaseLabelMaterial.setLabelCategoryCode("02");
+        }
+        List<BaseLabelMaterialDto> baseLabelMaterialDtos = baseFeignApi.findLabelMaterialList(searchBaseLabelMaterial).getData();
+        if(StringUtils.isEmpty(baseLabelMaterialDtos) || baseLabelMaterialDtos.size()<1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404,"物料未绑定标签模版");
+        }
+
         switch (barcodeType){
             case 2:
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("01",workOrderId);
@@ -220,7 +243,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 break;
         }
         if(StringUtils.isEmpty(labelRuteDto)||StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),barcodeType==2?"未匹配到工单绑定的条码规则":"未匹配到销售订单绑定的条码规则");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),barcodeType==2?"匹配工单条码规则失败":"匹配到销售订单条码规则失败");
         }
         return labelRuteDto;
     }

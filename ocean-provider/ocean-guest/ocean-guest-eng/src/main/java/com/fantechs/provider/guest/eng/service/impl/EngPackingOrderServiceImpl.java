@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
+import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
@@ -22,10 +23,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.guest.eng.mapper.EngHtPackingOrderMapper;
-import com.fantechs.provider.guest.eng.mapper.EngPackingOrderMapper;
-import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
-import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryMapper;
+import com.fantechs.provider.guest.eng.mapper.*;
 import com.fantechs.provider.guest.eng.service.EngDataExportEngPackingOrderService;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderService;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +57,8 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     private EngDataExportEngPackingOrderService engDataExportEngPackingOrderService;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private EngContractQtyOrderMapper engContractQtyOrderMapper;
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
@@ -181,6 +182,28 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                 engPackingOrderSummaryDetDto.setModifiedTime(new Date());
                 engPackingOrderSummaryDetDto.setModifiedUserId(user.getUserId());
                 engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDetDto);
+
+                //根据装箱清单数量回写采购量单
+                //校验合同量单
+                Example qtyExample = new Example(EngContractQtyOrder.class);
+                Example.Criteria qtyCriteria = qtyExample.createCriteria();
+                qtyCriteria.andEqualTo("contractCode",engPackingOrderSummaryDto.getContractCode());
+                qtyCriteria.andEqualTo("dominantTermCode",engPackingOrderSummaryDetDto.getDominantTermCode());
+                qtyCriteria.andEqualTo("deviceCode",engPackingOrderSummaryDetDto.getDeviceCode());
+                qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDetDto.getMaterialCode());
+                qtyCriteria.andEqualTo("locationNum",engPackingOrderSummaryDetDto.getLocationNum());
+                List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
+                if(StringUtils.isNotEmpty(engContractQtyOrders)){
+                   EngContractQtyOrder engContractQtyOrder = engContractQtyOrders.get(0);
+                   BigDecimal iss = engContractQtyOrder.getIssuedQty().add(engPackingOrderSummaryDetDto.getQty());
+                    engContractQtyOrder.setIssuedQty(iss);
+                   if(engContractQtyOrder.getPurQty().compareTo(iss)<=0){
+                       engContractQtyOrder.setNotIssueQty(new BigDecimal("0"));
+                   }else{
+                       engContractQtyOrder.setNotIssueQty(engContractQtyOrder.getPurQty().subtract(iss));
+                   }
+                    engContractQtyOrderMapper.updateByPrimaryKey(engContractQtyOrder);
+                }
             }
             engPackingOrderSummaryDto.setPutawayStorageId(putStorageId);
             engPackingOrderSummaryDto.setSummaryStatus((byte)1);

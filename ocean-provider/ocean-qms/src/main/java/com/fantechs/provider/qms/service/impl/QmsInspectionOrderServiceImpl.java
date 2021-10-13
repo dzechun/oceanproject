@@ -92,7 +92,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int batchQualified(Long inspectionOrderId){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(inspectionOrderId);
 
         Example example = new Example(QmsInspectionOrderDet.class);
@@ -118,6 +121,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 inspectionOrderDetSample.setInspectionOrderDetId(qmsInspectionOrderDet.getInspectionOrderDetId());
                 inspectionOrderDetSample.setBarcode(qmsInspectionOrderDetSample.getBarcode());
                 inspectionOrderDetSample.setSampleValue("OK");
+                inspectionOrderDetSample.setOrgId(user.getOrganizationId());
                 inspectionOrderDetSampleList.add(inspectionOrderDetSample);
             }
             qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
@@ -135,7 +139,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int batchSubmit(Long inspectionOrderId){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(inspectionOrderId);
 
         Example example = new Example(QmsInspectionOrderDet.class);
@@ -162,6 +169,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     inspectionOrderDetSample.setInspectionOrderDetId(qmsInspectionOrderDet.getInspectionOrderDetId());
                     inspectionOrderDetSample.setBarcode(qmsInspectionOrderDetSample.getBarcode());
                     inspectionOrderDetSample.setSampleValue("OK");
+                    inspectionOrderDetSample.setOrgId(user.getOrganizationId());
                     inspectionOrderDetSampleList.add(inspectionOrderDetSample);
                 }
                 qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
@@ -169,7 +177,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         List<QmsInspectionOrderDetSample> barcodes = qmsInspectionOrderDetSampleService.findBarcodes(inspectionOrderId);
-        List<QmsInspectionOrderDetSample> unQualifiedBarcodes = barcodes.stream().filter(item -> item.getBarcodeStatus() == (byte) 0).collect(Collectors.toList());
+        List<QmsInspectionOrderDetSample> unQualifiedBarcodes = barcodes.stream().filter(item -> item.getBarcodeStatus()!=null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
         if(barcodes.size() == unQualifiedBarcodes.size()){
             qmsInspectionOrder.setInspectionResult((byte)0);
         }else {

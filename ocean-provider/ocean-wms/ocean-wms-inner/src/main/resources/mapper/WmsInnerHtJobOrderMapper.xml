@@ -13,6 +13,7 @@
     <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
     <result column="working_area_id" jdbcType="BIGINT" property="workingAreaId" />
     <result column="worker_id" jdbcType="BIGINT" property="workerId" />
+      <result column="platform_id" jdbcType="BIGINT" property="platformId"/>
     <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode" />
     <result column="job_order_type" jdbcType="TINYINT" property="jobOrderType" />
     <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
@@ -44,6 +45,7 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="isPallet" jdbcType="TINYINT" property="isPallet"/>
+      <result column="platform_name" jdbcType="VARCHAR" property="platformName"/>
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -54,6 +56,7 @@
         wipo.order_type_id,
         wipo.working_area_id,
         wipo.worker_id,
+wipo.platform_id,
         wipo.job_order_code,
         wipo.job_order_type,
         wipo.related_order_code,
@@ -80,12 +83,14 @@
     ,bmo.material_owner_name,boy.order_type_name,bw.warehouse_name,wr.user_name as work_name,su.user_name AS
     create_user_name,
     sus.user_name AS modified_user_name,
-    bo.organization_name AS organization_Name
+    bo.organization_name AS organization_Name,
+      bp.platform_name,
     FROM wms_inner_ht_job_order wipo
     LEFT JOIN base_material_owner bmo ON wipo.material_owner_id=bmo.material_owner_id
     LEFT JOIN base_warehouse bw ON wipo.warehouse_id = bw.warehouse_id
     LEFT join base_order_type boy on wipo.order_type_id = boy.order_type_id
     LEFT JOIN base_worker bwr ON wipo.worker_id = bwr.worker_id
+      left JOIN base_platform bp on wipo.platform_id = bp.platform_id
     LEFT JOIN ocean_v2.sys_user wr ON bwr.user_id = wr.user_id
     LEFT JOIN ocean_v2.sys_user su ON wipo.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wipo.modified_user_id = sus.user_id

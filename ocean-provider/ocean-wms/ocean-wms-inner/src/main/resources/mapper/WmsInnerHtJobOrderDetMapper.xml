@@ -12,6 +12,7 @@
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="in_storage_id" jdbcType="BIGINT" property="inStorageId" />
     <result column="out_storage_id" jdbcType="BIGINT" property="outStorageId" />
+    <result column="platform_id" jdbcType="BIGINT" property="platformId"/>
     <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />

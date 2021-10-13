@@ -13,6 +13,7 @@
     <result column="profession_name" jdbcType="VARCHAR" property="professionName" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_id" jdbcType="VARCHAR" property="materialId" />
     <result column="design_qty" jdbcType="VARCHAR" property="designQty" />
     <result column="surplus_qty" jdbcType="VARCHAR" property="surplusQty" />
     <result column="purchase_req_qty" jdbcType="VARCHAR" property="purchaseReqQty" />
@@ -26,6 +27,9 @@
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
     <result column="purchase_req_explain" jdbcType="VARCHAR" property="purchaseReqExplain" />
     <result column="purchase_explain" jdbcType="VARCHAR" property="purchaseExplain" />
+    <result column="issued_qty" jdbcType="DECIMAL" property="issuedQty" />
+    <result column="not_issue_qty" jdbcType="DECIMAL" property="notIssueQty" />
+    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -50,6 +54,7 @@
     ecqo.profession_name,
     ecqo.material_code,
     bm.material_name,
+    bm.material_id as material_id,
     epro.design_qty,
     epro.surplus_qty,
     epro.purchase_req_qty,
@@ -63,6 +68,9 @@
     bs.supplier_name,
     epro.purchase_req_explain,
     epro.purchase_explain,
+    ecqo.issued_qty,
+    ecqo.not_issue_qty,
+    bmt.main_unit as main_unit,
     ecqo.remark,
     ecqo.status,
     ecqo.org_id,
@@ -83,6 +91,7 @@
     FROM eng_contract_qty_order ecqo
     LEFT JOIN eng_purchase_req_order epro ON ecqo.option3=epro.option3
     LEFT JOIN base_material bm ON ecqo.material_code=bm.material_code
+    LEFT JOIN base_material_tab bmt ON bm.material_id=bmt.material_id
     LEFT JOIN ocean_v2.sys_user u ON ecqo.create_user_id=u.user_id
     LEFT JOIN ocean_v2.sys_user s ON ecqo.modified_user_id=s.user_id
     LEFT JOIN fantech_imes_v2.base_supplier bs ON ecqo.supplier_id = bs.supplier_id

@@ -114,4 +114,11 @@ public class WmsInnerJobOrderDto extends WmsInnerJobOrder implements Serializabl
     @ApiModelProperty(name="detailedAddress",value = "详细地址")
     @Excel(name = "详细地址", height = 20, width = 30,orderNum="")
     private String detailedAddress;
+
+    /**
+     * 月台名称
+     */
+    @Transient
+    @ApiModelProperty(name = "platformName",value = "月台")
+    private String platformName;
 }

@@ -113,6 +113,13 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     private String customerOrderCode;
 
     /**
+     * 月台id
+     */
+    @ApiModelProperty(name = "platformId",value = "月台")
+    @Column(name = "platform_id")
+    private Long platformId;
+
+    /**
      * 相关单号1
      */
     @ApiModelProperty(name="relatedOrderCode1",value = "相关单号1")
@@ -229,6 +236,13 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="descr",value = "描述")
     @Column(name = "descr")
     private String descr;
+
+    /**
+     * 是否创建作业单
+     */
+    @ApiModelProperty(name = "是否创建作业单 1-是 0-否",value = "ifCreatedJobOrder")
+    @Column(name = "if_created_job_order")
+    private Byte ifCreatedJobOrder;
 
     /**
      * 单据状态(1-待拣货，2-拣货中，3-待发运、4-部分发运、5-发运完成)

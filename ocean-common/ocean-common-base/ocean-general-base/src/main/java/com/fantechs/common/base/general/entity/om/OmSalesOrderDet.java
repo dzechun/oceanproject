@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -357,6 +358,12 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @Column(name = "sales_code")
     private String salesCode;
     // =========== 2021-09-29 新增 end ===========
+
+    /**
+     * 是否数量反写 1=是
+     */
+    @Transient
+    private Byte isWriteQty;
 
     private static final long serialVersionUID = 1L;
 }
