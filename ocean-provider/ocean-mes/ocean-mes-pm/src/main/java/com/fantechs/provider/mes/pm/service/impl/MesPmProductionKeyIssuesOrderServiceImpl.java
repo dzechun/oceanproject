@@ -200,6 +200,7 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
         entity.setOrgId(user.getOrganizationId());
+        entity.setOrderStatus(StringUtils.isEmpty(entity.getOrderStatus())?(byte)2:entity.getOrderStatus());
         int i = mesPmProductionKeyIssuesOrderMapper.updateByPrimaryKeySelective(entity);
 
         //新增履历
