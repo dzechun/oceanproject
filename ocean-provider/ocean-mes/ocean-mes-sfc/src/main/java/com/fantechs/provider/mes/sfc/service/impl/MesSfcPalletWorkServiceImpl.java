@@ -80,9 +80,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     public PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String cartonCode = "";
         // 栈板作业需要绑定的所有产品条码
@@ -388,10 +385,28 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             // TODO PO号判断
 
             if (nextProcessIsPallet.isEmpty()){
-                // 未满栈板自动提交
-                List<Long> palletIdList = new ArrayList<>();
-                palletIdList.add(mesSfcProductPallet.getProductPalletId());
-                this.submitNoFullPallet(palletIdList, requestPalletWorkScanDto.getPrintBarcode(), requestPalletWorkScanDto.getPrintName());
+                // 自动提交
+                mesSfcProductPallet.setCloseStatus((byte) 1);
+                mesSfcProductPallet.setClosePalletUserId(user.getUserId());
+                mesSfcProductPallet.setClosePalletTime(new Date());
+                mesSfcProductPallet.setModifiedUserId(user.getUserId());
+                mesSfcProductPallet.setModifiedTime(new Date());
+                mesSfcProductPalletService.update(mesSfcProductPallet);
+
+                // 是否打印栈板码
+                if (requestPalletWorkScanDto.getPrintBarcode() == 1) {
+                    PrintCarCodeDto printCarCodeDto = new PrintCarCodeDto();
+                    printCarCodeDto.setWorkOrderId(workOrderId);
+                    printCarCodeDto.setLabelTypeCode("10");
+                    printCarCodeDto.setBarcode(palletCode);
+                    printCarCodeDto.setPrintName(requestPalletWorkScanDto.getPrintName() != null ? requestPalletWorkScanDto.getPrintName() : "测试");
+                    BarcodeUtils.printBarCode(printCarCodeDto);
+                }
+
+                // 生成完工入库单
+                List<Long> palletIds = new ArrayList<>();
+                palletIds.add(mesSfcProductPallet.getProductPalletId());
+                this.beforePalletAutoAsnOrder(palletIds, user.getOrganizationId(), mesSfcWorkOrderBarcodeList);
             }
         }
 
@@ -445,14 +460,13 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @LcnTransaction
     public int submitNoFullPallet(List<Long> palletIdList, byte printBarcode, String printName) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+        log.error("============未满箱提交，palletIdList:"+ palletIdList.size());
         Example example = new Example(MesSfcProductPallet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andIn("productPalletId", palletIdList);
         criteria.andEqualTo("closeStatus", 0);
         List<MesSfcProductPallet> productPallets = mesSfcProductPalletService.selectByExample(example);
+        log.error("============未满箱提交，productPallets:"+ productPallets.size());
         List<Long> palletIds = new ArrayList<>();
         for (MesSfcProductPallet item : productPallets){
             item.setCloseStatus((byte) 1);
@@ -472,6 +486,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         }
 
         // 生成完工入库单
+        log.error("============未满箱提交，palletIds:"+ palletIds.size());
         this.beforePalletAutoAsnOrder(palletIds, user.getOrganizationId(), null);
 
 
@@ -494,11 +509,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public int updateNowPackageSpecQty(Long productPalletId, Double nowPackageSpecQty, Boolean print, String printName) throws Exception {
-
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         int palletCartons = findPalletCarton(productPalletId).size();
         if (nowPackageSpecQty < palletCartons) {
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "修改栈板包装规格数量不能小于栈板已绑定包箱数量");
