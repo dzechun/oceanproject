@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -81,6 +82,13 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
     @Excel(name = "材料名称", height = 20, width = 30,orderNum="6")
     @Column(name = "material_name")
     private String materialName;
+
+    /**
+     * 材料id
+     */
+    @Transient
+    @ApiModelProperty(name="materialId",value = "材料id")
+    private Long materialId;
 
     /**
      * 设计量
@@ -328,4 +336,11 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
     private String organizationName;
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 单位
+     */
+    @Transient
+    @ApiModelProperty(name="mainUnit",value = "单位")
+    private String mainUnit;
 }

@@ -2,6 +2,7 @@ package com.fantechs.provider.guest.eng.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngHtPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryDetImport;
@@ -140,5 +141,14 @@ public class EngPackingOrderSummaryDetController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+
+    @ApiOperation(value = "根据合同量单新增",notes = "根据合同量单新增")
+    @PostMapping("/addByContractQtyOrder")
+    public ResponseEntity addByContractQtyOrder(@ApiParam(value = "必传：",required = true)@RequestBody List<EngContractQtyOrderAndPurOrderDto> engContractQtyOrderAndPurOrderDtos,
+                                                @ApiParam(value = "packingOrderSummaryId",required = true)@RequestParam  @NotNull(message="packingOrderSummaryId不能为空") Long packingOrderSummaryId) {
+        return ControllerUtil.returnCRUD(engPackingOrderSummaryDetService.addByContractQtyOrder( engContractQtyOrderAndPurOrderDtos,packingOrderSummaryId));
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.eng.service;
 
+import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.imports.EngPackingOrderSummaryDetImport;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
@@ -23,5 +24,7 @@ public interface EngPackingOrderSummaryDetService extends IService<EngPackingOrd
     Map<String, Object> importExcel(List<EngPackingOrderSummaryDetImport> engPackingOrderSummaryDetImports, Long packingOrderSummaryId);
 
     List<EngPackingOrderSummaryDetDto> findListByIds(String ids);
+
+    int addByContractQtyOrder(List<EngContractQtyOrderAndPurOrderDto> engContractQtyOrderAndPurOrderDtos,Long packingOrderSummaryId);
 
 }
