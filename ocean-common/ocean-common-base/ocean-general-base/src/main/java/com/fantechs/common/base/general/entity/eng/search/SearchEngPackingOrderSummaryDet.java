@@ -43,4 +43,16 @@ public class SearchEngPackingOrderSummaryDet extends BaseQuery implements Serial
      */
     @ApiModelProperty(name = "materialCode",value = "材料编码")
     private String materialCode;
+
+    /**
+     * 货物名称
+     */
+    @ApiModelProperty(name = "materialName",value = "货物名称")
+    private String materialName;
+
+    /**
+     * 规格
+     */
+    @ApiModelProperty(name = "spec",value = "规格")
+    private String spec;
 }

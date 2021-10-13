@@ -135,9 +135,15 @@ sposd.summary_det_status
     <if test="rawMaterialCode!=null and rawMaterialCode!=''">
       and sposd.raw_material_code like CONCAT('%',#{rawMaterialCode},'%')
     </if>
+      <if test="spec!=null and spec!=''">
+        and sposd.spec like CONCAT('%',#{spec},'%')
+      </if>
     <if test="materialCode!=null and materialCode!=''">
       and bm.material_code like CONCAT('%',#{materialCode},'%')
     </if>
+      <if test="materialName!=null and materialName!=''">
+        and bm.material_name like CONCAT('%',#{materialName},'%')
+      </if>
     <!-- 以下为导出查询条件 -->
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(spo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -118,7 +118,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
         //条码列表
         List<EamEquipmentBarcode> eamEquipmentBarcodeList = record.getEamEquipmentBarcodeList();
         if(StringUtils.isNotEmpty(eamEquipmentBarcodeList)){
-            this.barcodeIfRepeat(eamEquipmentBarcodeList);
+            this.barcodeIfRepeat(eamEquipmentBarcodeList,user);
 
             for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodeList){
                 eamEquipmentBarcode.setEquipmentId(record.getEquipmentId());
@@ -209,7 +209,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
 
         //条码列表
         if(StringUtils.isNotEmpty(eamEquipmentBarcodeList)){
-            this.barcodeIfRepeat(eamEquipmentBarcodeList);
+            this.barcodeIfRepeat(eamEquipmentBarcodeList,user);
 
             for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodeList){
                 if(equipmentBarcodeIdList.contains(eamEquipmentBarcode.getEquipmentBarcodeId())){
@@ -332,7 +332,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
      * 判断条码是否重复
      * @param eamEquipmentBarcodeList
      */
-    public void barcodeIfRepeat(List<EamEquipmentBarcode> eamEquipmentBarcodeList){
+    public void barcodeIfRepeat(List<EamEquipmentBarcode> eamEquipmentBarcodeList,SysUser user){
         List<String> equipmentBarcodes = new ArrayList<>();
         List<String> assetCodes = new ArrayList<>();
 
@@ -351,7 +351,8 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
 
             Example example = new Example(EamEquipmentBarcode.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("equipmentBarcode", eamEquipmentBarcode.getEquipmentBarcode());
+            criteria.andEqualTo("equipmentBarcode", eamEquipmentBarcode.getEquipmentBarcode())
+                    .andEqualTo("orgId",user.getOrganizationId());
             if(StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentBarcodeId())){
                 criteria.andNotEqualTo("equipmentBarcodeId",eamEquipmentBarcode.getEquipmentBarcodeId());
             }
@@ -365,7 +366,8 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             if(StringUtils.isNotEmpty(eamEquipmentBarcode.getAssetCode())) {
                 example.clear();
                 Example.Criteria criteria1 = example.createCriteria();
-                criteria1.andEqualTo("assetCode", eamEquipmentBarcode.getAssetCode());
+                criteria1.andEqualTo("assetCode", eamEquipmentBarcode.getAssetCode())
+                         .andEqualTo("orgId",user.getOrganizationId());
                 if (StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentBarcodeId())) {
                     criteria1.andNotEqualTo("equipmentBarcodeId", eamEquipmentBarcode.getEquipmentBarcodeId());
                 }

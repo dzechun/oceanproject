@@ -101,7 +101,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         //条码列表
         List<EamJigBarcode> eamJigBarcodeList = record.getEamJigBarcodeList();
         if(StringUtils.isNotEmpty(eamJigBarcodeList)){
-            this.barcodeIfRepeat(eamJigBarcodeList);
+            this.barcodeIfRepeat(eamJigBarcodeList,user);
 
             for (EamJigBarcode eamJigBarcode : eamJigBarcodeList){
                 eamJigBarcode.setJigId(record.getJigId());
@@ -158,7 +158,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
      * 判断条码是否重复
      * @param eamJigBarcodeList
      */
-    public void barcodeIfRepeat(List<EamJigBarcode> eamJigBarcodeList){
+    public void barcodeIfRepeat(List<EamJigBarcode> eamJigBarcodeList,SysUser user){
         List<String> jigBarcodes = new ArrayList<>();
         List<String> assetCodes = new ArrayList<>();
 
@@ -173,7 +173,8 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
 
             Example example = new Example(EamJigBarcode.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("jigBarcode", eamJigBarcode.getJigBarcode());
+            criteria.andEqualTo("jigBarcode", eamJigBarcode.getJigBarcode())
+                    .andEqualTo("orgId",user.getOrganizationId());
             if(StringUtils.isNotEmpty(eamJigBarcode.getJigBarcodeId())){
                 criteria.andNotEqualTo("jigBarcodeId",eamJigBarcode.getJigBarcodeId());
             }
@@ -184,7 +185,8 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
 
             example.clear();
             Example.Criteria criteria1 = example.createCriteria();
-            criteria1.andEqualTo("assetCode", eamJigBarcode.getAssetCode());
+            criteria1.andEqualTo("assetCode", eamJigBarcode.getAssetCode())
+                    .andEqualTo("orgId",user.getOrganizationId());
             if(StringUtils.isNotEmpty(eamJigBarcode.getJigBarcodeId())){
                 criteria1.andNotEqualTo("jigBarcodeId",eamJigBarcode.getJigBarcodeId());
             }
@@ -238,7 +240,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
 
         //条码列表
         if(StringUtils.isNotEmpty(eamJigBarcodeList)){
-            this.barcodeIfRepeat(eamJigBarcodeList);
+            this.barcodeIfRepeat(eamJigBarcodeList,user);
 
             for (EamJigBarcode eamJigBarcode : eamJigBarcodeList){
                 if(jigBarcodeIdList.contains(eamJigBarcode.getJigBarcodeId())){

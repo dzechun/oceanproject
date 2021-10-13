@@ -122,6 +122,9 @@ spos.putaway_storage_id
     <if test="cartonCode!=null and cartonCode!=''">
       and spos.carton_code like CONCAT('%',#{cartonCode},'%')
     </if>
+      <if test="materialName!=null and materialName!=''">
+        and spos.material_name like CONCAT('%',#{materialName},'%')
+      </if>
     </where>
     order by spos.create_time desc
   </select>

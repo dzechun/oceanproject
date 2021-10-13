@@ -33,4 +33,10 @@ public class SearchEngPackingOrderSummary extends BaseQuery implements Serializa
      */
     @ApiModelProperty(name="cartonCode",value = "包装箱号")
     private String cartonCode;
+
+    /**
+     * 货物名称
+     */
+    @ApiModelProperty(name="materialName",value = "货物名称")
+    private String materialName;
 }

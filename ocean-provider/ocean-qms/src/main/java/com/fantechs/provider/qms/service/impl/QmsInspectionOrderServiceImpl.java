@@ -100,11 +100,27 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         criteria.andEqualTo("inspectionOrderId",inspectionOrderId);
         List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.selectByExample(example);
 
+        Example example1 = new Example(QmsInspectionOrderDetSample.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("inspectionOrderId",inspectionOrderId);
+        List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
+
         for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
             //明细
             qmsInspectionOrderDet.setBadnessQty(BigDecimal.ZERO);
             qmsInspectionOrderDet.setInspectionResult((byte)1);
             qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
+
+            //样本
+            List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
+            for(QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSamples){
+                QmsInspectionOrderDetSample inspectionOrderDetSample = new QmsInspectionOrderDetSample();
+                inspectionOrderDetSample.setInspectionOrderDetId(qmsInspectionOrderDet.getInspectionOrderDetId());
+                inspectionOrderDetSample.setBarcode(qmsInspectionOrderDetSample.getBarcode());
+                inspectionOrderDetSample.setSampleValue("OK");
+                inspectionOrderDetSampleList.add(inspectionOrderDetSample);
+            }
+            qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
         }
 
         qmsInspectionOrder.setInspectionStatus((byte)3);
@@ -127,12 +143,28 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         criteria.andEqualTo("inspectionOrderId",inspectionOrderId);
         List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.selectByExample(example);
 
+        Example example1 = new Example(QmsInspectionOrderDetSample.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("inspectionOrderId",inspectionOrderId);
+        List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
+
         for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
             //明细
             if(StringUtils.isEmpty(qmsInspectionOrderDet.getInspectionResult())) {
                 qmsInspectionOrderDet.setBadnessQty(BigDecimal.ZERO);
                 qmsInspectionOrderDet.setInspectionResult((byte) 1);
                 qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
+
+                //样本
+                List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
+                for(QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSamples){
+                    QmsInspectionOrderDetSample inspectionOrderDetSample = new QmsInspectionOrderDetSample();
+                    inspectionOrderDetSample.setInspectionOrderDetId(qmsInspectionOrderDet.getInspectionOrderDetId());
+                    inspectionOrderDetSample.setBarcode(qmsInspectionOrderDetSample.getBarcode());
+                    inspectionOrderDetSample.setSampleValue("OK");
+                    inspectionOrderDetSampleList.add(inspectionOrderDetSample);
+                }
+                qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
             }
         }
 
