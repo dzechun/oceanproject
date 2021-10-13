@@ -270,7 +270,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setMaterialId(innerInventoryDto.getMaterialId());
             wmsInnerJobOrderDet.setPackingUnitName(innerInventoryDto.getPackingUnitName());
             wmsInnerJobOrderDet.setPlanQty(dto.getMaterialQty());
-            wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getPlanQty());
+//            wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getPlanQty());
             wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getPlanQty());
             wmsInnerJobOrderDet.setPalletCode(innerInventoryDto.getPalletCode());
             wmsInnerJobOrderDet.setReceivingDate(innerInventoryDto.getReceivingDate());
