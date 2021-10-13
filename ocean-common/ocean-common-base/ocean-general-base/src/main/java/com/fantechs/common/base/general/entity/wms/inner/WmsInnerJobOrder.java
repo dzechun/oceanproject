@@ -85,6 +85,13 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     private Long workerId;
 
     /**
+     * 月台id
+     */
+    @ApiModelProperty(name = "platformId",value = "月台")
+    @Column(name = "platform_id")
+    private Long platformId;
+
+    /**
      * 作业单号
      */
     @ApiModelProperty(name="jobOrderCode",value = "作业单号")

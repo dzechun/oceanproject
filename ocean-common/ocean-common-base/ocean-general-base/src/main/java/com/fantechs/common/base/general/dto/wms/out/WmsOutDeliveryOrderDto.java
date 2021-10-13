@@ -84,5 +84,10 @@ public class WmsOutDeliveryOrderDto extends WmsOutDeliveryOrder implements Seria
     @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="23")
     private String modifiedUserName;
 
-
+    /**
+     * 月台名称
+     */
+    @Transient
+    @ApiModelProperty(name = "platformName",value = "月台")
+    private String platformName;
 }

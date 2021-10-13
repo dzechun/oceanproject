@@ -403,7 +403,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int createJobOrder(Long id) {
+    public int createJobOrder(Long id,Long platformId) {
         Map<String, Object> map = new HashMap<>();
         map.put("deliveryOrderId", id);
         List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderMapper.findList(map);
@@ -486,8 +486,10 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     wmsInnerJobOrderDet.setPlanQty(dto.getPackingQty());
                     wmsInnerJobOrderDet.setOrderStatus((byte) 1);
                     wmsInnerJobOrderDet.setBatchCode(dto.getBatchCode());
+                    wmsInnerJobOrderDet.setPlatformId(dto.getPlatformId());
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
+                wmsInnerJobOrder.setPlatformId(platformId);
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
 
                 //创建作业单
@@ -496,6 +498,9 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                 }
             }
+            wmsOutDeliveryOrderDto.setIfCreatedJobOrder((byte)1);
+            wmsOutDeliveryOrderDto.setPlatformId(platformId);
+            wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDto);
         } else {
             throw new BizErrorException("拣货作业单已存在");
         }
