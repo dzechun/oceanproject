@@ -90,6 +90,22 @@ public class EngContractQtyOrder extends ValidGroup implements Serializable {
     private String purQty;
 
     /**
+     * 已发量
+     */
+    @ApiModelProperty(name="issuedQty",value = "已发量")
+    @Excel(name = "已发量", height = 20, width = 30,orderNum="")
+    @Column(name = "issued_qty")
+    private String issuedQty;
+
+    /**
+     * 未发量
+     */
+    @ApiModelProperty(name="notIssueQty",value = "未发量")
+    @Excel(name = "未发量", height = 20, width = 30,orderNum="")
+    @Column(name = "not_issue_qty")
+    private String notIssueQty;
+
+    /**
      * 专业编码
      */
     @ApiModelProperty(name="professionCode",value = "专业编码")
