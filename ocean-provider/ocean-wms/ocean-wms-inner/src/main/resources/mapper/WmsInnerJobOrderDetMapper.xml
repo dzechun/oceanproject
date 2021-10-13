@@ -12,6 +12,7 @@
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="in_storage_id" jdbcType="BIGINT" property="inStorageId"/>
         <result column="out_storage_id" jdbcType="BIGINT" property="outStorageId"/>
+        <result column="platform_id" jdbcType="BIGINT" property="platformId"/>
         <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
@@ -54,6 +55,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="platform_name" jdbcType="VARCHAR" property="platformName"/>
     </resultMap>
     <sql id="BaseColumnList">
         wipod.job_order_det_id,
@@ -63,6 +65,7 @@
         wipod.warehouse_id,
         wipod.in_storage_id,
         wipod.out_storage_id,
+        wipod.platform_id,
         wipod.inventory_status_id,
         wipod.material_id,
         wipod.packing_unit_name,
@@ -98,6 +101,7 @@
         bso.storage_code AS out_storage_code,
         bsi.storage_code AS in_storage_name,
         bsi.storage_code AS in_storage_code,
+        bp.platform_name,
         bm.material_code,
         bm.material_name,
         bm.material_desc,
@@ -110,6 +114,7 @@
         LEFT JOIN base_warehouse bw ON wipod.warehouse_id = bw.warehouse_id
         LEFT JOIN base_storage bso ON wipod.out_storage_id = bso.storage_id
         LEFT JOIN base_storage bsi ON wipod.in_storage_id = bsi.storage_id
+        left JOIN base_platform bp on wipod.platform_id = bp.platform_id
         LEFT JOIN base_inventory_status bis ON wipod.inventory_status_id = bis.inventory_status_id
         LEFT JOIN base_material bm ON wipod.material_id = bm.material_id
         LEFT JOIN ocean_v2.sys_user su ON wipod.create_user_id = su.user_id

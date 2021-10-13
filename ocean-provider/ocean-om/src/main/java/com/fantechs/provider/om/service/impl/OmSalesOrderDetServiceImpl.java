@@ -24,6 +24,7 @@ import com.fantechs.provider.om.service.ht.OmHtSalesOrderDetService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -137,7 +138,14 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
 //        if(StringUtils.isEmpty(currentUserInfo)) {
 //            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
 //        }
-
+        //装车作业出货数量反写
+        if(StringUtils.isNotEmpty(omSalesOrderDet.getIsWriteQty()) && omSalesOrderDet.getIsWriteQty()==1){
+            OmSalesOrderDet det = omSalesOrderDetMapper.selectByPrimaryKey(omSalesOrderDet.getSalesOrderDetId());
+            if(StringUtils.isEmpty(det.getTotalOutboundQty())){
+                det.setTotalOutboundQty(BigDecimal.ZERO);
+            }
+            omSalesOrderDet.setTotalOutboundQty(omSalesOrderDet.getTotalOutboundQty().add(det.getTotalOutboundQty()));
+        }
         omSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
         omSalesOrderDet.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
 

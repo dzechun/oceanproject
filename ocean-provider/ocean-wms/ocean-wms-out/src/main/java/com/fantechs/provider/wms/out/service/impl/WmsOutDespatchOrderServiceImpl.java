@@ -302,7 +302,9 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 num +=wmsOutDespatchOrderReJoReDetMapper.insertSelective(wmsOutDespatchOrderReJoReDet);
             }
         }
-        entity.setOrderStatus((byte)2);
+        if(StringUtils.isNotEmpty(entity.getOrderStatus()) && entity.getOrderStatus()==1){
+            entity.setOrderStatus((byte)2);
+        }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
         num+=wmsOutDespatchOrderMapper.updateByPrimaryKeySelective(entity);
@@ -383,8 +385,9 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 if(StringUtils.isNotEmpty(wmsOutDeliveryOrder.getSourceOrderId()) && StringUtils.isNotEmpty(wmsOutDeliveryOrderDet.getSourceOrderId())){
                     //反写销售订单出库数量
                     OmSalesOrderDet omSalesOrderDet = new OmSalesOrderDet();
+                    omSalesOrderDet.setIsWriteQty((byte)1);
                     omSalesOrderDet.setSalesOrderDetId(wmsOutDeliveryOrderDet.getSourceOrderId());
-                    omSalesOrderDet.setActualQty(wmsInnerJobOrderDetDto.getActualQty());
+                    omSalesOrderDet.setTotalOutboundQty(wmsInnerJobOrderDetDto.getActualQty());
                     ResponseEntity responseEntity = omFeignApi.update(omSalesOrderDet);
                 }
                 num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);

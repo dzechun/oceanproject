@@ -10,6 +10,7 @@
     <result column="source_order_id" jdbcType="BIGINT" property="deliveryOrderCode" />
     <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="platform_id" jdbcType="BIGINT" property="platformId"/>
     <result column="shipment_enterprise_id" jdbcType="BIGINT" property="shipmentEnterpriseId" />
     <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
     <result column="delivery_order_code" jdbcType="VARCHAR" property="deliveryOrderCode" />
@@ -28,6 +29,7 @@
     <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress" />
     <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
     <result column="descr" jdbcType="VARCHAR" property="descr" />
+    <result column="if_created_job_order" jdbcType="TINYINT" property="ifCreatedJobOrder"/>
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -50,6 +52,7 @@
     wohdo.source_order_id,
     wohdo.material_owner_id,
     wohdo.supplier_id,
+wohdo.platform_id,
     wohdo.shipment_enterprise_id,
     wohdo.order_type_id,
     wohdo.delivery_order_code,
@@ -68,6 +71,7 @@
     wohdo.e_mail_address,
     wohdo.detailed_address,
     wohdo.descr,
+wohdo.if_created_job_order,
     wohdo.order_status,
     wohdo.`status`,
     wohdo.org_id,

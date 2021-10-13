@@ -77,6 +77,13 @@ public class WmsInnerHtJobOrderDet extends ValidGroup implements Serializable {
     private Long outStorageId;
 
     /**
+     * 月台id
+     */
+    @ApiModelProperty(name = "platformId",value = "月台")
+    @Column(name = "platform_id")
+    private Long platformId;
+
+    /**
      * 库存状态ID
      */
     @ApiModelProperty(name="inventoryStatusId",value = "库存状态ID")
