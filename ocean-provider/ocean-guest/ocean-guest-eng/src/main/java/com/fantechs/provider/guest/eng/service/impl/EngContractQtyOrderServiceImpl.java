@@ -51,6 +51,10 @@ public class EngContractQtyOrderServiceImpl extends BaseService<EngContractQtyOr
 
     @Override
     public int saveByApi(EngContractQtyOrder engContractQtyOrder) {
+        //设置已发量为0 未发量=采购量
+        //engContractQtyOrder.setIssuedQty("0");
+        engContractQtyOrder.setNotIssueQty(engContractQtyOrder.getPurQty());
+
         Example example = new Example(EngContractQtyOrder.class);
         Example.Criteria criteria = example.createCriteria();
 //        criteria.andEqualTo("contractCode",engContractQtyOrder.getContractCode());

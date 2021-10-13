@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class QmsInspectionOrderDetSampleController {
 
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/batchAdd")
-    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSampleList) {
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty(message="样本信息不能为空")List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSampleList) {
         return ControllerUtil.returnCRUD(qmsInspectionOrderDetSampleService.batchAdd(qmsInspectionOrderDetSampleList));
     }
 

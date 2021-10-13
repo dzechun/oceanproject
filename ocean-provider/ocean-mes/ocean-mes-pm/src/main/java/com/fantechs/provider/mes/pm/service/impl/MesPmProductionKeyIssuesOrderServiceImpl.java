@@ -98,6 +98,8 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
                         mesPmProductionKeyIssuesOrderDet.setProductionKeyIssuesDetId(baseProductionKeyIssuesDet.getProductionKeyIssuesDetId());
                         mesPmProductionKeyIssuesOrderDets.add(mesPmProductionKeyIssuesOrderDet);
                     }
+                }else {
+                    throw new BizErrorException("该产品未绑定产前确认项");
                 }
             }
             mesPmProductionKeyIssuesOrder.setMesPmProductionKeyIssuesOrderDetList(mesPmProductionKeyIssuesOrderDets);
@@ -198,6 +200,7 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
         entity.setOrgId(user.getOrganizationId());
+        entity.setOrderStatus(StringUtils.isEmpty(entity.getOrderStatus())?(byte)2:entity.getOrderStatus());
         int i = mesPmProductionKeyIssuesOrderMapper.updateByPrimaryKeySelective(entity);
 
         //新增履历

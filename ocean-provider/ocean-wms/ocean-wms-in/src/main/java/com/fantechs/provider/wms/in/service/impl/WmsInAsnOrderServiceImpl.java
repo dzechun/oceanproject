@@ -709,8 +709,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         try {
             //查询redis是否存储今日入库单号
             Boolean hasKey = redisUtil.hasKey("pallet_id");
-            //true
+            Map<Long,Long> asnMap = new HashMap<>();
             if(hasKey){
+                asnMap = (Map<Long, Long>)redisUtil.get("pallet_id");
+            }
+            //获取当前组织生成的
+            //true
+            if(asnMap.containsKey(sysUser.getOrganizationId())){
                 Long asnOrderId = Long.parseLong(redisUtil.get("pallet_id").toString());
                 WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
                 if(StringUtils.isEmpty(wmsInAsnOrder)){
@@ -795,7 +800,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 //新增库存明细
                 res = this.addInventoryDet(palletAutoAsnDto.getBarCodeList(),wmsInAsnOrder.getAsnCode(),wmsInAsnOrderDet);
                 //设置新redis 时效为24小时
-                redisUtil.set("pallet_id",wmsInAsnOrder.getAsnOrderId());
+                asnMap.put(sysUser.getOrganizationId(), wmsInAsnOrder.getAsnOrderId());
+                redisUtil.set("pallet_id",asnMap);
                 redisUtil.expire("pallet_id",getRemainSecondsOneDay(new Date()));
                 //手动提交事务
                 dataSourceTransactionManager.commit(transactionStatus);

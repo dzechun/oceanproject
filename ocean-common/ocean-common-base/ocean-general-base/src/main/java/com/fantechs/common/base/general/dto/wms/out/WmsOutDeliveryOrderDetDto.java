@@ -71,4 +71,7 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
     @Excel(name = "毛重", height = 20, width = 30)
     private BigDecimal grossWeight;
 
+    @Transient
+    @ApiModelProperty(name = "inventoryStatusName",value = "库存状态")
+    private String inventoryStatusName;
 }

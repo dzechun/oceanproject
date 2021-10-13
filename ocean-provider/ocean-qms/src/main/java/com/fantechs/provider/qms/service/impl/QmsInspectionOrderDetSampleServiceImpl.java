@@ -90,10 +90,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
-        if(StringUtils.isEmpty(qmsInspectionOrderDetSampleList)){
-            throw new BizErrorException("样本信息不能为空");
-        }
-
         //原数据删除
         Long inspectionOrderDetId = qmsInspectionOrderDetSampleList.get(0).getInspectionOrderDetId();
         Example example = new Example(QmsInspectionOrderDetSample.class);
@@ -101,14 +97,42 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         criteria.andEqualTo("inspectionOrderDetId",inspectionOrderDetId);
         qmsInspectionOrderDetSampleMapper.deleteByExample(example);
 
+        //未检验的条码默认ok
+        Example example1 = new Example(QmsInspectionOrderDetSample.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("inspectionOrderId",qmsInspectionOrderDetSampleList.get(0).getInspectionOrderId());
+        List<QmsInspectionOrderDetSample> inspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
+        if (inspectionOrderDetSamples.size() > qmsInspectionOrderDetSampleList.size()) {
+            List<String> barcodes = new LinkedList<>();
+            for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSampleList) {
+                barcodes.add(qmsInspectionOrderDetSample.getBarcode());
+            }
+
+            for (QmsInspectionOrderDetSample inspectionOrderDetSample : inspectionOrderDetSamples){
+                if(!barcodes.contains(inspectionOrderDetSample.getBarcode())){
+                    QmsInspectionOrderDetSample qmsInspectionOrderDetSample = new QmsInspectionOrderDetSample();
+                    qmsInspectionOrderDetSample.setBarcode(inspectionOrderDetSample.getBarcode());
+                    qmsInspectionOrderDetSample.setInspectionOrderDetId(inspectionOrderDetId);
+                    qmsInspectionOrderDetSample.setSampleValue("OK");
+                    qmsInspectionOrderDetSampleList.add(qmsInspectionOrderDetSample);
+                }
+            }
+        }
+
         int i = 0;
         int badnessQty = 0;//不良数量
         for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSampleList){
-            i = i + this.save(qmsInspectionOrderDetSample);
+            qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());
+            qmsInspectionOrderDetSample.setCreateTime(new Date());
+            qmsInspectionOrderDetSample.setModifiedUserId(user.getUserId());
+            qmsInspectionOrderDetSample.setModifiedTime(new Date());
+            qmsInspectionOrderDetSample.setStatus(StringUtils.isEmpty(qmsInspectionOrderDetSample.getStatus())?1: qmsInspectionOrderDetSample.getStatus());
+            qmsInspectionOrderDetSample.setOrgId(user.getOrganizationId());
             if(StringUtils.isNotEmpty(qmsInspectionOrderDetSample.getBadnessPhenotypeId())){
                 badnessQty++;
             }
         }
+        i = qmsInspectionOrderDetSampleMapper.insertList(qmsInspectionOrderDetSampleList);
 
         Map<String,Object> map = new HashMap();
         map.put("inspectionOrderDetId",inspectionOrderDetId);
