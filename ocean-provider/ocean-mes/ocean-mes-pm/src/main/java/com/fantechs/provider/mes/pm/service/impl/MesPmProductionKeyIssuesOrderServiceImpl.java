@@ -98,6 +98,8 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
                         mesPmProductionKeyIssuesOrderDet.setProductionKeyIssuesDetId(baseProductionKeyIssuesDet.getProductionKeyIssuesDetId());
                         mesPmProductionKeyIssuesOrderDets.add(mesPmProductionKeyIssuesOrderDet);
                     }
+                }else {
+                    throw new BizErrorException("该产品未绑定产前确认项");
                 }
             }
             mesPmProductionKeyIssuesOrder.setMesPmProductionKeyIssuesOrderDetList(mesPmProductionKeyIssuesOrderDets);
