@@ -26,6 +26,8 @@
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
     <result column="purchase_req_explain" jdbcType="VARCHAR" property="purchaseReqExplain" />
     <result column="purchase_explain" jdbcType="VARCHAR" property="purchaseExplain" />
+    <result column="issued_qty" jdbcType="DECIMAL" property="issuedQty" />
+    <result column="not_issue_qty" jdbcType="DECIMAL" property="notIssueQty" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -63,6 +65,8 @@
     bs.supplier_name,
     epro.purchase_req_explain,
     epro.purchase_explain,
+    ecqo.issued_qty,
+    ecqo.not_issue_qty,
     ecqo.remark,
     ecqo.status,
     ecqo.org_id,
