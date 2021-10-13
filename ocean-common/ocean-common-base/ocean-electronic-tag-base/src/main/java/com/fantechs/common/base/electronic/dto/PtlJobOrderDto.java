@@ -25,7 +25,7 @@ public class PtlJobOrderDto extends PtlJobOrder implements Serializable {
     private String createUserCode;
 
     @ApiModelProperty(name = "modifiedUserCode",value = "修改账号")
-    @Excel(name = "修改账号", height = 20, width = 30,orderNum="10")
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum="12")
     private String modifiedUserCode;
 
     @ApiModelProperty(name = "warehouseAreaId",value = "仓库区域id")

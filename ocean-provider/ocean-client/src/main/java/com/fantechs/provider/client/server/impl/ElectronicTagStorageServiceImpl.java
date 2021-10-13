@@ -256,6 +256,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 PtlJobOrder ptlJobOrderUpdate = new PtlJobOrder();
                 ptlJobOrderUpdate.setJobOrderId(ptlJobOrderDto.getJobOrderId());
                 ptlJobOrderUpdate.setOrderStatus((byte) 2);
+                ptlJobOrderUpdate.setActivationTime(new Date());
                 ptlJobOrderUpdate.setModifiedTime(new Date());
                 ptlJobOrderUpdate.setModifiedUserId(currentUser.getUserId());
                 ptlJobOrderUpdate.setOption1(ptlJobOrderDto.getOption1());
@@ -702,16 +703,18 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             for (String jobOrderId : jobOrderIds) {
                 PtlJobOrder ptlJobOrder = electronicTagFeignApi.ptlJobOrderDetail(Long.valueOf(jobOrderId)).getData();
                 String color = "";
-                switch (ptlJobOrder.getOption1()) {
-                    case "0":
-                        color = "红色";
-                        break;
-                    case "1":
-                        color = "绿色";
-                        break;
-                    case "2":
-                        color = "黄色";
-                        break;
+                if (StringUtils.isNotEmpty(ptlJobOrder.getOption1())) {
+                    switch (ptlJobOrder.getOption1()) {
+                        case "0":
+                            color = "红色";
+                            break;
+                        case "1":
+                            color = "绿色";
+                            break;
+                        case "2":
+                            color = "黄色";
+                            break;
+                    }
                 }
 //        if (ptlJobOrder.getIfAlreadyPrint() == 1) {
 //            throw new Exception("该任务单已打印过标签，请不要重复操作");
@@ -852,6 +855,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 log.info("===========发送消息给打印客户端打印整、零标签完成===============");
             }
         } catch (Exception e) {
+            log.info(e.toString());
             redisUtil.del(endVehicleCode);
             log.info("打印失败，redis释放集货位：" + endVehicleCode);
             redisUtil.del(relatedOrderCode);
@@ -1329,8 +1333,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                         log.info("打印完成，redis释放集货位：" + vehicleCode);
                     }
                     if (StringUtils.isNotEmpty(redisUtil.get(relatedOrderCode))) {
-                        redisUtil.del(relatedOrderCode);
-                        log.info("打印完成，redis释放拣货单：" + relatedOrderCode);
+                        redisUtil.set(relatedOrderCode, redisUtil.get(relatedOrderCode), 1);
+                        log.info("打印完成，redis延时1秒释放拣货单：" + relatedOrderCode);
                     }
                     redisUtil.incr(vehicleCode + "_count", 1);
                     log.info("打印完成，集货位：" + vehicleCode + "使用次数加1：" + redisUtil.get(vehicleCode + "_count"));
