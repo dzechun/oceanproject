@@ -98,9 +98,6 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     @Transactional(rollbackFor = Exception.class)
     public int update(SysUser sysUser){
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         SysUser user = sysUserMapper.selectByPrimaryKey(sysUser.getUserId());
         if(StringUtils.isEmpty(user)){
@@ -116,10 +113,10 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
         Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userName", sysUser.getUserName()).orEqualTo("userCode",sysUser.getUserCode());
-        SysUser oneByUser = sysUserMapper.selectOneByExample(example);
+        criteria.andEqualTo("userCode",sysUser.getUserCode()).andNotEqualTo("userId", sysUser.getUserId());
+        int byExample = sysUserMapper.selectCountByExample(example);
 
-        if(StringUtils.isNotEmpty(oneByUser)&&!sysUser.getUserId().equals(oneByUser.getUserId())){
+        if(byExample > 0){
             throw new BizErrorException("该用户的帐号/工号已存在。");
         }
         sysUserMapper.updateByPrimaryKeySelective(sysUser);

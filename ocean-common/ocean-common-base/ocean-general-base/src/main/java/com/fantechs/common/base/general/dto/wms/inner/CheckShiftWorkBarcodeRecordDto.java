@@ -74,4 +74,10 @@ public class CheckShiftWorkBarcodeRecordDto implements Serializable {
      */
     @ApiModelProperty(name="materialQty",value = "物料数量")
     private BigDecimal materialQty;
+
+    /**
+     * 库存可用数量
+     */
+    @ApiModelProperty(name="packing_qty",value = "可用数量")
+    private BigDecimal packingQty;
 }

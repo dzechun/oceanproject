@@ -21,6 +21,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
@@ -77,6 +78,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Resource
     private SecurityFeignApi securityFeignApi;
+
+    @Resource
+    private EngFeignApi engFeignApi;
 
     @Override
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
@@ -163,6 +167,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         recordDto.setStorageCode(innerInventoryDto.getStorageCode());
         recordDto.setStorageId(innerInventoryDto.getStorageId());
         recordDto.setMaterialId(innerInventoryDto.getMaterialId());
+        recordDto.setPackingQty(innerInventoryDto.getPackingQty());
         if (dto.getJobOrderDetId() != null) {
             WmsInnerJobOrderDet jobOrderDet = wmsInnerJobOrderDetService.selectByKey(dto.getJobOrderDetId());
             recordDto.setPlanQty(jobOrderDet.getPlanQty());
@@ -477,6 +482,24 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 ws.setWorkStartTime(new Date());
             }
             ws.setWorkEndtTime(new Date());
+
+            //回传接口（五环）
+            //获取程序配置项
+            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+            if(itemListFiveRing.size()<1){
+                throw new BizErrorException("配置项 FiveRing 获取失败");
+            }
+            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+            if("1".equals(sysSpecItem.getParaValue())) {
+                //返写移位接口（五环）
+                if(wmsInnerJobOrderDto.getJobOrderType()==2){
+                    engFeignApi.reportInnerJobOrder(ws);
+                }
+            }
+            //回传结束
+
         } else {
             ws.setOrderStatus((byte) 4);
             if (StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())) {

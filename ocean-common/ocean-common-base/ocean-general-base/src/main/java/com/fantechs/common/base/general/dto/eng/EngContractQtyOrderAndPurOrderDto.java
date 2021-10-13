@@ -199,6 +199,22 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
     private String purchaseExplain;
 
     /**
+     * 已发量
+     */
+    @ApiModelProperty(name="issuedQty",value = "已发量")
+    @Excel(name = "已发量", height = 20, width = 30,orderNum="")
+    @Column(name = "issued_qty")
+    private BigDecimal issuedQty;
+
+    /**
+     * 未发量
+     */
+    @ApiModelProperty(name="notIssueQty",value = "未发量")
+    @Excel(name = "未发量", height = 20, width = 30,orderNum="")
+    @Column(name = "not_issue_qty")
+    private BigDecimal notIssueQty;
+
+    /**
      * 备注
      */
     
