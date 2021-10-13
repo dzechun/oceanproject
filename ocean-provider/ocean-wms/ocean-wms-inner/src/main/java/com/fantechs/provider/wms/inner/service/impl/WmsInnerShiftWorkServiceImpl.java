@@ -247,7 +247,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 innerJobOrder.setJobOrderCode(CodeUtils.getId("SHIFT-"));
                 innerJobOrder.setJobOrderType((byte) 2);
                 innerJobOrder.setPlanQty(dto.getMaterialQty());
-                innerJobOrder.setActualQty(innerJobOrder.getPlanQty());
+//                innerJobOrder.setActualQty(innerJobOrder.getPlanQty());
                 innerJobOrder.setOrderStatus((byte) 4);
                 innerJobOrder.setStatus((byte) 1);
                 innerJobOrder.setOrgId(sysUser.getOrganizationId());
@@ -270,8 +270,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setMaterialId(innerInventoryDto.getMaterialId());
             wmsInnerJobOrderDet.setPackingUnitName(innerInventoryDto.getPackingUnitName());
             wmsInnerJobOrderDet.setPlanQty(dto.getMaterialQty());
-//            wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getPlanQty());
-            wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getPlanQty());
+            wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getPlanQty());
+//            wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getPlanQty());
             wmsInnerJobOrderDet.setPalletCode(innerInventoryDto.getPalletCode());
             wmsInnerJobOrderDet.setReceivingDate(innerInventoryDto.getReceivingDate());
             wmsInnerJobOrderDet.setProductionDate(innerInventoryDto.getProductionDate());
