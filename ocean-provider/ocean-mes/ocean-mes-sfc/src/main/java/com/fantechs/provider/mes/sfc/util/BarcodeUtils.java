@@ -323,7 +323,9 @@ public class BarcodeUtils {
             mesSfcBarcodeProcess.setBarcodeStatus((byte)1);
 
         //客户条码
-        mesSfcBarcodeProcess.setCustomerBarcode(dto.getCustomerBarcode());
+        if (StringUtils.isNotEmpty(dto.getCustomerBarcode())){
+            mesSfcBarcodeProcess.setCustomerBarcode(dto.getCustomerBarcode());
+        }
 
         mesSfcBarcodeProcess.setInProcessTime(new Date());
         mesSfcBarcodeProcess.setOutProcessTime(new Date());
@@ -474,7 +476,7 @@ public class BarcodeUtils {
         */
         MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = mesSfcWorkOrderBarcodeDtos.get(0);
         if (mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == 2 || mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == 3) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012004, mesSfcWorkOrderBarcodeDto.getBarcodeStatus());
+            throw new BizErrorException(ErrorCodeEnum.PDA40012004, mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == 2 ? "已完成" : "待打印");
         }
         return mesSfcWorkOrderBarcodeDto;
     }
@@ -1270,7 +1272,7 @@ public class BarcodeUtils {
              */
             MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = mesSfcWorkOrderBarcodeDtos.get(0);
             if (mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == (byte)2 || mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == (byte)3) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012004, mesSfcWorkOrderBarcodeDto.getBarcodeStatus());
+                throw new BizErrorException(ErrorCodeEnum.PDA40012004, mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == 2 ? "已完成" : "待打印");
             }
 
             baseExecuteResultDto.setIsSuccess(true);
