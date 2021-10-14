@@ -217,6 +217,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         //检验结果返写回库存明细
         int unQualifiedCount = 0;
         SearchWmsInnerInventoryDet  searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setPageSize(999);
         searchWmsInnerInventoryDet.setInspectionOrderCode(inspectionOrderCode);
         List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
         if(StringUtils.isNotEmpty(inventoryDetDtos)) {
@@ -358,6 +359,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
                 //对应的库存明细写入质检单号
                 SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+                searchWmsInnerInventoryDet.setPageSize(999);
                 searchWmsInnerInventoryDet.setStorageId(wmsInnerInventoryDto.getStorageId());
                 searchWmsInnerInventoryDet.setMaterialId(wmsInnerInventoryDto.getMaterialId());
                 searchWmsInnerInventoryDet.setInventoryStatusId(wmsInnerInventoryDto.getInventoryStatusId());
@@ -545,6 +547,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         //检验结果返写回库存明细
         SearchWmsInnerInventoryDet  searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setPageSize(999);
         searchWmsInnerInventoryDet.setInspectionOrderCode(inspectionOrderCode);
         List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
         if(StringUtils.isNotEmpty(inventoryDetDtos)) {
@@ -663,6 +666,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
                             //对应的库存明细写入质检单号
                             SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+                            searchWmsInnerInventoryDet.setPageSize(999);
                             searchWmsInnerInventoryDet.setStorageId(wmsInnerInventory.getStorageId());
                             searchWmsInnerInventoryDet.setMaterialId(wmsInnerInventory.getMaterialId());
                             searchWmsInnerInventoryDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());

@@ -83,7 +83,8 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
         if (productType == 0) {
             Example example = new Example(BaseProductProcessRoute.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("productType", productType);
+            criteria.andEqualTo("productType", productType)
+                    .andEqualTo("organizationId",currentUser.getOrganizationId());
             List<BaseProductProcessRoute> baseProductProcessRoutes = baseProductProcessRouteMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(baseProductProcessRoutes)) {
                 throw new BizErrorException("产品类别为All(*)的工艺路线只能有一条");
@@ -130,7 +131,8 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
         if (productType == 0) {
             Example example = new Example(BaseProductProcessRoute.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("productType", productType);
+            criteria.andEqualTo("productType", productType)
+                    .andEqualTo("organizationId",currentUser.getOrganizationId());
             BaseProductProcessRoute productProcessRoute = baseProductProcessRouteMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(productProcessRoute) && !productProcessRoute.getProductProcessRouteId().equals(baseProductProcessRoute.getProductProcessRouteId())) {
                 throw new BizErrorException("产品类别为All(*)的工艺路线只能有一条");
