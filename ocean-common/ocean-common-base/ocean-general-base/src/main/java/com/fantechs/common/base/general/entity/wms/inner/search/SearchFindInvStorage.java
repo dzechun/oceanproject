@@ -20,4 +20,7 @@ public class SearchFindInvStorage extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name = "batchCode",value = "批次")
     private String batchCode;
+
+    @ApiModelProperty(name = "storageType",value = "库位类型")
+    private Byte storageType;
 }
