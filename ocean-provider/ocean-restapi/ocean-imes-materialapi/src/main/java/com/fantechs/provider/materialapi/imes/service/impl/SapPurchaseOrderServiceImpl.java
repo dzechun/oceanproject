@@ -2,14 +2,15 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiPurchaseOrderApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
-import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -109,7 +110,8 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
                 omPurchaseOrder.setInventorySite(purchaseOrderApiDto.getLGORT());
                 omPurchaseOrder.setFreeItem(purchaseOrderApiDto.getUMSON());
                 omPurchaseOrder.setSalesReturnItem(purchaseOrderApiDto.getRETPO());
-
+                omPurchaseOrder.setOrderStatus((byte)1);
+                omPurchaseOrder.setStatus((byte)1);
                 ResponseEntity<OmPurchaseOrder> omPurchaseOrderResponseEntity = oMFeignApi.saveByApi(omPurchaseOrder);
                 purchaseMap.put(purchaseOrderApiDto.getEBELN(),omPurchaseOrderResponseEntity.getData().getPurchaseOrderId());
             }
@@ -120,12 +122,14 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             List<BaseMaterial> baseMaterials = baseUtils.getBaseMaterial(purchaseOrderApiDto.getMATNR(),orgId);
             if(StringUtils.isEmpty(baseMaterials)) return "未查询到对应的物料编码，编码为："+purchaseOrderApiDto.getMATNR();
 
+
             purchaseOrderDet.setMaterialId(baseMaterials.get(0).getMaterialId());
             purchaseOrderDet.setOrderQty(new BigDecimal(purchaseOrderApiDto.getMENGE().trim()));
             purchaseOrderDet.setStatus((byte)1);
             purchaseOrderDet.setWarehouseId(baseWarehouseList.getData().get(0).getWarehouseId());
             purchaseOrderDet.setFactoryId(factoryList.getData().get(0).getFactoryId());
             purchaseOrderDet.setIsDelete((byte)1);
+            purchaseOrderDet.setOrgId(orgId);
             omPurchaseOrderDetList.add(purchaseOrderDet);
         }
         oMFeignApi.saveByApi(omPurchaseOrderDetList);
