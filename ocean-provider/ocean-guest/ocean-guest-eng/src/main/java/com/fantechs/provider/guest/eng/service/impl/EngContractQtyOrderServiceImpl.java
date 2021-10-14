@@ -59,6 +59,8 @@ public class EngContractQtyOrderServiceImpl extends BaseService<EngContractQtyOr
 //        criteria.andEqualTo("contractCode",engContractQtyOrder.getContractCode());
 //        criteria.andEqualTo("dominantTermCode",engContractQtyOrder.getDominantTermCode());
 //        criteria.andEqualTo("materialCode",engContractQtyOrder.getMaterialCode());
+
+        // option1 合同量单明细ID
         criteria.andEqualTo("option1",engContractQtyOrder.getOption1());
         criteria.andEqualTo("orgId",engContractQtyOrder.getOrgId());
 

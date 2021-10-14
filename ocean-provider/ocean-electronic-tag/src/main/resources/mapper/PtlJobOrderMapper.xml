@@ -19,6 +19,8 @@
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="pick_back_status" jdbcType="TINYINT" property="pickBackStatus" />
     <result column="if_already_print" jdbcType="TINYINT" property="ifAlreadyPrint" />
+    <result column="activation_time" jdbcType="TIMESTAMP" property="activationTime" />
+    <result column="finish_time" jdbcType="TIMESTAMP" property="finishTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -34,8 +36,9 @@
   
   <sql id="Base_Column_List">
     pjo.job_order_id, pjo.job_order_code, pjo.job_order_type, pjo.related_order_code, pjo.despatch_order_code, pjo.if_urgent, pjo.warehouse_id, pjo.warehouse_name,
-    pjo.vehicle_id, pjo.worker_user_id, pjo.worker_user_name, pjo.order_status, pjo.pick_back_status, pjo.if_already_print, pjo.status, pjo.remark,
-    pjo.org_id, pjo.create_user_id, pjo.create_time, pjo.modified_user_id, pjo.modified_time, pjo.is_delete, pjo.option1, pjo.option2, pjo.option3
+    pjo.vehicle_id, pjo.worker_user_id, pjo.worker_user_name, pjo.order_status, pjo.pick_back_status, pjo.if_already_print, pjo.activation_time,
+    pjo.finish_time, pjo.status, pjo.remark, pjo.org_id, pjo.create_user_id, pjo.create_time, pjo.modified_user_id, pjo.modified_time, pjo.is_delete,
+    pjo.option1, pjo.option2, pjo.option3
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.electronic.dto.PtlJobOrderDto">
@@ -97,10 +100,10 @@
         and TO_DAYS(pjo.create_time) = TO_DAYS(NOW())
       </if>
       <if test="materialCode != null and materialCode != ''">
-        pjod.material_code like CONCAT('%', #{materialCode}, '%')
+        and pjod.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
       <if test="materialName != null and materialName != ''">
-        pjod.material_name like CONCAT('%', #{materialName}, '%')
+        and pjod.material_name like CONCAT('%', #{materialName}, '%')
       </if>
       <if test="warehouseId != null">
         and bw.warehouse_id = #{warehouseId}

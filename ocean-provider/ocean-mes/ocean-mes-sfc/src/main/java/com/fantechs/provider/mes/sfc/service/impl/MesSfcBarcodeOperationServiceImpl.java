@@ -64,9 +64,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         if (StringUtils.isEmpty(dto.getBarCode())) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012026);
         }

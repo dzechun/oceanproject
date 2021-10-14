@@ -786,24 +786,24 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         return num;
     }
 
-//    /**
-//     * 获取原库存数量
-//     * @return
-//     */
-//    private BigDecimal getInvQty(Long jobOrderDetId,BigDecimal chageQty){
-//        Map<Long,BigDecimal> bigDecimalMap = new HashMap<>();
-//        if(redisUtil.hasKey(this.REDIS_KEY+jobOrderDetId.toString())){
-//            bigDecimalMap = (Map<Long, BigDecimal>) redisUtil.get(this.REDIS_KEY+jobOrderDetId.toString());
-//        }
-//        for (Map.Entry<Long, BigDecimal> m : bigDecimalMap.entrySet()){
-//            WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(m.getKey());
-//            if(StringUtils.isEmpty(wmsInnerInventory)){
-//                throw new BizErrorException("恢复库存失败");
-//            }
-//            chageQty = chageQty.add(wmsInnerInventory.getPackingQty());
-//        }
-//        return chageQty;
-//    }
+    /**
+     * 获取原库存数量
+     * @return
+     */
+    private BigDecimal getInvQty(Long jobOrderDetId,BigDecimal chageQty){
+        Map<Long,BigDecimal> bigDecimalMap = new HashMap<>();
+        if(redisUtil.hasKey(this.REDIS_KEY+jobOrderDetId.toString())){
+            bigDecimalMap = (Map<Long, BigDecimal>) redisUtil.get(this.REDIS_KEY+jobOrderDetId.toString());
+        }
+        for (Map.Entry<Long, BigDecimal> m : bigDecimalMap.entrySet()){
+            WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(m.getKey());
+            if(StringUtils.isEmpty(wmsInnerInventory)){
+                throw new BizErrorException("恢复库存失败");
+            }
+            chageQty = chageQty.add(wmsInnerInventory.getPackingQty());
+        }
+        return chageQty;
+    }
 
     /**
      * 添加数量

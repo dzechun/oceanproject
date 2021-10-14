@@ -36,8 +36,10 @@ import java.util.stream.Collectors;
 @Service
 public class ImportDataServiceImpl implements ImportDataService {
 
-    // Webservice接口地址
-    private final String address = "http://mattest.cwcec.com/LocWebServices/WebService1.asmx";
+    // Webservice接口地址(测试环境)
+    //private final String address = "http://mattest.cwcec.com/LocWebServices/WebService1.asmx";
+    //Webservice接口地址(生产环境)
+    private final String address = "http://mat.cwcec.com/LocWebServices/WebService1.asmx";
 
     @Resource
     BaseFeignApi baseFeignApi;

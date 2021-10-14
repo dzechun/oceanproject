@@ -247,7 +247,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 innerJobOrder.setJobOrderCode(CodeUtils.getId("SHIFT-"));
                 innerJobOrder.setJobOrderType((byte) 2);
                 innerJobOrder.setPlanQty(dto.getMaterialQty());
-                innerJobOrder.setActualQty(innerJobOrder.getPlanQty());
+//                innerJobOrder.setActualQty(innerJobOrder.getPlanQty());
                 innerJobOrder.setOrderStatus((byte) 4);
                 innerJobOrder.setStatus((byte) 1);
                 innerJobOrder.setOrgId(sysUser.getOrganizationId());
@@ -271,7 +271,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setPackingUnitName(innerInventoryDto.getPackingUnitName());
             wmsInnerJobOrderDet.setPlanQty(dto.getMaterialQty());
             wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getPlanQty());
-            wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getPlanQty());
+//            wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getPlanQty());
             wmsInnerJobOrderDet.setPalletCode(innerInventoryDto.getPalletCode());
             wmsInnerJobOrderDet.setReceivingDate(innerInventoryDto.getReceivingDate());
             wmsInnerJobOrderDet.setProductionDate(innerInventoryDto.getProductionDate());
@@ -406,6 +406,13 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
         }
         WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
+        //获取初期数量
+        WmsInnerInventory innerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(wmsInnerInventory.getParentInventoryId());
+        if(StringUtils.isEmpty(innerInventory.getPackingQty())){
+            innerInventory.setPackingQty(BigDecimal.ZERO);
+        }
+        BigDecimal initQty = innerInventory.getPackingQty().add(wmsInnerInventory.getPackingQty());
+
         if (StringUtils.isEmpty(wmsInnerInventory_old)) {
             if (StringUtils.isEmpty(wmsInnerInventory)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -415,12 +422,12 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
 
             //库存日志
-            InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrderDto,oldDto,wmsInnerInventory.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
+            InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrderDto,oldDto,initQty,wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
             InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrderDto,oldDto,BigDecimal.ZERO,wmsInnerInventory.getPackingQty(),(byte)3,(byte)1);
         } else {
 
             //库存日志
-            InventoryLogUtil.addLog(wmsInnerInventory_old,wmsInnerJobOrderDto,oldDto,wmsInnerInventory.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
+            InventoryLogUtil.addLog(wmsInnerInventory_old,wmsInnerJobOrderDto,oldDto,initQty,wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
             InventoryLogUtil.addLog(wmsInnerInventory_old,wmsInnerJobOrderDto,oldDto,wmsInnerInventory_old.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)1);
 
             wmsInnerInventory_old.setPackingQty(wmsInnerInventory_old.getPackingQty() != null ? wmsInnerInventory_old.getPackingQty().add(wmsInnerInventory.getPackingQty()) : wmsInnerInventory.getPackingQty());

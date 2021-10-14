@@ -129,7 +129,7 @@ wii.option5
       <if test="inventoryStatusName!=null and inventoryStatusName != ''">
         and bis.inventory_status_name = #{inventoryStatusName}
       </if>
-      <if test="storageType!=null and storageType != ''">
+      <if test="storageType!=null and storageType!=''">
         and bs.storage_type = #{storageType}
       </if>
       <if test="qcLock!=null and qcLock != ''">

@@ -160,7 +160,10 @@ wiid.option5
             and wiid.barcode_status = #{barcodeStatus}
         </if>
         <if test="qcDate!=null and qcDate!=''">
-            date_format(wiid.qcDate, '%Y-%m-%d')=${qcDate}
+            and date_format(wiid.qc_date, '%Y-%m-%d')=#{qcDate}
+        </if>
+        <if test="deliveryOrderCode!=null and deliveryOrderCode!=''">
+            and wiid.delivery_order_code like CONCAT('%',#{deliveryOrderCode},'%')
         </if>
         </where>
         order by wiid.create_time desc

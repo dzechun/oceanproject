@@ -175,6 +175,7 @@ public class ElectronicTagReceiver {
                             PtlJobOrder ptlJobOrder = new PtlJobOrder();
                             ptlJobOrder.setJobOrderId(ptlJobOrderDetDtoList.get(0).getJobOrderId());
                             ptlJobOrder.setOrderStatus((byte) 3);
+                            ptlJobOrder.setFinishTime(new Date());
                             ptlJobOrder.setModifiedTime(new Date());
                             electronicTagFeignApi.updatePtlJobOrder(ptlJobOrder);
 
