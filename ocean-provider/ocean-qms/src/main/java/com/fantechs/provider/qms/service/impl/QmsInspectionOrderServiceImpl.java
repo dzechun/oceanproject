@@ -599,10 +599,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
     public int autoAdd() {
-
+        System.out.println("===========自动生成成品检验单定时任务============");
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         //获取完工入库单
         SearchWmsInAsnOrder searchWmsInAsnOrder = new SearchWmsInAsnOrder();
         searchWmsInAsnOrder.setOrderStatus((byte)3);
@@ -613,6 +612,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         searchWmsInAsnOrder.setStartTime(DateUtils.getDateString(date));
         searchWmsInAsnOrder.setEndTime(DateUtils.getDateString(date));
         searchWmsInAsnOrder.setOrderTypeName("完工入库");
+        searchWmsInAsnOrder.setOrgId(user.getOrganizationId());
         ResponseEntity<List<WmsInAsnOrderDto>> wmsInAsnOrderList = inFeignApi.findList(searchWmsInAsnOrder);
 
         if(StringUtils.isNotEmpty(wmsInAsnOrderList.getData())){

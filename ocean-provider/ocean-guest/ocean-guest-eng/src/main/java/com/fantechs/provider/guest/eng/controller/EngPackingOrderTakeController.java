@@ -4,7 +4,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto;
-import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeDto;
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeSummaryDetDto;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrderSummaryDet;
@@ -58,15 +58,16 @@ public class EngPackingOrderTakeController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchEngPackingOrder searchEngPackingOrder){
-        List<EngPackingOrderDto> list = engPackingOrderTakeService.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrder));
-        List<EngPackingOrderTakeDto> collect = list.stream().map(engPackingOrderDto -> {
-            EngPackingOrderTakeDto engPackingOrderTakeDto = new EngPackingOrderTakeDto();
-            BeanUtils.copyProperties(engPackingOrderDto, engPackingOrderTakeDto);
-            return engPackingOrderTakeDto;
+        searchEngPackingOrder.setPageSize(5000);
+        List<EngPackingOrderSummaryDetDto> list = engPackingOrderSummaryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchEngPackingOrder));
+        List<EngPackingOrderTakeSummaryDetDto> collect = list.stream().map(engPackingOrderSummaryDetDto -> {
+            EngPackingOrderTakeSummaryDetDto engPackingOrderTakeSummaryDetDto = new EngPackingOrderTakeSummaryDetDto();
+            BeanUtils.copyProperties(engPackingOrderSummaryDetDto, engPackingOrderTakeSummaryDetDto);
+            return engPackingOrderTakeSummaryDetDto;
         }).collect(Collectors.toList());
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(collect, "导出信息", "收货入库信息", EngPackingOrderTakeDto.class, "收货入库信息.xls", response);
+            EasyPoiUtils.exportExcel(collect, "导出信息", "EngPackingOrderSummaryDet信息", EngPackingOrderTakeSummaryDetDto.class, "EngPackingOrderSummaryDet.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

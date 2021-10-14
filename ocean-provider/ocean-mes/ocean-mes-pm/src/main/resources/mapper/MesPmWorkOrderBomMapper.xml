@@ -81,7 +81,7 @@
     LEFT JOIN ocean_v2.sys_user s ON mpwob.modified_user_id = s.user_id
     LEFT JOIN base_organization bo ON mpwob.org_id = bo.organization_id
     <where>
-      1=1
+      mpwob.single_qty > 0
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(mpwob.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
