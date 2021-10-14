@@ -4,6 +4,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
+import com.fantechs.dto.PrintModelDto;
 import com.fantechs.entity.WmsInnerInventoryModel;
 import com.fantechs.entity.search.SearchWmsInnerInventory;
 import com.fantechs.service.WmsInnerInventoryUreportService;
@@ -53,5 +54,11 @@ public class WmsInnerInventoryUreportController {
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
+    }
+
+    @PostMapping("/printMaterialCode")
+    @ApiOperation("材料编码打印")
+    public ResponseEntity printMaterialCode(@RequestBody List<PrintModelDto> list){
+        return ControllerUtil.returnCRUD(wmsInnerInventoryUreportService.PrintMaterialCode(list));
     }
 }
