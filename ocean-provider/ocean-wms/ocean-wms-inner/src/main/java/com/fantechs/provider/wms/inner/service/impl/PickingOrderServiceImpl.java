@@ -763,13 +763,13 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     acuQty = acuQty.subtract(innerInventory.getPackingQty());
                     if (type == 3) {
                         //添加库存日志
-                        InventoryLogUtil.addLog(innerInventory, wmsInnerJobOrder, wmsInnerJobOrderDetDto, getInvQty(wmsInnerJobOrderDetDto.getJobOrderDetId(),innerInventory.getPackingQty()), innerInventory.getPackingQty(), (byte) 4, (byte) 2);
+                        InventoryLogUtil.addLog(innerInventory, wmsInnerJobOrder, wmsInnerJobOrderDetDto, innerInventory.getPackingQty(), innerInventory.getPackingQty(), (byte) 4, (byte) 2);
                     }
                     innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(innerInventory.getPackingQty()));
                 } else if (innerInventory.getPackingQty().compareTo(acuQty) > -1) {
                     if (type == 3) {
                         //添加库存日志
-                        InventoryLogUtil.addLog(innerInventory, wmsInnerJobOrder, wmsInnerJobOrderDetDto, getInvQty(wmsInnerJobOrderDetDto.getJobOrderDetId(),innerInventory.getPackingQty()), acuQty, (byte) 4, (byte) 2);
+                        InventoryLogUtil.addLog(innerInventory, wmsInnerJobOrder, wmsInnerJobOrderDetDto, innerInventory.getPackingQty(), acuQty, (byte) 4, (byte) 2);
                     }
                     innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(acuQty));
                     if (bigDecimalMap.containsKey(innerInventory.getInventoryId())) {
