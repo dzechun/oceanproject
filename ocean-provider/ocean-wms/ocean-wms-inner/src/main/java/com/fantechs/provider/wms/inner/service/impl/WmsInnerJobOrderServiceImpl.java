@@ -925,6 +925,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
                 }
                 WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
+
+                //获取初期数量
+                WmsInnerInventory innerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(wmsInnerInventory.getParentInventoryId());
+                if(StringUtils.isEmpty(innerInventory.getPackingQty())){
+                    innerInventory.setPackingQty(BigDecimal.ZERO);
+                }
                 if (StringUtils.isEmpty(wmsInnerInventory_old)) {
                     //添加库存
                     BigDecimal packingQty = wmsInnerInventory.getPackingQty();
@@ -948,10 +954,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(aqty));
                     wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
 
-                    InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,oldDto,packingQty,aqty,(byte)3,(byte)2);
+                    BigDecimal initQty = innerInventory.getPackingQty().add(packingQty);
+                    InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,oldDto,initQty,aqty,(byte)3,(byte)2);
                     InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,oldDto,BigDecimal.ZERO,aqty,(byte)3,(byte)1);
                 } else {
-                    BigDecimal packingQty = wmsInnerInventory.getPackingQty();
+                    BigDecimal packingQty = innerInventory.getPackingQty().add(wmsInnerInventory.getPackingQty());
                     BigDecimal initQty = wmsInnerInventory_old.getPackingQty();
                     wmsInnerInventory_old.setPackingQty(wmsInnerInventory_old.getPackingQty() != null ? wmsInnerInventory_old.getPackingQty().add(wmsInnerInventory.getPackingQty()) : wmsInnerInventory.getPackingQty());
                     wmsInnerInventory_old.setRelevanceOrderCode(wmsInnerInventory.getRelevanceOrderCode());

@@ -763,13 +763,13 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     acuQty = acuQty.subtract(innerInventory.getPackingQty());
                     if (type == 3) {
                         //添加库存日志
-                        InventoryLogUtil.addLog(innerInventory, wmsInnerJobOrder, wmsInnerJobOrderDetDto, innerInventory.getPackingQty(), innerInventory.getPackingQty(), (byte) 4, (byte) 2);
+                        InventoryLogUtil.addLog(innerInventory, wmsInnerJobOrder, wmsInnerJobOrderDetDto, getInvQty(wmsInnerJobOrderDetDto.getJobOrderDetId(),innerInventory.getPackingQty()), innerInventory.getPackingQty(), (byte) 4, (byte) 2);
                     }
                     innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(innerInventory.getPackingQty()));
                 } else if (innerInventory.getPackingQty().compareTo(acuQty) > -1) {
                     if (type == 3) {
                         //添加库存日志
-                        InventoryLogUtil.addLog(innerInventory, wmsInnerJobOrder, wmsInnerJobOrderDetDto, innerInventory.getPackingQty(), acuQty, (byte) 4, (byte) 2);
+                        InventoryLogUtil.addLog(innerInventory, wmsInnerJobOrder, wmsInnerJobOrderDetDto, getInvQty(wmsInnerJobOrderDetDto.getJobOrderDetId(),innerInventory.getPackingQty()), acuQty, (byte) 4, (byte) 2);
                     }
                     innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(acuQty));
                     if (bigDecimalMap.containsKey(innerInventory.getInventoryId())) {
@@ -786,24 +786,24 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         return num;
     }
 
-//    /**
-//     * 获取原库存数量
-//     * @return
-//     */
-//    private BigDecimal getInvQty(Long jobOrderDetId,BigDecimal chageQty){
-//        Map<Long,BigDecimal> bigDecimalMap = new HashMap<>();
-//        if(redisUtil.hasKey(this.REDIS_KEY+jobOrderDetId.toString())){
-//            bigDecimalMap = (Map<Long, BigDecimal>) redisUtil.get(this.REDIS_KEY+jobOrderDetId.toString());
-//        }
-//        for (Map.Entry<Long, BigDecimal> m : bigDecimalMap.entrySet()){
-//            WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(m.getKey());
-//            if(StringUtils.isEmpty(wmsInnerInventory)){
-//                throw new BizErrorException("恢复库存失败");
-//            }
-//            chageQty = chageQty.add(wmsInnerInventory.getPackingQty());
-//        }
-//        return chageQty;
-//    }
+    /**
+     * 获取原库存数量
+     * @return
+     */
+    private BigDecimal getInvQty(Long jobOrderDetId,BigDecimal chageQty){
+        Map<Long,BigDecimal> bigDecimalMap = new HashMap<>();
+        if(redisUtil.hasKey(this.REDIS_KEY+jobOrderDetId.toString())){
+            bigDecimalMap = (Map<Long, BigDecimal>) redisUtil.get(this.REDIS_KEY+jobOrderDetId.toString());
+        }
+        for (Map.Entry<Long, BigDecimal> m : bigDecimalMap.entrySet()){
+            WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(m.getKey());
+            if(StringUtils.isEmpty(wmsInnerInventory)){
+                throw new BizErrorException("恢复库存失败");
+            }
+            chageQty = chageQty.add(wmsInnerInventory.getPackingQty());
+        }
+        return chageQty;
+    }
 
     /**
      * 添加数量
