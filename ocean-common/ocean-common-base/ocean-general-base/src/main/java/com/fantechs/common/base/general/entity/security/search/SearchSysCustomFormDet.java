@@ -20,4 +20,7 @@ public class SearchSysCustomFormDet extends BaseQuery implements Serializable {
     @ApiModelProperty(name="fromRout",value = "表单路由")
     private String fromRout;
 
+    @ApiModelProperty(name="itemKey",value = "字段名")
+    private String itemKey;
+
 }
