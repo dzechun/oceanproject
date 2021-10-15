@@ -20,7 +20,7 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
         <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
         <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
@@ -65,8 +65,7 @@
     <select id="selectUsers" parameterType="com.fantechs.common.base.entity.security.search.SearchSysUser"
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
-        sf.factory_name,
-        sd.dept_name,
+        sf.factory_name, sd.dept_name,sr.role_name AS roleName,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
         from ocean_v2.sys_user su

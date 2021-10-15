@@ -87,6 +87,7 @@ public class EsopIssueController {
     @RequestBody(required = false) SearchEsopIssue searchEsopIssue){
     List<EsopIssueDto> list = esopIssueService.findList(ControllerUtil.dynamicConditionByEntity(searchEsopIssue));
     try {
+
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "问题清单", EsopIssueDto.class, "问题清单.xls", response);
         } catch (Exception e) {
