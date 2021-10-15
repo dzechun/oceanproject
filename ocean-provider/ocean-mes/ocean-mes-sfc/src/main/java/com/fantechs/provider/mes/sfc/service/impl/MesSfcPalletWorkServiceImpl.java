@@ -369,44 +369,29 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         palletWorkScanDto.setNowPackageSpecQty(nowPackageSpecQty);
         palletWorkScanDto.setScanCartonNum(palletCartons + 1);
 
-        /**
-         * 万宝特性要求
-         * 当程序配置项有数据时，则走此段逻辑
-         * 栈板作业，增加根据产品条码、PO号判断当前产线是否有同样的产品，没有则关闭当前栈板
-         */
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("wanbaoAutoClosePallet");
-        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        if (!specItems.isEmpty() && "1".equals(specItems.get(0).getParaValue())){
-            // 判断同个工单的、已过包箱过站但是没有栈板过站的包箱、并且PO号一致的数据是否存在
-            Map<String, Object> param = new HashMap<>();
-            param.put("workOrderId", mesSfcProductPallet.getWorkOrderId());
-            List<MesSfcBarcodeProcess> nextProcessIsPallet = mesSfcBarcodeProcessService.findNextProcessIsPallet(param);
-            // TODO PO号判断
+        // 未满箱
+        if (nowPackageSpecQty.compareTo(BigDecimal.valueOf(palletCartons + 1)) != 0){
+            /**
+             * 万宝特性要求
+             * 当程序配置项有数据时，则走此段逻辑
+             * 栈板作业，增加根据产品条码、PO号判断当前产线是否有同样的产品，没有则关闭当前栈板
+             */
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoAutoClosePallet");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (!specItems.isEmpty() && "1".equals(specItems.get(0).getParaValue())){
+                // 判断同个工单的、已过包箱过站但是没有栈板过站的包箱、并且PO号一致的数据是否存在
+                Map<String, Object> param = new HashMap<>();
+                param.put("workOrderId", mesSfcProductPallet.getWorkOrderId());
+                List<MesSfcBarcodeProcess> nextProcessIsPallet = mesSfcBarcodeProcessService.findNextProcessIsPallet(param);
+                // TODO PO号判断
 
-            if (nextProcessIsPallet.isEmpty()){
-                // 自动提交
-                mesSfcProductPallet.setCloseStatus((byte) 1);
-                mesSfcProductPallet.setClosePalletUserId(user.getUserId());
-                mesSfcProductPallet.setClosePalletTime(new Date());
-                mesSfcProductPallet.setModifiedUserId(user.getUserId());
-                mesSfcProductPallet.setModifiedTime(new Date());
-                mesSfcProductPalletService.update(mesSfcProductPallet);
-
-                // 是否打印栈板码
-                if (requestPalletWorkScanDto.getPrintBarcode() == 1) {
-                    PrintCarCodeDto printCarCodeDto = new PrintCarCodeDto();
-                    printCarCodeDto.setWorkOrderId(workOrderId);
-                    printCarCodeDto.setLabelTypeCode("10");
-                    printCarCodeDto.setBarcode(palletCode);
-                    printCarCodeDto.setPrintName(requestPalletWorkScanDto.getPrintName() != null ? requestPalletWorkScanDto.getPrintName() : "测试");
-                    BarcodeUtils.printBarCode(printCarCodeDto);
+                if (nextProcessIsPallet.isEmpty()){
+                    // 未满栈板自动提交
+                    List<Long> palletIdList = new ArrayList<>();
+                    palletIdList.add(mesSfcProductPallet.getProductPalletId());
+                    this.submitNoFullPallet(palletIdList, requestPalletWorkScanDto.getPrintBarcode(), requestPalletWorkScanDto.getPrintName());
                 }
-
-                // 生成完工入库单
-                List<Long> palletIds = new ArrayList<>();
-                palletIds.add(mesSfcProductPallet.getProductPalletId());
-                this.beforePalletAutoAsnOrder(palletIds, user.getOrganizationId(), mesSfcWorkOrderBarcodeList);
             }
         }
 
