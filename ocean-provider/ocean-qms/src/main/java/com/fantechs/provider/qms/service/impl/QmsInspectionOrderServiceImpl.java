@@ -241,9 +241,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if(StringUtils.isEmpty(innerInventoryDtoList.getData())){
             throw new BizErrorException("未查询到对应库存信息");
         }
-        WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.getData().get(0);
-        WmsInnerInventoryDto innerInventoryDto = innerInventoryDtoList.getData().get(0);
-
+        WmsInnerInventoryDto wmsInnerInventoryDto = new WmsInnerInventoryDto();
+        BeanUtils.copyProperties(innerInventoryDtoList.getData().get(0),wmsInnerInventoryDto);
+        WmsInnerInventoryDto innerInventoryDto = new WmsInnerInventoryDto();
+        BeanUtils.copyProperties(innerInventoryDtoList.getData().get(0),innerInventoryDto);
         //不合格库存
         wmsInnerInventoryDto.setQcLock((byte)0);
         wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList1.get(0).getInventoryStatusId());
