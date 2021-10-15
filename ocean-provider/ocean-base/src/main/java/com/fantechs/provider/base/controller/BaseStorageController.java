@@ -3,6 +3,7 @@ package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.JobRuleDto;
+import com.fantechs.common.base.general.dto.basic.PrintBaseStorageCode;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseFactoryImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
@@ -177,5 +178,11 @@ public class BaseStorageController {
     @PostMapping("/saveByApi")
     public ResponseEntity saveByApi(@ApiParam(value = "必传：storageCode",required = true)@RequestBody @Validated BaseStorage baseStorage) {
         return ControllerUtil.returnCRUD(baseStorageService.saveByApi(baseStorage));
+    }
+
+    @ApiOperation("库位打印")
+    @PostMapping("/printStorageCode")
+    public ResponseEntity printStorageCode(@RequestBody List<PrintBaseStorageCode> printBaseStorageCodes){
+        return ControllerUtil.returnCRUD(baseStorageService.printStorageCode(printBaseStorageCodes));
     }
 }
