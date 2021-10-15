@@ -170,7 +170,7 @@ public class BarcodeRuleUtils {
                     }
                     Map<String,Object> paramMap = JSON.parseObject(param,Map.class);
                     if(Integer.parseInt(paramMap.get("mesCode").toString())!=200){
-                        throw new BizErrorException(ErrorCodeEnum.GL9999404,paramMap.get("message"));
+                        throw new BizErrorException(paramMap.get("message").toString());
                     }else {
                         param = paramMap.get("param").toString();
                     }
