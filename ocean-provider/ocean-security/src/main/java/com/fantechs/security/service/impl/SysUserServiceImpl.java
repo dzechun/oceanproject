@@ -3,6 +3,7 @@ package com.fantechs.security.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysUserExcelDTO;
+import com.fantechs.common.base.entity.security.SysOrganizationUser;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtUser;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
@@ -15,6 +16,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.security.mapper.SysHtUserMapper;
+import com.fantechs.security.mapper.SysOrganizationUserMapper;
 import com.fantechs.security.mapper.SysUserMapper;
 import com.fantechs.security.service.SysUserService;
 import org.springframework.beans.BeanUtils;
@@ -40,6 +42,8 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private SysOrganizationUserMapper sysOrganizationUserMapper;
 
     @Override
     public List<SysUser> selectUsers(SearchSysUser searchSysUser) {
@@ -85,8 +89,15 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         sysUser.setModifiedTime(new Date());
         sysUser.setIsDelete(StringUtils.isEmpty(sysUser.getIsDelete()) ? (byte)1 : sysUser.getIsDelete());
         sysUser.setStatus(StringUtils.isEmpty(sysUser.getStatus()) ? (byte)1 : sysUser.getStatus());
-
         sysUserMapper.insertUseGeneratedKeys(sysUser);
+
+        //增加用户的角色、组织权限
+        SysOrganizationUser sysOrganizationUser = new SysOrganizationUser();
+        sysOrganizationUser.setOrganizationId(sysUser.getOrganizationId());
+        sysOrganizationUser.setUserId(sysUser.getUserId());
+        sysOrganizationUserMapper.insert(sysOrganizationUser);
+
+
 
         //新增用户历史信息
         SysHtUser sysHtUser=new SysHtUser();
