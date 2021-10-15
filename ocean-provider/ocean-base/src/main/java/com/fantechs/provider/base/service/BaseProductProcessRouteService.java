@@ -1,8 +1,7 @@
 package com.fantechs.provider.base.service;
 
-import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProductProcessRouteImport;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute;
+import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -20,4 +19,6 @@ public interface BaseProductProcessRouteService extends IService<BaseProductProc
     Map<String, Object> importExcel(List<BaseProductProcessRouteImport> baseProductProcessRouteImports);
 
     BaseProductProcessRoute addOrUpdate (BaseProductProcessRoute baseProductProcessRoute);
+
+    List<BaseProductProcessRoute> findListByCondition(Map<String, Object> map);
 }

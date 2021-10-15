@@ -1,11 +1,11 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.imports.BaseProductProcessRouteImport;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductProcessRoute;
-import com.fantechs.common.base.general.dto.basic.imports.BaseProductProcessRouteImport;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -28,7 +28,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  *
@@ -133,4 +132,13 @@ public class BaseProductProcessRouteController {
         BaseProductProcessRoute baseProductProcessRoutes = baseProductProcessRouteService.addOrUpdate(baseProductProcessRoute);
         return ControllerUtil.returnDataSuccess(baseProductProcessRoutes, StringUtils.isEmpty(baseProductProcessRoutes) ? 0 : 1);
     }
+
+    @ApiOperation("产品工艺路线信息列表")
+    @PostMapping("/findListByCondition")
+    public ResponseEntity<List<BaseProductProcessRoute>> findListByCondition(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessRoute searchBaseProductProcessRoute) {
+        Page<Object> page = PageHelper.startPage(searchBaseProductProcessRoute.getStartPage(), searchBaseProductProcessRoute.getPageSize());
+        List<BaseProductProcessRoute> list = baseProductProcessRouteService.findListByCondition(ControllerUtil.dynamicConditionByEntity(searchBaseProductProcessRoute));
+        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
+    }
+
 }

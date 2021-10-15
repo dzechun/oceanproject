@@ -2,16 +2,14 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtProductProcessRoute;
-import com.fantechs.common.base.general.dto.basic.imports.BaseProductProcessRouteImport;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.imports.BaseProductProcessRouteImport;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtProductProcessRoute;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseProductProcessRouteService;
 import org.springframework.beans.BeanUtils;
@@ -47,9 +45,6 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
     public List<BaseProductProcessRoute> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         List<BaseProductProcessRoute> list = baseProductProcessRouteMapper.findList(map);
@@ -325,6 +320,64 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
             baseProductProcessRouteMapper.insertUseGeneratedKeys(baseProductProcessRoute);
         }
         return baseProductProcessRoute;
+    }
+
+
+    @Override
+    public List<BaseProductProcessRoute> findListByCondition(Map<String, Object> map) {
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            map.put("orgId", user.getOrganizationId());
+        }
+        List<BaseProductProcessRoute> list = new ArrayList<>();
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("orgId", map.get("orgId"));
+        //依照物料，产品，产线，默认的优先级进行查询
+        if(StringUtils.isNotEmpty(map.get("materialId"))) {
+            maps.put("materialId", map.get("materialId"));
+            list = baseProductProcessRouteMapper.findList(map);
+            if(StringUtils.isNotEmpty(list)){
+                setName(list);
+                return list;
+            }
+        }
+        if(StringUtils.isNotEmpty(map.get("productModelId"))) {
+            maps.remove("materialId");
+            maps.put("productModelId", map.get("productModelId"));
+            list = baseProductProcessRouteMapper.findList(map);
+            if(StringUtils.isNotEmpty(list)){
+                setName(list);
+                return list;
+            }
+        }
+        if(StringUtils.isNotEmpty(map.get(""))) {
+            maps.remove("productModelId");
+            maps.put("proLineId", map.get("proLineId"));
+            list = baseProductProcessRouteMapper.findList(map);
+            if(StringUtils.isNotEmpty(list)){
+                setName(list);
+                return list;
+            }
+        }
+        maps.remove("proLineId");
+        maps.put("productType", 0);
+        list = baseProductProcessRouteMapper.findList(maps);
+        return list;
+    }
+
+    public void setName(List<BaseProductProcessRoute> list){
+        for (BaseProductProcessRoute baseProductProcessRoute : list) {
+            Integer productType = baseProductProcessRoute.getProductType();
+            if (productType == 0) {
+                baseProductProcessRoute.setProductName("*");
+            } else if (productType == 1) {
+                baseProductProcessRoute.setProductName(baseProductProcessRoute.getProName());
+            } else if (productType == 2) {
+                baseProductProcessRoute.setProductName(baseProductProcessRoute.getProductModelCode());
+            } else if (productType == 3) {
+                baseProductProcessRoute.setProductName(baseProductProcessRoute.getMaterialCode());
+            }
+        }
     }
 
 }
