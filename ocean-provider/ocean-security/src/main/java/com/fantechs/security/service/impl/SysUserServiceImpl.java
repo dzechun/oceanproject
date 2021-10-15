@@ -5,6 +5,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysUserExcelDTO;
 import com.fantechs.common.base.entity.security.SysOrganizationUser;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.SysUserRole;
 import com.fantechs.common.base.entity.security.history.SysHtUser;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -13,11 +14,15 @@ import com.fantechs.common.base.general.entity.basic.BaseDept;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseDept;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.*;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.RedisUtil;
+import com.fantechs.common.base.utils.SnowFlakeUtil;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.security.mapper.SysHtUserMapper;
 import com.fantechs.security.mapper.SysOrganizationUserMapper;
 import com.fantechs.security.mapper.SysUserMapper;
+import com.fantechs.security.mapper.SysUserRoleMapper;
 import com.fantechs.security.service.SysUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -44,6 +49,11 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
     @Resource
     private SysOrganizationUserMapper sysOrganizationUserMapper;
+
+    @Resource
+    private SysUserRoleMapper sysUserRoleMapper;
+
+
 
     @Override
     public List<SysUser> selectUsers(SearchSysUser searchSysUser) {
@@ -97,7 +107,10 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         sysOrganizationUser.setUserId(sysUser.getUserId());
         sysOrganizationUserMapper.insert(sysOrganizationUser);
 
-
+        SysUserRole sysUserRole = new SysUserRole();
+        sysUserRole.setUserId(sysUser.getUserId());
+        sysUserRole.setRoleId(sysUser.getRoleId());
+        sysUserRoleMapper.insert(sysUserRole);
 
         //新增用户历史信息
         SysHtUser sysHtUser=new SysHtUser();
@@ -114,6 +127,19 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
+
+        //修改用户绑定角色,只更新未绑定或绑定一个角色的用户
+     /*   Example roleExample = new Example(SysUserRole.class);
+        Example.Criteria roleCriteria = roleExample.createCriteria();
+        roleCriteria.andEqualTo("userId",user.getUserId());
+        List<SysUserRole> sysUserRoles = sysUserRoleMapper.selectByExample(roleExample);
+        if(sysUserRoles.size()<=1) {
+            sysUserRoleMapper.deleteByExample(roleExample);
+            SysUserRole sysUserRole = new SysUserRole();
+            sysUserRole.setUserId(sysUser.getUserId());
+            sysUserRole.setRoleId(sysUser.getRoleId());
+            sysUserRoleMapper.insert(sysUserRole);
+        }*/
 
         if(StringUtils.isNotEmpty(sysUser.getPassword())){
             sysUser.setPassword(new BCryptPasswordEncoder().encode(sysUser.getPassword()));
