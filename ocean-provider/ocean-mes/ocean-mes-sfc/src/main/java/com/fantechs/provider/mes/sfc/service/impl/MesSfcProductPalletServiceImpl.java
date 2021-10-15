@@ -1,12 +1,13 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcPalletReportDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcProductPalletMapper;
-import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
 import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletDetService;
 import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletService;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -39,10 +39,12 @@ public class MesSfcProductPalletServiceImpl extends BaseService<MesSfcProductPal
 
     @Override
     public List<MesSfcPalletReportDto> getPalletReport() {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<MesSfcPalletReportDto> list = new ArrayList<>();
 
         Map<String, Object> map = new HashMap<>();
-        map.put("moveStatus", 0);
+        map.put("closeStatus", 0);
+        map.put("orgId", sysUser.getOrganizationId());
         List<MesSfcProductPalletDto> productPalletDtos = mesSfcProductPalletMapper.findList(map);
         if(productPalletDtos == null || productPalletDtos.size() <= 0){
             return list;
@@ -53,6 +55,7 @@ public class MesSfcProductPalletServiceImpl extends BaseService<MesSfcProductPal
         }
         map.clear();
         map.put("productPalletIds", productPalletIds);
+        map.put("orgId", sysUser.getOrganizationId());
         map.put("groupBy", "cartonCode");
         List<MesSfcProductPalletDetDto> palletDetServiceList = mesSfcProductPalletDetService.findList(map);
         for (MesSfcProductPalletDto dto : productPalletDtos) {
