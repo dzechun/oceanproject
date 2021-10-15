@@ -31,6 +31,12 @@ public class SearchSysImportTemplate extends BaseQuery implements Serializable {
     private Long menuId;
 
     /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
+
+    /**
      * 模板所属菜单id列表
      */
     /*@ApiModelProperty(name = "menuIds",value = "模板所属菜单id列表")

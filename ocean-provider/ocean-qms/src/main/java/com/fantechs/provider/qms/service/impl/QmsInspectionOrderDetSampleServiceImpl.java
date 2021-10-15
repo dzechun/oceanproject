@@ -228,7 +228,25 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
             throw new BizErrorException("该条码未与该检验单绑定");
         }
 
+        //已扫条码数
         Example example = new Example(QmsInspectionOrderDetSample.class);
+        Example.Criteria criteria2 = example.createCriteria();
+        criteria2.andEqualTo("inspectionOrderId",qmsInspectionOrderDetSample.getInspectionOrderId());
+        List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example);
+        int size = qmsInspectionOrderDetSamples.size();
+
+        //样本数
+        Example example1 = new Example(QmsInspectionOrderDet.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("inspectionOrderId",qmsInspectionOrder.getInspectionOrderId());
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.selectByExample(example1);
+        BigDecimal sampleQty = qmsInspectionOrderDets.get(0).getSampleQty();
+
+        if(sampleQty.compareTo(new BigDecimal(size)) == 0){
+            throw new BizErrorException("扫描条码数已达到上限");
+        }
+
+        example.clear();
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("barcode",qmsInspectionOrderDetSample.getBarcode())
                 .andEqualTo("inspectionOrderId",qmsInspectionOrderDetSample.getInspectionOrderId());

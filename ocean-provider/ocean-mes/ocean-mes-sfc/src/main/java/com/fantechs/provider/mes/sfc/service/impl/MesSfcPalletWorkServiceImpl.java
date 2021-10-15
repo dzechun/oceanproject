@@ -628,7 +628,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
             if(!itemList.isEmpty()){
                 String warehouseCode = null;
-                log.info("程序配置项值："+ itemList.get(0).getParaValue());
+                log.info("程序配置项值："+ itemList.get(0).getParaValue() + " ========== 条码集合数：" + barcodeDtos.size());
                 List<Map<String, String>> list = JSONArray.parseObject(itemList.get(0).getParaValue(), List.class);
                 for (Map<String, String> item : list){
                     if(barcodeDtos.get(0).getMaterialCode().contains(item.get("material"))){
