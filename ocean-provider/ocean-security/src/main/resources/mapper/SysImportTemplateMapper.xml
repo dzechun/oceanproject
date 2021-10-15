@@ -42,11 +42,14 @@
     select <include refid="Base_Column_List"/>,
     s.user_name as modifiedUserName,u.user_name as createUserName
     from sys_import_template sit
-    left join sys_user u on si.create_user_id=u.user_id
-    left join sys_user s on si.modified_user_id=s.user_id
+    left join sys_user u on sit.create_user_id=u.user_id
+    left join sys_user s on sit.modified_user_id=s.user_id
     <where>
-      <if test="importTemplateCode!=null and importTemplateCode!=''">
+      <if test="importTemplateCode!=null and importTemplateCode!='' and codeQueryMark != 1">
         and sit.import_template_code like CONCAT('%', #{importTemplateCode}, '%')
+      </if>
+      <if test="importTemplateCode!=null and importTemplateCode!='' and codeQueryMark == 1">
+        and sit.import_template_code = #{importTemplateCode}
       </if>
       <if test="importTemplateName!=null and importTemplateName!=''">
         and sit.import_template_name like CONCAT('%', #{importTemplateName}, '%')

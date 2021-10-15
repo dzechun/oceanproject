@@ -98,7 +98,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
 
         baseBadnessCause.setModifiedTime(new Date());
         baseBadnessCause.setModifiedUserId(currentUser.getUserId());
-        baseBadnessCause.setOrgId(currentUser.getOrganizationId());
         int i = baseBadnessCauseMapper.updateByPrimaryKeySelective(baseBadnessCause);
 
         BaseHtBadnessCause baseHtBadnessCause = new BaseHtBadnessCause();

@@ -89,10 +89,10 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
     private Byte inspectionStatus;
 
     /**
-     * 检验结果(0-不合格 1-合格)
+     * 检验结果(0-整批不合格 1-整批合格 2-部分不合格)
      */
-    @ApiModelProperty(name="inspectionResult",value = "检验结果(0-不合格 1-合格)")
-    @Excel(name = "检验结果(0-不合格 1-合格)", height = 20, width = 30,orderNum="10")
+    @ApiModelProperty(name="inspectionResult",value = "检验结果(0-整批不合格 1-整批合格 2-部分不合格)")
+    @Excel(name = "检验结果(0-整批不合格 1-整批合格 2-部分不合格)", height = 20, width = 30,orderNum="10")
     @Column(name = "inspection_result")
     private Byte inspectionResult;
 

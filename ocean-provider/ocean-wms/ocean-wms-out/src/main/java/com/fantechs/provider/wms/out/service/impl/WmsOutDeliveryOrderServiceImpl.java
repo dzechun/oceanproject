@@ -700,8 +700,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             if(StringUtils.isNotEmpty(storageCode)){
                 for (BaseStorage baseStorage : baseStorages){
                     if (storageCode.equals(baseStorage.getStorageCode())){
-                        wmsOutDeliveryOrderImport.setStorageId(baseStorages.get(0).getStorageId());
-                        wmsOutDeliveryOrderImport.setWarehouseId(baseStorages.get(0).getWarehouseId());
+                        wmsOutDeliveryOrderImport.setStorageId(baseStorage.getStorageId());
+                        wmsOutDeliveryOrderImport.setWarehouseId(baseStorage.getWarehouseId());
                         break;
                     }
                 }

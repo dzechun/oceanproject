@@ -76,7 +76,7 @@
                 and bl.label_category_id =#{labelCategoryId}
             </if>
             <if test="labelCategoryCode!=null and labelCategoryCode!=''">
-                and bl.label_category_code = #{labelCategoryCode}
+                and blc.label_category_code = #{labelCategoryCode}
             </if>
             <if test="processId!=null and processId!=''">
                 and bcm.process_id = #{processId}

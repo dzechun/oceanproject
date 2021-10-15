@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
@@ -83,13 +84,21 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 SearchBaseProductProcessRoute searchBaseProductProcessRoute = new SearchBaseProductProcessRoute();
                 searchBaseProductProcessRoute.setOrgId(orgId);
                 searchBaseProductProcessRoute.setMaterialCode(restapiWorkOrderApiDto.getMATNR());
-                List<BaseProductProcessRoute> productProcessRoute = baseFeignApi.findList(searchBaseProductProcessRoute).getData();
-                if(StringUtils.isNotEmpty(productProcessRoute) && productProcessRoute.size() == 1 )
+                List<BaseProductProcessRoute> productProcessRoute = baseFeignApi.findListByCondition(searchBaseProductProcessRoute).getData();
+                if(StringUtils.isNotEmpty(productProcessRoute)) {
                     mesPmWorkOrder.setRouteId(productProcessRoute.get(0).getRouteId());
-
+                    List<BaseRouteProcess> data = baseFeignApi.findConfigureRout(productProcessRoute.get(0).getRouteId()).getData();
+                    if(StringUtils.isNotEmpty(data)) {
+                        mesPmWorkOrder.setPutIntoProcessId(data.get(0).getProcessId());
+                        mesPmWorkOrder.setOutputProcessId(data.get(data.size()-1).getProcessId());
+                    }
+                }else{
+                    return "未配置产品工艺路线";
+                }
                 mesPmWorkOrder.setOrgId(orgId);
                 mesPmWorkOrder.setIsDelete((byte)1);
                 mesPmWorkOrder.setWorkOrderType((byte)0);
+                mesPmWorkOrder.setWorkOrderStatus((byte)0);
                 ResponseEntity<MesPmWorkOrder> mesPmWorkOrderResponseEntity = pmFeignApi.saveByApi(mesPmWorkOrder);
                 orderMap.put(restapiWorkOrderApiDto.getAUFNR(),mesPmWorkOrderResponseEntity.getData().getWorkOrderId());
             }

@@ -1,9 +1,13 @@
 package com.fantechs.provider.base.util;
 
 
+import com.alibaba.fastjson.JSON;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.CodeUtils;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseBarcodeRuleSpecService;
 import com.sun.org.apache.xpath.internal.operations.Bool;
@@ -158,10 +162,20 @@ public class BarcodeRuleUtils {
                     maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
                 }else if("[f]".equals(specification)){
                     //执行函数获取解析码
+
+
                     String param = barcodeRuleUtils.baseBarcodeRuleSpecService.executeFunction(functionName,params);
                     if(StringUtils.isEmpty(param)){
                         throw new BizErrorException("条码规则执行函数失败，请检查执行函数");
                     }
+                    Map<String,Object> paramMap = JSON.parseObject(param,Map.class);
+                    if(Integer.parseInt(paramMap.get("mesCode").toString())!=200){
+                        throw new BizErrorException(ErrorCodeEnum.GL9999404,paramMap.get("message"));
+                    }else {
+                        param = paramMap.get("param").toString();
+                    }
+
+
                     if(param.length()<barcodeLength){
                         while (param.length()<barcodeLength){
                             StringBuffer s = new StringBuffer();

@@ -734,7 +734,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wms);
                 }else{
                     wms = palletAutoAsnDto;
-                    Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("warehouseId",wms.getWarehouseId()));
+                    Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("warehouseId",wms.getWarehouseId(),"orgId",sysUser.getOrganizationId()));
                     wms.setInventoryStatusId(statusId);
                     wms.setAsnOrderId(asnOrderId);
                     wms.setCreateTime(new Date());
@@ -781,7 +781,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 }
                 WmsInAsnOrderDet wmsInAsnOrderDet = new WmsInAsnOrderDet();
                 BeanUtil.copyProperties(palletAutoAsnDto,wmsInAsnOrderDet);
-                Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("warehouseId",wmsInAsnOrderDet.getWarehouseId()));
+                Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("warehouseId",wmsInAsnOrderDet.getWarehouseId(),"orgId",sysUser.getOrganizationId()));
                 wmsInAsnOrderDet.setInventoryStatusId(statusId);
                 wmsInAsnOrderDet.setAsnOrderId(wmsInAsnOrder.getAsnOrderId());
                 wmsInAsnOrderDet.setCreateTime(new Date());
@@ -812,7 +812,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         }catch (Exception e){
             //手动回滚事务
             dataSourceTransactionManager.rollback(transactionStatus);
-            throw new BizErrorException(e.getMessage());
+            throw new BizErrorException(e);
         }
     }
 
