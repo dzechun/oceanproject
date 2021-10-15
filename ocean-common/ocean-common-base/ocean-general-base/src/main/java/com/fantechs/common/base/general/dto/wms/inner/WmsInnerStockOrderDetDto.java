@@ -87,4 +87,11 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
     @Transient
     @ApiModelProperty(name = "inventoryStatusName",value = "库存状态")
     private String inventoryStatusName;
+
+    /**
+     * 供应商
+     */
+    @Transient
+    @ApiModelProperty(name="supplierName" ,value="供应商")
+    private String supplierName;
 }

@@ -70,6 +70,6 @@
             and bbc.org_id=#{orgId}
         </if>
     </where>
-    order by bbc.create_time,bbc.badness_cause_id desc
+    order by bbc.badness_cause_id desc
   </select>
 </mapper>

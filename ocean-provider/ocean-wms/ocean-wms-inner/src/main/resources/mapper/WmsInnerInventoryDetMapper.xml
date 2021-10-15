@@ -165,6 +165,9 @@ wiid.option5
         <if test="deliveryOrderCode!=null and deliveryOrderCode!=''">
             and wiid.delivery_order_code like CONCAT('%',#{deliveryOrderCode},'%')
         </if>
+        <if test="orgId!=null and orgId!=''">
+            and wiid.org_id = #{orgId}
+        </if>
         </where>
         order by wiid.create_time desc
     </select>

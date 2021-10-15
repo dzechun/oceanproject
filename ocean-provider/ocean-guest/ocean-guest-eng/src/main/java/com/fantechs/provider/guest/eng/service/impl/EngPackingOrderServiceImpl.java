@@ -197,10 +197,12 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                    EngContractQtyOrder engContractQtyOrder = engContractQtyOrders.get(0);
                    BigDecimal iss = engContractQtyOrder.getIssuedQty().add(engPackingOrderSummaryDetDto.getQty());
                     engContractQtyOrder.setIssuedQty(iss);
-                   if(engContractQtyOrder.getPurQty().compareTo(iss)<=0){
-                       engContractQtyOrder.setNotIssueQty(new BigDecimal("0"));
+                   if(new BigDecimal(engContractQtyOrder.getPurQty()).compareTo(iss)<=0){
+                       //engContractQtyOrder.setNotIssueQty(new BigDecimal("0"));
+                       engContractQtyOrder.setNotIssueQty("0");
                    }else{
-                       engContractQtyOrder.setNotIssueQty(engContractQtyOrder.getPurQty().subtract(iss));
+                       //engContractQtyOrder.setNotIssueQty(engContractQtyOrder.getPurQty().subtract(iss));
+                       engContractQtyOrder.setNotIssueQty(new BigDecimal(engContractQtyOrder.getPurQty()).subtract(iss).toString());
                    }
                     engContractQtyOrderMapper.updateByPrimaryKey(engContractQtyOrder);
                 }

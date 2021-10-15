@@ -178,5 +178,61 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
     @Column(name = "inventory_status_id")
     private Long inventoryStatusId;
 
+
+    /**
+     * 请购单号
+     */
+    @ApiModelProperty(name="purchaseReqOrderCode" ,value="请购单号")
+    @Column(name = "purchase_req_order_code")
+    private String purchaseReqOrderCode;
+
+    /**
+     * 合同号
+     */
+    @ApiModelProperty(name="contractCode" ,value="合同号")
+    @Column(name = "contract_code")
+    private String contractCode;
+
+    /**
+     * 装置号
+     */
+    @ApiModelProperty(name="deviceCode" ,value="装置号")
+    @Column(name = "device_code")
+    private String deviceCode;
+
+    /**
+     * 位号
+     */
+    @ApiModelProperty(name="locationNum" ,value="位号")
+    @Column(name = "location_num")
+    private String locationNum;
+
+    /**
+     * 主项号
+     */
+    @ApiModelProperty(name="dominantTermCode" ,value="主项号")
+    @Column(name = "dominant_term_code")
+    private String dominantTermCode;
+
+    /**
+     * 材料用途
+     */
+    @ApiModelProperty(name="materialPurpose" ,value="材料用途")
+    @Column(name = "material_purpose")
+    private String materialPurpose;
+
+    /**
+     * 供应商
+     */
+    @ApiModelProperty(name="supplierId" ,value="供应商")
+    @Column(name = "supplier_id")
+    private Long supplierId;
+
+    private String option1;
+
+    private String option2;
+
+    private String option3;
+
     private static final long serialVersionUID = 1L;
 }

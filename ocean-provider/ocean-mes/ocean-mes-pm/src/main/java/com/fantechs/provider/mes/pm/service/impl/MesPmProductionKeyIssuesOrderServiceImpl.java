@@ -196,18 +196,6 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        //修改产前关键事项确认
-        entity.setModifiedTime(new Date());
-        entity.setModifiedUserId(user.getUserId());
-        entity.setOrgId(user.getOrganizationId());
-        entity.setOrderStatus(StringUtils.isEmpty(entity.getOrderStatus())?(byte)2:entity.getOrderStatus());
-        int i = mesPmProductionKeyIssuesOrderMapper.updateByPrimaryKeySelective(entity);
-
-        //新增履历
-        MesPmHtProductionKeyIssuesOrder mesPmHtProductionKeyIssuesOrder = new MesPmHtProductionKeyIssuesOrder();
-        BeanUtils.copyProperties(entity, mesPmHtProductionKeyIssuesOrder);
-        mesPmHtProductionKeyIssuesOrderMapper.insertSelective(mesPmHtProductionKeyIssuesOrder);
-
         //删除原明细
         Example example1 = new Example(MesPmProductionKeyIssuesOrderDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
@@ -215,6 +203,7 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
         mesPmProductionKeyIssuesOrderDetMapper.deleteByExample(example1);
 
         //新增明细
+        int count = 0;
         List<MesPmProductionKeyIssuesOrderDet> mesPmProductionKeyIssuesOrderDetList = entity.getMesPmProductionKeyIssuesOrderDetList();
         if(StringUtils.isNotEmpty(mesPmProductionKeyIssuesOrderDetList)){
             for (MesPmProductionKeyIssuesOrderDet mesPmProductionKeyIssuesOrderDet : mesPmProductionKeyIssuesOrderDetList){
@@ -225,9 +214,24 @@ public class MesPmProductionKeyIssuesOrderServiceImpl extends BaseService<MesPmP
                 mesPmProductionKeyIssuesOrderDet.setModifiedUserId(user.getUserId());
                 mesPmProductionKeyIssuesOrderDet.setOrgId(user.getOrganizationId());
                 mesPmProductionKeyIssuesOrderDet.setStatus(StringUtils.isEmpty(mesPmProductionKeyIssuesOrderDet.getStatus())?(byte)1: mesPmProductionKeyIssuesOrderDet.getStatus());
+                if(StringUtils.isNotEmpty(mesPmProductionKeyIssuesOrderDet.getYesOrNo())||StringUtils.isNotEmpty(mesPmProductionKeyIssuesOrderDet.getValue())){
+                    count++;
+                }
             }
             mesPmProductionKeyIssuesOrderDetMapper.insertList(mesPmProductionKeyIssuesOrderDetList);
         }
+
+        //修改产前关键事项确认
+        entity.setModifiedTime(new Date());
+        entity.setModifiedUserId(user.getUserId());
+        entity.setOrgId(user.getOrganizationId());
+        entity.setOrderStatus(count == mesPmProductionKeyIssuesOrderDetList.size() ? (byte)2 : (byte)1);
+        int i = mesPmProductionKeyIssuesOrderMapper.updateByPrimaryKeySelective(entity);
+
+        //新增履历
+        MesPmHtProductionKeyIssuesOrder mesPmHtProductionKeyIssuesOrder = new MesPmHtProductionKeyIssuesOrder();
+        BeanUtils.copyProperties(entity, mesPmHtProductionKeyIssuesOrder);
+        mesPmHtProductionKeyIssuesOrderMapper.insertSelective(mesPmHtProductionKeyIssuesOrder);
 
         return i;
     }

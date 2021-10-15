@@ -189,12 +189,14 @@ public class EngPackingOrderTakeSummaryDetDto implements Serializable {
      * 上架数量
      */
     @ApiModelProperty( value = "上架数量",name = "putawayQty")
+    @Excel(name = "上架数量", height = 20, width = 30,orderNum="22")
     private BigDecimal putawayQty;
 
     /**
      * 收货数量
      */
     @ApiModelProperty(value = "收货数量",name = "receivingQty")
+    @Excel(name = "收货数量", height = 20, width = 30,orderNum="21")
     private BigDecimal receivingQty;
 
     @ApiModelProperty(value = "收货库位id",name = "receivingStorageId")

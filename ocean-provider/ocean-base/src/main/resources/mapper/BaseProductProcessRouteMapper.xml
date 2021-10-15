@@ -77,7 +77,7 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sppr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="productType!=null and productType!=''">
+      <if test="productType!=null">
         and sppr.product_type=#{productType}
       </if>
       <if test="proLineId!=null and proLineId!=''">
