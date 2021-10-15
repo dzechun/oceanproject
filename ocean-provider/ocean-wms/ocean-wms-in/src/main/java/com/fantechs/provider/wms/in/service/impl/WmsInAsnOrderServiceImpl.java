@@ -709,14 +709,14 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         try {
             //查询redis是否存储今日入库单号
             Boolean hasKey = redisUtil.hasKey("pallet_id");
-            Map<Long,Long> asnMap = new HashMap<>();
+            Map<String,String> asnMap = new HashMap<>();
             if(hasKey){
-                asnMap = (Map<Long, Long>)redisUtil.get("pallet_id");
+                asnMap = (Map<String, String>)redisUtil.get("pallet_id");
             }
             //获取当前组织生成的
             //true
-            if(asnMap.containsKey(sysUser.getOrganizationId())){
-                Long asnOrderId = asnMap.get(sysUser.getOrganizationId());
+            if(asnMap.containsKey(sysUser.getOrganizationId().toString())){
+                Long asnOrderId = Long.parseLong(asnMap.get(sysUser.getOrganizationId().toString()));
                 WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
                 if(StringUtils.isEmpty(wmsInAsnOrder)){
                     throw new BizErrorException(ErrorCodeEnum.GL9999404);
@@ -800,7 +800,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 //新增库存明细
                 res = this.addInventoryDet(palletAutoAsnDto.getBarCodeList(),wmsInAsnOrder.getAsnCode(),wmsInAsnOrderDet);
                 //设置新redis 时效为24小时
-                asnMap.put(sysUser.getOrganizationId(), wmsInAsnOrder.getAsnOrderId());
+                asnMap.put(sysUser.getOrganizationId().toString(), wmsInAsnOrder.getAsnOrderId().toString());
                 redisUtil.set("pallet_id",asnMap);
                 redisUtil.expire("pallet_id",getRemainSecondsOneDay(new Date()));
                 //手动提交事务
@@ -812,7 +812,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         }catch (Exception e){
             //手动回滚事务
             dataSourceTransactionManager.rollback(transactionStatus);
-            throw new BizErrorException(e);
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002,e.getMessage());
         }
     }
 
