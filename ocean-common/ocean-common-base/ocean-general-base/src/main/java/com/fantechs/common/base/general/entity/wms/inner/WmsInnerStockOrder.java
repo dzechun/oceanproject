@@ -53,10 +53,10 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
     private String relatedOrderCode;
 
     /**
-     * 盘点类型：1-货品 2-库位 3-全盘
+     * 盘点类型：1-库位 2-货品 3-全盘
      */
-    @ApiModelProperty(name="stockType",value = "盘点类型：1-货品 2-库位 3-全盘")
-    @Excel(name = "1-仓库 2-库位", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="stockType",value = "盘点类型：1-库位 2-货品 3-全盘")
+    @Excel(name = "盘点类型", height = 20, width = 30,orderNum="",replace = {"1_库位","2_货品","3_全盘"})
     @Column(name = "stock_type")
     private Byte stockType;
 
@@ -64,7 +64,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 1-盘点 2-复盘
      */
     @ApiModelProperty(name="projectType",value = "1-盘点 2-复盘")
-    @Excel(name = "1-盘点 2-复盘", height = 20, width = 30,orderNum="") 
+    @Excel(name = "作业类型", height = 20, width = 30,orderNum="",replace = {"1_盘点","2_复盘"})
     @Column(name = "project_type")
     private Byte projectType;
 

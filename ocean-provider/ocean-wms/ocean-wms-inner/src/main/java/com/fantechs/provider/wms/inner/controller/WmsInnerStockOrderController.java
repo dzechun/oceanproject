@@ -1,8 +1,11 @@
 package com.fantechs.provider.wms.inner.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
+import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStockOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStockOrderDet;
@@ -16,13 +19,16 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -32,6 +38,7 @@ import java.util.List;
 @Api(tags = "库存盘点")
 @RequestMapping("/wmsInventoryVerification")
 @Validated
+@Slf4j
 public class WmsInnerStockOrderController {
 
     @Resource
@@ -103,5 +110,38 @@ public class WmsInnerStockOrderController {
     @PostMapping("/difference")
     public ResponseEntity difference(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
         return ControllerUtil.returnCRUD(wmsInventoryVerificationService.difference(ids));
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file,
+                                      @ApiParam(value = "盘点单Id",required = true)
+                                      @RequestParam Long stockOrderId){
+        try {
+            // 导入操作
+            List<WmsInnerStockOrderImport> wmsInnerStockOrderImports = EasyPoiUtils.importExcel(file, 0, 1, WmsInnerStockOrderImport.class);
+            Map<String, Object> resultMap = wmsInventoryVerificationDetService.importExcel(stockOrderId,wmsInnerStockOrderImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        }catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+    }
+
+    @PostMapping("/batchDeletlDet")
+    @ApiOperation("批量删除明细")
+    public ResponseEntity batchDeleteDet(@ApiParam(name = "ids",required = true)@RequestParam String ids){
+        return ControllerUtil.returnCRUD(wmsInventoryVerificationDetService.batchDelete(ids));
     }
 }

@@ -27,6 +27,13 @@
     <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
     <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
+    <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
+    <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
+    <result column="device_code" jdbcType="VARCHAR" property="deviceCode"/>
+    <result column="location_num" jdbcType="VARCHAR" property="locationNum"/>
+    <result column="dominant_term_code" jdbcType="VARCHAR" property="dominantTermCode"/>
+    <result column="material_purpose" jdbcType="VARCHAR" property="materialPurpose"/>
+    <result column="supplier_id" jdbcType="VARCHAR" property="supplierId"/>
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetDto">
     <result column="work_name" jdbcType="VARCHAR" property="workName"/>
@@ -39,6 +46,7 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
   </resultMap>
   <sql id="Base_Column_List">
 wivd.stock_order_det_id,
@@ -62,15 +70,26 @@ wivd.modified_user_id,
 wivd.modified_time,
 wivd.barcode,
 wivd.pallet_code,
-wivd.inventory_status_id
+wivd.inventory_status_id,
+wivd.purchase_req_order_code,
+wivd.contract_code,
+wivd.location_num,
+wivd.dominant_term_code,
+wivd.device_code,
+wivd.material_purpose,
+wivd.supplier_id,
+wivd.option1,
+wivd.option2,
+wivd.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     SELECT <include refid="Base_Column_List"/>,bis.inventory_status_name,bs.storage_code,bs.storage_name,bs.storage_desc,bm.material_code,bm.material_name,
-           s.user_name as work_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+           s.user_name as work_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,bss.supplier_name
     FROM wms_inner_stock_order_det wivd
     LEFT JOIN base_storage bs ON wivd.storage_id = bs.storage_id
     LEFT JOIN base_material bm ON wivd.material_id = bm.material_id
     LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wivd.inventory_status_id
+    LEFT JOIN base_supplier bss on bss.supplier_id = wivd.supplier_id
     left join ocean_v2.sys_user s  ON wivd.stock_user_id = s.user_id
     LEFT JOIN ocean_v2.sys_user su  ON wivd.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wivd.modified_user_id = sus.user_id
