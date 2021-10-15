@@ -88,7 +88,7 @@ public class EngContractQtyOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="purQty",value = "采购数")
     @Excel(name = "采购数", height = 20, width = 30,orderNum="") 
     @Column(name = "pur_qty")
-    private BigDecimal purQty;
+    private String purQty;
 
     /**
      * 已发量
@@ -104,7 +104,7 @@ public class EngContractQtyOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="notIssueQty",value = "未发量")
     @Excel(name = "未发量", height = 20, width = 30,orderNum="")
     @Column(name = "not_issue_qty")
-    private BigDecimal notIssueQty;
+    private String notIssueQty;
 
     /**
      * 专业编码
