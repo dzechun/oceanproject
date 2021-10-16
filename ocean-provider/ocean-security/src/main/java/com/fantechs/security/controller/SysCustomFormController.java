@@ -39,15 +39,27 @@ public class SysCustomFormController {
     @Autowired
     private SysCustomFormService sysCustomFormService;
 
+    @ApiOperation(value = "全组织新增",notes = "全组织新增")
+    @PostMapping("/saveInAllOrg")
+    public ResponseEntity saveInAllOrg(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SysCustomForm sysCustomForm) {
+        return ControllerUtil.returnCRUD(sysCustomFormService.saveInAllOrg(sysCustomForm));
+    }
+
+    @ApiOperation(value = "全组织修改",notes = "全组织修改")
+    @PostMapping("/updateInAllOrg")
+    public ResponseEntity updateInAllOrg(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SysCustomForm.update.class) SysCustomForm sysCustomForm) {
+        return ControllerUtil.returnCRUD(sysCustomFormService.updateInAllOrg(sysCustomForm));
+    }
+
+    @ApiOperation("全组织删除")
+    @PostMapping("/batchDeleteInAllOrg")
+    public ResponseEntity batchDeleteInAllOrg(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(sysCustomFormService.batchDeleteInAllOrg(ids));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SysCustomForm sysCustomForm) {
-        // 获取登录用户
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        sysCustomForm.setOrgId(user.getOrganizationId());
         return ControllerUtil.returnCRUD(sysCustomFormService.save(sysCustomForm));
     }
 

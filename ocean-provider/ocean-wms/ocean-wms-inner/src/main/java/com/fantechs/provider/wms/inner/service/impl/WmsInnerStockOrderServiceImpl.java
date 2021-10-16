@@ -234,6 +234,13 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInventoryVerificationDet.setPalletCode(wmsInnerInventory.getPalletCode());
                 wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
                 wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
+                wmsInventoryVerificationDet.setContractCode(wmsInnerInventory.getContractCode());
+                wmsInventoryVerificationDet.setPurchaseReqOrderCode(wmsInnerInventory.getPurchaseReqOrderCode());
+                wmsInventoryVerificationDet.setLocationNum(wmsInnerInventory.getOption4());
+                wmsInventoryVerificationDet.setDominantTermCode(wmsInnerInventory.getOption2());
+                wmsInventoryVerificationDet.setDeviceCode(wmsInnerInventory.getOption1());
+                wmsInventoryVerificationDet.setMaterialPurpose(wmsInnerInventory.getOption3());
+                wmsInventoryVerificationDet.setSupplierId(wmsInnerInventory.getSupplierId());
                 list.add(wmsInventoryVerificationDet);
             }
         }
@@ -686,6 +693,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             wmsInnerInventory.setOption1(wmsInnerStockOrderDet.getDeviceCode());
             wmsInnerInventory.setOption3(wmsInnerStockOrderDet.getMaterialPurpose());
             wmsInnerInventory.setSupplierId(wmsInnerStockOrderDet.getSupplierId());
+            wmsInnerInventory.setPalletCode(wmsInnerStockOrderDet.getPalletCode());
 
             num+=wmsInnerInventoryMapper.insertSelective(wmsInnerInventory);
             wmsInnerInventoryLog = initLog(wmsInnerInventory);

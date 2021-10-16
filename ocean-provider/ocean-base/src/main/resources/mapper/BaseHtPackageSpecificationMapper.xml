@@ -78,13 +78,13 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(shps.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="packageSpecificationCode != null">
+      <if test="packageSpecificationCode != null and packageSpecificationCode != ''">
         and shps.package_specification_code like CONCAT('%', #{packageSpecificationCode}, '%')
       </if>
-      <if test="packageSpecificationName != null">
+      <if test="packageSpecificationName != null and packageSpecificationName != ''">
         and  shps.package_specification_name like CONCAT('%', #{packageSpecificationName}, '%')
       </if>
-      <if test="packageSpecificationDesc != null">
+      <if test="packageSpecificationDesc != null and packageSpecificationDesc != ''">
         and shps.package_specification_desc like CONCAT('%', #{packageSpecificationDesc}, '%')
       </if>
         <if test="orgId!=null">

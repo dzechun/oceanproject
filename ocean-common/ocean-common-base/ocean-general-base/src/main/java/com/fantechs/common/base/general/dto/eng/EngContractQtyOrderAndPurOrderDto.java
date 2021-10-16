@@ -210,7 +210,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      * 已发量
      */
     @ApiModelProperty(name="issuedQty",value = "已发量")
-    @Excel(name = "已发量", height = 20, width = 30,orderNum="")
+    @Excel(name = "已发量", height = 20, width = 30,orderNum="19")
     @Column(name = "issued_qty")
     private BigDecimal issuedQty;
 
@@ -218,7 +218,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      * 未发量
      */
     @ApiModelProperty(name="notIssueQty",value = "未发量")
-    @Excel(name = "未发量", height = 20, width = 30,orderNum="")
+    @Excel(name = "未发量", height = 20, width = 30,orderNum="20")
     @Column(name = "not_issue_qty")
     private BigDecimal notIssueQty;
 
@@ -227,7 +227,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="19")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="21")
     @Column(name = "remark")
     private String remark;
 
@@ -263,7 +263,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
     
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
     @Column(name = "create_user_name")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="20")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="22")
     private String createUserName;
 
     /**
@@ -271,7 +271,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="21",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="23",exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -289,7 +289,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="22")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="24")
     @Column(name = "modified_user_name")
     private String modifiedUserName;
 
@@ -298,7 +298,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="23",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="25",exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

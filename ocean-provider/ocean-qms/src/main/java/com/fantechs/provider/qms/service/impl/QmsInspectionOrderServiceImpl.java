@@ -241,9 +241,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if(StringUtils.isEmpty(innerInventoryDtoList.getData())){
             throw new BizErrorException("未查询到对应库存信息");
         }
-        WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.getData().get(0);
-        WmsInnerInventoryDto innerInventoryDto = innerInventoryDtoList.getData().get(0);
-
+        WmsInnerInventoryDto wmsInnerInventoryDto = new WmsInnerInventoryDto();
+        BeanUtils.copyProperties(innerInventoryDtoList.getData().get(0),wmsInnerInventoryDto);
+        WmsInnerInventoryDto innerInventoryDto = new WmsInnerInventoryDto();
+        BeanUtils.copyProperties(innerInventoryDtoList.getData().get(0),innerInventoryDto);
         //不合格库存
         wmsInnerInventoryDto.setQcLock((byte)0);
         wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList1.get(0).getInventoryStatusId());
@@ -510,7 +511,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if(StringUtils.isEmpty(innerInventoryDtoList.getData())){
             throw new BizErrorException("未查询到对应库存信息");
         }
-        WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.getData().get(0);
+        WmsInnerInventoryDto wmsInnerInventoryDto = new WmsInnerInventoryDto();
+        BeanUtils.copyProperties(innerInventoryDtoList.getData().get(0),wmsInnerInventoryDto);
 
 
         SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
@@ -521,27 +523,29 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             throw new BizErrorException("未查询到对应库存状态");
         }
 
-        wmsInnerInventoryDto.setQcLock((byte)0);
-        wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
-        innerFeignApi.update(wmsInnerInventoryDto);
-
         //合并库存
         SearchWmsInnerInventory searchInnerInventory = new SearchWmsInnerInventory();
         searchInnerInventory.setMaterialId(wmsInnerInventoryDto.getMaterialId());
         searchInnerInventory.setWarehouseId(wmsInnerInventoryDto.getWarehouseId());
         searchInnerInventory.setStorageId(wmsInnerInventoryDto.getStorageId());
         searchInnerInventory.setBatchCode(wmsInnerInventoryDto.getBatchCode());
-        searchInnerInventory.setInventoryStatusId(wmsInnerInventoryDto.getInventoryStatusId());
+        searchInnerInventory.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
         searchInnerInventory.setJobStatus((byte) 1);
         searchInnerInventory.setLockStatus((byte) 0);
         searchInnerInventory.setQcLock((byte) 0);
         searchInnerInventory.setStockLock((byte) 0);
         List<WmsInnerInventoryDto> innerInventoryDtos = innerFeignApi.findList(searchInnerInventory).getData();
         if (StringUtils.isNotEmpty(innerInventoryDtos)) {
-            WmsInnerInventoryDto innerInventoryDto = innerInventoryDtos.get(0);
+            WmsInnerInventoryDto innerInventoryDto = new WmsInnerInventoryDto();
+            BeanUtils.copyProperties(innerInventoryDtos.get(0),innerInventoryDto);
+            innerInventoryDto.setQcLock((byte)0);
             innerInventoryDto.setPackingQty(innerInventoryDto.getPackingQty().add(wmsInnerInventoryDto.getPackingQty()));
             innerFeignApi.update(innerInventoryDto);
             wmsInnerInventoryDto.setPackingQty(BigDecimal.ZERO);
+            innerFeignApi.update(wmsInnerInventoryDto);
+        }else{
+            wmsInnerInventoryDto.setQcLock((byte)0);
+            wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
             innerFeignApi.update(wmsInnerInventoryDto);
         }
 

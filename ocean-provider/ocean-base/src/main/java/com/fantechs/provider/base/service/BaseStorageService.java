@@ -1,6 +1,7 @@
 package com.fantechs.provider.base.service;
 
 
+import com.fantechs.common.base.general.dto.basic.PrintBaseStorageCode;
 import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.support.IService;
@@ -43,4 +44,6 @@ public interface BaseStorageService extends IService<BaseStorage> {
     List<StorageRuleDto> LastStorage(Map<String ,Object> map);
 
     int saveByApi(BaseStorage baseStorage);
+
+    int printStorageCode(List<PrintBaseStorageCode> printBaseStorageCodes);
 }

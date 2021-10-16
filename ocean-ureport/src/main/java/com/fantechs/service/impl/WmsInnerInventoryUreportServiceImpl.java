@@ -52,7 +52,7 @@ public class WmsInnerInventoryUreportServiceImpl implements WmsInnerInventoryUre
             printModel.setQrCode(printModelDto.getMaterialCode());
             printModel.setSize(printModelDto.getSize());
             printModels.add(printModel);
-
+            printDto.setPrintModelList(printModels);
             ResponseEntity responseEntity = sfcFeignApi.print(printDto);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());

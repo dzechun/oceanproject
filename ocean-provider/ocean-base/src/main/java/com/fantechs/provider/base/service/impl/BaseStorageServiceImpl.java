@@ -1,14 +1,19 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.general.dto.basic.PrintBaseStorageCode;
 import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStorage;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseStorageService;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
@@ -36,6 +41,8 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     private BaseWarehouseAreaMapper baseWarehouseAreaMapper;
     @Resource
     private BaseWorkingAreaMapper baseWorkingAreaMapper;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
 
     @Override
     public int batchUpdate(List<BaseStorage> baseStorages) {
@@ -335,5 +342,30 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             baseStorageMapper.updateByPrimaryKeySelective(baseStorage);
         }
         return i;
+    }
+
+    @Override
+    public int printStorageCode(List<PrintBaseStorageCode> printBaseStorageCodes) {
+        for (PrintBaseStorageCode printBaseStorageCode : printBaseStorageCodes) {
+            if(StringUtils.isEmpty(printBaseStorageCode.getPrintName())){
+                throw new BizErrorException("请输入打印机名称");
+            }
+            PrintDto printDto = new PrintDto();
+            printDto.setPrintName(printBaseStorageCode.getPrintName());
+            printDto.setLabelName(printBaseStorageCode.getPrintMode());
+            printDto.setLabelVersion("0.0.1");
+            List<PrintModel> printModels = new ArrayList<>();
+            PrintModel printModel = new PrintModel();
+            printModel.setId(Long.parseLong("1"));
+            printModel.setQrCode(printBaseStorageCode.getStorageCode());
+            printModel.setSize(printBaseStorageCode.getSize());
+            printModels.add(printModel);
+            printDto.setPrintModelList(printModels);
+            ResponseEntity responseEntity = sfcFeignApi.print(printDto);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
+        }
+        return 1;
     }
 }

@@ -159,7 +159,7 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     private Byte lockStatus;
 
     /**
-     * 作业状态(1-待入 2-正常 3-待出)
+     * 作业状态(1正常 2待出)
      */
     @ApiModelProperty(name="jobStatus",value = "作业状态(1正常 2待出)")
     private Byte jobStatus;

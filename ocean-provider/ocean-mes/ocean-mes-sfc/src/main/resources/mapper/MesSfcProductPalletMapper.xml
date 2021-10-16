@@ -75,6 +75,9 @@
       <if test="closeStatus != null">
         and mspp.close_status = #{closeStatus}
       </if>
+      <if test="orgId != null">
+        and mspp.org_id = #{orgId}
+      </if>
     </where>
   </select>
 </mapper>

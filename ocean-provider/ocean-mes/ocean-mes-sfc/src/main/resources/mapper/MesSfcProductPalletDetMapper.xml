@@ -62,6 +62,9 @@
       <if test="workOrderBarcodeId != null">
         and msppd.work_order_barcode_id = #{workOrderBarcodeId}
       </if>
+      <if test="orgId != null">
+        and msppd.org_id = #{orgId}
+      </if>
     </where>
     <if test="groupBy != null and groupBy != ''">
       group by cartonCode

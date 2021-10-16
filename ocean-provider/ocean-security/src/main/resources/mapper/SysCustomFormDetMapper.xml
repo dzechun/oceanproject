@@ -100,6 +100,9 @@ cfd.select_value
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(cfd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+            <if test="itemKey!=null and itemKey!=''">
+                and cfd.item_key=#{itemKey}
+            </if>
             <if test="customFormId!=null and customFormId!=''">
                 and cfd.custom_form_id=#{customFormId}
             </if>
