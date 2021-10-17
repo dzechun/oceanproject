@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -36,9 +37,16 @@ public class QmsIpqcInspectionOrderDetSampleController {
     @Resource
     private QmsIpqcInspectionOrderDetSampleService qmsIpqcInspectionOrderDetSampleService;
 
+
+    @ApiOperation(value = "条码检验批量新增",notes = "条码检验批量新增")
+    @PostMapping("/barcodeBatchAdd")
+    public ResponseEntity barcodeBatchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty(message="样本信息不能为空")List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSampleList) {
+        return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderDetSampleService.barcodeBatchAdd(qmsIpqcInspectionOrderDetSampleList));
+    }
+
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/batchAdd")
-    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSampleList) {
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty(message="样本信息不能为空")List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSampleList) {
         return ControllerUtil.returnCRUD(qmsIpqcInspectionOrderDetSampleService.batchAdd(qmsIpqcInspectionOrderDetSampleList));
     }
 
