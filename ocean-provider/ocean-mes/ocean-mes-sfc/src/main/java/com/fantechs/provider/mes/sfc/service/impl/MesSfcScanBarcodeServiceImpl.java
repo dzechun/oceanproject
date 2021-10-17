@@ -33,6 +33,7 @@ public class MesSfcScanBarcodeServiceImpl implements MesSfcScanBarcodeService {
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public BaseExecuteResultDto chkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws Exception {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
