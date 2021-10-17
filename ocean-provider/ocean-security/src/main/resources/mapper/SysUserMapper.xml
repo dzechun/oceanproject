@@ -20,7 +20,7 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
         <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
         <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
@@ -65,8 +65,7 @@
     <select id="selectUsers" parameterType="com.fantechs.common.base.entity.security.search.SearchSysUser"
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
-        sf.factory_name,
-        sd.dept_name,
+        sf.factory_name, sd.dept_name,sr.role_name AS roleName,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
         from ocean_v2.sys_user su
@@ -74,6 +73,8 @@
         left join ocean_v2.sys_user s on su.modified_user_id=s.user_id
         left join fantech_imes_v2.base_factory sf on su.factory_id= sf.factory_id
         left join fantech_imes_v2.base_dept sd on su.dept_id=sd.dept_id
+        LEFT JOIN ocean_v2.sys_user_role sur ON su.user_id = sur.user_id
+        LEFT JOIN ocean_v2.sys_role sr ON sur.role_id = sr.role_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON su.organization_id = bo.organization_id
         <where>
             1=1
@@ -114,6 +115,7 @@
                 AND su.status=1
             </if>
         </where>
+        group by su.user_id
     </select>
 
     <select id="selectDept" parameterType="java.lang.String" resultMap="DeptResultMap">

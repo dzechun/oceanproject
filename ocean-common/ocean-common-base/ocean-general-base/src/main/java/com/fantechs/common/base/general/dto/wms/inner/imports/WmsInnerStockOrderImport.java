@@ -109,6 +109,6 @@ public class WmsInnerStockOrderImport implements Serializable {
      * 供应商
      */
     @Excel(name = "供应商",  height = 20, width = 30, orderNum="14")
-    @ApiModelProperty(name="supplierCode" ,value="供应商")
-    private String supplierCode;
+    @ApiModelProperty(name="supplierName" ,value="供应商")
+    private String supplierName;
 }

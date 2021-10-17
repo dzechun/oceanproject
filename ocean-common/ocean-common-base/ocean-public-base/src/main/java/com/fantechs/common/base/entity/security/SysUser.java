@@ -216,4 +216,19 @@ public class SysUser extends ValidGroup implements Serializable {
      */
     @Transient
     private String menu;
+
+    /**
+     * 角色id
+     */
+    @ApiModelProperty(name="roleId" ,value="角色id")
+    @Transient
+    private Long roleId;
+
+    /**
+     * 角色名称
+     */
+    @ApiModelProperty(name="roleName" ,value="角色名称")
+    @Transient
+    private Long roleName;
+
 }

@@ -1,10 +1,12 @@
 package com.fantechs.provider.esop.controller;
 
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.esop.EsopWiReleaseDetDto;
 import com.fantechs.common.base.general.entity.esop.EsopWiReleaseDet;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopWiReleaseDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.esop.service.EsopWiReleaseDetService;
 import com.github.pagehelper.Page;
@@ -16,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -66,4 +69,17 @@ public class EsopWiReleaseDetController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stresop")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchEsopWiReleaseDet searchEsopWiReleaseDet){
+        List<EsopWiReleaseDetDto> list = esopWiReleaseDetService.findList(searchEsopWiReleaseDet);
+        System.out.println("-------list-------------"+list);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出信息", "工艺路线", EsopWiReleaseDetDto.class, "工艺路线.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
+    }
 }
