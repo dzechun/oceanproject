@@ -118,7 +118,9 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         List<BaseInspectionStandardDet> baseInspectionStandardDets = baseInspectionStandard.getBaseInspectionStandardDets();
         if(StringUtils.isNotEmpty(baseInspectionStandardDets)){
             for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets) {
-                if(baseInspectionStandardDet.getInspectionTag()!=null && baseInspectionStandardDet.getInspectionTag()==(byte)2) {
+                if(StringUtils.isEmpty(baseInspectionStandardDet.getInspectionTag())){
+                    throw new BizErrorException("检验标识不能为空");
+                }else if(baseInspectionStandardDet.getInspectionTag()==(byte)2) {
                     if(StringUtils.isNotEmpty(baseInspectionStandardDet.getSpecificationUpperLimit(),baseInspectionStandardDet.getSpecificationFloor())) {
                         if (baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor()) == -1
                                 || baseInspectionStandardDet.getSpecificationUpperLimit().compareTo(baseInspectionStandardDet.getSpecificationFloor()) == 0) {

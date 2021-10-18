@@ -196,7 +196,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private int addInventoryDet(String barcode,String jobOrderCode,WmsInnerJobOrderDet wmsInnerJobOrderDet){
         //获取完工入库单单号
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("barcode",barcode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId()).andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId()).andEqualTo("barcodeStatus",3).andEqualTo("orgId",wmsInnerJobOrderDet.getOrgId());
+        example.createCriteria().andEqualTo("barcode",barcode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId())
+                .andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId())
+                .andEqualTo("barcodeStatus",3)
+                .andEqualTo("orgId",wmsInnerJobOrderDet.getOrgId());
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(wmsInnerInventoryDet)){
             throw new BizErrorException("库存匹配失败");
@@ -235,7 +238,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }else{
             //获取出库单对应的工单
 //            WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = outFeignApi.detail(wmsInnerJobOrderDet.getSourceDetId()).getData();
-            BigDecimal qty = InBarcodeUtil.pickCheckBarCode(wmsInnerJobOrderDet.getMaterialId(),barCode);
+            BigDecimal qty = InBarcodeUtil.pickCheckBarCode(wmsInnerJobOrderDet.getInventoryStatusId(),wmsInnerJobOrderDet.getMaterialId(),barCode);
             map.put("SN","true");
             map.put("qty",qty);
         }
@@ -267,7 +270,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
                 //推荐库位
                 SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-                List<WmsInnerInventory> wmsInnerInventories = OutInventoryRule.jobMainRule(wmsInnerJobOrder.getWarehouseId(),wms.getMaterialId(),StringUtils.isNotEmpty(wms.getBatchCode())?wms.getBatchCode():null,StringUtils.isNotEmpty(wms.getProductionDate())?sf.format(wms.getProductionDate()):null);
+                List<WmsInnerInventory> wmsInnerInventories = OutInventoryRule.jobMainRule(wmsInnerJobOrder.getWarehouseId(),wms.getMaterialId(),StringUtils.isNotEmpty(wms.getBatchCode())?wms.getBatchCode():null,StringUtils.isNotEmpty(wms.getProductionDate())?sf.format(wms.getProductionDate()):null,StringUtils.isNotEmpty(wms.getInventoryStatusId())?wms.getInventoryStatusId():null);
                 if(StringUtils.isEmpty(wmsInnerInventories) || wmsInnerInventories.size()<1){
                     throw new BizErrorException("未匹配到库位");
                 }

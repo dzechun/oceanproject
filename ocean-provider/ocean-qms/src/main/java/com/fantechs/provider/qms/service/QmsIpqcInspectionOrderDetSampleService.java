@@ -16,4 +16,5 @@ public interface QmsIpqcInspectionOrderDetSampleService extends IService<QmsIpqc
     List<QmsIpqcInspectionOrderDetSample> findList(Map<String, Object> map);
     int batchAdd(List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSampleList);
     Boolean checkBarcode(String barcode, Long qmsIpqcInspectionOrderDetId);
+    int barcodeBatchAdd(List<QmsIpqcInspectionOrderDetSample> qmsIpqcInspectionOrderDetSampleList);
 }

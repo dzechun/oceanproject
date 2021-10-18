@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 入库条码校验
@@ -107,11 +108,12 @@ public class InBarcodeUtil {
 
     /**
      * 拣货作业匹配条码
+     * @param inventoryStatusId
      * @param materialId
      * @param barCode
      * @return
      */
-    public static BigDecimal pickCheckBarCode(Long materialId,String barCode){
+    public static BigDecimal pickCheckBarCode(Long inventoryStatusId, Long materialId,String barCode){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         //查询库存明细是否存在改条码
         Example example = new Example(WmsInnerInventoryDet.class);
@@ -119,6 +121,9 @@ public class InBarcodeUtil {
         List<WmsInnerInventoryDet> list = inBarcodeUtil.wmsInnerInventoryDetMapper.selectByExample(example);
         if(list.size()<1){
             throw new BizErrorException("条码不存在");
+        }
+        if (StringUtils.isNotEmpty(inventoryStatusId)){
+            list = list.stream().filter(li->li.getInventoryStatusId().equals(inventoryStatusId)).collect(Collectors.toList());
         }
         BigDecimal totalQty =list.stream()
                 .map(WmsInnerInventoryDet::getMaterialQty)

@@ -728,7 +728,7 @@ public class BarcodeUtils {
                 //String paraValue = getSysSpecItemValue("ProcessCheckProductHalfProductionRelation");
 
                 //如果当前工序等于工单投产工序 则判断产品条码与半成品条码关系
-                if(updateProcessDto.getNowProcessId()==updateProcessDto.getPutIntoProcessId()) {
+                if(updateProcessDto.getNowProcessId().equals(updateProcessDto.getPutIntoProcessId())) {
                     baseExecuteResultDto = checkProHalfProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(),
                             restapiChkSNRoutingApiDto.getPartBarcode(), updateProcessDto.getNowProcessId(),
                             updateProcessDto.getWorkOrderId(), updateProcessDto.getMaterialId(), orgId);
@@ -1013,6 +1013,10 @@ public class BarcodeUtils {
 
                 mesPmWorkOrderDto=workOrderlist.getData().get(0);
 
+                if(StringUtils.isEmpty(mesPmWorkOrderDto.getRouteId())){
+                    throw new BizErrorException("工单未选择工艺路线-->"+mesPmWorkOrderDto.getWorkOrderCode());
+                }
+
                 //设置工单ID
                 updateProcessDto.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
                 //设置工单编号
@@ -1047,14 +1051,14 @@ public class BarcodeUtils {
                 }
             }
             //检查半成品SN 不为空 检查是否已在条码表中 不存在则新增到条码表中
-            if(StringUtils.isNotEmpty(partBarcode) && StringUtils.isNotEmpty(mesPmWorkOrderDto) && StringUtils.isEmpty(barcodeCode)){
+            if(StringUtils.isNotEmpty(partBarcode) && StringUtils.isNotEmpty(mesPmWorkOrderDto)){
                 baseExecuteResultDto=createWorkOrderBarcode(partBarcode,mesPmWorkOrderDto,orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
             }
             //检查成品SN 不为空 检查是否已在条码表中 不存在则新增到条码表中
-            if(StringUtils.isNotEmpty(partBarcode) && StringUtils.isNotEmpty(mesPmWorkOrderDto) && StringUtils.isEmpty(barcodeCode)){
-                baseExecuteResultDto=createWorkOrderBarcode(partBarcode,mesPmWorkOrderDto,orgId);
+            if(StringUtils.isNotEmpty(barcodeCode) && StringUtils.isNotEmpty(mesPmWorkOrderDto)){
+                baseExecuteResultDto=createWorkOrderBarcode(barcodeCode,mesPmWorkOrderDto,orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
             }
@@ -1163,20 +1167,22 @@ public class BarcodeUtils {
             //检查半成品条码
             baseExecuteResultDto=checkBarcodeStatus(halfProductionSn,orgId,"");
             if(baseExecuteResultDto.getIsSuccess()==false) {
-                //获取配置项 工单在条码中的位置 WorkOrderPositionOnBarcode
-                String paraValue = getSysSpecItemValue("WorkOrderPositionOnBarcode");
-                int beginIndex = 0;
-                int endIndex = 0;
-                if (StringUtils.isNotEmpty(paraValue)) {
-                    String[] arry = paraValue.split("-");
-                    if (arry.length == 2) {
-                        beginIndex = Integer.parseInt(arry[0]);
-                        endIndex = Integer.parseInt(arry[1]);
-                    }
-                }
-                //半成品条码是外购 所以截取出来的是采购单号
-                purchaseOrderCode = halfProductionSn.substring(beginIndex, endIndex);
+                throw new Exception(baseExecuteResultDto.getFailMsg());
             }
+
+            //获取配置项 工单在条码中的位置 WorkOrderPositionOnBarcode
+            String paraValue = getSysSpecItemValue("WorkOrderPositionOnBarcode");
+            int beginIndex = 0;
+            int endIndex = 0;
+            if (StringUtils.isNotEmpty(paraValue)) {
+                String[] arry = paraValue.split("-");
+                if (arry.length == 2) {
+                    beginIndex = Integer.parseInt(arry[0]);
+                    endIndex = Integer.parseInt(arry[1]);
+                }
+            }
+            //半成品条码是外购 所以截取出来的是采购单号
+            purchaseOrderCode = halfProductionSn.substring(beginIndex, endIndex);
 
             if(StringUtils.isNotEmpty(purchaseOrderCode)) {
 //                SearchMesPmWorkOrder searchMesPmWorkOrder=new SearchMesPmWorkOrder();
@@ -1203,7 +1209,7 @@ public class BarcodeUtils {
                 //设置半成品物料ID
                 updateProcessDto.setPartMaterialId(partMaterialId);
                 //展产品BOM找是否存在物料  如不存在 在工单BOM中找
-                Boolean isExist=findBomExistMaterialId(materialId,partMaterialId);
+                Boolean isExist=findBomExistMaterialId(materialId,partMaterialId,orgId);
 
                 if(isExist==false) {
                     SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
@@ -1713,9 +1719,6 @@ public class BarcodeUtils {
                 mesSfcBarcodeProcess.setRouteCode(mesPmWorkOrderDto.getRouteCode());
                 mesSfcBarcodeProcess.setRouteName(mesPmWorkOrderDto.getRouteName());
 
-                if(StringUtils.isEmpty(mesPmWorkOrderDto.getRouteId())){
-                    throw new BizErrorException("工单未选择工艺路线-->"+mesPmWorkOrderDto.getWorkOrderCode());
-                }
                 //查询工艺路线
                 ResponseEntity<List<BaseRouteProcess>> res = barcodeUtils.baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
                 if(res.getCode()!=0){
@@ -1743,9 +1746,10 @@ public class BarcodeUtils {
         return baseExecuteResultDto;
     }
 
-    public static Boolean findBomExistMaterialId(Long materialId,Long partMaterialId){
+    public static Boolean findBomExistMaterialId(Long materialId,Long partMaterialId,Long orgId){
         SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
         searchBaseProductBom.setMaterialId(materialId);
+        searchBaseProductBom.setOrgId(orgId);
         ResponseEntity<List<BaseProductBomDto>> responseEntityPB = barcodeUtils.deviceInterFaceUtils.getProductBomList(searchBaseProductBom);
         if (StringUtils.isNotEmpty(responseEntityPB.getData())) {
             BaseProductBomDto baseProductBomDto = responseEntityPB.getData().get(0);
@@ -1763,7 +1767,9 @@ public class BarcodeUtils {
                     List<BaseProductBomDetDto> productBomDetDtos=baseProductBomDetDtos.stream().filter(item -> item.getIfHaveLowerLevel().equals((byte)1)).collect(Collectors.toList());
                     if(productBomDetDtos.size()>0){
                         for (BaseProductBomDetDto item : productBomDetDtos) {
-                            findBomExistMaterialId(item.getMaterialId(),partMaterialId);
+                            Boolean isOK=findBomExistMaterialId(item.getMaterialId(),partMaterialId,orgId);
+                            if(isOK)
+                                return true;
                         }
                     }
                     else {
