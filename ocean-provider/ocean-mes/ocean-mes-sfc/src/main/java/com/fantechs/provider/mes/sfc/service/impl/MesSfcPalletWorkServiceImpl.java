@@ -21,13 +21,9 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.BeanUtils;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.RedisUtil;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
@@ -77,8 +73,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     InFeignApi inFeignApi;
     @Resource
     SecurityFeignApi securityFeignApi;
-    @Resource
-    private OMFeignApi omFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -389,10 +383,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 // 判断同个工单的、已过包箱过站但是没有栈板过站的包箱、并且PO号一致的数据是否存在
                 Map<String, Object> param = new HashMap<>();
                 param.put("workOrderId", mesSfcProductPallet.getWorkOrderId());
-//                param.put("samePackageCode", );
                 List<MesSfcBarcodeProcess> nextProcessIsPallet = mesSfcBarcodeProcessService.findNextProcessIsPallet(param);
                 // TODO PO号判断
-
 
                 if (nextProcessIsPallet.isEmpty()){
                     // 未满栈板自动提交

@@ -1,4 +1,4 @@
-package com.fantechs.provider.om.mapper.ht;
+package com.fantechs.provider.om.mapper;
 
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDetDto;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;

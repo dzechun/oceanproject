@@ -2,31 +2,24 @@ package com.fantechs.provider.mes.sfc.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
-import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
-import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
-import com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc;
-import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.qms.OMFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcProductCartonMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
@@ -63,10 +56,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     private PMFeignApi pmFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
-    @Resource
-    private SecurityFeignApi securityFeignApi;
-    @Resource
-    private OMFeignApi omFeignApi;
 
 
     @Override
@@ -316,45 +305,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                                 .isDelete((byte) 1)
                                 .build());
                         iswork = false;
-
-                        /**
-                         * 万宝特性要求
-                         * 扫附件码时，通过销售条码查找销售编码与PO关系表
-                         * 绑定关系
-                         */
-                        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-                        searchSysSpecItem.setSpecCode("wanbaoAutoClosePallet");
-                        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-                        if (!specItems.isEmpty() && "1".equals(specItems.get(0).getParaValue())){
-                            SearchOmSalesCodeReSpc searchOmSalesCodeReSpc = new SearchOmSalesCodeReSpc();
-                            searchOmSalesCodeReSpc.setSamePackageCodeStatus((byte) 1);
-                            List<OmSalesCodeReSpcDto> codeReSpcDtos = omFeignApi.findAll(searchOmSalesCodeReSpc).getData();
-                            // 同个销售编码
-                            List<OmSalesCodeReSpcDto> currentDtos = new ArrayList<>();
-                            for (OmSalesCodeReSpcDto omSalesCodeReSpcDto : codeReSpcDtos){
-                                if (dto.getBarAnnexCode().contains(omSalesCodeReSpcDto.getSalesCode())){
-                                    currentDtos.add(omSalesCodeReSpcDto);
-                                    continue;
-                                }
-                            }
-                            if (currentDtos.isEmpty()){
-                                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "销售编码管理PO数据不存在，请先为维护！");
-                            }
-                            // 排序，优先级最高的
-                            currentDtos = currentDtos.stream().sorted(Comparator.comparing(OmSalesCodeReSpc::getPriority)).collect(Collectors.toList());
-                            OmSalesCodeReSpc omSalesCodeReSpc = currentDtos.get(0);
-                            // 绑定关系
-                            mesSfcBarcodeProcess.setSamePackageCode(omSalesCodeReSpc.getSamePackageCode());
-                            mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
-
-                            // 增加以匹配数
-                            omSalesCodeReSpc.setMatchedQty(omSalesCodeReSpc.getMatchedQty() != null ? BigDecimal.ONE.add(omSalesCodeReSpc.getMatchedQty()) : BigDecimal.ONE);
-                            if (omSalesCodeReSpc.getMatchedQty().compareTo(omSalesCodeReSpc.getSamePackageCodeQty()) == 0){
-                                omSalesCodeReSpc.setSamePackageCodeStatus((byte) 3);
-                            }
-                            omFeignApi.update(omSalesCodeReSpc);
-                        }
-
                         break;
                     }
                 }

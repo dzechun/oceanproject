@@ -9,7 +9,7 @@ import com.fantechs.common.base.general.entity.om.OmHtSalesOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.om.mapper.ht.OmHtSalesOrderMapper;
+import com.fantechs.provider.om.mapper.OmHtSalesOrderMapper;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderService;
 import org.springframework.stereotype.Service;
 

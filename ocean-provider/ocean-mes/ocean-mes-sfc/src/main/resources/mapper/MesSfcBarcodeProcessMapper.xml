@@ -65,7 +65,6 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode" />
   </resultMap>
 
   <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto" extends="BaseResultMap">

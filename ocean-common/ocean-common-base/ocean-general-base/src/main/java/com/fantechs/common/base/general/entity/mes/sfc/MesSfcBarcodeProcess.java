@@ -18,15 +18,6 @@ import java.util.Date;
 ;
 ;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.Date;
-
-;
-;
-
 /**
  * 生产管理-产品条码过站表
  * mes_sfc_barcode_process
@@ -508,12 +499,4 @@ public class MesSfcBarcodeProcess extends ValidGroup implements Serializable {
     private String option3;
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 同包装编码
-     */
-    @ApiModelProperty(name="samePackageCode",value = "同包装编码")
-    @Excel(name = "同包装编码", height = 20, width = 30,orderNum="")
-    @Column(name = "same_package_code")
-    private String samePackageCode;
 }
