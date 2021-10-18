@@ -141,7 +141,7 @@ public class BaseStorageCapacityServiceImpl extends BaseService<BaseStorageCapac
             //判断物料是否存在
             Example example = new Example(BaseMaterial.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", currentUser.getOrganizationId())
+            criteria.andEqualTo("organizationId", currentUser.getOrganizationId())
                     .andEqualTo("materialCode",materialCode);
             BaseMaterial baseMaterial = baseMaterialMapper.selectOneByExample(example);
             if (StringUtils.isEmpty(baseMaterial)){
@@ -155,7 +155,7 @@ public class BaseStorageCapacityServiceImpl extends BaseService<BaseStorageCapac
             Example.Criteria criteria1 = example1.createCriteria();
             criteria1.andEqualTo("orgId", currentUser.getOrganizationId())
                     .andEqualTo("materialId",baseStorageCapacityImport.getMaterialId());
-            if (StringUtils.isNotEmpty(baseStorageCapacityMapper.selectOneByExample(example))){
+            if (StringUtils.isNotEmpty(baseStorageCapacityMapper.selectOneByExample(example1))){
                 fail.add(i+4);
                 continue;
             }
