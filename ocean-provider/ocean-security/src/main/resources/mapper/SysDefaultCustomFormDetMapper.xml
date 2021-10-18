@@ -104,6 +104,9 @@
       <if test="customFormId!=null and customFormId!=''">
         and dcfd.custom_form_id=#{customFormId}
       </if>
+      <if test="itemKey!=null and itemKey!=''">
+        and dcfd.item_key=#{itemKey}
+      </if>
       <if test="customFormCode!=null and customFormCode!=''">
         and dcf.custom_form_code=#{customFormCode}
       </if>

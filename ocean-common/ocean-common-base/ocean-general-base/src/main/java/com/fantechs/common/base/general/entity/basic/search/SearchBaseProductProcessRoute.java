@@ -68,4 +68,5 @@ public class SearchBaseProductProcessRoute extends BaseQuery implements Serializ
      */
     @ApiModelProperty(name="routeCode" ,value="工艺路线编码")
     private String routeCode;
+
 }

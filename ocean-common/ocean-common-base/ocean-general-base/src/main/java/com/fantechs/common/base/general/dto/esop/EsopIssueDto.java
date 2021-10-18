@@ -79,5 +79,11 @@ public class EsopIssueDto extends EsopIssue implements Serializable {
     @ApiModelProperty(name = "processCode",value = "工序编码")
     private String processCode;
 
+    /**
+     * 工序名称
+     */
+    @Transient
+    @ApiModelProperty(name = "processName",value = "工序名称")
+    private String processName;
 
 }

@@ -41,9 +41,10 @@ public class OutInventoryRule {
      * @param materialId 产品id
      * @param batchCode 批次号
      * @param productionDate 生成日期
+     * @param inventoryStatusId 库存状态
      * @return 可出库库存
      */
-    public static List<WmsInnerInventory> jobMainRule(Long warehouseId,Long materialId,String batchCode,String productionDate){
+    public static List<WmsInnerInventory> jobMainRule(Long warehouseId,Long materialId,String batchCode,String productionDate,Long inventoryStatusId){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -56,6 +57,9 @@ public class OutInventoryRule {
         }
         if(StringUtils.isNotEmpty(productionDate)){
             criteria.andEqualTo("productionDate",productionDate);
+        }
+        if(StringUtils.isNotEmpty(inventoryStatusId)){
+            criteria.andEqualTo("inventoryStatusId",inventoryStatusId);
         }
         criteria.andEqualTo("jobStatus",1);
         criteria.andEqualTo("orgId",sysUser.getOrganizationId());

@@ -17,6 +17,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.security.mapper.SysCustomFormDetMapper;
 import com.fantechs.security.mapper.SysCustomFormMapper;
+import com.fantechs.security.mapper.SysDefaultCustomFormDetMapper;
 import com.fantechs.security.mapper.SysDefaultCustomFormMapper;
 import com.fantechs.security.service.SysCustomFormService;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +40,136 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
     private SysCustomFormMapper sysCustomFormMapper;
     @Resource
     private SysCustomFormDetMapper sysCustomFormDetMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
+    @Resource
+    private SysDefaultCustomFormMapper sysDefaultCustomFormMapper;
+    @Resource
+    private SysDefaultCustomFormDetMapper sysDefaultCustomFormDetMapper;
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int saveInAllOrg(SysCustomForm sysCustomForm) {
+        // 获取登录用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        ifCodeRepeat(sysCustomForm,user);
+        sysCustomForm.setOrgId(user.getOrganizationId());
+
+        //默认表新增
+        SysDefaultCustomForm defaultCustomForm = new SysDefaultCustomForm();
+        BeanUtil.copyProperties(sysCustomForm, defaultCustomForm);
+        defaultCustomForm.setOrgId(null);
+        sysDefaultCustomFormMapper.insertSelective(defaultCustomForm);
+
+        //全组织新增
+        List<SysCustomForm> formList = new LinkedList<>();
+        formList.add(sysCustomForm);
+        List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(new SearchBaseOrganization()).getData();
+        if(!organizationDtos.isEmpty()){
+            for (BaseOrganizationDto org : organizationDtos){
+                if(!org.getOrganizationId().equals(sysCustomForm.getOrgId())){
+                    SysCustomForm form = new SysCustomForm();
+                    BeanUtil.copyProperties(sysCustomForm, form);
+                    form.setOrgId(org.getOrganizationId());
+                    formList.add(form);
+                }
+            }
+        }
+
+        return sysCustomFormMapper.insertList(formList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateInAllOrg(SysCustomForm sysCustomForm) {
+        // 获取登录用户
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        ifCodeRepeat(sysCustomForm,user);
+        sysCustomForm.setOrgId(user.getOrganizationId());
+
+        SysCustomForm subForm = new SysCustomForm();
+        if(StringUtils.isNotEmpty(sysCustomForm.getSubId())) {
+            subForm = sysCustomFormMapper.selectByPrimaryKey(sysCustomForm.getSubId());
+        }
+
+        //默认表修改
+        Example example = new Example(SysDefaultCustomForm.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode());
+        SysDefaultCustomForm defaultCustomForm = sysDefaultCustomFormMapper.selectOneByExample(example);
+        defaultCustomForm.setCustomFormName(sysCustomForm.getCustomFormName());
+        defaultCustomForm.setFromRout(sysCustomForm.getFromRout());
+        defaultCustomForm.setStatus(sysCustomForm.getStatus());
+        defaultCustomForm.setOrgId(null);
+        if(StringUtils.isNotEmpty(sysCustomForm.getSubId())) {
+            example.clear();
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria1.andEqualTo("customFormCode",subForm.getCustomFormCode());
+            SysDefaultCustomForm defaultSubForm = sysDefaultCustomFormMapper.selectOneByExample(example);
+            defaultCustomForm.setSubId(defaultSubForm.getCustomFormId());
+        }
+        sysDefaultCustomFormMapper.updateByPrimaryKeySelective(defaultCustomForm);
+
+        //全组织修改
+        Example example2 = new Example(SysCustomForm.class);
+        Example.Criteria criteria2 = example2.createCriteria();
+        criteria2.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode())
+                .andNotEqualTo("orgId",sysCustomForm.getOrgId());
+        List<SysCustomForm> formList = sysCustomFormMapper.selectByExample(example2);
+        for (SysCustomForm customForm : formList){
+            customForm.setCustomFormName(sysCustomForm.getCustomFormName());
+            customForm.setFromRout(sysCustomForm.getFromRout());
+            customForm.setStatus(sysCustomForm.getStatus());
+            if(StringUtils.isNotEmpty(sysCustomForm.getSubId())) {
+                example2.clear();
+                Example.Criteria criteria3 = example2.createCriteria();
+                criteria3.andEqualTo("customFormCode",subForm.getCustomFormCode())
+                        .andEqualTo("orgId",customForm.getOrgId());
+                SysCustomForm subFormInOrg = sysCustomFormMapper.selectOneByExample(example2);
+                customForm.setSubId(subFormInOrg.getCustomFormId());
+            }
+            sysCustomFormMapper.updateByPrimaryKeySelective(customForm);
+        }
+
+        return sysCustomFormMapper.updateByPrimaryKeySelective(sysCustomForm);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchDeleteInAllOrg(String ids) {
+        int i = 0;
+
+        List<SysCustomForm> formList = sysCustomFormMapper.selectByIds(ids);
+        for (SysCustomForm sysCustomForm : formList){
+            //删除默认表单
+            Example example1 = new Example(SysDefaultCustomForm.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode());
+            SysDefaultCustomForm defaultCustomForm = sysDefaultCustomFormMapper.selectOneByExample(example1);
+            Example example2 = new Example(SysDefaultCustomFormDet.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("customFormId",defaultCustomForm.getCustomFormId());
+            sysDefaultCustomFormDetMapper.deleteByExample(example2);
+            sysDefaultCustomFormMapper.deleteByExample(example1);
+
+            //全组织删除
+            Example example3 = new Example(SysCustomForm.class);
+            Example.Criteria criteria3 = example3.createCriteria();
+            criteria3.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode());
+            List<SysCustomForm> formList1 = sysCustomFormMapper.selectByExample(example3);
+            for(SysCustomForm sysCustomForm1 : formList1){
+                //删除明细
+                Example example4 = new Example(SysCustomFormDet.class);
+                Example.Criteria criteria4 = example4.createCriteria();
+                criteria4.andEqualTo("customFormId",sysCustomForm1.getCustomFormId());
+                sysCustomFormDetMapper.deleteByExample(example4);
+            }
+            i = sysCustomFormMapper.deleteByExample(example3);
+        }
+
+        return i;
+    }
 
     @Override
     public List<SysCustomFormDto> findList(Map<String, Object> map) {

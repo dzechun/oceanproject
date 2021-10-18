@@ -14,4 +14,10 @@ import java.util.Map;
 
 public interface SysCustomFormDetService extends IService<SysCustomFormDet> {
     List<SysCustomFormDetDto> findList(Map<String, Object> map);
+
+    int saveInAllOrg(SysCustomFormDet sysCustomFormDet);
+
+    int updateInAllOrg(SysCustomFormDet sysCustomFormDet);
+
+    int batchDeleteInAllOrg(String ids);
 }

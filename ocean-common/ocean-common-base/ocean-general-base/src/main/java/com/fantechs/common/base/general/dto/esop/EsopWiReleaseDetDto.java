@@ -1,6 +1,6 @@
 package com.fantechs.common.base.general.dto.esop;
 
-import com.fantechs.common.base.general.entity.eam.EamWiReleaseDet;
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.esop.EsopWiReleaseDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -45,6 +45,6 @@ public class EsopWiReleaseDetDto extends EsopWiReleaseDet implements Serializabl
      * 所属工序名称
      */
     @ApiModelProperty(name="processName",value = "所属工序名称")
-    @Transient
+    @Excel(name = "工艺路线", height = 20, width = 30,orderNum="1")
     private String processName;
 }

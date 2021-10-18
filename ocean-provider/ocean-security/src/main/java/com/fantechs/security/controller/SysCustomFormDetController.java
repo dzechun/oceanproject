@@ -39,6 +39,24 @@ public class SysCustomFormDetController {
     @Autowired
     private SysCustomFormDetService sysCustomFormDetService;
 
+    @ApiOperation(value = "全组织新增",notes = "新增")
+    @PostMapping("/saveInAllOrg")
+    public ResponseEntity saveInAllOrg(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SysCustomFormDet sysCustomFormDet) {
+        return ControllerUtil.returnCRUD(sysCustomFormDetService.saveInAllOrg(sysCustomFormDet));
+    }
+
+    @ApiOperation("全组织删除")
+    @PostMapping("/batchDeleteInAllOrg")
+    public ResponseEntity batchDeleteInAllOrg(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(sysCustomFormDetService.batchDeleteInAllOrg(ids));
+    }
+
+    @ApiOperation("全组织修改")
+    @PostMapping("/updateInAllOrg")
+    public ResponseEntity updateInAllOrg(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SysCustomFormDet.update.class) SysCustomFormDet sysCustomFormDet) {
+        return ControllerUtil.returnCRUD(sysCustomFormDetService.updateInAllOrg(sysCustomFormDet));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SysCustomFormDet sysCustomFormDet) {

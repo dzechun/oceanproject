@@ -116,9 +116,9 @@ public class WmsInnerStockOrderDetServiceImpl extends BaseService<WmsInnerStockO
             wmsInnerStockOrderDet.setInventoryStatusId(baseInventoryStatusList.get(0).getInventoryStatusId());
 
             //供应商
-            if(StringUtils.isNotEmpty(wmsInnerStockOrderImports.get(i).getSupplierCode())){
+            if(StringUtils.isNotEmpty(wmsInnerStockOrderImports.get(i).getSupplierName())){
                 SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
-                searchBaseSupplier.setSupplierCode(wmsInnerStockOrderImports.get(i).getSupplierCode());
+                searchBaseSupplier.setSupplierName(wmsInnerStockOrderImports.get(i).getSupplierName());
                 searchBaseSupplier.setCodeQueryMark((byte)1);
                 searchBaseSupplier.setSupplierType((byte)1);
                 List<BaseSupplier> baseSupplierList = baseFeignApi.findSupplierList(searchBaseSupplier).getData();
