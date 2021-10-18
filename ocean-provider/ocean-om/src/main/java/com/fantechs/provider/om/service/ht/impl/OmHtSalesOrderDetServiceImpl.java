@@ -4,7 +4,7 @@ package com.fantechs.provider.om.service.ht.impl;
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDetDto;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.provider.om.mapper.OmHtSalesOrderDetMapper;
+import com.fantechs.provider.om.mapper.ht.OmHtSalesOrderDetMapper;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderDetService;
 import org.springframework.stereotype.Service;
 

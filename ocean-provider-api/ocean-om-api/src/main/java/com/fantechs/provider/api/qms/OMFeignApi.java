@@ -1,10 +1,12 @@
 package com.fantechs.provider.api.qms;
 
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
+import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
 import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -97,5 +99,13 @@ public interface OMFeignApi {
     @ApiOperation("其他入库订单数量反写")
     @PostMapping("/omOtherInOrder/writeQty")
     ResponseEntity writeQtyToIn(@RequestBody OmOtherInOrderDet omOtherInOrderDet);
+
+    @ApiOperation("查询销售编码关联PO列表(不分页)")
+    @PostMapping("/omSalesCodeReSpc/findAll")
+    ResponseEntity<List<OmSalesCodeReSpcDto>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchOmSalesCodeReSpc searchOmSalesCodeReSpc);
+
+    @ApiOperation("销售编码关联PO修改")
+    @PostMapping("/omSalesCodeReSpc/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesCodeReSpc.update.class) OmSalesCodeReSpc omSalesCodeReSpc);
 
 }
