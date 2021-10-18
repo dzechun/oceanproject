@@ -46,4 +46,17 @@ public class SearchSysRole extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="userName" ,value="用户账号")
     private  String userName;
+
+    /**
+     * 是否查询已绑定角色
+     */
+    @ApiModelProperty(name="searchType" ,value="是否查询已绑定角色（1-查询绑定角色）")
+    private  Byte searchType;
+
+    /**
+     * 用户ID
+     */
+    @ApiModelProperty(name="userId" ,value="用户ID")
+    private Long userId;
+
 }
