@@ -23,7 +23,6 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 库存盘点ID
      */
     @ApiModelProperty(name="stockOrderId",value = "库存盘点ID")
-    @Excel(name = "库存盘点ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "stock_order_id")
     private Long stockOrderId;
@@ -32,7 +31,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 盘点单号
      */
     @ApiModelProperty(name="stockOrderCode",value = "盘点单号")
-    @Excel(name = "盘点单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "盘点单号", height = 20, width = 30,orderNum="1")
     @Column(name = "stock_order_code")
     private String stockOrderCode;
 
@@ -40,7 +39,6 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 货主
      */
     @ApiModelProperty(name = "materialOwnerId",value = "货主")
-    @Excel(name = "货主", height = 20, width = 30,orderNum="")
     @Column(name = "material_owner_id")
     private Long materialOwnerId;
 
@@ -48,7 +46,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 相关单号
      */
     @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
-    @Excel(name = "相关单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "相关单号", height = 20, width = 30,orderNum="3")
     @Column(name = "related_order_code")
     private String relatedOrderCode;
 
@@ -56,7 +54,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 盘点类型：1-库位 2-货品 3-全盘
      */
     @ApiModelProperty(name="stockType",value = "盘点类型：1-库位 2-货品 3-全盘")
-    @Excel(name = "盘点类型", height = 20, width = 30,orderNum="",replace = {"1_库位","2_货品","3_全盘"})
+    @Excel(name = "盘点类型", height = 20, width = 30,orderNum="4",replace = {"1_库位","2_货品","3_全盘"})
     @Column(name = "stock_type")
     private Byte stockType;
 
@@ -64,7 +62,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 1-盘点 2-复盘
      */
     @ApiModelProperty(name="projectType",value = "1-盘点 2-复盘")
-    @Excel(name = "作业类型", height = 20, width = 30,orderNum="",replace = {"1_盘点","2_复盘"})
+    @Excel(name = "作业类型", height = 20, width = 30,orderNum="5",replace = {"1_盘点","2_复盘"})
     @Column(name = "project_type")
     private Byte projectType;
 
@@ -72,7 +70,6 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 仓库id
      */
     @ApiModelProperty(name="warehouseId",value = "仓库id")
-    @Excel(name = "仓库id", height = 20, width = 30,orderNum="") 
     @Column(name = "warehouse_id")
     private Long warehouseId;
 
@@ -80,7 +77,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 1-打开 2-待作业 3-作业中 4-作废 5完成
      */
     @ApiModelProperty(name="orderStatus",value = "1-打开 2-待作业 3-作业中 4-作废 5完成")
-    @Excel(name = "1-打开 2-待作业 3-作业中 4-作废 5完成", height = 20, width = 30,orderNum="")
+    @Excel(name = "1-打开 2-待作业 3-作业中 4-作废 5完成", height = 20, width = 30,orderNum="7",replace = {"1_打开"," 2_待作业"," 3_作业中"," 4_作废","5_完成"})
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -88,7 +85,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 盘点方式 1-PDA盘点 2-纸质盘点
      */
     @ApiModelProperty(name="stockMode",value = "盘点方式 1-PDA盘点 2-纸质盘点")
-    @Excel(name = "盘点方式 1-PDA盘点 2-纸质盘点", height = 20, width = 30,orderNum="") 
+    @Excel(name = "盘点方式 1-PDA盘点 2-纸质盘点", height = 20, width = 30,orderNum="8",replace = {"1_PDA盘点","2_纸质盘点"})
     @Column(name = "`stock_mode`")
     private Byte stockMode;
 
@@ -96,7 +93,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 盲盘 1-是 2-否
      */
     @ApiModelProperty(name="blind",value = "盲盘 1-是 2-否")
-    @Excel(name = "盲盘 1-是 2-否", height = 20, width = 30,orderNum="") 
+    @Excel(name = "盲盘 1-是 2-否", height = 20, width = 30,orderNum="9",replace = {"1_是","2_否"})
     private String ifBlindStock;
 
     @Column(name = "max_storage_count")
@@ -106,14 +103,13 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
+    @Excel(name = "备注", height = 20, width = 30,orderNum="10")
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long organizationId;
 
@@ -121,7 +117,6 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -129,7 +124,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="13",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -138,7 +133,6 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -146,7 +140,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="15",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
