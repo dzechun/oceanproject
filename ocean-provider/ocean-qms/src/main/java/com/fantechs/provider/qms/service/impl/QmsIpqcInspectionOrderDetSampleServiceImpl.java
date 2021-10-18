@@ -260,6 +260,7 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
                 } else if (qmsIpqcInspectionOrderDet.getBadnessQty().longValue() >= qmsIpqcInspectionOrderDet.getReValue()) {
                     qmsIpqcInspectionOrderDet.setInspectionResult((byte) 0);
                 }
+                qmsIpqcInspectionOrderDet.setBadnessCategoryId(qmsIpqcInspectionOrderDetSample.getBadnessCategoryId());
                 qmsIpqcInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrderDet);
             }
             ipqcInspectionOrderId = qmsIpqcInspectionOrderDet.getIpqcInspectionOrderId();
