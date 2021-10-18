@@ -25,6 +25,7 @@ import tk.mybatis.mapper.common.BaseMapper;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -201,5 +202,12 @@ public class BaseStorageCapacityServiceImpl extends BaseService<BaseStorageCapac
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
+    }
+
+    @Override
+    public BigDecimal totalQty(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
+        return baseStorageCapacityMapper.totalQty(map);
     }
 }

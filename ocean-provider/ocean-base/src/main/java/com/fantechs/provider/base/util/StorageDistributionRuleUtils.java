@@ -1,10 +1,18 @@
 package com.fantechs.provider.base.util;
 
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.base.service.BaseStorageCapacityService;
 import com.fantechs.provider.base.service.BaseStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +33,10 @@ public class StorageDistributionRuleUtils {
     //引用
     @Autowired
     private BaseStorageService baseStorageService;
+    @Autowired
+    private SecurityFeignApi securityFeignApi;
+    @Autowired
+    private BaseStorageCapacityService baseStorageCapacityService;
 
     //声明对象
     private static StorageDistributionRuleUtils storageDistributionRuleUtils;
@@ -34,6 +46,8 @@ public class StorageDistributionRuleUtils {
     public void init(){
         storageDistributionRuleUtils = this;
         storageDistributionRuleUtils.baseStorageService = this.baseStorageService;
+        storageDistributionRuleUtils.securityFeignApi = this.securityFeignApi;
+        storageDistributionRuleUtils.baseStorageCapacityService = this.baseStorageCapacityService;
     }
 
     /**
@@ -131,7 +145,7 @@ public class StorageDistributionRuleUtils {
         map.put("materialId",materialId);
         map.put("orgId",sysUser.getOrganizationId());
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.findStorageMaterial(map);
-        list = calculateStorage(storageRuleDtos);
+        list = calculateStorage(storageRuleDtos,materialId);
         return list;
     }
 
@@ -152,7 +166,7 @@ public class StorageDistributionRuleUtils {
         map.put("productionDate",prodDate);
         map.put("orgId",sysUser.getOrganizationId());
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.BatchEqualStorage(map);
-        list = calculateStorage(storageRuleDtos);
+        list = calculateStorage(storageRuleDtos,materialId);
         return list;
     }
 
@@ -164,7 +178,7 @@ public class StorageDistributionRuleUtils {
         map.put("materialId",materialId);
        map.put("orgId",sysUser.getOrganizationId());
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.EmptyStorage(map);
-        list = calculateStorage(storageRuleDtos);
+        list = calculateStorage(storageRuleDtos,materialId);
         return list;
     }
 
@@ -176,7 +190,7 @@ public class StorageDistributionRuleUtils {
         map.put("materialId",materialId);
         map.put("orgId",sysUser.getOrganizationId());
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.LastStorage(map);
-        list = calculateStorage(storageRuleDtos);
+        list = calculateStorage(storageRuleDtos,materialId);
         return list;
     }
 
@@ -188,7 +202,7 @@ public class StorageDistributionRuleUtils {
         map.put("materialId",materialId);
         map.put("orgId",sysUser.getOrganizationId());
         List<StorageRuleDto> storageRuleDtos = storageDistributionRuleUtils.baseStorageService.MixedWithStorage(map);
-        list = calculateStorage(storageRuleDtos);
+        list = calculateStorage(storageRuleDtos,materialId);
         return list;
     }
 
@@ -198,7 +212,7 @@ public class StorageDistributionRuleUtils {
      * @param putawayMoveLineNo 上架库位动线号
      * @return 库位列表
      */
-    private static Map<String,Object> getCanPutawayEmptyStorageList(Long warehouseId,Integer putawayMoveLineNo){
+    private static Map<String,Object> getCanPutawayEmptyStorageList(Long warehouseId,Integer putawayMoveLineNo,Long materialId){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<StorageRuleDto> list = new ArrayList<>();
         List<StorageRuleDto> storageRuleDtos = null;
@@ -236,7 +250,7 @@ public class StorageDistributionRuleUtils {
             Map<String,Object> map = new HashMap<>();
             map.put("warehouseId",warehouseId);
             storageRuleDtos = storageDistributionRuleUtils.baseStorageService.findPutawayRule(map);
-            list = calculateStorage(storageRuleDtos);
+            list = calculateStorage(storageRuleDtos,materialId);
         }
         mapList.put("list",list);
         return mapList;
@@ -251,28 +265,95 @@ public class StorageDistributionRuleUtils {
      * @param storageRuleDtos
      * @return
      */
-    private static List<StorageRuleDto> calculateStorage(List<StorageRuleDto> storageRuleDtos){
+    private static List<StorageRuleDto> calculateStorage(List<StorageRuleDto> storageRuleDtos,Long materialId){
         List<StorageRuleDto> list = new ArrayList<>();
         if(StringUtils.isNotEmpty(storageRuleDtos)&&storageRuleDtos.size()>0){
             for (StorageRuleDto storageRuleDto : storageRuleDtos) {
-                if(StringUtils.isEmpty(storageRuleDto.getVolume(),storageRuleDto.getNetWeight())){
-                    throw new BizErrorException("请维护物料体积重量");
-                }
-                //物料体积必须大于0
-                if(storageRuleDto.getVolume().compareTo(BigDecimal.ZERO)==1 && storageRuleDto.getNetWeight().compareTo(BigDecimal.ZERO)==1){
-                    //库位按体积可上架数 = 剩余体积/物料体积 向下去整数
-                    storageRuleDto.setVolumeQty(storageRuleDto.getSurplusVolume().divide(storageRuleDto.getVolume(),0,BigDecimal.ROUND_DOWN));
-                    storageRuleDto.setNetWeightQty(storageRuleDto.getSurplusLoad().divide(storageRuleDto.getNetWeight(),0,BigDecimal.ROUND_DOWN));
-                    if(storageRuleDto.getVolumeQty().compareTo(storageRuleDto.getNetWeightQty())==1){
-                        storageRuleDto.setPutawayQty(storageRuleDto.getNetWeightQty());
+
+                //获取配置项
+                SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+                searchSysSpecItem.setSpecCode("capacity");
+                List<SysSpecItem> itemList = storageDistributionRuleUtils.securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+                if(itemList.size()<1 || StringUtils.isEmpty(itemList.get(0).getParaValue()) || itemList.get(0).getParaValue().equals("base_storage")){
+                    if(StringUtils.isEmpty(storageRuleDto.getVolume(),storageRuleDto.getNetWeight())){
+                        throw new BizErrorException("请维护物料体积重量");
+                    }
+                    //物料体积必须大于0
+                    if(storageRuleDto.getVolume().compareTo(BigDecimal.ZERO)==1 && storageRuleDto.getNetWeight().compareTo(BigDecimal.ZERO)==1){
+                        //库位按体积可上架数 = 剩余体积/物料体积 向下去整数
+                        storageRuleDto.setVolumeQty(storageRuleDto.getSurplusVolume().divide(storageRuleDto.getVolume(),0,BigDecimal.ROUND_DOWN));
+                        storageRuleDto.setNetWeightQty(storageRuleDto.getSurplusLoad().divide(storageRuleDto.getNetWeight(),0,BigDecimal.ROUND_DOWN));
+                        if(storageRuleDto.getVolumeQty().compareTo(storageRuleDto.getNetWeightQty())==1){
+                            storageRuleDto.setPutawayQty(storageRuleDto.getNetWeightQty());
+                        }else{
+                            storageRuleDto.setPutawayQty(storageRuleDto.getVolumeQty());
+                        }
+                        if(storageRuleDto.getPutawayQty().compareTo(BigDecimal.ZERO)==1){
+                            list.add(storageRuleDto);
+                        }
                     }else{
-                        storageRuleDto.setPutawayQty(storageRuleDto.getVolumeQty());
+                        throw new BizErrorException("请维护物料体积重量");
                     }
-                    if(storageRuleDto.getPutawayQty().compareTo(BigDecimal.ZERO)==1){
-                        list.add(storageRuleDto);
+                }else {
+                    if ("base_storage_capacity".equals(itemList.get(0).getParaValue())) {
+                        //通过库位获取库位储存类型A、B、C、D类
+                        //再通过物料获取A、B、C、D类库容
+                        List<BaseStorage> storages = storageDistributionRuleUtils.baseStorageService.findList(ControllerUtil.dynamicCondition("storageId",storageRuleDto.getStorageId()));
+                        if(storages.isEmpty()){
+                            throw new BizErrorException("获取库位信息失败");
+                        }
+                        List<BaseStorageCapacity> baseStorageCapacities = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("materialId",materialId));
+                        //获取库存数量
+                        BigDecimal totalQty = storageDistributionRuleUtils.baseStorageCapacityService.totalQty(ControllerUtil.dynamicCondition("storageId",storageRuleDto.getStorageId(),"materialId",materialId));
+                        if(StringUtils.isEmpty(totalQty)){
+                            totalQty = BigDecimal.ZERO;
+                        }
+                        if(baseStorageCapacities.size()>0){
+                            switch (storages.get(0).getMaterialStoreType()){
+                                case 1:
+                                    if(StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeACapacity())){
+                                        throw new BizErrorException("未维护A类容量");
+                                    }
+                                    //计算剩余容量 = 总容量-库存数量
+                                    totalQty = baseStorageCapacities.get(0).getTypeACapacity().subtract(totalQty);
+                                    if(totalQty.compareTo(BigDecimal.ZERO)==1){
+                                        storageRuleDto.setPutawayQty(totalQty);
+                                        list.add(storageRuleDto);
+                                    }
+                                    break;
+                                case 2:
+                                    if(StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeBCapacity())){
+                                        throw new BizErrorException("未维护B类容量");
+                                    }
+                                    totalQty = baseStorageCapacities.get(0).getTypeBCapacity().subtract(totalQty);
+                                    if(totalQty.compareTo(BigDecimal.ZERO)==1){
+                                        storageRuleDto.setPutawayQty(totalQty);
+                                        list.add(storageRuleDto);
+                                    }
+                                    break;
+                                case 3:
+                                    if(StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeCCapacity())){
+                                        throw new BizErrorException("未维护C类容量");
+                                    }
+                                    totalQty = baseStorageCapacities.get(0).getTypeCCapacity().subtract(totalQty);
+                                    if(totalQty.compareTo(BigDecimal.ZERO)==1){
+                                        storageRuleDto.setPutawayQty(totalQty);
+                                        list.add(storageRuleDto);
+                                    }
+                                    break;
+                                case 4:
+                                    if(StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeDCapacity())){
+                                        throw new BizErrorException("未维护D类容量");
+                                    }
+                                    totalQty = baseStorageCapacities.get(0).getTypeDCapacity().subtract(totalQty);
+                                    if(totalQty.compareTo(BigDecimal.ZERO)==1){
+                                        storageRuleDto.setPutawayQty(totalQty);
+                                        list.add(storageRuleDto);
+                                    }
+                                    break;
+                            }
+                        }
                     }
-                }else{
-                    throw new BizErrorException("请维护物料体积重量");
                 }
             }
         }

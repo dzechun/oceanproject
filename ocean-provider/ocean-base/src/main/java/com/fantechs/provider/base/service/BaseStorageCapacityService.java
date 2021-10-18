@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.basic.imports.BaseStorageCapacityImp
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -16,4 +17,6 @@ public interface BaseStorageCapacityService extends IService<BaseStorageCapacity
     List<BaseStorageCapacity> findList(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<BaseStorageCapacityImport> baseStorageCapacityImports);
+
+    BigDecimal totalQty(Map<String,Object> map);
 }

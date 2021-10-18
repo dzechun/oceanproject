@@ -73,7 +73,15 @@
       <if test="orgId!=null">
         and bsc.org_id=#{orgId}
       </if>
+    <if test="materialId!=null and materialId!=''">
+      and bsc.material_id = #{materialId}
+    </if>
     </where>
     order by bsc.create_time desc
+  </select>
+  <select id="totalQty" resultType="java.math.BigDecimal">
+    SELECT sum(wii.packing_qty) FROM wms_inner_inventory wii
+    LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
+    WHERE wii.material_id = #{materialId} and wii.storage_id=#{storage_id} and org_id=#{orgId}
   </select>
 </mapper>
