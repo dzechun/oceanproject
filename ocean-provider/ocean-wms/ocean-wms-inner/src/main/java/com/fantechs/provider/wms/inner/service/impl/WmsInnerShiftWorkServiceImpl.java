@@ -264,6 +264,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             // 创建移位明细
             WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
             wmsInnerJobOrderDet.setJobOrderId(dto.getJobOrderId());
+
+            //保存库存ID 2021/10/18
+            wmsInnerJobOrderDet.setSourceDetId(innerInventoryDto.getInventoryId());
+
             wmsInnerJobOrderDet.setMaterialOwnerId(innerInventoryDto.getMaterialOwnerId());
             wmsInnerJobOrderDet.setWarehouseId(dto.getWarehouseId());
             wmsInnerJobOrderDet.setOutStorageId(dto.getStorageId());
