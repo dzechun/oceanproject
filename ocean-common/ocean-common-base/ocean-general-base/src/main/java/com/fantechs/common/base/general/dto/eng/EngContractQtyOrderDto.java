@@ -28,6 +28,14 @@ public class EngContractQtyOrderDto extends EngContractQtyOrder implements Seria
     private String modifiedUserName;
 
     /**
+     * 物料规格
+     */
+    @Transient
+    @ApiModelProperty(name = "materialDesc",value = "物料规格")
+    @Excel(name = "物料规格", height = 20, width = 30,orderNum="")
+    private String materialDesc;
+
+    /**
      * 组织名称
      */
     @Transient

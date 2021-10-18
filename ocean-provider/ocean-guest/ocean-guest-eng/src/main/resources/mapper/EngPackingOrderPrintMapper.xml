@@ -11,7 +11,9 @@
                -- eposd.raw_material_code as 'rawMaterialCode',
                bm.material_code AS 'rawMaterialCode',
                eposd.device_code as 'deviceCode',eposd.location_num as 'locationNum',
-               bm.material_name as 'materialName',bs.supplier_name as 'supplierName',su.user_name as 'createUserName',eposd.create_time as 'createTime',sus.user_name as 'modifiedUserName',eposd.modified_time as 'modifiedTime',
+               bm.material_name as 'materialName',
+               bm.material_desc AS materialDesc,
+               bs.supplier_name as 'supplierName',su.user_name as 'createUserName',eposd.create_time as 'createTime',sus.user_name as 'modifiedUserName',eposd.modified_time as 'modifiedTime',
         eposd.packing_order_summary_det_id as 'packingOrderSummaryDetId',epos.packing_order_summary_id as 'packingOrderSummaryId',epo.packing_order_id as 'packingOrderId',
         bse.shipment_enterprise_name as 'shipmentEnterpriseName',eposd.part_number as 'partNumber',eposd.drawing_number as 'drawingNumber',epo.remark
         FROM eng_packing_order_summary_det eposd

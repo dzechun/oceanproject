@@ -5,7 +5,6 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -40,6 +39,11 @@ public class WmsOutDeliveryOrderDetDto extends WmsOutDeliveryOrderDet implements
     @ApiModelProperty(name="materialName" ,value="物料名称")
     @Excel(name = "物料名称", height = 20, width = 30)
     private String materialName;
+
+    @Transient
+    @ApiModelProperty(name="materialDesc" ,value="物料规格")
+    @Excel(name = "物料规格", height = 20, width = 30)
+    private String materialDesc;
 
     @Transient
     @ApiModelProperty(name="storageCode" ,value="库位编码")

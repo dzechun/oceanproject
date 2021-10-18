@@ -50,6 +50,7 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+      <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
     <result column="picking_storage_code" jdbcType="VARCHAR" property="pickingStorageCode"/>
@@ -102,7 +103,8 @@ wodod.option10
 
   <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
     select<include refid="Base_Column_List"/>,
-    bm.material_code,bm.material_name,bw.warehouse_name,bs.storage_code,bss.storage_code as 'picking_storage_code',
+    bm.material_code,bm.material_name,bm.material_desc,
+    bw.warehouse_name,bs.storage_code,bss.storage_code as 'picking_storage_code',
     bmt.volume,bmt.net_weight,bmt.gross_weight,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,

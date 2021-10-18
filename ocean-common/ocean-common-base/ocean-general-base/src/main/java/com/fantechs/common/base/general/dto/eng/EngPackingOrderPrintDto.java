@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.dto.eng;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -81,4 +80,7 @@ public class EngPackingOrderPrintDto implements Serializable {
 
     @ApiModelProperty(name = "remark",value = "备注")
     private String remark;
+
+    @ApiModelProperty(name = "materialDesc",value = "物料规格")
+    private String materialDesc;
 }

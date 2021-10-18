@@ -32,4 +32,12 @@ public class EngPurchaseReqOrderDto extends EngPurchaseReqOrder implements Seria
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 物料规格
+     */
+    @Transient
+    @ApiModelProperty(name = "materialDesc",value = "物料规格")
+    @Excel(name = "物料规格", height = 20, width = 30,orderNum="")
+    private String materialDesc;
 }

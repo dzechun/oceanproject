@@ -5,7 +5,6 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -43,6 +42,13 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
     @Transient
     @ApiModelProperty(name = "materialName",value = "物料名称")
     private String materialName;
+
+    /**
+     * 物料规格
+     */
+    @Transient
+    @ApiModelProperty(name = "materialDesc",value = "物料规格")
+    private String materialDesc;
 
     /**
      * 作业员

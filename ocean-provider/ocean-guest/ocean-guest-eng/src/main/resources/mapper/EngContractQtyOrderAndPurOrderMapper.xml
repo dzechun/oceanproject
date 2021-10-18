@@ -43,6 +43,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -83,7 +84,8 @@
     ecqo.modified_user_id,
     s.user_name AS modified_user_name,
     ecqo.modified_time,
-    bo.organization_name
+    bo.organization_name,
+    bm.material_desc
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
