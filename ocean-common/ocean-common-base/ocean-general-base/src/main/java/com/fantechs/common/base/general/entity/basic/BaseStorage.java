@@ -137,6 +137,13 @@ public class BaseStorage extends ValidGroup implements Serializable {
     private Byte storageType;
 
     /**
+     * 产品存储类型(1-A类 2-B类 3-C类 4-D类)
+     */
+    @ApiModelProperty(name="materialStoreType",value = "产品存储类型(1-A类 2-B类 3-C类 4-D类)")
+    @Column(name = "material_store_type")
+    private Byte materialStoreType;
+
+    /**
      * 工作区
      */
     @ApiModelProperty(name="workingAreaId",value = "工作区")

@@ -14,6 +14,7 @@
         <result column="temperature" jdbcType="DECIMAL" property="temperature"/>
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
         <result column="storage_type" jdbcType="TINYINT" property="storageType"/>
+        <result column="material_store_type" jdbcType="TINYINT" property="materialStoreType"/>
         <result column="roadway" jdbcType="INTEGER" property="roadway"/>
         <result column="row_no" jdbcType="INTEGER" property="rowNo"/>
         <result column="column_no" jdbcType="INTEGER" property="columnNo"/>
@@ -56,6 +57,7 @@
         ss.temperature,
         ss.unit,
         ss.storage_type,
+        ss.material_store_type,
         ss.warehouse_id,
         ss.warehouse_area_id,
         ss.working_area_id,
@@ -106,6 +108,9 @@
             </if>
             <if test="storageType!=null">
                 and ss.storage_type = #{storageType}
+            </if>
+            <if test="materialStoreType!=null">
+                and ss.material_store_type = #{materialStoreType}
             </if>
             <if test="storageCode!=null and storageCode!='' and codeQueryMark==1">
                 and ss.storage_code = #{storageCode}

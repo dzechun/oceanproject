@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.BaseStorageCapacityMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseStorageCapacity">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="storage_capacity_id" jdbcType="BIGINT" property="storageCapacityId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="type_a_capacity" jdbcType="DECIMAL" property="typeACapacity" />
+    <result column="type_b_capacity" jdbcType="DECIMAL" property="typeBCapacity" />
+    <result column="type_c_capacity" jdbcType="DECIMAL" property="typeCCapacity" />
+    <result column="type_d_capacity" jdbcType="DECIMAL" property="typeDCapacity" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    bsc.storage_capacity_id,
+    bsc.material_id,
+    bsc.type_a_capacity,
+    bsc.type_b_capacity,
+    bsc.type_c_capacity,
+    bsc.type_d_capacity,
+    bsc.`status`,
+    bsc.remark,
+    bsc.org_id,
+    bsc.create_user_id,
+    bsc.create_time,
+    bsc.modified_user_id,
+    bsc.modified_time,
+    bsc.is_delete,
+    bsc.option1,
+    bsc.option2,
+    bsc.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    bm.material_code,bm.material_name,
+    u.user_name as create_user_name, s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.base_storage_capacity bsc
+    left join fantech_imes_v2.base_material bm on bsc.material_id=bm.material_id
+    left join ocean_v2.sys_user u on bsc.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on bsc.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo on bsc.org_id = bo.organization_id
+    <where>
+      <if test="materialCode!=null and materialCode!=''">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="status!=null">
+        and bsc.status=#{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(bsc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and bsc.org_id=#{orgId}
+      </if>
+    </where>
+    order by bsc.create_time desc
+  </select>
+</mapper>
