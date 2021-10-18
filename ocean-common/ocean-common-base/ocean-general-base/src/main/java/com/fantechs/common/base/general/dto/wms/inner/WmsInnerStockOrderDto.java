@@ -28,7 +28,7 @@ public class WmsInnerStockOrderDto extends WmsInnerStockOrder implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
-    @Excel(name = "仓库id", height = 20, width = 30,orderNum="6")
+    @Excel(name = "仓库", height = 20, width = 30,orderNum="6")
     private String warehouseName;
     /**
      * 组织名称

@@ -77,7 +77,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 1-打开 2-待作业 3-作业中 4-作废 5完成
      */
     @ApiModelProperty(name="orderStatus",value = "1-打开 2-待作业 3-作业中 4-作废 5完成")
-    @Excel(name = "1-打开 2-待作业 3-作业中 4-作废 5完成", height = 20, width = 30,orderNum="7",replace = {"1_打开"," 2_待作业"," 3_作业中"," 4_作废","5_完成"})
+    @Excel(name = "状态", height = 20, width = 30,orderNum="7",replace = {"1_打开"," 2_待作业"," 3_作业中"," 4_作废","5_完成"})
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -85,7 +85,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 盘点方式 1-PDA盘点 2-纸质盘点
      */
     @ApiModelProperty(name="stockMode",value = "盘点方式 1-PDA盘点 2-纸质盘点")
-    @Excel(name = "盘点方式 1-PDA盘点 2-纸质盘点", height = 20, width = 30,orderNum="8",replace = {"1_PDA盘点","2_纸质盘点"})
+    @Excel(name = "盘点方式", height = 20, width = 30,orderNum="8",replace = {"1_PDA盘点","2_纸质盘点"})
     @Column(name = "`stock_mode`")
     private Byte stockMode;
 
@@ -93,7 +93,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 盲盘 1-是 2-否
      */
     @ApiModelProperty(name="blind",value = "盲盘 1-是 2-否")
-    @Excel(name = "盲盘 1-是 2-否", height = 20, width = 30,orderNum="9",replace = {"1_是","2_否"})
+    @Excel(name = "盲盘", height = 20, width = 30,orderNum="9",replace = {"1_是","2_否"})
     private String ifBlindStock;
 
     @Column(name = "max_storage_count")
