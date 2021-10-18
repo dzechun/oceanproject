@@ -100,6 +100,8 @@ public class StorageDistributionRuleUtils {
 //            }
             //查询是否有最近上架库位
             List<StorageRuleDto> EmptyStorageList = LasetStorage(warehouseId,materialId);
+
+            //获取空库位
             if(StringUtils.isEmpty(EmptyStorageList) || EmptyStorageList.size()<1){
                 EmptyStorageList = getCanPutawayEmptyStorageList(warehouseId,materialId);
             }
@@ -121,6 +123,8 @@ public class StorageDistributionRuleUtils {
 //                list = (List<StorageRuleDto>) map.get("list");
 //                jobTotalPackageQty_BU = (BigDecimal) map.get("jobTotalPackageQty_BU");
 //            }
+
+            //获取混放库位
             List<StorageRuleDto> MixedWithStorageList = MixedWithStorage(warehouseId,materialId);
             if(StringUtils.isNotEmpty(MixedWithStorageList) && MixedWithStorageList.size()>0){
                 Map<String,Object> map = dedicatedStorager(MixedWithStorageList,jobTotalPackageQty_BU);
@@ -182,6 +186,12 @@ public class StorageDistributionRuleUtils {
         return list;
     }
 
+    /**
+     * 空库位
+     * @param warehouseId
+     * @param materialId
+     * @return
+     */
     private static List<StorageRuleDto> LasetStorage(Long warehouseId,Long materialId){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<StorageRuleDto> list;
@@ -194,6 +204,12 @@ public class StorageDistributionRuleUtils {
         return list;
     }
 
+    /**
+     * 混放库位
+     * @param warehouseId
+     * @param materialId
+     * @return
+     */
     private static List<StorageRuleDto> MixedWithStorage(Long warehouseId,Long materialId){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<StorageRuleDto> list;
@@ -274,6 +290,8 @@ public class StorageDistributionRuleUtils {
                 SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
                 searchSysSpecItem.setSpecCode("capacity");
                 List<SysSpecItem> itemList = storageDistributionRuleUtils.securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+
+                //原始库位容量规则
                 if(itemList.size()<1 || StringUtils.isEmpty(itemList.get(0).getParaValue()) || itemList.get(0).getParaValue().equals("base_storage")){
                     if(StringUtils.isEmpty(storageRuleDto.getVolume(),storageRuleDto.getNetWeight())){
                         throw new BizErrorException("请维护物料体积重量");
@@ -295,6 +313,8 @@ public class StorageDistributionRuleUtils {
                         throw new BizErrorException("请维护物料体积重量");
                     }
                 }else {
+
+                    //库容规则
                     if ("base_storage_capacity".equals(itemList.get(0).getParaValue())) {
                         //通过库位获取库位储存类型A、B、C、D类
                         //再通过物料获取A、B、C、D类库容

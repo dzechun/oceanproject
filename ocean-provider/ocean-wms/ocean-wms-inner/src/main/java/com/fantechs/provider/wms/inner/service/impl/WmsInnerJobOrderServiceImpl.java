@@ -2036,6 +2036,21 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     }
 
     /**
+     * 库容入库规则计算容量
+     * @param materialId
+     * @param storageId
+     * @param qty
+     * @return
+     */
+    private Boolean storageCapacity(Long materialId,Long storageId,BigDecimal qty){
+        //获取配置项
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("capacity");
+        List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        return false;
+    }
+
+    /**
      * 获取当前登录用户
      *
      * @return
