@@ -54,7 +54,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 盘点类型：1-库位 2-货品 3-全盘
      */
     @ApiModelProperty(name="stockType",value = "盘点类型：1-库位 2-货品 3-全盘")
-    @Excel(name = "盘点类型", height = 20, width = 30,orderNum="4",replace = {"1_库位","2_货品","3_全盘"})
+    @Excel(name = "盘点类型", height = 20, width = 30,orderNum="4",replace = {"库位_1","货品_2","全盘_3"})
     @Column(name = "stock_type")
     private Byte stockType;
 
@@ -62,7 +62,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 1-盘点 2-复盘
      */
     @ApiModelProperty(name="projectType",value = "1-盘点 2-复盘")
-    @Excel(name = "作业类型", height = 20, width = 30,orderNum="5",replace = {"1_盘点","2_复盘"})
+    @Excel(name = "作业类型", height = 20, width = 30,orderNum="5",replace = {"盘点_1","复盘_2"})
     @Column(name = "project_type")
     private Byte projectType;
 
@@ -77,7 +77,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 1-打开 2-待作业 3-作业中 4-作废 5完成
      */
     @ApiModelProperty(name="orderStatus",value = "1-打开 2-待作业 3-作业中 4-作废 5完成")
-    @Excel(name = "状态", height = 20, width = 30,orderNum="7",replace = {"1_打开"," 2_待作业"," 3_作业中"," 4_作废","5_完成"})
+    @Excel(name = "状态", height = 20, width = 30,orderNum="7",replace = {"打开_1"," 待作业_2"," 作业中_3"," 作废_4","待处理_5","完成_6"})
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -85,7 +85,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 盘点方式 1-PDA盘点 2-纸质盘点
      */
     @ApiModelProperty(name="stockMode",value = "盘点方式 1-PDA盘点 2-纸质盘点")
-    @Excel(name = "盘点方式", height = 20, width = 30,orderNum="8",replace = {"1_PDA盘点","2_纸质盘点"})
+    @Excel(name = "盘点方式", height = 20, width = 30,orderNum="8",replace = {"PDA盘点_1","纸质盘点_2"})
     @Column(name = "`stock_mode`")
     private Byte stockMode;
 
@@ -93,7 +93,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
      * 盲盘 1-是 2-否
      */
     @ApiModelProperty(name="blind",value = "盲盘 1-是 2-否")
-    @Excel(name = "盲盘", height = 20, width = 30,orderNum="9",replace = {"1_是","2_否"})
+    @Excel(name = "盲盘", height = 20, width = 30,orderNum="9",replace = {"是_1","否_2"})
     private String ifBlindStock;
 
     @Column(name = "max_storage_count")
