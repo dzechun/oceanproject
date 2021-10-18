@@ -385,7 +385,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 if(StringUtils.isNotEmpty(wmsOutDeliveryOrder.getSourceOrderId()) && StringUtils.isNotEmpty(wmsOutDeliveryOrderDet.getSourceOrderId())){
                     //反写销售订单出库数量
                     OmSalesOrderDet omSalesOrderDet = new OmSalesOrderDet();
-                    omSalesOrderDet.setIsWriteQty((byte)1);
+                    omSalesOrderDet.setIsWriteQty(1);
                     omSalesOrderDet.setSalesOrderDetId(wmsOutDeliveryOrderDet.getSourceOrderId());
                     omSalesOrderDet.setTotalOutboundQty(wmsInnerJobOrderDetDto.getActualQty());
                     ResponseEntity responseEntity = omFeignApi.update(omSalesOrderDet);

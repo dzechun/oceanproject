@@ -363,7 +363,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      * 是否数量反写 1=是
      */
     @Transient
-    private Byte isWriteQty;
+    private Integer isWriteQty;
 
     private static final long serialVersionUID = 1L;
 }
