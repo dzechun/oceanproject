@@ -95,4 +95,19 @@ public class ${modelNameUpperCamel}Controller {
         throw new BizErrorException(e);
         }
     }
+
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入",notes = "从excel导入")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<${modelNameUpperCamel}> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, ${modelNameUpperCamel}.class);
+            Map<String, Object> resultMap = ${modelNameLowerCamel}Service.importExcel(baseAddressImports);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+    }
 }

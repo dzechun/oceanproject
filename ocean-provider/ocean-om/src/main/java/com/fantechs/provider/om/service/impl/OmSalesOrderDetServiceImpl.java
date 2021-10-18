@@ -139,7 +139,7 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
 //            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
 //        }
         //装车作业出货数量反写
-        if(omSalesOrderDet.getIsWriteQty()==1){
+        if(StringUtils.isNotEmpty(omSalesOrderDet.getIsWriteQty()) && omSalesOrderDet.getIsWriteQty()==1){
             OmSalesOrderDet det = omSalesOrderDetMapper.selectByPrimaryKey(omSalesOrderDet.getSalesOrderDetId());
             if(StringUtils.isEmpty(det.getTotalOutboundQty())){
                 det.setTotalOutboundQty(BigDecimal.ZERO);
