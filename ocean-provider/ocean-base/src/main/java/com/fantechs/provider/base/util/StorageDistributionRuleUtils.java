@@ -89,7 +89,7 @@ public class StorageDistributionRuleUtils {
 
         if(jobTotalPackageQty_BU.compareTo(BigDecimal.ZERO)==1 || proDate!=null){
             //获取空库位
-            //putawayMoveLineNo = storageDistributionRuleUtils.baseStorageService.findPutawayNo(warehouseId,materialId);
+//            putawayMoveLineNo = storageDistributionRuleUtils.baseStorageService.findPutawayNo(warehouseId,materialId);
 //            Map<String,Object> map = getCanPutawayEmptyStorageList(warehouseId,putawayMoveLineNo);
 //            list = (List<StorageRuleDto>) map.get("list");
 //            SART = map.get("SART")!=null?map.get("SART").toString():"ASC";

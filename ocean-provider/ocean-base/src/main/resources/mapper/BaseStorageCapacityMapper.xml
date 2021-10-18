@@ -82,6 +82,6 @@
   <select id="totalQty" resultType="java.math.BigDecimal">
     SELECT sum(wii.packing_qty) FROM wms_inner_inventory wii
     LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
-    WHERE wii.material_id = #{materialId} and wii.storage_id=#{storage_id} and org_id=#{orgId}
+    WHERE wii.material_id = #{materialId} and wii.storage_id=#{storageId} and wii.org_id=#{orgId}
   </select>
 </mapper>
