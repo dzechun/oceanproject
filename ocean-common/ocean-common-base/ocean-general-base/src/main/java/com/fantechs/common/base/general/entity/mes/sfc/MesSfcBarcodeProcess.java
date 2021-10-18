@@ -18,6 +18,15 @@ import java.util.Date;
 ;
 ;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Date;
+
+;
+;
+
 /**
  * 生产管理-产品条码过站表
  * mes_sfc_barcode_process
