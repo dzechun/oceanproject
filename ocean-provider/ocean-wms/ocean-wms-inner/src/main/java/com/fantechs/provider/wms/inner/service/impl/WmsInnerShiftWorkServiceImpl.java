@@ -414,7 +414,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             innerInventory.setPackingQty(BigDecimal.ZERO);
         }
         BigDecimal initQty = innerInventory.getPackingQty().add(wmsInnerInventory.getPackingQty());
-
+        oldDto.setInStorageId(baseStorage.getStorageId());
         if (StringUtils.isEmpty(wmsInnerInventory_old)) {
             if (StringUtils.isEmpty(wmsInnerInventory)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -422,6 +422,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerInventory.setJobStatus((byte) 1);
             wmsInnerInventory.setStorageId(baseStorage.getStorageId());
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
+
 
             //库存日志
             InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrderDto,oldDto,initQty,wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
