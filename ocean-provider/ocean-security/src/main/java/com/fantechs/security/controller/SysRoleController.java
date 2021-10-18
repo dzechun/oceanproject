@@ -121,4 +121,12 @@ public class SysRoleController {
         List<SysUserRole> sysUserRoleList=sysRoleService.findUserRoleList(userId);
         return  ControllerUtil.returnDataSuccess(sysUserRoleList, StringUtils.isEmpty(sysUserRoleList)?0:sysUserRoleList.size());
     }
+
+    @ApiOperation("用户绑定角色")
+    @PostMapping("/addUserRole")
+    public ResponseEntity addUserRole(
+            @ApiParam(value = "用户Id",required = true)@RequestParam @NotNull(message = "角色Id不能为空") Long userId,
+            @ApiParam(value = "角色id",required = true)@RequestBody @NotNull(message = "userIds不能为空") List<Long> roleIds){
+        return ControllerUtil.returnCRUD(sysRoleService.addUserRole(userId,roleIds));
+    }
 }

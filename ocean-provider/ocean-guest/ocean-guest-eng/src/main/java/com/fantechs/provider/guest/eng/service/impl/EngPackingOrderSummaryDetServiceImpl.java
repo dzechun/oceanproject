@@ -285,7 +285,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 Example orderExample = new Example(EngPurchaseReqOrder.class);
                 Example.Criteria orderCriteria = orderExample.createCriteria();
                 orderCriteria.andEqualTo("purchaseReqOrderCode",engPackingOrderSummaryDetImport.getPurchaseReqOrderCode());
-                orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
+         //       orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
                 List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
                 if(StringUtils.isEmpty(engPurchaseReqOrders)){
                     throw new BizErrorException("添加失败，合同量单与请购单号未匹配到请购单,"+"错误行数为:"+(i+2));
@@ -419,7 +419,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             Example orderExample = new Example(EngPurchaseReqOrder.class);
             Example.Criteria orderCriteria = orderExample.createCriteria();
             orderCriteria.andEqualTo("purchaseReqOrderCode",engPackingOrderSummary.getPurchaseReqOrderCode());
-            orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
+        //    orderCriteria.andEqualTo("option3",engContractQtyOrders.get(0).getOption3());
             List<EngPurchaseReqOrder> engPurchaseReqOrders = engPurchaseReqOrderMapper.selectByExample(orderExample);
             if(StringUtils.isEmpty(engPurchaseReqOrders)){
                 throw new BizErrorException("添加失败，合同量单与请购单号未匹配到请购单");

@@ -145,6 +145,13 @@ public class QmsIpqcInspectionOrderDetSample extends ValidGroup implements Seria
     @Excel(name = "不良现象描述", height = 20, width = 30,orderNum="13")
     private String badnessPhenotypeDesc;
 
+    /**
+     * 不良类别id
+     */
+    @Transient
+    @ApiModelProperty(name = "badnessCategoryId",value = "不良类别id")
+    private Long badnessCategoryId;
+
     private String option1;
 
     private String option2;

@@ -165,7 +165,9 @@
       <if test="orgId!=null">
         and ecqo.org_id=#{orgId}
       </if>
-
+      <if test="isNotEmpty ==1 ">
+        and epro.purchase_req_order_code is not null
+      </if>
     </where>
     order by ecqo.create_time desc
   </select>

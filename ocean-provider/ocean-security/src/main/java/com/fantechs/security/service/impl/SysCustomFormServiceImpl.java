@@ -98,18 +98,20 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode());
         SysDefaultCustomForm defaultCustomForm = sysDefaultCustomFormMapper.selectOneByExample(example);
-        defaultCustomForm.setCustomFormName(sysCustomForm.getCustomFormName());
-        defaultCustomForm.setFromRout(sysCustomForm.getFromRout());
-        defaultCustomForm.setStatus(sysCustomForm.getStatus());
-        defaultCustomForm.setOrgId(null);
-        if(StringUtils.isNotEmpty(sysCustomForm.getSubId())) {
-            example.clear();
-            Example.Criteria criteria1 = example.createCriteria();
-            criteria1.andEqualTo("customFormCode",subForm.getCustomFormCode());
-            SysDefaultCustomForm defaultSubForm = sysDefaultCustomFormMapper.selectOneByExample(example);
-            defaultCustomForm.setSubId(defaultSubForm.getCustomFormId());
+        if(StringUtils.isNotEmpty(defaultCustomForm)) {
+            defaultCustomForm.setCustomFormName(sysCustomForm.getCustomFormName());
+            defaultCustomForm.setFromRout(sysCustomForm.getFromRout());
+            defaultCustomForm.setStatus(sysCustomForm.getStatus());
+            defaultCustomForm.setOrgId(null);
+            if (StringUtils.isNotEmpty(sysCustomForm.getSubId())) {
+                example.clear();
+                Example.Criteria criteria1 = example.createCriteria();
+                criteria1.andEqualTo("customFormCode", subForm.getCustomFormCode());
+                SysDefaultCustomForm defaultSubForm = sysDefaultCustomFormMapper.selectOneByExample(example);
+                defaultCustomForm.setSubId(StringUtils.isNotEmpty(defaultSubForm)?defaultSubForm.getCustomFormId():null);
+            }
+            sysDefaultCustomFormMapper.updateByPrimaryKeySelective(defaultCustomForm);
         }
-        sysDefaultCustomFormMapper.updateByPrimaryKeySelective(defaultCustomForm);
 
         //全组织修改
         Example example2 = new Example(SysCustomForm.class);
@@ -147,11 +149,13 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
             Example.Criteria criteria1 = example1.createCriteria();
             criteria1.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode());
             SysDefaultCustomForm defaultCustomForm = sysDefaultCustomFormMapper.selectOneByExample(example1);
-            Example example2 = new Example(SysDefaultCustomFormDet.class);
-            Example.Criteria criteria2 = example2.createCriteria();
-            criteria2.andEqualTo("customFormId",defaultCustomForm.getCustomFormId());
-            sysDefaultCustomFormDetMapper.deleteByExample(example2);
-            sysDefaultCustomFormMapper.deleteByExample(example1);
+            if(StringUtils.isNotEmpty(defaultCustomForm)) {
+                Example example2 = new Example(SysDefaultCustomFormDet.class);
+                Example.Criteria criteria2 = example2.createCriteria();
+                criteria2.andEqualTo("customFormId", defaultCustomForm.getCustomFormId());
+                sysDefaultCustomFormDetMapper.deleteByExample(example2);
+                sysDefaultCustomFormMapper.deleteByExample(example1);
+            }
 
             //全组织删除
             Example example3 = new Example(SysCustomForm.class);

@@ -167,7 +167,9 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
             searchSysDefaultCustomFormDet.setCustomFormCode(sysCustomForm.getCustomFormCode());
             searchSysDefaultCustomFormDet.setItemKey(sysCustomFormDet.getItemKey());
             List<SysDefaultCustomFormDetDto> defaultDetList = sysDefaultCustomFormDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchSysDefaultCustomFormDet));
-            sysDefaultCustomFormDetMapper.deleteByPrimaryKey(defaultDetList.get(0).getCustomFormDetId());
+            if(StringUtils.isNotEmpty(defaultDetList)) {
+                sysDefaultCustomFormDetMapper.deleteByPrimaryKey(defaultDetList.get(0).getCustomFormDetId());
+            }
 
             //全组织删除
             SearchSysCustomFormDet searchSysCustomFormDet = new SearchSysCustomFormDet();

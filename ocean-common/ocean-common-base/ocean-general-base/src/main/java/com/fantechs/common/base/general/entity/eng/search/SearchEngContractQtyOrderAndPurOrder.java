@@ -246,4 +246,11 @@ public class SearchEngContractQtyOrderAndPurOrder extends BaseQuery implements S
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 是否查询采购订单为空的数据
+     */
+    @Transient
+    @ApiModelProperty(name = "isNotEmpty",value = "是否查询采购订单为空的数据")
+    private Byte isNotEmpty;
 }

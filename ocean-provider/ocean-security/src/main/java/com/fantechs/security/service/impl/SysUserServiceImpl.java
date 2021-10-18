@@ -102,16 +102,18 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
         sysUserMapper.insertUseGeneratedKeys(sysUser);
 
         //增加用户的角色、组织权限
-        SysOrganizationUser sysOrganizationUser = new SysOrganizationUser();
-        sysOrganizationUser.setOrganizationId(sysUser.getOrganizationId());
-        sysOrganizationUser.setUserId(sysUser.getUserId());
-        sysOrganizationUserMapper.insert(sysOrganizationUser);
-
-        SysUserRole sysUserRole = new SysUserRole();
-        sysUserRole.setUserId(sysUser.getUserId());
-        sysUserRole.setRoleId(sysUser.getRoleId());
-        sysUserRoleMapper.insert(sysUserRole);
-
+        if(StringUtils.isNotEmpty(sysUser.getOrganizationId())) {
+            SysOrganizationUser sysOrganizationUser = new SysOrganizationUser();
+            sysOrganizationUser.setOrganizationId(sysUser.getOrganizationId());
+            sysOrganizationUser.setUserId(sysUser.getUserId());
+            sysOrganizationUserMapper.insert(sysOrganizationUser);
+        }
+        if(StringUtils.isNotEmpty(sysUser.getRoleId())) {
+            SysUserRole sysUserRole = new SysUserRole();
+            sysUserRole.setUserId(sysUser.getUserId());
+            sysUserRole.setRoleId(sysUser.getRoleId());
+            sysUserRoleMapper.insert(sysUserRole);
+        }
         //新增用户历史信息
         SysHtUser sysHtUser=new SysHtUser();
         BeanUtils.copyProperties(sysUser,sysHtUser);
