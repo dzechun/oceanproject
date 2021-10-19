@@ -63,7 +63,7 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
             List<EsopIssueDto> list = new ArrayList<>();
 
             SearchEsopEquipment searchEsopEquipment = new SearchEsopEquipment();
-            searchEsopEquipment.setEquipmentIp(map.get("equipmentMacAddress").toString());
+            searchEsopEquipment.setEquipmentMacAddress(map.get("equipmentMacAddress").toString());
             List<EsopEquipmentDto> esopEquipmentDtos = esopEquipmentMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEsopEquipment));
             if (StringUtils.isNotEmpty(esopEquipmentDtos)) {
                 //查询该设备所在工序的WI
