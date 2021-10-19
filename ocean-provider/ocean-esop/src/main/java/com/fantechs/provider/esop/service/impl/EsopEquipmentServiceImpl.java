@@ -9,7 +9,6 @@ import com.fantechs.common.base.general.entity.esop.history.EsopHtEquipment;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.esop.mapper.EsopEquipmentMapper;
 import com.fantechs.provider.esop.mapper.EsopHtEquipmentMapper;
 import com.fantechs.provider.esop.service.EsopEquipmentService;
@@ -34,11 +33,6 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
     private EsopEquipmentMapper esopEquipmentMapper;
     @Resource
     private EsopHtEquipmentMapper esopHtEquipmentMapper;
-    @Resource
-    private BaseFeignApi easeFeignApi;
-
-
-
 
 
     @Override
@@ -62,6 +56,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
         return esopEquipmentMapper.batchUpdate(list);
     }
 
+/*
     @Override
     public EsopEquipment detailByIp(String ip) {
         Example example = new Example(EsopEquipment.class);
@@ -70,6 +65,19 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
         EsopEquipment EsopEquipment = esopEquipmentMapper.selectOneByExample(example);
         if (StringUtils.isEmpty(EsopEquipment)){
             throw new BizErrorException("未查询到ip对应的设备信息");
+        }
+        return EsopEquipment;
+    }
+*/
+
+    @Override
+    public EsopEquipment detailByMacAddress(String macAddress) {
+        Example example = new Example(EsopEquipment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("equipmentMacAddress",macAddress);
+        EsopEquipment EsopEquipment = esopEquipmentMapper.selectOneByExample(example);
+        if (StringUtils.isEmpty(EsopEquipment)){
+            throw new BizErrorException("未查询到mac地址对应的设备信息");
         }
         return EsopEquipment;
     }

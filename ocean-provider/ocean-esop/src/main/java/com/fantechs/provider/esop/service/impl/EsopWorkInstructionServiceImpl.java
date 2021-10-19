@@ -94,13 +94,16 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
 
     @Override
     public EsopWorkInstructionDto findByEquipmentIp(SearchEsopWorkInstruction searchEsopWorkInstruction) {
-        if(StringUtils.isEmpty(searchEsopWorkInstruction.getEquipmentIp()))
+        if(StringUtils.isEmpty(searchEsopWorkInstruction.getEquipmentIp()) && StringUtils.isEmpty(searchEsopWorkInstruction.getEquipmentMacAddress()))
             throw new BizErrorException("设备ip不能为空");
         SysUser sysUser = currentUser();
 
         Example example = new Example(EsopEquipment.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentIp", searchEsopWorkInstruction.getEquipmentIp());
+        if(StringUtils.isNotEmpty(searchEsopWorkInstruction.getEquipmentMacAddress()))
+            criteria.andEqualTo("equipmentMacAddress", searchEsopWorkInstruction.getEquipmentMacAddress());
+        if(StringUtils.isNotEmpty(searchEsopWorkInstruction.getEquipmentIp()))
+            criteria.andEqualTo("equipmentIp", searchEsopWorkInstruction.getEquipmentIp());
         criteria.andEqualTo("orgId", sysUser.getOrganizationId());
         List<EsopEquipment> EsopEquipments = esopEquipmentMapper.selectByExample(example);
         if(EsopEquipments.size() >1) throw new BizErrorException("出现两个或两个以上的设备ip相同");
@@ -807,7 +810,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
             for (EsopWiReleaseDet EsopWiReleaseDet : EsopWiReleaseDetList) {
                 EsopWiRelease EsopWiRelease = esopWiReleaseMapper.selectByPrimaryKey(EsopWiReleaseDet.getWiReleaseId());
                 if (EsopWiRelease.getReleaseStatus() == (byte) 2) {
-                    socketService.BatchInstructions(EsopWiRelease.getProLineId(), "1202", "/#/YunZhiESOP?ip=","0");
+                    socketService.BatchInstructions(EsopWiRelease.getProLineId(), "1202", "/#/YunZhiESOP?mac=","0");
                 }
             }
         }
