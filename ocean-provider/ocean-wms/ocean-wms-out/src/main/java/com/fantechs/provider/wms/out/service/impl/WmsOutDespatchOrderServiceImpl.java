@@ -166,7 +166,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     wmsInnerInventoryLog.setJobOrderType((byte)8);
                     wmsInnerInventoryLog.setAddOrSubtract((byte)2);
                     wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDetDto.getInStorageId());
-                    wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrderDetDto.getWarehouseId());
+                    wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
                     wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDetDto.getMaterialId());
                     wmsInnerInventoryLog.setProductionDate(wmsInnerJobOrderDetDto.getProductionDate());
                     wmsInnerInventoryLog.setExpiredDate(wmsInnerJobOrderDetDto.getExpiredDate());

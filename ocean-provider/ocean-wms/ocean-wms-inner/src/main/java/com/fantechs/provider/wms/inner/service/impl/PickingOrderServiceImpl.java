@@ -942,13 +942,13 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             inv.setOrgId(sysUser.getOrganizationId());
 
             //库存日志
-            InventoryLogUtil.addLog(wmsInnerInventorys,wmsInnerJobOrder,newDto,BigDecimal.ZERO,inv.getPackingQty(),(byte)4,(byte)1);
+            InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,newDto,BigDecimal.ZERO,inv.getPackingQty(),(byte)4,(byte)1);
             return wmsInnerInventoryMapper.insertSelective(inv);
         }else{
             //原库存
 
             //库存日志
-            InventoryLogUtil.addLog(wmsInnerInventorys,wmsInnerJobOrder,oldDto,wmsInnerInventorys.getPackingQty(),newDto.getActualQty(),(byte)4,(byte)1);
+            InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,oldDto,wmsInnerInventorys.getPackingQty(),newDto.getActualQty(),(byte)4,(byte)1);
             wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().add(newDto.getActualQty()));
             return wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
         }
