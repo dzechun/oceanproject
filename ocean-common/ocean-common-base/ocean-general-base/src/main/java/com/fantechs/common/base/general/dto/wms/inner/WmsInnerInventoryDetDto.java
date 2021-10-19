@@ -90,4 +90,11 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     @Excel(name = "盘存转报废单号", height = 20, width = 30,orderNum = "19")
     @Transient
     private String modifiedUserName;
+
+    /**
+     * 同包装编码
+     */
+    @ApiModelProperty(name="samePackageCode",value = "同包装编码")
+    @Transient
+    private String samePackageCode;
 }
