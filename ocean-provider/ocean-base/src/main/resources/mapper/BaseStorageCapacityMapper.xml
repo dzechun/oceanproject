@@ -64,6 +64,21 @@
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
+      <if test="materialName!=null and materialName!=''">
+        and bm.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
+      <if test="materialStoreType!=null and materialStoreType == 1">
+        and (bsc.type_a_capacity is not null and bsc.type_a_capacity !=0)
+      </if>
+      <if test="materialStoreType!=null and materialStoreType == 2">
+        and (bsc.type_b_capacity is not null and bsc.type_b_capacity !=0)
+      </if>
+      <if test="materialStoreType!=null and materialStoreType == 3">
+        and (bsc.type_c_capacity is not null and bsc.type_c_capacity !=0)
+      </if>
+      <if test="materialStoreType!=null and materialStoreType == 4">
+        and (bsc.type_d_capacity is not null and bsc.type_d_capacity !=0)
+      </if>
       <if test="status!=null">
         and bsc.status=#{status}
       </if>
@@ -82,6 +97,6 @@
   <select id="totalQty" resultType="java.math.BigDecimal">
     SELECT sum(wii.packing_qty) FROM wms_inner_inventory wii
     LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
-    WHERE wii.material_id = #{materialId} and wii.storage_id=#{storage_id} and org_id=#{orgId}
+    WHERE wii.material_id = #{materialId} and wii.storage_id=#{storageId} and wii.org_id=#{orgId}
   </select>
 </mapper>

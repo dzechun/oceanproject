@@ -16,4 +16,16 @@ public class SearchBaseStorageCapacity extends BaseQuery implements Serializable
     @ApiModelProperty(name="materialCode",value = "产品编码")
     private String materialCode;
 
+    /**
+     * 产品名称
+     */
+    @ApiModelProperty(name="materialName",value = "产品名称")
+    private String materialName;
+
+    /**
+     * 产品存储类型(1-A类 2-B类 3-C类 4-D类)
+     */
+    @ApiModelProperty(name = "materialStoreType",value = "产品存储类型(1-A类 2-B类 3-C类 4-D类)")
+    private Integer materialStoreType;
+
 }

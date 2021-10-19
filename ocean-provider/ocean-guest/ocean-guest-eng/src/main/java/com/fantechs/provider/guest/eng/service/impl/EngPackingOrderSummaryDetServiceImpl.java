@@ -452,6 +452,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
                 det.setModifiedUserId(user.getUserId());
                 det.setStatus((byte)1);
                 det.setOrgId(user.getOrganizationId());
+                det.setSpec(dto.getMaterialDesc());
                 detList.add(det);
 
                 EngHtPackingOrderSummaryDet ht = new EngHtPackingOrderSummaryDet();
