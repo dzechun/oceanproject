@@ -218,7 +218,18 @@ public class BarcodeUtils {
         mesSfcBarcodeProcess.setProLineId(baseProLine.getProLineId());
         mesSfcBarcodeProcess.setProCode(baseProLine.getProCode());
         mesSfcBarcodeProcess.setProName(baseProLine.getProName());
-        mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcess.getPassStationCount() != null ? mesSfcBarcodeProcess.getPassStationCount() + 1 : 1);
+
+        //过站次数累加注释
+        //mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcess.getPassStationCount() != null ? mesSfcBarcodeProcess.getPassStationCount() + 1 : 1);
+        //条码在当前工序有几条过站记录 记录工序过站次数开始 2021-10-18
+        Map<String, Object> mapExist = new HashMap<>();
+        mapExist.put("barcode", dto.getBarCode());
+        mapExist.put("stationId", dto.getNowStationId());
+        mapExist.put("processId", dto.getNowProcessId());
+        List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(mapExist);
+        mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcessRecordDtoList.size()+1);
+        //条码在当前工序有几条过站记录 记录工序过站次数结束 2021-10-18
+
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId())) {
             mesSfcBarcodeProcess.setDevoteTime(new Date());
         }
@@ -351,11 +362,11 @@ public class BarcodeUtils {
         mesSfcBarcodeProcessRecord.setOption1(dto.getPassTime());
         barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("workOrderBarcodeId", dto.getBarCode());
-        map.put("stationId", dto.getNowStationId());
-        map.put("processId", dto.getNowProcessId());
-        List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(map);
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("workOrderBarcodeId", dto.getBarCode());
+//        map.put("stationId", dto.getNowStationId());
+//        map.put("processId", dto.getNowProcessId());
+//        List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(map);
         // 是否投产工序且是该条码在工单工序第一次过站，工单投产数量 +1
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId()) && mesSfcBarcodeProcessRecordDtoList.isEmpty()) {
             mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE));
@@ -942,11 +953,32 @@ public class BarcodeUtils {
 
                 //判断设备条码使用次数
                 EamEquipmentDto eamEquipmentDto=eamEquipmentDtoList.getData().get(0);
-                if(eamEquipmentBarcode.getCurrentUsageTime()+1>=eamEquipmentDto.getMaxUsageTime())
+
+                Integer CurrentUsageTime=0;
+                if(StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageTime())){
+                    CurrentUsageTime=eamEquipmentBarcode.getCurrentUsageTime();
+                }
+
+                Integer MaxUsageTime=0;
+                if(StringUtils.isNotEmpty(eamEquipmentDto.getMaxUsageTime())){
+                    MaxUsageTime=eamEquipmentDto.getMaxUsageTime();
+                }
+
+                if(CurrentUsageTime+1>=MaxUsageTime && MaxUsageTime>0)
                     throw new Exception("该设备条码已达到最大使用次数-->"+equipmentBarCode);
 
                 //最大使用天数判断
-                if(eamEquipmentBarcode.getCurrentUsageDays()>=eamEquipmentDto.getMaxUsageDays())
+                Integer CurrentUsageDays=0;
+                if(StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageDays())){
+                    CurrentUsageDays=eamEquipmentBarcode.getCurrentUsageDays();
+                }
+
+                Integer MaxUsageDays=0;
+                if(StringUtils.isNotEmpty(eamEquipmentDto.getMaxUsageDays())){
+                    MaxUsageDays=eamEquipmentDto.getMaxUsageDays();
+                }
+
+                if(CurrentUsageDays>=MaxUsageDays && MaxUsageDays>0)
                     throw new Exception("该设备条码已达到最大使用天数-->"+equipmentBarCode);
 
                 //设置设备条码ID
@@ -1423,11 +1455,28 @@ public class BarcodeUtils {
                             }
                             EamJig eamJig=responseEntityJig.getData();
                             //最大使用次数判断
-                            if(eamJigBarcodeDto.getCurrentUsageTime()+1>eamJig.getMaxUsageTime()){
+                            Integer CurrentUsageTime=0;
+                            if(StringUtils.isNotEmpty(eamJigBarcodeDto.getCurrentUsageTime())){
+                                CurrentUsageTime=eamJigBarcodeDto.getCurrentUsageTime();
+                            }
+                            Integer MaxUsageTime=0;
+                            if(StringUtils.isNotEmpty(eamJig.getMaxUsageTime())){
+                                MaxUsageTime=eamJig.getMaxUsageTime();
+                            }
+                            if(CurrentUsageTime+1>MaxUsageTime && MaxUsageTime>0){
                                 throw new Exception("治具条码-->"+item+" 已达到最大使用次数");
                             }
                             //最大使用天数判断
-                            if(eamJigBarcodeDto.getCurrentUsageDays()+1>eamJig.getMaxUsageDays()){
+                            Integer CurrentUsageDays=0;
+                            if(StringUtils.isNotEmpty(eamJigBarcodeDto.getCurrentUsageDays())){
+                                CurrentUsageDays=eamJigBarcodeDto.getCurrentUsageDays();
+                            }
+                            Integer MaxUsageDays=0;
+                            if(StringUtils.isNotEmpty(eamJig.getMaxUsageDays())){
+                                MaxUsageDays=eamJig.getMaxUsageDays();
+                            }
+
+                            if(CurrentUsageDays+1>MaxUsageDays && MaxUsageDays>0){
                                 throw new Exception("治具条码-->"+item+" 已达到最大使用天数");
                             }
                         }
