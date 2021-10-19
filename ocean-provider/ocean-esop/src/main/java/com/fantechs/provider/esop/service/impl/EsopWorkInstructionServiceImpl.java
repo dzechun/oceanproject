@@ -8,8 +8,11 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.esop.EsopWiReleaseDetDto;
 import com.fantechs.common.base.general.dto.esop.EsopWiReleaseDto;
 import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionDto;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.dto.esop.imports.EsopWorkInstructionImport;
+import com.fantechs.common.base.general.entity.basic.BaseProcess;
+import com.fantechs.common.base.general.entity.basic.BaseProductModel;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductModel;
 import com.fantechs.common.base.general.entity.esop.*;
 import com.fantechs.common.base.general.entity.esop.history.*;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopWiRelease;
@@ -23,15 +26,9 @@ import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.esop.mapper.*;
 import com.fantechs.provider.esop.service.EsopWorkInstructionService;
 import com.fantechs.provider.esop.service.socket.SocketService;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -363,6 +360,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
     }
 
 
+/*
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -382,10 +380,105 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         
         return EsopWorkInstructionDto;
     }
+*/
 
-    /**
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<EsopWorkInstructionImport> esopWorkInstructionImports) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+            Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+            int success = 0;  //记录操作成功数
+            List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+
+            LinkedList<EsopWorkInstruction> list = new LinkedList<>();
+            LinkedList<EsopHtWorkInstruction> htList = new LinkedList<>();
+            for (int i = 0; i < esopWorkInstructionImports.size(); i++) {
+                EsopWorkInstructionImport esopWorkInstructionImport = esopWorkInstructionImports.get(i);
+                EsopWorkInstruction esopWorkInstruction = new EsopWorkInstruction();
+
+                String workInstructionCode = esopWorkInstructionImport.getWorkInstructionCode();
+                String workInstructionName = esopWorkInstructionImport.getWorkInstructionName();
+                String processCode = esopWorkInstructionImport.getProcessCode();
+                String productModelCode = esopWorkInstructionImport.getProductModelCode();
+                String workInstructionSeqNum = esopWorkInstructionImport.getWorkInstructionSeqNum();
+                if (StringUtils.isEmpty(
+                        workInstructionCode,workInstructionName,processCode,productModelCode,workInstructionSeqNum
+                )){
+                    fail.add(i+4);
+                    continue;
+                }
+
+                //判断编码是否重复
+                Example example = new Example(EsopWorkInstruction.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("orgId", user.getOrganizationId());
+                criteria.andEqualTo("workInstructionCode", workInstructionCode);
+                if (StringUtils.isNotEmpty(esopWorkInstructionMapper.selectOneByExample(example))){
+                    fail.add(i+4);
+                    continue;
+                }
+
+                BeanUtils.copyProperties(esopWorkInstructionImport, esopWorkInstruction);
+                //产品型号是否为空
+                if(StringUtils.isNotEmpty(productModelCode)){
+                    SearchBaseProductModel searchBaseProductModel = new SearchBaseProductModel();
+                    searchBaseProductModel.setOrgId(user.getOrganizationId());
+                    searchBaseProductModel.setProductModelCode(productModelCode);
+                    List<BaseProductModel> baseProductModelList = baseFeignApi.findList(searchBaseProductModel).getData();
+                    if (StringUtils.isEmpty(baseProductModelList)){
+                        fail.add(i+4);
+                        continue;
+                    }
+                    esopWorkInstruction.setProductModelId(baseProductModelList.get(0).getProductModelId());
+                }
+
+                //工序是否为空
+                if(StringUtils.isNotEmpty(processCode)){
+                    SearchBaseProcess searchBaseProcess = new SearchBaseProcess();
+                    searchBaseProcess.setOrgId(user.getOrganizationId());
+                    searchBaseProcess.setProcessCode(processCode);
+                    List<BaseProcess> processList = baseFeignApi.findProcessList(searchBaseProcess).getData();
+                    if (StringUtils.isEmpty(processList)){
+                        fail.add(i+4);
+                        continue;
+                    }
+                    esopWorkInstruction.setProcessId(processList.get(0).getProcessId());
+                }
+
+                esopWorkInstruction.setCreateTime(new Date());
+                esopWorkInstruction.setCreateUserId(user.getUserId());
+                esopWorkInstruction.setModifiedTime(new Date());
+                esopWorkInstruction.setModifiedUserId(user.getUserId());
+                esopWorkInstruction.setStatus((byte)1);
+                esopWorkInstruction.setOrgId(user.getOrganizationId());
+                list.add(esopWorkInstruction);
+            }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = esopWorkInstructionMapper.insertList(list);
+        }
+
+        for (EsopWorkInstruction esopWorkInstruction : list) {
+            EsopHtWorkInstruction esopHtWorkInstruction = new EsopHtWorkInstruction();
+            BeanUtils.copyProperties(esopWorkInstruction, esopHtWorkInstruction);
+            htList.add(esopHtWorkInstruction);
+        }
+        if (StringUtils.isNotEmpty(htList)){
+            esopHtWorkInstructionMapper.insertList(htList);
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
+    }
+/*
+
+    */
+/**
     *  导入物料清单
-    **/
+    **//*
+
     private List<EsopWiBom> importEsopWiBomExcel(MultipartFile file,SysUser user) throws IOException {
         //获取物料清单
         List<EsopWiBom> EsopWiBoms = importWiBomData(file.getInputStream());
@@ -488,9 +581,11 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
 
 
 
-    /**
+    */
+/**
      *  导入工装设备及检具要求
-     **/
+     **//*
+
     private List<EsopWiFTAndInspectionTool> importEsopWiFTAndInspectionToolExcel(MultipartFile file, SysUser user) throws IOException {
         //工装设备及检具要求
         List<EsopWiFTAndInspectionTool> EsopWiFTAndInspectionTools = importWiFTAndInspectionToolData(file.getInputStream());
@@ -565,9 +660,11 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
 
 
 
-    /**
+    */
+/**
      *  品质标准
-     **/
+     **//*
+
     private  List<EsopWiQualityStandards> importEsopWiQualityStandardsExcel(MultipartFile file, SysUser user) throws IOException {
         //获取品质标准数据
         List<EsopWiQualityStandards> EsopWiQualityStandardss = importWiQualityStandardsData(file.getInputStream());
@@ -647,6 +744,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         }
         return list;
     }
+*/
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
