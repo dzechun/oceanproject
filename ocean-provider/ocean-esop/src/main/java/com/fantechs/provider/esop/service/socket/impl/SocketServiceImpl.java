@@ -139,7 +139,7 @@ public class SocketServiceImpl implements SocketService {
                 }
 
                 map.put("code", code);
-                map.put("url", urlHeader + url + eamEquipment.getEquipmentIp());
+                map.put("url", urlHeader + url + eamEquipment.getEquipmentMacAddress());
                 list.add(map);
                 data.put("data",list);
                 String outMsg = JSON.toJSONString(data);

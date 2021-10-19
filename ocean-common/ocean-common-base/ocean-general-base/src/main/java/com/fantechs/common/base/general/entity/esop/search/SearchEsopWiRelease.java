@@ -33,6 +33,13 @@ public class SearchEsopWiRelease extends BaseQuery implements Serializable {
     @ApiModelProperty(name="equipmentIp",value = "设备ip")
     private String equipmentIp;
 
+
+    /**
+     * MAC地址
+     */
+    @ApiModelProperty(name="equipmentMacAddress",value = "MAC地址")
+    private String equipmentMacAddress;
+
     /**
      * 发布状态(1-待发布 2-已发布)
      */

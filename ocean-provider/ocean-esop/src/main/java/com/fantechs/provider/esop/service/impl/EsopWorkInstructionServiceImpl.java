@@ -111,7 +111,8 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         if(EsopEquipments.size() <1 ) return null;
         //查询到对应的wi
         SearchEsopWiRelease searchEsopWiRelease = new SearchEsopWiRelease();
-        searchEsopWiRelease.setEquipmentIp(searchEsopWorkInstruction.getEquipmentIp());
+    //    searchEsopWiRelease.setEquipmentIp(searchEsopWorkInstruction.getEquipmentIp());
+        searchEsopWiRelease.setEquipmentMacAddress(searchEsopWorkInstruction.getEquipmentMacAddress());
         searchEsopWiRelease.setOrgId(sysUser.getOrganizationId());
         searchEsopWiRelease.setReleaseStatus((byte)2);
         searchEsopWiRelease.setProLineId(EsopEquipments.get(0).getProLineId());
@@ -121,9 +122,6 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         if(StringUtils.isNotEmpty(list) ) {
             if (list.size()>1)  throw new BizErrorException("查询到多条该设备对应产线发布的WI");
             for(EsopWiReleaseDetDto dto : list.get(0).getEsopWiReleaseDetDtos()){
-                /*if(dto.getProcessId().equals(EsopEquipments.get(0).getProcessId()) ){
-                    searchEsopWorkInstruction.setWorkInstructionId(dto.getWorkInstructionId());
-                }*/
                 if(dto.getWiReleaseDetSeqNum().equals(EsopEquipments.get(0).getEquipmentSeqNum()) ){
                     searchEsopWorkInstruction.setWorkInstructionId(dto.getWorkInstructionId());
                 }
