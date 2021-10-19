@@ -36,6 +36,7 @@
     <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
     <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+    <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -59,7 +60,7 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
     bm.material_code,bm.material_name,bpm.product_model_name,bpm.product_model_code,bpm.product_model_code,bpm.product_model_code,
-    bpm.product_model_desc,bpm.product_model_desc,bp.process_name as process_name,
+    bpm.product_model_desc,bpm.product_model_desc,bp.process_name as process_name,bp.process_code as process_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -80,6 +81,15 @@
       </if>
       <if test="materialId!=null">
         and ei.material_id=#{materialId}
+      </if>
+      <if test="processId!=null">
+        and ei.process_id=#{processId}
+      </if>
+      <if test="processCode != null and processCode!=''">
+        and bp.process_code=#{processCode}
+      </if>
+      <if test="processName != null and processName!=''">
+        and bp.process_name like CONCAT('%', #{processName}, '%')
       </if>
       <if test="materialCode != null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
