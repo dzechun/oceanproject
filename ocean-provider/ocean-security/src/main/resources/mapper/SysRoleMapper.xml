@@ -54,6 +54,9 @@
       <if test="searchType==1 and userId!=null">
         and sur.user_id =#{userId}
       </if>
+       <if test="roleCode!=null and roleCode!=''">
+        and sr.role_code=#{roleCode}
+       </if>
     </where>
   </select>
 
