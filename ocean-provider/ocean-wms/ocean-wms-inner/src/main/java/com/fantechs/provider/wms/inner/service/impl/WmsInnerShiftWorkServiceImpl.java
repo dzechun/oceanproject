@@ -264,6 +264,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             // 创建移位明细
             WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
             wmsInnerJobOrderDet.setJobOrderId(dto.getJobOrderId());
+
+            //保存库存ID 2021/10/18
+            wmsInnerJobOrderDet.setSourceDetId(innerInventoryDto.getInventoryId());
+
             wmsInnerJobOrderDet.setMaterialOwnerId(innerInventoryDto.getMaterialOwnerId());
             wmsInnerJobOrderDet.setWarehouseId(dto.getWarehouseId());
             wmsInnerJobOrderDet.setOutStorageId(dto.getStorageId());
@@ -414,7 +418,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             innerInventory.setPackingQty(BigDecimal.ZERO);
         }
         BigDecimal initQty = innerInventory.getPackingQty().add(wmsInnerInventory.getPackingQty());
-
+        oldDto.setInStorageId(baseStorage.getStorageId());
         if (StringUtils.isEmpty(wmsInnerInventory_old)) {
             if (StringUtils.isEmpty(wmsInnerInventory)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -422,6 +426,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerInventory.setJobStatus((byte) 1);
             wmsInnerInventory.setStorageId(baseStorage.getStorageId());
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
+
 
             //库存日志
             InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrderDto,oldDto,initQty,wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);

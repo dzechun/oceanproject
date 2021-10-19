@@ -231,7 +231,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         }
         List<BaseLabelMaterialDto> baseLabelMaterialDtos = baseFeignApi.findLabelMaterialList(searchBaseLabelMaterial).getData();
         if(StringUtils.isEmpty(baseLabelMaterialDtos) || baseLabelMaterialDtos.size()<1){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404,"物料未绑定标签模版");
+            throw new BizErrorException("物料未绑定标签模版");
         }
 
         switch (barcodeType){

@@ -31,10 +31,7 @@ import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespat
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.CodeUtils;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.RedisUtil;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
@@ -386,8 +383,10 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     //反写销售订单出库数量
                     OmSalesOrderDet omSalesOrderDet = new OmSalesOrderDet();
                     omSalesOrderDet.setIsWriteQty(1);
-                    omSalesOrderDet.setSalesOrderDetId(wmsOutDeliveryOrderDet.getSourceOrderId());
+                    omSalesOrderDet.setSalesOrderId(wmsOutDeliveryOrderDet.getSourceOrderId());
+                    omSalesOrderDet.setSalesOrderDetId(wmsOutDeliveryOrderDet.getOrderDetId());
                     omSalesOrderDet.setTotalOutboundQty(wmsInnerJobOrderDetDto.getActualQty());
+                    omSalesOrderDet.setActualDeliverDate(DateUtils.getDateString(new Date(),"yyyy-MM-dd"));
                     ResponseEntity responseEntity = omFeignApi.update(omSalesOrderDet);
                 }
                 num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);

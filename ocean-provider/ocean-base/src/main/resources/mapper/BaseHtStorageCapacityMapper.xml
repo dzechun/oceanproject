@@ -66,6 +66,21 @@
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
+      <if test="materialName!=null and materialName!=''">
+        and bm.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
+      <if test="materialStoreType!=null and materialStoreType == 1">
+        and (bhsc.type_a_capacity is not null and bhsc.type_a_capacity !=0)
+      </if>
+      <if test="materialStoreType!=null and materialStoreType == 2">
+        and (bhsc.type_b_capacity is not null and bhsc.type_b_capacity !=0)
+      </if>
+      <if test="materialStoreType!=null and materialStoreType == 3">
+        and (bhsc.type_c_capacity is not null and bhsc.type_c_capacity !=0)
+      </if>
+      <if test="materialStoreType!=null and materialStoreType == 4">
+        and (bhsc.type_d_capacity is not null and bhsc.type_d_capacity !=0)
+      </if>
       <if test="status!=null">
         and bhsc.status=#{status}
       </if>

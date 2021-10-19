@@ -20,6 +20,7 @@ public class WmsInnerStockOrderDto extends WmsInnerStockOrder implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "materialOwnerName",value = "货主")
+    @Excel(name = "货主", height = 20, width = 30,orderNum="2")
     private String materialOwnerName;
 
     /**
@@ -27,12 +28,14 @@ public class WmsInnerStockOrderDto extends WmsInnerStockOrder implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
+    @Excel(name = "仓库", height = 20, width = 30,orderNum="6")
     private String warehouseName;
     /**
      * 组织名称
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
+    @Excel(name = "组织", height = 20, width = 30,orderNum="11")
     private String organizationName;
 
     /**
@@ -40,7 +43,7 @@ public class WmsInnerStockOrderDto extends WmsInnerStockOrder implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="12")
     private String createUserName;
 
     /**
@@ -48,6 +51,6 @@ public class WmsInnerStockOrderDto extends WmsInnerStockOrder implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="14")
     private String modifiedUserName;
 }
