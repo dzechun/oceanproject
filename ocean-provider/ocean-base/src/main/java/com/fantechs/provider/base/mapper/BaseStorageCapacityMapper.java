@@ -14,4 +14,6 @@ public interface BaseStorageCapacityMapper extends MyMapper<BaseStorageCapacity>
     List<BaseStorageCapacity> findList(Map<String, Object> map);
 
     BigDecimal totalQty(Map<String ,Object> map);
+
+    BigDecimal putJobQty(Map<String,Object> map);
 }

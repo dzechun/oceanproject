@@ -19,4 +19,6 @@ public interface BaseStorageCapacityService extends IService<BaseStorageCapacity
     Map<String, Object> importExcel(List<BaseStorageCapacityImport> baseStorageCapacityImports);
 
     BigDecimal totalQty(Map<String,Object> map);
+
+    BigDecimal putJobQty(Map<String,Object> map);
 }

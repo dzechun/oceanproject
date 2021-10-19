@@ -325,52 +325,56 @@ public class StorageDistributionRuleUtils {
                         List<BaseStorageCapacity> baseStorageCapacities = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("materialId",materialId));
                         //获取库存数量
                         BigDecimal totalQty = storageDistributionRuleUtils.baseStorageCapacityService.totalQty(ControllerUtil.dynamicCondition("storageId",storageRuleDto.getStorageId(),"materialId",materialId));
+                        //计算上架已分配的数量
+                        BigDecimal putJobQty = storageDistributionRuleUtils.baseStorageCapacityService.putJobQty(ControllerUtil.dynamicCondition("storageId",storageRuleDto.getStorageId(),"materialId",materialId));
                         if(StringUtils.isEmpty(totalQty)){
                             totalQty = BigDecimal.ZERO;
                         }
-                        if(baseStorageCapacities.size()>0){
-                            switch (storages.get(0).getMaterialStoreType()){
-                                case 1:
-                                    if(StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeACapacity())){
-                                        throw new BizErrorException("未维护A类容量");
-                                    }
-                                    //计算剩余容量 = 总容量-库存数量
-                                    totalQty = baseStorageCapacities.get(0).getTypeACapacity().subtract(totalQty);
-                                    if(totalQty.compareTo(BigDecimal.ZERO)==1){
-                                        storageRuleDto.setPutawayQty(totalQty);
-                                        list.add(storageRuleDto);
-                                    }
-                                    break;
-                                case 2:
-                                    if(StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeBCapacity())){
-                                        throw new BizErrorException("未维护B类容量");
-                                    }
-                                    totalQty = baseStorageCapacities.get(0).getTypeBCapacity().subtract(totalQty);
-                                    if(totalQty.compareTo(BigDecimal.ZERO)==1){
-                                        storageRuleDto.setPutawayQty(totalQty);
-                                        list.add(storageRuleDto);
-                                    }
-                                    break;
-                                case 3:
-                                    if(StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeCCapacity())){
-                                        throw new BizErrorException("未维护C类容量");
-                                    }
-                                    totalQty = baseStorageCapacities.get(0).getTypeCCapacity().subtract(totalQty);
-                                    if(totalQty.compareTo(BigDecimal.ZERO)==1){
-                                        storageRuleDto.setPutawayQty(totalQty);
-                                        list.add(storageRuleDto);
-                                    }
-                                    break;
-                                case 4:
-                                    if(StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeDCapacity())){
-                                        throw new BizErrorException("未维护D类容量");
-                                    }
-                                    totalQty = baseStorageCapacities.get(0).getTypeDCapacity().subtract(totalQty);
-                                    if(totalQty.compareTo(BigDecimal.ZERO)==1){
-                                        storageRuleDto.setPutawayQty(totalQty);
-                                        list.add(storageRuleDto);
-                                    }
-                                    break;
+                        if(baseStorageCapacities.size()>0) {
+                            if (StringUtils.isNotEmpty(storages.get(0).getMaterialStoreType())) {
+                                switch (storages.get(0).getMaterialStoreType()) {
+                                    case 1:
+                                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeACapacity())) {
+                                            throw new BizErrorException("未维护A类容量");
+                                        }
+                                        //计算剩余容量 = 总容量-库存数量
+                                        totalQty = baseStorageCapacities.get(0).getTypeACapacity().subtract(totalQty);
+                                        if (totalQty.compareTo(BigDecimal.ZERO) == 1) {
+                                            storageRuleDto.setPutawayQty(totalQty);
+                                            list.add(storageRuleDto);
+                                        }
+                                        break;
+                                    case 2:
+                                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeBCapacity())) {
+                                            throw new BizErrorException("未维护B类容量");
+                                        }
+                                        totalQty = baseStorageCapacities.get(0).getTypeBCapacity().subtract(totalQty);
+                                        if (totalQty.compareTo(BigDecimal.ZERO) == 1) {
+                                            storageRuleDto.setPutawayQty(totalQty);
+                                            list.add(storageRuleDto);
+                                        }
+                                        break;
+                                    case 3:
+                                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeCCapacity())) {
+                                            throw new BizErrorException("未维护C类容量");
+                                        }
+                                        totalQty = baseStorageCapacities.get(0).getTypeCCapacity().subtract(totalQty);
+                                        if (totalQty.compareTo(BigDecimal.ZERO) == 1) {
+                                            storageRuleDto.setPutawayQty(totalQty);
+                                            list.add(storageRuleDto);
+                                        }
+                                        break;
+                                    case 4:
+                                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeDCapacity())) {
+                                            throw new BizErrorException("未维护D类容量");
+                                        }
+                                        totalQty = baseStorageCapacities.get(0).getTypeDCapacity().subtract(totalQty);
+                                        if (totalQty.compareTo(BigDecimal.ZERO) == 1) {
+                                            storageRuleDto.setPutawayQty(totalQty);
+                                            list.add(storageRuleDto);
+                                        }
+                                        break;
+                                }
                             }
                         }
                     }

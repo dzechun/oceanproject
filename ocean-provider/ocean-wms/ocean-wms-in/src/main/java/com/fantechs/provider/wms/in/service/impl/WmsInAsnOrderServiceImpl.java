@@ -103,12 +103,11 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     /**
      * 整单收货
      * @param ids
-     * @param inventoryStatusId
      * @return
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int allReceiving(String ids,Long storageId,Long inventoryStatusId) {
+    public int allReceiving(String ids,Long storageId) {
         SysUser sysUser = currentUser();
         String[] arrId = ids.split(",");
         int num = 0;
@@ -126,8 +125,10 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             for (WmsInAsnOrderDet wmsInAsnOrderDet : list) {
                 try {
                     if(StringUtils.isEmpty(wmsInAsnOrderDet.getActualQty()) || wmsInAsnOrderDet.getActualQty().compareTo(BigDecimal.ZERO)==0) {
+
+                        Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("warehouseId",wmsInAsnOrderDet.getWarehouseId(),"orgId",sysUser.getOrganizationId()));
+                        wmsInAsnOrderDet.setInventoryStatusId(statusId);
                         wmsInAsnOrderDet.setStorageId(wmsInAsnOrderDet.getStorageId());
-                        wmsInAsnOrderDet.setInventoryStatusId(inventoryStatusId);
                         wmsInAsnOrderDet.setActualQty(wmsInAsnOrderDet.getPackingQty());
                         wmsInAsnOrderDet.setModifiedTime(new Date());
                         wmsInAsnOrderDet.setModifiedUserId(sysUser.getUserId());
@@ -499,22 +500,27 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("库存添加失败");
             }
+            //添加库存日志
+            this.addLog(wmsInnerInventory,wmsInAsnOrderDto,wmsInAsnOrderDetDto,BigDecimal.ZERO,qty);
         }else{
             //原库存
             //BigDecimal qty = wmsInAsnOrderDetDto.getActualQty().subtract(wmsInnerInventory.getPackingQty());
+            BigDecimal initQty = wmsInnerInventory.getPackingQty();
             wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(qty));
             ResponseEntity responseEntity =  innerFeignApi.updateByPrimaryKeySelective(wmsInnerInventory);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("确认失败");
             }
+            //添加库存日志
+            this.addLog(wmsInnerInventory,wmsInAsnOrderDto,wmsInAsnOrderDetDto,initQty,qty);
         }
         //添加库存日志
-        this.addLog(wmsInAsnOrderDto,wmsInAsnOrderDetDto);
         return 1;
     }
 
-    private void addLog(WmsInAsnOrder wmsInAsnOrder,WmsInAsnOrderDet wmsInAsnOrderDet){
+    private void addLog(WmsInnerInventory wmsInnerInventory,WmsInAsnOrder wmsInAsnOrder,WmsInAsnOrderDet wmsInAsnOrderDet,BigDecimal initQty,BigDecimal changQty){
         WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
+        BeanUtil.copyProperties(wmsInnerInventory,wmsInnerInventoryLog);
         wmsInnerInventoryLog.setAsnCode(wmsInAsnOrder.getAsnCode());
         //收货
         wmsInnerInventoryLog.setJobOrderType((byte)1);
@@ -529,8 +535,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         wmsInnerInventoryLog.setBatchCode(wmsInAsnOrderDet.getBatchCode());
         wmsInnerInventoryLog.setPalletCode(wmsInAsnOrderDet.getPalletCode());
         wmsInnerInventoryLog.setInventoryStatusId(wmsInAsnOrderDet.getInventoryStatusId());
-        wmsInnerInventoryLog.setInitialQty(BigDecimal.ZERO);
-        wmsInnerInventoryLog.setChangeQty(wmsInAsnOrderDet.getActualQty());
+        wmsInnerInventoryLog.setInitialQty(initQty);
+        wmsInnerInventoryLog.setChangeQty(changQty);
         wmsInnerInventoryLog.setSupplierId(wmsInAsnOrder.getSupplierId());
         wmsInnerInventoryLog.setMaterialOwnerId(wmsInAsnOrder.getMaterialOwnerId());
         wmsInnerInventoryLog.setOrgId(wmsInAsnOrder.getOrgId());
