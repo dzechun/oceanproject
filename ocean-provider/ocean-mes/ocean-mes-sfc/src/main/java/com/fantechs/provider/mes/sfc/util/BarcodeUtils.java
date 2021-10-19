@@ -802,7 +802,7 @@ public class BarcodeUtils {
             baseExecuteResultDto=checkParameter(restapiSNDataTransferApiDto.getWorkOrderCode(),restapiSNDataTransferApiDto.getProCode(),restapiSNDataTransferApiDto.getProcessCode(),
                     restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getPartBarcode(),
                     restapiSNDataTransferApiDto.getEamJigBarCode(),restapiSNDataTransferApiDto.getEquipmentBarCode(),
-                    "",restapiSNDataTransferApiDto.getStationCode(),restapiSNDataTransferApiDto.getUserCode(),
+                    restapiSNDataTransferApiDto.getSectionCode(),restapiSNDataTransferApiDto.getStationCode(),restapiSNDataTransferApiDto.getUserCode(),
                     restapiSNDataTransferApiDto.getBadnessPhenotypeCode(),"2");
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new Exception(baseExecuteResultDto.getFailMsg());
@@ -1087,12 +1087,24 @@ public class BarcodeUtils {
                 baseExecuteResultDto=createWorkOrderBarcode(partBarcode,mesPmWorkOrderDto,orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
+                else {
+                    if(StringUtils.isNotEmpty(partBarcode) && StringUtils.isEmpty(barcodeCode)){
+                        //设置工单条码ID
+                        updateProcessDto.setWorkOrderBarcodeId((Long) baseExecuteResultDto.getExecuteResult());
+                    }
+                }
             }
             //检查成品SN 不为空 检查是否已在条码表中 不存在则新增到条码表中
             if(StringUtils.isNotEmpty(barcodeCode) && StringUtils.isNotEmpty(mesPmWorkOrderDto)){
                 baseExecuteResultDto=createWorkOrderBarcode(barcodeCode,mesPmWorkOrderDto,orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
+                else {
+                    if(StringUtils.isNotEmpty(barcodeCode)){
+                        //设置工单条码ID
+                        updateProcessDto.setWorkOrderBarcodeId((Long) baseExecuteResultDto.getExecuteResult());
+                    }
+                }
             }
 
             //设置过站条码
@@ -1783,6 +1795,11 @@ public class BarcodeUtils {
                     throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(),"条码过站失败-->"+barcode);
                 }
 
+                baseExecuteResultDto.setExecuteResult(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
+
+            }
+            else {
+                baseExecuteResultDto.setExecuteResult(workOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId());
             }
 
             baseExecuteResultDto.setIsSuccess(true);
