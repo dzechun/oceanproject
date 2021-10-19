@@ -90,9 +90,8 @@ public class WmsInAsnOrderController {
 
     @ApiOperation("整单收货")
     @PostMapping("/allReceiving")
-    public ResponseEntity allReceiving(@ApiParam(value = "对象ID列表，多个逗号分隔")@RequestParam @NotNull(message = "id不能为空")String ids,
-                                       @ApiParam(value = "库存状态id")@RequestParam @NotNull(message = "库存状态不能为空") Long inventoryStatusId){
-        return ControllerUtil.returnCRUD(wmsInAsnOrderService.allReceiving(ids,null,inventoryStatusId));
+    public ResponseEntity allReceiving(@ApiParam(value = "对象ID列表，多个逗号分隔")@RequestParam @NotNull(message = "id不能为空")String ids){
+        return ControllerUtil.returnCRUD(wmsInAsnOrderService.allReceiving(ids,null));
     }
 
     @ApiOperation("单一收货")

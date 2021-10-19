@@ -74,12 +74,12 @@ public class EsopWiReleaseDetController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchEsopWiReleaseDet searchEsopWiReleaseDet){
         List<EsopWiReleaseDetDto> list = esopWiReleaseDetService.findList(searchEsopWiReleaseDet);
-        System.out.println("-------list-------------"+list);
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "导出信息", "工艺路线", EsopWiReleaseDetDto.class, "工艺路线.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
+
     }
 }

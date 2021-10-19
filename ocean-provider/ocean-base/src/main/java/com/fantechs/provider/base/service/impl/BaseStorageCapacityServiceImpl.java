@@ -210,4 +210,11 @@ public class BaseStorageCapacityServiceImpl extends BaseService<BaseStorageCapac
         map.put("orgId",sysUser.getOrganizationId());
         return baseStorageCapacityMapper.totalQty(map);
     }
+
+    @Override
+    public BigDecimal putJobQty(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
+        return baseStorageCapacityMapper.putJobQty(map);
+    }
 }

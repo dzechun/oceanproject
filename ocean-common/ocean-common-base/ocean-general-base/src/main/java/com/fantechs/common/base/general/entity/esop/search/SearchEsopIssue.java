@@ -62,4 +62,11 @@ public class SearchEsopIssue extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "codeQueryMark",value = "查询方式标记")
     private Integer codeQueryMark;
+
+    /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId" ,value="工序ID")
+    private Long processId;
+
 }

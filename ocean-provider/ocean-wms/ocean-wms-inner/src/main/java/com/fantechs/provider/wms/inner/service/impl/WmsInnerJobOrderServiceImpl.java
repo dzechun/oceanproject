@@ -18,8 +18,10 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
@@ -2042,12 +2044,83 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      * @param qty
      * @return
      */
-    private Boolean storageCapacity(Long materialId,Long storageId,BigDecimal qty){
+    @Override
+    public Boolean storageCapacity(Long materialId,Long storageId,BigDecimal qty){
+        SysUser sysUser = currentUser();
+        Boolean isSuccess = true;
         //获取配置项
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("capacity");
         List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        return false;
+        if(itemList.size()>0){
+
+            //获取库位
+            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            searchBaseStorage.setStorageId(storageId);
+            List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+            if(baseStorages.size()<1){
+                throw new BizErrorException("获取库位信息失败");
+            }
+            if(StringUtils.isEmpty(baseStorages.get(0).getMaterialStoreType())){
+                throw new BizErrorException("库位未维护生产存储类型");
+            }
+
+            //库容入库规则判断是否足够存放
+            if(itemList.get(0).getParaValue().equals("base_storage_capacity")){
+                //获取库容
+                SearchBaseStorageCapacity searchBaseStorageCapacity = new SearchBaseStorageCapacity();
+                searchBaseStorageCapacity.setMaterialId(materialId);
+                List<BaseStorageCapacity> baseStorageCapacities = baseFeignApi.findList(searchBaseStorageCapacity).getData();
+                if(baseStorageCapacities.size()<1){
+                    throw new BizErrorException("物料未维护库容信息");
+                }
+                Example example = new Example(WmsInnerInventory.class);
+                example.createCriteria().andEqualTo("storageId",storageId).andEqualTo("materialId",materialId).andEqualTo("orgId",sysUser.getOrganizationId());
+                List<WmsInnerInventory> inventories = wmsInnerInventoryMapper.selectByExample(example);
+                BigDecimal totalQty = inventories.stream()
+                        .map(WmsInnerInventory::getPackingQty)
+                        .reduce(BigDecimal.ZERO,BigDecimal::add);
+                switch (baseStorages.get(0).getMaterialStoreType()) {
+                    case 1:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeACapacity())) {
+                            throw new BizErrorException("未维护A类容量");
+                        }
+                        totalQty = baseStorageCapacities.get(0).getTypeACapacity().subtract(totalQty);
+                        if(totalQty.compareTo(qty)==-1){
+                            isSuccess = false;
+                        }
+                        break;
+                    case 2:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeBCapacity())) {
+                            throw new BizErrorException("未维护B类容量");
+                        }
+                        totalQty = baseStorageCapacities.get(0).getTypeBCapacity().subtract(totalQty);
+                        if(totalQty.compareTo(qty)==-1){
+                            isSuccess = false;
+                        }
+                        break;
+                    case 3:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeCCapacity())) {
+                            throw new BizErrorException("未维护C类容量");
+                        }
+                        totalQty = baseStorageCapacities.get(0).getTypeCCapacity().subtract(totalQty);
+                        if(totalQty.compareTo(qty)==-1){
+                            isSuccess = false;
+                        }
+                        break;
+                    case 4:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeDCapacity())) {
+                            throw new BizErrorException("未维护D类容量");
+                        }
+                        totalQty = baseStorageCapacities.get(0).getTypeDCapacity().subtract(totalQty);
+                        if(totalQty.compareTo(qty)==-1){
+                            isSuccess = false;
+                        }
+                        break;
+                }
+            }
+        }
+        return isSuccess;
     }
 
     /**

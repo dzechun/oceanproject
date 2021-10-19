@@ -10,6 +10,9 @@ import java.io.Serializable;
 @Data
 public class SearchBaseStorageCapacity extends BaseQuery implements Serializable {
 
+    @ApiModelProperty(name = "materialId",value = "物料id")
+    private Long materialId;
+
     /**
      * 产品编码
      */

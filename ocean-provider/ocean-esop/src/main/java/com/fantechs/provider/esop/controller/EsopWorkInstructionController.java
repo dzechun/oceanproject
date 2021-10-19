@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.esop.EsopHtWorkInstructionDto;
 import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionDto;
+import com.fantechs.common.base.general.dto.esop.imports.EsopWorkInstructionImport;
 import com.fantechs.common.base.general.entity.esop.EsopWorkInstruction;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopWorkInstruction;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -17,6 +18,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +29,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -36,6 +39,7 @@ import java.util.List;
 @Api(tags = "电子WI管理")
 @RequestMapping("/esopWorkInstruction")
 @Validated
+@Slf4j
 public class EsopWorkInstructionController {
 
     @Resource
@@ -106,11 +110,11 @@ public class EsopWorkInstructionController {
 
 
     /**
-     * 从excel导入数据
+     * 从excel导入设备、物料数据
      * @return
      * @throws
      */
-    @PostMapping(value = "/import")
+/*    @PostMapping(value = "/import")
     @ApiOperation(value = "从excel导入WI信息",notes = "从excel导入WI信息")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
         try {
@@ -125,8 +129,33 @@ public class EsopWorkInstructionController {
             e.printStackTrace();
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
-    }
+    }*/
 
+    /**
+     * 从excel导入数据
+     *
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入作业指导书", notes = "从excel导入作业指导书")
+    public ResponseEntity importExcel(@ApiParam(value = "输入excel文件", required = true)
+                                      @RequestPart(value = "file") MultipartFile file) {
+        try {
+            // 导入操作
+            List<EsopWorkInstructionImport> esopWorkInstructionImports = EasyPoiUtils.importExcel(file, 0, 1, EsopWorkInstructionImport.class);
+            Map<String, Object> resultMap = esopWorkInstructionService.importExcel(esopWorkInstructionImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+    }
 
     @ApiOperation("下载模板地址")
     @PostMapping("/download")

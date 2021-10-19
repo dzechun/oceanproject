@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,5 +141,11 @@ public class WmsInnerJobOrderController {
     @PostMapping("/cancelJobOrder")
     public ResponseEntity cancelJobOrder(@RequestBody List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels){
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.cancelJobOrder(engPackingOrderTakeCancels));
+    }
+
+    @PostMapping("/storageCapacity")
+    @ApiOperation("库容入库规则判断入库数量")
+    public ResponseEntity storageCapacity(@RequestParam Long materialId, @RequestParam Long storageId, @RequestParam BigDecimal qty){
+        return ControllerUtil.returnDataSuccess(wmsInPutawayOrderService.storageCapacity(materialId,storageId,qty),1);
     }
 }
