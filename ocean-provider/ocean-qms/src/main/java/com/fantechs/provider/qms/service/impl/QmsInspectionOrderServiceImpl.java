@@ -656,7 +656,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         searchWmsInAsnOrder.setOrderStatus((byte) 3);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.DATE, 0);
+        calendar.add(Calendar.DATE, -1);
         Date date = calendar.getTime();
         searchWmsInAsnOrder.setStartTime(DateUtils.getDateString(date));
         searchWmsInAsnOrder.setEndTime(DateUtils.getDateString(date));

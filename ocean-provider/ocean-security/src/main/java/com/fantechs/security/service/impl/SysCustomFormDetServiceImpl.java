@@ -100,11 +100,13 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
                             .andEqualTo("orgId",org.getOrganizationId());
                     SysCustomForm customForm = sysCustomFormMapper.selectOneByExample(example1);
 
-                    SysCustomFormDet formDet = new SysCustomFormDet();
-                    BeanUtil.copyProperties(sysCustomFormDet, formDet);
-                    formDet.setCustomFormId(customForm.getCustomFormId());
-                    formDet.setOrgId(org.getOrganizationId());
-                    formDetList.add(formDet);
+                    if(StringUtils.isNotEmpty(customForm)) {
+                        SysCustomFormDet formDet = new SysCustomFormDet();
+                        BeanUtil.copyProperties(sysCustomFormDet, formDet);
+                        formDet.setCustomFormId(customForm.getCustomFormId());
+                        formDet.setOrgId(org.getOrganizationId());
+                        formDetList.add(formDet);
+                    }
                 }
             }
         }
