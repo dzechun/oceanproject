@@ -18,4 +18,7 @@ public class SearchOmSalesReturnOrder extends BaseQuery implements Serializable 
     private String materialOwnerName;
     @ApiModelProperty(name = "orderStatus",value = "单据状态")
     private Byte orderStatus;
+
+    @ApiModelProperty(name = "completeDate",value = "要求完成日期")
+    private String completeDate;
 }

@@ -65,6 +65,7 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="sales_code_re_spc_id" jdbcType="BIGINT" property="salesCodeReSpcId" />
     <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode" />
   </resultMap>
 
@@ -104,6 +105,22 @@
         AND msbp.work_order_barcode_id = #{workOrderBarcodeId}
       </if>
     </where>
+  </select>
+
+  <select id="findByPOGroup" resultMap="BaseResultMap">
+    select msbp.same_package_code
+    from mes_sfc_product_carton_det mspcd
+    left join mes_sfc_product_carton mspc ON mspc.product_carton_id = mspcd.product_carton_id
+    left join mes_sfc_barcode_process msbp on mspcd.work_order_barcode_id=msbp.work_order_barcode_id
+    <where>
+      <if test="productCartonId != null">
+        and mspcd.product_carton_id = #{productCartonId}
+      </if>
+      <if test="cartonCode != null">
+        and mspc.carton_code = #{cartonCode}
+      </if>
+    </where>
+    GROUP BY msbp.same_package_code
   </select>
 
   <select id="findNextProcessIsPallet" parameterType="map" resultMap="BaseResultMap">

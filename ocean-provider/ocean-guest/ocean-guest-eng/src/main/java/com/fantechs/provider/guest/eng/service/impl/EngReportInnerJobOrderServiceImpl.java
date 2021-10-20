@@ -67,7 +67,6 @@ public class EngReportInnerJobOrderServiceImpl implements EngReportInnerJobOrder
         //ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeIssueDetails (s13,projectID);
         ResponseEntity<String>  responseEntityResult=fiveringFeignApi.writeMoveInventoryDetails (s13,projectID);
 
-
         return responseEntityResult.getData();
     }
 

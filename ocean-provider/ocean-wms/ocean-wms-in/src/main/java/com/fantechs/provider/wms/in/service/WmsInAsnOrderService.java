@@ -23,10 +23,9 @@ public interface WmsInAsnOrderService extends IService<WmsInAsnOrder> {
     /**
      * 整单收货
      * @param ids
-     * @param inventoryStatusId
      * @return
      */
-    int allReceiving(String ids,Long storageId,Long inventoryStatusId);
+    int allReceiving(String ids,Long storageId);
 
     /**
      * 单一收货

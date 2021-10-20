@@ -56,4 +56,11 @@ public class SearchOmOtherOutOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="actualDespatchDateF" ,value="实际发运日期结束时间(YYYY-MM-DD)")
     private String actualDespatchDateF;
+
+
+    /**
+     * 客户
+     */
+    @ApiModelProperty(name = "supplierName",value = "客户")
+    private String supplierName;
 }

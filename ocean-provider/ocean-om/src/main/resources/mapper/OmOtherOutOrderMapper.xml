@@ -118,6 +118,9 @@ ouo.option3
     <if test="otherOutOrderId!=null and otherOutOrderId!=''">
       and ouo.other_out_order_id=#{otherOutOrderId}
     </if>
+  <if test="supplierName!=null and supplierName!=''">
+    and bs.supplier_name like CONCAT('%',#{supplierName},'%')
+  </if>
 </where>
 order by ouo.create_time desc
   </select>

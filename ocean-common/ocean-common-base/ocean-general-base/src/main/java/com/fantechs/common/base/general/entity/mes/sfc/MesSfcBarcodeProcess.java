@@ -516,4 +516,12 @@ public class MesSfcBarcodeProcess extends ValidGroup implements Serializable {
     @Excel(name = "同包装编码", height = 20, width = 30,orderNum="")
     @Column(name = "same_package_code")
     private String samePackageCode;
+
+    /**
+     * 销售编码关联同包装编码ID
+     */
+    @ApiModelProperty(name="salesCodeReSpcId",value = "销售编码关联同包装编码ID")
+    @Excel(name = "销售编码关联同包装编码ID", height = 20, width = 30,orderNum="")
+    @Column(name = "sales_code_re_spc_id")
+    private Long salesCodeReSpcId;
 }

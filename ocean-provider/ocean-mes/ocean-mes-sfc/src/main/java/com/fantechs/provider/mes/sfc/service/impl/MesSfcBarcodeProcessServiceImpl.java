@@ -31,6 +31,11 @@ public class MesSfcBarcodeProcessServiceImpl extends BaseService<MesSfcBarcodePr
     }
 
     @Override
+    public List<MesSfcBarcodeProcess> findByPOGroup(Map<String, Object> map) {
+        return mesSfcBarcodeProcessMapper.findByPOGroup(map);
+    }
+
+    @Override
     public List<MesSfcBarcodeProcess> findBarcode(SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess) {
         Example example = new Example(MesSfcBarcodeProcess.class);
         Example.Criteria criteria = example.createCriteria();

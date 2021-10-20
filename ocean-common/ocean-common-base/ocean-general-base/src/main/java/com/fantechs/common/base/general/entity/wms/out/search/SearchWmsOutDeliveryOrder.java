@@ -80,4 +80,10 @@ public class SearchWmsOutDeliveryOrder extends BaseQuery implements Serializable
     @ApiModelProperty(name = "customerName",value = "客户")
     private String customerName;
 
+    /**
+     * 审核状态(0-未审核 1-已审核)
+     */
+    @ApiModelProperty(name="auditStatus",value = "审核状态(0-未审核 1-已审核)")
+    private Byte auditStatus;
+
 }

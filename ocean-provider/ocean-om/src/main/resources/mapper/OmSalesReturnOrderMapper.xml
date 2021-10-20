@@ -85,6 +85,9 @@ left join base_organization bo on osro.org_id = bo.organization_id
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(osro.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
+      <if test="completeDate!=null and completeDate!=''">
+        and date_format(osro.complete_date,'%Y-%m-%d') = #{completeDate}
+      </if>
   </where>
 order by osro.create_time desc
   </select>

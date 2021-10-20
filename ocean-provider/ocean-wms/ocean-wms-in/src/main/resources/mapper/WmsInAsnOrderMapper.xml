@@ -175,6 +175,9 @@ wiao.storage_id,
     <if test="orderTypeName!=null and orderTypeName!=''">
         and boy.order_type_name = #{orderTypeName}
     </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+      </if>
 </where>
 order by wiao.create_time desc
     </select>

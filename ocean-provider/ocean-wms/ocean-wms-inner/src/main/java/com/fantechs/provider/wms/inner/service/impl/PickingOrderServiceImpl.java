@@ -1019,12 +1019,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         Example example = new Example(WmsInnerJobOrderDet.class);
         example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrderDet.getJobOrderId());
         List<WmsInnerJobOrderDet> list = wmsInnerJobOrderDetMapper.selectByExample(example);
-        byte by = 5;
+        byte by = 4;
         if(list.size()==list.stream().filter(li->li.getOrderStatus()==6).collect(Collectors.toList()).size()){
             by=6;
         }
-        if(list.stream().filter(li->li.getOrderStatus()==4).collect(Collectors.toList()).size()<1 && list.stream().filter(li->li.getOrderStatus()==5).collect(Collectors.toList()).size()>0){
-            by=4;
+        if(list.stream().filter(li->li.getOrderStatus()==5).collect(Collectors.toList()).size()==list.size()){
+            by=5;
         }
         return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                 .jobOrderId(wmsInnerJobOrderDet.getJobOrderId())
@@ -1101,6 +1101,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 example = new Example(WmsInnerJobOrderDet.class);
                 example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
                 List<WmsInnerJobOrderDet> dets = wmsInnerJobOrderDetMapper.selectByExample(example);
+
+                //查询是否有可发运数量
+                if(dets.stream().filter(li->li.getOrderStatus()==4 || li.getOrderStatus()==5).collect(Collectors.toList()).size()<1){
+                    throw new BizErrorException("暂无可发运数量");
+                }
+
                 if(dets.stream().filter(li->li.getActualQty().compareTo(li.getDistributionQty())==-1).collect(Collectors.toList()).size()>0){
                     //获取配置项
                     //获取程序配置项
@@ -1141,7 +1147,13 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             throw new BizErrorException(responseEntity.getMessage());
         }
 
-        //领料出库回传接口（五环） 发运之前调用 回传数量=拣货-发运数量
+        //发运
+        ResponseEntity rs = outFeignApi.forwarding(responseEntity.getData());
+        if(rs.getCode()!=0){
+            throw new BizErrorException(rs.getMessage());
+        }
+
+        //领料出库回传接口（五环） 发运调用 回传数量=发运数量 开始
         //获取程序配置项
         if(orderTypeId==(byte)8) {
             SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
@@ -1152,33 +1164,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
             SysSpecItem sysSpecItem = itemListFiveRing.get(0);
             if ("1".equals(sysSpecItem.getParaValue())) {
-                for (WmsInnerJobOrder wmsInnerJobOrder : list) {
-                    engFeignApi.reportIssueDetails(wmsInnerJobOrder);
-                }
+                WmsInnerJobOrder wmsInnerJobOrderIssue=new WmsInnerJobOrder();
+                wmsInnerJobOrderIssue.setJobOrderId(outDeliveryOrderId);
+                engFeignApi.reportIssueDetails(wmsInnerJobOrderIssue);
             }
         }
-
-        //发运
-        ResponseEntity rs = outFeignApi.forwarding(responseEntity.getData());
-        if(rs.getCode()!=0){
-            throw new BizErrorException(rs.getMessage());
-        }
-        //领料出库回传接口（五环）
-        //获取程序配置项
-//        if(orderTypeId==(byte)8) {
-//            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-//            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-//            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-//            if (itemListFiveRing.size() < 1) {
-//                throw new BizErrorException("配置项 FiveRing 获取失败");
-//            }
-//            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-//            if ("1".equals(sysSpecItem.getParaValue())) {
-//                for (WmsInnerJobOrder wmsInnerJobOrder : list) {
-//                    engFeignApi.reportIssueDetails(wmsInnerJobOrder);
-//                }
-//            }
-//        }
+        //领料出库回传接口（五环） 发运之前调用 回传数量=发运数量 结束
 
         return 1;
     }

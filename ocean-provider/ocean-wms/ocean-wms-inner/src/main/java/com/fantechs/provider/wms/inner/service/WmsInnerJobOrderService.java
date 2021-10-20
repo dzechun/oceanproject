@@ -86,4 +86,13 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     int addList(List<WmsInnerJobOrder> list);
 
     int cancelJobOrder(List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels);
+
+    /**
+     * 库容入库规则判断入库数量
+     * @param materialId
+     * @param materialStoreType
+     * @param qty
+     * @return
+     */
+    Boolean storageCapacity(Long materialId,Long storageId,BigDecimal qty);
 }

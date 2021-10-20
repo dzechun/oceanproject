@@ -142,6 +142,13 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 }
             }
             //PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(mesSfcWorkOrderBarcode.getLabelCategoryId(), mesSfcWorkOrderBarcode.getWorkOrderId());
+
+            //查询是否有模版视图
+            String labelView = mesSfcWorkOrderBarcodeMapper.findLabelView(labelRuteDto.getLabelCode());
+            if(StringUtils.isEmpty(labelView)){
+                throw new BizErrorException("未查询到模版视图");
+            }
+
             PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(ControllerUtil.dynamicCondition("labelCode",labelRuteDto.getLabelCode(),"id",mesSfcWorkOrderBarcode.getWorkOrderId()));
             printModel.setSize(labelRuteDto.getOncePrintQty());
             if(StringUtils.isEmpty(labelRuteDto)){

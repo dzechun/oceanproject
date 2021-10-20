@@ -22,6 +22,7 @@
     <result column="asn_code" jdbcType="VARCHAR" property="asnCode" />
     <result column="despatch_order_code" jdbcType="VARCHAR" property="despatchOrderCode" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
     <result column="initial_qty" jdbcType="DECIMAL" property="initialQty" />
     <result column="change_qty" jdbcType="DECIMAL" property="changeQty"/>
     <result column="final_qty" jdbcType="DECIMAL" property="finalQty" />
@@ -68,6 +69,7 @@ wiil.qc_date,
 wiil.batch_code,
 wiil.asn_code,
 wiil.despatch_order_code,
+wiil.packing_unit_name,
 wiil.pallet_code,
 wiil.initial_qty,
 wiil.change_qty,
@@ -167,6 +169,9 @@ wiil.option5
   <if test="orgId!=null and orgId!=''">
     and wiil.org_id = #{orgId}
   </if>
+    <if test="packingUnitName!=null and packingUnitName!=''">
+      and wiil.packing_unit_name like CONCAT('%',#{packingUnitName},'%')
+    </if>
 </where>
 order by wiil.inventory_log_id desc
   </select>

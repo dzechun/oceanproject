@@ -132,7 +132,7 @@ wii.option5
       <if test="storageType!=null and storageType!=''">
         and bs.storage_type = #{storageType}
       </if>
-      <if test="qcLock!=null and qcLock != ''">
+      <if test="qcLock!=null">
         and wii.qc_lock = #{qcLock}
       </if>
       <if test="lockStatus!=null and lockStatus != ''">
