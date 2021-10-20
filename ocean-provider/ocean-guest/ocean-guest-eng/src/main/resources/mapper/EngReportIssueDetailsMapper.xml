@@ -28,7 +28,7 @@
     LEFT JOIN ocean_v2.sys_user u ON wodo.modified_user_id=u.user_id
     <where>
       <if test="jobOrderId!=null and jobOrderId!=''">
-        and wodod.delivery_order_id = #{jobOrderId} and wodod.picking_qty-wodod.dispatch_qty>0
+        and wodod.delivery_order_id = #{jobOrderId} and IFNULL(wodod.picking_qty,0)-IFNULL(wodod.dispatch_qty,0)>0
       </if>
     </where>
 
