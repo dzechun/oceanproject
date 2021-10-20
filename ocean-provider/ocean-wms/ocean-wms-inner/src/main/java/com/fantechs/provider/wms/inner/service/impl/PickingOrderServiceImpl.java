@@ -1101,6 +1101,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 example = new Example(WmsInnerJobOrderDet.class);
                 example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
                 List<WmsInnerJobOrderDet> dets = wmsInnerJobOrderDetMapper.selectByExample(example);
+
+                //查询是否有可发运数量
+                if(dets.stream().filter(li->li.getOrderStatus()==4 || li.getOrderStatus()==5).collect(Collectors.toList()).size()<1){
+                    throw new BizErrorException("暂无可发运数量");
+                }
+
                 if(dets.stream().filter(li->li.getActualQty().compareTo(li.getDistributionQty())==-1).collect(Collectors.toList()).size()>0){
                     //获取配置项
                     //获取程序配置项
