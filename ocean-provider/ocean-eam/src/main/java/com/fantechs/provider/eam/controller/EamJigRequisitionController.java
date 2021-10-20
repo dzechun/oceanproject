@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.dto.eam.EamJigRequisitionWorkOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.EamJigRequisition;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRequisition;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRequisition;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -58,9 +59,8 @@ public class EamJigRequisitionController {
 
     @ApiOperation(value = "检查治具条码",notes = "检查治具条码")
     @PostMapping("/checkJigBarcode")
-    public ResponseEntity<EamJigBarcode> checkJigBarcode(@ApiParam(value = "治具条码",required = true) @RequestParam @NotBlank(message="治具条码不能为空") String jigBarcode,
-                                          @ApiParam(value = "治具ID",required = true) @RequestParam @NotNull(message="治具ID不能为空") Long jigId) {
-        EamJigBarcode eamJigBarcode = eamJigRequisitionService.checkJigBarcode(jigBarcode, jigId);
+    public ResponseEntity<EamJigBarcode> checkJigBarcode(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SearchEamJigBarcode searchEamJigBarcode) {
+        EamJigBarcode eamJigBarcode = eamJigRequisitionService.checkJigBarcode(searchEamJigBarcode.getJigBarcode(), searchEamJigBarcode.getJigId());
         return ControllerUtil.returnDataSuccess(eamJigBarcode,StringUtils.isEmpty(eamJigBarcode)?0:1);
     }
 

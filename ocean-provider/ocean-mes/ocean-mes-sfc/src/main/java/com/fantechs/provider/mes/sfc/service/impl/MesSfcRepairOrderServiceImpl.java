@@ -6,26 +6,37 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRelevance;
+import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDetDto;
+import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseFile;
 import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFile;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStation;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.mes.sfc.history.MesSfcHtRepairOrder;
+import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
+import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.*;
 import com.fantechs.provider.mes.sfc.service.MesSfcRepairOrderService;
+import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
+import com.fantechs.provider.mes.sfc.util.DeviceInterFaceUtils;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -53,6 +64,8 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
+    private OMFeignApi omFeignApi;
+    @Resource
     private MesSfcRepairOrderBadPhenotypeMapper mesSfcRepairOrderBadPhenotypeMapper;
     @Resource
     private MesSfcRepairOrderBadPhenotypeRepairMapper mesSfcRepairOrderBadPhenotypeRepairMapper;
@@ -63,7 +76,9 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     @Resource
     private RabbitProducer rabbitProducer;
     @Resource
-    private MesSfcWorkOrderBarcodeMapper mesSfcWorkOrderBarcodeMapper;
+    private BarcodeUtils barcodeUtils;
+    @Resource
+    private DeviceInterFaceUtils deviceInterFaceUtils;
 
     @Override
     public List<MesSfcRepairOrderDto> findList(Map<String, Object> map) {
@@ -91,36 +106,48 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
 
     @Override
     public MesSfcRepairOrderDto getWorkOrder(String SNCode,String workOrderCode,Integer SNCodeType){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         MesSfcRepairOrderDto mesSfcRepairOrderDto = new MesSfcRepairOrderDto();
+        String purchaseOrderCode = "";
 
         if(StringUtils.isNotEmpty(SNCode)) {
-            //截取工单号
-           /* SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("WorkOrderPositionOnBarcode");
-            List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            String paraValue = sysSpecItemList.get(0).getParaValue();
-            int beginIndex = 0;
-            int endIndex = 0;
-            if (StringUtils.isNotEmpty(paraValue)) {
-                String[] arry = paraValue.split("-");
-                if (arry.length == 2) {
-                    beginIndex = Integer.parseInt(arry[0]);
-                    endIndex = Integer.parseInt(arry[1]);
+            if(SNCodeType == 1) {
+                //截取工单号
+                SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+                searchSysSpecItem.setSpecCode("WorkOrderPositionOnBarcodeProduct");
+                List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+                String paraValue = sysSpecItemList.get(0).getParaValue();
+                int beginIndex = 0;
+                int endIndex = 0;
+                if (StringUtils.isNotEmpty(paraValue)) {
+                    String[] arry = paraValue.split("-");
+                    if (arry.length == 2) {
+                        beginIndex = Integer.parseInt(arry[0]);
+                        endIndex = Integer.parseInt(arry[1]);
+                    }
                 }
+                workOrderCode = SNCode.substring(beginIndex, endIndex);
+            }else if(SNCodeType == 2) {
+                //截取采购单号
+                SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+                searchSysSpecItem.setSpecCode("WorkOrderPositionOnBarcode");
+                List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+                String paraValue = sysSpecItemList.get(0).getParaValue();
+                int beginIndex = 0;
+                int endIndex = 0;
+                if (StringUtils.isNotEmpty(paraValue)) {
+                    String[] arry = paraValue.split("-");
+                    if (arry.length == 2) {
+                        beginIndex = Integer.parseInt(arry[0]);
+                        endIndex = Integer.parseInt(arry[1]);
+                    }
+                }
+                String partPurchaseOrderCode = SNCode.substring(beginIndex, endIndex);
+                StringBuilder stringBuilder = new StringBuilder(partPurchaseOrderCode);
+                stringBuilder.insert(0,"4");
+                stringBuilder.insert(2,"000");
+                purchaseOrderCode = stringBuilder.toString();
             }
-
-            workOrderCode = SNCode.substring(beginIndex, endIndex);*/
-
-            Example example = new Example(MesSfcWorkOrderBarcode.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("barcode",SNCode);
-            MesSfcWorkOrderBarcode workOrderBarcode = mesSfcWorkOrderBarcodeMapper.selectOneByExample(example);
-            if (StringUtils.isEmpty(workOrderBarcode)){
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"找不到此工单条码");
-            }
-
-            workOrderCode = workOrderBarcode.getWorkOrderCode();
-            mesSfcRepairOrderDto.setWorkOrderBarcodeId(workOrderBarcode.getWorkOrderBarcodeId());
         }
 
         //查询工单信息
@@ -129,7 +156,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         searchMesPmWorkOrder.setCodeQueryMark(1);
         List<MesPmWorkOrderDto> pmWorkOrderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
         if (StringUtils.isEmpty(pmWorkOrderDtos)){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"找不到此工单");
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未找到工单");
         }
         MesPmWorkOrderDto mesPmWorkOrderDto = pmWorkOrderDtos.get(0);
 
@@ -146,6 +173,37 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                     mesSfcRepairOrderSemiProduct.setMaterialId(mesSfcKeyPartRelevanceDto.getMaterialId());
                     mesSfcRepairOrderSemiProduct.setMaterialCode(mesSfcKeyPartRelevanceDto.getMaterialCode());
                     mesSfcRepairOrderSemiProducts.add(mesSfcRepairOrderSemiProduct);
+                }
+            }
+        }else if(SNCodeType == 2){
+            SearchOmPurchaseOrder searchOmPurchaseOrder = new SearchOmPurchaseOrder();
+            searchOmPurchaseOrder.setPurchaseOrderCode(purchaseOrderCode);
+            List<OmPurchaseOrderDto> purchaseOrderDtos = omFeignApi.findList(searchOmPurchaseOrder).getData();
+            if(StringUtils.isEmpty(purchaseOrderDtos)){
+                throw new BizErrorException("找不到采购单");
+            }
+            OmPurchaseOrderDto omPurchaseOrderDto = purchaseOrderDtos.get(0);
+
+            SearchOmPurchaseOrderDet searchOmPurchaseOrderDet = new SearchOmPurchaseOrderDet();
+            searchOmPurchaseOrderDet.setPurchaseOrderId(omPurchaseOrderDto.getPurchaseOrderId());
+            List<OmPurchaseOrderDetDto> purchaseOrderDetDtos = omFeignApi.findList(searchOmPurchaseOrderDet).getData();
+            if(StringUtils.isEmpty(purchaseOrderDetDtos)){
+                throw new BizErrorException("找不到采购单明细");
+            }
+            Long partMaterialId = purchaseOrderDetDtos.get(0).getMaterialId();
+            if(StringUtils.isEmpty(partMaterialId)){
+                throw new BizErrorException("找不到采购单号相应的物料ID-->"+purchaseOrderCode);
+            }
+            Boolean isExist = barcodeUtils.findBomExistMaterialId(mesPmWorkOrderDto.getMaterialId(),partMaterialId,user.getOrganizationId());
+
+            if(isExist==false) {
+                SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
+                searchMesPmWorkOrderBom.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+                searchMesPmWorkOrderBom.setPartMaterialId(partMaterialId);
+                searchMesPmWorkOrderBom.setProcessId(mesPmWorkOrderDto.getPutIntoProcessId());
+                ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
+                if (StringUtils.isEmpty(responseEntityBom.getData())) {
+                    throw new BizErrorException("当前工序找不到成品条码与半成品条码的关系");
                 }
             }
         }

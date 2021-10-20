@@ -253,12 +253,15 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         searchEamJigMaterial.setMaterialId(eamJigRequisitionWorkOrderDto.getMaterialId());
         searchEamJigMaterial.setOrgId(user.getOrganizationId());
         List<EamJigMaterialDto> jigList = eamJigMaterialMapper.findJigList(ControllerUtil.dynamicConditionByEntity(searchEamJigMaterial));
-
+        if(StringUtils.isEmpty(jigList)){
+            throw new BizErrorException("该工单的物料未绑定治具");
+        }
 
         Example example = new Example(EamJigRequisition.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("workOrderId",mesPmWorkOrderDtos.get(0).getWorkOrderId());
         for (EamJigMaterialDto eamJigMaterialDto : jigList){
+            example.clear();
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("workOrderId",mesPmWorkOrderDtos.get(0).getWorkOrderId());
             criteria.andEqualTo("jigId",eamJigMaterialDto.getJigId());
             int recordQty = eamJigRequisitionMapper.selectCountByExample(example);
             eamJigMaterialDto.setRecordQty(recordQty);

@@ -62,8 +62,8 @@
         </if>
         <where>
             <if test="userId!=null and orgId!=null and supplierType==1">
-                IF ((SELECT supplier_id FROM base_supplier_re_user WHERE user_id = #{userId} AND organization_id = #{orgId}) IS NULL,
-                1=1,ss.supplier_id =(SELECT supplier_id FROM base_supplier_re_user WHERE user_id = #{userId} AND organization_id = #{orgId}))
+                IF ((SELECT supplier_id FROM base_supplier_re_user WHERE user_id = #{userId} AND organization_id = #{orgId} LIMIT 1) IS NULL,
+                1=1,ss.supplier_id =(SELECT supplier_id FROM base_supplier_re_user WHERE user_id = #{userId} AND organization_id = #{orgId} LIMIT 1))
             </if>
             <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
                 AND date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
