@@ -114,6 +114,14 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     throw new BizErrorException(ErrorCodeEnum.PDA40012034);
                 }
             }
+            //扫描的是箱码 判断是否为同一PO 2021-10-20
+            if(requestPalletWorkScanDto.getPalletType() == 2){
+                // 判断是否为同一PO
+                List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findByPOGroup(map);
+                if(mesSfcBarcodeProcessList.size() > 1){
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012034);
+                }
+            }
 
             workOrderId = mesSfcProductCartonDtoList.get(0).getWorkOrderId();
             // 获取箱号绑定产品条码
@@ -656,5 +664,16 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
             inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
+    }
+
+    public Boolean judgeSamePOPallet(Long stationId) {
+        List<MesSfcProductPalletDto> list = mesSfcProductPalletService.findList(ControllerUtil.dynamicConditionByEntity(SearchMesSfcProductPallet.builder()
+                .stationId(stationId)
+                .closeStatus((byte) 0)
+                .build()));
+        if(list.size()>0){
+            return false;
+        }
+        return true;
     }
 }
