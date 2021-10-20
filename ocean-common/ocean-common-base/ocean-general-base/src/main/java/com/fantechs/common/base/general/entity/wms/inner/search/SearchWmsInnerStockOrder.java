@@ -28,4 +28,7 @@ public class SearchWmsInnerStockOrder extends BaseQuery implements Serializable 
     @ApiModelProperty("创建人")
     private String createUserName;
     private boolean isPda;
+
+    @ApiModelProperty(name = "materialOwnerName",value = "货主")
+    private String materialOwnerName;
 }

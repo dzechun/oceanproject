@@ -165,6 +165,13 @@ public class WmsInnerInventoryLog extends ValidGroup implements Serializable {
     private String palletCode;
 
     /**
+     * 包装单位名称
+     */
+    @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
+    @Column(name = "packing_unit_name")
+    private String packingUnitName;
+
+    /**
      * 期初数量
      */
     @ApiModelProperty(name="initialQty",value = "期初数量")
