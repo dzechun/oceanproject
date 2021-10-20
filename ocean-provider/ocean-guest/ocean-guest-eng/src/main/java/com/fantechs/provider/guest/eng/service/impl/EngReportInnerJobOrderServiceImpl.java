@@ -46,6 +46,10 @@ public class EngReportInnerJobOrderServiceImpl implements EngReportInnerJobOrder
             if(StringUtils.isNotEmpty(user)) {
                 item.setCreateUserName(user.getUserName());
             }
+            //PDA无计划移库 传移入库位
+            if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOption1()) && StringUtils.isEmpty(item.getNewStorageId())){
+                item.setNewStorageId(wmsInnerJobOrder.getOption1());
+            }
         }
 
         jsonVoiceArray= JsonUtils.objectToJson(innerJobOrders);

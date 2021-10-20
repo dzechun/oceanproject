@@ -518,6 +518,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             if("1".equals(sysSpecItem.getParaValue())) {
                 //返写移位接口（五环）
                 if(wmsInnerJobOrderDto.getJobOrderType()==2){
+                    ws.setOption1(baseStorage.getOption1());//baseStorage
                     engFeignApi.reportInnerJobOrder(ws);
                 }
             }
