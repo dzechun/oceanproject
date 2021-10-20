@@ -50,19 +50,16 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
 
     @Override
     public List<EsopNewsDto> findList(Map<String, Object> map) {
-        if(StringUtils.isEmpty(map.get("equipmentIp"))) {
+        if(StringUtils.isEmpty(map.get("equipmentMacAddress"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }else {
             Example example = new Example(EsopEquipment.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("equipmentIp",map.get("equipmentIp"));
+            criteria.andEqualTo("equipmentMacAddress",map.get("equipmentMacAddress"));
             List<EsopEquipment> EsopEquipments = esopEquipmentMapper.selectByExample(example);
             if(StringUtils.isEmpty(EsopEquipments)){
-                throw new BizErrorException("查无绑定此IP的设备");
+                throw new BizErrorException("未查到绑定此mac地址的设备");
             }
             map.put("newStatus",3);
             map.put("orgId", EsopEquipments.get(0).getOrgId());
@@ -111,7 +108,7 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
             num += esopNewsMapper.updateByPrimaryKeySelective(EsopNews);
         }
         //发送消息
-        socketService.BatchInstructions(null,"1201","/#/ESOPDataShow?ip=","0");
+        socketService.BatchInstructions(null,"1201","/#/ESOPDataShow?mac=","0");
         return num;
     }
 

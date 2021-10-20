@@ -61,7 +61,7 @@ public class SocketServiceImpl implements SocketService {
                 Long value = entry.getValue();
                 if (System.currentTimeMillis() - value > timeOut) {
                     log.info("==============检测到设备断开，设备ip："+key);
-                    updateStatus(key, (byte) 3);
+                    updateStatus(key, (byte) 3,null);
                     iterator.remove();
                 }
             }
@@ -113,7 +113,9 @@ public class SocketServiceImpl implements SocketService {
         for (EsopEquipment eamEquipment : eamEquipments) {
             try {
                 Socket socket = (Socket)hashtable.get(eamEquipment.getEquipmentIp());
-                if(socket == null)  continue;
+                if(socket == null || (socket != null && (eamEquipment.getOnlineStatus() ==0 || eamEquipment.getOnlineStatus() ==3 )))
+                continue;
+
                 OutputStream os = socket.getOutputStream();
                 PrintWriter out =new PrintWriter(os);
                 String urlHeader = getUrl();
@@ -126,12 +128,12 @@ public class SocketServiceImpl implements SocketService {
                 if(StringUtils.isNotEmpty(specItemList)&& "1".equals(type)) {
                     String[] paraValue =specItemList.getData().get(0).getParaValue().split(",");
                     Map IssueMap = new HashMap();
-                    IssueMap.put("equipmentIp",eamEquipment.getEquipmentIp());
+                    IssueMap.put("equipmentMacAddress",eamEquipment.getEquipmentMacAddress());
                     IssueMap.put("orgId",user.getOrganizationId());
                     List esopIssues = esopIssueService.findList(IssueMap);
                     if("1".equals(paraValue[0]) && StringUtils.isNotEmpty(esopIssues)){
                         managementDate.put("code", 1207);
-                        managementDate.put("url", urlHeader + "/#/IssueList?ip=" + eamEquipment.getEquipmentIp());
+                        managementDate.put("url", urlHeader + "/#/IssueList?mac=" + eamEquipment.getEquipmentMacAddress());
                         managementDate.put("seconds", paraValue[1]);
                         managementDate.put("isShow", 1);
                         list.add(managementDate);
@@ -139,7 +141,7 @@ public class SocketServiceImpl implements SocketService {
                 }
 
                 map.put("code", code);
-                map.put("url", urlHeader + url + eamEquipment.getEquipmentIp());
+                map.put("url", urlHeader + url + eamEquipment.getEquipmentMacAddress());
                 list.add(map);
                 data.put("data",list);
                 String outMsg = JSON.toJSONString(data);
@@ -186,7 +188,8 @@ public class SocketServiceImpl implements SocketService {
             try {
 
                 //开机获取mac地址，保存ip
-                String mac = inputStreamToString(socket, addr.getHostAddress());
+                String mac = inputStreamToString(socket, null,addr.getHostAddress());
+                updateStatus(null,(byte)1,mac);
                 EsopEquipment equipment = null;
                 if(StringUtils.isNotEmpty(mac) && mac.length()>5){
                     equipment = getEquipment(null, mac);
@@ -204,7 +207,7 @@ public class SocketServiceImpl implements SocketService {
                 List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
 
                 map.put("code", 1201);
-                map.put("url", url+"/#/ESOPDataShow?ip=" + ip);
+                map.put("url", url+"/#/ESOPDataShow?mac=" + mac);
                 newList.add(map);
 
                 //配置项为展示状态且问题清单有数据。则发送信息。
@@ -214,12 +217,12 @@ public class SocketServiceImpl implements SocketService {
                 if(StringUtils.isNotEmpty(specItemList)) {
                     String[] paraValue =specItemList.getData().get(0).getParaValue().split(",");
                     Map IssueMap = new HashMap();
-                    IssueMap.put("equipmentIp",ip);
+                    IssueMap.put("equipmentMacAddress",mac);
                     IssueMap.put("orgId",equipment.getOrgId());
                     List list = esopIssueService.findList(IssueMap);
                     if("1".equals(paraValue[0]) && StringUtils.isNotEmpty(list)){
                         managementDate.put("code", 1207);
-                        managementDate.put("url", url+"/#/IssueList?ip=" + ip);
+                        managementDate.put("url", url+"/#/IssueList?mac=" + mac);
                         managementDate.put("seconds", paraValue[1]);
                         managementDate.put("isShow", 1);
                         newList.add(managementDate);
@@ -227,7 +230,7 @@ public class SocketServiceImpl implements SocketService {
                 }
 
                 newMap.put("code", 1202);
-                newMap.put("url", url+"/#/YunZhiESOP?ip=" + ip);
+                newMap.put("url", url+"/#/YunZhiESOP?mac=" + mac);
                 newList.add(newMap);
 
                 newData.put("data", newList);
@@ -237,10 +240,10 @@ public class SocketServiceImpl implements SocketService {
                 out.write(outMsg);
                 out.flush();
 
-                updateStatus(ip,(byte)1);
+
                 //读取输入字段，判断是否断开
                 while(true) {
-                    String str = inputStreamToString(socket, addr.getHostAddress());
+                    String str = inputStreamToString(socket, null,mac);
                     if( str!= null ){
                         ipMap.put(ip, System.currentTimeMillis());
                     }
@@ -249,19 +252,19 @@ public class SocketServiceImpl implements SocketService {
                         equipment = getEquipment(null, mac);
                         equipment.setEquipmentIp(addr.getHostAddress());
                         esopEquipmentMapper.updateByPrimaryKeySelective(equipment);
-                        updateStatus(ip, (byte)2);
+                        updateStatus(null, (byte)2,mac);
                     }
                 }
 
             } catch (Exception e) {
-                updateStatus(ip,(byte)0);
+                updateStatus(ip,(byte)0,null);
                 e.printStackTrace();
             }
 
         }
     }
 
-    private  String inputStreamToString(Socket socket ,String ip) throws IOException {
+    private  String inputStreamToString(Socket socket ,String ip,String mac) throws IOException {
         String str = null;
         try {
             InputStream inputStream = socket.getInputStream();
@@ -273,7 +276,7 @@ public class SocketServiceImpl implements SocketService {
             e.printStackTrace();
         } catch (IOException e) {
             log.info("---断开连接----");
-            updateStatus(ip, (byte) 0);
+            updateStatus(null, (byte) 0,mac);
             socket.shutdownInput();
             socket.shutdownOutput();
             socket.close();
@@ -300,8 +303,8 @@ public class SocketServiceImpl implements SocketService {
         return eamEquipments.get(0);
     }
 
-    public int updateStatus(String ip, Byte bytes) {
-        EsopEquipment eamEquipment  = getEquipment(ip, null);
+    public int updateStatus(String ip, Byte bytes,String mac) {
+        EsopEquipment eamEquipment  = getEquipment(ip, mac);
         eamEquipment.setOnlineStatus(bytes);
         esopEquipmentMapper.updateByPrimaryKeySelective(eamEquipment);
         return 1;

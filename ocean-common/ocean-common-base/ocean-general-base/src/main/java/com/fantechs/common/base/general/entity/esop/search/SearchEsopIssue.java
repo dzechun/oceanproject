@@ -58,6 +58,12 @@ public class SearchEsopIssue extends BaseQuery implements Serializable {
     private String equipmentIp;
 
     /**
+     * mac地址
+     */
+    @ApiModelProperty(name="equipmentMacAddress",value = "mac地址")
+    private String equipmentMacAddress;
+
+    /**
      * 根据编码查询方式标记（传1则为等值查询）
      */
     @ApiModelProperty(name = "codeQueryMark",value = "查询方式标记")

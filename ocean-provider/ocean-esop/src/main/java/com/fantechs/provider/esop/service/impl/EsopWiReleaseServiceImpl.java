@@ -1,9 +1,7 @@
 package com.fantechs.provider.esop.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.esop.EsopWiReleaseDetDto;
 import com.fantechs.common.base.general.dto.esop.EsopWiReleaseDto;
@@ -12,7 +10,6 @@ import com.fantechs.common.base.general.entity.esop.EsopWiReleaseDet;
 import com.fantechs.common.base.general.entity.esop.history.EsopHtWiRelease;
 import com.fantechs.common.base.general.entity.esop.history.EsopHtWiReleaseDet;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopWiRelease;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -30,7 +27,10 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  *
@@ -171,7 +171,7 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
         EsopWiRelease.setStatus((byte)1);
         EsopWiRelease.setReleaseStatus((byte)2);
         int i = esopWiReleaseMapper.updateByPrimaryKeySelective(EsopWiRelease);
-        socketService.BatchInstructions(EsopWiRelease.getProLineId(),"1202","/#/YunZhiESOP?ip=", "1");
+        socketService.BatchInstructions(EsopWiRelease.getProLineId(),"1202","/#/YunZhiESOP?mac=", "1");
         return i;
     }
 
