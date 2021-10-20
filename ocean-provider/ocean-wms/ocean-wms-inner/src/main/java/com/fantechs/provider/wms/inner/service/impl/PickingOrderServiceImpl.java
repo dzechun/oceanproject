@@ -1130,6 +1130,26 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
 
         if(wmsInnerJobOrders.size()>0){
+            //领料出库回传接口（五环） 发运之前调用 回传数量=拣货-发运数量
+            //获取程序配置项
+            if(orderTypeId==(byte)8) {
+                SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+                searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+                List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+                if (itemListFiveRing.size() < 1) {
+                    throw new BizErrorException("配置项 FiveRing 获取失败");
+                }
+                SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+                if ("1".equals(sysSpecItem.getParaValue())) {
+//                    for (WmsInnerJobOrder wmsInnerJobOrder : list) {
+//                        engFeignApi.reportIssueDetails(wmsInnerJobOrder);
+//                    }
+                    WmsInnerJobOrder wmsInnerJobOrderIssue=new WmsInnerJobOrder();
+                    wmsInnerJobOrderIssue.setJobOrderId(outDeliveryOrderId);
+                    engFeignApi.reportIssueDetails(wmsInnerJobOrderIssue);
+                }
+            }
+
             this.pickDisQty(wmsInnerJobOrders);
         }
 
@@ -1139,23 +1159,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         ResponseEntity<String> responseEntity = outFeignApi.add(wmsOutDespatchOrder);
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(responseEntity.getMessage());
-        }
-
-        //领料出库回传接口（五环） 发运之前调用 回传数量=拣货-发运数量
-        //获取程序配置项
-        if(orderTypeId==(byte)8) {
-            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-            if (itemListFiveRing.size() < 1) {
-                throw new BizErrorException("配置项 FiveRing 获取失败");
-            }
-            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if ("1".equals(sysSpecItem.getParaValue())) {
-                for (WmsInnerJobOrder wmsInnerJobOrder : list) {
-                    engFeignApi.reportIssueDetails(wmsInnerJobOrder);
-                }
-            }
         }
 
         //发运
