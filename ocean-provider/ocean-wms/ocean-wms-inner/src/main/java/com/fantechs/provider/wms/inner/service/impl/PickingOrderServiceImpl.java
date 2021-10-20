@@ -1019,12 +1019,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         Example example = new Example(WmsInnerJobOrderDet.class);
         example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrderDet.getJobOrderId());
         List<WmsInnerJobOrderDet> list = wmsInnerJobOrderDetMapper.selectByExample(example);
-        byte by = 5;
+        byte by = 4;
         if(list.size()==list.stream().filter(li->li.getOrderStatus()==6).collect(Collectors.toList()).size()){
             by=6;
         }
-        if(list.stream().filter(li->li.getOrderStatus()==4).collect(Collectors.toList()).size()<1 && list.stream().filter(li->li.getOrderStatus()==5).collect(Collectors.toList()).size()>0){
-            by=4;
+        if(list.stream().filter(li->li.getOrderStatus()==5).collect(Collectors.toList()).size()==list.size()){
+            by=5;
         }
         return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                 .jobOrderId(wmsInnerJobOrderDet.getJobOrderId())
