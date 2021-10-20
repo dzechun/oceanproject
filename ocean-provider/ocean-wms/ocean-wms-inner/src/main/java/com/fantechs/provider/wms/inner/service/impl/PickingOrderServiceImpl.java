@@ -1421,6 +1421,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     this.subtract(wmsInnerJobOrder,wmsInnerJobOrderDetDto,3,null);
                 }
             }else {
+                InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,wmsInPutawayOrderDet,getInvQty(wmsInPutawayOrderDet.getJobOrderDetId(),wmsInPutawayOrderDet.getActualQty()),wmsInPutawayOrderDet.getActualQty(),(byte)4,(byte)2);
                 wmsIn.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInPutawayOrderDet.getActualQty()));
                 wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsIn);
             }

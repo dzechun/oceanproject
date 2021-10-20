@@ -50,4 +50,10 @@ public class SearchEsopNews extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="equipmentIp",value = "设备IP")
     private String equipmentIp;
+
+    /**
+     * mac地址
+     */
+    @ApiModelProperty(name="equipmentMacAddress",value = "mac地址")
+    private String equipmentMacAddress;
 }

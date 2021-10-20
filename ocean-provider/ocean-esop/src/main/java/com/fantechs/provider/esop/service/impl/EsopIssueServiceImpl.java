@@ -59,19 +59,19 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
             map.put("orgId", user.getOrganizationId());
         }
 
-        if (StringUtils.isNotEmpty(map.get("equipmentIp"))) {
+        if (StringUtils.isNotEmpty(map.get("equipmentMacAddress"))) {
             List<EsopIssueDto> list = new ArrayList<>();
 
             SearchEsopEquipment searchEsopEquipment = new SearchEsopEquipment();
-            searchEsopEquipment.setEquipmentIp(map.get("equipmentIp").toString());
+            searchEsopEquipment.setEquipmentMacAddress(map.get("equipmentMacAddress").toString());
             List<EsopEquipmentDto> esopEquipmentDtos = esopEquipmentMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEsopEquipment));
             if (StringUtils.isNotEmpty(esopEquipmentDtos)) {
                 //查询该设备所在工序的WI
                 SearchEsopWorkInstruction searchEsopWorkInstruction = new SearchEsopWorkInstruction();
-                searchEsopWorkInstruction.setProcessId(esopEquipmentDtos.get(0).getProcessId());
                 searchEsopWorkInstruction.setEquipmentSeqNum(esopEquipmentDtos.get(0).getEquipmentSeqNum());
                 searchEsopWorkInstruction.setProLineId(esopEquipmentDtos.get(0).getProLineId());
                 List<EsopWorkInstructionDto> esopWorkInstructionDtos = esopWorkInstructionMapper.findList(searchEsopWorkInstruction);
+
                 if (StringUtils.isNotEmpty(esopWorkInstructionDtos)) {
                     //查询该WI绑定的产品型号、工序的问题清单
                     SearchEsopIssue searchEsopIssue = new SearchEsopIssue();
