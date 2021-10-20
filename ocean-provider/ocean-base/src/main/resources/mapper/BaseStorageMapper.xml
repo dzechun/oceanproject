@@ -283,6 +283,6 @@ order by wii.modified_time desc limit 1
         SELECT bs.storage_id as storageId, bs.roadway, bs.row_no as rowNo, bs.column_no as columnNo, bs.level_no as levelNo, bs.putaway_move_line_no as putawayMoveLineNo, IFNULL(bs.surplus_load,0) as surplusLoad, IFNULL(bs.surplus_volume,0) as surplusVolume, bs.surplus_can_put_salver as surplusCanPutSalver, IFNULL(bmt.volume,0) as volume, IFNULL(bmt.net_weight,0) as netWeight
         FROM base_storage bs
         LEFT JOIN base_material_tab bmt ON bmt.material_id=#{materialId}
-        WHERE bs.org_id=#{orgId} and  bs.storage_id IN(SELECT wii.storage_id FROM wms_inner_inventory wii WHERE bs.storage_type=1 AND wii.warehouse_id=#{warehouseId} GROUP BY wii.storage_id HAVING COUNT(wii.material_id)>1)
+        WHERE bs.org_id=#{orgId} and  bs.storage_id IN(SELECT wii.storage_id FROM wms_inner_inventory wii WHERE bs.storage_type=1 AND wii.warehouse_id=#{warehouseId} and wii.packing_qty>0 GROUP BY wii.storage_id HAVING COUNT(wii.material_id)>1)
     </select>
 </mapper>
