@@ -134,4 +134,10 @@ public class SearchWmsInnerInventoryLog extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人名称")
     private String modifiedUserName;
+
+    /**
+     * 包装单位名称
+     */
+    @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
+    private String packingUnitName;
 }
