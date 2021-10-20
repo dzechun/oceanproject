@@ -113,7 +113,9 @@ public class SocketServiceImpl implements SocketService {
         for (EsopEquipment eamEquipment : eamEquipments) {
             try {
                 Socket socket = (Socket)hashtable.get(eamEquipment.getEquipmentIp());
-                if(socket == null)  continue;
+                if(socket == null || (socket != null && (eamEquipment.getOnlineStatus() ==0 || eamEquipment.getOnlineStatus() ==3 )))
+                continue;
+
                 OutputStream os = socket.getOutputStream();
                 PrintWriter out =new PrintWriter(os);
                 String urlHeader = getUrl();
@@ -187,6 +189,7 @@ public class SocketServiceImpl implements SocketService {
 
                 //开机获取mac地址，保存ip
                 String mac = inputStreamToString(socket, null,addr.getHostAddress());
+                updateStatus(null,(byte)1,mac);
                 EsopEquipment equipment = null;
                 if(StringUtils.isNotEmpty(mac) && mac.length()>5){
                     equipment = getEquipment(null, mac);
@@ -237,7 +240,7 @@ public class SocketServiceImpl implements SocketService {
                 out.write(outMsg);
                 out.flush();
 
-                updateStatus(null,(byte)1,mac);
+
                 //读取输入字段，判断是否断开
                 while(true) {
                     String str = inputStreamToString(socket, null,mac);

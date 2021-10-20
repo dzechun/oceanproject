@@ -162,20 +162,6 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
-        if(StringUtils.isNotEmpty(entity.getEquipmentIp())) {
-            Example examples = new Example(EsopEquipment.class);
-            Example.Criteria criterias = examples.createCriteria();
-            criterias.andEqualTo("equipmentIp", entity.getEquipmentIp());
-            criterias.andEqualTo("orgId", entity.getOrgId());
-            if(StringUtils.isNotEmpty(entity.getEquipmentId())){
-                criterias.andNotEqualTo("equipmentId",entity.getEquipmentId());
-            }
-            if (StringUtils.isNotEmpty(esopEquipmentMapper.selectOneByExample(examples))) {
-                throw new BizErrorException("设备ip不能重复");
-            }
-        }
-
-
         if(StringUtils.isNotEmpty(entity.getEquipmentMacAddress())){
             Example macExample = new Example(EsopEquipment.class);
             Example.Criteria macCriteria = macExample.createCriteria();

@@ -111,8 +111,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         if(EsopEquipments.size() <1 ) return null;
         //查询到对应的wi
         SearchEsopWiRelease searchEsopWiRelease = new SearchEsopWiRelease();
-    //    searchEsopWiRelease.setEquipmentIp(searchEsopWorkInstruction.getEquipmentIp());
-        searchEsopWiRelease.setEquipmentMacAddress(searchEsopWorkInstruction.getEquipmentMacAddress());
+    //    searchEsopWiRelease.setEquipmentMacAddress(searchEsopWorkInstruction.getEquipmentMacAddress());
         searchEsopWiRelease.setOrgId(sysUser.getOrganizationId());
         searchEsopWiRelease.setReleaseStatus((byte)2);
         searchEsopWiRelease.setProLineId(EsopEquipments.get(0).getProLineId());

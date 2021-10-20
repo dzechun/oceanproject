@@ -68,10 +68,10 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
             if (StringUtils.isNotEmpty(esopEquipmentDtos)) {
                 //查询该设备所在工序的WI
                 SearchEsopWorkInstruction searchEsopWorkInstruction = new SearchEsopWorkInstruction();
-                searchEsopWorkInstruction.setProcessId(esopEquipmentDtos.get(0).getProcessId());
                 searchEsopWorkInstruction.setEquipmentSeqNum(esopEquipmentDtos.get(0).getEquipmentSeqNum());
                 searchEsopWorkInstruction.setProLineId(esopEquipmentDtos.get(0).getProLineId());
                 List<EsopWorkInstructionDto> esopWorkInstructionDtos = esopWorkInstructionMapper.findList(searchEsopWorkInstruction);
+
                 if (StringUtils.isNotEmpty(esopWorkInstructionDtos)) {
                     //查询该WI绑定的产品型号、工序的问题清单
                     SearchEsopIssue searchEsopIssue = new SearchEsopIssue();
