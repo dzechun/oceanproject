@@ -81,10 +81,12 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
         eamEquipmentRepairOrder.setEquipmentId(eamEquipmentBarcodes.get(0).getEquipmentId());
         eamEquipmentRepairOrder.setEquipmentBarcodeId(eamEquipmentBarcodes.get(0).getEquipmentBarcodeId());
         eamEquipmentRepairOrder.setRequestForRepairTime(new Date());
-        this.save(eamEquipmentRepairOrder);
+        EamEquipmentRepairOrderDto eamEquipmentRepairOrderDto = new EamEquipmentRepairOrderDto();
+        BeanUtils.copyProperties(eamEquipmentRepairOrder,eamEquipmentRepairOrderDto);
+        this.save(eamEquipmentRepairOrderDto);
 
         SearchEamEquipmentRepairOrder searchEamEquipmentRepairOrder1 = new SearchEamEquipmentRepairOrder();
-        searchEamEquipmentRepairOrder1.setEquipmentRepairOrderId(eamEquipmentRepairOrder.getEquipmentRepairOrderId());
+        searchEamEquipmentRepairOrder1.setEquipmentRepairOrderId(eamEquipmentRepairOrderDto.getEquipmentRepairOrderId());
         List<EamEquipmentRepairOrderDto> list = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentRepairOrder1));
 
         return list.get(0);

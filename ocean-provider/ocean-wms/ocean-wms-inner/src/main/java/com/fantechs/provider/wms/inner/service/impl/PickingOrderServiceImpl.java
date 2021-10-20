@@ -682,6 +682,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
+        SysUser sysUser = currentUser();
+        searchWmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
         return wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder);
     }
     /**

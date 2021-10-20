@@ -96,6 +96,15 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
             if (StringUtils.isNotEmpty(baseProductProcessRoutes)) {
                 throw new BizErrorException("该产品名称的工艺路线已存在");
             }
+
+            if(StringUtils.isNotEmpty(materialId)){
+                example.clear();
+                Example.Criteria criteria2 = example.createCriteria();
+                criteria2.andEqualTo("materialId",materialId);
+                if(StringUtils.isNotEmpty(baseProductProcessRouteMapper.selectByExample(example))){
+                    throw new BizErrorException("同个产品料号不能绑定多个产品工艺路线");
+                }
+            }
         }
         baseProductProcessRoute.setCreateUserId(currentUser.getUserId());
         baseProductProcessRoute.setCreateTime(new Date());
@@ -143,6 +152,16 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
             BaseProductProcessRoute productProcessRoute = baseProductProcessRouteMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(productProcessRoute) && !productProcessRoute.getProductProcessRouteId().equals(baseProductProcessRoute.getProductProcessRouteId())) {
                 throw new BizErrorException("该产品名称的工艺路线已存在");
+            }
+
+            if(StringUtils.isNotEmpty(materialId)){
+                example.clear();
+                Example.Criteria criteria2 = example.createCriteria();
+                criteria2.andEqualTo("materialId",materialId)
+                        .andNotEqualTo("productProcessRouteId",baseProductProcessRoute.getProductProcessRouteId());
+                if(StringUtils.isNotEmpty(baseProductProcessRouteMapper.selectByExample(example))){
+                    throw new BizErrorException("同个产品料号不能绑定多个产品工艺路线");
+                }
             }
         }
 
