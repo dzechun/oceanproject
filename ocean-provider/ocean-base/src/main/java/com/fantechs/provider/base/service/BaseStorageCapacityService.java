@@ -2,6 +2,7 @@ package com.fantechs.provider.base.service;
 
 import com.fantechs.common.base.general.dto.basic.imports.BaseStorageCapacityImport;
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.support.IService;
 
 import java.math.BigDecimal;
@@ -21,4 +22,6 @@ public interface BaseStorageCapacityService extends IService<BaseStorageCapacity
     BigDecimal totalQty(Map<String,Object> map);
 
     BigDecimal putJobQty(Map<String,Object> map);
+
+    List<WmsInnerInventory> wmsList(Map<String,Object> map);
 }
