@@ -154,7 +154,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 throw new BizErrorException("单据已分配完成");
             }
             Example example = new Example(WmsInnerJobOrderDet.class);
-            example.createCriteria().andEqualTo("jobOrderId", wmsInnerJobOrder.getJobOrderId());
+            example.createCriteria().andEqualTo("jobOrderId", wmsInnerJobOrder.getJobOrderId()).andEqualTo("orderStatus",1);
             List<WmsInnerJobOrderDet> list = wmsInPutawayOrderDetMapper.selectByExample(example);
             for (WmsInnerJobOrderDet wms : list) {
                 if (StringUtils.isEmpty(wms)) {
