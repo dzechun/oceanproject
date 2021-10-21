@@ -70,7 +70,9 @@
         left join ocean_v2.sys_user suc on so.create_user_id = suc.user_id
         left join base_organization bo on so.org_id = bo.organization_id
         left join ocean_v2.sys_user sumod on so.modified_user_id = sumod.user_id
-        left join mes_pm_work_order mpwo on so.sales_order_id = mpwo.sales_order_id
+        <if test="workOrderId != null and workOrderId != ''">
+            left join mes_pm_work_order mpwo on so.sales_order_id = mpwo.sales_order_id
+        </if>
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(so.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
