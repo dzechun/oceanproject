@@ -166,7 +166,7 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
             qmsIpqcInspectionOrderDet.setBadnessQty((long)badnessQty);
             if (qmsIpqcInspectionOrderDet.getBadnessQty().longValue() <= qmsIpqcInspectionOrderDet.getAcValue().longValue()) {
                 qmsIpqcInspectionOrderDet.setInspectionResult((byte) 1);
-            } else if (qmsIpqcInspectionOrderDet.getBadnessQty().longValue() >= qmsIpqcInspectionOrderDet.getReValue()) {
+            } else if (qmsIpqcInspectionOrderDet.getBadnessQty().longValue() >= qmsIpqcInspectionOrderDet.getReValue().longValue()) {
                 qmsIpqcInspectionOrderDet.setInspectionResult((byte) 0);
             }
             qmsIpqcInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrderDet);
@@ -252,7 +252,7 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
                 if (qmsIpqcInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(DetSamples.size() + 1)) == 0) {
                     if (qmsIpqcInspectionOrderDet.getBadnessQty().longValue() <= qmsIpqcInspectionOrderDet.getAcValue().longValue()) {
                         qmsIpqcInspectionOrderDet.setInspectionResult((byte) 1);
-                    } else if (qmsIpqcInspectionOrderDet.getBadnessQty().longValue() >= qmsIpqcInspectionOrderDet.getReValue()) {
+                    } else if (qmsIpqcInspectionOrderDet.getBadnessQty().longValue() >= qmsIpqcInspectionOrderDet.getReValue().longValue()) {
                         qmsIpqcInspectionOrderDet.setInspectionResult((byte) 0);
                     }
                 }
@@ -268,13 +268,20 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
                 qmsIpqcInspectionOrderDetSample.setOrgId(user.getOrganizationId());
             }
             i = qmsIpqcInspectionOrderDetSampleMapper.insertList(qmsIpqcInspectionOrderDetSampleList);
+
+            QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.selectByPrimaryKey(ipqcInspectionOrderId);
+            //更新检验状态
+            if(qmsIpqcInspectionOrder.getInspectionStatus()==(byte)1){
+                qmsIpqcInspectionOrder.setInspectionStatus((byte)2);
+                qmsIpqcInspectionOrderMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrder);
+            }
             //返写单据检验结果
             qmsIpqcInspectionOrderService.writeBack(ipqcInspectionOrderId);
         }else {
             for (QmsIpqcInspectionOrderDetSample qmsIpqcInspectionOrderDetSample : qmsIpqcInspectionOrderDetSampleList) {
                 QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet = qmsIpqcInspectionOrderDetMapper.selectByPrimaryKey(qmsIpqcInspectionOrderDetSample.getIpqcInspectionOrderDetId());
                 qmsIpqcInspectionOrderDet.setBadnessCategoryId(qmsIpqcInspectionOrderDetSample.getBadnessCategoryId());
-                qmsIpqcInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrderDet);
+                i += qmsIpqcInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrderDet);
             }
         }
 
