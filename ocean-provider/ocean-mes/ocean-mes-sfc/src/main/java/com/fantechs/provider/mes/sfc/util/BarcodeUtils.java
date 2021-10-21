@@ -124,9 +124,9 @@ public class BarcodeUtils {
         MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = checkBarcodeStatus(record.getBarCode(), record.getWorkOrderId());
 
         // 2、判断条码流程是否正确（流程表）
-        if (record.getProcessId() != null) {
-            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
-        }
+//        if (record.getProcessId() != null) {
+//            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
+//        }
 
         // 3、系统检查条码工单状态是否正确（工单表）
         if (mesSfcWorkOrderBarcodeDto.getWorkOrderId() != null) {
@@ -1792,6 +1792,7 @@ public class BarcodeUtils {
                 mesSfcBarcodeProcess.setRouteId(mesPmWorkOrderDto.getRouteId());
                 mesSfcBarcodeProcess.setRouteCode(mesPmWorkOrderDto.getRouteCode());
                 mesSfcBarcodeProcess.setRouteName(mesPmWorkOrderDto.getRouteName());
+                mesSfcBarcodeProcess.setOrgId(orgId);
 
                 //查询工艺路线
                 ResponseEntity<List<BaseRouteProcess>> res = barcodeUtils.baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
