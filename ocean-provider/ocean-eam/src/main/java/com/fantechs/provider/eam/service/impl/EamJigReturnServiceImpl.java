@@ -188,13 +188,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
         List<Long> jigIdList = eamJigRequisitionMapper.findJigId(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
 
         Example example1 = new Example(EamJigRequisition.class);
-        Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("workOrderId",mesPmWorkOrderDtos.get(0).getWorkOrderId());
-
         Example example2 = new Example(EamJigRequisition.class);
-        Example.Criteria criteria2 = example2.createCriteria();
-        criteria2.andEqualTo("workOrderId",mesPmWorkOrderDtos.get(0).getWorkOrderId());
-
         List<EamJigMaterialDto> list = new ArrayList<>();
         for (Long jigId : jigIdList) {
             //获取治具信息
@@ -204,10 +198,16 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
             EamJigMaterialDto eamJigMaterialDto = eamJigMaterialDtos.get(0);
 
             //获取领用数量
+            example1.clear();
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("workOrderId",mesPmWorkOrderDtos.get(0).getWorkOrderId());
             criteria1.andEqualTo("jigId",jigId);
             int recordQty = eamJigRequisitionMapper.selectCountByExample(example1);
             eamJigMaterialDto.setRecordQty(recordQty);
             //获取归还数量
+            example2.clear();
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("workOrderId",mesPmWorkOrderDtos.get(0).getWorkOrderId());
             criteria2.andEqualTo("jigId",jigId);
             int returnQty = eamJigReturnMapper.selectCountByExample(example2);
             eamJigMaterialDto.setReturnQty(returnQty);
