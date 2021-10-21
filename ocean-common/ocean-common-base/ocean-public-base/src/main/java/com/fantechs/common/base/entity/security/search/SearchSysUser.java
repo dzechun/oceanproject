@@ -11,6 +11,13 @@ import java.io.Serializable;
 @Data
 public class SearchSysUser extends BaseQuery implements Serializable {
     private static final long serialVersionUID = -110480906537756636L;
+
+    /**
+     * 用户唯一id
+     */
+    @ApiModelProperty(name="userId" ,value="用户唯一id")
+    private String userId;
+
     /**
      * 用户帐号
      */
