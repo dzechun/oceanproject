@@ -86,6 +86,14 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     public PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        //samePackageCode 同包装编码--扫描的箱号产品条码对应的或者扫描的产品条码对应的PO编码 2020-10-20
+        String samePackageCode="";
+
+        //samePackageCodePallet 同包装编码--栈板包装产品条码对应的PO编码 2020-10-20
+        String samePackageCodePallet="";
+
+        //palletCodeExist 当前工位未关闭栈板的栈板号 2020-10-20
+        String palletCodeExist="";
 
         String cartonCode = "";
         // 栈板作业需要绑定的所有产品条码
@@ -120,6 +128,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findByPOGroup(map);
                 if(mesSfcBarcodeProcessList.size() > 1){
                     throw new BizErrorException(ErrorCodeEnum.PDA40012034,"该包箱条码不属于同个PO，不可扫码");
+                }
+                else{
+                    samePackageCode=mesSfcBarcodeProcessList.get(0).getSamePackageCode();
                 }
             }
 
@@ -182,6 +193,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 if(mesSfcBarcodeProcessList.size() > 1){
                     throw new BizErrorException(ErrorCodeEnum.PDA40012034,"该包箱条码不属于同个PO，不可扫码");
                 }
+                else {
+                    samePackageCode=mesSfcBarcodeProcessList.get(0).getSamePackageCode();
+                }
             }
 
             Map<String, Object> productCartonDetMap = new HashMap<>();
@@ -230,8 +244,12 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         int palletCartons = 0;
         for (MesSfcProductPalletDto mesSfcProductPalletDto : mesSfcProductPalletDtoList) {
             if ((requestPalletWorkScanDto.getPalletType() == 0 && mesPmWorkOrderDto.getWorkOrderId().equals(mesSfcProductPalletDto.getWorkOrderId()))
-            || (requestPalletWorkScanDto.getPalletType() == 1 && mesPmWorkOrderDto.getMaterialId().equals(mesSfcProductPalletDto.getMaterialId()))) {
+            || (requestPalletWorkScanDto.getPalletType() == 1 && mesPmWorkOrderDto.getMaterialId().equals(mesSfcProductPalletDto.getMaterialId()))
+            || requestPalletWorkScanDto.getPalletType() == 2) {
                 palletCode = mesSfcProductPalletDto.getPalletCode();
+                //当前工位未关闭栈板的栈板号 2021-10-21
+                palletCodeExist=palletCode;
+
                 nowPackageSpecQty = mesSfcProductPalletDto.getNowPackageSpecQty();
                 isPallet = false;
                 mesSfcProductPallet = mesSfcProductPalletDto;
@@ -239,6 +257,14 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 break;
             }
         }
+
+        //同一PO判断 2021-10-21
+        if(requestPalletWorkScanDto.getPalletType() == 2){
+            if(StringUtils.isNotEmpty(palletCodeExist) && StringUtils.isNotEmpty(samePackageCode)){
+
+            }
+        }
+
         // 查找条码生成规则配置，生成新的栈板码
         if (isPallet) {
             if (mesSfcProductPalletDtoList.size() >= requestPalletWorkScanDto.getMaxPalletNum()) {
