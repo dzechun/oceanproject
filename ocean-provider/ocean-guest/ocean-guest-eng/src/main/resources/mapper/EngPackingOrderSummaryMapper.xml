@@ -90,6 +90,7 @@ spos.putaway_storage_id
     bo.organization_name,
     bs.supplier_name as 'supplierName',
     spo.despatch_batch as 'despatchBatch',
+    bss.storage_code as 'putawayStorageCode',
     bss.storage_name as 'putawayStorageName'
     from eng_packing_order_summary spos
     LEFT JOIN eng_packing_order spo on spos.packing_order_id = spo.packing_order_id
