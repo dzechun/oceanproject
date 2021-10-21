@@ -244,6 +244,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             baseStorage.setModifiedUserId(currentUser.getUserId());
             baseStorage.setOrgId(currentUser.getOrganizationId());
             baseStorage.setStorageType(baseStorageImport.getStorageType().byteValue());
+            baseStorage.setMaterialStoreType(baseStorageImport.getMaterialStoreType().byteValue());
             list.add(baseStorage);
         }
 

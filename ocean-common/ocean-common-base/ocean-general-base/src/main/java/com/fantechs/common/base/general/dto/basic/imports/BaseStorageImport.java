@@ -3,6 +3,8 @@ package com.fantechs.common.base.general.dto.basic.imports;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -104,6 +106,13 @@ public class BaseStorageImport implements Serializable {
     @ApiModelProperty(name="workingAreaCode" ,value="工作区编码")
     @Excel(name = "工作区编码(必填)", height = 20, width = 30)
     private String workingAreaCode;
+
+    /**
+     * 产品存储类型(1-A类 2-B类 3-C类 4-D类)
+     */
+    @ApiModelProperty(name="materialStoreType",value = "产品存储类型(1-A类 2-B类 3-C类 4-D类)")
+    @Excel(name = "产品存储类型(1-A类 2-B类 3-C类 4-D类)", height = 20, width = 30)
+    private Integer materialStoreType;
 
     /**
      * 巷道(必填)
