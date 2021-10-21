@@ -523,8 +523,6 @@ public class StorageDistributionRuleUtils {
      * @return
      */
     private BigDecimal calculate(Long storageId,Long materialId){
-
-
         List<BaseStorage> storages = storageDistributionRuleUtils.baseStorageService.findList(ControllerUtil.dynamicCondition("storageId",storageId));
         if(storages.isEmpty()){
             throw new BizErrorException("获取库位信息失败");
