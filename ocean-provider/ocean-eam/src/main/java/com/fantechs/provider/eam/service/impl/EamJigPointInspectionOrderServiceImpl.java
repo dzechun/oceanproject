@@ -32,10 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -52,6 +49,8 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
     private EamHtJigPointInspectionOrderMapper eamHtJigPointInspectionOrderMapper;
     @Resource
     private EamJigBarcodeMapper eamJigBarcodeMapper;
+    @Resource
+    private EamJigRequisitionMapper eamJigRequisitionMapper;
     @Resource
     private EamJigPointInspectionProjectMapper eamJigPointInspectionProjectMapper;
     @Resource
@@ -135,7 +134,14 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         //修改该治具使用状态
         EamJigBarcode eamJigBarcode = new EamJigBarcode();
         eamJigBarcode.setJigBarcodeId(eamJigPointInspectionOrder.getJigBarcodeId());
-        eamJigBarcode.setUsageStatus((byte)1);
+        Map<String,Object> map = new HashMap<>();
+        map.put("jigBarcodeId",eamJigPointInspectionOrder.getJigBarcodeId());
+        map.put("requisitionStatus",1);
+        if(StringUtils.isNotEmpty(eamJigRequisitionMapper.findList(map))){
+            eamJigBarcode.setUsageStatus((byte)2);
+        }else {
+            eamJigBarcode.setUsageStatus((byte)1);
+        }
         eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
 
         return i;

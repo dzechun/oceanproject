@@ -123,6 +123,22 @@
     GROUP BY msbp.same_package_code
   </select>
 
+  <select id="findByPalletPOGroup" resultMap="BaseResultMap">
+    select msbp.same_package_code
+    from mes_sfc_product_pallet_det msppd
+    left join mes_sfc_product_pallet mspp ON msppd.product_pallet_id = mspp.product_pallet_id
+    left join mes_sfc_barcode_process msbp on msppd.work_order_barcode_id=msbp.work_order_barcode_id
+    <where>
+      <if test="productCartonId != null">
+        and mspp.product_pallet_id = #{productPalletId}
+      </if>
+      <if test="palletCode != null">
+        and mspp.pallet_code = #{palletCode}
+      </if>
+    </where>
+    GROUP BY msbp.same_package_code
+  </select>
+
   <select id="findNextProcessIsPallet" parameterType="map" resultMap="BaseResultMap">
     SELECT
       msbp.*

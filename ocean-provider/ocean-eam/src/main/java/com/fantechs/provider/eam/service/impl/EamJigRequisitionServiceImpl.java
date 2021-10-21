@@ -114,14 +114,14 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
         List<Long> jigIdList = eamJigRequisitionMapper.findJigId(ControllerUtil.dynamicConditionByEntity(searchEamJigRequisition));
 
         Example example = new Example(EamJigRequisition.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("workOrderId",oldMesPmWorkOrderDtos.get(0).getWorkOrderId());
-
         List<EamJigMaterialDto> list = new ArrayList<>();
         for (Long jigId : jigIdList) {
             EamJigMaterialDto eamJigMaterialDto = new EamJigMaterialDto();
             eamJigMaterialDto.setJigId(jigId);
             //获取记录数量
+            example.clear();
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("workOrderId",oldMesPmWorkOrderDtos.get(0).getWorkOrderId());
             criteria.andEqualTo("jigId",jigId);
             int recordQty = eamJigRequisitionMapper.selectCountByExample(example);
             eamJigMaterialDto.setRecordQty(recordQty);

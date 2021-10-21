@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -51,9 +52,6 @@ public class EngContractQtyOrderServiceImpl extends BaseService<EngContractQtyOr
 
     @Override
     public int saveByApi(EngContractQtyOrder engContractQtyOrder) {
-        //设置已发量为0 未发量=采购量
-        //engContractQtyOrder.setIssuedQty("0");
-        engContractQtyOrder.setNotIssueQty(engContractQtyOrder.getPurQty());
         Example example = new Example(EngContractQtyOrder.class);
         Example.Criteria criteria = example.createCriteria();
 //        criteria.andEqualTo("contractCode",engContractQtyOrder.getContractCode());
@@ -73,6 +71,9 @@ public class EngContractQtyOrderServiceImpl extends BaseService<EngContractQtyOr
 
         }
         else {
+            //新增设置已发量为0 未发量=采购量
+            engContractQtyOrder.setIssuedQty(new BigDecimal(0));
+            engContractQtyOrder.setNotIssueQty(engContractQtyOrder.getPurQty());
             engContractQtyOrder.setCreateTime(new Date());
             engContractQtyOrder.setCreateUserId((long) 1);
             engContractQtyOrder.setModifiedUserId((long) 1);
