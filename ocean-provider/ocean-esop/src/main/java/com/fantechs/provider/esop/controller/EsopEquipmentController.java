@@ -68,10 +68,17 @@ public class EsopEquipmentController {
         return  ControllerUtil.returnDataSuccess(esopEquipment,StringUtils.isEmpty(esopEquipment)?0:1);
     }
 
-    @ApiOperation("通过IP获取详情")
+/*    @ApiOperation("通过IP获取详情")
     @GetMapping("/detailByIp")
     public ResponseEntity<EsopEquipment> detailByIp(@ApiParam(value = "ip",required = true) @RequestParam  @NotNull(message="id不能为空") String ip) {
         EsopEquipment  esopEquipment = esopEquipmentService.detailByIp(ip);
+        return  ControllerUtil.returnDataSuccess(esopEquipment,StringUtils.isEmpty(esopEquipment)?0:1);
+    }*/
+
+    @ApiOperation("通过IP获取详情")
+    @GetMapping("/detailByMacAddress")
+    public ResponseEntity<EsopEquipment> detailByMacAddress(@ApiParam(value = "MacAddress",required = true) @RequestParam  @NotNull(message="id不能为空") String macAddress) {
+        EsopEquipment  esopEquipment = esopEquipmentService.detailByMacAddress(macAddress);
         return  ControllerUtil.returnDataSuccess(esopEquipment,StringUtils.isEmpty(esopEquipment)?0:1);
     }
 

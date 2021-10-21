@@ -682,6 +682,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
+        SysUser sysUser = currentUser();
+        searchWmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
         return wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder);
     }
     /**
@@ -1135,24 +1137,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsOutDespatchOrderReJos.add(wms);
         }
 
-        //领料出库回传接口（五环） 发运之前调用 回传数量=拣货-发运数量 开始
-        //获取程序配置项
-        if(orderTypeId==(byte)8) {
-            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-            if (itemListFiveRing.size() < 1) {
-                throw new BizErrorException("配置项 FiveRing 获取失败");
-            }
-            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if ("1".equals(sysSpecItem.getParaValue())) {
-                WmsInnerJobOrder wmsInnerJobOrderIssue=new WmsInnerJobOrder();
-                wmsInnerJobOrderIssue.setJobOrderId(outDeliveryOrderId);
-                engFeignApi.reportIssueDetails(wmsInnerJobOrderIssue);
-            }
-        }
-        //领料出库回传接口（五环） 发运之前调用 回传数量=拣货-发运数量 结束
-
         if(wmsInnerJobOrders.size()>0){
             this.pickDisQty(wmsInnerJobOrders);
         }
@@ -1170,6 +1154,24 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         if(rs.getCode()!=0){
             throw new BizErrorException(rs.getMessage());
         }
+
+        //领料出库回传接口（五环） 发运调用 回传数量=发运数量 开始
+        //获取程序配置项
+        if(orderTypeId==(byte)8) {
+            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+            if (itemListFiveRing.size() < 1) {
+                throw new BizErrorException("配置项 FiveRing 获取失败");
+            }
+            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+            if ("1".equals(sysSpecItem.getParaValue())) {
+                WmsInnerJobOrder wmsInnerJobOrderIssue=new WmsInnerJobOrder();
+                wmsInnerJobOrderIssue.setJobOrderId(outDeliveryOrderId);
+                engFeignApi.reportIssueDetails(wmsInnerJobOrderIssue);
+            }
+        }
+        //领料出库回传接口（五环） 发运之前调用 回传数量=发运数量 结束
 
         return 1;
     }
@@ -1421,6 +1423,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     this.subtract(wmsInnerJobOrder,wmsInnerJobOrderDetDto,3,null);
                 }
             }else {
+                InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,wmsInPutawayOrderDet,getInvQty(wmsInPutawayOrderDet.getJobOrderDetId(),wmsInPutawayOrderDet.getActualQty()),wmsInPutawayOrderDet.getActualQty(),(byte)4,(byte)2);
                 wmsIn.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInPutawayOrderDet.getActualQty()));
                 wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsIn);
             }

@@ -497,6 +497,15 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             }
             ws.setWorkEndtTime(new Date());
 
+        } else {
+            ws.setOrderStatus((byte) 4);
+            if (StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())) {
+                ws.setWorkStartTime(new Date());
+            }
+        }
+        num += wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
+
+        if(oCount == count){
             //回传接口（五环）
             //获取程序配置项
             SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
@@ -509,18 +518,13 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             if("1".equals(sysSpecItem.getParaValue())) {
                 //返写移位接口（五环）
                 if(wmsInnerJobOrderDto.getJobOrderType()==2){
+                    ws.setOption1(baseStorage.getOption1());//baseStorage
                     engFeignApi.reportInnerJobOrder(ws);
                 }
             }
             //回传结束
-
-        } else {
-            ws.setOrderStatus((byte) 4);
-            if (StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())) {
-                ws.setWorkStartTime(new Date());
-            }
         }
-        num += wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
+
         return num;
     }
 

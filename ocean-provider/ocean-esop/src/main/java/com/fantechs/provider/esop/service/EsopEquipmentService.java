@@ -19,7 +19,9 @@ public interface EsopEquipmentService extends IService<EsopEquipment> {
 
     int batchUpdate(List<EsopEquipment> list);
 
-    EsopEquipment detailByIp(String ip);
+ //   EsopEquipment detailByIp(String ip);
+
+    EsopEquipment detailByMacAddress(String macAddress);
 
     List<EsopEquipmentDto> findNoGroup(Map<String, Object> map);
 

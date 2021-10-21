@@ -103,4 +103,19 @@
     SELECT sum(actual_qty) FROM wms_inner_job_order_det
     WHERE org_id=#{orgId} AND order_status=3 and material_id=#{materialId} and in_storage_id=#{storageId}
   </select>
+
+  <select id="wmsList" resultType="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory">
+    SELECT storage_id as storageId,material_id as materialId,sum(packing_qty) as packingQty
+    FROM wms_inner_inventory
+    <where>
+      org_id=#{orgId}
+        <if test="_parameter.containsKey('storageId')">
+          and storage_id=#{storageId}
+        </if>
+        <if test="_parameter.containsKey('materialId')">
+          and material_id = #{materialId}
+        </if>
+    </where>
+    GROUP BY material_id
+  </select>
 </mapper>

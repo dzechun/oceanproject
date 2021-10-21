@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.BaseWorkingArea;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPlatform;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStorageCapacity;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -216,5 +217,12 @@ public class BaseStorageCapacityServiceImpl extends BaseService<BaseStorageCapac
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
         return baseStorageCapacityMapper.putJobQty(map);
+    }
+
+    @Override
+    public List<WmsInnerInventory> wmsList(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
+        return baseStorageCapacityMapper.wmsList(map);
     }
 }

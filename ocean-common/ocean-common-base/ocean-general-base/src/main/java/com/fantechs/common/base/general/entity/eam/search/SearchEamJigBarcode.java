@@ -57,4 +57,10 @@ public class SearchEamJigBarcode extends BaseQuery implements Serializable {
     @ApiModelProperty(name="ifGroup",value = "是否按治具id分组（0-否 1-是）")
     private Integer ifGroup;
 
+    /**
+     * 工单ID
+     */
+    @ApiModelProperty(name="workOrderId",value = "工单ID")
+    private Long workOrderId;
+
 }

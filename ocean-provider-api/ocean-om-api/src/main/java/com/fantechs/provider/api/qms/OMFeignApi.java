@@ -1,13 +1,14 @@
 package com.fantechs.provider.api.qms;
 
-import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
-import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
-import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
-import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
+import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -59,6 +60,10 @@ public interface OMFeignApi {
     @ApiOperation("获取采购单明细物料ID")
     @PostMapping("/omPurchaseOrder/findPurchaseMaterial")
     ResponseEntity<Long> findPurchaseMaterial(@ApiParam(value = "purchaseOrderCode",required = true)@RequestParam String purchaseOrderCode);
+
+    @ApiOperation("采购订单明细列表")
+    @PostMapping("/omPurchaseOrderDet/findList")
+    ResponseEntity<List<OmPurchaseOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmPurchaseOrderDet searchOmPurchaseOrderDet);
 
     @ApiOperation("修改单据状态")
     @PostMapping("/omTransferOrder/updateStatus")

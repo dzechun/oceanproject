@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -322,8 +323,16 @@ public class StorageDistributionRuleUtils {
                     }
                 }else {
 
+                    if("base_storage_capacity".equals(itemList.get(0).getParaValue())){
+                        BigDecimal totalQty = storageDistributionRuleUtils.calculate(storageRuleDto.getStorageId(),materialId);
+                        if(StringUtils.isNotEmpty(totalQty) && totalQty.compareTo(BigDecimal.ZERO)==1){
+                            storageRuleDto.setPutawayQty(totalQty);
+                            list.add(storageRuleDto);
+                        }
+                    }
+
                     //库容规则
-                    if ("base_storage_capacity".equals(itemList.get(0).getParaValue())) {
+                    if ("1base_storage_capacity".equals(itemList.get(0).getParaValue())) {
                         //通过库位获取库位储存类型A、B、C、D类
                         //再通过物料获取A、B、C、D类库容
                         List<BaseStorage> storages = storageDistributionRuleUtils.baseStorageService.findList(ControllerUtil.dynamicCondition("storageId",storageRuleDto.getStorageId()));
@@ -341,6 +350,11 @@ public class StorageDistributionRuleUtils {
                         if(StringUtils.isEmpty(totalQty)){
                             totalQty = BigDecimal.ZERO;
                         }
+
+
+
+                        //混放 A 货品可存放数量 = 单个货品库存数/库容数量*A货品
+
                         if(baseStorageCapacities.size()>0) {
                             if (StringUtils.isNotEmpty(storages.get(0).getMaterialStoreType())) {
                                 switch (storages.get(0).getMaterialStoreType()) {
@@ -501,5 +515,98 @@ public class StorageDistributionRuleUtils {
             return list1;
         }
         return list;
+    }
+
+
+    /**
+     * 库容比例计算
+     * @return
+     */
+    private BigDecimal calculate(Long storageId,Long materialId){
+        List<BaseStorage> storages = storageDistributionRuleUtils.baseStorageService.findList(ControllerUtil.dynamicCondition("storageId",storageId));
+        if(storages.isEmpty()){
+            throw new BizErrorException("获取库位信息失败");
+        }
+        List<BaseStorageCapacity> baseStorageCapacities = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("materialId",materialId));
+
+        //查询库位下的所以货品及数量
+        List<WmsInnerInventory> wmsInnerInventories = storageDistributionRuleUtils.baseStorageCapacityService.wmsList(ControllerUtil.dynamicCondition("storageId",storageId));
+        //
+        //已知货品A在A仓库可以放10个货品B在A仓库可以放20个 现A仓库有货品A 5个 货品B 4个 求货品A跟货品B还可以在仓库A各存放多少个
+        //B货品可存放量 = 5/10*20=10 20-10=10    A货品可存放量 = 4/20*10=2
+        //可存放数量
+        BigDecimal totalQty = BigDecimal.ZERO;
+        if(baseStorageCapacities.size()>0) {
+            if (StringUtils.isNotEmpty(storages.get(0).getMaterialStoreType())) {
+
+                BigDecimal TypeCapacity = BigDecimal.ZERO;
+                Byte type = null;
+                switch (storages.get(0).getMaterialStoreType()){
+                    case 1:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeACapacity())) {
+                            throw new BizErrorException("未维护A类容量");
+                        }
+                        TypeCapacity = baseStorageCapacities.get(0).getTypeACapacity();
+                        type = 1;
+                        break;
+                    case 2:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeBCapacity())) {
+                            throw new BizErrorException("未维护B类容量");
+                        }
+                        TypeCapacity = baseStorageCapacities.get(0).getTypeBCapacity();
+                        type = 2;
+                        break;
+                    case 3:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeCCapacity())) {
+                            throw new BizErrorException("未维护C类容量");
+                        }
+                        TypeCapacity = baseStorageCapacities.get(0).getTypeCCapacity();
+                        type = 3;
+                        break;
+                    case 4:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeDCapacity())) {
+                            throw new BizErrorException("未维护D类容量");
+                        }
+                        TypeCapacity = baseStorageCapacities.get(0).getTypeDCapacity();
+                        type = 4;
+                        break;
+                }
+
+                if(wmsInnerInventories.size()>0){
+                    BigDecimal qty = baseStorageCapacities.get(0).getTypeACapacity();
+                    for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
+                        if(!Objects.equals(wmsInnerInventory.getMaterialId(), materialId)){
+                            //转换数量
+                            //查询该货品库容
+                            List<BaseStorageCapacity> shiftStorageCapacity = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("materialId",wmsInnerInventory.getMaterialId()));
+                            BigDecimal shiftCapacity = BigDecimal.ZERO;
+                            if(type==1){
+                                shiftCapacity = shiftStorageCapacity.get(0).getTypeACapacity();
+                            }else if(type==2){
+                                shiftCapacity = shiftStorageCapacity.get(0).getTypeBCapacity();
+                            }else if(type==3){
+                                shiftCapacity = shiftStorageCapacity.get(0).getTypeCCapacity();
+                            }else if(type==4){
+                                shiftCapacity = shiftStorageCapacity.get(0).getTypeDCapacity();
+                            }
+                            //库存数/转换货品库容*货品库容
+                            BigDecimal a = wmsInnerInventory.getPackingQty().divide(shiftCapacity).multiply(TypeCapacity);
+                            //四舍五入取整数
+                            a = a.setScale(0, BigDecimal.ROUND_HALF_UP);
+                            qty = qty.subtract(a);
+                        }else {
+                            qty = qty.subtract(wmsInnerInventory.getPackingQty());
+                        }
+                    }
+                    if(qty.compareTo(BigDecimal.ZERO)==1){
+                        totalQty = qty;
+                    }
+                }else {
+                    totalQty = baseStorageCapacities.get(0).getTypeACapacity();
+                }
+            }
+        }
+
+        return totalQty;
     }
 }

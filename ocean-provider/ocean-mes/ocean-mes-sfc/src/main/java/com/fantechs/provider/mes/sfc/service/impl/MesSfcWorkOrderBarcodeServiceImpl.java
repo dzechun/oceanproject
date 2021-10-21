@@ -150,7 +150,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             }
 
             PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(ControllerUtil.dynamicCondition("labelCode",labelRuteDto.getLabelCode(),"id",mesSfcWorkOrderBarcode.getWorkOrderId()));
-            printModel.setSize(labelRuteDto.getOncePrintQty());
+            printModel.setSize(1);
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
             }
@@ -226,7 +226,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         searchMesPmWorkOrder.setWorkOrderId(workOrderId);
         MesPmWorkOrderDto mesPmWorkOrder = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
         if(StringUtils.isEmpty(mesPmWorkOrder.getBarcodeRuleSetId())){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404,"工单未绑定条码规则");
+            throw new BizErrorException("工单未绑定条码规则");
         }
         //查询物料是否绑定标签模版
         SearchBaseLabelMaterial searchBaseLabelMaterial = new SearchBaseLabelMaterial();

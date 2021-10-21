@@ -1546,7 +1546,7 @@ public class BarcodeUtils {
             }
             else {
                 MesPmProductionKeyIssuesOrder mesPmProductionKeyIssuesOrder = PmPKIOList.getData().get(0);
-                if (!"2".equals(mesPmProductionKeyIssuesOrder.getOrderStatus())) {
+                if (mesPmProductionKeyIssuesOrder.getOrderStatus()!=(byte)2) {
                     throw new Exception("工单产前关键事项未完成");
                 }
             }
