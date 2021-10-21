@@ -214,6 +214,12 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             if(StringUtils.isNotEmpty(baseSignatures)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
             }
+
+            //删除供应商同时删除供应商与用户绑定关系
+            Example example1 = new Example(BaseSupplierReUser.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("supplierId",baseSupplier.getSupplierId());
+            baseSupplierReUserMapper.deleteByExample(example1);
         }
         i = baseSupplierMapper.deleteByIds(ids);
         return i;

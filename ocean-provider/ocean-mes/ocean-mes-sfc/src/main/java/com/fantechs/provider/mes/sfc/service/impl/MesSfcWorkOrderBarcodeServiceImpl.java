@@ -152,44 +152,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
             }
-//            if(labelRuteDto.getBarcodeType()==(byte)1 &&printType==(byte)1){
-//                //生成条码过站记录
-//                MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
-//                mesSfcBarcodeProcess.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
-//                mesSfcBarcodeProcess.setWorkOrderCode(mesSfcWorkOrderBarcode.getWorkOrderCode());
-//                mesSfcBarcodeProcess.setWorkOrderBarcodeId(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
-//                mesSfcBarcodeProcess.setBarcodeType((byte)2);
-//                mesSfcBarcodeProcess.setBarcode(mesSfcWorkOrderBarcode.getBarcode());
-//
-//                SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-//                searchMesPmWorkOrder.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
-//                MesPmWorkOrderDto mesPmWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
-//
-//                mesSfcBarcodeProcess.setProLineId(mesPmWorkOrderDto.getProLineId());
-//                mesSfcBarcodeProcess.setProcessCode(mesPmWorkOrderDto.getProCode());
-//                mesSfcBarcodeProcess.setMaterialId(mesPmWorkOrderDto.getMaterialId());
-//                mesSfcBarcodeProcess.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
-//                mesSfcBarcodeProcess.setMaterialName(mesPmWorkOrderDto.getMaterialName());
-//                mesSfcBarcodeProcess.setMaterialVer(mesPmWorkOrderDto.getMaterialVersion());
-//                mesSfcBarcodeProcess.setRouteId(mesPmWorkOrderDto.getRouteId());
-//                mesSfcBarcodeProcess.setRouteCode(mesPmWorkOrderDto.getRouteCode());
-//                mesSfcBarcodeProcess.setRouteName(mesPmWorkOrderDto.getRouteName());
-//
-//                //查询工艺路线
-//                ResponseEntity<List<BaseRouteProcess>> responseEntity = baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
-//                if(responseEntity.getCode()!=0){
-//                    throw new BizErrorException("工艺路线查询失败");
-//                }
-//                mesSfcBarcodeProcess.setProcessId(responseEntity.getData().get(0).getProcessId());
-//                mesSfcBarcodeProcess.setProcessName(responseEntity.getData().get(0).getProcessName());
-//                mesSfcBarcodeProcess.setNextProcessId(responseEntity.getData().get(0).getProcessId());
-//                mesSfcBarcodeProcess.setNextProcessName(responseEntity.getData().get(0).getProcessName());
-//                mesSfcBarcodeProcess.setSectionId(responseEntity.getData().get(0).getSectionId());
-//                mesSfcBarcodeProcess.setSectionName(responseEntity.getData().get(0).getSectionName());
-//                if(mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess)<1){
-//                    throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(),"条码过站失败");
-//                }
-//            }
             mesSfcWorkOrderBarcode.setBarcodeStatus((byte)0);
             mesSfcWorkOrderBarcode.setPrintTime(new Date());
             this.update(mesSfcWorkOrderBarcode);
