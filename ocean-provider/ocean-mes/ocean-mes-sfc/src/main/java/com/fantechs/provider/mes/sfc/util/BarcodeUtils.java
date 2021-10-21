@@ -124,9 +124,9 @@ public class BarcodeUtils {
         MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = checkBarcodeStatus(record.getBarCode(), record.getWorkOrderId());
 
         // 2、判断条码流程是否正确（流程表）
-        if (record.getProcessId() != null) {
-            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
-        }
+//        if (record.getProcessId() != null) {
+//            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
+//        }
 
         // 3、系统检查条码工单状态是否正确（工单表）
         if (mesSfcWorkOrderBarcodeDto.getWorkOrderId() != null) {
@@ -764,7 +764,13 @@ public class BarcodeUtils {
 
                 //标准条码流程检查
                 CheckProductionDto checkProductionDto=new CheckProductionDto();
-                checkProductionDto.setBarCode(restapiChkSNRoutingApiDto.getBarcodeCode());
+                if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getBarcodeCode())){
+                    checkProductionDto.setBarCode(restapiChkSNRoutingApiDto.getBarcodeCode());
+                }
+                else if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getPartBarcode())){
+                    checkProductionDto.setBarCode(restapiChkSNRoutingApiDto.getPartBarcode());
+                }
+                //checkProductionDto.setBarCode(restapiChkSNRoutingApiDto.getBarcodeCode());
                 checkProductionDto.setWorkOrderId(updateProcessDto.getWorkOrderId());
                 checkProductionDto.setProcessId(updateProcessDto.getNowProcessId());
 
@@ -860,7 +866,14 @@ public class BarcodeUtils {
 
             //标准条码流程检查
             CheckProductionDto checkProductionDto=new CheckProductionDto();
-            checkProductionDto.setBarCode(restapiSNDataTransferApiDto.getBarCode());
+            if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getBarCode())){
+                checkProductionDto.setBarCode(restapiSNDataTransferApiDto.getBarCode());
+            }
+            else if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getPartBarcode())){
+                checkProductionDto.setBarCode(restapiSNDataTransferApiDto.getPartBarcode());
+            }
+            //checkProductionDto.setBarCode(restapiSNDataTransferApiDto.getBarCode());
+
             checkProductionDto.setWorkOrderId(updateProcessDto.getWorkOrderId());
             checkProductionDto.setProcessId(updateProcessDto.getNowProcessId());
             checkSN(checkProductionDto);
@@ -1779,6 +1792,7 @@ public class BarcodeUtils {
                 mesSfcBarcodeProcess.setRouteId(mesPmWorkOrderDto.getRouteId());
                 mesSfcBarcodeProcess.setRouteCode(mesPmWorkOrderDto.getRouteCode());
                 mesSfcBarcodeProcess.setRouteName(mesPmWorkOrderDto.getRouteName());
+                mesSfcBarcodeProcess.setOrgId(orgId);
 
                 //查询工艺路线
                 ResponseEntity<List<BaseRouteProcess>> res = barcodeUtils.baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());

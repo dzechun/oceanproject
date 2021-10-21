@@ -25,6 +25,13 @@ public interface MesSfcBarcodeProcessService extends IService<MesSfcBarcodeProce
     List<MesSfcBarcodeProcess> findByPOGroup(Map<String, Object> map);
 
     /**
+     * 按PO分组找栈板PO
+     * @param map
+     * @return
+     */
+    List<MesSfcBarcodeProcess> findByPalletPOGroup(Map<String, Object> map);
+
+    /**
      * 查找下一道工序为栈板作业的记录
      * @param map
      * @return
