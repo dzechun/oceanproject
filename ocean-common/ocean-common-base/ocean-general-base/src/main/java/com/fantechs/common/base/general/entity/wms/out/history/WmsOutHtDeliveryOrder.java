@@ -240,6 +240,14 @@ public class WmsOutHtDeliveryOrder extends ValidGroup implements Serializable {
     private Byte orderStatus;
 
     /**
+     * 审核状态(0-未审核 1-已审核)
+     */
+    @ApiModelProperty(name="auditStatus",value = "审核状态(0-未审核 1-已审核)")
+    @Excel(name = "审核状态(0-未审核 1-已审核)", height = 20, width = 30,orderNum="19")
+    @Column(name = "audit_status")
+    private Byte auditStatus;
+
+    /**
      * 是否有效（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "是否有效（0、无效 1、有效）")
