@@ -34,7 +34,7 @@
     <result column="part_material_code" jdbcType="VARCHAR" property="partMaterialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="material_ersion" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="sub_material_code" jdbcType="VARCHAR" property="subMaterialCode"/>
     <result column="process_name" jdbcType="VARCHAR" property="processName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>

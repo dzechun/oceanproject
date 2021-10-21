@@ -307,7 +307,6 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      * 物料规格
      */
     @ApiModelProperty(name = "materialDesc",value = "物料规格")
-    @Excel(name = "物料规格", height = 20, width = 30,orderNum="")
     @Column(name = "material_desc")
     private String materialDesc;
 

@@ -203,7 +203,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                 searchMesPmWorkOrderBom.setProcessId(mesPmWorkOrderDto.getPutIntoProcessId());
                 ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
                 if (StringUtils.isEmpty(responseEntityBom.getData())) {
-                    throw new BizErrorException("当前工序找不到成品条码与半成品条码的关系");
+                    throw new BizErrorException("当前工单与半成品序列号不匹配");
                 }
             }
         }

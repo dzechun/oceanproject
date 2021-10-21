@@ -764,7 +764,13 @@ public class BarcodeUtils {
 
                 //标准条码流程检查
                 CheckProductionDto checkProductionDto=new CheckProductionDto();
-                checkProductionDto.setBarCode(restapiChkSNRoutingApiDto.getBarcodeCode());
+                if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getBarcodeCode())){
+                    checkProductionDto.setBarCode(restapiChkSNRoutingApiDto.getBarcodeCode());
+                }
+                else if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getPartBarcode())){
+                    checkProductionDto.setBarCode(restapiChkSNRoutingApiDto.getPartBarcode());
+                }
+                //checkProductionDto.setBarCode(restapiChkSNRoutingApiDto.getBarcodeCode());
                 checkProductionDto.setWorkOrderId(updateProcessDto.getWorkOrderId());
                 checkProductionDto.setProcessId(updateProcessDto.getNowProcessId());
 
@@ -860,7 +866,14 @@ public class BarcodeUtils {
 
             //标准条码流程检查
             CheckProductionDto checkProductionDto=new CheckProductionDto();
-            checkProductionDto.setBarCode(restapiSNDataTransferApiDto.getBarCode());
+            if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getBarCode())){
+                checkProductionDto.setBarCode(restapiSNDataTransferApiDto.getBarCode());
+            }
+            else if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getPartBarcode())){
+                checkProductionDto.setBarCode(restapiSNDataTransferApiDto.getPartBarcode());
+            }
+            //checkProductionDto.setBarCode(restapiSNDataTransferApiDto.getBarCode());
+
             checkProductionDto.setWorkOrderId(updateProcessDto.getWorkOrderId());
             checkProductionDto.setProcessId(updateProcessDto.getNowProcessId());
             checkSN(checkProductionDto);

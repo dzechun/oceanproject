@@ -721,7 +721,15 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             }
             //获取当前组织生成的
             //true
+            boolean isExist = false;
             if(asnMap.containsKey(sysUser.getOrganizationId().toString())){
+                Long asnOrderId = Long.parseLong(asnMap.get(sysUser.getOrganizationId().toString()));
+                WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectOneByExample(asnOrderId);
+                if(StringUtils.isNotEmpty(wmsInAsnOrder)){
+                    isExist=true;
+                }
+            }
+            if(isExist){
                 Long asnOrderId = Long.parseLong(asnMap.get(sysUser.getOrganizationId().toString()));
                 WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
                 if(StringUtils.isEmpty(wmsInAsnOrder)){

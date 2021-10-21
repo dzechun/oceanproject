@@ -49,10 +49,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -121,6 +118,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             throw new BizErrorException("请设置打印机名称");
         }
         String[] arrId = ids.split(",");
+        Map<Long,PrintDto> map = new HashMap<>();
         for (String s : arrId) {
             //查询模版信息
             MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = mesSfcWorkOrderBarcodeMapper.selectByPrimaryKey(s);
@@ -196,14 +194,26 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             mesSfcWorkOrderBarcode.setPrintTime(new Date());
             this.update(mesSfcWorkOrderBarcode);
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
-            PrintDto printDto = new PrintDto();
-            printDto.setLabelName(labelRuteDto.getLabelName()+".btw");
-            printDto.setLabelVersion(labelRuteDto.getLabelVersion());
-            printDto.setPrintName(printName);
-            List<PrintModel> printModelList = new ArrayList<>();
-            printModelList.add(printModel);
-            printDto.setPrintModelList(printModelList);
-            rabbitProducer.sendPrint(printDto);
+
+            if(map.containsKey(mesSfcWorkOrderBarcode.getWorkOrderId())){
+                PrintDto printDto = map.get(mesSfcWorkOrderBarcode.getWorkOrderId());
+                List<PrintModel> printModelList = printDto.getPrintModelList();
+                printModelList.add(printModel);
+                map.put(mesSfcWorkOrderBarcode.getWorkOrderId(),printDto);
+            }else {
+                PrintDto printDto = new PrintDto();
+                printDto.setLabelName(labelRuteDto.getLabelName()+".btw");
+                printDto.setLabelVersion(labelRuteDto.getLabelVersion());
+                printDto.setPrintName(printName);
+                List<PrintModel> printModelList = new ArrayList<>();
+                printModelList.add(printModel);
+                printDto.setPrintModelList(printModelList);
+                map.put(mesSfcWorkOrderBarcode.getWorkOrderId(),printDto);
+            }
+
+        }
+        for (Map.Entry<Long, PrintDto> m : map.entrySet()) {
+            rabbitProducer.sendPrint(m.getValue());
         }
         return 1;
     }
