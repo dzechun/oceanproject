@@ -41,4 +41,10 @@ public class SearchBaseProductYield extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="proLineId",value = "产线id")
     private Long proLineId;
+
+    /**
+     * 物料id
+     */
+    @ApiModelProperty(name="materialCode",value = "物料id")
+    private String materialId;
 }

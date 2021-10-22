@@ -20,7 +20,7 @@ public class BaseProductYieldDto extends BaseProductYield implements Serializabl
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="5")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="8")
     private String createUserName;
 
     /**
@@ -28,7 +28,7 @@ public class BaseProductYieldDto extends BaseProductYield implements Serializabl
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="7")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="10")
     private String modifiedUserName;
 
     /**
@@ -36,6 +36,33 @@ public class BaseProductYieldDto extends BaseProductYield implements Serializabl
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30,orderNum="10")
     private String organizationName;
+
+    /**
+     * 产线名称
+     */
+    @ApiModelProperty(name="proName",value = "产线名称")
+    @Excel(name = "产线名称", height = 20, width = 30,orderNum="2")
+    private String proName;
+
+    /**
+     * 产品料号
+     */
+    @ApiModelProperty(name="materialId",value = "产品料号")
+    @Excel(name = "产品料号", height = 20, width = 30,orderNum="3")
+    private Long materialId;
+
+    /**
+     * 产品名称
+     */
+    @ApiModelProperty(name="materialName",value = "产品名称")
+    @Excel(name = "产品名称", height = 20, width = 30,orderNum="4")
+    private Long materialName;
+
+    /**
+     * 工序名称
+     */
+    @ApiModelProperty(name="processName",value = "工序名称")
+    @Excel(name = "工序名称", height = 20, width = 30,orderNum="5")
+    private Long processName;
 }

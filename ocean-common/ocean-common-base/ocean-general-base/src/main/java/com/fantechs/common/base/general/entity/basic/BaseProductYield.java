@@ -29,7 +29,6 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 产品良率设置ID
      */
     @ApiModelProperty(name="productYieldId",value = "产品良率设置ID")
-    @Excel(name = "产品良率设置ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "product_yield_id")
     private Long productYieldId;
@@ -38,7 +37,6 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 产线ID
      */
     @ApiModelProperty(name="proLineId",value = "产线ID")
-    @Excel(name = "产线ID", height = 20, width = 30,orderNum="") 
     @Column(name = "pro_line_id")
     private Long proLineId;
 
@@ -46,7 +44,6 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="") 
     @Column(name = "material_id")
     private Long materialId;
 
@@ -54,7 +51,6 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 工序ID
      */
     @ApiModelProperty(name="processId",value = "工序ID")
-    @Excel(name = "工序ID", height = 20, width = 30,orderNum="") 
     @Column(name = "process_id")
     private Long processId;
 
@@ -62,7 +58,7 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 停线良率
      */
     @ApiModelProperty(name="productlineStopYield",value = "停线良率")
-    @Excel(name = "停线良率", height = 20, width = 30,orderNum="") 
+    @Excel(name = "停线良率", height = 20, width = 30,orderNum="6")
     @Column(name = "productline_stop_yield")
     private BigDecimal productlineStopYield;
 
@@ -70,7 +66,7 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 预警良率
      */
     @ApiModelProperty(name="warningYield",value = "预警良率")
-    @Excel(name = "预警良率", height = 20, width = 30,orderNum="") 
+    @Excel(name = "预警良率", height = 20, width = 30,orderNum="7")
     @Column(name = "warning_yield")
     private BigDecimal warningYield;
 
@@ -78,7 +74,7 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 良率类别(1-通用 2-产线 3-料号)
      */
     @ApiModelProperty(name="yieldType",value = "良率类别(1-通用 2-产线 3-料号)")
-    @Excel(name = "良率类别(1-通用 2-产线 3-料号)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "良率类别(1-通用 2-产线 3-料号)", height = 20, width = 30,orderNum="1")
     @Column(name = "yield_type")
     private Byte yieldType;
 
@@ -88,7 +84,6 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -96,7 +91,6 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -104,7 +98,7 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -113,7 +107,6 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -121,7 +114,7 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -130,7 +123,6 @@ public class BaseProductYield extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 
