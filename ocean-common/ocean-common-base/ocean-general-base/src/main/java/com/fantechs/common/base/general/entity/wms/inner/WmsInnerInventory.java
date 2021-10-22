@@ -4,15 +4,11 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -139,7 +135,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 包装数量
      */
     @ApiModelProperty(name="packingQty",value = "包装数量")
-    @Excel(name = "包装数量", height = 20, width = 30,orderNum="15")
+    @Excel(name = "包装数量", height = 20, width = 30,type=10,numFormat="0.000",orderNum="15")
     @Column(name = "packing_qty")
     private BigDecimal packingQty;
 
@@ -147,7 +143,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 库存总数
      */
     @ApiModelProperty(name="inventoryTotalQty",value = "库存总数")
-    @Excel(name = "库存总数", height = 20, width = 30,orderNum="16")
+    @Excel(name = "库存总数", height = 20, width = 30,type=10,numFormat="0.000",orderNum="16")
     @Column(name = "inventory_total_qty")
     private BigDecimal inventoryTotalQty;
 
@@ -337,12 +333,16 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     @Column(name = "purchase_req_order_code")
     private String purchaseReqOrderCode;
 
+    @Excel(name = "装置号", height = 20, width = 30,orderNum="38")
     private String option1;
 
+    @Excel(name = "主项号", height = 20, width = 30,orderNum="39")
     private String option2;
 
+    @Excel(name = "材料用途", height = 20, width = 30,orderNum="40")
     private String option3;
 
+    @Excel(name = "位号", height = 20, width = 30,orderNum="41")
     private String option4;
 
     private String option5;

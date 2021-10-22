@@ -32,6 +32,10 @@ public interface EsopFeignApi {
     @GetMapping("/esopEquipment/detailByIp")
     ResponseEntity<EsopEquipment> detailByIp(@ApiParam(value = "ip",required = true) @RequestParam @NotNull(message="id不能为空") String ip);
 
+    @ApiOperation("通过物理地址获取详情")
+    @GetMapping("/esopEquipment/detailByMacAddress")
+    ResponseEntity<EsopEquipment> detailByMacAddress(@ApiParam(value = "ip",required = true) @RequestParam @NotNull(message="id不能为空") String macAddress);
+
     @ApiOperation("查询设备列表")
     @PostMapping("/esopEquipment/findByMac")
     ResponseEntity<List<EsopEquipmentDto>> findByMac(@RequestParam(value = "mac") Object mac, @RequestParam(value = "orgId") Long orgId);

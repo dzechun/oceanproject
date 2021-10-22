@@ -2,12 +2,9 @@ package com.fantechs.common.base.general.dto.eng;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -298,9 +295,9 @@ public class EngPackingOrderTakeSummaryDetDto implements Serializable {
      * 上架库位
      */
     @Transient
-    @ApiModelProperty(name = "putawayStorageName",value = "上架库位")
+    @ApiModelProperty(name = "putawayStorageCode",value = "上架库位")
     @Excel(name = "上架库位", height = 20, width = 30)
-    private String putawayStorageName;
+    private String putawayStorageCode;
 
     /**
      * 取消数量
