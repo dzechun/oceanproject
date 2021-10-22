@@ -263,7 +263,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if(StringUtils.isNotEmpty(palletCodeExist) && StringUtils.isNotEmpty(samePackageCode)){
                 Map<String, Object> PalletMap = new HashMap<>();
                 PalletMap.put("palletCode",palletCodeExist );
-                List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findByPOGroup(PalletMap);
+                List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findByPalletPOGroup(PalletMap);
                 if(mesSfcBarcodeProcessList.size() > 0){
                     samePackageCodePallet= mesSfcBarcodeProcessList.get(0).getSamePackageCode();
                     if(StringUtils.isNotEmpty(samePackageCodePallet) && samePackageCodePallet.equals(samePackageCode)==false){
