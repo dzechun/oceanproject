@@ -171,6 +171,9 @@
     <if test="auditStatus!=null">
       and wodo.audit_status = #{auditStatus}
     </if>
+    <if test="option1!=null and option1!=''">
+      and wodo.option1 =#{option1}
+    </if>
     </where>
     order by wodo.create_time desc
   </select>

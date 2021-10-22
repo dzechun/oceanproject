@@ -8,10 +8,7 @@ import com.fantechs.common.base.general.dto.eam.*;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
-import com.fantechs.common.base.general.entity.eam.EamJigPointInspectionOrder;
-import com.fantechs.common.base.general.entity.eam.EamJigPointInspectionOrderDet;
-import com.fantechs.common.base.general.entity.eam.EamJigPointInspectionProjectItem;
+import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigPointInspectionOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspectionOrder;
@@ -43,6 +40,8 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
 
     @Resource
     private EamJigPointInspectionOrderMapper eamJigPointInspectionOrderMapper;
+    @Resource
+    private EamJigMaintainOrderMapper eamJigMaintainOrderMapper;
     @Resource
     private EamJigPointInspectionOrderDetMapper eamJigPointInspectionOrderDetMapper;
     @Resource
@@ -100,7 +99,6 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
             throw new BizErrorException("已存在该治具待点检状态的单据");
         }
 
-
         //保存点检单信息
         EamJigPointInspectionOrder eamJigPointInspectionOrder = new EamJigPointInspectionOrder();
         List<EamJigPointInspectionOrderDetDto> eamJigPointInspectionOrderDetList = new ArrayList<>();
@@ -154,6 +152,15 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(user)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Example example = new Example(EamJigMaintainOrder.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("jigBarcodeId",record.getJigBarcodeId())
+                .andEqualTo("orderStatus",1);
+        EamJigMaintainOrder eamJigMaintainOrder = eamJigMaintainOrderMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(eamJigMaintainOrder)){
+            throw new BizErrorException("保养与点检不能同时进行");
         }
 
         //报废无法新增点检单

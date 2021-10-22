@@ -128,14 +128,16 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
         searchSysDefaultCustomFormDet.setCustomFormCode(sysCustomForm.getCustomFormCode());
         searchSysDefaultCustomFormDet.setItemKey(sysCustomFormDet.getItemKey());
         List<SysDefaultCustomFormDetDto> defaultDetList = sysDefaultCustomFormDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchSysDefaultCustomFormDet));
-        SysDefaultCustomFormDetDto sysDefaultCustomFormDetDto = defaultDetList.get(0);
-        Long defaultCustomFormId = sysDefaultCustomFormDetDto.getCustomFormId();
-        Long defaultCustomFormDetId = sysDefaultCustomFormDetDto.getCustomFormDetId();
-        BeanUtil.copyProperties(sysCustomFormDet, sysDefaultCustomFormDetDto);
-        sysDefaultCustomFormDetDto.setOrgId(null);
-        sysDefaultCustomFormDetDto.setCustomFormId(defaultCustomFormId);
-        sysDefaultCustomFormDetDto.setCustomFormDetId(defaultCustomFormDetId);
-        sysDefaultCustomFormDetMapper.updateByPrimaryKeySelective(sysDefaultCustomFormDetDto);
+        if(StringUtils.isNotEmpty(defaultDetList)) {
+            SysDefaultCustomFormDetDto sysDefaultCustomFormDetDto = defaultDetList.get(0);
+            Long defaultCustomFormId = sysDefaultCustomFormDetDto.getCustomFormId();
+            Long defaultCustomFormDetId = sysDefaultCustomFormDetDto.getCustomFormDetId();
+            BeanUtil.copyProperties(sysCustomFormDet, sysDefaultCustomFormDetDto);
+            sysDefaultCustomFormDetDto.setOrgId(null);
+            sysDefaultCustomFormDetDto.setCustomFormId(defaultCustomFormId);
+            sysDefaultCustomFormDetDto.setCustomFormDetId(defaultCustomFormDetId);
+            sysDefaultCustomFormDetMapper.updateByPrimaryKeySelective(sysDefaultCustomFormDetDto);
+        }
 
         //全组织修改
         SearchSysCustomFormDet searchSysCustomFormDet = new SearchSysCustomFormDet();

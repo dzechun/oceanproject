@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @Author mr.lei
@@ -73,6 +74,8 @@ public class EngPackingOrderPrintServiceImpl implements EngPackingOrderPrintServ
             printModel.setSize(engPackingOrderPrintParam.getSize());
             list.add(printModel);
         }
+        //过滤重复数据
+        list = list.stream().distinct().collect(Collectors.toList());
         printDto.setPrintModelList(list);
         ResponseEntity responseEntity;
         if (StringUtils.isNotEmpty(lists.getData())){

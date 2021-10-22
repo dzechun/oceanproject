@@ -39,6 +39,9 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
     private EamEquPointInspectionOrderMapper eamEquPointInspectionOrderMapper;
 
     @Resource
+    private EamEquipmentMaintainOrderMapper eamEquipmentMaintainOrderMapper;
+
+    @Resource
     private EamHtEquPointInspectionOrderMapper eamHtEquPointInspectionOrderMapper;
 
     @Resource
@@ -114,7 +117,6 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
             throw new BizErrorException("已存在该设备待点检状态的单据");
         }
 
-
         //保存点检单信息
         EamEquPointInspectionOrder eamEquPointInspectionOrder = new EamEquPointInspectionOrder();
         List<EamEquPointInspectionOrderDetDto> eamEquPointInspectionOrderDets = new ArrayList<>();
@@ -166,6 +168,16 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
         }
         eamEquipmentBarcode.setEquipmentStatus((byte)6);
         eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+
+        //保养与点检不能同时进行
+        Example example1 = new Example(EamEquipmentMaintainOrder.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("equipmentBarcodeId",eamEquipmentBarcode.getEquipmentBarcodeId())
+                .andEqualTo("orderStatus",1);
+        EamEquipmentMaintainOrder eamEquipmentMaintainOrder = eamEquipmentMaintainOrderMapper.selectOneByExample(example1);
+        if(StringUtils.isNotEmpty(eamEquipmentMaintainOrder)){
+            throw new BizErrorException("保养与点检不能同时进行");
+        }
 
         // 新增点检单
         eamEquPointInspectionOrder.setEquPointInspectionOrderCode(CodeUtils.getId("SBDJ-"));

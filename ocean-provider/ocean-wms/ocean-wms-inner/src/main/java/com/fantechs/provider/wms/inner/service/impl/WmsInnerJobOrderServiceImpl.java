@@ -723,6 +723,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         if (StringUtils.isNotEmpty(wmsInnerInventory)){
                             criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
                         }
+
+                        //获取初期数量
+                        WmsInnerInventory innerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(wmsInnerInventory.getParentInventoryId());
+                        if(StringUtils.isEmpty(innerInventory.getPackingQty())){
+                            innerInventory.setPackingQty(BigDecimal.ZERO);
+                        }
+
                         WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example1);
                         BigDecimal packageQty = BigDecimal.ZERO;
                         if (StringUtils.isEmpty(wmsInnerInventory_old)) {
@@ -739,7 +746,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory_old);
                             wmsInnerInventoryService.delete(wmsInnerInventory);
                         }
-                        InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,oldDto,wmsInnerInventory.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
+                        InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,oldDto,innerInventory.getPackingQty().add(wmsInnerInventory.getPackingQty()),wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
                         InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,oldDto,packageQty,wmsInnerInventory.getPackingQty(),(byte)3,(byte)1);
                         //更新库存明细
                         Example example2 = new Example(WmsInnerJobOrderDetBarcode.class);
