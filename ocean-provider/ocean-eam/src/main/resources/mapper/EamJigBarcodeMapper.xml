@@ -83,8 +83,11 @@
       <if test="jigId != null">
         and ejb.jig_id = #{jigId}
       </if>
-      <if test="jigBarcode != null and jigBarcode!=''">
+      <if test="jigBarcode != null and jigBarcode!='' and codeQueryMark != 1">
         and ejb.jig_barcode like CONCAT('%', #{jigBarcode}, '%')
+      </if>
+      <if test="jigBarcode != null and jigBarcode!='' and codeQueryMark == 1">
+        and ejb.jig_barcode = #{jigBarcode}
       </if>
       <if test="assetCode != null and assetCode!=''">
         and ejb.asset_code like CONCAT('%', #{assetCode}, '%')
