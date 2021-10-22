@@ -76,6 +76,6 @@ public class ProLineBoardModel implements Serializable {
      * 产线名称
      */
     @ApiModelProperty(name="proName",value = "产线名称")
-    private Long proName;
+    private String proName;
 
 }

@@ -28,9 +28,9 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="if_must_inspection" jdbcType="TINYINT" property="ifMustInspection"/>
-    <result column="inspection_item_desc_small" jdbcType="VARCHAR" property="inspectionItemDescSmall"/>
-    <result column="inspection_item_standard" jdbcType="VARCHAR" property="inspectionItemStandard"/>
-    <result column="inspection_item_desc_big" jdbcType="VARCHAR" property="inspectionItemDescBig"/>
+    <result column="small_inspection_item_desc" jdbcType="VARCHAR" property="smallInspectionItemDesc"/>
+    <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName"/>
+    <result column="big_inspection_item_desc" jdbcType="VARCHAR" property="bigInspectionItemDesc"/>
     <result column="inspection_tag" jdbcType="TINYINT" property="inspectionTag"/>
     <result column="specification_upper_limit" jdbcType="DECIMAL" property="specificationUpperLimit"/>
     <result column="specification_floor" jdbcType="DECIMAL" property="specificationFloor"/>
@@ -71,8 +71,8 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bisd.if_must_inspection,bii.inspection_item_standard,bbc.badness_category_code,bbc.badness_category_desc,
-    bii2.inspection_item_desc as inspection_item_desc_big,bii.inspection_item_desc as inspection_item_desc_small,
+    bisd.if_must_inspection,bii.inspection_standard_name,bbc.badness_category_code,bbc.badness_category_desc,
+    bii2.inspection_item_desc as big_inspection_item_desc,bii.inspection_item_desc as small_inspection_item_desc,
     bisd.inspection_tag,bisd.specification_upper_limit,bisd.specification_floor,bisd.unit_name,
     bspa.aql_value,bsp.ac_value,bsp.re_value,bsp.sample_qty,bsp.sample_process_type,bsp.sample_process_id,
     (select MAX(CONVERT(sample_value,SIGNED)) from qms_ipqc_inspection_order_det_sample where

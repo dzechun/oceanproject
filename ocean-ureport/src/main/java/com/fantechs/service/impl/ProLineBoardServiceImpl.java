@@ -1,6 +1,5 @@
 package com.fantechs.service.impl;
 
-import cn.hutool.core.date.DateUtil;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseProductYield;
@@ -17,7 +16,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,10 +29,10 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         //查询当天日计划的所有排产数量和完工数量
 
-        searchProLineBoard.setStartTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
-        searchProLineBoard.setEndTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
-    //    searchProLineBoard.setStartTime("2021-09-30");
-    //    searchProLineBoard.setEndTime("2021-09-30");
+    //    searchProLineBoard.setStartTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
+    //    searchProLineBoard.setEndTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
+        searchProLineBoard.setStartTime("2021-09-30");
+        searchProLineBoard.setEndTime("2021-09-30");
         searchProLineBoard.setOrgId(user.getOrganizationId());
         ProLineBoardModel model = proLineBoardMapper.findPlanList(searchProLineBoard);
         if(StringUtils.isNotEmpty(model)) {
@@ -80,10 +78,10 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
             searchBaseProductYield.setYieldType((byte)2);
             BaseProductYield yieldList = null;
             yieldList = proLineBoardMapper.findYieldList(searchBaseProductYield);
-            if(StringUtils.isNotEmpty(yieldList)){
+            if(StringUtils.isEmpty(yieldList)){
                 searchBaseProductYield.setYieldType((byte)1);
                 yieldList = proLineBoardMapper.findYieldList(searchBaseProductYield);
-                if(StringUtils.isNotEmpty(yieldList)) throw new BizErrorException("未查询到默认的产品良率配置");
+                if(StringUtils.isEmpty(yieldList)) throw new BizErrorException("未查询到默认的产品良率配置");
             }
 
             model.setEquipmentQty(equipMentNum);
