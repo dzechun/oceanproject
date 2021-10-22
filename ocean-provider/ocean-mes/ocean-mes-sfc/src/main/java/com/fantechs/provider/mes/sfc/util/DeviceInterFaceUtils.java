@@ -265,7 +265,7 @@ public class DeviceInterFaceUtils {
     /*
      * 获取采购单明细物料ID
      * */
-    public ResponseEntity<Long> findPurchaseMaterial(String purchaseOrderCode){
+    public ResponseEntity<String> findPurchaseMaterial(String purchaseOrderCode){
          return omFeignApi.findPurchaseMaterial(purchaseOrderCode);
     }
     /*

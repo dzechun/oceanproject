@@ -5,10 +5,7 @@ import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -59,7 +56,7 @@ public interface OMFeignApi {
 
     @ApiOperation("获取采购单明细物料ID")
     @PostMapping("/omPurchaseOrder/findPurchaseMaterial")
-    ResponseEntity<Long> findPurchaseMaterial(@ApiParam(value = "purchaseOrderCode",required = true)@RequestParam String purchaseOrderCode);
+    ResponseEntity<String> findPurchaseMaterial(@ApiParam(value = "purchaseOrderCode",required = true)@RequestParam String purchaseOrderCode);
 
     @ApiOperation("采购订单明细列表")
     @PostMapping("/omPurchaseOrderDet/findList")
