@@ -30,7 +30,6 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 相关明细ID
      */
     @ApiModelProperty(name="sourceDetId",value = "相关明细ID")
-    @Excel(name = "相关明细ID", height = 20, width = 30,orderNum="") 
     @Column(name = "source_det_id")
     private Long sourceDetId;
 
@@ -38,7 +37,6 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 储位id
      */
     @ApiModelProperty(name="storageId",value = "储位id")
-    @Excel(name = "储位id", height = 20, width = 30,orderNum="") 
     @Column(name = "storage_id")
     private Long storageId;
 
@@ -46,7 +44,6 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 物料id
      */
     @ApiModelProperty(name="materialId",value = "物料id")
-    @Excel(name = "物料id", height = 20, width = 30,orderNum="") 
     @Column(name = "material_id")
     private Long materialId;
 
@@ -54,7 +51,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 包装单位
      */
     @ApiModelProperty(name = "packingUnitName",value = "包装单位")
-    @Excel(name = "包装单位",height = 20,width = 30,orderNum = "")
+    @Excel(name = "包装单位",height = 20,width = 30,orderNum = "7")
     @Column(name = "packing_unit_name")
     private String packingUnitName;
 
@@ -62,7 +59,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 原始数量
      */
     @ApiModelProperty(name="originalQty",value = "原始数量")
-    @Excel(name = "原始数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "原始数量", height = 20, width = 30,orderNum="10",type = 10,numFormat = "0.00")
     @Column(name = "original_qty")
     private BigDecimal originalQty;
 
@@ -70,7 +67,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 盘点数量
      */
     @ApiModelProperty(name="stockQty",value = "盘点数量")
-    @Excel(name = "盘点数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "盘点数量", height = 20, width = 30,orderNum="11",type = 10,numFormat = "0.00")
     @Column(name = "stock_qty")
     private BigDecimal stockQty;
 
@@ -78,7 +75,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 差异数量
      */
     @ApiModelProperty(name="varianceQty",value = "差异数量")
-    @Excel(name = "差异数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "差异数量", height = 20, width = 30,orderNum="12",type = 10,numFormat = "0.00")
     @Column(name = "variance_qty")
     private BigDecimal varianceQty;
 
@@ -86,7 +83,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 上次差异数量
      */
     @ApiModelProperty(name="lastTimeVarianceQty",value = "上次差异数量")
-    @Excel(name = "差异数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "上次差异数量", height = 20, width = 30,orderNum="13",type = 10,numFormat = "0.00")
     @Column(name = "last_time_variance_qty")
     private BigDecimal lastTimeVarianceQty;
 
@@ -94,12 +91,11 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 批次号
      */
     @ApiModelProperty(name="batchCode",value = "批次号")
-    @Excel(name = "批次号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "批次号", height = 20, width = 30,orderNum="14")
     @Column(name = "batch_code")
     private String batchCode;
 
     @ApiModelProperty(name = "stockUserId",value = "盘点人员id")
-    @Excel(name = "盘点人员id",height = 20,width = 30,orderNum = "")
     @Column(name = "stock_user_id")
     private Long stockUserId;
 
@@ -107,21 +103,19 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 是否登记 1-是 2-否
      */
     @ApiModelProperty(name="ifRegister",value = "是否登记 1-是 2-否")
-    @Excel(name = "是否登记 1-是 2-否", height = 20, width = 30,orderNum="") 
+    @Excel(name = "是否登记", height = 20, width = 30,orderNum="15",replace = {"是_1","否_2"})
     private Byte ifRegister;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long organizationId;
 
@@ -129,7 +123,6 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -137,7 +130,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="26",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -146,7 +139,6 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -154,7 +146,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="28",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -167,7 +159,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 托盘号
      */
     @ApiModelProperty(name="palletCode",value = "托盘号")
-    @Excel(name = "托盘号", height = 20, width = 30,orderNum="18")
+    @Excel(name = "托盘号", height = 20, width = 30,orderNum="16")
     @Column(name = "pallet_code")
     private String palletCode;
 
@@ -183,6 +175,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 请购单号
      */
     @ApiModelProperty(name="purchaseReqOrderCode" ,value="请购单号")
+    @Excel(name = "请购单号", height = 20, width = 30,orderNum="17")
     @Column(name = "purchase_req_order_code")
     private String purchaseReqOrderCode;
 
@@ -190,6 +183,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 合同号
      */
     @ApiModelProperty(name="contractCode" ,value="合同号")
+    @Excel(name = "合同号", height = 20, width = 30,orderNum="18")
     @Column(name = "contract_code")
     private String contractCode;
 
@@ -197,6 +191,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 装置号
      */
     @ApiModelProperty(name="deviceCode" ,value="装置号")
+    @Excel(name = "装置号", height = 20, width = 30,orderNum="19")
     @Column(name = "device_code")
     private String deviceCode;
 
@@ -204,6 +199,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 位号
      */
     @ApiModelProperty(name="locationNum" ,value="位号")
+    @Excel(name = "位号", height = 20, width = 30,orderNum="20")
     @Column(name = "location_num")
     private String locationNum;
 
@@ -211,6 +207,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 主项号
      */
     @ApiModelProperty(name="dominantTermCode" ,value="主项号")
+    @Excel(name = "主项号", height = 20, width = 30,orderNum="21")
     @Column(name = "dominant_term_code")
     private String dominantTermCode;
 
@@ -218,6 +215,7 @@ public class WmsInnerStockOrderDet extends ValidGroup implements Serializable {
      * 材料用途
      */
     @ApiModelProperty(name="materialPurpose" ,value="材料用途")
+    @Excel(name = "材料用途", height = 20, width = 30,orderNum="22")
     @Column(name = "material_purpose")
     private String materialPurpose;
 

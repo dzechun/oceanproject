@@ -264,7 +264,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="34",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="38",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -280,7 +280,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="36",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="40",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -333,16 +333,16 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
     @Column(name = "purchase_req_order_code")
     private String purchaseReqOrderCode;
 
-    @Excel(name = "装置号", height = 20, width = 30,orderNum="38")
+    @Excel(name = "装置号", height = 20, width = 30,orderNum="32")
     private String option1;
 
-    @Excel(name = "主项号", height = 20, width = 30,orderNum="39")
+    @Excel(name = "主项号", height = 20, width = 30,orderNum="33")
     private String option2;
 
-    @Excel(name = "材料用途", height = 20, width = 30,orderNum="40")
+    @Excel(name = "材料用途", height = 20, width = 30,orderNum="34")
     private String option3;
 
-    @Excel(name = "位号", height = 20, width = 30,orderNum="41")
+    @Excel(name = "位号", height = 20, width = 30,orderNum="35")
     private String option4;
 
     private String option5;

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Author mr.lei
@@ -51,4 +52,6 @@ public class SearchWmsInnerStockOrderDet extends BaseQuery implements Serializab
      */
     @ApiModelProperty("计划类型")
     private Byte stockType;
+
+    private List<Long> stockIds;
 }

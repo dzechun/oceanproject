@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStockOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStockOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -76,13 +78,17 @@ public class WmsInnerStockOrderController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWmsInnerStockOrder searchWmsInventoryVerification){
-    List<WmsInnerStockOrderDto> list = wmsInventoryVerificationService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInventoryVerification));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsInventoryVerification信息", WmsInnerStockOrderDto.class, "WmsInventoryVerification.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<WmsInnerStockOrderDto> list = wmsInventoryVerificationService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInventoryVerification));
+        List<Long> longs = list.stream().map(WmsInnerStockOrderDto::getStockOrderId).collect(Collectors.toList());
+        SearchWmsInnerStockOrderDet searchWmsInnerStockOrderDet = new SearchWmsInnerStockOrderDet();
+        searchWmsInnerStockOrderDet.setStockIds(longs);
+        List<WmsInnerStockOrderDetDto> detDtos = wmsInventoryVerificationDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerStockOrderDet));
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(detDtos, "导出信息", "盘点单", WmsInnerStockOrderDetDto.class, "盘点单.xls", response);
+            } catch (Exception e) {
+            throw new BizErrorException(e);
+            }
     }
 
     @ApiOperation("盘点单激活作废")

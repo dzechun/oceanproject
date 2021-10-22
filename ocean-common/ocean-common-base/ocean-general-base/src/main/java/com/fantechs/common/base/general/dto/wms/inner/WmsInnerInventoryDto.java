@@ -1,12 +1,19 @@
 package com.fantechs.common.base.general.dto.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializable {
@@ -71,7 +78,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 组织名称
      */
     @ApiModelProperty(name="organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30,orderNum = "32")
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum = "36")
     @Transient
     private String organizationName;
 
@@ -79,7 +86,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 创建人名称
      */
     @ApiModelProperty(name="createUserName",value = "创建人名称")
-    @Excel(name = "创建人名称", height = 20, width = 30,orderNum = "33")
+    @Excel(name = "创建人名称", height = 20, width = 30,orderNum = "37")
     @Transient
     private String createUserName;
 
@@ -95,7 +102,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 库存状态名称
      */
     @ApiModelProperty(name="inventoryStatusName",value = "库存状态名称")
-    @Excel(name = "库存状态", height = 20, width = 30,orderNum = "37")
+    @Excel(name = "库存状态名称", height = 20, width = 30,orderNum = "41")
     @Transient
     private String inventoryStatusName;
 

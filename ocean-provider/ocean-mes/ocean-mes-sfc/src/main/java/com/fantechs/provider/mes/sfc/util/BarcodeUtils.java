@@ -124,9 +124,9 @@ public class BarcodeUtils {
         MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = checkBarcodeStatus(record.getBarCode(), record.getWorkOrderId());
 
         // 2、判断条码流程是否正确（流程表）
-//        if (record.getProcessId() != null) {
-//            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
-//        }
+        if (record.getProcessId() != null) {
+            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
+        }
 
         // 3、系统检查条码工单状态是否正确（工单表）
         if (mesSfcWorkOrderBarcodeDto.getWorkOrderId() != null) {
@@ -136,6 +136,18 @@ public class BarcodeUtils {
         // 4、是否检查排程
         if (record.getCheckOrNot()) {
 
+        }
+        return true;
+    }
+
+    public static Boolean checkSN(CheckProductionDto record,Long workOrderBarcodeId,Long orgId) throws Exception {
+
+        // 2、判断条码流程是否正确（流程表）
+        if (record.getProcessId() != null) {
+            MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto=new MesSfcWorkOrderBarcodeDto();
+            mesSfcWorkOrderBarcodeDto.setWorkOrderBarcodeId(workOrderBarcodeId);
+            mesSfcWorkOrderBarcodeDto.setBarcode(record.getBarCode());
+            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
         }
         return true;
     }
@@ -774,7 +786,7 @@ public class BarcodeUtils {
                 checkProductionDto.setWorkOrderId(updateProcessDto.getWorkOrderId());
                 checkProductionDto.setProcessId(updateProcessDto.getNowProcessId());
 
-                checkSN(checkProductionDto);
+                checkSN(checkProductionDto,updateProcessDto.getWorkOrderBarcodeId(),orgId);
 
                 baseExecuteResultDto.setIsSuccess(true);
                 baseExecuteResultDto.setSuccessMsg(" 验证通过 ");
@@ -876,7 +888,8 @@ public class BarcodeUtils {
 
             checkProductionDto.setWorkOrderId(updateProcessDto.getWorkOrderId());
             checkProductionDto.setProcessId(updateProcessDto.getNowProcessId());
-            checkSN(checkProductionDto);
+            //checkSN(checkProductionDto);
+            checkSN(checkProductionDto,updateProcessDto.getWorkOrderBarcodeId(),orgId);
 
             //绑定半成品条码
             baseExecuteResultDto=bandingWorkOrderBarcode(updateProcessDto.getWorkOrderId(),partMaterialId,
@@ -1217,14 +1230,18 @@ public class BarcodeUtils {
             Long partMaterialId=0L;//半成品物料ID
 
             //检查产品条码
-            baseExecuteResultDto=checkBarcodeStatus(productionSn,orgId,"");
-            if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+            if(StringUtils.isNotEmpty(productionSn)) {
+                baseExecuteResultDto = checkBarcodeStatus(productionSn, orgId, "");
+                if (baseExecuteResultDto.getIsSuccess() == false)
+                    throw new Exception(baseExecuteResultDto.getFailMsg());
+            }
 
             //检查半成品条码
-            baseExecuteResultDto=checkBarcodeStatus(halfProductionSn,orgId,"");
-            if(baseExecuteResultDto.getIsSuccess()==false) {
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+            if(StringUtils.isNotEmpty(halfProductionSn)) {
+                baseExecuteResultDto = checkBarcodeStatus(halfProductionSn, orgId, "");
+                if (baseExecuteResultDto.getIsSuccess() == false) {
+                    throw new Exception(baseExecuteResultDto.getFailMsg());
+                }
             }
 
             //获取配置项 工单在条码中的位置 WorkOrderPositionOnBarcode
@@ -1339,7 +1356,7 @@ public class BarcodeUtils {
             }
 
             baseExecuteResultDto.setIsSuccess(true);
-            baseExecuteResultDto.setSuccessMsg("操作成功");
+            //baseExecuteResultDto.setSuccessMsg("操作成功");
             baseExecuteResultDto.setExecuteResult(mesSfcWorkOrderBarcodeDto);
 
         }catch (Exception ex){
