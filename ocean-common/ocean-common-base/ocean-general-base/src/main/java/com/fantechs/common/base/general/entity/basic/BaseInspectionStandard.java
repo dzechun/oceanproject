@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -42,7 +43,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 检验标准编码
      */
     @ApiModelProperty(name="inspectionStandardCode",value = "检验标准编码")
-    @Excel(name = "检验标准编码", height = 20, width = 30,orderNum="1")
+    @Excel(name = "检验标准编码", height = 20, width = 30,orderNum="1",needMerge = true)
     @Column(name = "inspection_standard_code")
     @NotBlank(message = "检验标准编码不能为空")
     private String inspectionStandardCode;
@@ -51,7 +52,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 检验标准名称
      */
     @ApiModelProperty(name="inspectionStandardName",value = "检验标准名称")
-    @Excel(name = "检验标准名称", height = 20, width = 30,orderNum="2")
+    @Excel(name = "检验标准名称", height = 20, width = 30,orderNum="2",needMerge = true)
     @Column(name = "inspection_standard_name")
     private String inspectionStandardName;
 
@@ -59,7 +60,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 检验标准版本号
      */
     @ApiModelProperty(name="inspectionStandardVersion",value = "检验标准版本号")
-    @Excel(name = "检验标准版本号", height = 20, width = 30,orderNum="8")
+    @Excel(name = "检验标准版本号", height = 20, width = 30,orderNum="8",needMerge = true)
     @Column(name = "inspection_standard_version")
     private String inspectionStandardVersion;
 
@@ -82,7 +83,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="inspectionType",value = "检验类型(1-来料检验 2-驻厂检验 3-出货检验 4-IPQC检验)")
     @Column(name = "inspection_type")
-    @Excel(name = "检验类型(1-来料检验 2-驻厂检验 3-出货检验 4-IPQC检验)", height = 20, width = 30,orderNum="6",replace = {"来料检验_1", "驻厂检验_2", "出货检验_3", "IPQC检验_4"})
+    @Excel(name = "检验类型(1-来料检验 2-驻厂检验 3-出货检验 4-IPQC检验)", height = 20, width = 30,orderNum="6",needMerge = true,replace = {"来料检验_1", "驻厂检验_2", "出货检验_3", "IPQC检验_4"})
     private Byte inspectionType;
 
     /**
@@ -96,7 +97,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="9",replace = {"无效_0", "有效_1"})
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="9",needMerge = true,replace = {"无效_0", "有效_1"})
     private Byte status;
 
     /**
@@ -123,7 +124,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="11",needMerge = true,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -139,7 +140,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="13",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="13",needMerge = true,exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -156,7 +157,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedUserName" ,value="修改人名称")
     @Transient
-    @Excel(name = "修改人名称", height = 20, width = 30,orderNum="12")
+    @Excel(name = "修改人名称", height = 20, width = 30,orderNum="12",needMerge = true)
     private String modifiedUserName;
 
     /**
@@ -164,7 +165,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createUserName" ,value="创建人名称")
     @Transient
-    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="10")
+    @Excel(name = "创建人名称", height = 20, width = 30,orderNum="10",needMerge = true)
     private String createUserName;
 
     /**
@@ -179,7 +180,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialCode" ,value="物料编码")
     @Transient
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="3")
+    @Excel(name = "物料编码", height = 20, width = 30,orderNum="3",needMerge = true)
     private String materialCode;
 
     /**
@@ -187,7 +188,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="materialName" ,value="物料名称")
     @Transient
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="4")
+    @Excel(name = "物料名称", height = 20, width = 30,orderNum="4",needMerge = true)
     private String materialName;
 
     /**
@@ -195,7 +196,7 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="supplierName" ,value="客户")
     @Transient
-    @Excel(name = "客户", height = 20, width = 30,orderNum="5")
+    @Excel(name = "客户", height = 20, width = 30,orderNum="5",needMerge = true)
     private String supplierName;
 
     /**
@@ -203,13 +204,14 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="inspectionWayDesc" ,value="检验方式")
     @Transient
-    @Excel(name = "检验方式", height = 20, width = 30,orderNum="7")
+    @Excel(name = "检验方式", height = 20, width = 30,orderNum="7",needMerge = true)
     private String inspectionWayDesc;
 
     /**
      * 检验标准明细
      */
     @ApiModelProperty(name="baseInspectionStandardDets",value = "检验标准明细")
+    @ExcelCollection(name="检验标准明细",orderNum="14")
     private List<BaseInspectionStandardDet> baseInspectionStandardDets = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;

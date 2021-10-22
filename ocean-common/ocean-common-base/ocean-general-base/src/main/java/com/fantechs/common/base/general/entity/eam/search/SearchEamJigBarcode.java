@@ -63,4 +63,9 @@ public class SearchEamJigBarcode extends BaseQuery implements Serializable {
     @ApiModelProperty(name="workOrderId",value = "工单ID")
     private Long workOrderId;
 
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

@@ -489,8 +489,22 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
             Example example = new Example(WmsOutDeliveryOrderDet.class);
             example.createCriteria().andEqualTo("deliveryOrderId",wmsOutDeliveryOrder.getDeliveryOrderId());
             List<WmsOutDeliveryOrderDet> list = wmsOutDeliveryOrderDetMapper.selectByExample(example);
-            BigDecimal totalQty = list.stream().map(WmsOutDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
-            BigDecimal totalDisQty = list.stream().map(WmsOutDeliveryOrderDet::getDispatchQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal totalQty =list.stream().map(i->{
+                if (StringUtils.isNotEmpty(i.getPackingQty())) {
+                    return i.getPackingQty();
+                }else {
+                    return BigDecimal.ZERO;
+                }
+            }).reduce(BigDecimal.ZERO,BigDecimal::add);
+            BigDecimal totalDisQty = list.stream().map(i->{
+                if(StringUtils.isNotEmpty(i.getDispatchQty())){
+                    return i.getDispatchQty();
+                }else {
+                    return BigDecimal.ZERO;
+                }
+            }).reduce(BigDecimal.ZERO,BigDecimal::add);
+            //BigDecimal totalQty = list.stream().map(WmsOutDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            //BigDecimal totalDisQty = list.stream().map(WmsOutDeliveryOrderDet::getDispatchQty).reduce(BigDecimal.ZERO,BigDecimal::add);
             WmsOutDeliveryOrder wms =new WmsOutDeliveryOrder();
             wms.setDeliveryOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
             if(totalQty.compareTo(totalDisQty)==0){

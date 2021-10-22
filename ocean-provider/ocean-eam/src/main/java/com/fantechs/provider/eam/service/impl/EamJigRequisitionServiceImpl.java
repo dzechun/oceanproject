@@ -218,8 +218,8 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             throw new BizErrorException("该治具条码不属于此治具");
         }
 
-        if(eamJigBarcode.getUsageStatus()==(byte)2){
-            throw new BizErrorException("该治具正在使用中");
+        if(eamJigBarcode.getUsageStatus()!=(byte)1){
+            throw new BizErrorException("该治具非空闲状态");
         }
 
         return eamJigBarcode;

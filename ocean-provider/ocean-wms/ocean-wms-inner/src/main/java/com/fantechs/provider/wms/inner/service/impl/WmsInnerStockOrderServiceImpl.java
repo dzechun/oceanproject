@@ -242,6 +242,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
                 wmsInventoryVerificationDet.setPalletCode(wmsInnerInventory.getPalletCode());
                 wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
+                wmsInventoryVerificationDet.setPackingUnitName(wmsInnerInventory.getPackingUnitName());
                 wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
                 wmsInventoryVerificationDet.setContractCode(wmsInnerInventory.getContractCode());
                 wmsInventoryVerificationDet.setPurchaseReqOrderCode(wmsInnerInventory.getPurchaseReqOrderCode());
@@ -321,6 +322,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     wmsInventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
                     wmsInventoryVerificationDet.setPalletCode(wmsInnerInventory.getPalletCode());
                     wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
+                    wmsInventoryVerificationDet.setPackingUnitName(wmsInnerInventory.getPackingUnitName());
                     wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
                     wmsInventoryVerificationDet.setContractCode(wmsInnerInventory.getContractCode());
                     wmsInventoryVerificationDet.setPurchaseReqOrderCode(wmsInnerInventory.getPurchaseReqOrderCode());
