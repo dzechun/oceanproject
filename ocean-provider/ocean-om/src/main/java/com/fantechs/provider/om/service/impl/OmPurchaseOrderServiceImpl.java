@@ -117,7 +117,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
     }
 
     @Override
-    public long findPurchaseMaterial(String purchaseOrderCode) {
+    public String findPurchaseMaterial(String purchaseOrderCode) {
         return omPurchaseOrderMapper.findPurchaseMaterial(purchaseOrderCode);
     }
 }

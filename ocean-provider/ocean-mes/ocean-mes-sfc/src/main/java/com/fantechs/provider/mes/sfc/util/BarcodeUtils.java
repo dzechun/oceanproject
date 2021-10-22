@@ -1119,12 +1119,14 @@ public class BarcodeUtils {
 
                 if (StringUtils.isNotEmpty(purchaseOrderCode)) {
                     //找采购订单物料 只有一个物料
-                    ResponseEntity<Long> reMaterialId = barcodeUtils.deviceInterFaceUtils.findPurchaseMaterial(purchaseOrderCode);
+                    Long partMaterialId = 0L;
+                    ResponseEntity<String> reMaterialId = barcodeUtils.deviceInterFaceUtils.findPurchaseMaterial(purchaseOrderCode);
                     if (StringUtils.isEmpty(reMaterialId.getData())) {
                         throw new Exception("找不到采购单号相应的物料ID-->" + purchaseOrderCode);
                     }
-
-                    Long partMaterialId = reMaterialId.getData().longValue();
+                    if(StringUtils.isNotEmpty(reMaterialId.getData())){
+                        partMaterialId=new Long(reMaterialId.getData());
+                    }
 
                     //设置半成品物料ID
                     updateProcessDto.setPartMaterialId(partMaterialId);
