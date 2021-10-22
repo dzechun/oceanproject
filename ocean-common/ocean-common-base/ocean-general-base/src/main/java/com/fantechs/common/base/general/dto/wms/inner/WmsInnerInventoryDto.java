@@ -94,7 +94,7 @@ public class WmsInnerInventoryDto extends WmsInnerInventory implements Serializa
      * 修改人名称
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人名称")
-    @Excel(name = "盘存转报废单号", height = 20, width = 30,orderNum = "39")
+    @Excel(name = "盘存转报废单号", height = 20, width = 30,orderNum = "35")
     @Transient
     private String modifiedUserName;
 

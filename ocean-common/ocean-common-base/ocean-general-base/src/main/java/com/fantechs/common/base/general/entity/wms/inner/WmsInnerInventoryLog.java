@@ -1,18 +1,21 @@
 package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+;
+;
 
 /**
  * 库存日志
@@ -175,7 +178,7 @@ public class WmsInnerInventoryLog extends ValidGroup implements Serializable {
      * 期初数量
      */
     @ApiModelProperty(name="initialQty",value = "期初数量")
-    @Excel(name = "期初数量", height = 20, width = 30,orderNum="18")
+    @Excel(name = "期初数量", height = 20, width = 30,type=10,numFormat="0.000",orderNum="18")
     @Column(name = "initial_qty")
     private BigDecimal initialQty;
 
@@ -183,7 +186,7 @@ public class WmsInnerInventoryLog extends ValidGroup implements Serializable {
      * 变化数量
      */
     @ApiModelProperty(name="changeQty",value = "变化数量")
-    @Excel(name = "变化数量", height = 20, width = 30,orderNum="19")
+    @Excel(name = "变化数量", height = 20, width = 30,type=10,numFormat="0.000",orderNum="19")
     @Column(name = "change_qty")
     private BigDecimal changeQty;
 
@@ -191,7 +194,7 @@ public class WmsInnerInventoryLog extends ValidGroup implements Serializable {
      * 期末数量
      */
     @ApiModelProperty(name="finalQty",value = "期末数量")
-    @Excel(name = "期末数量", height = 20, width = 30,orderNum="20")
+    @Excel(name = "期末数量", height = 20, width = 30,type=10,numFormat="0.000",orderNum="20")
     @Column(name = "final_qty")
     private BigDecimal finalQty;
 
@@ -255,6 +258,7 @@ public class WmsInnerInventoryLog extends ValidGroup implements Serializable {
      * 合同号
      */
     @ApiModelProperty(name = "contractCode",value = "合同号")
+    @Excel(name = "合同号", height = 20, width = 30,orderNum="21")
     @Column(name = "contract_code")
     private String contractCode;
 
@@ -262,6 +266,7 @@ public class WmsInnerInventoryLog extends ValidGroup implements Serializable {
      * 规格
      */
     @ApiModelProperty(name = "spec",value = "规格")
+    @Excel(name = "规格", height = 20, width = 30,orderNum="24")
     @Column(name = "spec")
     private String spec;
 
@@ -269,6 +274,7 @@ public class WmsInnerInventoryLog extends ValidGroup implements Serializable {
      * 请购单号
      */
     @ApiModelProperty(name = "purchaseReqOrderCode",value = "请购单号")
+    @Excel(name = "请购单号", height = 20, width = 30,orderNum="22")
     @Column(name = "purchase_req_order_code")
     private String purchaseReqOrderCode;
 
@@ -276,24 +282,28 @@ public class WmsInnerInventoryLog extends ValidGroup implements Serializable {
      * option1
      */
     @ApiModelProperty(name="option1",value = "option1")
+    @Excel(name = "装置号", height = 20, width = 30,orderNum="25")
     private String option1;
 
     /**
      * option2
      */
     @ApiModelProperty(name="option2",value = "option2")
+    @Excel(name = "主项号", height = 20, width = 30,orderNum="26")
     private String option2;
 
     /**
      * option3
      */
     @ApiModelProperty(name="option3",value = "option3")
+    @Excel(name = "材料用途", height = 20, width = 30,orderNum="27")
     private String option3;
 
     /**
      * option4
      */
     @ApiModelProperty(name="option4",value = "option4")
+    @Excel(name = "位号", height = 20, width = 30,orderNum="28")
     private String option4;
 
     /**

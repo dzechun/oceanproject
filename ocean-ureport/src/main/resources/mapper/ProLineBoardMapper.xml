@@ -6,8 +6,10 @@
     </resultMap>
     <select id="findPlanList" resultMap="BaseResultMap" parameterType="com.fantechs.entity.search.SearchProLineBoard">
         select 	sum(mpwo.scheduled_qty)AS 'scheduledQty', sum(mpwo.output_qty) AS 'outputQty', mpwo.pro_line_id AS 'proLineId'
+        , bpl.pro_name AS 'proName'
         from mes_pm_daily_plan mpdp
         LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
+        LEFT JOIN base_pro_line bpl ON mpwo.pro_line_id = bpl.pro_line_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -69,6 +71,22 @@
             </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(msbpr.out_process_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="findYieldList" resultMap="BaseResultMap" parameterType="com.fantechs.entity.search.SearchBaseProductYield">
+        select 	bpy.productline_stop_yield,bpy.warning_yield
+        from base_product_yield bpy
+        <where>
+            <if test="proLineId!=null and proLineId!='' and  yieldType=2">
+                and bpy.pro_line_id = #{proLineId}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and bpy.material_id = #{materialId}
+            </if>
+            <if test="yieldType!=null and yieldType!=''">
+                and bpy.yield_type = #{yieldType}
             </if>
         </where>
     </select>

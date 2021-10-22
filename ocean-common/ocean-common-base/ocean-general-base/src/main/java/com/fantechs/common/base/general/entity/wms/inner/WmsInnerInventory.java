@@ -4,15 +4,11 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -139,7 +135,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 包装数量
      */
     @ApiModelProperty(name="packingQty",value = "包装数量")
-    @Excel(name = "包装数量", height = 20, width = 30,orderNum="15")
+    @Excel(name = "包装数量", height = 20, width = 30,type=10,numFormat="0.000",orderNum="15")
     @Column(name = "packing_qty")
     private BigDecimal packingQty;
 
@@ -147,7 +143,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      * 库存总数
      */
     @ApiModelProperty(name="inventoryTotalQty",value = "库存总数")
-    @Excel(name = "库存总数", height = 20, width = 30,orderNum="16")
+    @Excel(name = "库存总数", height = 20, width = 30,type=10,numFormat="0.000",orderNum="16")
     @Column(name = "inventory_total_qty")
     private BigDecimal inventoryTotalQty;
 
