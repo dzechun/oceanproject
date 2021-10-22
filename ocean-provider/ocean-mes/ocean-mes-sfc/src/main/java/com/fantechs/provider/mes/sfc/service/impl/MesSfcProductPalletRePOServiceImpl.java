@@ -1,7 +1,6 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletRePODto;
 import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
@@ -43,12 +42,14 @@ public class MesSfcProductPalletRePOServiceImpl extends BaseService<MesSfcProduc
     @Override
     public List<MesSfcProductPalletRePODto> findList(Map<String, Object> map) {
         List<MesSfcProductPalletRePODto> palletRePODtos=null;
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         palletRePODtos= mesSfcProductPalletRePOMapper.findList(map);
         for (MesSfcProductPalletRePODto palletRePODto : palletRePODtos) {
             SearchOmSalesCodeReSpc searchOmSalesCodeReSpc = new SearchOmSalesCodeReSpc();
             searchOmSalesCodeReSpc.setSalesCode(palletRePODto.getSalesCode());
-            //searchOmSalesCodeReSpc.setSamePackageCodeStatus((byte)1);
+            searchOmSalesCodeReSpc.setSamePackageCodeStatus((byte)1);
+            searchOmSalesCodeReSpc.setOrgId(user.getOrganizationId());
             List<OmSalesCodeReSpcDto> codeReSpcDtos = omFeignApi.findAll(searchOmSalesCodeReSpc).getData();
             palletRePODto.setOmSalesCodeReSpcList(codeReSpcDtos);
         }
@@ -57,7 +58,6 @@ public class MesSfcProductPalletRePOServiceImpl extends BaseService<MesSfcProduc
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
     public int updateBarcodePO(MesSfcProductPalletRePODto mesSfcProductPalletRePODto) throws Exception{
         String oldSamePackageCode=mesSfcProductPalletRePODto.getOldSamePackageCode();
         String newSamePackageCode=mesSfcProductPalletRePODto.getNewSamePackageCode();
@@ -95,7 +95,7 @@ public class MesSfcProductPalletRePOServiceImpl extends BaseService<MesSfcProduc
         searchOmSalesCodeReSpcOld.setSamePackageCode(oldSamePackageCode);
         List<OmSalesCodeReSpcDto> codeReSpcDtosOld = omFeignApi.findAll(searchOmSalesCodeReSpcOld).getData();
         OmSalesCodeReSpc omSalesCodeReSpcOld=codeReSpcDtosOld.get(0);
-        omSalesCodeReSpcOld.setMatchedQty(omSalesCodeReSpcOld.getMatchedQty().subtract(new BigDecimal(1)));
+        omSalesCodeReSpcOld.setMatchedQty(omSalesCodeReSpcOld.getMatchedQty() !=null ? omSalesCodeReSpcOld.getMatchedQty().subtract(new BigDecimal(1)) : BigDecimal.ONE);
         omSalesCodeReSpcOld.setSamePackageCodeStatus((byte)1);
 
         omFeignApi.update(omSalesCodeReSpcOld);

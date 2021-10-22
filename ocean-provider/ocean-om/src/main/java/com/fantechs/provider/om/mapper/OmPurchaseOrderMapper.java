@@ -13,5 +13,5 @@ import java.util.Map;
 public interface OmPurchaseOrderMapper extends MyMapper<OmPurchaseOrder> {
     List<OmPurchaseOrderDto> findList(Map<String, Object> map);
 
-    Long findPurchaseMaterial(@Param("purchaseOrderCode")String purchaseOrderCode);
+    String findPurchaseMaterial(@Param("purchaseOrderCode")String purchaseOrderCode);
 }

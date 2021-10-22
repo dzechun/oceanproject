@@ -95,18 +95,32 @@ public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet impl
     private String organizationName;
 
     /**
-     * 收货库位
+     * 收货库位名称
      */
     @Transient
-    @ApiModelProperty(name = "receivingStorageName",value = "收货库位")
+    @ApiModelProperty(name = "receivingStorageName",value = "收货库位名称")
     private String receivingStorageName;
 
     /**
-     * 上架库位
+     * 收货库位编码
      */
     @Transient
-    @ApiModelProperty(name = "putawayStorageName",value = "上架库位")
+    @ApiModelProperty(name = "receivingStorageCode",value = "收货库位编码")
+    private String receivingStorageCode;
+
+    /**
+     * 上架库位名称
+     */
+    @Transient
+    @ApiModelProperty(name = "putawayStorageName",value = "上架库位名称")
     private String putawayStorageName;
+
+    /**
+     * 上架库位编码
+     */
+    @Transient
+    @ApiModelProperty(name = "putawayStorageCode",value = "上架库位编码")
+    private String putawayStorageCode;
 
     /**
      * 取消数量

@@ -1349,17 +1349,19 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         wmsInPutawayOrderDet.setActualQty(wmsInPutawayOrderDet.getActualQty().add(det.getActualQty()));
                     }
                 }
-                //作业中
-                if(StringUtils.isEmpty(wmsInPutawayOrderDet.getWorkStartTime())){
-                    wmsInPutawayOrderDet.setWorkStartTime(new Date());
-                }
-                //wmsInPutawayOrderDet.setOrderStatus((byte)4);
-                num+=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
-                //反写出库单拣货数量
-                num+=this.writeDeliveryOrderQty(wmsInPutawayOrderDet);
-                if(wmsInPutawayOrderDet.getOrderStatus()==5){
-                    //清除redis
-                    this.removeRedis(wmsInPutawayOrderDet.getJobOrderDetId());
+                if(totalQty.compareTo(BigDecimal.ZERO)==1){
+                    //作业中
+                    if(StringUtils.isEmpty(wmsInPutawayOrderDet.getWorkStartTime())){
+                        wmsInPutawayOrderDet.setWorkStartTime(new Date());
+                    }
+                    //wmsInPutawayOrderDet.setOrderStatus((byte)4);
+                    num+=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
+                    //反写出库单拣货数量
+                    num+=this.writeDeliveryOrderQty(wmsInPutawayOrderDet);
+                    if(wmsInPutawayOrderDet.getOrderStatus()==5){
+                        //清除redis
+                        this.removeRedis(wmsInPutawayOrderDet.getJobOrderDetId());
+                    }
                 }
             }
             if(StringUtils.isEmpty(wmsInnerJobOrder.getWorkStartTime())){

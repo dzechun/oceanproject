@@ -242,8 +242,10 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.selectByExample(example1);
         BigDecimal sampleQty = qmsInspectionOrderDets.get(0).getSampleQty();
 
-        if(sampleQty.compareTo(new BigDecimal(size)) == 0){
-            throw new BizErrorException("扫描条码数已达到上限");
+        if(StringUtils.isNotEmpty(sampleQty)) {
+            if (sampleQty.compareTo(new BigDecimal(size)) == 0) {
+                throw new BizErrorException("扫描条码数已达到上限");
+            }
         }
 
         example.clear();

@@ -134,7 +134,7 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
         baseSampleProcess.setModifiedTime(new Date());
         baseSampleProcess.setModifiedUserId(user.getUserId());
         baseSampleProcess.setOrgId(user.getOrganizationId());
-        int i = baseSampleProcessMapper.updateByPrimaryKey(baseSampleProcess);
+        int i = baseSampleProcessMapper.updateByPrimaryKeySelective(baseSampleProcess);
 
         BaseHtSampleProcess baseHtSampleProcess = new BaseHtSampleProcess();
         BeanUtils.copyProperties(baseSampleProcess, baseHtSampleProcess);

@@ -59,7 +59,7 @@ public class WmsInnerInventoryModel implements Serializable {
      * 包装数量
      */
     @ApiModelProperty(name="packingQty",value = "包装数量")
-    @Excel(name = "包装数量", height = 20, width = 30,orderNum="6")
+    @Excel(name = "包装数量", height = 20, width = 30,type=10,numFormat="0.000",orderNum="6")
     @Column(name = "packing_qty")
     private BigDecimal packingQty;
 
@@ -107,6 +107,7 @@ public class WmsInnerInventoryModel implements Serializable {
      * 合同号
      */
     @ApiModelProperty(name = "contractCode",value = "合同号")
+    @Excel(name = "合同号", height = 20, width = 30,orderNum = "12")
     @Column(name = "contract_code")
     private String contractCode;
 
@@ -114,6 +115,7 @@ public class WmsInnerInventoryModel implements Serializable {
      * 规格
      */
     @ApiModelProperty(name = "spec",value = "规格")
+    @Excel(name = "规格", height = 20, width = 30,orderNum = "15")
     @Column(name = "spec")
     private String spec;
 
@@ -121,14 +123,19 @@ public class WmsInnerInventoryModel implements Serializable {
      * 请购单号
      */
     @ApiModelProperty(name = "purchaseReqOrderCode",value = "请购单号")
+    @Excel(name = "请购单号", height = 20, width = 30,orderNum = "13")
     @Column(name = "purchase_req_order_code")
     private String purchaseReqOrderCode;
 
+    @Excel(name = "位号", height = 20, width = 30,orderNum = "14")
     private String option1;
 
+    @Excel(name = "装置号", height = 20, width = 30,orderNum = "16")
     private String option2;
 
+    @Excel(name = "主项号", height = 20, width = 30,orderNum = "17")
     private String option3;
 
+    @Excel(name = "材料用途", height = 20, width = 30,orderNum = "18")
     private String option4;
 }

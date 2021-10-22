@@ -99,6 +99,6 @@
         and bii.organization_id=#{orgId}
       </if>
     </where>
-    order by bii.create_time desc
+    order by bii.inspection_item_code
   </select>
 </mapper>

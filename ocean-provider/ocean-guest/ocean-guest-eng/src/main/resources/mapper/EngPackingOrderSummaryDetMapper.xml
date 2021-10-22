@@ -97,8 +97,10 @@ sposd.summary_det_status
     u.user_name as create_user_name,cast(qty as decimal(18,3)) as exportQty,
     s.user_name as modified_user_name,
     bo.organization_name,
-    bs.storage_code as 'receivingStorageName',
-    bss.storage_code as 'putawayStorageName'
+    bs.storage_name as 'receivingStorageName',
+    bs.storage_code as 'receivingStorageCode',
+    bss.storage_code as 'putawayStorageCode',
+    bss.storage_name as 'putawayStorageName'
     from eng_packing_order_summary_det sposd
     LEFT JOIN eng_packing_order_summary spos ON sposd.packing_order_summary_id = spos.packing_order_summary_id
     LEFT JOIN eng_packing_order spo ON spos.packing_order_id = spo.packing_order_id

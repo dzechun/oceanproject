@@ -81,15 +81,14 @@ public class BasePackageSpecificationImport implements Serializable {
      * 包装单位ID
      */
     @ApiModelProperty(name="packingUnitId",value = "包装单位ID")
-    @Excel(name = "包装单位ID", height = 20, width = 30)
     private Long packingUnitId;
 
     /**
-     * 包装单位编码
+     * 包装单位名称
      */
-    @ApiModelProperty(name="packingUnitCode",value = "包装单位编码")
-    @Excel(name = "包装单位编码", height = 20, width = 30)
-    private String packingUnitCode;
+    @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
+    @Excel(name = "包装单位名称", height = 20, width = 30)
+    private String packingUnitName;
 
     /**
      * 备注

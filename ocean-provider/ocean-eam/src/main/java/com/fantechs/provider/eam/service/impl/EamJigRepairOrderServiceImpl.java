@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderReplacementDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigRepairOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamJigBarcode;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRepairOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -58,37 +59,32 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public EamJigRepairOrderDto pdaCreateOrder(String jigBarcode) {
-        Example example = new Example(EamJigBarcode.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("jigBarcode",jigBarcode);
-        List<EamJigBarcode> eamJigBarcodes = eamJigBarcodeMapper.selectByExample(example);
-        if(StringUtils.isEmpty(eamJigBarcodes)){
+        SearchEamJigBarcode searchEamJigBarcode = new SearchEamJigBarcode();
+        searchEamJigBarcode.setJigBarcode(jigBarcode);
+        searchEamJigBarcode.setCodeQueryMark(1);
+        List<EamJigBarcodeDto> jigBarcodeDtos = eamJigBarcodeMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigBarcode));
+        if(StringUtils.isEmpty(jigBarcodeDtos)){
             throw new BizErrorException("查不到此治具条码");
         }
-        EamJigBarcode eamJigBarcode = eamJigBarcodes.get(0);
-
+        EamJigBarcodeDto eamJigBarcodeDto = jigBarcodeDtos.get(0);
 
         SearchEamJigRepairOrder searchEamJigRepairOrder1 = new SearchEamJigRepairOrder();
-        searchEamJigRepairOrder1.setJigBarcodeId(eamJigBarcode.getJigBarcodeId());
+        searchEamJigRepairOrder1.setJigBarcodeId(eamJigBarcodeDto.getJigBarcodeId());
         searchEamJigRepairOrder1.setOrderStatus((byte)1);
         List<EamJigRepairOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigRepairOrder1));
         if(StringUtils.isNotEmpty(orderDtos)){
             throw new BizErrorException("已存在该治具待维修状态的单据");
         }
 
-        //保存维修单信息
-        EamJigRepairOrder eamJigRepairOrder = new EamJigRepairOrder();
-        eamJigRepairOrder.setJigBarcode(jigBarcode);
-        eamJigRepairOrder.setJigId(eamJigBarcode.getJigId());
-        eamJigRepairOrder.setJigBarcodeId(eamJigBarcode.getJigBarcodeId());
-        eamJigRepairOrder.setRequestForRepairTime(new Date());
-        this.save(eamJigRepairOrder);
+        //维修单信息
+        EamJigRepairOrderDto eamJigRepairOrderDto = new EamJigRepairOrderDto();
+        eamJigRepairOrderDto.setJigBarcodeId(eamJigBarcodeDto.getJigBarcodeId());
+        eamJigRepairOrderDto.setJigBarcode(jigBarcode);
+        eamJigRepairOrderDto.setJigId(eamJigBarcodeDto.getJigId());
+        eamJigRepairOrderDto.setJigCode(eamJigBarcodeDto.getJigCode());
+        eamJigRepairOrderDto.setJigName(eamJigBarcodeDto.getJigName());
 
-        SearchEamJigRepairOrder searchEamJigRepairOrder = new SearchEamJigRepairOrder();
-        searchEamJigRepairOrder.setJigRepairOrderId(eamJigRepairOrder.getJigRepairOrderId());
-        List<EamJigRepairOrderDto> eamJigRepairOrderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigRepairOrder));
-
-        return eamJigRepairOrderDtos.get(0);
+        return eamJigRepairOrderDto;
     }
 
     @Override

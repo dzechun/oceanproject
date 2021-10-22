@@ -451,9 +451,17 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 Map<String, Object> param = new HashMap<>();
                 param.put("workOrderId", mesSfcProductPallet.getWorkOrderId());
 //                param.put("samePackageCode", );
+
+                //扫描的条码有PO号判断 2021-10-22
+                if(StringUtils.isNotEmpty(samePackageCode) && requestPalletWorkScanDto.getPalletType() == 2){
+                    param.put("samePackageCode", samePackageCode);
+                }
+
                 List<MesSfcBarcodeProcess> nextProcessIsPallet = mesSfcBarcodeProcessService.findNextProcessIsPallet(param);
                 // TODO PO号判断
-
+                //栈板作业的时候，判断当前条码有没有PO号，
+                //如果有PO号 -> 则校验条码工单号、PO号在已过包箱数据里面还有没有，有就不做任何处理，没有的话就自动提交当前栈板
+                //如果没有PO号 -> 则校验条码工单号在已过包箱数据里面还有没有，有就不做任何处理，没有的话就自动提交当前栈板
 
                 if (nextProcessIsPallet.isEmpty()){
                     // 未满栈板自动提交
