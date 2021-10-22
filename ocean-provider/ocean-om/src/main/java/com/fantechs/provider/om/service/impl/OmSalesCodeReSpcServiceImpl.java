@@ -42,8 +42,10 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
 
     @Override
     public List<OmSalesCodeReSpcDto> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        map.put("orgId", user.getOrganizationId());
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            map.put("orgId", user.getOrganizationId());
+        }
         return omSalesCodeReSpcMapper.findList(map);
     }
 
@@ -130,6 +132,9 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
 
     @Override
     public int save(OmSalesCodeReSpc omSalesCodeReSpc) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        omSalesCodeReSpc.setOrgId(user.getOrganizationId());
+
         int i = omSalesCodeReSpcMapper.insertSelective(omSalesCodeReSpc);
 
         // 保存履历表
@@ -142,8 +147,8 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
     @Override
     public int update(OmSalesCodeReSpc omSalesCodeReSpc){
         if (omSalesCodeReSpc.getSamePackageCodeStatus().equals((byte) 1)
-                && omSalesCodeReSpc.getSamePackageCodeQty().compareTo(omSalesCodeReSpc.getMatchedQty()) > -1){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(), "PO号匹配数量已满足，不可重新激活");
+                && omSalesCodeReSpc.getSamePackageCodeQty().compareTo(omSalesCodeReSpc.getMatchedQty()) == 0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002, "PO号匹配数量已满足，不可重新激活");
         }
         int i = omSalesCodeReSpcMapper.updateByPrimaryKeySelective(omSalesCodeReSpc);
 
