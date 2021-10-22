@@ -88,5 +88,4 @@ public class SearchWmsOutDeliveryOrder extends BaseQuery implements Serializable
 
     @ApiModelProperty(name ="option1",value = "领料单类型")
     private String option1;
-
 }
