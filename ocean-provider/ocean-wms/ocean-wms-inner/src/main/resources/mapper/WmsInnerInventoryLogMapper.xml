@@ -172,6 +172,9 @@ wiil.option5
     <if test="packingUnitName!=null and packingUnitName!=''">
       and wiil.packing_unit_name like CONCAT('%',#{packingUnitName},'%')
     </if>
+    <if test="materialOwnerName!=null and materialOwnerName!=''">
+      and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
+    </if>
 </where>
 order by wiil.inventory_log_id desc
   </select>
