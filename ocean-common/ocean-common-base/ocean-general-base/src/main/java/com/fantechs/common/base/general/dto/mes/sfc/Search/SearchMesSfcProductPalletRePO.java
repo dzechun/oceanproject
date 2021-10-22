@@ -22,9 +22,9 @@ public class SearchMesSfcProductPalletRePO extends BaseQuery implements Serializ
     private String barcode;
 
     /**
-     * 销售码
+     * 销售条码
      */
-    @ApiModelProperty(name = "salesCode", value = "销售码")
-    private String salesCode;
+    @ApiModelProperty(name="salesBarcode" ,value="销售条码")
+    private String salesBarcode;
 
 }

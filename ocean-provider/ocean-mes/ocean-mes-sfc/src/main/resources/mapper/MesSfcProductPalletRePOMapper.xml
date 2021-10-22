@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcProductPalletRePOMapper">
+  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletRePODto">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="old_same_package_code" jdbcType="VARCHAR" property="oldSamePackageCode" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode" />
+    <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
+  </resultMap>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select
+    msbp.work_order_barcode_id,
+    msbp.barcode,
+    msbp.same_package_code AS old_same_package_code,
+    bm.material_code,
+    bm.material_name,
+    mskpr.part_barcode AS sales_barcode,
+    case when LENGTH(mskpr.part_barcode)>12 then LEFT(mskpr.part_barcode,12) else mskpr.part_barcode end as sales_code
+    from fantech_imes_v2.mes_sfc_barcode_process msbp
+    left join fantech_imes_v2.base_material bm on msbp.material_id=bm.material_id
+    left join fantech_imes_v2.om_sales_code_re_spc oscrs on msbp.same_package_code=oscrs.same_package_code
+    left join fantech_imes_v2.mes_sfc_key_part_relevance mskpr on msbp.work_order_barcode_id=mskpr.work_order_barcode_id
+    <where>
+      <if test="barcode != null and barcode!=''">
+        AND msbp.barcode = #{barcode}
+      </if>
+      <if test="salesBarcode != null and salesBarcode!=''">
+        AND msbp.part_barcode = #{salesBarcode}
+      </if>
+    </where>
+  </select>
+
+</mapper>
