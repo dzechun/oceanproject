@@ -195,7 +195,7 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
 
             EamJigBarcode eamJigBarcode = new EamJigBarcode();
             eamJigBarcode.setJigBarcodeId(entity.getJigBarcodeId());
-            eamJigBarcode.setUsageStatus((byte) 2);
+            eamJigBarcode.setUsageStatus((byte) 1);
             eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
         }
     }

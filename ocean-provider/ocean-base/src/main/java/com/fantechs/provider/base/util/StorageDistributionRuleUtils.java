@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -540,7 +541,7 @@ public class StorageDistributionRuleUtils {
             if (StringUtils.isNotEmpty(storages.get(0).getMaterialStoreType())) {
 
                 BigDecimal TypeCapacity = BigDecimal.ZERO;
-                Byte type = null;
+                byte type = 0;
                 switch (storages.get(0).getMaterialStoreType()){
                     case 1:
                         if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeACapacity())) {
@@ -590,9 +591,9 @@ public class StorageDistributionRuleUtils {
                                 shiftCapacity = shiftStorageCapacity.get(0).getTypeDCapacity();
                             }
                             //库存数/转换货品库容*货品库容
-                            BigDecimal a = wmsInnerInventory.getPackingQty().divide(shiftCapacity).multiply(TypeCapacity);
+                            BigDecimal a = wmsInnerInventory.getPackingQty().divide(shiftCapacity,2).multiply(TypeCapacity);
                             //四舍五入取整数
-                            a = a.setScale(0, BigDecimal.ROUND_HALF_UP);
+                            a = a.setScale(0, RoundingMode.HALF_UP);
                             qty = qty.subtract(a);
                         }else {
                             qty = qty.subtract(wmsInnerInventory.getPackingQty());
