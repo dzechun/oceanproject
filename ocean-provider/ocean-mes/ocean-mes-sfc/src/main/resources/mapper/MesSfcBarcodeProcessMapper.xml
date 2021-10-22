@@ -146,9 +146,15 @@
       mes_sfc_barcode_process msbp
         LEFT JOIN base_process bp ON msbp.next_process_id = bp.process_id
         LEFT JOIN base_process_category bpc ON bp.process_category_id = bpc.process_category_id
-    WHERE
+    <where>
       bpc.process_category_code = 'PALLET'
-      AND msbp.work_order_id = #{workOrderId}
+      <if test="workOrderId != null">
+        AND msbp.work_order_id = #{workOrderId}
+      </if>
+      <if test="samePackageCode != null and samePackageCode !=''">
+        AND msbp.same_package_code = #{samePackageCode}
+      </if>
+    </where>
   </select>
 
   <update id="batchUpdate" parameterType="java.util.ArrayList">

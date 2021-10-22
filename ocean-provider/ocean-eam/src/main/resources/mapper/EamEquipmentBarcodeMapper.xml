@@ -77,8 +77,11 @@
       <if test="equipmentId != null">
         and eeb.equipment_id = #{equipmentId}
       </if>
-      <if test="equipmentBarcode != null and equipmentBarcode!=''">
+      <if test="equipmentBarcode != null and equipmentBarcode!='' and codeQueryMark != 1">
         and eeb.equipment_barcode like CONCAT('%', #{equipmentBarcode}, '%')
+      </if>
+      <if test="equipmentBarcode != null and equipmentBarcode!='' and codeQueryMark == 1">
+        and eeb.equipment_barcode = #{equipmentBarcode}
       </if>
       <if test="assetCode != null and assetCode!=''">
         and eeb.asset_code like CONCAT('%', #{assetCode}, '%')

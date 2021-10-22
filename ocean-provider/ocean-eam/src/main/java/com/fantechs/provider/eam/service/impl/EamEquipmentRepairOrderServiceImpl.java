@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.dto.eam.EamEquipmentRepairOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamJigRepairOrderDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentRepairOrder;
+import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentBarcode;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentRepairOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigRepairOrder;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -59,37 +60,32 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public EamEquipmentRepairOrderDto pdaCreateOrder(String equipmentBarcode) {
-        Example example = new Example(EamEquipmentBarcode.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentBarcode",equipmentBarcode);
-        List<EamEquipmentBarcode> eamEquipmentBarcodes = eamEquipmentBarcodeMapper.selectByExample(example);
-        if(StringUtils.isEmpty(eamEquipmentBarcodes)){
+        SearchEamEquipmentBarcode searchEamEquipmentBarcode = new SearchEamEquipmentBarcode();
+        searchEamEquipmentBarcode.setEquipmentBarcode(equipmentBarcode);
+        searchEamEquipmentBarcode.setCodeQueryMark(1);
+        List<EamEquipmentBarcode> equipmentBarcodes = eamEquipmentBarcodeMapper.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentBarcode));
+        if(StringUtils.isEmpty(equipmentBarcodes)){
             throw new BizErrorException("查不到该设备条码");
         }
+        EamEquipmentBarcode eamEquipmentBarcode = equipmentBarcodes.get(0);
 
         SearchEamEquipmentRepairOrder searchEamEquipmentRepairOrder = new SearchEamEquipmentRepairOrder();
-        searchEamEquipmentRepairOrder.setEquipmentBarcodeId(eamEquipmentBarcodes.get(0).getEquipmentBarcodeId());
+        searchEamEquipmentRepairOrder.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
         searchEamEquipmentRepairOrder.setOrderStatus((byte)1);
         List<EamEquipmentRepairOrderDto> orderDtos = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentRepairOrder));
         if(StringUtils.isNotEmpty(orderDtos)){
             throw new BizErrorException("已存在该设备待维修状态的单据");
         }
 
-        //保存
-        EamEquipmentRepairOrder eamEquipmentRepairOrder = new EamEquipmentRepairOrder();
-        eamEquipmentRepairOrder.setEquipmentBarcode(equipmentBarcode);
-        eamEquipmentRepairOrder.setEquipmentId(eamEquipmentBarcodes.get(0).getEquipmentId());
-        eamEquipmentRepairOrder.setEquipmentBarcodeId(eamEquipmentBarcodes.get(0).getEquipmentBarcodeId());
-        eamEquipmentRepairOrder.setRequestForRepairTime(new Date());
+        //设备信息
         EamEquipmentRepairOrderDto eamEquipmentRepairOrderDto = new EamEquipmentRepairOrderDto();
-        BeanUtils.copyProperties(eamEquipmentRepairOrder,eamEquipmentRepairOrderDto);
-        this.save(eamEquipmentRepairOrderDto);
+        eamEquipmentRepairOrderDto.setEquipmentBarcodeId(eamEquipmentBarcode.getEquipmentBarcodeId());
+        eamEquipmentRepairOrderDto.setEquipmentBarcode(equipmentBarcode);
+        eamEquipmentRepairOrderDto.setEquipmentId(eamEquipmentBarcode.getEquipmentId());
+        eamEquipmentRepairOrderDto.setEquipmentCode(eamEquipmentBarcode.getEquipmentCode());
+        eamEquipmentRepairOrderDto.setEquipmentName(eamEquipmentBarcode.getEquipmentName());
 
-        SearchEamEquipmentRepairOrder searchEamEquipmentRepairOrder1 = new SearchEamEquipmentRepairOrder();
-        searchEamEquipmentRepairOrder1.setEquipmentRepairOrderId(eamEquipmentRepairOrderDto.getEquipmentRepairOrderId());
-        List<EamEquipmentRepairOrderDto> list = this.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentRepairOrder1));
-
-        return list.get(0);
+        return eamEquipmentRepairOrderDto;
     }
 
     @Override
