@@ -250,7 +250,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
             String materialCode = basePackageSpecificationImport.getMaterialCode();
             String processCode = basePackageSpecificationImport.getProcessCode();
             String barcodeRuleCode = basePackageSpecificationImport.getBarcodeRuleCode();
-            String packingUnitCode = basePackageSpecificationImport.getPackingUnitCode();
+            String packingUnitName = basePackageSpecificationImport.getPackingUnitName();
             if (StringUtils.isEmpty(
                     packageSpecificationCode,packageSpecificationName,materialCode,processCode
             )){
@@ -306,11 +306,11 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
             }
 
             //如果包装单位编码不为空，则判断包装单位信息是否存在
-            if (StringUtils.isNotEmpty(packingUnitCode)){
+            if (StringUtils.isNotEmpty(packingUnitName)){
                 Example example3 = new Example(BasePackingUnit.class);
-                Example.Criteria criteria3 = example1.createCriteria();
+                Example.Criteria criteria3 = example3.createCriteria();
                 criteria3.andEqualTo("organizationId", currentUser.getOrganizationId());
-                criteria3.andEqualTo("packingUnitCode",packingUnitCode);
+                criteria3.andEqualTo("packingUnitName",packingUnitName);
                 BasePackingUnit basePackingUnit = basePackingUnitMapper.selectOneByExample(example3);
                 if (StringUtils.isEmpty(basePackingUnit)){
                     fail.add(i+4);

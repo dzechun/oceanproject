@@ -119,9 +119,9 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("productBomId", baseProductBomDet.getProductBomId());
         criteria.andEqualTo("materialId", baseProductBomDet.getMaterialId());
+        criteria.andNotEqualTo("productBomDetId", baseProductBomDet.getProductBomDetId());
         BaseProductBomDet productBomDet = baseProductBomDetMapper.selectOneByExample(example);
-
-        if (StringUtils.isNotEmpty(productBomDet) && !productBomDet.getProductBomDetId().equals(productBomDet.getProductBomDetId())) {
+        if (StringUtils.isNotEmpty(productBomDet)) {
             throw new BizErrorException("零件料号已存在");
         }
 

@@ -175,7 +175,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                     mesSfcRepairOrderSemiProducts.add(mesSfcRepairOrderSemiProduct);
                 }
             }
-        }else if(SNCodeType == 2){
+        }else if(SNCodeType == 2 && StringUtils.isNotEmpty(SNCode)){
             SearchOmPurchaseOrder searchOmPurchaseOrder = new SearchOmPurchaseOrder();
             searchOmPurchaseOrder.setPurchaseOrderCode(purchaseOrderCode);
             List<OmPurchaseOrderDto> purchaseOrderDtos = omFeignApi.findList(searchOmPurchaseOrder).getData();
