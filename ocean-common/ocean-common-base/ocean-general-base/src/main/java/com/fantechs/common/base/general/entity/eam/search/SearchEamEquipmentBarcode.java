@@ -46,4 +46,9 @@ public class SearchEamEquipmentBarcode extends BaseQuery implements Serializable
     @ApiModelProperty(name="equipmentModel",value = "设备型号")
     private String equipmentModel;
 
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

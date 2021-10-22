@@ -87,8 +87,14 @@
       <if test="materialId!=null and ifContainCommon==1">
         and (bis.material_id = #{materialId} or bis.material_id = 0)
       </if>
+      <if test="materialId==null and ifContainCommon==1">
+        and (bis.material_id is null or bis.material_id = 0)
+      </if>
       <if test="supplierId!=null and ifContainCommon==1">
         and (bis.supplier_id = #{supplierId} or bis.material_id = 0)
+      </if>
+      <if test="supplierId==null and ifContainCommon==1">
+        and (bis.supplier_id is null or bis.material_id = 0)
       </if>
       <if test="inspectionWayId!=null">
         and bis.inspection_way_id = #{inspectionWayId}
