@@ -93,7 +93,15 @@ public class BaseProductYieldServiceImpl extends BaseService<BaseProductYield> i
         if(StringUtils.isNotEmpty(baseProductYields)&&!baseProductYields.get(0).getProductYieldId().equals(baseProductYieldDto.getProLineId())){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
-
+        example.clear();
+        criteria = example.createCriteria();
+        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        criteria.andEqualTo("materialId",baseProductYieldDto.getMaterialId());
+        criteria.orEqualTo("priLineId",baseProductYieldDto.getProLineId());
+        baseProductYields = baseProductYieldMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(baseProductYields)&&!baseProductYields.get(0).getProductYieldId().equals(baseProductYieldDto.getProLineId())){
+            throw new BizErrorException("产线与物料重复");
+        }
 
         baseProductYieldDto.setModifiedUserId(currentUser.getUserId());
         baseProductYieldDto.setModifiedTime(new Date());

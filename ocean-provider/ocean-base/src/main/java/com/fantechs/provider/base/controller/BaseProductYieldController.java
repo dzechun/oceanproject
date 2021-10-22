@@ -1,11 +1,13 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseProductYieldDto;
 import com.fantechs.common.base.general.entity.basic.BaseProductYield;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductYield;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductYield;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseHtProductYieldService;
 import com.fantechs.provider.base.service.BaseProductYieldService;
@@ -18,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -84,6 +87,19 @@ public class BaseProductYieldController {
         Page<Object> page = PageHelper.startPage(searchBaseProductYield.getStartPage(),searchBaseProductYield.getPageSize());
         List<BaseHtProductYield> list = baseHtProductYieldService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseProductYield));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @PostMapping(value = "/export")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchBaseProductYield searchBaseProductYield){
+        List<BaseProductYieldDto> list = baseProductYieldService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductYield));
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出信息", "BaseProductYield信息", BaseProductYieldDto.class, "BaseProductYield.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
     }
 
 }
