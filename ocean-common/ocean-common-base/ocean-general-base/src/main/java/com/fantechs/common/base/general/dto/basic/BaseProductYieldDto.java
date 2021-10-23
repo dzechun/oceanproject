@@ -45,24 +45,36 @@ public class BaseProductYieldDto extends BaseProductYield implements Serializabl
     @Excel(name = "产线名称", height = 20, width = 30,orderNum="2")
     private String proName;
 
-    /**
-     * 产品料号
-     */
-    @ApiModelProperty(name="materialId",value = "产品料号")
-    @Excel(name = "产品料号", height = 20, width = 30,orderNum="3")
-    private Long materialId;
 
     /**
      * 产品名称
      */
     @ApiModelProperty(name="materialName",value = "产品名称")
     @Excel(name = "产品名称", height = 20, width = 30,orderNum="4")
-    private Long materialName;
+    private String materialName;
+
+    /**
+     * 产品编码
+     */
+    @ApiModelProperty(name="materialCode",value = "产品编码")
+    private String materialCode;
 
     /**
      * 工序名称
      */
     @ApiModelProperty(name="processName",value = "工序名称")
     @Excel(name = "工序名称", height = 20, width = 30,orderNum="5")
-    private Long processName;
+    private String processName;
+
+    /**
+     * 产线编码
+     */
+    @ApiModelProperty(name="proCode",value = "产线名称")
+    private String proCode;
+
+    /**
+     * 工序编码
+     */
+    @ApiModelProperty(name="processCode",value = "工序编码")
+    private String processCode;
 }
