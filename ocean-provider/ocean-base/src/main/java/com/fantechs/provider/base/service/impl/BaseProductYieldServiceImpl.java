@@ -48,7 +48,7 @@ public class BaseProductYieldServiceImpl extends BaseService<BaseProductYield> i
 
         Example example = new Example(BaseProductYield.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.orEqualTo("yieldType", 1);
         List<BaseProductYield> baseProductYields = baseProductYieldMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(baseProductYields)){
@@ -56,9 +56,9 @@ public class BaseProductYieldServiceImpl extends BaseService<BaseProductYield> i
         }
         example.clear();
         criteria = example.createCriteria();
-        criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("materialId",baseProductYieldDto.getMaterialId());
-        criteria.orEqualTo("priLineId",baseProductYieldDto.getProLineId());
+        criteria.orEqualTo("proLineId",baseProductYieldDto.getProLineId());
         baseProductYields = baseProductYieldMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(baseProductYields)){
             throw new BizErrorException("产线与物料重复");

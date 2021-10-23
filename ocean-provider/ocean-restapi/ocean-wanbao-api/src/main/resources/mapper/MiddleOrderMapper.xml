@@ -34,17 +34,19 @@
             wdj.quantity_completed AS output_qty,
             wdj.last_update_date AS modified_time
         FROM
-            wip_entities we,
-            mfg_lookups wjs,
-            wip_discrete_jobs wdj,
-            mtl_system_items_b msib
+            APPS.wip_entities we,
+            APPS.mfg_lookups wjs,
+            APPS.wip_discrete_jobs wdj,
+            APPS.mtl_system_items_b msib
         <where>
             we.wip_entity_id = wdj.wip_entity_id
             AND wdj.primary_item_id = msib.inventory_item_id
             AND msib.organization_id = 83
             AND wjs.lookup_type = 'WIP_JOB_STATUS'
             AND wjs.LOOKUP_CODE = WDJ.STATUS_TYPE
+            AND wjs.meaning = '已发放'
             AND SCHEDULE_GROUP_ID in (2047, 2045, 2046, 2047)
+--             AND wdj.scheduled_start_date >= TO_DATE('2021-10-01' , 'YYYY-MM-DD' )
             <if test="date != null and date != ''">
                 AND wdj.scheduled_start_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>

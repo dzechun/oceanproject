@@ -63,7 +63,7 @@
         sod.actual_deliver_date, sod.plan_delivery_date, sod.actual_delivery_date, sod.delivery_address,
         sod.total_inform_deliver_qty, sod.arrange_dispatch_qty, sod.total_outbound_qty, sod.total_sales_return_apply_qty,
         sod.total_return_qty, sod.order_goods_qty, sod.not_order_goods_qty, sod.total_return_need_supply_qty,
-        sod.total_production_qty, sod.total_not_production_qty, sod.return_arrange_dispatch_qty,
+        sod.total_production_qty, sod.total_not_production_qty, sod.return_arrange_dispatch_qty,sod.sales_code,
         sod.status, sod.is_delete, sod.remark, sod.org_id, sod.create_user_id, sod.create_time,
         sod.modified_user_id, sod.modified_time
     </sql>

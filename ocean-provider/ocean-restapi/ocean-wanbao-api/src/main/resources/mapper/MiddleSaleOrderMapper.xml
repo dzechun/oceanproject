@@ -25,7 +25,7 @@
 
     <select id="setPolicy" >
         begin
-        mo_global.set_policy_context('S',81);
+        APPS.mo_global.set_policy_context('S',81);
         end;
     </select>
 
@@ -41,7 +41,7 @@
             mld.product_code AS sales_code,
             mld.Wb_Make_Code AS make_code,
             mld.product_description AS material_name,
-            mld.PRODUCT_CODE AS material_code,
+            mld.Wb_Make_Code AS material_code,
             mld.quantity AS order_qty,
             mld.quantity AS sales_code_qty,
             mh.order_date AS make_order_date,
@@ -49,11 +49,14 @@
             mh.creation_date AS create_time,
             mh.LAST_UPDATE_DATE AS modified_time
         FROM
-        oms_mo_headers_v mh
-        LEFT JOIN oms_mo_line_details_v mld ON mld.mo_header_id = mh.mo_header_id
+        APPS.oms_mo_headers_v mh
+        LEFT JOIN APPS.oms_mo_line_details_v mld ON mld.mo_header_id = mh.mo_header_id
         <where>
             mh.org_id = 81
             AND mh.mo_number IS NOT null
+            AND mh.mo_status = '审批通过'
+            AND mld.LINE_NUMBER LIKE '%.1'
+--             AND mh.order_date >= TO_DATE('2021-08-01' , 'YYYY-MM-DD' )
             <if test="date != null and date != ''">
                 and mh.order_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>

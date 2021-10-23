@@ -1,5 +1,7 @@
 package com.fantechs.provider.wms.out.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -214,7 +216,17 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
         //出库单
         if(wmsOutDeliveryOrder.getOrderTypeId()==1){
-            wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("XSCK-"));
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoSyncData");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (specItems.isEmpty()){
+                wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("XSCK-"));
+            }else {
+                JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
+                if(!jsonObject.get("enable").equals(1) || StringUtils.isEmpty(wmsOutDeliveryOrder.getDeliveryOrderCode())){
+                    wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("XSCK-"));
+                }
+            }
         }else if(wmsOutDeliveryOrder.getOrderTypeId()==2){
             wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("DBCK-"));
         }else if(wmsOutDeliveryOrder.getOrderTypeId()==7){

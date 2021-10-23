@@ -63,7 +63,7 @@ public class MiddleSaleOrder implements Serializable {
 
     @ApiModelProperty(name="customerOrderLineNumber" ,value="订单行号")
     @Column(name = "customer_order_line_number")
-    private String customerOrderLineNumber;
+    private BigDecimal customerOrderLineNumber;
 
     @ApiModelProperty(name="salesCode" ,value="销售编码")
     @Column(name = "sales_code")

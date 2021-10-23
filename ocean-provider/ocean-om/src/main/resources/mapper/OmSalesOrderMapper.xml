@@ -104,6 +104,12 @@
             <if test="workOrderId != null and workOrderId != ''">
                 and mpwo.work_order_id = #{workOrderId}
             </if>
+            <if test="salesUserName!=null and salesUserName!=''">
+                and so.sales_user_name like CONCAT('%',#{salesUserName},'%')
+            </if>
+        <if test="orderType!=null and orderType!=''">
+            so.order_type like CONCAT('%',#{orderType},'%')
+        </if>
         </where>
         order by so.modified_time desc
     </select>

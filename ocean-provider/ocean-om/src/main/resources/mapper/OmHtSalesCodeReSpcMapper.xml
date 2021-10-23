@@ -10,7 +10,7 @@
     <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
     <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="material_model_id" jdbcType="BIGINT" property="materialModelId" />
+    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
     <result column="priority" jdbcType="INTEGER" property="priority" />
     <result column="same_package_code_status" jdbcType="TINYINT" property="samePackageCodeStatus" />
     <result column="same_package_code_qty" jdbcType="DECIMAL" property="samePackageCodeQty" />

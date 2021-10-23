@@ -10,6 +10,7 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
@@ -85,8 +86,6 @@ public class SyncDataServiceImpl implements SyncDataService {
     // endregion
 
     @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    @LcnTransaction
     public void syncMaterialData() {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -156,14 +155,15 @@ public class SyncDataServiceImpl implements SyncDataService {
                             break;
                         }
                     }
-                }
-                if (StringUtils.isEmpty(dto.getProductModelId())) {
-                    BaseProductModel baseProductModel = new BaseProductModel();
-                    baseProductModel.setProductModelName(dto.getProductModelCode());
-                    baseProductModel.setProductModelCode(dto.getProductModelCode());
-                    baseProductModel.setStatus(1);
-                    String id = baseFeignApi.addForReturnId(baseProductModel).getData();
-                    dto.setProductModelId(id);
+                    if (StringUtils.isEmpty(dto.getProductModelId())) {
+                        BaseProductModel baseProductModel = new BaseProductModel();
+                        baseProductModel.setProductModelName(dto.getProductModelCode());
+                        baseProductModel.setProductModelCode(dto.getProductModelCode());
+                        baseProductModel.setProductModelDesc(dto.getMaterialCode());
+                        baseProductModel.setStatus(1);
+                        Long id = baseFeignApi.addForReturnId(baseProductModel).getData();
+                        dto.setProductModelId(id.toString());
+                    }
                 }
                 long MaterialCount = baseMaterials.stream().filter(item -> item.getMaterialCode().equals(dto.getMaterialCode())).count();
                 if (MaterialCount <= 0) {
@@ -204,7 +204,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 
                     //修改物料页签
                     for (BaseTabDto item : baseTabDtos){
-                        if (item.getMaterialId().equals(dto.getMaterialId())){
+                        if (item.getMaterialId().equals(material.getMaterialId())){
                             BaseTab tab = new BaseTab();
                             BeanUtil.copyProperties(item, tab);
                             // FG成品 SA半成品
@@ -214,6 +214,9 @@ public class SyncDataServiceImpl implements SyncDataService {
                                 tab.setMaterialProperty((byte) 0);
                             }
                             tab.setVoltage(dto.getVoltage());
+                            if(StringUtils.isNotEmpty(dto.getProductModelId())){
+                                tab.setProductModelId(Long.valueOf(dto.getProductModelId()));
+                            }
                             baseFeignApi.updateTab(tab);
                             break;
                         }
@@ -230,8 +233,6 @@ public class SyncDataServiceImpl implements SyncDataService {
     }
 
     @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    @LcnTransaction
     public void syncOrderData() {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -261,12 +262,13 @@ public class SyncDataServiceImpl implements SyncDataService {
             map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
         }
         List<MiddleOrder> workOrders = middleOrderMapper.findOrderData(map);
+        log.info("获取万宝工单数据，当前获取数量：" + workOrders.size());
         if (!workOrders.isEmpty()) {
             // 记录日志
             long start = System.currentTimeMillis();
 
             // 获取所有销售订单
-            List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
+//            List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
             // 物料集合
             List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
             // 工单集合
@@ -322,24 +324,29 @@ public class SyncDataServiceImpl implements SyncDataService {
                 workOrder.setPutIntoProcessId(routeProcessList.get(0).getProcessId());
                 workOrder.setOutputProcessId(routeProcessList.get(routeProcessList.size()-1).getProcessId());
                 workOrder.setBarcodeRuleSetId(ruleSetId);
+                workOrder.setIsDelete((byte) 1);
+                workOrder.setOrgId(sysUser.getOrganizationId());
+                workOrder.setScheduledQty(workOrder.getWorkOrderQty());
+                workOrder.setProductionQty(BigDecimal.ZERO);
+                workOrder.setWorkOrderStatus((byte) 1);
                 // 销售订单
-                if (StringUtils.isEmpty(order.getSalesOrderCode())) {
-                    apiLog.setResponseData(order.getWorkOrderCode() + "此生产订单数据中销售订单号为空，不同步此条订单数据");
-                    securityFeignApi.add(apiLog);
-                    continue;
-                }
-                for (OmSalesOrderDto item : salesOrderDtos) {
-                    if (item.getSalesOrderCode().equals(order.getSalesOrderCode())) {
-                        workOrder.setSalesOrderId(item.getSalesOrderId());
-                        break;
-                    }
-                }
-                if (StringUtils.isEmpty(workOrder.getSalesOrderId())) {
-                    // 记录日志
-                    apiLog.setResponseData(order.getWorkOrderCode() + "此订单编号在系统中没有匹配的销售订单号" + order.getSalesOrderCode() + "，不同步此条订单数据");
-                    securityFeignApi.add(apiLog);
-                    continue;
-                }
+//                if (StringUtils.isEmpty(order.getSalesOrderCode())) {
+//                    apiLog.setResponseData(order.getWorkOrderCode() + "此生产订单数据中销售订单号为空，不同步此条订单数据");
+//                    securityFeignApi.add(apiLog);
+//                    continue;
+//                }
+//                for (OmSalesOrderDto item : salesOrderDtos) {
+//                    if (item.getSalesOrderCode().equals(order.getSalesOrderCode())) {
+//                        workOrder.setSalesOrderId(item.getSalesOrderId());
+//                        break;
+//                    }
+//                }
+//                if (StringUtils.isEmpty(workOrder.getSalesOrderId())) {
+//                    // 记录日志
+//                    apiLog.setResponseData(order.getWorkOrderCode() + "此订单编号在系统中没有匹配的销售订单号" + order.getSalesOrderCode() + "，不同步此条订单数据");
+//                    securityFeignApi.add(apiLog);
+//                    continue;
+//                }
 
                 // 物料
                 if (StringUtils.isEmpty(order.getMaterialCode())) {
@@ -416,8 +423,6 @@ public class SyncDataServiceImpl implements SyncDataService {
     }
 
     @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    @LcnTransaction
     public void syncSaleOrderData() {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -450,7 +455,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         // 执行查询前调用函数执行存储过程
         middleSaleOrderMapper.setPolicy();
         List<MiddleSaleOrder> salesOrders = middleSaleOrderMapper.findSaleOrderData(map);
-
+        log.info("获取万宝销售订单数据，当前获取数量：" + salesOrders.size());
         if (!salesOrders.isEmpty()) {
             // 记录日志
             long start = System.currentTimeMillis();
@@ -474,8 +479,17 @@ public class SyncDataServiceImpl implements SyncDataService {
             List<MiddleSaleOrder> list = new ArrayList<>();
             Map<String, List<MiddleSaleOrder>> collect = salesOrders.stream().collect(Collectors.groupingBy(MiddleSaleOrder::getSalesOrderCode));
             collect.forEach((key, value) -> {
+                Map<BigDecimal, List<MiddleSaleOrder>> listMap = value.stream().sorted(Comparator.comparing(MiddleSaleOrder::getModifiedTime))
+                        .collect(Collectors.groupingBy(MiddleSaleOrder::getCustomerOrderLineNumber));
+                List<MiddleSaleOrder> orders = new ArrayList<>();
+                listMap.forEach((itemkey, itemvalue) -> {
+                    orders.add(itemvalue.get(0));
+                });
+
+
+
                 OmSalesOrderDto omSalesOrder =  new OmSalesOrderDto();
-                BeanUtil.copyProperties(value.get(0), omSalesOrder);
+                BeanUtil.copyProperties(orders.get(0), omSalesOrder);
                 for (BaseBarcodeRuleSetDto ruleSetDto : ruleSetDtos){
                     if (ruleSetDto.getBarcodeRuleSetCode().equals(jsonObject.get("ruleCode"))){
                         omSalesOrder.setBarcodeRuleSetId(ruleSetDto.getBarcodeRuleSetId());
@@ -484,7 +498,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
 
                 List<OmSalesOrderDetDto> omSalesOrderDetDtoList = new ArrayList<>();
-                for (MiddleSaleOrder saleOrder : value) {
+                for (MiddleSaleOrder saleOrder : orders) {
                     // 客户编码
                     if (StringUtils.isEmpty(saleOrder.getSupplierCode())) {
                         // 记录日志
@@ -539,13 +553,15 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
                 // 保存平台库
                 if(!omSalesOrderDetDtoList.isEmpty()){
+                    omSalesOrder.setSalesUserName(omSalesOrder.getMakeOrderUserName());
                     omSalesOrder.setOmSalesOrderDetDtoList(omSalesOrderDetDtoList);
                     if (StringUtils.isNotEmpty(omSalesOrder.getSalesOrderId())) {
                         omFeignApi.update(omSalesOrder);
                     } else {
-                        list.addAll(value);
+                        list.addAll(orders);
                         omSalesOrder.setOrderStatus((byte) 1);
                         omSalesOrder.setStatus((byte) 1);
+                        log.info("omSalesOrder=========" + JSON.toJSONString(omSalesOrder));
                         omFeignApi.add(omSalesOrder);
                     }
                 }
@@ -568,8 +584,6 @@ public class SyncDataServiceImpl implements SyncDataService {
     }
 
     @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    @LcnTransaction
     public void syncOutDeliveryData() {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -601,7 +615,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         // 执行查询前调用函数执行存储过程
         middleOutDeliveryOrderMapper.setPolicy();
         List<MiddleOutDeliveryOrder> deliveryOrders = middleOutDeliveryOrderMapper.findOutDeliveryData(map);
-
+        log.info("获取万宝出库单数据，当前获取数量：" + deliveryOrders.size());
         if (!deliveryOrders.isEmpty()){
             // 记录日志
             long start = System.currentTimeMillis();
@@ -609,59 +623,83 @@ public class SyncDataServiceImpl implements SyncDataService {
             // 收货人
 //            List<BaseConsignee> baseConsignees = baseFeignApi.findConsigneeAll().getData();
             // 客户
-//            List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierAll().getData();
+            List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierAll().getData();
             // 货主
-//            List<BaseMaterialOwnerDto> ownerDtos = baseFeignApi.findMaterialOwnerAll().getData();
-
+            List<BaseMaterialOwnerDto> ownerDtos = baseFeignApi.findMaterialOwnerAll().getData();
             // 物料集合
             List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
 
             // 保存平台库
             List<MiddleOutDeliveryOrder> list = new ArrayList<>();
             Map<String, List<MiddleOutDeliveryOrder>> listMap = deliveryOrders.stream().collect(Collectors.groupingBy(MiddleOutDeliveryOrder::getDeliveryOrderCode));
+            log.info("=========listMap" + listMap.size());
             listMap.forEach((key, value) ->{
                 WmsOutDeliveryOrder order = new WmsOutDeliveryOrder();
                 BeanUtil.copyProperties(value.get(0), order);
                 order.setOrderTypeId(1L); // 销售出库
-                List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = new ArrayList<>();
-                for (MiddleOutDeliveryOrder item : deliveryOrders){
-                    WmsOutDeliveryOrderDetDto orderDet = new WmsOutDeliveryOrderDetDto();
-                    BeanUtil.copyProperties(item, orderDet);
+                order.setOrgId(sysUser.getOrganizationId());
+                order.setMaterialOwnerId(ownerDtos.get(0).getMaterialOwnerId());
 
-                    // 物料
-                    if (StringUtils.isEmpty(item.getMaterialCode())) {
-                        apiLog.setResponseData(item.getWorkOrderCode() + "此出货通知书数据中物料编码为空，不同步此条数据");
-                        securityFeignApi.add(apiLog);
-                        continue;
-                    }
-                    for (BaseMaterial material : baseMaterials) {
-                        if (material.getMaterialCode().equals(item.getMaterialCode())) {
-                            orderDet.setMaterialId(material.getMaterialId());
-                            break;
-                        }
-                    }
-
-                    if (StringUtils.isEmpty(orderDet.getMaterialId())) {
-                        // 记录日志
-                        apiLog.setResponseData(item.getDeliveryOrderCode() + "此出货通知书编号在系统中没有匹配的物料" + item.getMaterialCode() + "，不同步此条数据");
-                        securityFeignApi.add(apiLog);
-                        continue;
-                    }
-                    wmsOutDeliveryOrderDetList.add(orderDet);
+                // 客户编码
+                if (StringUtils.isEmpty(value.get(0).getCustomerCode())) {
+                    // 记录日志
+                    apiLog.setResponseData(value.get(0).getCustomerCode() + "此销售订单客户编码为空，不同步此条出库单订单数据");
+                    securityFeignApi.add(apiLog);
                 }
-                outFeignApi.add(order);
-                list.addAll(value);
+                for (BaseSupplier supplier : baseSuppliers) {
+                    if (supplier.getSupplierCode().equals(value.get(0).getCustomerCode())) {
+                        order.setSupplierId(supplier.getSupplierId());
+                        break;
+                    }
+                }
+                if (StringUtils.isEmpty(order.getSupplierId())) {
+                    // 记录日志
+                    apiLog.setResponseData(value.get(0).getDeliveryOrderCode() + "此销售订单编号在系统中不存在此客户编码" + value.get(0).getCustomerCode() + "，不同步此条订单数据");
+                    securityFeignApi.add(apiLog);
+                }else {
+                    List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = new ArrayList<>();
+                    for (MiddleOutDeliveryOrder item : value){
+                        WmsOutDeliveryOrderDetDto orderDet = new WmsOutDeliveryOrderDetDto();
+                        BeanUtil.copyProperties(item, orderDet);
+
+                        // 物料
+                        if (StringUtils.isEmpty(item.getMaterialCode())) {
+                            apiLog.setResponseData(item.getDeliveryOrderCode() + "此出货通知书数据中物料编码为空，不同步此条数据");
+                            securityFeignApi.add(apiLog);
+                            continue;
+                        }
+                        for (BaseMaterial material : baseMaterials) {
+                            if (material.getMaterialCode().equals(item.getMaterialCode())) {
+                                orderDet.setMaterialId(material.getMaterialId());
+                                break;
+                            }
+                        }
+
+                        if (StringUtils.isEmpty(orderDet.getMaterialId())) {
+                            // 记录日志
+                            apiLog.setResponseData(item.getDeliveryOrderCode() + "此出货通知书编号在系统中没有匹配的物料" + item.getMaterialCode() + "，不同步此条数据");
+                            securityFeignApi.add(apiLog);
+                            continue;
+                        }
+                        wmsOutDeliveryOrderDetList.add(orderDet);
+                    }
+                    if (!wmsOutDeliveryOrderDetList.isEmpty()){
+                        order.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetList);
+                        outFeignApi.add(order);
+                        list.addAll(value);
+                    }
+                }
             });
 
-            if (!list.isEmpty()){
-                // 保存中间库
-                DynamicDataSourceHolder.putDataSouce("secondary");
-                for (MiddleOutDeliveryOrder item : list){
-                    item.setDeliveryOrderId(UUIDUtils.getUUID());
-                    middleOutDeliveryOrderMapper.save(item);
-                }
-                DynamicDataSourceHolder.removeDataSource();
-            }
+//            if (!list.isEmpty()){
+//                // 保存中间库
+//                DynamicDataSourceHolder.putDataSouce("secondary");
+//                for (MiddleOutDeliveryOrder item : list){
+//                    item.setDeliveryOrderId(UUIDUtils.getUUID());
+//                    middleOutDeliveryOrderMapper.save(item);
+//                }
+//                DynamicDataSourceHolder.removeDataSource();
+//            }
 
             apiLog.setRequestTime(new Date());
             apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
@@ -670,8 +708,6 @@ public class SyncDataServiceImpl implements SyncDataService {
     }
 
     @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    @LcnTransaction
     public void syncBarcodeData() {
 
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
