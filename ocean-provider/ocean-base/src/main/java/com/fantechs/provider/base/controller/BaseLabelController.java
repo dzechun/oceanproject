@@ -13,10 +13,10 @@ import com.fantechs.provider.base.service.BaseHtLabelService;
 import com.fantechs.provider.base.service.BaseLabelService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,7 +56,7 @@ public class BaseLabelController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true) @Validated(value= BaseLabel.update.class) BaseLabel baseLabel, MultipartFile file) {
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true) @Validated(value= BaseLabel.update.class) BaseLabel baseLabel, BindingResult bindingResult, MultipartFile file) {
         return ControllerUtil.returnCRUD(baseLabelService.update(baseLabel,file));
     }
 

@@ -2,6 +2,7 @@ package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.BaseProcessCategoryDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseProcessCategoryImport;
 import com.fantechs.common.base.general.entity.basic.BaseProcessCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProcessCategory;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcessCategory;
@@ -113,8 +114,8 @@ public class BaseProcessCategoryController {
                                       @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<BaseProcessCategoryDto> smtProcessCategoryDtos = EasyPoiUtils.importExcel(file, BaseProcessCategoryDto.class);
-            Map<String, Object> resultMap = baseProcessCategoryService.importExcel(smtProcessCategoryDtos);
+            List<BaseProcessCategoryImport> baseProcessCategoryImportList = EasyPoiUtils.importExcel(file,2,1, BaseProcessCategoryImport.class);
+            Map<String, Object> resultMap = baseProcessCategoryService.importExcel(baseProcessCategoryImportList);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
         }catch (RuntimeException e) {
             e.printStackTrace();
