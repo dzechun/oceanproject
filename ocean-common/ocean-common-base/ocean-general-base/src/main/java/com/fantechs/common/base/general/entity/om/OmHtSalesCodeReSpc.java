@@ -69,10 +69,10 @@ public class OmHtSalesCodeReSpc extends ValidGroup implements Serializable {
     /**
      * 客户型号ID
      */
-    @ApiModelProperty(name="materialModelId",value = "客户型号ID")
+    @ApiModelProperty(name="productModelId",value = "客户型号ID")
     @Excel(name = "客户型号ID", height = 20, width = 30,orderNum="")
-    @Column(name = "material_model_id")
-    private Long materialModelId;
+    @Column(name = "product_model_id")
+    private Long productModelId;
 
     /**
      * 优先级
