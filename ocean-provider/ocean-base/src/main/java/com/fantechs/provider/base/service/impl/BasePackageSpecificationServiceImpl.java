@@ -1,23 +1,23 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.basic.imports.BasePackageSpecificationImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPackageSpecification;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialPackage;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialPackage;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BasePackageSpecificationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 /**
  * Created by leifengzhi on 2020/11/04.
  */
+@Slf4j
 @Service
 public class BasePackageSpecificationServiceImpl extends BaseService<BasePackageSpecification> implements BasePackageSpecificationService {
 
@@ -322,9 +323,9 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
             packageSpecificationImports.add(basePackageSpecificationImport);
         }
 
-        if (StringUtils.isNotEmpty(basePackageSpecificationImports)){
+        if (StringUtils.isNotEmpty(packageSpecificationImports)){
             //对合格数据进行分组
-            Map<String, List<BasePackageSpecificationImport>> map = basePackageSpecificationImports.stream().collect(Collectors.groupingBy(BasePackageSpecificationImport::getPackageSpecificationCode, HashMap::new, Collectors.toList()));
+            Map<String, List<BasePackageSpecificationImport>> map = packageSpecificationImports.stream().collect(Collectors.groupingBy(BasePackageSpecificationImport::getPackageSpecificationCode, HashMap::new, Collectors.toList()));
             Set<String> codeList = map.keySet();
             for (String code : codeList) {
                 List<BasePackageSpecificationImport> PackageSpecificationImports1 = map.get(code);

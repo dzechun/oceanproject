@@ -488,7 +488,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("新增产品型号")
     @PostMapping("/baseProductModel/addForReturnId")
-    ResponseEntity<String> addForReturnId(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody BaseProductModel baseProductModel);
+    ResponseEntity<Long> addForReturnId(@ApiParam(value = "必传：productModelCode、productModelName",required = true)@RequestBody BaseProductModel baseProductModel);
 
     @ApiOperation("新增产品型号并返回对象")
     @PostMapping("/baseProductModel/addForReturn")
