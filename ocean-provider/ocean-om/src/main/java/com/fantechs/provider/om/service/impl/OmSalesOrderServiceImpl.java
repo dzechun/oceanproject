@@ -110,7 +110,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
         }else {
             JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
-            if(!jsonObject.get("enable").equals(1)){
+            if(!jsonObject.get("enable").equals(1) || StringUtils.isEmpty(omSalesOrder.getSalesOrderCode())){
                 omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
             }
         }

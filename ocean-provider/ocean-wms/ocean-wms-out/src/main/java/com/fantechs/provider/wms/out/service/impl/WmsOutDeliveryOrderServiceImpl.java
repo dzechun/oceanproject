@@ -223,7 +223,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("XSCK-"));
             }else {
                 JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
-                if(!jsonObject.get("enable").equals(1)){
+                if(!jsonObject.get("enable").equals(1) || StringUtils.isEmpty(wmsOutDeliveryOrder.getDeliveryOrderCode())){
                     wmsOutDeliveryOrder.setDeliveryOrderCode(CodeUtils.getId("XSCK-"));
                 }
             }
