@@ -32,6 +32,7 @@ import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
 import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import com.fantechs.provider.om.service.OmSalesOrderService;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +46,7 @@ import java.util.*;
  */
 @Service
 @Transactional
+@Slf4j
 public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implements OmSalesOrderService {
 
     @Resource
@@ -74,7 +76,6 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 //            throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(), "保存表头失败");
             return 0;
         }
-
         for(int i = 0; i < omSalesOrderDto.getOmSalesOrderDetDtoList().size(); i++) {
             OmSalesOrderDetDto omSalesOrderDetDto = omSalesOrderDto.getOmSalesOrderDetDtoList().get(i);
             omSalesOrderDetDto.setSalesOrderId(omSalesOrder.getSalesOrderId());
@@ -109,7 +110,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
         }else {
             JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
-            if(jsonObject.get("enable").equals(1)){
+            if(!jsonObject.get("enable").equals(1)){
                 omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
             }
         }

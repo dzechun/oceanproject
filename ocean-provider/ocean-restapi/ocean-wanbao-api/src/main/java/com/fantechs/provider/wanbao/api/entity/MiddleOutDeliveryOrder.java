@@ -1,5 +1,6 @@
 package com.fantechs.provider.wanbao.api.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @Table(name = "middle_out_delivery_order")
@@ -22,27 +24,31 @@ public class MiddleOutDeliveryOrder implements Serializable {
     @Column(name = "delivery_order_code")
     private String deliveryOrderCode;
 
-    @ApiModelProperty(name="planDespatchDate",value = "客户编码")
+    @ApiModelProperty(name="planDespatchDate",value = "计划出货日期")
     @Column(name = "plan_despatch_date")
     private String planDespatchDate;
 
-    @ApiModelProperty(name="actualDespatchDate",value = "客户id")
+    @ApiModelProperty(name="actualDespatchDate",value = "实际出货日期")
     @Column(name = "actual_despatch_date")
     private String actualDespatchDate;
 
-    @ApiModelProperty(name="customerCode" ,value="订单状态")
+    @ApiModelProperty(name="customerCode" ,value="客户编码")
     @Column(name = "customer_code")
     private String customerCode;
 
-    @ApiModelProperty(name="customerName" ,value="订单类型")
+    @ApiModelProperty(name="customerName" ,value="客户名称")
     @Column(name = "customer_name")
     private String customerName;
 
-    @ApiModelProperty(name="auditStatus" ,value="工厂编码")
+    @ApiModelProperty(name="supplierId",value = "客户ID")
+    @Column(name = "supplier_id")
+    private Long supplierId;
+
+    @ApiModelProperty(name="auditStatus" ,value="审批状态")
     @Column(name = "audit_status")
     private String auditStatus;
 
-    @ApiModelProperty(name="orderStatus",value = "制单人员")
+    @ApiModelProperty(name="orderStatus",value = "订单状态")
     @Column(name = "order_status")
     private String orderStatus;
 
@@ -58,9 +64,9 @@ public class MiddleOutDeliveryOrder implements Serializable {
     @Column(name = "material_name")
     private String materialName;
 
-    @ApiModelProperty(name="workOrderCode" ,value="客户型号")
-    @Column(name = "work_order_code")
-    private String workOrderCode;
+    @ApiModelProperty(name="salesOrderCode" ,value="销售订单")
+    @Column(name = "sales_order_code")
+    private String salesOrderCode;
 
     @ApiModelProperty(name="customerOrderCode" ,value="订单行号")
     @Column(name = "customer_order_code")
@@ -70,13 +76,18 @@ public class MiddleOutDeliveryOrder implements Serializable {
     @Column(name = "product_model_code")
     private String productModelCode;
 
-    @ApiModelProperty(name="pickingQty" ,value="制造编码")
-    @Column(name = "picking_qty")
-    private BigDecimal pickingQty;
+    @ApiModelProperty(name="packingQty" ,value="包装数量")
+    @Column(name = "packing_qty")
+    private BigDecimal packingQty;
 
     @ApiModelProperty(name="dispatchQty" ,value="订单数量")
     @Column(name = "dispatch_qty")
     private BigDecimal dispatchQty;
+
+    @ApiModelProperty(name="orderDate",value = "订单日期")
+    @Column(name = "order_date")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    private Date orderDate;
 
     @ApiModelProperty(name="option1",value = "扩展字段1")
     @Column(name = "option1")

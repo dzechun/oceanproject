@@ -15,22 +15,22 @@
     </resultMap>
 
     <select id="findMaterialData" parameterType="map" resultMap="BaseResultMap">
-        SELECT
-        msib.segment1 AS material_code,
-        msib.description AS material_name,
-        msib.description AS material_desc,
-        msib.ITEM_TYPE AS material_property,
-        msib.last_update_date AS modified_time,
-        msib.WIP_SUPPLY_LOCATOR_ID AS middle_material_id,
-        mde1.element_value AS product_model_code,
-        mde2.element_value AS voltage
+       SELECT
+            msib.segment1 AS material_code,
+            msib.description AS material_name,
+            msib.description AS material_desc,
+            msib.ITEM_TYPE AS material_property,
+            msib.last_update_date AS modified_time,
+            msib.WIP_SUPPLY_LOCATOR_ID AS middle_material_id,
+            mde1.element_value AS product_model_code,
+            mde2.element_value AS voltage
         FROM
         INV.mtl_system_items_b msib
         LEFT JOIN APPS.mtl_item_categories_v t ON t.inventory_item_id = msib.inventory_item_id
         LEFT JOIN APPS.fnd_common_lookups fc ON msib.item_type = fc.lookup_code
         LEFT JOIN APPS.po_buyers_val_v pbv ON msib.buyer_id = pbv.employee_id
-        LEFT JOIN mtl_descr_element_values mde1 ON mde1.inventory_item_id = msib.inventory_item_id AND mde1.element_name = '客户型号'
-        LEFT JOIN mtl_descr_element_values mde2 ON mde2.inventory_item_id = msib.inventory_item_id AND mde2.element_name = '电压频率'
+        LEFT JOIN APPS.mtl_descr_element_values mde1 ON mde1.inventory_item_id = msib.inventory_item_id AND mde1.element_name = '客户型号'
+        LEFT JOIN APPS.mtl_descr_element_values mde2 ON mde2.inventory_item_id = msib.inventory_item_id AND mde2.element_name = '电压频率'
         <where>
             msib.organization_id = 83
             AND msib.inventory_item_status_code = 'Active'
@@ -45,17 +45,17 @@
     </select>
 
     <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleMaterial">
-        INSERT INTO "K3WMS"."middle_material" ( "middle_material_id", "material_id", "material_code", "material_name", "material_desc", "voltage", "product_model_id", "product_model_code", "material_property", "modified_time" )
+        INSERT INTO K3WMS.middle_material ( "middle_material_id", "material_id", "material_code", "material_name", "material_desc", "voltage", "product_model_id", "product_model_code", "material_property", "modified_time" )
         VALUES
-            ( #{middleMaterialId},
-            #{materialId},
-            #{materialCode},
-            #{materialName},
-            #{materialDesc},
-            #{materialProperty},
-            #{modifiedTime},
-            #{productModelId},
-            #{productModelCode},
-            #{voltage} )
+            ( #{middleMaterialId,jdbcType=VARCHAR},
+            #{materialId,jdbcType=VARCHAR},
+            #{materialCode,jdbcType=VARCHAR},
+            #{materialName,jdbcType=VARCHAR},
+            #{materialDesc,jdbcType=VARCHAR},
+            #{materialProperty,jdbcType=VARCHAR},
+            #{modifiedTime,jdbcType=VARCHAR},
+            #{productModelId,jdbcType=VARCHAR},
+            #{productModelCode,jdbcType=VARCHAR},
+            #{voltage,jdbcType=VARCHAR} )
     </insert>
 </mapper>

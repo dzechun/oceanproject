@@ -80,7 +80,7 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
             omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + String.format("%03d", lineNumber));
         }else {
             JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
-            if(jsonObject.get("enable").equals(1)){
+            if(!jsonObject.get("enable").equals(1)){
                 omSalesOrderDet.setCustomerOrderLineNumber(customerOrderCode + String.format("%03d", lineNumber));
             }
         }
