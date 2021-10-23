@@ -12,14 +12,19 @@ import com.fantechs.common.base.general.dto.callagv.RequestBarcodeUnboundDTO;
 import com.fantechs.common.base.general.dto.callagv.RequestCallAgvStockDTO;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageTaskPoint;
+import com.fantechs.common.base.general.entity.callagv.CallAgvProductionInLog;
 import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleLog;
 import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleReBarcode;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.*;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.RedisUtil;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.agv.AgvFeignApi;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
+import com.fantechs.provider.guest.callagv.mapper.CallAgvProductionInLogMapper;
 import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleLogMapper;
 import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleReBarcodeMapper;
 import com.fantechs.provider.guest.callagv.service.CallAgvVehicleReBarcodeService;
@@ -41,6 +46,9 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
     @Resource
     private CallAgvVehicleLogMapper callAgvVehicleLogMapper;
+
+    @Resource
+    private CallAgvProductionInLogMapper callAgvProductionInLogMapper;
 
     @Resource
     private TemVehicleFeignApi temVehicleFeignApi;
@@ -185,6 +193,32 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             callAgvVehicleLog.setCreateUserId(user.getUserId());
             callAgvVehicleLog.setCreateTime(new Date());
             callAgvVehicleLogMapper.insertSelective(callAgvVehicleLog);
+        }
+
+        Example example = new Example(CallAgvVehicleReBarcode.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("vehicleId", vehicleId).andEqualTo("orgId", user.getOrganizationId());
+        List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = callAgvVehicleReBarcodeMapper.selectByExample(example);
+
+        if (type != 3) {
+            // 插入条码出入库操作记录
+            for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
+                CallAgvProductionInLog callAgvProductionInLog = new CallAgvProductionInLog();
+                callAgvProductionInLog.setInWarehouseId(baseStorageTaskPoint.getWarehouseId());
+                callAgvProductionInLog.setOutWarehouseId(baseStorageTaskPointList.get(0).getWarehouseId());
+                callAgvProductionInLog.setInWarehouseAreaId(baseStorageTaskPoint.getWarehouseAreaId());
+                callAgvProductionInLog.setOutWarehouseAreaId(baseStorageTaskPointList.get(0).getWarehouseAreaId());
+                callAgvProductionInLog.setInStorageId(baseStorageTaskPoint.getStorageId());
+                callAgvProductionInLog.setOutStorageId(baseStorageTaskPointList.get(0).getStorageId());
+                callAgvProductionInLog.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
+                callAgvProductionInLog.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
+                callAgvProductionInLog.setStartStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
+                callAgvProductionInLog.setOperateTime(new Date());
+                callAgvProductionInLog.setOrgId(user.getOrganizationId());
+                callAgvProductionInLog.setCreateUserId(user.getUserId());
+                callAgvProductionInLog.setCreateTime(new Date());
+                callAgvProductionInLogMapper.insertSelective(callAgvProductionInLog);
+            }
         }
 
         String message = "";
