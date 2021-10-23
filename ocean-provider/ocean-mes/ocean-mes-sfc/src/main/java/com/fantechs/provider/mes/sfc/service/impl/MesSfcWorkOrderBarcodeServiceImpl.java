@@ -388,7 +388,10 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 //查询工艺路线
                 ResponseEntity<List<BaseRouteProcess>> res = baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
                 if(res.getCode()!=0){
-                    throw new BizErrorException("工艺路线查询失败");
+                    throw new BizErrorException(res.getCode(),res.getMessage());
+                }
+                if(res.getData().isEmpty()){
+                    throw new BizErrorException("请检查工单工艺路线");
                 }
                 mesSfcBarcodeProcess.setProcessId(res.getData().get(0).getProcessId());
                 mesSfcBarcodeProcess.setProcessName(res.getData().get(0).getProcessName());
