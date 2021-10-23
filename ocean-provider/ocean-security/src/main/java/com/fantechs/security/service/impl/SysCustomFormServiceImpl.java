@@ -129,7 +129,7 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
                 criteria3.andEqualTo("customFormCode",subForm.getCustomFormCode())
                         .andEqualTo("orgId",customForm.getOrgId());
                 SysCustomForm subFormInOrg = sysCustomFormMapper.selectOneByExample(example2);
-                customForm.setSubId(subFormInOrg.getCustomFormId());
+                customForm.setSubId(StringUtils.isNotEmpty(subFormInOrg)?subFormInOrg.getCustomFormId():null);
             }
             sysCustomFormMapper.updateByPrimaryKeySelective(customForm);
         }

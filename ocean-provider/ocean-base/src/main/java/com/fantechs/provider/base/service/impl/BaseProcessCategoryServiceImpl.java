@@ -2,6 +2,8 @@ package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.BaseProcessCategoryDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseProcessCategoryImport;
+import com.fantechs.common.base.general.dto.basic.imports.BaseTeamImport;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseProcessCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProcessCategory;
@@ -147,7 +149,7 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<BaseProcessCategoryDto> smtProcessCategoryDtos) {
+    public Map<String, Object> importExcel(List<BaseProcessCategoryImport> baseProcessCategoryImportList) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
@@ -157,14 +159,14 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         LinkedList<BaseProcessCategory> list = new LinkedList<>();
         LinkedList<BaseHtProcessCategory> htList = new LinkedList<>();
-        for (int i = 0; i < smtProcessCategoryDtos.size(); i++) {
-            BaseProcessCategoryDto smtProcessCategoryDto = smtProcessCategoryDtos.get(i);
-            String processCategoryCode = smtProcessCategoryDto.getProcessCategoryCode();
-            String processCategoryName = smtProcessCategoryDto.getProcessCategoryName();
+        for (int i = 0; i < baseProcessCategoryImportList.size(); i++) {
+            BaseProcessCategoryImport baseProcessCategoryImport = baseProcessCategoryImportList.get(i);
+            String processCategoryCode = baseProcessCategoryImport.getProcessCategoryCode();
+            String processCategoryName = baseProcessCategoryImport.getProcessCategoryName();
             if (StringUtils.isEmpty(
                     processCategoryCode,processCategoryName
             )){
-                fail.add(i+3);
+                fail.add(i+4);
                 continue;
             }
 
@@ -174,12 +176,26 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
             criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
             criteria.andEqualTo("processCategoryCode",processCategoryCode);
             if (StringUtils.isNotEmpty(baseProcessCategoryMapper.selectOneByExample(example))){
-                fail.add(i+3);
+                fail.add(i+4);
+                continue;
+            }
+
+            //判断集合中是否存在该条数据
+            boolean tag = false;
+            if (StringUtils.isNotEmpty(list)){
+                for (BaseProcessCategory baseProcessCategory : list) {
+                    if (baseProcessCategory.getProcessCategoryCode().equals(processCategoryCode)){
+                        tag = true;
+                    }
+                }
+            }
+            if (tag){
+                fail.add(i+4);
                 continue;
             }
 
             BaseProcessCategory baseProcessCategory = new BaseProcessCategory();
-            BeanUtils.copyProperties(smtProcessCategoryDto, baseProcessCategory);
+            BeanUtils.copyProperties(baseProcessCategoryImport, baseProcessCategory);
             baseProcessCategory.setCreateTime(new Date());
             baseProcessCategory.setCreateUserId(currentUser.getUserId());
             baseProcessCategory.setModifiedTime(new Date());
