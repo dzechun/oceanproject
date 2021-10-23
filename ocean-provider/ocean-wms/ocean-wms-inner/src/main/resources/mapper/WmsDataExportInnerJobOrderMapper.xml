@@ -54,7 +54,7 @@
     LEFT JOIN eng_packing_order epo ON epos.packing_order_id=epo.packing_order_id
     LEFT JOIN base_material bm ON eposdet.material_id=bm.material_id
     LEFT JOIN eng_contract_qty_order ecqo ON epos.contract_code=ecqo.contract_code
-    AND epos.device_code=ecqo.device_code
+    AND eposdet.device_code=ecqo.device_code
     AND bm.material_code=ecqo.material_code
     LEFT JOIN eng_purchase_req_order epro ON epro.option3=ecqo.option3
     LEFT JOIN base_storage bs ON wijod.in_storage_id=bs.storage_id
