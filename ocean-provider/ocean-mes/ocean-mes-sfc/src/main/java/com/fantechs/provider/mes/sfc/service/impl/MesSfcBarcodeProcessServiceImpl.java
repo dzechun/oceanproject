@@ -37,7 +37,7 @@ public class MesSfcBarcodeProcessServiceImpl extends BaseService<MesSfcBarcodePr
 
     @Override
     public List<MesSfcBarcodeProcess> findByPalletPOGroup(Map<String, Object> map) {
-        return mesSfcBarcodeProcessMapper.findByPOGroup(map);
+        return mesSfcBarcodeProcessMapper.findByPalletPOGroup(map);
     }
 
     @Override
