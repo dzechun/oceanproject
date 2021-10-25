@@ -137,7 +137,7 @@ wohdo.audit_status,
         and wohdo.order_status = #{orderStatus}
       </if>
         <if test="auditStatus!=null">
-            and wodo.audit_status = #{auditStatus}
+            and wohdo.audit_status = #{auditStatus}
         </if>
     </where>
     order by wohdo.modified_time desc

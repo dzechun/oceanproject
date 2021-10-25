@@ -121,12 +121,15 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         sysCustomFormDet.setOrgId(user.getOrganizationId());
 
+        //获取原数据
+        SysCustomFormDet oldCustomFormDet = sysCustomFormDetMapper.selectByPrimaryKey(sysCustomFormDet.getCustomFormDetId());
+
         int i = 0;
         //默认表修改
-        SysCustomForm sysCustomForm = sysCustomFormMapper.selectByPrimaryKey(sysCustomFormDet.getCustomFormId());
+        SysCustomForm sysCustomForm = sysCustomFormMapper.selectByPrimaryKey(oldCustomFormDet.getCustomFormId());
         SearchSysDefaultCustomFormDet searchSysDefaultCustomFormDet = new SearchSysDefaultCustomFormDet();
         searchSysDefaultCustomFormDet.setCustomFormCode(sysCustomForm.getCustomFormCode());
-        searchSysDefaultCustomFormDet.setItemKey(sysCustomFormDet.getItemKey());
+        searchSysDefaultCustomFormDet.setItemKey(oldCustomFormDet.getItemKey());
         List<SysDefaultCustomFormDetDto> defaultDetList = sysDefaultCustomFormDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchSysDefaultCustomFormDet));
         if(StringUtils.isNotEmpty(defaultDetList)) {
             SysDefaultCustomFormDetDto sysDefaultCustomFormDetDto = defaultDetList.get(0);
@@ -142,7 +145,7 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
         //全组织修改
         SearchSysCustomFormDet searchSysCustomFormDet = new SearchSysCustomFormDet();
         searchSysCustomFormDet.setCustomFormCode(sysCustomForm.getCustomFormCode());
-        searchSysCustomFormDet.setItemKey(sysCustomFormDet.getItemKey());
+        searchSysCustomFormDet.setItemKey(oldCustomFormDet.getItemKey());
         List<SysCustomFormDetDto> detList = sysCustomFormDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomFormDet));
         for(SysCustomFormDetDto sysCustomFormDetDto:detList){
             Long customFormId = sysCustomFormDetDto.getCustomFormId();

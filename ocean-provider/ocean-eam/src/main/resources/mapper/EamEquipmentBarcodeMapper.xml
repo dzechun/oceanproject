@@ -16,6 +16,7 @@
     <result column="current_maintain_usage_time" jdbcType="INTEGER" property="currentMaintainUsageTime" />
     <result column="current_maintain_usage_days" jdbcType="INTEGER" property="currentMaintainUsageDays" />
     <result column="equipment_status" jdbcType="TINYINT" property="equipmentStatus" />
+    <result column="equipment_seq_num" jdbcType="VARCHAR" property="equipmentSeqNum" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -45,6 +46,7 @@
     eeb.current_maintain_time,
     eeb.current_maintain_usage_time,
     eeb.equipment_status,
+    eeb.equipment_seq_num,
     eeb.`status`,
     eeb.remark,
     eeb.org_id,

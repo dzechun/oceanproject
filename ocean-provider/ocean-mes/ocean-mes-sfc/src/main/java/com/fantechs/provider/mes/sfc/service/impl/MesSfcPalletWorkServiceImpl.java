@@ -92,9 +92,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         //samePackageCodePallet 同包装编码--栈板包装产品条码对应的PO编码 2020-10-20
         String samePackageCodePallet="";
 
-        //palletCodeExist 当前工位未关闭栈板的栈板号 2020-10-20
-        String palletCodeExist="";
-
         String cartonCode = "";
         // 栈板作业需要绑定的所有产品条码
         List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodeList = new ArrayList<>();
@@ -258,28 +255,29 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if ((requestPalletWorkScanDto.getPalletType() == 0 && mesPmWorkOrderDto.getWorkOrderId().equals(mesSfcProductPalletDto.getWorkOrderId()))
             || (requestPalletWorkScanDto.getPalletType() == 1 && mesPmWorkOrderDto.getMaterialId().equals(mesSfcProductPalletDto.getMaterialId()))) {
                 palletCode = mesSfcProductPalletDto.getPalletCode();
-                //当前工位未关闭栈板的栈板号 2021-10-21
-                palletCodeExist=palletCode;
-
                 nowPackageSpecQty = mesSfcProductPalletDto.getNowPackageSpecQty();
                 isPallet = false;
                 mesSfcProductPallet = mesSfcProductPalletDto;
                 palletCartons = findPalletCarton(mesSfcProductPallet.getProductPalletId()).size();
                 break;
             }
-        }
 
-        //同一PO判断 2021-10-21
-        if(requestPalletWorkScanDto.getPalletType() == 2){
-            if(StringUtils.isNotEmpty(palletCodeExist) && StringUtils.isNotEmpty(samePackageCode)){
-                Map<String, Object> PalletMap = new HashMap<>();
-                PalletMap.put("palletCode",palletCodeExist );
-                List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findByPalletPOGroup(PalletMap);
-                if(mesSfcBarcodeProcessList.size() > 0){
-                    samePackageCodePallet= mesSfcBarcodeProcessList.get(0).getSamePackageCode();
-                    if(StringUtils.isNotEmpty(samePackageCodePallet) && samePackageCodePallet.equals(samePackageCode)==false
-                            && mesSfcProductPalletDtoList.size() >= requestPalletWorkScanDto.getMaxPalletNum()){
-                        throw new BizErrorException(ErrorCodeEnum.PDA40012034,"该包箱条码对应PO-->"+samePackageCode+" 与当前栈板对应PO-->"+samePackageCodePallet+" 不属于同个PO，不可扫码");
+            //同一PO判断 2021-10-21
+            if(requestPalletWorkScanDto.getPalletType() == 2){
+                if(StringUtils.isNotEmpty(mesSfcProductPalletDto.getPalletCode()) && StringUtils.isNotEmpty(samePackageCode)){
+                    Map<String, Object> PalletMap = new HashMap<>();
+                    PalletMap.put("palletCode",mesSfcProductPalletDto.getPalletCode() );
+                    List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findByPalletPOGroup(PalletMap);
+                    if(mesSfcBarcodeProcessList.size() > 0){
+                        samePackageCodePallet= mesSfcBarcodeProcessList.get(0).getSamePackageCode();
+                        if(StringUtils.isNotEmpty(samePackageCodePallet) && samePackageCodePallet.equals(samePackageCode)){
+                            palletCode = mesSfcProductPalletDto.getPalletCode();
+                            nowPackageSpecQty = mesSfcProductPalletDto.getNowPackageSpecQty();
+                            isPallet = false;
+                            mesSfcProductPallet = mesSfcProductPalletDto;
+                            palletCartons = findPalletCarton(mesSfcProductPallet.getProductPalletId()).size();
+                            break;
+                        }
                     }
                 }
             }

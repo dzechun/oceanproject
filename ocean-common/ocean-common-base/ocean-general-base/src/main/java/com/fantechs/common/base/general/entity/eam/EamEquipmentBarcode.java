@@ -10,7 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -50,6 +49,13 @@ public class EamEquipmentBarcode extends ValidGroup implements Serializable {
     @Excel(name = "设备条码", height = 20, width = 30,orderNum="") 
     @Column(name = "equipment_barcode")
     private String equipmentBarcode;
+
+    /**
+     * 设备序号
+     */
+    @ApiModelProperty(name="equipmentSeqNum",value = "设备序号")
+    @Column(name = "equipment_seq_num")
+    private String equipmentSeqNum;
 
     /**
      * 资产编码
