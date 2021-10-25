@@ -54,6 +54,9 @@
       <if test="importTemplateName!=null and importTemplateName!=''">
         and sit.import_template_name like CONCAT('%', #{importTemplateName}, '%')
       </if>
+      <if test="importTemplateFileName!=null and importTemplateFileName!=''">
+        and sit.import_template_file_name like CONCAT('%', #{importTemplateFileName}, '%')
+      </if>
       <!--<if test="menuId != null and menuId != '' ">
         and sit.menu_id = #{menuId}
       </if>-->
