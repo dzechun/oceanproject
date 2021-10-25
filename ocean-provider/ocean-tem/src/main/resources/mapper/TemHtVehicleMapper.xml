@@ -11,6 +11,7 @@
     <result column="vehicle_name" jdbcType="VARCHAR" property="vehicleName" />
     <result column="standard_capacity" jdbcType="DECIMAL" property="standardCapacity" />
     <result column="agv_task_template" jdbcType="VARCHAR" property="agvTaskTemplate" />
+    <result column="agv_task_template_second" jdbcType="VARCHAR" property="agvTaskTemplate" />
     <result column="storage_task_point_id" jdbcType="BIGINT" property="storageTaskPointId" />
     <result column="vehicle_status" jdbcType="TINYINT" property="vehicleStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -23,8 +24,8 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    thv.ht_vehicle_id, thv.vehicle_id, thv.vehicle_code, thv.vehicle_name, thv.standard_capacity, thv.agv_task_template, thv.storage_task_point_id,
-    thv.vehicle_status, thv.status, thv.remark, thv.org_id, thv.create_user_id, thv.create_time, thv.modified_user_id, thv.modified_time
+    thv.ht_vehicle_id, thv.vehicle_id, thv.vehicle_code, thv.vehicle_name, thv.standard_capacity, thv.agv_task_template, thv.agv_task_template_second,
+    thv.storage_task_point_id, thv.vehicle_status, thv.status, thv.remark, thv.org_id, thv.create_user_id, thv.create_time, thv.modified_user_id, thv.modified_time
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">

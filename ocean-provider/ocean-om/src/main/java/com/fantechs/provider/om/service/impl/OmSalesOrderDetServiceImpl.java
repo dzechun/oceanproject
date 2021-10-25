@@ -85,7 +85,8 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
             }
         }
         omSalesOrderDet.setSourceLineNumber(String.format("%03d", lineNumber));
-        omSalesOrderDet.setLineNumber(String.format("%02d",lineNumber));
+        Integer num = lineNumber+1;
+        omSalesOrderDet.setLineNumber(String.format("%02d",num));
 
         omSalesOrderDet.setOrgId(currentUserInfo.getOrganizationId());
         omSalesOrderDet.setCreateTime(DateUtils.getDateTimeString(new DateTime()));

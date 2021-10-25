@@ -1,14 +1,21 @@
 package com.fantechs.common.base.general.entity.tem.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 周转工具管理履历表
@@ -67,6 +74,14 @@ public class TemHtVehicle extends ValidGroup implements Serializable {
     @Excel(name = "AGV任务模板", height = 20, width = 30,orderNum="") 
     @Column(name = "agv_task_template")
     private String agvTaskTemplate;
+
+    /**
+     * agv不同类任务模板
+     */
+    @ApiModelProperty(name="agvTaskTemplateSecond",value = "agv不同类任务模板")
+    @Excel(name = "agv不同类任务模板(必填)", height = 20, width = 30,orderNum="")
+    @Column(name = "agv_task_template_second")
+    private String agvTaskTemplateSecond;
 
     /**
      * 配送点ID

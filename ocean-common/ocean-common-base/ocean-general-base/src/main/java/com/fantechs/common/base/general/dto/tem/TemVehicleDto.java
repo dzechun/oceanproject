@@ -11,11 +11,11 @@ import java.io.Serializable;
 public class TemVehicleDto extends TemVehicle implements Serializable {
 
     @ApiModelProperty(name = "createUserCode",value = "创建账号")
-    @Excel(name = "创建账号", height = 20, width = 30,orderNum="6")
+    @Excel(name = "创建账号", height = 20, width = 30,orderNum="7")
     private String createUserCode;
 
     @ApiModelProperty(name = "modifiedUserCode",value = "修改账号")
-    @Excel(name = "修改账号", height = 20, width = 30,orderNum="8")
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum="9")
     private String modifiedUserCode;
 
     @ApiModelProperty(name = "count",value = "使用次数")

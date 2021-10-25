@@ -117,6 +117,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         criteria1.andEqualTo("inspectionOrderId",inspectionOrderId);
         List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
 
+        List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
         for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
             //明细
             qmsInspectionOrderDet.setBadnessQty(BigDecimal.ZERO);
@@ -124,7 +125,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
 
             //样本
-            List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
             for(QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSamples){
                 QmsInspectionOrderDetSample inspectionOrderDetSample = new QmsInspectionOrderDetSample();
                 inspectionOrderDetSample.setInspectionOrderDetId(qmsInspectionOrderDet.getInspectionOrderDetId());
@@ -133,8 +133,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 inspectionOrderDetSample.setOrgId(user.getOrganizationId());
                 inspectionOrderDetSampleList.add(inspectionOrderDetSample);
             }
-            qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
         }
+        qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
 
         qmsInspectionOrder.setInspectionStatus((byte)3);
         qmsInspectionOrder.setInspectionResult((byte)1);
@@ -164,6 +164,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         criteria1.andEqualTo("inspectionOrderId",inspectionOrderId);
         List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
 
+        List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
         for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
             //明细
             if(StringUtils.isEmpty(qmsInspectionOrderDet.getInspectionResult())) {
@@ -172,7 +173,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
 
                 //样本
-                List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
                 for(QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSamples){
                     QmsInspectionOrderDetSample inspectionOrderDetSample = new QmsInspectionOrderDetSample();
                     inspectionOrderDetSample.setInspectionOrderDetId(qmsInspectionOrderDet.getInspectionOrderDetId());
@@ -181,9 +181,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     inspectionOrderDetSample.setOrgId(user.getOrganizationId());
                     inspectionOrderDetSampleList.add(inspectionOrderDetSample);
                 }
-                qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
             }
         }
+        qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
 
         List<QmsInspectionOrderDetSample> barcodes = qmsInspectionOrderDetSampleService.findBarcodes(inspectionOrderId);
         List<QmsInspectionOrderDetSample> unQualifiedBarcodes = barcodes.stream().filter(item -> item.getBarcodeStatus()!=null && item.getBarcodeStatus() == 0).collect(Collectors.toList());

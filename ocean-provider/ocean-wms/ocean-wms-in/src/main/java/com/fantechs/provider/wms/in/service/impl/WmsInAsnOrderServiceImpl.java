@@ -135,7 +135,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
 
                         //添加库存
                         wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wmsInAsnOrderDet);
-                        num += addInventory(wmsInAsnOrder.getAsnOrderId(), wmsInAsnOrderDet.getAsnOrderDetId(), wmsInAsnOrderDet.getActualQty());
+                        num += addInventory(wmsInAsnOrder.getAsnOrderId(), wmsInAsnOrderDet.getAsnOrderDetId(), wmsInAsnOrderDet.getActualQty(),(byte)1);
                     }
                 }catch (Exception e){
                     throw new BizErrorException("收货失败");
@@ -220,7 +220,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         wmsInAsnOrderDetMapper.updateByPrimaryKey(wmsInAsnOrderDet);
        wmsInAsnOrderDet = wms;
         //添加库存
-        int num = this.addInventory(wmsInAsnOrderDet.getAsnOrderId(), wmsInAsnOrderDet.getAsnOrderDetId(),wmsInAsnOrderDet.getActualQty());
+        int num = this.addInventory(wmsInAsnOrderDet.getAsnOrderId(), wmsInAsnOrderDet.getAsnOrderDetId(),wmsInAsnOrderDet.getActualQty(),(byte)1);
         if(num<1){
             throw new BizErrorException("收货失败");
         }
@@ -452,7 +452,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         return num;
     }
 
-    private int addInventory(Long asnOrderId,Long asnOrderDetId,BigDecimal qty){
+    private int addInventory(Long asnOrderId,Long asnOrderDetId,BigDecimal qty,Byte type){
         SysUser sysUser = currentUser();
         WmsInAsnOrderDto wmsInAsnOrderDto = wmsInAsnOrderMapper.findList(SearchWmsInAsnOrder.builder()
                 .asnOrderId(asnOrderId)
@@ -490,7 +490,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setBatchCode(wmsInAsnOrderDetDto.getBatchCode());
             wmsInnerInventory.setReceivingDate(new Date());
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
-            wmsInnerInventory.setJobStatus((byte)1);
+            wmsInnerInventory.setJobStatus(type);
             wmsInnerInventory.setCreateTime(new Date());
             wmsInnerInventory.setCreateUserId(sysUser.getUserId());
             wmsInnerInventory.setModifiedTime(new Date());
@@ -708,11 +708,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int palletAutoAsnOrder(PalletAutoAsnDto palletAutoAsnDto) {
         SysUser sysUser = currentUser();
         //手动开启事务！
-        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
-        try {
+        //TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+        //try {
             //查询redis是否存储今日入库单号
             Boolean hasKey = redisUtil.hasKey("pallet_id");
             Map<String,String> asnMap = new HashMap<>();
@@ -724,7 +726,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             boolean isExist = false;
             if(asnMap.containsKey(sysUser.getOrganizationId().toString())){
                 Long asnOrderId = Long.parseLong(asnMap.get(sysUser.getOrganizationId().toString()));
-                WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectOneByExample(asnOrderId);
+                WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
                 if(StringUtils.isNotEmpty(wmsInAsnOrder)){
                     isExist=true;
                 }
@@ -760,13 +762,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wms);
                 }
                 //更新库存
-                int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wms.getAsnOrderDetId(),palletAutoAsnDto.getPackingQty());
+                int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wms.getAsnOrderDetId(),palletAutoAsnDto.getPackingQty(),(byte)2);
                 wms.setActualQty(palletAutoAsnDto.getActualQty());
                 //新增库存明细
                 res = this.addInventoryDet(palletAutoAsnDto.getBarCodeList(),wmsInAsnOrder.getAsnCode(),wms);
 
                 //手动提交事务
-                dataSourceTransactionManager.commit(transactionStatus);
+                //dataSourceTransactionManager.commit(transactionStatus);
 
                 //新增上架作业单
                 res = this.createJobOrder(wmsInAsnOrder,wms);
@@ -807,7 +809,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 wmsInAsnOrderDet.setLineNumber(1);
                 wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wmsInAsnOrderDet);
                 //新增库存
-                int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wmsInAsnOrderDet.getAsnOrderDetId(),palletAutoAsnDto.getPackingQty());
+                int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wmsInAsnOrderDet.getAsnOrderDetId(),palletAutoAsnDto.getPackingQty(),(byte)2);
                 if(res<1){
                     throw new BizErrorException("库存添加失败");
                 }
@@ -818,16 +820,16 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 redisUtil.set("pallet_id",asnMap);
                 redisUtil.expire("pallet_id",getRemainSecondsOneDay(new Date()));
                 //手动提交事务
-                dataSourceTransactionManager.commit(transactionStatus);
+                //dataSourceTransactionManager.commit(transactionStatus);
                 //新增上级作业单
                 res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
                 return 1;
             }
-        }catch (Exception e){
+        //}catch (Exception e){
             //手动回滚事务
-            dataSourceTransactionManager.rollback(transactionStatus);
-            throw new BizErrorException(ErrorCodeEnum.OPT20012002,e.getMessage());
-        }
+            //dataSourceTransactionManager.rollback(transactionStatus);
+           // throw new BizErrorException(ErrorCodeEnum.OPT20012002,e.getMessage());
+        //}
     }
 
     /**
@@ -863,6 +865,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .planQty(wmsInAsnOrderDet.getActualQty())
                 .palletCode(wmsInAsnOrderDet.getPalletCode())
                 .orderStatus((byte)1)
+                        .option1("1")
                 .build());
         wmsInnerJobOrder.setWmsInPutawayOrderDets(list);
         ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
