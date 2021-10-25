@@ -89,10 +89,18 @@ public class BaseStorageTaskPoint extends ValidGroup implements Serializable {
     private Integer usePriority;
 
     /**
+     * 配送方式
+     */
+    @ApiModelProperty(name="type",value = "配送方式")
+    @Excel(name = "配送方式", height = 20, width = 30,orderNum="9")
+    @Column(name = "type")
+    private String type;
+
+    /**
      * 库位配送点状态(1-空闲 2-使用)
      */
     @ApiModelProperty(name="storageTaskPointStatus",value = "库位配送点状态(1-空闲 2-使用)")
-    @Excel(name = "库位配送点状态(1-空闲 2-使用)", height = 20, width = 30,orderNum="9")
+    @Excel(name = "库位配送点状态(1-空闲 2-使用)", height = 20, width = 30,orderNum="10")
     @Column(name = "storage_task_point_status")
     private Byte storageTaskPointStatus;
 
@@ -127,7 +135,7 @@ public class BaseStorageTaskPoint extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="10")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="11")
     private String remark;
 
     /**
@@ -148,7 +156,7 @@ public class BaseStorageTaskPoint extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="13",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -164,7 +172,7 @@ public class BaseStorageTaskPoint extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="15",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -212,7 +220,7 @@ public class BaseStorageTaskPoint extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum = "11")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum = "12")
     private String createUserName;
 
     /**
@@ -220,7 +228,7 @@ public class BaseStorageTaskPoint extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum = "13")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum = "14")
     private String modifiedUserName;
 
     /**

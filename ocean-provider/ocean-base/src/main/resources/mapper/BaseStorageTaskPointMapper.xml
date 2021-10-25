@@ -12,6 +12,7 @@
     <result column="task_point_type" jdbcType="TINYINT" property="taskPointType" />
     <result column="xyz_code" jdbcType="VARCHAR" property="xyzCode" />
     <result column="use_priority" jdbcType="INTEGER" property="usePriority" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="storage_task_point_status" jdbcType="TINYINT" property="storageTaskPointStatus" />
     <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
     <result column="working_area_id" jdbcType="BIGINT" property="workingAreaId" />
@@ -48,6 +49,7 @@
     bstp.task_point_type,
     bstp.xyz_code,
     bstp.use_priority,
+    bstp.type,
     bstp.storage_task_point_status,
     bstp.warehouse_area_id,
     bstp.working_area_id,

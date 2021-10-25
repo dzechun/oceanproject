@@ -10,6 +10,7 @@
     <result column="vehicle_name" jdbcType="VARCHAR" property="vehicleName" />
     <result column="standard_capacity" jdbcType="DECIMAL" property="standardCapacity" />
     <result column="agv_task_template" jdbcType="VARCHAR" property="agvTaskTemplate" />
+    <result column="agv_task_template_second" jdbcType="VARCHAR" property="agvTaskTemplateSecond" />
     <result column="storage_task_point_id" jdbcType="BIGINT" property="storageTaskPointId" />
     <result column="vehicle_status" jdbcType="TINYINT" property="vehicleStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -22,8 +23,8 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    tv.vehicle_id, tv.vehicle_code, tv.vehicle_name, tv.standard_capacity, tv.agv_task_template, tv.storage_task_point_id,tv.vehicle_status,
-    tv.status, tv.remark, tv.org_id, tv.create_user_id, tv.create_time, tv.modified_user_id, tv.modified_time
+    tv.vehicle_id, tv.vehicle_code, tv.vehicle_name, tv.standard_capacity, tv.agv_task_template, tv.agv_task_template_second,
+    tv.storage_task_point_id, tv.vehicle_status, tv.status, tv.remark, tv.org_id, tv.create_user_id, tv.create_time, tv.modified_user_id, tv.modified_time
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.tem.TemVehicleDto">

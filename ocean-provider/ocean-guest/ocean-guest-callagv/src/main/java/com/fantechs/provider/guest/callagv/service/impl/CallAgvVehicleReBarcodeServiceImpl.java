@@ -231,7 +231,13 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             } else {
                 message = "空货架返回";
             }
-            taskCode = genAgvSchedulingTask(temVehicle.getAgvTaskTemplate(), positionCodeList);
+            String taskTyp = temVehicle.getAgvTaskTemplate();
+            if (StringUtils.isNotEmpty(baseStorageTaskPoint.getType(),
+                    baseStorageTaskPointList.get(0).getType())
+                    && baseStorageTaskPoint.getType().equals(baseStorageTaskPointList.get(0).getType())) {
+                taskTyp = temVehicle.getAgvTaskTemplateSecond();
+            }
+            taskCode = genAgvSchedulingTask(taskTyp, positionCodeList);
             log.info("==========启动agv执行" + message + "作业任务==============\r\n");
             baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
             baseStorageTaskPoint.setModifiedUserId(user.getUserId());

@@ -1,16 +1,21 @@
 package com.fantechs.common.base.general.entity.tem;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
-import lombok.Data;
+;
+;
 
 /**
  * 周转工具管理
@@ -63,6 +68,14 @@ public class TemVehicle extends ValidGroup implements Serializable {
     private String agvTaskTemplate;
 
     /**
+     * agv不同类任务模板
+     */
+    @ApiModelProperty(name="agvTaskTemplateSecond",value = "agv不同类任务模板")
+    @Excel(name = "agv不同类任务模板(必填)", height = 20, width = 30,orderNum="6")
+    @Column(name = "agv_task_template_second")
+    private String agvTaskTemplateSecond;
+
+    /**
      * 配送点ID
      */
     @ApiModelProperty(name="storageTaskPointId",value = "配送点ID")
@@ -87,7 +100,7 @@ public class TemVehicle extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum = "10")
+    @Excel(name = "备注", height = 20, width = 30,orderNum = "11")
     private String remark;
 
     /**
@@ -108,7 +121,7 @@ public class TemVehicle extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="7",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -124,7 +137,7 @@ public class TemVehicle extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
