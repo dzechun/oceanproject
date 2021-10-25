@@ -869,7 +869,7 @@ public class BarcodeUtils {
             //String paraValue = getSysSpecItemValue("ProcessCheckProductHalfProductionRelation");
 
             //如果当前工序等于工单投产工序 则判断产品条码与半成品条码关系
-            if(updateProcessDto.getNowProcessId()==updateProcessDto.getPutIntoProcessId()) {
+            if(updateProcessDto.getNowProcessId().equals(updateProcessDto.getPutIntoProcessId())) {
                 baseExecuteResultDto = checkProHalfProRelation(restapiSNDataTransferApiDto.getBarCode(),
                         restapiSNDataTransferApiDto.getPartBarcode(), updateProcessDto.getNowProcessId(),
                         updateProcessDto.getWorkOrderId(), updateProcessDto.getMaterialId(),partMaterialId, orgId);
@@ -1680,8 +1680,8 @@ public class BarcodeUtils {
     public static BaseExecuteResultDto checkJigHalfProRelation(String eamJigBarCode,Long materialId,Long orgId) throws Exception{
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {
-            //获取配置项检查治具与产品条码关系  JigsIfCheckProductionRelation
-            String paraValue = getSysSpecItemValue("JigsIfCheckProductionRelation");
+            //获取配置项检查治具与半成品条码关系  JigsIfCheckHalfProductionRelation
+            String paraValue = getSysSpecItemValue("JigsIfCheckHalfProductionRelation");
             if ("1".equals(paraValue)) {
                 baseExecuteResultDto = checkJigHalfProductRelation(eamJigBarCode,materialId, orgId);
                 if (baseExecuteResultDto.getIsSuccess() == false) {
@@ -1875,16 +1875,16 @@ public class BarcodeUtils {
                 * 3 绑定到mes_sfc_key_part_relevance 生产管理-关键部件关联表
                 */
 
-                SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
-                searchMesPmWorkOrderBom.setWorkOrderId(workOrderId);
-                searchMesPmWorkOrderBom.setPartMaterialId(partMaterialId);
-                searchMesPmWorkOrderBom.setProcessId(processId);
-                ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = barcodeUtils.deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
-                if(StringUtils.isEmpty(responseEntityBom.getData())){
-                    throw new Exception("找不到当前工单工序所需的物料信息");
-                }
+//                SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
+//                searchMesPmWorkOrderBom.setWorkOrderId(workOrderId);
+//                searchMesPmWorkOrderBom.setPartMaterialId(partMaterialId);
+//                searchMesPmWorkOrderBom.setProcessId(processId);
+//                ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = barcodeUtils.deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
+//                if(StringUtils.isEmpty(responseEntityBom.getData())){
+//                    throw new Exception("找不到当前工单工序所需的物料信息");
+//                }
 
-                MesPmWorkOrderBomDto mesPmWorkOrderBomDto=responseEntityBom.getData().get(0);
+//                MesPmWorkOrderBomDto mesPmWorkOrderBomDto=responseEntityBom.getData().get(0);
                 // 半成品条码是否已绑定
                 Example example = new Example(MesSfcKeyPartRelevance.class);
                 Example.Criteria criteria = example.createCriteria();
@@ -1902,8 +1902,8 @@ public class BarcodeUtils {
                 //map.put("materialId", mesPmWorkOrder.getMaterialId());
                 map.put("workOrderBarcodeId", workOrderBarcodeId);
                 List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = barcodeUtils.mesSfcKeyPartRelevanceService.findList(map);
-                // 关键部件物料数量大于等于用量
-                if (keyPartRelevanceDtos.size() >= mesPmWorkOrderBomDto.getUsageQty().intValue()) {
+                // 关键部件物料数量大于等于用量 mesPmWorkOrderBomDto.getUsageQty().intValue()
+                if (keyPartRelevanceDtos.size() >= 1) {
                     throw new BizErrorException(ErrorCodeEnum.PDA40012020,"物料清单已满，不可扫码");
                 }
 

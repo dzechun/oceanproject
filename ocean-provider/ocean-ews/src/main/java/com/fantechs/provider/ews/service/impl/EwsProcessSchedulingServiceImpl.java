@@ -163,6 +163,7 @@ public class EwsProcessSchedulingServiceImpl extends BaseService<EwsProcessSched
                 }
             }
             num = ewsProcessSchedulingMapper.updateByPrimaryKeySelective(entity);
+            this.start(entity.getProcessSchedulingId());
         }catch (Exception e){
             throw new BizErrorException("排程修改失败");
         }

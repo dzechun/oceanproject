@@ -37,14 +37,14 @@ public class MesSfcScanBarcodeController {
     @ApiOperation("过站作业-过站信息校验")
     @PostMapping("/chkSnRouting")
     public ResponseEntity<BaseExecuteResultDto> chkSnRouting(@ApiParam(value = "过站信息校验", required = true) @RequestBody RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws Exception {
-        return ControllerUtil.returnDataSuccess("", mesSfcScanBarcodeService.chkSnRouting(restapiChkSNRoutingApiDto));
+        return ControllerUtil.returnSuccess("", mesSfcScanBarcodeService.chkSnRouting(restapiChkSNRoutingApiDto));
     }
 
 
     @ApiOperation("过站作业-条码过站")
     @PostMapping("/snDataTransfer")
     public ResponseEntity<BaseExecuteResultDto> snDataTransfer(@ApiParam(value = "条码过站", required = true) @RequestBody RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception{
-        return ControllerUtil.returnDataSuccess("",mesSfcScanBarcodeService.snDataTransfer(restapiSNDataTransferApiDto));
+        return ControllerUtil.returnSuccess("",mesSfcScanBarcodeService.snDataTransfer(restapiSNDataTransferApiDto));
     }
 
 }

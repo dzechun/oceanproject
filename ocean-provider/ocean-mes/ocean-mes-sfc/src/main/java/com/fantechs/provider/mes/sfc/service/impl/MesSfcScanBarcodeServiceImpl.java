@@ -1,11 +1,10 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkLogUserInfoApiDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiSNDataTransferApiDto;
-import com.fantechs.provider.mes.sfc.service.*;
+import com.fantechs.provider.mes.sfc.service.MesSfcScanBarcodeService;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +50,7 @@ public class MesSfcScanBarcodeServiceImpl implements MesSfcScanBarcodeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    //@LcnTransaction
     public BaseExecuteResultDto snDataTransfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {

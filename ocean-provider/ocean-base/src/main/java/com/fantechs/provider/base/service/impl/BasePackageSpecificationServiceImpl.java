@@ -243,7 +243,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
         LinkedList<BasePackageSpecification> list = new LinkedList<>();
         LinkedList<BaseHtPackageSpecification> htList = new LinkedList<>();
         LinkedList<BasePackageSpecificationImport> packageSpecificationImports = new LinkedList<>();
-        LinkedList<BaseMaterialPackage> baseMaterialPackages = new LinkedList<>();
+
         for (int i = 0; i < basePackageSpecificationImports.size(); i++) {
             BasePackageSpecificationImport basePackageSpecificationImport = basePackageSpecificationImports.get(i);
             String packageSpecificationCode = basePackageSpecificationImport.getPackageSpecificationCode();
@@ -347,6 +347,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
                 htList.add(baseHtPackageSpecification);
 
                 //新增包装规格物料数据
+                LinkedList<BaseMaterialPackage> baseMaterialPackages = new LinkedList<>();
                 for (BasePackageSpecificationImport basePackageSpecificationImport : PackageSpecificationImports1) {
                     BaseMaterialPackage baseMaterialPackage = new BaseMaterialPackage();
                     BeanUtils.copyProperties(basePackageSpecificationImport, baseMaterialPackage);
