@@ -1,7 +1,9 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBatchRulesDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseBatchRulesImport;
 import com.fantechs.common.base.general.entity.basic.BaseBatchRules;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBatchRules;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBatchRules;
@@ -13,17 +15,20 @@ import com.fantechs.provider.base.service.BaseBatchRulesService;
 import com.fantechs.provider.base.service.BaseHtBatchRulesService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +38,7 @@ import java.util.List;
 @Api(tags = "批次规则")
 @RequestMapping("/baseBatchRules")
 @Validated
+@Slf4j
 public class BaseBatchRulesController {
 
     @Resource
@@ -91,6 +97,31 @@ public class BaseBatchRulesController {
         EasyPoiUtils.exportExcel(list, "导出信息", "BaseBatchRules信息", BaseBatchRulesDto.class, "BaseBatchRules.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseBatchRulesImport> baseBatchRulesImports = EasyPoiUtils.importExcel(file,2,1, BaseBatchRulesImport.class);
+            Map<String, Object> resultMap = baseBatchRulesService.importExcel(baseBatchRulesImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        }catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

@@ -4,19 +4,21 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseSafeStockDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseSafeStockImport;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.BaseSafeStock;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtSafeStock;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSafeStock;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.base.mapper.BaseHtSafeStockMapper;
-import com.fantechs.provider.base.mapper.BaseSafeStockMapper;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseSafeStockService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -34,7 +36,12 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     @Resource
     private BaseHtSafeStockMapper baseHtSafeStockMapper;
     @Resource
-    private BaseFeignApi baseFeignApi;
+    private BaseWarehouseMapper baseWarehouseMapper;
+    @Resource
+    private BaseMaterialMapper baseMaterialMapper;
+    @Resource
+    private BaseMaterialOwnerMapper baseMaterialOwnerMapper;
+
 
     @Override
     public List<BaseSafeStockDto> findList(Map<String, Object> map) {
@@ -159,5 +166,99 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
         }
         BeanUtils.copyProperties(baseSafeStock, baseHtSafeStock);
         baseHtSafeStockMapper.insertSelective(baseHtSafeStock);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseSafeStockImport> baseSafeStockImports) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(currentUser)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<BaseSafeStock> list = new LinkedList<>();
+        LinkedList<BaseHtSafeStock> htList = new LinkedList<>();
+        for (int i = 0; i < baseSafeStockImports.size(); i++) {
+            BaseSafeStockImport baseSafeStockImport = baseSafeStockImports.get(i);
+            String warehouseCode = baseSafeStockImport.getWarehouseCode();
+
+            if (StringUtils.isEmpty(
+                    warehouseCode
+            )){
+                fail.add(i+4);
+                continue;
+            }
+
+            //仓库信息
+            Example example1 = new Example(BaseWarehouse.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria1.andEqualTo("warehouseCode", warehouseCode);
+            BaseWarehouse baseWarehouse = baseWarehouseMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(baseWarehouse)) {
+                fail.add(i + 4);
+                continue;
+            }
+            baseSafeStockImport.setWarehouseId(baseWarehouse.getWarehouseId());
+
+            //物料信息
+            String materialCode = baseSafeStockImport.getMaterialCode();
+            if(StringUtils.isNotEmpty(materialCode)){
+                Example example2 = new Example(BaseMaterial.class);
+                Example.Criteria criteria2 = example2.createCriteria();
+                criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
+                criteria2.andEqualTo("materialCode",materialCode);
+                BaseMaterial baseMaterial = baseMaterialMapper.selectOneByExample(example2);
+                if (StringUtils.isEmpty(baseMaterial)){
+                    fail.add(i+4);
+                    continue;
+                }
+                baseSafeStockImport.setMaterialId(baseMaterial.getMaterialId());
+            }
+
+            //货主信息
+            String materialOwnerCode = baseSafeStockImport.getMaterialOwnerCode();
+            if(StringUtils.isNotEmpty(materialOwnerCode)){
+                Example example3 = new Example(BaseMaterialOwner.class);
+                Example.Criteria criteria3 = example3.createCriteria();
+                criteria3.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria3.andEqualTo("materialOwnerCode",materialOwnerCode);
+                BaseMaterialOwner baseMaterialOwner = baseMaterialOwnerMapper.selectOneByExample(example3);
+                if (StringUtils.isEmpty(baseMaterialOwner)){
+                    fail.add(i+4);
+                    continue;
+                }
+                baseSafeStockImport.setMaterialOwnerId(baseMaterialOwner.getMaterialOwnerId());
+            }
+
+            BaseSafeStock baseSafeStock = new BaseSafeStock();
+            BeanUtils.copyProperties(baseSafeStockImport, baseSafeStock);
+            baseSafeStock.setCreateTime(new Date());
+            baseSafeStock.setCreateUserId(currentUser.getUserId());
+            baseSafeStock.setModifiedTime(new Date());
+            baseSafeStock.setModifiedUserId(currentUser.getUserId());
+            baseSafeStock.setStatus(StringUtils.isEmpty(baseSafeStock.getStatus())?1:baseSafeStock.getStatus().byteValue());
+            baseSafeStock.setOrganizationId(currentUser.getOrganizationId());
+            list.add(baseSafeStock);
+        }
+
+        if (StringUtils.isNotEmpty(list)){
+            success = baseSafeStockMapper.insertList(list);
+        }
+
+        for (BaseSafeStock baseSafeStock : list) {
+            BaseHtSafeStock baseHtSafeStock = new BaseHtSafeStock();
+            BeanUtils.copyProperties(baseSafeStock, baseHtSafeStock);
+            htList.add(baseHtSafeStock);
+        }
+
+        if (StringUtils.isNotEmpty(htList)){
+            baseHtSafeStockMapper.insertList(htList);
+        }
+        resutlMap.put("操作成功总数",success);
+        resutlMap.put("操作失败行数",fail);
+        return resutlMap;
     }
 }

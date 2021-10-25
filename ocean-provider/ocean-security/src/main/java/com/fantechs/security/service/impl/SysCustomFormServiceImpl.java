@@ -88,6 +88,10 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
         ifCodeRepeat(sysCustomForm,user);
         sysCustomForm.setOrgId(user.getOrganizationId());
 
+        int i = 0;
+        //获取原数据
+        SysCustomForm oldCustomForm = sysCustomFormMapper.selectByPrimaryKey(sysCustomForm.getCustomFormId());
+
         SysCustomForm subForm = new SysCustomForm();
         if(StringUtils.isNotEmpty(sysCustomForm.getSubId())) {
             subForm = sysCustomFormMapper.selectByPrimaryKey(sysCustomForm.getSubId());
@@ -96,9 +100,10 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
         //默认表修改
         Example example = new Example(SysDefaultCustomForm.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode());
+        criteria.andEqualTo("customFormCode",oldCustomForm.getCustomFormCode());
         SysDefaultCustomForm defaultCustomForm = sysDefaultCustomFormMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(defaultCustomForm)) {
+            defaultCustomForm.setCustomFormCode(sysCustomForm.getCustomFormCode());
             defaultCustomForm.setCustomFormName(sysCustomForm.getCustomFormName());
             defaultCustomForm.setFromRout(sysCustomForm.getFromRout());
             defaultCustomForm.setStatus(sysCustomForm.getStatus());
@@ -116,10 +121,10 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
         //全组织修改
         Example example2 = new Example(SysCustomForm.class);
         Example.Criteria criteria2 = example2.createCriteria();
-        criteria2.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode())
-                .andNotEqualTo("orgId",sysCustomForm.getOrgId());
+        criteria2.andEqualTo("customFormCode",oldCustomForm.getCustomFormCode());
         List<SysCustomForm> formList = sysCustomFormMapper.selectByExample(example2);
         for (SysCustomForm customForm : formList){
+            customForm.setCustomFormCode(sysCustomForm.getCustomFormCode());
             customForm.setCustomFormName(sysCustomForm.getCustomFormName());
             customForm.setFromRout(sysCustomForm.getFromRout());
             customForm.setStatus(sysCustomForm.getStatus());
@@ -131,10 +136,10 @@ public class SysCustomFormServiceImpl extends BaseService<SysCustomForm> impleme
                 SysCustomForm subFormInOrg = sysCustomFormMapper.selectOneByExample(example2);
                 customForm.setSubId(StringUtils.isNotEmpty(subFormInOrg)?subFormInOrg.getCustomFormId():null);
             }
-            sysCustomFormMapper.updateByPrimaryKeySelective(customForm);
+            i += sysCustomFormMapper.updateByPrimaryKeySelective(customForm);
         }
 
-        return sysCustomFormMapper.updateByPrimaryKeySelective(sysCustomForm);
+        return i;
     }
 
     @Override
