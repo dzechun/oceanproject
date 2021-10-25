@@ -70,8 +70,8 @@ public class AuthHeaderFilter extends ZuulFilter {
 			"/ocean-fileserver/file/uploadsFiles";
 	private static final String SWAGGER_URI = "/v2/api-docs";
 
-	private static final String CLIENT_URI = "/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder,/ocean-wanbao-api/wanbaoSyncData/syncMaterialData," +
-			"/ocean-wanbao-api/wanbaoSyncData/syncOrderData,/ocean-wanbao-api/wanbaoSyncData/syncSaleOrderData,/ocean-wanbao-api/wanbaoSyncData/syncOutDeliveryData,/ocean-wanbao-api/wanbaoSyncData/syncBarcodeData," +
+	private static final String CLIENT_URI = "/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder," +
+			"/ocean-wanbao-api/wanbaoSyncData/syncMaterialData,/ocean-wanbao-api/wanbaoSyncData/syncBarcodeData," +
 			"/ocean-wanbao-api/wanbaoSyncData/syncOrderData,/ocean-wanbao-api/wanbaoSyncData/syncSaleOrderData,/ocean-wanbao-api/wanbaoSyncData/syncOutDeliveryData," +
 			"/ocean-chinafivering-api/webServiceImport/getVendor,/ocean-chinafivering-api/webServiceImport/getIssueDetails,"+
 			"/ocean-chinafivering-api/webServiceImport/getPoDetails,/ocean-chinafivering-api/webServiceImport/getPartNoInfo,"+
@@ -141,13 +141,6 @@ public class AuthHeaderFilter extends ZuulFilter {
 					break;
 				}
 			} else {
-//				SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-//				searchSysSpecItem.setSpecCode("silentLogin");
-//				List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-//				if (specItems.isEmpty()){
-//					throw new BizErrorException(ErrorCodeEnum.GL9999404, "定时任务默认组织的程序配置项不存在");
-//				}
-//				token = RestTemplateUtil.getForStringNoJson(securityUrl + "?orgId=" + specItems.get(0).getParaValue());
 				token = RestTemplateUtil.getForStringNoJson(securityUrl + "?orgId=" + orgId);
 				log.info("---------为客户端赋予一个可访问的token : " + token + "---------------");
 			}

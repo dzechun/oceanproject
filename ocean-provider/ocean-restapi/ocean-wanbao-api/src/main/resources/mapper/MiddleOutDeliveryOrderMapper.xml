@@ -10,13 +10,14 @@
         <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
         <result column="audit_status" jdbcType="VARCHAR" property="auditStatus" />
         <result column="order_status" jdbcType="VARCHAR" property="orderStatus" />
-        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
         <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
         <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
         <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
         <result column="material_name" jdbcType="VARCHAR" property="materialName" />
-        <result column="picking_qty" jdbcType="DECIMAL" property="pickingQty"/>
+        <result column="packing_qty" jdbcType="DECIMAL" property="packingQty"/>
         <result column="dispatch_qty" jdbcType="DECIMAL" property="dispatchQty"/>
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
         <result column="option1" jdbcType="VARCHAR" property="option1" />
         <result column="option2" jdbcType="VARCHAR" property="option2" />
         <result column="option3" jdbcType="VARCHAR" property="option3" />
@@ -35,49 +36,51 @@
 
     <select id="setPolicy" >
         begin
-        mo_global.set_policy_context('S',81);
+        APPS.mo_global.set_policy_context('S',81);
         end;
     </select>
 
-    <select id="findSaleOrderData" parameterType="map" resultMap="BaseResultMap">
+    <select id="findOutDeliveryData" parameterType="map" resultMap="BaseResultMap">
         SELECT
         sh.so_number AS delivery_order_code,
         sh.schedule_ship_date AS plan_despatch_date,
         sh.actual_ship_date AS actual_despatch_date,
-        sh.cancel_number AS option1,
+--         sh.cancel_number AS option1,
         sh.customer_number AS customer_code,
         sh.customer_name AS customer_name,
-        sh.payment_type_name AS option2,
-        sh.oa_days AS option3,
-        sh.bn_number AS option4,
-        sh.virtual_container_no AS option5,
-        sh.so_type_name AS option6,
-        sh.container_type_name AS option7,
-        sh.salesname AS option8,
-        sh.export_country_name AS option9,
+--         sh.payment_type_name AS option2,
+--         sh.oa_days AS option3,
+--         sh.bn_number AS option4,
+--         sh.virtual_container_no AS option5,
+--         sh.so_type_name AS option6,
+--         sh.container_type_name AS option7,
+--         sh.salesname AS option8,
+--         sh.export_country_name AS option9,
         sh.status_name AS audit_status,
         sh.delivery_status_name AS order_status,
-        sh.declaration_flag AS option10,
-        sl.mo_number AS work_order_code,
-        sl.qo_number AS option11,
-        sl.manual_number AS option12,
-        sl.version_number AS option13,
+--         sh.declaration_flag AS option10,
+        sl.mo_number AS sales_order_code,
+--         sl.qo_number AS option11,
+--         sl.manual_number AS option12,
+--         sl.version_number AS option13,
         sl.po_number AS customer_order_code,
-        sl.lc_numbers AS option14,
+--         sl.lc_numbers AS option14,
         sl.customer_model AS product_model_code,
-        sld.product_code AS material_code,
+        sld.factory_code AS material_code,
         sld.product_name AS material_name,
-        sld.quantity_plan_ship AS picking_qty,
-        sld.quantity_load_container AS dispatch_qty
+        sld.quantity_plan_ship AS packing_qty,
+        sld.quantity_load_container AS dispatch_qty,
+        sh.CREATION_DATE AS order_date
         FROM
-        apps.oms_so_headers_v sh,
-        apps.oms_so_lines_v sl,
-        apps.oms_so_line_details_v sld
+        APPS.oms_so_headers_v sh,
+        APPS.oms_so_lines_v sl,
+        APPS.oms_so_line_details_v sld
         <where>
             sh.so_header_id = sl.so_header_id
             AND sld.so_line_id = sl.so_line_id
+            and sh.last_update_date >= TO_DATE('2021-08-01' , 'YYYY-MM-DD' )
             <if test="date != null and date != ''">
-                and mh.order_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
+                and sh.last_update_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>
         </where>
         ORDER BY

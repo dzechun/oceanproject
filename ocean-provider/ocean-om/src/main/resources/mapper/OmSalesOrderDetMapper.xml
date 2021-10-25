@@ -46,6 +46,7 @@
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto">
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
@@ -63,18 +64,20 @@
         sod.actual_deliver_date, sod.plan_delivery_date, sod.actual_delivery_date, sod.delivery_address,
         sod.total_inform_deliver_qty, sod.arrange_dispatch_qty, sod.total_outbound_qty, sod.total_sales_return_apply_qty,
         sod.total_return_qty, sod.order_goods_qty, sod.not_order_goods_qty, sod.total_return_need_supply_qty,
-        sod.total_production_qty, sod.total_not_production_qty, sod.return_arrange_dispatch_qty,
+        sod.total_production_qty, sod.total_not_production_qty, sod.return_arrange_dispatch_qty,sod.sales_code,
         sod.status, sod.is_delete, sod.remark, sod.org_id, sod.create_user_id, sod.create_time,
         sod.modified_user_id, sod.modified_time
     </sql>
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-        select<include refid="Base_Column_List"/>, bm.material_code, bm.material_name, bm.material_version,
+        select<include refid="Base_Column_List"/>, oso.sales_order_code,
+        bm.material_code, bm.material_name, bm.material_version,
         bm.material_desc, bw.warehouse_name,
         suc.user_name as create_user_name,
         bo.organization_name,
         sumod.user_name as modified_user_name
         from om_sales_order_det sod
+        left join om_sales_order oso on sod.sales_order_id=oso.sales_order_id
         left join base_material bm on sod.material_id = bm.material_id
         left join base_warehouse bw on sod.warehouse_id = bw.warehouse_id
         left join ocean_v2.sys_user suc on sod.create_user_id = suc.user_id
@@ -91,6 +94,12 @@
 
             <if test="salesOrderId != null">
                 and sod.sales_order_id = #{salesOrderId}
+            </if>
+            <if test="materialCode != null">
+                and bm.material_code = #{materialCode}
+            </if>
+            <if test="salesOrderCode != null">
+                and oso.sales_order_code = #{salesOrderCode}
             </if>
 
         </where>

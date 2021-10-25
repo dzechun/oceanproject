@@ -27,6 +27,7 @@ public class WanbaoSyncDataController {
     @ApiOperation(value = "万宝-物料基础信息同步",notes = "万宝-物料基础信息同步")
     @PostMapping("/syncMaterialData")
     public ResponseEntity syncMaterialData(){
+        log.info("万宝-物料基础信息同步");
         syncDataService.syncMaterialData();
         return ControllerUtil.returnSuccess();
     }
@@ -34,6 +35,7 @@ public class WanbaoSyncDataController {
     @ApiOperation(value = "万宝-工单信息同步",notes = "万宝-工单信息同步")
     @PostMapping("/syncOrderData")
     public ResponseEntity syncOrderData(){
+        log.info("万宝-工单信息同步");
         syncDataService.syncOrderData();
         return ControllerUtil.returnSuccess();
     }
@@ -41,6 +43,7 @@ public class WanbaoSyncDataController {
     @ApiOperation(value = "万宝-销售订单信息同步",notes = "万宝-销售订单信息同步")
     @PostMapping("/syncSaleOrderData")
     public ResponseEntity syncSaleOrderData(){
+        log.info("万宝-销售订单信息同步");
         syncDataService.syncSaleOrderData();
         return ControllerUtil.returnSuccess();
     }
@@ -48,6 +51,7 @@ public class WanbaoSyncDataController {
     @ApiOperation(value = "万宝-出货通知单信息同步",notes = "万宝-出货通知单信息同步")
     @PostMapping("/syncOutDeliveryData")
     public ResponseEntity syncOutDeliveryData(){
+        log.info("万宝-出货通知单信息同步");
         syncDataService.syncOutDeliveryData();
         return ControllerUtil.returnSuccess();
     }
@@ -55,6 +59,7 @@ public class WanbaoSyncDataController {
     @ApiOperation(value = "万宝-产品条码信息同步",notes = "万宝-产品条码信息同步")
     @PostMapping("/syncBarcodeData")
     public ResponseEntity syncBarcodeData(){
+        log.info("万宝-产品条码信息同步");
         syncDataService.syncBarcodeData();
         return ControllerUtil.returnSuccess();
     }

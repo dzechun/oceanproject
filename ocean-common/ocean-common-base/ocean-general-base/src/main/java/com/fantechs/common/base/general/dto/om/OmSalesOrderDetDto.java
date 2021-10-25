@@ -13,6 +13,11 @@ public class OmSalesOrderDetDto extends OmSalesOrderDet implements Serializable 
     /**
      *
      */
+
+    @ApiModelProperty(name = "salesOrderCode", value = "销售订单号")
+    @Excel(name = "销售订单号", height = 20, width = 30)
+    private String salesOrderCode;
+
     @ApiModelProperty(name = "materialCode", value = "物料编码")
     @Excel(name = "物料编码", height = 20, width = 30)
     private String materialCode;
