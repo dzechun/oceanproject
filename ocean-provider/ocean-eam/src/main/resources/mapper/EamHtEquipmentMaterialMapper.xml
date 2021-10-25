@@ -29,7 +29,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    ehem.ht_equipment_material_id
+    ehem.ht_equipment_material_id,
     ehem.equipment_material_id,
     ehem.equipment_id,
     ehem.`status`,
