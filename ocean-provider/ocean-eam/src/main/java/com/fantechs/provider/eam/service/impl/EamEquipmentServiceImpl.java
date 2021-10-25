@@ -363,7 +363,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             criteria2.andEqualTo("equipmentSeqNum", eamEquipmentBarcode.getEquipmentSeqNum())
                     .andEqualTo("orgId",user.getOrganizationId());
             if(StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentBarcodeId())){
-                criteria.andNotEqualTo("equipmentBarcodeId",eamEquipmentBarcode.getEquipmentBarcodeId());
+                criteria2.andNotEqualTo("equipmentBarcodeId",eamEquipmentBarcode.getEquipmentBarcodeId());
             }
             EamEquipmentBarcode equipmentBarcodNum = eamEquipmentBarcodeMapper.selectOneByExample(example);
             if (StringUtils.isNotEmpty(equipmentBarcodNum)) {

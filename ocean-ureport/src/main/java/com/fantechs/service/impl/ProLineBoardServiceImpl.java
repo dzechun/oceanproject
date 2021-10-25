@@ -11,7 +11,6 @@ import com.fantechs.service.ProLineBoardService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +25,10 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
     public ProLineBoardModel findList(SearchProLineBoard searchProLineBoard) {
         //查询当天日计划的所有排产数量和完工数量
 
-    //    searchProLineBoard.setStartTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
-    //    searchProLineBoard.setEndTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
-        searchProLineBoard.setStartTime("2021-09-30");
-        searchProLineBoard.setEndTime("2021-09-30");
+//        searchProLineBoard.setStartTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
+//        searchProLineBoard.setEndTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
+        searchProLineBoard.setStartTime("2021-10-22");
+        searchProLineBoard.setEndTime("2021-10-22");
         searchProLineBoard.setOrgId((long)1000);
         ProLineBoardModel model = proLineBoardMapper.findPlanList(searchProLineBoard);
         if(StringUtils.isNotEmpty(model)) {
@@ -38,9 +37,9 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
             NumberFormat numberFormat = NumberFormat.getInstance();
             numberFormat.setMaximumFractionDigits(2);
 
-            String outputRate = "0%";
-            if(StringUtils.isNotEmpty(model.getScheduledQty()) && StringUtils.isNotEmpty(model.getOutputQty())) {
-                outputRate = numberFormat.format((float) model.getOutputQty() / (float)model.getScheduledQty() * 100)+"%";
+            String outputRate = "0";
+            if(StringUtils.isNotEmpty(model.getScheduledQty()) && StringUtils.isNotEmpty(model.getOutputQty()) && model.getScheduledQty()>0 ) {
+                outputRate = numberFormat.format((float) model.getOutputQty() / (float)model.getScheduledQty() * 100);
             }
 
             searchProLineBoard.setProLineId(model.getProLineId());
@@ -62,12 +61,12 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
             searchProLineBoard.setBarcodeStatus((byte)1);
             Long passNum = proLineBoardMapper.findBarCodeRecordList(searchProLineBoard);
 
-            String passRate = "0%";
+            String passRate = "0";
             if(StringUtils.isNotEmpty(passNum) && StringUtils.isNotEmpty(lqcNum) && StringUtils.isNotEmpty(zzNum)
             && (lqcNum + zzNum)!=0 ) {
-                passRate = numberFormat.format((float) passNum / (float) (lqcNum + zzNum) * 100) + "%";
+                passRate = numberFormat.format((float) passNum / (float) (lqcNum + zzNum) * 100);
             }
-            String operationRatio = numberFormat.format((float) equipMentUseingNum / (float)equipMentNum * 100)+"%";
+            String operationRatio = numberFormat.format((float) equipMentUseingNum / (float)equipMentNum * 100);
 
             //查询预警良率和停线良率
             SearchBaseProductYield searchBaseProductYield = new SearchBaseProductYield();
@@ -84,8 +83,8 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
 
             model.setEquipmentQty(equipMentNum);
             model.setUseQty(equipMentUseingNum);
-            model.setWarningRate(yieldList.getWarningYield().multiply(new BigDecimal(100)).toString() +"%");
-            model.setStopProLineRate (yieldList.getProductlineStopYield().multiply(new BigDecimal(100)).toString() +"%");
+            model.setWarningRate(numberFormat.format(yieldList.getWarningYield()));
+            model.setStopProLineRate (numberFormat.format(yieldList.getProductlineStopYield()));
 
             model.setOutputRate(outputRate);
             model.setPassRate(passRate);

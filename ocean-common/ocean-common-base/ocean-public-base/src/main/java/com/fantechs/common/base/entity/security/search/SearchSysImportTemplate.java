@@ -25,6 +25,12 @@ public class SearchSysImportTemplate extends BaseQuery implements Serializable {
     private String importTemplateName;
 
     /**
+     * 模板文件名
+     */
+    @ApiModelProperty(name = "importTemplateFileName",value = "模板文件名")
+    private String importTemplateFileName;
+
+    /**
      * 模板所属菜单id
      */
     @ApiModelProperty(name = "menuId",value = "模板所属菜单id")
