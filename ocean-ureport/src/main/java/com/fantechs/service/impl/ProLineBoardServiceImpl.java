@@ -1,11 +1,9 @@
 package com.fantechs.service.impl;
 
-import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.entity.basic.BaseProductYield;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductYield;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.entity.BaseProductYield;
 import com.fantechs.entity.ProLineBoardModel;
 import com.fantechs.entity.search.SearchProLineBoard;
 import com.fantechs.mapper.ProLineBoardMapper;
@@ -26,14 +24,13 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
 
     @Override
     public ProLineBoardModel findList(SearchProLineBoard searchProLineBoard) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         //查询当天日计划的所有排产数量和完工数量
 
     //    searchProLineBoard.setStartTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
     //    searchProLineBoard.setEndTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
         searchProLineBoard.setStartTime("2021-09-30");
         searchProLineBoard.setEndTime("2021-09-30");
-        searchProLineBoard.setOrgId(user.getOrganizationId());
+        searchProLineBoard.setOrgId((long)1000);
         ProLineBoardModel model = proLineBoardMapper.findPlanList(searchProLineBoard);
         if(StringUtils.isNotEmpty(model)) {
 
@@ -79,8 +76,9 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
             BaseProductYield yieldList = null;
             yieldList = proLineBoardMapper.findYieldList(searchBaseProductYield);
             if(StringUtils.isEmpty(yieldList)){
-                searchBaseProductYield.setYieldType((byte)1);
-                yieldList = proLineBoardMapper.findYieldList(searchBaseProductYield);
+                SearchBaseProductYield searchBaseProductYield1 = new SearchBaseProductYield();
+                searchBaseProductYield1.setYieldType((byte)1);
+                yieldList = proLineBoardMapper.findYieldList(searchBaseProductYield1);
                 if(StringUtils.isEmpty(yieldList)) throw new BizErrorException("未查询到默认的产品良率配置");
             }
 
