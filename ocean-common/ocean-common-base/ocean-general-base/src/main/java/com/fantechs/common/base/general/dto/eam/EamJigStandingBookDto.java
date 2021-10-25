@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.dto.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eam.EamIssue;
 import com.fantechs.common.base.general.entity.eam.EamJigStandingBook;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -1,6 +1,5 @@
 package com.fantechs.common.base.general.dto.esop;
 
-import com.fantechs.common.base.general.entity.eam.history.EamHtWiBom;
 import com.fantechs.common.base.general.entity.esop.history.EsopHtWiBom;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -6,13 +6,9 @@ import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentBarcode;
-import com.fantechs.common.base.general.entity.eam.EamIssue;
 import com.fantechs.common.base.general.entity.eam.EamJig;
 import com.fantechs.common.base.general.entity.eam.search.*;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -56,11 +52,6 @@ public interface EamFeignApi {
     @PostMapping("/eamJigBarcode/plusCurrentUsageTime")
     ResponseEntity plusCurrentUsageTime(@ApiParam(value = "治具条码id", required = true) @RequestParam @NotNull(message = "治具条码id") Long jigBarcodeId,
                                         @ApiParam(value = "治具使用次数", required = true) @RequestParam @NotNull(message = "治具使用次数不能为空") Integer num);
-
-
-    @ApiOperation(value = "批量新增",notes = "批量新增")
-    @PostMapping("/eamIssue/batchAdd")
-    ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody List<EamIssue> eamIssues);
 
     @ApiOperation("查询设备绑定产品列表")
     @PostMapping("/eamEquipmentMaterial/findList")

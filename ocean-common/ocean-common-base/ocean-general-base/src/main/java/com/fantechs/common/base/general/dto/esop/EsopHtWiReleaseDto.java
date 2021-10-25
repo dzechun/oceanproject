@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.dto.esop;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eam.history.EamHtWiRelease;
 import com.fantechs.common.base.general.entity.esop.history.EsopHtWiRelease;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

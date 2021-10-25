@@ -1,6 +1,5 @@
 package com.fantechs.provider.eam.mapper;
 
-import com.fantechs.common.base.general.dto.eam.EamIssueDto;
 import com.fantechs.common.base.general.dto.eam.EamJigStandingBookDto;
 import com.fantechs.common.base.general.entity.eam.EamJigStandingBook;
 import com.fantechs.common.base.mybatis.MyMapper;

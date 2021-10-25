@@ -6,8 +6,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.daq.DaqEquipmentDataGroupReDcDto;
 import com.fantechs.common.base.general.entity.daq.DaqEquipmentDataGroupReDc;
 import com.fantechs.common.base.general.entity.daq.DaqHtEquipmentDataGroupReDc;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentDataGroupReDc;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentDataGroupReDc;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
