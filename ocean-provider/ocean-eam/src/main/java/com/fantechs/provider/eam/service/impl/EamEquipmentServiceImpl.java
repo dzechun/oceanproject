@@ -7,19 +7,18 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
-import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
-import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
-import com.fantechs.common.base.general.dto.eam.*;
+import com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamEquMaintainOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
+import com.fantechs.common.base.general.dto.eam.EamSparePartReEquDto;
 import com.fantechs.common.base.general.dto.eam.imports.EamEquipmentImport;
-import com.fantechs.common.base.general.dto.eam.imports.EamJigImport;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
-import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseFactory;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShop;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipment;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJig;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -358,6 +357,19 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             if (StringUtils.isNotEmpty(equipmentBarcode)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "设备条码重复");
             }
+
+            example.clear();
+            Example.Criteria criteria2 = example.createCriteria();
+            criteria2.andEqualTo("equipmentSeqNum", eamEquipmentBarcode.getEquipmentSeqNum())
+                    .andEqualTo("orgId",user.getOrganizationId());
+            if(StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentBarcodeId())){
+                criteria.andNotEqualTo("equipmentBarcodeId",eamEquipmentBarcode.getEquipmentBarcodeId());
+            }
+            EamEquipmentBarcode equipmentBarcodNum = eamEquipmentBarcodeMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(equipmentBarcodNum)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "设备序号重复");
+            }
+
             equipmentBarcodes.add(eamEquipmentBarcode.getEquipmentBarcode());
 
 

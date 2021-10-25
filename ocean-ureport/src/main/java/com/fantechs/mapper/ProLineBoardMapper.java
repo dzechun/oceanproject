@@ -1,8 +1,8 @@
 package com.fantechs.mapper;
 
 
-import com.fantechs.common.base.general.entity.basic.BaseProductYield;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductYield;
+import com.fantechs.entity.BaseProductYield;
 import com.fantechs.entity.ProLineBoardModel;
 import com.fantechs.entity.search.SearchProLineBoard;
 
