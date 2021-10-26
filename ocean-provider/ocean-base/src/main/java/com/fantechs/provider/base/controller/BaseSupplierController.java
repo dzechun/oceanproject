@@ -5,6 +5,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseCustomerImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -77,6 +78,14 @@ public class BaseSupplierController {
     public ResponseEntity<List<BaseSupplier>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSupplier searchBaseSupplier) {
         Page<Object> page = PageHelper.startPage(searchBaseSupplier.getStartPage(), searchBaseSupplier.getPageSize());
         List<BaseSupplier> list = baseSupplierService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSupplier));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<BaseHtSupplier>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSupplier searchBaseSupplier) {
+        Page<Object> page = PageHelper.startPage(searchBaseSupplier.getStartPage(),searchBaseSupplier.getPageSize());
+        List<BaseHtSupplier> list = baseSupplierService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseSupplier));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

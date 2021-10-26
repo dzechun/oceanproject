@@ -4,8 +4,11 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialSupplierDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseMaterialSupplierImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterialSupplier;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterialSupplier;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialSupplier;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -76,6 +79,14 @@ public class BaseMaterialSupplierController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<BaseHtMaterialSupplier>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseMaterialSupplier searchBaseMaterialSupplier) {
+        Page<Object> page = PageHelper.startPage(searchBaseMaterialSupplier.getStartPage(),searchBaseMaterialSupplier.getPageSize());
+        List<BaseHtMaterialSupplier> list = baseMaterialSupplierService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialSupplier));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
@@ -95,7 +106,7 @@ public class BaseMaterialSupplierController {
      * @throws
      */
     @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入电子标签信息",notes = "从excel导入电子标签信息")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
                                       @RequestPart(value="file") MultipartFile file){
         try {

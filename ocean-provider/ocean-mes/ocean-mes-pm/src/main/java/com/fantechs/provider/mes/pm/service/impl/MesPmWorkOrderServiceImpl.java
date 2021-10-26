@@ -134,6 +134,25 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public int updatePmWorkOrder(MesPmWorkOrder mesPmWorkOrder) {
+        int i = 0;
+        //mesPmWorkOrder.setModifiedUserId(currentUser.getUserId());
+        mesPmWorkOrder.setModifiedTime(new Date());
+        i = mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder);
+
+        //新增工单历史信息
+        MesPmHtWorkOrder mesPmHtWorkOrder = new MesPmHtWorkOrder();
+        BeanUtils.copyProperties(mesPmWorkOrder, mesPmHtWorkOrder);
+        //mesPmHtWorkOrder.setModifiedUserId(currentUser.getUserId());
+        mesPmHtWorkOrder.setModifiedTime(new Date());
+        smtHtWorkOrderMapper.insertSelective(mesPmHtWorkOrder);
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         List<MesPmHtWorkOrder> list = new ArrayList<>();
 

@@ -78,6 +78,12 @@ public class MesPmWorkOrderController {
         return ControllerUtil.returnCRUD(mesPmWorkOrderService.update(mesPmWorkOrderDto));
     }
 
+    @ApiOperation("过站修改工单")
+    @PostMapping("/updatePmWorkOrder")
+    public ResponseEntity updatePmWorkOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrder mesPmWorkOrder) {
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.updatePmWorkOrder(mesPmWorkOrder));
+    }
+
     @ApiOperation("批量修改完工数量")
     @PostMapping("/batchUpdate")
     public ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true) @RequestBody List<MesPmWorkOrder> mesPmWorkOrders){

@@ -59,6 +59,7 @@
     <select id="findList" parameterType="map"
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
+        spl.pro_name, spl.pro_code,
         spm.product_model_code, spm.product_model_name,
         sm.material_code,sm.material_desc,sm.material_version,
         u.user_name as create_user_name, s.user_name as modified_user_name,
@@ -86,6 +87,15 @@
             </if>
             <if test="materialId!=null and materialId!=''">
                 and shppr.material_id=#{materialId}
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="proName != null and proName != ''">
+                and spl.pro_name like CONCAT('%', #{proName}, '%')
+            </if>
+            <if test="productModelName != null and productModelName != ''">
+                and spm.product_model_name like CONCAT('%', #{productModelName}, '%')
             </if>
             <if test="routeId!=null and routeId!=''">
                 and shppr.route_id=#{routeId}
