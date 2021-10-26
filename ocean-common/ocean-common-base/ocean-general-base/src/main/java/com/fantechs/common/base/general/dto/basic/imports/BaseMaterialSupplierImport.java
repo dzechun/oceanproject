@@ -32,6 +32,7 @@ public class BaseMaterialSupplierImport implements Serializable {
      * 客户编码
      */
     @ApiModelProperty(name="supplierCode",value = "客户编码")
+    @Excel(name = "客户编码(必填)", height = 20, width = 3)
     private String supplierCode;
 
     /**
@@ -47,6 +48,13 @@ public class BaseMaterialSupplierImport implements Serializable {
     @ApiModelProperty(name="image",value = "图片")
     @Excel(name = "图片", height = 20, width = 30)
     private String image;
+
+    /**
+     * 客户产品型号
+     */
+    @ApiModelProperty(name="supplierProductModel",value = "客户产品型号")
+    @Excel(name = "客户产品型号", height = 20, width = 30)
+    private String supplierProductModel;
 
     /**
      * 备注

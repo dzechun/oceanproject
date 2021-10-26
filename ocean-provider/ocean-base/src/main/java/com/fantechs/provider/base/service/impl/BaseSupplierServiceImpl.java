@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseAddressDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
 import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.history.BaseHtSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionExemptedList;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -41,8 +42,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     @Resource
     private BaseMaterialMapper baseMaterialMapper;
     @Resource
-    private BaseOrganizationMapper baseOrganizationMapper;
-
+    private BaseHtSupplierMapper baseHtSupplierMapper;
     @Resource
     private BaseSupplierReUserMapper baseSupplierReUserMapper;
 
@@ -112,6 +112,13 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     }
 
     @Override
+    public List<BaseHtSupplier> findHtList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId", user.getOrganizationId());
+        return baseHtSupplierMapper.findHtList(map);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseSupplier record) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -133,6 +140,11 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         record.setIsDelete((byte) 1);
         record.setOrganizationId(currentUser.getOrganizationId());
         int i = baseSupplierMapper.insertUseGeneratedKeys(record);
+
+        //新增历史信息
+        BaseHtSupplier baseHtSupplier = new BaseHtSupplier();
+        BeanUtils.copyProperties(record, baseHtSupplier);
+        baseHtSupplierMapper.insertSelective(baseHtSupplier);
 
         List<BaseAddressDto> address = record.getList();
 
@@ -160,6 +172,11 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         entity.setModifiedUserId(currentUser.getUserId());
         entity.setOrganizationId(currentUser.getOrganizationId());
         int i = baseSupplierMapper.updateByPrimaryKeySelective(entity);
+
+        //新增历史信息
+        BaseHtSupplier baseHtSupplier = new BaseHtSupplier();
+        BeanUtils.copyProperties(entity, baseHtSupplier);
+        baseHtSupplierMapper.insertSelective(baseHtSupplier);
 
         Example supplierAddressExample = new Example(BaseSupplierAddress.class);
         supplierAddressExample.createCriteria().andEqualTo("supplierId",entity.getSupplierId());
