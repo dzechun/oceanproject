@@ -30,4 +30,6 @@ public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
     int save(MesPmWorkOrderDto mesPmWorkOrderDto);
 
     int update(MesPmWorkOrderDto mesPmWorkOrderDto);
+
+    int updatePmWorkOrder(MesPmWorkOrder mesPmWorkOrder);
 }

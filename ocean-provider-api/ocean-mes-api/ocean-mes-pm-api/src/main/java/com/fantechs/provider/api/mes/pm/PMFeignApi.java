@@ -41,6 +41,10 @@ public interface PMFeignApi {
     @PostMapping("/mesPmWorkOrder/update")
     ResponseEntity updateSmtWorkOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrder mesPmWorkOrder);
 
+    @ApiOperation("过站修改工单")
+    @PostMapping("/mesPmWorkOrder/updatePmWorkOrder")
+    ResponseEntity updatePmWorkOrder(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesPmWorkOrder mesPmWorkOrder);
+
     @ApiOperation("批量修改完工数量")
     @PostMapping("/mesPmWorkOrder/batchUpdate")
     ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true) @RequestBody List<MesPmWorkOrder> mesPmWorkOrders);

@@ -379,26 +379,36 @@ public class BarcodeUtils {
 //        map.put("stationId", dto.getNowStationId());
 //        map.put("processId", dto.getNowProcessId());
 //        List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(map);
-        // 是否投产工序且是该条码在工单工序第一次过站，工单投产数量 +1
-        if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId()) && mesSfcBarcodeProcessRecordDtoList.isEmpty()) {
-            mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE));
-            // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
-            if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
-                mesPmWorkOrder.setWorkOrderStatus((byte) 3);
+        // 是否投产工序且是该条码在工单工序第一次过站，工单投产数量 +1 mesSfcBarcodeProcessRecordDtoList.isEmpty()
+        if(StringUtils.isNotEmpty(mesPmWorkOrder.getPutIntoProcessId())) {
+            if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId()) && mesSfcBarcodeProcessRecordDtoList.size()==0) {
+                mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE));
+                // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
+                if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
+                    mesPmWorkOrder.setWorkOrderStatus((byte) 3);
+                }
+                // huangshuijun 注释此 updateSmtWorkOrder 方法原因：1 过站方式如果是设备调用 获取不了当前用户
+                // 2 调用此方法会把工单BOM删除 大忌
+                //barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
+                barcodeUtils.pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
             }
-            barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
         }
         // 判断当前工序是否为产出工序，且是该条码在工单工序第一次过站，工单产出 +1
-        if (dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId()) && mesSfcBarcodeProcessRecordDtoList.isEmpty()) {
-            mesPmWorkOrder.setOutputQty(BigDecimal.ONE.add(mesPmWorkOrder.getOutputQty()));
-            if (mesPmWorkOrder.getOutputQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 0) {
-                // 产出数量等于工单数量，工单完工
-                mesPmWorkOrder.setWorkOrderStatus((byte) 6);
-                mesPmWorkOrder.setActualEndTime(new Date());
-                mesPmWorkOrder.setModifiedTime(new Date());
-                mesPmWorkOrder.setModifiedUserId(dto.getOperatorUserId());
+        if(StringUtils.isNotEmpty(mesPmWorkOrder.getOutputProcessId())) {
+            if (dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId()) && mesSfcBarcodeProcessRecordDtoList.size()==0) {
+                mesPmWorkOrder.setOutputQty(BigDecimal.ONE.add(mesPmWorkOrder.getOutputQty()));
+                if (mesPmWorkOrder.getOutputQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 0) {
+                    // 产出数量等于工单数量，工单完工
+                    mesPmWorkOrder.setWorkOrderStatus((byte) 6);
+                    mesPmWorkOrder.setActualEndTime(new Date());
+                    mesPmWorkOrder.setModifiedTime(new Date());
+                    mesPmWorkOrder.setModifiedUserId(dto.getOperatorUserId());
+                }
+                // huangshuijun 注释此 updateSmtWorkOrder 方法原因：1 过站方式如果是设备调用 获取不了当前用户
+                // 2 调用此方法会把工单BOM删除 大忌
+                //barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
+                barcodeUtils.pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
             }
-            barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
         }
         return 1;
     }
