@@ -51,6 +51,18 @@ public class SearchBaseProductProcessRoute extends BaseQuery implements Serializ
     private String materialCode;
 
     /**
+     *  产线名称
+     */
+    @ApiModelProperty(name="proName" ,value="产线名称")
+    private String proName;
+
+    /**
+     *  产品型号名称
+     */
+    @ApiModelProperty(name="productModelName" ,value="产品型号名称")
+    private String productModelName;
+
+    /**
      * 工艺路线ID
      */
     @Column(name = "route_id")

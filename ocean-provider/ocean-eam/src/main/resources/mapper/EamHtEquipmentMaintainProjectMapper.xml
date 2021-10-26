@@ -75,6 +75,9 @@
       <if test="equipmentMaintainProjectName != null and equipmentMaintainProjectName!=''">
         and eemp.equipment_maintain_project_name like CONCAT('%', #{equipmentMaintainProjectName}, '%')
       </if>
+      <if test="equipmentCategoryName != null and equipmentCategoryName!=''">
+        and eec.equipment_category_name like CONCAT('%', #{equipmentCategoryName}, '%')
+      </if>
       <if test="status!=null">
         and eemp.status = #{status}
       </if>

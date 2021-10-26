@@ -92,6 +92,12 @@
       <if test="materialCode != null and materialCode != ''">
         and sm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
+      <if test="proName != null and proName != ''">
+        and spl.pro_name like CONCAT('%', #{proName}, '%')
+      </if>
+      <if test="productModelName != null and productModelName != ''">
+        and spm.product_model_name like CONCAT('%', #{productModelName}, '%')
+      </if>
       <if test="routeId!=null and routeId!=''">
         and sppr.route_id=#{routeId}
       </if>
