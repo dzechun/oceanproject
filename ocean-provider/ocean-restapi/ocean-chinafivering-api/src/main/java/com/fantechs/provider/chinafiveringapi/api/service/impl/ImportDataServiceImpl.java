@@ -582,7 +582,7 @@ public class ImportDataServiceImpl implements ImportDataService {
             String str = s2.substring(indexb, indexe + 1);
             List<SysUser> listUser = BeanUtils.jsonToListObject(str, SysUser.class);
 
-            //获取供应商角色
+            //获取供应商角色ID
             Long roleId=null;
             SearchSysRole searchSysRole=new SearchSysRole();
             searchSysRole.setRoleCode("SROLE");
