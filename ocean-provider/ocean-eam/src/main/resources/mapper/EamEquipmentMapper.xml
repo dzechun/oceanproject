@@ -39,8 +39,6 @@
     <result column="warning_time" jdbcType="INTEGER" property="warningTime" />
     <result column="max_usage_days" jdbcType="INTEGER" property="maxUsageDays" />
     <result column="warning_days" jdbcType="INTEGER" property="warningDays" />
-    <result column="x_axis" jdbcType="DECIMAL" property="xAxis" />
-    <result column="y_axis" jdbcType="DECIMAL" property="yAxis" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -171,8 +169,6 @@
     left join base_factory bf on ee.factory_id=bf.factory_id
     left join base_process bp on ee.process_id=bp.process_id
     left join eam_equipment_maintain_project emp on ee.equipment_maintain_project_id=emp.equipment_maintain_project_id
-    left join eam_equipment_data_group_re_dc eedgrd on ee.equipment_id=eedgrd.equipment_id
-    left join eam_equipment_data_group eedg on eedgrd.equipment_data_group_id=eedg.equipment_data_group_id
     left join ocean_v2.sys_user su on ee.equipment_mgt_user_id=su.user_id
     left join ocean_v2.sys_user u on ee.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ee.modified_user_id=s.user_id
@@ -207,9 +203,6 @@
       </if>
       <if test="equipmentMacAddress != null and equipmentMacAddress!=''">
         and ee.equipment_mac_address = #{equipmentMacAddress}
-      </if>
-      <if test="equipmentDataGroupId != null and equipmentDataGroupId!=''">
-        and eedg.equipment_data_group_id = #{equipmentDataGroupId}
       </if>
     </where>
     order by ee.create_time desc
