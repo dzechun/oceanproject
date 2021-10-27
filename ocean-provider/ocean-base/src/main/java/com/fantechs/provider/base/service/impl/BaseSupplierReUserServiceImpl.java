@@ -36,11 +36,13 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
 
     @Override
     public List<BaseSupplierReUser> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
         }
-        map.put("orgId", user.getOrganizationId());
 
         return baseSupplierReUserMapper.findList(map);
     }
@@ -179,5 +181,33 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
         baseHtSupplierReUserMapper.insertList(htList);
 
         return baseSupplierReUserMapper.deleteByIds(ids);
+    }
+
+    @Override
+    public int saveByApi(BaseSupplierReUser baseSupplierReUser) {
+        int i= 0;
+
+        Example example = new Example(BaseSupplierReUser.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("supplierId",baseSupplierReUser.getSupplierId());
+        criteria.andEqualTo("userId",baseSupplierReUser.getUserId());
+        criteria.andEqualTo("organizationId",baseSupplierReUser.getOrganizationId());
+        BaseSupplierReUser supplierReUser = baseSupplierReUserMapper.selectOneByExample(example);
+
+        if(StringUtils.isEmpty(supplierReUser)) {
+            baseSupplierReUser.setCreateTime(new Date());
+            baseSupplierReUser.setCreateUserId((long) 1);
+            baseSupplierReUser.setModifiedUserId((long) 1);
+            baseSupplierReUser.setModifiedTime(new Date());
+            baseSupplierReUser.setIsDelete((byte) 1);
+            i = baseSupplierReUserMapper.insertSelective(baseSupplierReUser);
+        }
+        else{
+            baseSupplierReUser.setSupplierReUserId(supplierReUser.getSupplierReUserId());
+            baseSupplierReUser.setModifiedTime(new Date());
+            i=baseSupplierReUserMapper.updateByPrimaryKeySelective(baseSupplierReUser);
+        }
+
+        return i;
     }
 }

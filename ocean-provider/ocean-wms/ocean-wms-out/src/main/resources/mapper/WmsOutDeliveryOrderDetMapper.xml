@@ -23,6 +23,7 @@
     <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
     <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
     <result column="source_line_number" jdbcType="VARCHAR" property="sourceLineNumber" />
+      <result column="pipeline_number" jdbcType="VARCHAR" property="pipelineNumber" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -81,6 +82,7 @@ wodod.picking_storage_id,
     wodod.batch_code,
     wodod.source_order_code,
     wodod.source_line_number,
+    wodod.pipeline_number,
     wodod.`status`,
     wodod.org_id,
     wodod.remark,

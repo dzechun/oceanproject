@@ -534,6 +534,10 @@ public class BarcodeUtils {
             if (mesSfcBarcodeProcess.getNextProcessId().equals(0L)){
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码已完成所有工序过站");
             }
+            //是否已不良
+            if (StringUtils.isNotEmpty(mesSfcBarcodeProcess.getBarcodeStatus()) && mesSfcBarcodeProcess.getBarcodeStatus().equals((byte)0)){
+                throw new BizErrorException("该产品条码已不良 不可继续");
+            }
         }else {
             throw new BizErrorException(ErrorCodeEnum.PDA40012002, mesSfcWorkOrderBarcodeDto.getBarcode());
         }

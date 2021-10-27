@@ -1,13 +1,12 @@
 package com.fantechs.provider.api.security.service;
 
 
+import com.fantechs.common.base.dto.security.SysRoleDto;
 import com.fantechs.common.base.entity.security.*;
+import com.fantechs.common.base.entity.security.search.SearchSysRole;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -64,5 +63,14 @@ public interface SecurityFeignApi {
     @ApiOperation(value = "同步默认自定义表单的数据到自定义表单",notes = "同步默认自定义表单的数据到自定义表单")
     @PostMapping("/sysDefaultCustomForm/syncDefaultData")
     ResponseEntity syncDefaultData(@ApiParam(value = "组织id",required = true)@RequestParam  @NotNull(message="组织id不能为空") Long orgId);
+
+    @ApiOperation("接口新增或修改供应商用户信息")
+    @PostMapping("/sysUser/saveByApi")
+    ResponseEntity<SysUser> saveByApi(@ApiParam(value = "必传：userCode、userName、password、status",required = true)@RequestBody @Validated SysUser sysUser);
+
+    @ApiOperation("查询角色信息")
+    @PostMapping("/sysRole/findList")
+    ResponseEntity<List<SysRoleDto>> selectRoles(@ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSysRole searchSysRole);
+
 
 }

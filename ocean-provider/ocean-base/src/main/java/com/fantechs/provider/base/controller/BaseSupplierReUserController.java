@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -97,5 +96,11 @@ public class BaseSupplierReUserController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/saveByApi")
+    public ResponseEntity saveByApi(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseSupplierReUser baseSupplierReUser) {
+        return ControllerUtil.returnCRUD(baseSupplierReUserService.saveByApi(baseSupplierReUser));
     }
 }
