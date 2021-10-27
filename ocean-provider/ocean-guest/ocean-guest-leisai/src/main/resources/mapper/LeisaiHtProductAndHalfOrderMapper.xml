@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.guest.leisai.mapper.LeisaiHtProductAndHalfOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.leisai.history.LeisaiHtProductAndHalfOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_product_and_half_order_id" jdbcType="BIGINT" property="htProductAndHalfOrderId" />
+    <result column="product_and_half_order_id" jdbcType="BIGINT" property="productAndHalfOrderId" />
+    <result column="product_and_half_order_code" jdbcType="VARCHAR" property="productAndHalfOrderCode" />
+    <result column="scan_sn" jdbcType="VARCHAR" property="scanSn" />
+    <result column="product_sn" jdbcType="VARCHAR" property="productSn" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+    <result column="product_material_code" jdbcType="VARCHAR" property="productMaterialCode" />
+    <result column="product_material_desc" jdbcType="VARCHAR" property="productMaterialDesc" />
+    <result column="half_product_sn" jdbcType="VARCHAR" property="halfProductSn" />
+    <result column="outsource_order_code" jdbcType="VARCHAR" property="outsourceOrderCode" />
+    <result column="ipqc_inspection_time" jdbcType="TIMESTAMP" property="ipqcInspectionTime" />
+    <result column="half_product_material_code" jdbcType="VARCHAR" property="halfProductMaterialCode" />
+    <result column="half_product_material_desc" jdbcType="VARCHAR" property="halfProductMaterialDesc" />
+    <result column="recorder" jdbcType="VARCHAR" property="recorder" />
+    <result column="qty" jdbcType="DECIMAL" property="qty" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+</mapper>
