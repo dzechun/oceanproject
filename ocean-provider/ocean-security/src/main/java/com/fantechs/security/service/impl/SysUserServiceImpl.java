@@ -356,4 +356,49 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
         return sysUserMapper.updateByExampleSelective(user,example);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SysUser saveByApi(SysUser sysUser) {
+        Example example = new Example(SysUser.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userName", sysUser.getUserName()).orEqualTo("userCode",sysUser.getUserCode());
+        SysUser oneByUser = sysUserMapper.selectOneByExample(example);
+
+        if(StringUtils.isNotEmpty(oneByUser)){
+            //throw new BizErrorException("该用户的帐号/工号已存在。");
+            sysUser.setModifiedTime(new Date());
+            sysUserMapper.updateByPrimaryKeySelective(sysUser);
+        }
+        else{
+            sysUser.setUserId(SnowFlakeUtil.getUid());
+            sysUser.setCreateUserId(1L);
+            sysUser.setCreateTime(new Date());
+            sysUser.setModifiedUserId(1L);
+            sysUser.setModifiedTime(new Date());
+            sysUser.setIsDelete(StringUtils.isEmpty(sysUser.getIsDelete()) ? (byte)1 : sysUser.getIsDelete());
+            sysUser.setStatus(StringUtils.isEmpty(sysUser.getStatus()) ? (byte)1 : sysUser.getStatus());
+            sysUserMapper.insertUseGeneratedKeys(sysUser);
+
+            //增加用户的角色、组织权限
+            if(StringUtils.isNotEmpty(sysUser.getOrganizationId())) {
+                SysOrganizationUser sysOrganizationUser = new SysOrganizationUser();
+                sysOrganizationUser.setOrganizationId(sysUser.getOrganizationId());
+                sysOrganizationUser.setUserId(sysUser.getUserId());
+                sysOrganizationUserMapper.insert(sysOrganizationUser);
+            }
+            if(StringUtils.isNotEmpty(sysUser.getRoleId())) {
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setUserId(sysUser.getUserId());
+                sysUserRole.setRoleId(sysUser.getRoleId());
+                sysUserRoleMapper.insert(sysUserRole);
+            }
+            //新增用户历史信息
+            SysHtUser sysHtUser=new SysHtUser();
+            BeanUtils.copyProperties(sysUser,sysHtUser);
+            sysHtUserMapper.insertSelective(sysHtUser);
+        }
+
+        return sysUser;
+    }
 }
