@@ -35,7 +35,7 @@
     <result column="pick_material_user_name" jdbcType="VARCHAR" property="pickMaterialUserName" />
     <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId" />
     <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName" />
-
+    <result column="audit_time" jdbcType="VARCHAR" property="auditTime" />
     <result column="if_created_job_order" jdbcType="TINYINT" property="ifCreatedJobOrder"/>
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
@@ -96,6 +96,7 @@
     wodo.pick_material_user_name,
     wodo.audit_user_id,
     wodo.audit_user_name,
+    wodo.audit_time,
     wodo.if_created_job_order,
     wodo.order_status,
     wodo.audit_status,

@@ -266,6 +266,14 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     private String auditUserName;
 
     /**
+     * 审批时间
+     */
+    @ApiModelProperty(name="auditTime",value = "审批时间")
+    @Column(name = "audit_time")
+    private String auditTime;
+
+
+    /**
      * 是否创建作业单
      */
     @ApiModelProperty(name = "是否创建作业单 1-是 0-否",value = "ifCreatedJobOrder")
