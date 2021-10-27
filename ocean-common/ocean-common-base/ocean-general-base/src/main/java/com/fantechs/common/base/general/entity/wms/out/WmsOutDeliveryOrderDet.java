@@ -240,6 +240,13 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
+
+    // ===== 20211025 增加
+    @ApiModelProperty(name="salesCode",value = "销售编码")
+    @Excel(name = "销售编码", height = 20, width = 30,orderNum="")
+    @Column(name = "sales_code")
+    private String salesCode;
+
     /**
      * 扩展字段1
      */
