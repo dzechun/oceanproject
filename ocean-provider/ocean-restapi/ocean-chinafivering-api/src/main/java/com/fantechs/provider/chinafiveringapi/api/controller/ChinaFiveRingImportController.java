@@ -82,6 +82,14 @@ public class ChinaFiveRingImportController {
         return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
     }
 
+    @ApiOperation("获取供应商用户信息")
+    @PostMapping("/getVendorUserNameAndPwd")
+    public ResponseEntity<String> getVendorUserNameAndPwd() throws Exception {
+        BaseExecuteResultDto result = importDataService.getVendorUserNameAndPwd();
+        String strResult= JsonUtils.objectToJson(result);
+        return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
+    }
+
     @ApiOperation("获取请购单信息")
     @PostMapping("/getReqDetails")
     //@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID

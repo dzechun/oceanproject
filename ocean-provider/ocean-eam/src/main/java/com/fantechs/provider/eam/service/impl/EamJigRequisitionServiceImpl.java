@@ -309,6 +309,7 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
                 continue;
             }
 
+            eamJigRequisition.setUsageUserId(user.getUserId());
             eamJigRequisition.setCreateUserId(user.getUserId());
             eamJigRequisition.setCreateTime(new Date());
             eamJigRequisition.setModifiedUserId(user.getUserId());
