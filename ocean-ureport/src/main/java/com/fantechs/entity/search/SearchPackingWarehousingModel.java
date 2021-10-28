@@ -17,84 +17,84 @@ public class SearchPackingWarehousingModel extends BaseQuery implements Serializ
     /**
      *发运批次
      */
-    @ApiModelProperty(name = "发运批次",value = "despatchBatch")
+    @ApiModelProperty(name = "despatchBatch",value = "发运批次")
     private String despatchBatch;
 
     /**
      *专业
      */
-    @ApiModelProperty(name = "专业",value = "professionName")
+    @ApiModelProperty(name = "professionName",value = "专业")
     private String professionName;
 
     /**
      *合同号
      */
-    @ApiModelProperty(name = "合同号",value = "contractCode")
+    @ApiModelProperty(name = "contractCode",value = "合同号")
     private String contractCode;
 
     /**
      *请购单号
      */
-    @ApiModelProperty(name = "请购单号",value = "purchaseReqOrderCode")
+    @ApiModelProperty(name = "purchaseReqOrderCode",value = "请购单号")
     private String purchaseReqOrderCode;
 
     /**
      *材料编码
      */
-    @ApiModelProperty(name = "材料编码",value = "materialCode")
+    @ApiModelProperty(name = "materialCode",value = "材料编码")
     private String materialCode;
 
     /**
      *位号
      */
-    @ApiModelProperty(name = "位号",value = "locationNum")
+    @ApiModelProperty(name = "locationNum",value = "位号")
     private String locationNum;
 
     /**
      *材料名称
      */
-    @ApiModelProperty(name = "材料名称",value = "materialName")
+    @ApiModelProperty(name = "materialName",value = "材料名称")
     private String materialName;
 
     /**
      *规格
      */
-    @ApiModelProperty(name = "规格",value = "spec")
+    @ApiModelProperty(name = "spec",value = "规格")
     private String spec;
 
     /**
      *主项号
      */
-    @ApiModelProperty(name = "主项号",value = "dominantTermCode")
+    @ApiModelProperty(name = "dominantTermCode",value = "主项号")
     private String dominantTermCode;
 
     /**
      *装置号
      */
-    @ApiModelProperty(name = "装置号",value = "deviceCode")
+    @ApiModelProperty(name = "deviceCode",value = "装置号")
     private String deviceCode;
 
     /**
      *到货量
      */
-    @ApiModelProperty(name = "到货量",value = "putawayQty")
+    @ApiModelProperty(name = "putawayQty",value = "到货量")
     private BigDecimal putawayQty;
 
     /**
      *计量单位
      */
-    @ApiModelProperty(name = "计量单位",value = "unitName")
+    @ApiModelProperty(name = "unitName",value = "计量单位")
     private String unitName;
 
     /**
      *材料用途
      */
-    @ApiModelProperty(name = "材料用途",value = "materialPurpose")
+    @ApiModelProperty(name = "materialPurpose",value = "材料用途")
     private String materialPurpose;
 
     /**
      *供应商
      */
-    @ApiModelProperty(name = "供应商",value = "supplierName")
+    @ApiModelProperty(name = "supplierName",value = "供应商")
     private String supplierName;
 }

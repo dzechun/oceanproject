@@ -148,6 +148,9 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             }
 
             PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(ControllerUtil.dynamicCondition("labelCode",labelRuteDto.getLabelCode(),"id",mesSfcWorkOrderBarcode.getWorkOrderBarcodeId()));
+            if(StringUtils.isEmpty(printModel)){
+                throw new BizErrorException("获取视图数据信息失败，请检查视图");
+            }
             printModel.setSize(1);
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
