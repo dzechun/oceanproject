@@ -99,7 +99,7 @@
     where sd.parent_id=#{parentId}
   </select>
 
-  <select id="findList_COUNT" parameterType="map" resultType="Long">
+  <!--<select id="findList_COUNT" parameterType="map" resultType="Long">
     select count(sd.dept_id) from fantech_imes_v2.base_dept sd
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
@@ -132,6 +132,6 @@
         and sd.parent_id = -1
     </where>
     order by sd.create_time desc
-  </select>
+  </select>-->
 
 </mapper>

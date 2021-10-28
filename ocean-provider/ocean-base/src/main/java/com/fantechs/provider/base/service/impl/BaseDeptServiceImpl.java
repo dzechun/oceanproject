@@ -47,6 +47,7 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
         return list;
     }
 
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseDept baseDept) {
