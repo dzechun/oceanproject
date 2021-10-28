@@ -31,6 +31,11 @@
     <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress" />
     <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
     <result column="descr" jdbcType="VARCHAR" property="descr" />
+    <result column="pick_material_user_id" jdbcType="BIGINT" property="pickMaterialUserId" />
+    <result column="pick_material_user_name" jdbcType="VARCHAR" property="pickMaterialUserName" />
+    <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId" />
+    <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName" />
+    <result column="audit_time" jdbcType="VARCHAR" property="auditTime" />
     <result column="if_created_job_order" jdbcType="TINYINT" property="ifCreatedJobOrder"/>
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
@@ -87,6 +92,11 @@
     wodo.e_mail_address,
     wodo.detailed_address,
     wodo.descr,
+    wodo.pick_material_user_id,
+    wodo.pick_material_user_name,
+    wodo.audit_user_id,
+    wodo.audit_user_name,
+    wodo.audit_time,
     wodo.if_created_job_order,
     wodo.order_status,
     wodo.audit_status,
@@ -165,15 +175,23 @@
       <if test="orderStatus!=null">
         and wodo.order_status = #{orderStatus}
       </if>
-    <if test="customerName!=null and customerName!=''">
-      and sus.supplier_name like CONCAT('%',#{customerName},'%')
-    </if>
-    <if test="auditStatus!=null">
-      and wodo.audit_status = #{auditStatus}
-    </if>
-    <if test="option1!=null and option1!=''">
-      and wodo.option1 =#{option1}
-    </if>
+      <if test="customerName!=null and customerName!=''">
+        and sus.supplier_name like CONCAT('%',#{customerName},'%')
+      </if>
+
+      <if test="pickMaterialUserName!=null and pickMaterialUserName!=''">
+        and wodo.pick_material_user_name like CONCAT('%',#{pickMaterialUserName},'%')
+      </if>
+      <if test="auditUserName!=null and auditUserName!=''">
+        and wodo.audit_user_name like CONCAT('%',#{auditUserName},'%')
+      </if>
+
+      <if test="auditStatus!=null">
+        and wodo.audit_status = #{auditStatus}
+      </if>
+      <if test="option1!=null and option1!=''">
+        and wodo.option1 =#{option1}
+      </if>
     </where>
     order by wodo.create_time desc
   </select>

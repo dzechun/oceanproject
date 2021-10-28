@@ -176,6 +176,14 @@ public class WmsOutDeliveryOrderDet extends ValidGroup implements Serializable {
     private String sourceLineNumber;
 
     /**
+     * 管线号
+     */
+    @ApiModelProperty(name="pipelineNumber",value = "管线号")
+    @Excel(name = "管线号", height = 20, width = 30,orderNum="")
+    @Column(name = "pipeline_number")
+    private String pipelineNumber;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")

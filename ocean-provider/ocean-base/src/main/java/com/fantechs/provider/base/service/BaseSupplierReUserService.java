@@ -18,6 +18,8 @@ public interface BaseSupplierReUserService extends IService<BaseSupplierReUser> 
     List<BaseHtSupplierReUser> findHtList(Map<String, Object> map);
 
     int addUser(Long supplierId, List<Long> userIds);
+
+    int saveByApi (BaseSupplierReUser baseSupplierReUser);
 }
 
 

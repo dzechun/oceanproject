@@ -45,4 +45,10 @@ public interface ImportDataService {
      */
     BaseExecuteResultDto getReqDetails(String projectID) throws Exception;
 
+    /**
+     * 中国五环-供应商用户接口
+     * @return
+     */
+    BaseExecuteResultDto getVendorUserNameAndPwd() throws Exception;
+
 }

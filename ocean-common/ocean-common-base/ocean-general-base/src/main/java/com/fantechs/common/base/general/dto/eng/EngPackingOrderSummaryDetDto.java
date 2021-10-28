@@ -151,4 +151,26 @@ public class EngPackingOrderSummaryDetDto extends EngPackingOrderSummaryDet impl
     private BigDecimal exportQty;
 
     private Byte isCal;
+
+    /**
+     * 发货总量
+     */
+    @Transient
+    @ApiModelProperty(name = "totalQty",value = "发货总量")
+    private BigDecimal totalQty;
+
+    /**
+     * 合同量
+     */
+    @Transient
+    @ApiModelProperty(name = "contractQty",value = "合同量")
+    private BigDecimal contractQty;
+
+    /**
+     * 实发量
+     */
+    @Transient
+    @ApiModelProperty(name = "issuedQty",value = "实发量")
+    private BigDecimal issuedQty;
+
 }

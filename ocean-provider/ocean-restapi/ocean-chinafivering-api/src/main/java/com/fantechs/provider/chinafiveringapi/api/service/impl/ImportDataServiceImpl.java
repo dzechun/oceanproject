@@ -1,5 +1,8 @@
 package com.fantechs.provider.chinafiveringapi.api.service.impl;
 
+import com.fantechs.common.base.dto.security.SysRoleDto;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysRole;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
@@ -10,6 +13,7 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderTempDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
@@ -19,6 +23,7 @@ import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.chinafiveringapi.api.service.ImportDataService;
 import org.springframework.stereotype.Service;
@@ -47,6 +52,8 @@ public class ImportDataServiceImpl implements ImportDataService {
     OutFeignApi outFeignApi;
     @Resource
     EngFeignApi engFeignApi;
+    @Resource
+    SecurityFeignApi securityFeignApi;
 
     @Override
     /**
@@ -168,10 +175,15 @@ public class ImportDataServiceImpl implements ImportDataService {
             String s18=s17.replaceAll("实发量","option11");
             String s19=s18.replaceAll("批准量","dispatchQty");
 
+            String s20=s19.replaceAll("领料人","pickMaterialUserName");
+            String s21=s20.replaceAll("审批人","auditUserName");
+            String s22=s21.replaceAll("审批时间","auditTime");
+            String s23=s22.replaceAll("管线号","pipelineNumber");
+
             //同步到数据库
-            int indexb=s19.indexOf("[");
-            int indexe=s19.lastIndexOf("]");
-            String str=s19.substring(indexb,indexe+1);
+            int indexb=s23.indexOf("[");
+            int indexe=s23.lastIndexOf("]");
+            String str=s23.substring(indexb,indexe+1);
             List<WmsOutDeliveryOrderTempDto> listWmsOut= BeanUtils.jsonToListObject(str,WmsOutDeliveryOrderTempDto.class);
 
             //按照领料单号分组
@@ -207,6 +219,13 @@ public class ImportDataServiceImpl implements ImportDataService {
                     wmsOutDeliveryOrder.setOption5(tempDto.getOutMaterialTime());
                     // 表头 领料截止时间
                     wmsOutDeliveryOrder.setOption6(tempDto.getOutMaterialTimeEnd());
+
+                    // 表头 领料人
+                    wmsOutDeliveryOrder.setPickMaterialUserName(tempDto.getPickMaterialUserName());
+                    // 表头 审批人
+                    wmsOutDeliveryOrder.setAuditUserName(tempDto.getAuditUserName());
+                    // 表头 审批时间
+                    wmsOutDeliveryOrder.setAuditTime(tempDto.getAuditTime());
 
                     if(customerId==0L) {
                         SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
@@ -258,6 +277,9 @@ public class ImportDataServiceImpl implements ImportDataService {
                     detDto.setOption11(tempDto.getOption11());
                     //备注
                     detDto.setRemark(tempDto.getRemark());
+                    //管线号
+                    detDto.setPipelineNumber(tempDto.getPipelineNumber());
+
                     //批准量 保存到 包装数量 packingQty
                     if(StringUtils.isEmpty(tempDto.getDispatchQty()))
                         detDto.setPackingQty(BigDecimal.ZERO);
@@ -531,6 +553,85 @@ public class ImportDataServiceImpl implements ImportDataService {
                 //客户供应商用同一个表 SupplierType=1 表示供应商
                 baseSupplier.setSupplierType((byte)1);
                 baseFeignApi.saveByApi(baseSupplier);
+            }
+
+            baseExecuteResultDto.setExecuteResult("");
+            baseExecuteResultDto.setIsSuccess(true);
+            baseExecuteResultDto.setSuccessMsg("操作成功");
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        return baseExecuteResultDto;
+    }
+
+    @Override
+    /**
+     * create by: Dylan
+     * description: 供应商用户接口
+     * create time:
+     * @return
+     */
+    public BaseExecuteResultDto getVendorUserNameAndPwd() throws Exception {
+        BaseExecuteResultDto baseExecuteResultDto = new BaseExecuteResultDto();
+        try {
+            ResponseEntity<List<BaseOrganizationDto>> responseEntityOrg=this.getOrId();
+            if(StringUtils.isEmpty(responseEntityOrg.getData())){
+                throw new BizErrorException("找不到相应组织");
+            }
+            Long orgId=responseEntityOrg.getData().get(0).getOrganizationId();
+
+            baseExecuteResultDto = callWebService(address, "getVendorUserNameAndPwd", "");
+            if (baseExecuteResultDto.getIsSuccess() == false)
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
+
+            String strResult = baseExecuteResultDto.getExecuteResult().toString();
+            String s0 = strResult.replaceAll("供应商名称", "userName");
+            String s1 = s0.replaceAll("账号", "userCode");
+            String s2 = s1.replaceAll("密码", "password");
+
+            int indexb = s2.indexOf("[");
+            int indexe = s2.lastIndexOf("]");
+            String str = s2.substring(indexb, indexe + 1);
+            List<SysUser> listUser = BeanUtils.jsonToListObject(str, SysUser.class);
+
+            //获取供应商角色ID
+            Long roleId=null;
+            SearchSysRole searchSysRole=new SearchSysRole();
+            searchSysRole.setRoleCode("SROLE");
+            ResponseEntity<List<SysRoleDto>> responseEntityRoles= securityFeignApi.selectRoles(searchSysRole);
+            if(StringUtils.isNotEmpty(responseEntityRoles.getData())){
+                roleId=responseEntityRoles.getData().get(0).getRoleId();
+            }
+
+            //同步到数据库
+            for (SysUser user : listUser) {
+                user.setOrganizationId(orgId);
+                user.setStatus((byte)1);
+                user.setRoleId(roleId);
+                ResponseEntity<SysUser> responseEntityUser=securityFeignApi.saveByApi(user);
+                if(StringUtils.isNotEmpty(responseEntityUser.getData())){
+                    //用户ID
+                    Long userId=responseEntityUser.getData().getUserId();
+
+                    //找供应商ID
+                    Long supplierId=null;
+                    SearchBaseSupplier searchBaseSupplier=new SearchBaseSupplier();
+                    searchBaseSupplier.setSupplierName(user.getUserName());
+                    searchBaseSupplier.setOrganizationId(orgId);
+                    ResponseEntity<List<BaseSupplier>> responseEntitySupplier= baseFeignApi.findSupplierList(searchBaseSupplier);
+                    if(StringUtils.isNotEmpty(responseEntitySupplier)){
+                        supplierId=responseEntitySupplier.getData().get(0).getSupplierId();
+                    }
+                    //增加用户绑定供应商
+                    BaseSupplierReUser baseSupplierReUser=new BaseSupplierReUser();
+                    baseSupplierReUser.setSupplierId(supplierId);
+                    baseSupplierReUser.setUserId(userId);
+                    baseSupplierReUser.setOrganizationId(orgId);
+                    baseFeignApi.saveByApi(baseSupplierReUser);
+                }
             }
 
             baseExecuteResultDto.setExecuteResult("");

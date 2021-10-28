@@ -1,5 +1,6 @@
 package com.fantechs.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductYield;
 import com.fantechs.common.base.utils.StringUtils;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -25,10 +27,10 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
     public ProLineBoardModel findList(SearchProLineBoard searchProLineBoard) {
         //查询当天日计划的所有排产数量和完工数量
 
-//        searchProLineBoard.setStartTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
-//        searchProLineBoard.setEndTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
-        searchProLineBoard.setStartTime("2021-10-22");
-        searchProLineBoard.setEndTime("2021-10-22");
+        searchProLineBoard.setStartTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
+        searchProLineBoard.setEndTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
+       /* searchProLineBoard.setStartTime("2021-10-22");
+        searchProLineBoard.setEndTime("2021-10-22");*/
         searchProLineBoard.setOrgId((long)1000);
         ProLineBoardModel model = proLineBoardMapper.findPlanList(searchProLineBoard);
         if(StringUtils.isNotEmpty(model)) {

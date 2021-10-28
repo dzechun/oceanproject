@@ -332,9 +332,11 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                             // 同个销售编码
                             List<OmSalesCodeReSpcDto> currentDtos = new ArrayList<>();
                             for (OmSalesCodeReSpcDto omSalesCodeReSpcDto : codeReSpcDtos){
-                                if (dto.getBarAnnexCode().contains(omSalesCodeReSpcDto.getSalesCode())){
-                                    currentDtos.add(omSalesCodeReSpcDto);
-                                    continue;
+                                if(StringUtils.isNotEmpty(omSalesCodeReSpcDto.getSalesCode())) {
+                                    if (dto.getBarAnnexCode().contains(omSalesCodeReSpcDto.getSalesCode())) {
+                                        currentDtos.add(omSalesCodeReSpcDto);
+                                        continue;
+                                    }
                                 }
                             }
                             if (currentDtos.isEmpty()){

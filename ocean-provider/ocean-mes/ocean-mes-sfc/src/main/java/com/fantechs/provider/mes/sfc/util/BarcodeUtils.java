@@ -382,7 +382,8 @@ public class BarcodeUtils {
         // 是否投产工序且是该条码在工单工序第一次过站，工单投产数量 +1 mesSfcBarcodeProcessRecordDtoList.isEmpty()
         if(StringUtils.isNotEmpty(mesPmWorkOrder.getPutIntoProcessId())) {
             if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId()) && mesSfcBarcodeProcessRecordDtoList.size()==0) {
-                mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE));
+                //mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE));
+                mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty() != null ? mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE) : BigDecimal.ONE);
                 // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
                 if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
                     mesPmWorkOrder.setWorkOrderStatus((byte) 3);
@@ -396,7 +397,8 @@ public class BarcodeUtils {
         // 判断当前工序是否为产出工序，且是该条码在工单工序第一次过站，工单产出 +1
         if(StringUtils.isNotEmpty(mesPmWorkOrder.getOutputProcessId())) {
             if (dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId()) && mesSfcBarcodeProcessRecordDtoList.size()==0) {
-                mesPmWorkOrder.setOutputQty(BigDecimal.ONE.add(mesPmWorkOrder.getOutputQty()));
+                //mesPmWorkOrder.setOutputQty(BigDecimal.ONE.add(mesPmWorkOrder.getOutputQty()));
+                mesPmWorkOrder.setOutputQty(mesPmWorkOrder.getOutputQty() != null ? BigDecimal.ONE.add(mesPmWorkOrder.getOutputQty()) : BigDecimal.ONE);
                 if (mesPmWorkOrder.getOutputQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 0) {
                     // 产出数量等于工单数量，工单完工
                     mesPmWorkOrder.setWorkOrderStatus((byte) 6);
@@ -533,6 +535,10 @@ public class BarcodeUtils {
             // 已完成所有过站工序
             if (mesSfcBarcodeProcess.getNextProcessId().equals(0L)){
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码已完成所有工序过站");
+            }
+            //是否已不良
+            if (StringUtils.isNotEmpty(mesSfcBarcodeProcess.getBarcodeStatus()) && mesSfcBarcodeProcess.getBarcodeStatus().equals((byte)0)){
+                throw new BizErrorException("该产品条码已不良 不可继续");
             }
         }else {
             throw new BizErrorException(ErrorCodeEnum.PDA40012002, mesSfcWorkOrderBarcodeDto.getBarcode());

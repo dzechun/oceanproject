@@ -238,6 +238,42 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     private String descr;
 
     /**
+     * 领料人用户ID
+     */
+    @ApiModelProperty(name="pickMaterialUserId",value = "领料人用户ID")
+    @Column(name = "pick_material_user_id")
+    private Long pickMaterialUserId;
+
+    /**
+     * 领料人名称
+     */
+    @ApiModelProperty(name="pickMaterialUserName",value = "领料人名称")
+    @Column(name = "pick_material_user_name")
+    private String pickMaterialUserName;
+
+    /**
+     * 审批用户ID
+     */
+    @ApiModelProperty(name="auditUserId",value = "审批用户ID")
+    @Column(name = "audit_user_id")
+    private Long auditUserId;
+
+    /**
+     * 审批人名称
+     */
+    @ApiModelProperty(name="auditUserName",value = "审批人名称")
+    @Column(name = "audit_user_name")
+    private String auditUserName;
+
+    /**
+     * 审批时间
+     */
+    @ApiModelProperty(name="auditTime",value = "审批时间")
+    @Column(name = "audit_time")
+    private String auditTime;
+
+
+    /**
      * 是否创建作业单
      */
     @ApiModelProperty(name = "是否创建作业单 1-是 0-否",value = "ifCreatedJobOrder")

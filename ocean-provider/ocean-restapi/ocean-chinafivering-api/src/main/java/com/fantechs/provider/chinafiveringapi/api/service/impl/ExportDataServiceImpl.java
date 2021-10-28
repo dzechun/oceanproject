@@ -206,7 +206,79 @@ public class ExportDataServiceImpl implements ExportDataService {
         return baseExecuteResultDto;
     }
 
-    private  String actionBySOAP(String method,String JsonVoiceArray,String projectID){
+    @Override
+    /**
+     * create by: Dylan
+     * description: 库位信息回传
+     * create time:
+     * @return
+     */
+    public BaseExecuteResultDto writeShelvesNo(String jsonVoiceArray, String projectID) throws Exception {
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        byte result=0;//调用结果(0-失败 1-成功)
+        String str="";
+        try{
+            baseExecuteResultDto= callWebService(address,"writeShelvesNo",jsonVoiceArray,projectID);
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
+            //success
+            str=baseExecuteResultDto.getExecuteResult().toString();
+            if(str.contains("success")){
+                result=1;
+                baseExecuteResultDto.setIsSuccess(true);
+            }
+            else {
+                throw new BizErrorException(str);
+            }
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        //记录日志
+        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray,"writePackingLists");
+
+        return baseExecuteResultDto;
+    }
+
+    @Override
+    /**
+     * create by: Dylan
+     * description: 封单信息回传
+     * create time:
+     * @return
+     */
+    public BaseExecuteResultDto overIssue(String ISGUID, String userName) throws Exception {
+        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        byte result=0;//调用结果(0-失败 1-成功)
+        String str="";
+        try{
+            baseExecuteResultDto= callWebService(address,"overIssue","","");
+            if(baseExecuteResultDto.getIsSuccess()==false)
+                throw new BizErrorException(baseExecuteResultDto.getFailMsg());
+            //success
+            str=baseExecuteResultDto.getExecuteResult().toString();
+            if(str.contains("success")){
+                result=1;
+                baseExecuteResultDto.setIsSuccess(true);
+            }
+            else {
+                throw new BizErrorException(str);
+            }
+
+        }catch (Exception ex){
+            baseExecuteResultDto.setIsSuccess(false);
+            baseExecuteResultDto.setFailMsg(ex.getMessage());
+        }
+
+        //记录日志
+        logsUtils.addlog(result,(byte)1,1004L,str,"","writePackingLists");
+
+        return baseExecuteResultDto;
+    }
+
+    private  String actionBySOAP(String method, String JsonVoiceArray, String projectID){
         String str="";
         if(StringUtils.isEmpty(projectID)){
             str="<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +

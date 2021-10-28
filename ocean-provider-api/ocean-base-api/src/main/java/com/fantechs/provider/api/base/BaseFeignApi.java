@@ -506,6 +506,11 @@ public interface BaseFeignApi {
     @PostMapping("/baseSupplierReUser/findList")
     ResponseEntity<List<BaseSupplierReUser>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseSupplierReUser searchBaseSupplierReUser);
 
+    @ApiOperation("增加供应商绑定用户信息")
+    @PostMapping("/baseSupplierReUser/saveByApi")
+    ResponseEntity saveByApi(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseSupplierReUser baseSupplierReUser);
+
+
     @ApiOperation("增加客户信息")
     @PostMapping("/baseCustomer/saveByApi")
     ResponseEntity saveByApi(@ApiParam(value = "必传：customer_code",required = true)@RequestBody @Validated BaseCustomer baseCustomer);

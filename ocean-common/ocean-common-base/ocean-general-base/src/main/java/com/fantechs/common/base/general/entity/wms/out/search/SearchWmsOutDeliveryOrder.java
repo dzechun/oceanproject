@@ -1,11 +1,9 @@
 package com.fantechs.common.base.general.entity.wms.out.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 @Data
@@ -88,4 +86,10 @@ public class SearchWmsOutDeliveryOrder extends BaseQuery implements Serializable
 
     @ApiModelProperty(name ="option1",value = "领料单类型")
     private String option1;
+
+    @ApiModelProperty(name ="pickMaterialUserName",value = "领料人名称")
+    private String pickMaterialUserName;
+
+    @ApiModelProperty(name ="auditUserName",value = "审批人名称")
+    private String auditUserName;
 }

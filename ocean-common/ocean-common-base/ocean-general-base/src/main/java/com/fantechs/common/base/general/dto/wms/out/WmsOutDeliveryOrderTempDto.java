@@ -22,6 +22,18 @@ public class WmsOutDeliveryOrderTempDto implements Serializable {
     private String customerCode;
 
     @Transient
+    @ApiModelProperty(name="pickMaterialUserName" ,value="领料人")
+    private String pickMaterialUserName;
+
+    @Transient
+    @ApiModelProperty(name="auditUserName" ,value="审批人")
+    private String auditUserName;
+
+    @Transient
+    @ApiModelProperty(name="auditTime" ,value="审批时间")
+    private String auditTime;
+
+    @Transient
     @ApiModelProperty(name="outMaterialTimeEnd" ,value="领料截止时间")
     private String outMaterialTimeEnd;
 
@@ -85,12 +97,12 @@ public class WmsOutDeliveryOrderTempDto implements Serializable {
     @ApiModelProperty(name="option11" ,value="明细 实发量")
     private String option11;
 
-    //"申领量":"15.00",
-    //"批准量":"15.00",
-    //"实发量":"15.00",
-
     @Transient
     @ApiModelProperty(name="dispatchQty" ,value="明细 批准量 发货数量")
     private String dispatchQty;
+
+    @Transient
+    @ApiModelProperty(name="pipelineNumber" ,value="明细 管线号")
+    private String pipelineNumber;
 
 }

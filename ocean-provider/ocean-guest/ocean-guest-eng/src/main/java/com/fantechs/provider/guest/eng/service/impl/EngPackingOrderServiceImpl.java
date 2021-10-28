@@ -3,6 +3,7 @@ package com.fantechs.provider.guest.eng.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDto;
@@ -17,6 +18,7 @@ import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrder;
+import com.fantechs.common.base.general.entity.eng.search.SearchEngContractQtyOrderAndPurOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -24,6 +26,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.guest.eng.mapper.*;
+import com.fantechs.provider.guest.eng.service.EngContractQtyOrderAndPurOrderService;
 import com.fantechs.provider.guest.eng.service.EngDataExportEngPackingOrderService;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderService;
 import org.springframework.beans.BeanUtils;
@@ -59,6 +62,8 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     private BaseFeignApi baseFeignApi;
     @Resource
     private EngContractQtyOrderMapper engContractQtyOrderMapper;
+    @Resource
+    private EngContractQtyOrderAndPurOrderService engContractQtyOrderAndPurOrderService;
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
@@ -126,6 +131,9 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     public int submit(EngPackingOrder engPackingOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         check(engPackingOrder);
+
+
+
         engPackingOrder.setModifiedUserId(user.getUserId());
         engPackingOrder.setModifiedTime(new Date());
         int i = engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
@@ -135,6 +143,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
 
         return i;
     }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -291,5 +300,44 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         searchBaseSupplierReUser.setUserId(userId);
         ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
         return list.getData();
+    }
+
+
+    @Override
+    public  List<EngPackingOrderSummaryDetDto> checkQty(List<EngPackingOrderDto> engPackingOrderDtos) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
+        for(EngPackingOrderDto engPackingOrderDto : engPackingOrderDtos) {
+            List<EngPackingOrderSummaryDto> engPackingOrderSummaryDtos = engPackingOrderSummaryMapper.findList(ControllerUtil.dynamicCondition("packingOrderId", engPackingOrderDto.getPackingOrderId()));
+            if (StringUtils.isNotEmpty(engPackingOrderSummaryDtos)) {
+                for (EngPackingOrderSummaryDto summaryDto : engPackingOrderSummaryDtos) {
+                    List<EngPackingOrderSummaryDetDto> engPackingOrderSummaryDetDtos = engPackingOrderSummaryDetMapper.findList(ControllerUtil.dynamicCondition("packingOrderSummaryId", summaryDto.getPackingOrderSummaryId()));
+                    if (StringUtils.isNotEmpty(engPackingOrderSummaryDetDtos)) {
+                        for (EngPackingOrderSummaryDetDto det : engPackingOrderSummaryDetDtos) {
+                            if (StringUtils.isNotEmpty(det.getMaterialCode()) && !"-".equals(det.getMaterialCode().substring(2, 3))) {
+                                SearchEngContractQtyOrderAndPurOrder searchEngContractQtyOrderAndPurOrder = new SearchEngContractQtyOrderAndPurOrder();
+                                searchEngContractQtyOrderAndPurOrder.setOrgId(user.getOrganizationId());
+                              //从合同量单中添加，请购单号可能不一样，导致无法查询
+                             //   searchEngContractQtyOrderAndPurOrder.setContractCode(det.getContractCode());
+                             //   searchEngContractQtyOrderAndPurOrder.setPurchaseReqOrderCode(det.getPurchaseReqOrderCode());
+                                searchEngContractQtyOrderAndPurOrder.setMaterialCode(det.getMaterialCode());
+                                searchEngContractQtyOrderAndPurOrder.setDeviceCode(det.getDeviceCode());
+                                searchEngContractQtyOrderAndPurOrder.setDominantTermCode(det.getDominantTermCode());
+                                List<EngContractQtyOrderAndPurOrderDto> engContractQtyOrderAndPurOrderDtos = engContractQtyOrderAndPurOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchEngContractQtyOrderAndPurOrder));
+                                if (StringUtils.isNotEmpty(engContractQtyOrderAndPurOrderDtos)) {
+                                    EngContractQtyOrderAndPurOrderDto engContractQtyOrderAndPurOrderDto = engContractQtyOrderAndPurOrderDtos.get(0);
+                                    if (engContractQtyOrderAndPurOrderDto.getPurQty().compareTo(engContractQtyOrderAndPurOrderDto.getIssuedQty().add(det.getQty())) < 0) {
+                                        det.setTotalQty(engContractQtyOrderAndPurOrderDto.getIssuedQty().add(det.getQty()));
+                                        det.setContractQty(engContractQtyOrderAndPurOrderDto.getPurQty());
+                                        list.add(det);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return list;
     }
 }

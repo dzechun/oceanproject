@@ -25,4 +25,7 @@ public interface SysUserService extends IService<SysUser> {
     int switchOrganization(Long organizationId);
 
     int updatePassword(String oldPassword, String newPassword);
+
+    //接口保存用户
+    SysUser saveByApi(SysUser sysUser);
 }
