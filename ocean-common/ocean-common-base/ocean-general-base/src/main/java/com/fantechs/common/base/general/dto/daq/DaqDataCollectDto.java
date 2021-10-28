@@ -23,11 +23,11 @@ public class DaqDataCollectDto extends DaqDataCollect implements Serializable {
     @ApiModelProperty(name="equipmentIp",value = "设备IP")
     private String equipmentIp;
 
-    @ApiModelProperty(name="xAxis",value = "X坐标")
-    private BigDecimal xAxis;
+    @ApiModelProperty(name="xaxis",value = "X坐标")
+    private BigDecimal xaxis;
 
-    @ApiModelProperty(name="yAxis",value = "Y坐标")
-    private BigDecimal yAxis;
+    @ApiModelProperty(name="yaxis",value = "Y坐标")
+    private BigDecimal yaxis;
 
     @ApiModelProperty(name="tableName",value = "表头")
     private String tableName;

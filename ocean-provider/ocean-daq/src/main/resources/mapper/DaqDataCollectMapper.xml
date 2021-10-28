@@ -26,8 +26,8 @@
     <result column="equipment_code" jdbcType="VARCHAR" property="equipmentCode" />
     <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName" />
     <result column="equipment_ip" jdbcType="VARCHAR" property="equipmentIp" />
-    <result column="x_axis" jdbcType="DECIMAL" property="xAxis" />
-    <result column="y_axis" jdbcType="DECIMAL" property="yAxis" />
+    <result column="x_axis" jdbcType="DECIMAL" property="xaxis" />
+    <result column="y_axis" jdbcType="DECIMAL" property="yaxis" />
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -54,8 +54,14 @@
     FROM daq_data_collect msdc
     LEFT JOIN daq_equipment ee ON msdc.equipment_id = ee.equipment_id
     <where>
-      <if test="equipmentCode != null">
+      <if test="equipmentCode != null and equipmentCode!=''">
         and ee.equipment_code = #{equipmentCode}
+      </if>
+      <if test="collectTime!= null and collectTime!= ''">
+        and date_format(msdc.collect_time, '%Y-%m-%d') BETWEEN #{collectTime} AND #{collectTime}
+      </if>
+      <if test="orgId!=null">
+        and msdc.org_id=#{orgId}
       </if>
     </where>
   </select>
@@ -75,7 +81,7 @@
     LEFT JOIN daq_data_collect msdc ON dci.data_collect_id = msdc.data_collect_id
     LEFT JOIN daq_equipment ee ON msdc.equipment_id = ee.equipment_id
     <where>
-      <if test="equipmentId != null">
+      <if test="equipmentId != null and equipmentId!=''">
         and msdc.equipment_id = #{equipmentId}
       </if>
     </where>
