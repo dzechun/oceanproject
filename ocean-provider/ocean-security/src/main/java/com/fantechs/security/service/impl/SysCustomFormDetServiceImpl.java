@@ -143,10 +143,28 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
         }
 
         //全组织修改
-        SearchSysCustomFormDet searchSysCustomFormDet = new SearchSysCustomFormDet();
-        searchSysCustomFormDet.setCustomFormCode(sysCustomForm.getCustomFormCode());
-        searchSysCustomFormDet.setItemKey(oldCustomFormDet.getItemKey());
-        List<SysCustomFormDetDto> detList = sysCustomFormDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomFormDet));
+        List<SysCustomFormDetDto> detList = new LinkedList<>();
+        SysCustomFormDetDto formDetDto = new SysCustomFormDetDto();
+        BeanUtil.copyProperties(sysCustomFormDet,formDetDto);
+        detList.add(formDetDto);
+
+        List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(new SearchBaseOrganization()).getData();
+        if(!organizationDtos.isEmpty()) {
+            for (BaseOrganizationDto org : organizationDtos) {
+                if (!org.getOrganizationId().equals(sysCustomFormDet.getOrgId())) {
+                    SearchSysCustomFormDet searchSysCustomFormDet = new SearchSysCustomFormDet();
+                    searchSysCustomFormDet.setCustomFormCode(sysCustomForm.getCustomFormCode());
+                    searchSysCustomFormDet.setItemKey(oldCustomFormDet.getItemKey());
+                    searchSysCustomFormDet.setOrgId(org.getOrganizationId());
+                    List<SysCustomFormDetDto> detListInOrg = sysCustomFormDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomFormDet));
+                    if(StringUtils.isNotEmpty(detListInOrg)){
+                        SysCustomFormDetDto customFormDetDto = detListInOrg.get(0);
+                        detList.add(customFormDetDto);
+                    }
+                }
+            }
+        }
+
         for(SysCustomFormDetDto sysCustomFormDetDto:detList){
             Long customFormId = sysCustomFormDetDto.getCustomFormId();
             Long customFormDetId = sysCustomFormDetDto.getCustomFormDetId();

@@ -126,6 +126,9 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                         endIndex = Integer.parseInt(arry[1]);
                     }
                 }
+                if(SNCode.length() < endIndex){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"成品序列号有误");
+                }
                 workOrderCode = SNCode.substring(beginIndex, endIndex);
             }else if(SNCodeType == 2) {
                 //截取采购单号
@@ -141,6 +144,9 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                         beginIndex = Integer.parseInt(arry[0]);
                         endIndex = Integer.parseInt(arry[1]);
                     }
+                }
+                if(SNCode.length() < endIndex){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"半成品序列号有误");
                 }
                 String partPurchaseOrderCode = SNCode.substring(beginIndex, endIndex);
                 StringBuilder stringBuilder = new StringBuilder(partPurchaseOrderCode);
