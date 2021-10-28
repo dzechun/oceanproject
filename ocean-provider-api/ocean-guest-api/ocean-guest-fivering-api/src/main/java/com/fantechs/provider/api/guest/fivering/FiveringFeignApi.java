@@ -60,4 +60,12 @@ public interface FiveringFeignApi {
     @PostMapping("/webServiceExport/writePackingLists")
     ResponseEntity<String> writePackingLists(@ApiParam(value = "jsonVoiceArray",required = true)@RequestParam @NotNull(message="jsonVoiceArray不能为空") String jsonVoiceArray,@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID);
 
+    @ApiOperation("库位回传接口")
+    @PostMapping("/webServiceExport/writeShelvesNo")
+    ResponseEntity<String> writeShelvesNo(@ApiParam(value = "jsonVoiceArray",required = true)@RequestParam @NotNull(message="jsonVoiceArray不能为空") String jsonVoiceArray,@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID);
+
+    @ApiOperation("封单回传接口")
+    @PostMapping("/webServiceExport/overIssue")
+    ResponseEntity<String> overIssue(@ApiParam(value = "ISGUID",required = true)@RequestParam @NotNull(message="ISGUID 不能为空") String ISGUID,@ApiParam(value = "userName",required = true)@RequestParam @NotNull(message="userName 不能为空") String userName);
+
 }

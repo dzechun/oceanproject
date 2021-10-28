@@ -51,4 +51,24 @@ public interface ExportDataService {
      * 返回值：成功：success  错误：错误描述（如数据格式不正确）
      */
     BaseExecuteResultDto writePackingLists(String jsonVoiceArray, String projectID) throws Exception;
+
+    /**
+     * 中国五环-库位信息回传接口
+     * @return
+     * 参数：jsonVoiceArray,说明： PSGUID,材料编码,位号,设计量,余量,请购量,采购量,备注,主项号,装置号,
+     * 材料用途,登记时间,登记人
+     * 参数：projectID,  说明：项目ID = 3919
+     * 返回值：成功：success  错误：错误描述（如数据格式不正确）
+     */
+    BaseExecuteResultDto writeShelvesNo(String jsonVoiceArray, String projectID) throws Exception;
+
+    /**
+     * 中国五环-封单信息回传接口
+     * @return
+     * 参数：jsonVoiceArray,说明： PSGUID,材料编码,位号,设计量,余量,请购量,采购量,备注,主项号,装置号,
+     * 材料用途,登记时间,登记人
+     * 参数：projectID,  说明：项目ID = 3919
+     * 返回值：成功：success  错误：错误描述（如数据格式不正确）
+     */
+    BaseExecuteResultDto overIssue(String ISGUID, String userName) throws Exception;
 }

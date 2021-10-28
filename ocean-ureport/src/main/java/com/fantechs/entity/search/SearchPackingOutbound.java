@@ -18,90 +18,90 @@ public class SearchPackingOutbound extends BaseQuery implements Serializable {
     /**
      *专业
      */
-    @ApiModelProperty(name = "专业",value = "professionName")
+    @ApiModelProperty(name = "professionName",value = "专业")
     private String professionName;
 
     /**
      *领料单号
      */
-    @ApiModelProperty(name = "领料单号",value = "deliveryOrderCode")
+    @ApiModelProperty(name = "deliveryOrderCode",value = "领料单号")
     private String deliveryOrderCode;
 
     /**
      *领料单位
      */
-    @ApiModelProperty(name = "领料单位",value = "customerName")
+    @ApiModelProperty(name = "customerName",value = "领料单位")
     private String customerName;
 
     /**
      *材料编码
      */
-    @ApiModelProperty(name = "材料编码",value = "materialCode")
+    @ApiModelProperty(name = "materialCode",value = "材料编码")
     private String materialCode;
 
     /**
      *位号
      */
-    @ApiModelProperty(name = "位号",value = "locationNum")
+    @ApiModelProperty(name = "locationNum",value = "位号")
     private String locationNum;
 
     /**
      *装置号
      */
-    @ApiModelProperty(name = "装置号",value = "deviceCode")
+    @ApiModelProperty(name = "deviceCode",value = "装置号")
     private String deviceCode;
 
     /**
      *申请量
      */
-    @ApiModelProperty(name = "申请量",value = "packingQty")
+    @ApiModelProperty(name = "packingQty",value = "申请量")
     private BigDecimal packingQty;
 
     /**
      *批准量
      */
-    @ApiModelProperty(name = "批准量",value = "pickingQty")
+    @ApiModelProperty(name = "pickingQty",value = "批准量")
     private BigDecimal pickingQty;
 
     /**
      *实发量
      */
-    @ApiModelProperty(name = "实发量",value = "dispatchQty")
+    @ApiModelProperty(name = "dispatchQty",value = "实发量")
     private BigDecimal dispatchQty;
 
     /**
      *管线号
      */
-    @ApiModelProperty(name = "管线号",value = "pipelineNumber")
+    @ApiModelProperty(name = "pipelineNumber",value = "管线号")
     private String pipelineNumber;
 
     /**
      *规格
      */
-    @ApiModelProperty(name = "规格",value = "spec")
+    @ApiModelProperty(name = "spec",value = "规格")
     private String spec;
 
     /**
      *材料名称
      */
-    @ApiModelProperty(name = "材料名称",value = "materialName")
+    @ApiModelProperty(name = "materialName",value = "材料名称")
     private String materialName;
 
     /**
      *领料人
      */
-    @ApiModelProperty(name = "领料人",value = "pickMaterialUserName")
+    @ApiModelProperty(name = "pickMaterialUserName",value = "领料人")
     private String pickMaterialUserName;
 
     /**
      *审批人
      */
-    @ApiModelProperty(name = "审批人",value = "auditUserName")
+    @ApiModelProperty(name = "auditUserName",value = "审批人")
     private String auditUserName;
 
     /**
      *发料人
      */
-    @ApiModelProperty(name = "发料人",value = "issueUserName")
+    @ApiModelProperty(name = "issueUserName",value = "发料人")
     private String  issueUserName;
 }

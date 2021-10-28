@@ -175,10 +175,15 @@ public class ImportDataServiceImpl implements ImportDataService {
             String s18=s17.replaceAll("实发量","option11");
             String s19=s18.replaceAll("批准量","dispatchQty");
 
+            String s20=s19.replaceAll("领料人","pickMaterialUserName");
+            String s21=s20.replaceAll("审批人","auditUserName");
+            String s22=s21.replaceAll("审批时间","auditTime");
+            String s23=s22.replaceAll("管线号","pipelineNumber");
+
             //同步到数据库
-            int indexb=s19.indexOf("[");
-            int indexe=s19.lastIndexOf("]");
-            String str=s19.substring(indexb,indexe+1);
+            int indexb=s23.indexOf("[");
+            int indexe=s23.lastIndexOf("]");
+            String str=s23.substring(indexb,indexe+1);
             List<WmsOutDeliveryOrderTempDto> listWmsOut= BeanUtils.jsonToListObject(str,WmsOutDeliveryOrderTempDto.class);
 
             //按照领料单号分组
@@ -214,6 +219,13 @@ public class ImportDataServiceImpl implements ImportDataService {
                     wmsOutDeliveryOrder.setOption5(tempDto.getOutMaterialTime());
                     // 表头 领料截止时间
                     wmsOutDeliveryOrder.setOption6(tempDto.getOutMaterialTimeEnd());
+
+                    // 表头 领料人
+                    wmsOutDeliveryOrder.setPickMaterialUserName(tempDto.getPickMaterialUserName());
+                    // 表头 审批人
+                    wmsOutDeliveryOrder.setAuditUserName(tempDto.getAuditUserName());
+                    // 表头 审批时间
+                    wmsOutDeliveryOrder.setAuditTime(tempDto.getAuditTime());
 
                     if(customerId==0L) {
                         SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
@@ -265,6 +277,9 @@ public class ImportDataServiceImpl implements ImportDataService {
                     detDto.setOption11(tempDto.getOption11());
                     //备注
                     detDto.setRemark(tempDto.getRemark());
+                    //管线号
+                    detDto.setPipelineNumber(tempDto.getPipelineNumber());
+
                     //批准量 保存到 包装数量 packingQty
                     if(StringUtils.isEmpty(tempDto.getDispatchQty()))
                         detDto.setPackingQty(BigDecimal.ZERO);
