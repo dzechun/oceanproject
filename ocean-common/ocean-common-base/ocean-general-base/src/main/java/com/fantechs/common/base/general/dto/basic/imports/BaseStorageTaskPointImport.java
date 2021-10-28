@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 
 @Data
@@ -58,6 +57,13 @@ public class BaseStorageTaskPointImport implements Serializable {
     @ApiModelProperty(name = "usePriority",value = "使用优先级(必填)")
     @Excel(name = "使用优先级(必填)", height = 20, width = 30)
     private Integer usePriority;
+
+    /**
+     * 配送方式
+     */
+    @ApiModelProperty(name="type",value = "配送方式")
+    @Excel(name = "配送方式", height = 20, width = 30,orderNum="")
+    private String type;
 
     /**
      * 库位配送点状态(1-空闲 2-使用)

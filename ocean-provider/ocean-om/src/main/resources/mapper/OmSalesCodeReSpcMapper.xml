@@ -95,5 +95,6 @@
               and oscrs.same_package_code like CONCAT('%', #{samePackageCode}, '%')
           </if>
       </where>
+        ORDER BY oscrs.create_time DESC
   </select>
 </mapper>

@@ -567,4 +567,8 @@ public interface BaseFeignApi {
     @PostMapping("/baseStorageCapacity/findList")
     ResponseEntity<List<BaseStorageCapacity>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseStorageCapacity searchBaseStorageCapacity);
 
+
+    @ApiOperation("列表")
+    @PostMapping("/baseProductProcessReM/findList")
+    ResponseEntity<List<BaseProductProcessReM>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessReM searchBaseProductProcessReM);
 }

@@ -16,6 +16,18 @@ public class SearchEamEquipmentRepairOrder extends BaseQuery implements Serializ
     private Long equipmentRepairOrderId;
 
     /**
+     * 设备维修单号
+     */
+    @ApiModelProperty(name="equipmentRepairOrderCode",value = "设备维修单号")
+    private String equipmentRepairOrderCode;
+
+    /**
+     * 设备条码
+     */
+    @ApiModelProperty(name="equipmentBarcode",value = "设备条码")
+    private String equipmentBarcode;
+
+    /**
      * 设备编码
      */
     @ApiModelProperty(name="equipmentCode",value = "设备编码")

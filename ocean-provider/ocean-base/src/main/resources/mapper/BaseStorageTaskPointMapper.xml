@@ -51,9 +51,9 @@
     bstp.use_priority,
     bstp.type,
     bstp.storage_task_point_status,
-    bstp.warehouse_area_id,
-    bstp.working_area_id,
-    bstp.warehouse_id,
+    bs.warehouse_area_id,
+    bs.working_area_id,
+    bs.warehouse_id,
     bstp.`status`,
     bstp.remark,
     bstp.org_id,
@@ -126,7 +126,7 @@
         order by bstp.use_priority
       </if>
       <if test="ifOrderByUsePriority != 1">
-        order by bstp.create_time desc
+        order by bstp.task_point_code
       </if>
     </where>
   </select>

@@ -20,6 +20,7 @@ import com.fantechs.provider.om.service.OmSalesCodeReSpcService;
 import com.fantechs.provider.om.service.ht.OmHtSalesCodeReSpcService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -64,6 +65,8 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
         List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
         // 获取客户型号集合
         List<BaseProductModel> productModels = baseFeignApi.findProductModelAll().getData();
+        // 获取所有PO号
+        List<OmSalesCodeReSpcDto> reSpcDtos = omSalesCodeReSpcMapper.findList(new HashMap<>());
         // 循环便利数据
         for (int i = 0; i < list.size(); i++){
             OmSalesCodeReSpcImport item = list.get(i);
@@ -94,11 +97,24 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
             // 判断客户型号
             for (BaseProductModel productModel : productModels){
                 if (productModel.getProductModelCode().equals(item.getProductModelCode())){
-                    item.setMaterialModelId(productModel.getProductModelId());
+                    item.setProductModelId(productModel.getProductModelId());
                     break;
                 }
             }
-            if (StringUtils.isEmpty(item.getMaterialModelId())){
+            if (StringUtils.isEmpty(item.getProductModelId())){
+                fail.add(i + 1);
+                continue;
+            }
+
+            boolean flag = false;
+            for (OmSalesCodeReSpcDto dto : reSpcDtos){
+                if (dto.getSalesCode().equals(item.getSalesCode())
+                        && dto.getPriority().equals(item.getPriority())){
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag){
                 fail.add(i + 1);
                 continue;
             }
@@ -110,7 +126,8 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
             reSpc.setModifiedUserId(user.getUserId());
             reSpc.setModifiedTime(new Date());
             reSpc.setOrgId(user.getOrganizationId());
-            reSpc.setStatus((byte)1);
+            reSpc.setStatus((byte) 1);
+            reSpc.setIsDelete((byte) 1);
             omSalesCodeReSpcs.add(reSpc);
 
             // 履历
@@ -135,6 +152,16 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         omSalesCodeReSpc.setOrgId(user.getOrganizationId());
 
+        Example example = new Example(OmSalesCodeReSpc.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("salesCode", omSalesCodeReSpc.getSalesCode())
+                .andEqualTo("priority", omSalesCodeReSpc.getPriority());
+        int count = omSalesCodeReSpcMapper.selectCountByExample(example);
+        if (count > 0){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "同个销售编码不能存在相同优先级");
+        }
+
+
         int i = omSalesCodeReSpcMapper.insertSelective(omSalesCodeReSpc);
 
         // 保存履历表
@@ -149,6 +176,16 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
         if (omSalesCodeReSpc.getSamePackageCodeStatus().equals((byte) 1)
                 && omSalesCodeReSpc.getSamePackageCodeQty().compareTo(omSalesCodeReSpc.getMatchedQty()) == 0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012002, "PO号匹配数量已满足，不可重新激活");
+        }
+
+        Example example = new Example(OmSalesCodeReSpc.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("salesCode", omSalesCodeReSpc.getSalesCode())
+                .andEqualTo("priority", omSalesCodeReSpc.getPriority())
+                .andNotEqualTo("salesCodeReSpcId", omSalesCodeReSpc.getSalesCodeReSpcId());
+        int count = omSalesCodeReSpcMapper.selectCountByExample(example);
+        if (count > 0){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "同个销售编码不能存在相同优先级");
         }
         int i = omSalesCodeReSpcMapper.updateByPrimaryKeySelective(omSalesCodeReSpc);
 

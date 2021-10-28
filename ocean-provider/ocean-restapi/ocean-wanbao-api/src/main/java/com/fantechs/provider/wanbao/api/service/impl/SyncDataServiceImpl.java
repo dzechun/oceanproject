@@ -17,12 +17,14 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodePr
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseRoute;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
+import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.UUIDUtils;
@@ -268,7 +270,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             long start = System.currentTimeMillis();
 
             // 获取所有销售订单
-//            List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
+            List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
             // 物料集合
             List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
             // 工单集合
@@ -335,12 +337,12 @@ public class SyncDataServiceImpl implements SyncDataService {
 //                    securityFeignApi.add(apiLog);
 //                    continue;
 //                }
-//                for (OmSalesOrderDto item : salesOrderDtos) {
-//                    if (item.getSalesOrderCode().equals(order.getSalesOrderCode())) {
-//                        workOrder.setSalesOrderId(item.getSalesOrderId());
-//                        break;
-//                    }
-//                }
+                for (OmSalesOrderDto item : salesOrderDtos) {
+                    if (item.getSalesOrderCode().equals(order.getSalesOrderCode())) {
+                        workOrder.setSalesOrderId(item.getSalesOrderId());
+                        break;
+                    }
+                }
 //                if (StringUtils.isEmpty(workOrder.getSalesOrderId())) {
 //                    // 记录日志
 //                    apiLog.setResponseData(order.getWorkOrderCode() + "此订单编号在系统中没有匹配的销售订单号" + order.getSalesOrderCode() + "，不同步此条订单数据");
@@ -629,10 +631,13 @@ public class SyncDataServiceImpl implements SyncDataService {
             // 物料集合
             List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
 
+            SearchWmsOutDeliveryOrder outDeliveryOrder = new SearchWmsOutDeliveryOrder();
+            outDeliveryOrder.setPageSize(999999);
+            List<WmsOutDeliveryOrderDto> deliveryOrderDtos = outFeignApi.findList(outDeliveryOrder).getData();
+
             // 保存平台库
             List<MiddleOutDeliveryOrder> list = new ArrayList<>();
             Map<String, List<MiddleOutDeliveryOrder>> listMap = deliveryOrders.stream().collect(Collectors.groupingBy(MiddleOutDeliveryOrder::getDeliveryOrderCode));
-            log.info("=========listMap" + listMap.size());
             listMap.forEach((key, value) ->{
                 WmsOutDeliveryOrder order = new WmsOutDeliveryOrder();
                 BeanUtil.copyProperties(value.get(0), order);
@@ -661,6 +666,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     for (MiddleOutDeliveryOrder item : value){
                         WmsOutDeliveryOrderDetDto orderDet = new WmsOutDeliveryOrderDetDto();
                         BeanUtil.copyProperties(item, orderDet);
+                        log.info("============= json数据" + JSON.toJSONString(orderDet));
 
                         // 物料
                         if (StringUtils.isEmpty(item.getMaterialCode())) {
@@ -674,7 +680,6 @@ public class SyncDataServiceImpl implements SyncDataService {
                                 break;
                             }
                         }
-
                         if (StringUtils.isEmpty(orderDet.getMaterialId())) {
                             // 记录日志
                             apiLog.setResponseData(item.getDeliveryOrderCode() + "此出货通知书编号在系统中没有匹配的物料" + item.getMaterialCode() + "，不同步此条数据");
@@ -683,10 +688,22 @@ public class SyncDataServiceImpl implements SyncDataService {
                         }
                         wmsOutDeliveryOrderDetList.add(orderDet);
                     }
-                    if (!wmsOutDeliveryOrderDetList.isEmpty()){
-                        order.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetList);
-                        outFeignApi.add(order);
-                        list.addAll(value);
+
+                    boolean flag = true;
+                    for (WmsOutDeliveryOrderDto dto : deliveryOrderDtos){
+                        if (dto.getDeliveryOrderCode().equals(order.getDeliveryOrderCode())){
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag){
+                        if (!wmsOutDeliveryOrderDetList.isEmpty()){
+                            order.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetList);
+                            outFeignApi.add(order);
+                            list.addAll(value);
+                        }
+                    }else {
+                        outFeignApi.update(order);
                     }
                 }
             });

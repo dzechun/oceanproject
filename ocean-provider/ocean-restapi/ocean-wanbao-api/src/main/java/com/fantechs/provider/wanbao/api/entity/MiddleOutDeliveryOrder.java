@@ -89,6 +89,10 @@ public class MiddleOutDeliveryOrder implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date orderDate;
 
+    @ApiModelProperty(name="salesCode",value = "销售编码")
+    @Column(name = "sales_code")
+    private String salesCode;
+
     @ApiModelProperty(name="option1",value = "扩展字段1")
     @Column(name = "option1")
     private String option1;

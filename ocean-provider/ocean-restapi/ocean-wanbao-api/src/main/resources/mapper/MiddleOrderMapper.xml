@@ -22,7 +22,7 @@
         SELECT
             we.wip_entity_name AS work_order_code,
             wjs.meaning AS work_order_status,
-            decode( wdj.job_type, 1, '0', '非标' ) AS work_order_type,
+            decode( wdj.job_type, 1, '标准', '非标' ) AS work_order_type,
             wdj.Attribute5 AS sales_order_code,
             wdj.attribute6 AS pro_name,
             wdj.SCHEDULE_GROUP_ID AS pro_code,
@@ -45,8 +45,10 @@
             AND wjs.lookup_type = 'WIP_JOB_STATUS'
             AND wjs.LOOKUP_CODE = WDJ.STATUS_TYPE
             AND wjs.meaning = '已发放'
-            AND SCHEDULE_GROUP_ID in (2047, 2045, 2046, 2047)
---             AND wdj.scheduled_start_date >= TO_DATE('2021-10-01' , 'YYYY-MM-DD' )
+--             AND SCHEDULE_GROUP_ID in (2047, 2045, 2046, 2047)
+            AND wdj.attribute6 IN ( 'A1车间A线', 'A2车间D线', 'A2车间C线' )
+            AND wdj.job_type = 1
+            AND wdj.scheduled_start_date >= TO_DATE ( '2021-10-01', 'YYYY-MM-DD' )
             <if test="date != null and date != ''">
                 AND wdj.scheduled_start_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>

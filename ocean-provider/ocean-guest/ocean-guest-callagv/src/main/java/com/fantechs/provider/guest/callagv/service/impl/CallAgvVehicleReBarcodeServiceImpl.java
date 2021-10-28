@@ -212,7 +212,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                 callAgvProductionInLog.setOutStorageId(baseStorageTaskPointList.get(0).getStorageId());
                 callAgvProductionInLog.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
                 callAgvProductionInLog.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
-                callAgvProductionInLog.setStartStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
+                callAgvProductionInLog.setEndStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
                 callAgvProductionInLog.setOperateTime(new Date());
                 callAgvProductionInLog.setOrgId(user.getOrganizationId());
                 callAgvProductionInLog.setCreateUserId(user.getUserId());
@@ -234,7 +234,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             String taskTyp = temVehicle.getAgvTaskTemplate();
             if (StringUtils.isNotEmpty(baseStorageTaskPoint.getType(),
                     baseStorageTaskPointList.get(0).getType())
-                    && baseStorageTaskPoint.getType().equals(baseStorageTaskPointList.get(0).getType())) {
+                    && !baseStorageTaskPoint.getType().equals(baseStorageTaskPointList.get(0).getType())) {
                 taskTyp = temVehicle.getAgvTaskTemplateSecond();
             }
             taskCode = genAgvSchedulingTask(taskTyp, positionCodeList);

@@ -38,6 +38,7 @@
             AND t.organization_id = 83
             AND fc.lookup_type = 'ITEM_TYPE'
             AND t.category_set_id = 1
+            AND msib.description NOT LIKE '%回用%'
             <if test="date != null and date != ''">
                 AND msib.last_update_date >= TO_DATE( #{date} , 'YYYY-MM-DD' )
             </if>
