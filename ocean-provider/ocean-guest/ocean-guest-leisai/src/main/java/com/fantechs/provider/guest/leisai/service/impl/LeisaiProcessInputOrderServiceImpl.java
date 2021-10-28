@@ -33,6 +33,8 @@ public class LeisaiProcessInputOrderServiceImpl extends BaseService<LeisaiProces
 
     @Override
     public List<LeisaiProcessInputOrderDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",user.getOrganizationId());
         return leisaiProcessInputOrderMapper.findList(map);
     }
 

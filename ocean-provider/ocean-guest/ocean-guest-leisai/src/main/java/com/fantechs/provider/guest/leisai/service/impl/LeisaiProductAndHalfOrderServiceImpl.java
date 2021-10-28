@@ -34,6 +34,8 @@ public class LeisaiProductAndHalfOrderServiceImpl extends BaseService<LeisaiProd
 
     @Override
     public List<LeisaiProductAndHalfOrderDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",user.getOrganizationId());
         return leisaiProductAndHalfOrderMapper.findList(map);
     }
 
