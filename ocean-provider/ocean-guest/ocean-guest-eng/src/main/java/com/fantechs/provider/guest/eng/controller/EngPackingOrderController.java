@@ -3,6 +3,7 @@ package com.fantechs.provider.guest.eng.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngHtPackingOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrder;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -93,6 +94,14 @@ public class EngPackingOrderController {
     @PostMapping("/censor")
     public ResponseEntity censor(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EngPackingOrder.update.class) EngPackingOrder engPackingOrder) {
         return ControllerUtil.returnCRUD(engPackingOrderService.censor(engPackingOrder));
+    }
+
+
+    @ApiOperation("校验超发")
+    @PostMapping("/checkQty")
+    public ResponseEntity<List<EngPackingOrderSummaryDetDto>> checkQty(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EngPackingOrder.update.class) List<EngPackingOrderDto> engPackingOrderDtos) {
+        List<EngPackingOrderSummaryDetDto> list = engPackingOrderService.checkQty(engPackingOrderDtos);
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
     @PostMapping(value = "/export")

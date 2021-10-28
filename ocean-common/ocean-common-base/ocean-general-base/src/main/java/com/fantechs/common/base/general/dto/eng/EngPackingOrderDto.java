@@ -2,7 +2,6 @@ package com.fantechs.common.base.general.dto.eng;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
-import com.fantechs.common.base.general.entity.srm.SrmPackingOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -87,4 +86,6 @@ public class EngPackingOrderDto extends EngPackingOrder implements Serializable 
     @Transient
     @ApiModelProperty(value = "收货数量",name = "totalReceivingQty")
     private BigDecimal totalReceivingQty;
+
+
 }

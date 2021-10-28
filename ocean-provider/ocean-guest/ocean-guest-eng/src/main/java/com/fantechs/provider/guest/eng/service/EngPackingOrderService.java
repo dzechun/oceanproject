@@ -1,6 +1,7 @@
 package com.fantechs.provider.guest.eng.service;
 
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.support.IService;
 
@@ -17,4 +18,7 @@ public interface EngPackingOrderService extends IService<EngPackingOrder> {
     int censor(EngPackingOrder engPackingOrder);
 
     int submit(EngPackingOrder engPackingOrder);
+
+    List<EngPackingOrderSummaryDetDto> checkQty(List<EngPackingOrderDto> engPackingOrderDtos);
+
 }
