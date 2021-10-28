@@ -66,4 +66,20 @@ public class ChinaFiveRingExportController {
         return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
     }
 
+    @ApiOperation("库位回传接口")
+    @PostMapping("/writeShelvesNo")
+    public ResponseEntity<String> writeShelvesNo(@ApiParam(value = "jsonVoiceArray",required = true)@RequestParam @NotNull(message="jsonVoiceArray不能为空") String jsonVoiceArray,@ApiParam(value = "projectID",required = true)@RequestParam @NotNull(message="projectID不能为空") String projectID) throws Exception {
+        BaseExecuteResultDto result = exportDataService.writeShelvesNo(jsonVoiceArray,projectID);
+        String strResult= JsonUtils.objectToJson(result);
+        return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
+    }
+
+    @ApiOperation("封单回传接口")
+    @PostMapping("/overIssue")
+    public ResponseEntity<String> overIssue(@ApiParam(value = "ISGUID",required = true)@RequestParam @NotNull(message="ISGUID 不能为空") String ISGUID,@ApiParam(value = "userName",required = true)@RequestParam @NotNull(message="userName 不能为空") String userName) throws Exception {
+        BaseExecuteResultDto result = exportDataService.overIssue(ISGUID,userName);
+        String strResult= JsonUtils.objectToJson(result);
+        return  ControllerUtil.returnDataSuccess(strResult, StringUtils.isEmpty(strResult)?0:1);
+    }
+
 }

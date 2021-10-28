@@ -38,6 +38,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderDetMapper;
@@ -76,6 +77,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     private SecurityFeignApi securityFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private FiveringFeignApi fiveringFeignApi;
 
     @Override
     public List<WmsOutDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -791,4 +794,33 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         return resultMap;
     }
 
+    @Override
+    /**
+     * create by: Dylan
+     * description: 封单回传五环
+     * create time:
+     * @return
+     */
+    public int overIssue(Long deliveryOrderId) {
+        String ISGUID="";
+        String userName="";
+        //获取当前系统登录人员
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(user)){
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+        userName=user.getUserName();
+
+        SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
+        searchWmsOutDeliveryOrderDet.setDeliveryOrderId(deliveryOrderId);
+        List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrderDet));
+        if (StringUtils.isEmpty(wmsOutDeliveryOrderDetList)) {
+            throw new BizErrorException("出库单明细为空时无法创建作业单");
+        }
+
+        ISGUID=wmsOutDeliveryOrderDetList.get(0).getOption2();
+        fiveringFeignApi.overIssue(ISGUID,userName);
+
+        return 0;
+    }
 }

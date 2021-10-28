@@ -1,22 +1,31 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.PrintBaseStorageCode;
+import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
-import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.dto.restapi.EngReportStorageDto;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
+import com.fantechs.common.base.general.entity.basic.BaseWorkingArea;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStorage;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseStorageService;
-import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +52,10 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     private BaseWorkingAreaMapper baseWorkingAreaMapper;
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private FiveringFeignApi fiveringFeignApi;
 
     @Override
     public int batchUpdate(List<BaseStorage> baseStorages) {
@@ -77,6 +90,42 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         BaseHtStorage baseHtStorage = new BaseHtStorage();
         org.springframework.beans.BeanUtils.copyProperties(baseStorage, baseHtStorage);
         int i = baseHtStorageMapper.insertSelective(baseHtStorage);
+
+        //五环库位回传开始
+        SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+        searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+        List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+        if (itemListFiveRing.size() < 1) {
+            throw new BizErrorException("配置项 FiveRing 获取失败");
+        }
+        SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+        if ("1".equals(sysSpecItem.getParaValue())) {
+            String jsonVoiceArray="";
+            String projectID="3919";
+            List<EngReportStorageDto> listStorage=new ArrayList<>();
+
+            EngReportStorageDto engReportStorageDto=new EngReportStorageDto();
+            engReportStorageDto.setStorageId(baseStorage.getStorageId().toString());
+            engReportStorageDto.setStorageCode(baseStorage.getStorageCode());
+            engReportStorageDto.setStorageDesc(baseStorage.getStorageCode());
+            engReportStorageDto.setStorageType("项目现场主仓库");
+            listStorage.add(engReportStorageDto);
+
+            jsonVoiceArray= JsonUtils.objectToJson(listStorage);
+            String s0=jsonVoiceArray.replaceAll("storageId","DHGUID");
+            String s1=s0.replaceAll("storageCode","货架编号");
+            String s2=s1.replaceAll("storageDesc","货架编号描述");
+            String s3=s2.replaceAll("storageType","货架地点类别");
+
+            //回传
+            fiveringFeignApi.writeShelvesNo(s3,projectID);
+
+            //更新DHGUID
+            baseStorage.setOption1(baseStorage.getStorageId().toString());
+            baseStorageMapper.updateByPrimaryKeySelective(baseStorage);
+        }
+        //五环库位回传结束
+
         return i;
     }
 
