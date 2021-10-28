@@ -55,7 +55,7 @@
       <if test="orgId!=null and orgId!=''">
         and eescba.org_id = #{orgId}
       </if>
-      <if test="workInstructionId!=null and workInstructionId!=''">
+      <if test="equipmentStandingBookId!=null and equipmentStandingBookId!=''">
         and eescba.equipment_standing_book_id = #{equipmentStandingBookId}
       </if>
     </where>

@@ -51,6 +51,8 @@
     <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode" />
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="profession_name" jdbcType="VARCHAR" property="professionName" />
+    <result column="contract_qty" jdbcType="VARCHAR" property="contractQty" />
+    <result column="issued_qty" jdbcType="VARCHAR" property="issuedQty" />
   </resultMap>
 
 
@@ -81,12 +83,12 @@
     sposd.option1,
     sposd.option2,
     sposd.option3,
-sposd.receiving_storage_id,
-sposd.putaway_storage_id,
-sposd.distribution_qty,
-sposd.putaway_qty,
-sposd.receiving_qty,
-sposd.summary_det_status
+    sposd.receiving_storage_id,
+    sposd.putaway_storage_id,
+    sposd.distribution_qty,
+    sposd.putaway_qty,
+    sposd.receiving_qty,
+    sposd.summary_det_status
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
@@ -94,7 +96,7 @@ sposd.summary_det_status
     bm.material_name as material_name,bm.material_code as material_code,spo.packing_order_code as packing_order_code,
     bsp.supplier_name as supplier_name,spo.despatch_batch as despatch_batchs,spos.contract_code as contract_code,
     spos.purchase_req_order_code as purchase_req_order_code,spos.profession_name as profession_name,
-    u.user_name as create_user_name,cast(qty as decimal(18,3)) as exportQty,
+    u.user_name as create_user_name,cast(qty as decimal(18,3)) as exportQty,ecqo.pur_qty as contract_qty,ecqo.issued_qty as issued_qty,
     s.user_name as modified_user_name,
     bo.organization_name,
     bs.storage_name as 'receivingStorageName',
@@ -107,6 +109,8 @@ sposd.summary_det_status
     LEFT JOIN base_supplier bsp ON spo.supplier_id = bsp.supplier_id
     left join base_shipment_enterprise bse on spo.shipment_enterprise_id=bse.shipment_enterprise_id
     left join base_material bm on sposd.material_id=bm.material_id
+    LEFT JOIN eng_contract_qty_order ecqo ON bm.material_code = ecqo.material_code and sposd.device_code =ecqo.device_code
+        and sposd.dominant_term_code =ecqo.dominant_term_code
     LEFT JOIN base_storage bs on sposd.receiving_storage_id = bs.storage_id
     LEFT JOIn base_storage bss on sposd.putaway_storage_id = bss.storage_id
     left join ocean_v2.sys_user u on sposd.create_user_id=u.user_id
