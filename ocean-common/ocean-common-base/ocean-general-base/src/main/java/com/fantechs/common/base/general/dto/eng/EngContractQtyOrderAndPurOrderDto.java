@@ -222,12 +222,21 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
     @Column(name = "not_issue_qty")
     private BigDecimal notIssueQty;
 
+
+    /**
+     * 到货量
+     */
+    @ApiModelProperty(name="agoQty",value = "到货量")
+    @Excel(name = "到货量", height = 20, width = 30,type=10,numFormat="0.000",orderNum="22")
+    @Column(name = "ago_qty")
+    private String agoQty;
+
     /**
      * 备注
      */
     
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="22")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="23")
     @Column(name = "remark")
     private String remark;
 
@@ -263,7 +272,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
     
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
     @Column(name = "create_user_name")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="23")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="24")
     private String createUserName;
 
     /**
@@ -271,7 +280,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="24",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="25",exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -289,7 +298,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="25")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="26")
     @Column(name = "modified_user_name")
     private String modifiedUserName;
 
@@ -298,7 +307,7 @@ public class EngContractQtyOrderAndPurOrderDto implements Serializable {
      */
     
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="26",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="27",exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

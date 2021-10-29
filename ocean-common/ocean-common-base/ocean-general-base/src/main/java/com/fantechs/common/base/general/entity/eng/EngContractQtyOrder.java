@@ -107,6 +107,14 @@ public class EngContractQtyOrder extends ValidGroup implements Serializable {
     private String notIssueQty;
 
     /**
+     * 到货量
+     */
+    @ApiModelProperty(name="agoQty",value = "到货量")
+    @Excel(name = "到货量", height = 20, width = 30,orderNum="")
+    @Column(name = "ago_qty")
+    private BigDecimal agoQty;
+
+    /**
      * 专业编码
      */
     @ApiModelProperty(name="professionCode",value = "专业编码")

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -88,4 +87,5 @@ public class EngContractQtyOrderController {
     public ResponseEntity saveByApi(@ApiParam(value = "必传：contractCode、dominantTermCode",required = true)@RequestBody @Validated EngContractQtyOrder engContractQtyOrder) {
         return ControllerUtil.returnCRUD(engContractQtyOrderService.saveByApi(engContractQtyOrder));
     }
+
 }

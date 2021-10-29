@@ -29,6 +29,7 @@
     <result column="purchase_explain" jdbcType="VARCHAR" property="purchaseExplain" />
     <result column="issued_qty" jdbcType="DECIMAL" property="issuedQty" />
     <result column="not_issue_qty" jdbcType="DECIMAL" property="notIssueQty" />
+    <result column="ago_qty" jdbcType="DECIMAL" property="agoQty" />
     <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="TINYINT" property="status" />
