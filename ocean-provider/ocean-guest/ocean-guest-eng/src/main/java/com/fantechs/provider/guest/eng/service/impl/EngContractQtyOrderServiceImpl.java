@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -7,14 +8,17 @@ import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderMapper;
+import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
 import com.fantechs.provider.guest.eng.service.EngContractQtyOrderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -34,10 +38,13 @@ public class EngContractQtyOrderServiceImpl extends BaseService<EngContractQtyOr
     private EngContractQtyOrderMapper engContractQtyOrderMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private EngPackingOrderSummaryDetMapper engPackingOrderSummaryDetMapper;
+
 
     @Override
     public List<EngContractQtyOrderDto> findList(Map<String, Object> map) {
-        SysUser user= getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(map.get("orgId"))){
             map.put("orgId",user.getOrganizationId());
         }
@@ -84,11 +91,27 @@ public class EngContractQtyOrderServiceImpl extends BaseService<EngContractQtyOr
 
     }
 
-    public SysUser getUser(){
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+
+/*    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
+    public int writeAgoQty(Long id, BigDecimal qty) {
+        EngPackingOrderSummaryDet engPackingOrderSummaryDet = engPackingOrderSummaryDetMapper.selectByPrimaryKey(id);
+        Example qtyExample = new Example(EngContractQtyOrder.class);
+        Example.Criteria qtyCriteria = qtyExample.createCriteria();
+        qtyCriteria.andEqualTo("contractCode",engPackingOrderSummaryDet.getCartonCode());
+        qtyCriteria.andEqualTo("dominantTermCode",engPackingOrderSummaryDet.getDominantTermCode());
+        qtyCriteria.andEqualTo("deviceCode",engPackingOrderSummaryDet.getDeviceCode());
+        qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDet.getMaterialId());
+        List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
+        if(StringUtils.isEmpty(engContractQtyOrders))
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未查询到对应的合同量单");
+        EngContractQtyOrder order = engContractQtyOrders.get(0);
+        if(StringUtils.isEmpty(order.getAgoQty())){
+            order.setAgoQty(qty);
+        }else{
+            order.setAgoQty(order.getAgoQty().add(qty));
         }
-        return currentUser;
-    }
+        return engContractQtyOrderMapper.updateByPrimaryKeySelective(order);
+    }*/
 }

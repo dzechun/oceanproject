@@ -16,6 +16,7 @@ import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
+import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
@@ -29,12 +30,14 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
+import com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryMapper;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderTakeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -57,6 +60,8 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
     private InnerFeignApi innerFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private EngContractQtyOrderMapper engContractQtyOrderMapper;
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
@@ -818,6 +823,25 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         }else {
             engPackingOrderSummaryDet.setDistributionQty(engPackingOrderSummaryDet.getDistributionQty().add(qty));
         }
+
+        //返写合同量单
+        Example qtyExample = new Example(EngContractQtyOrder.class);
+        Example.Criteria qtyCriteria = qtyExample.createCriteria();
+        qtyCriteria.andEqualTo("contractCode",engPackingOrderSummaryDet.getCartonCode());
+        qtyCriteria.andEqualTo("dominantTermCode",engPackingOrderSummaryDet.getDominantTermCode());
+        qtyCriteria.andEqualTo("deviceCode",engPackingOrderSummaryDet.getDeviceCode());
+        qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDet.getMaterialId());
+        List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
+        if(StringUtils.isEmpty(engContractQtyOrders))
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未查询到对应的合同量单");
+        EngContractQtyOrder order = engContractQtyOrders.get(0);
+        if(StringUtils.isEmpty(order.getAgoQty())){
+            order.setAgoQty(qty);
+        }else{
+            order.setAgoQty(order.getAgoQty().add(qty));
+        }
+        engContractQtyOrderMapper.updateByPrimaryKeySelective(order);
+
         return engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDet);
     }
 

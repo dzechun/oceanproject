@@ -18,6 +18,7 @@
     <result column="profession_name" jdbcType="VARCHAR" property="professionName" />
     <result column="issued_qty" jdbcType="DECIMAL" property="issuedQty" />
     <result column="not_issue_qty" jdbcType="DECIMAL" property="notIssueQty" />
+    <result column="ago_qty" jdbcType="DECIMAL" property="agoQty" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -53,6 +54,7 @@
     ecqo.profession_name,
     ecqo.issued_qty,
     ecqo.not_issue_qty,
+    ecqo.ago_qty,
     ecqo.status,
     ecqo.remark,
     ecqo.org_id,
