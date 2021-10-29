@@ -614,6 +614,9 @@ public class ImportDataServiceImpl implements ImportDataService {
                 user.setOrganizationId(orgId);
                 user.setStatus((byte)1);
                 user.setRoleId(roleId);
+                if(StringUtils.isEmpty(user.getUserName())){
+                    user.setUserName(user.getUserCode());
+                }
                 ResponseEntity<SysUser> responseEntityUser=securityFeignApi.saveByApi(user);
                 if(StringUtils.isNotEmpty(responseEntityUser.getData())){
                     //用户ID

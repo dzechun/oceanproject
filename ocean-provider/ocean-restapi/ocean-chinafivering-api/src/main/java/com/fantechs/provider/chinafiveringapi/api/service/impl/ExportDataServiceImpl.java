@@ -254,7 +254,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         byte result=0;//调用结果(0-失败 1-成功)
         String str="";
         try{
-            baseExecuteResultDto= callWebService(address,"overIssue","","");
+            baseExecuteResultDto= callWebService(address,"overIssue",ISGUID,userName);
             if(baseExecuteResultDto.getIsSuccess()==false)
                 throw new BizErrorException(baseExecuteResultDto.getFailMsg());
             //success
@@ -280,35 +280,38 @@ public class ExportDataServiceImpl implements ExportDataService {
 
     private  String actionBySOAP(String method, String JsonVoiceArray, String projectID){
         String str="";
-        if(StringUtils.isEmpty(projectID)){
+        if(method.equals("overIssue")){
             str="<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +
                     "   <soapenv:Header/>\n" +
                     "   <soapenv:Body>\n" +
-                    "      <tem:"+method+"/>\n" +
+                    "      <tem:overIssue>\n" +
+                    "         <tem:isguid>" + JsonVoiceArray + "</tem:isguid>\n" +
+                    "         <tem:username>" + projectID + "</tem:username>\n" +
+                    "      </tem:overIssue>\n" +
                     "   </soapenv:Body>\n" +
                     "</soapenv:Envelope>";
         }
         else {
-//            str = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +
-//                    "   <soapenv:Header/>\n" +
-//                    "   <soapenv:Body>\n" +
-//                    "      <tem:" + method + ">\n" +
-//                    "         <tem:JsonVoiceArray>" + JsonVoiceArray + "</tem:JsonVoiceArray>\n" +
-//                    "         <tem:ProjectID>" + projectID + "</tem:ProjectID>\n" +
-//                    "      </tem:" + method + ">\n" +
-//                    "   </soapenv:Body>\n" +
-//                    "</soapenv:Envelope>";
+            if (StringUtils.isEmpty(projectID)) {
+                str = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +
+                        "   <soapenv:Header/>\n" +
+                        "   <soapenv:Body>\n" +
+                        "      <tem:" + method + "/>\n" +
+                        "   </soapenv:Body>\n" +
+                        "</soapenv:Envelope>";
+            } else {
 
-            str="<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +
-                    "   <soapenv:Header/>\n" +
-                    "   <soapenv:Body>\n" +
-                    "      <tem:" + method + ">\n" +
-                    "         <tem:JsonVoiceArray>"+JsonVoiceArray+"</tem:JsonVoiceArray>\n" +
-                    "         <tem:ProjectID>3919</tem:ProjectID>\n" +
-                    "      </tem:" + method + ">\n" +
-                    "   </soapenv:Body>\n" +
-                    "</soapenv:Envelope>";
+                str = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\n" +
+                        "   <soapenv:Header/>\n" +
+                        "   <soapenv:Body>\n" +
+                        "      <tem:" + method + ">\n" +
+                        "         <tem:JsonVoiceArray>" + JsonVoiceArray + "</tem:JsonVoiceArray>\n" +
+                        "         <tem:ProjectID>3919</tem:ProjectID>\n" +
+                        "      </tem:" + method + ">\n" +
+                        "   </soapenv:Body>\n" +
+                        "</soapenv:Envelope>";
 
+            }
         }
 
         return str;

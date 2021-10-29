@@ -814,12 +814,11 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
         searchWmsOutDeliveryOrderDet.setDeliveryOrderId(deliveryOrderId);
         List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrderDet));
-        if (StringUtils.isEmpty(wmsOutDeliveryOrderDetList)) {
-            throw new BizErrorException("出库单明细为空时无法创建作业单");
-        }
+        if(wmsOutDeliveryOrderDetList.size()>0){
 
-        ISGUID=wmsOutDeliveryOrderDetList.get(0).getOption2();
-        fiveringFeignApi.overIssue(ISGUID,userName);
+            ISGUID=wmsOutDeliveryOrderDetList.get(0).getOption2();
+            fiveringFeignApi.overIssue(ISGUID,userName);
+        }
 
         return 0;
     }
