@@ -1,5 +1,6 @@
 package com.fantechs.provider.daq.service.impl;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.daq.DaqDataCollectDto;
 import com.fantechs.common.base.general.dto.daq.DaqDataCollectModel;
@@ -10,6 +11,7 @@ import com.fantechs.common.base.general.entity.daq.DaqEquipment;
 import com.fantechs.common.base.general.entity.daq.search.SearchDaqEquipmentDataGroup;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.daq.mapper.DaqDataCollectMapper;
 import com.fantechs.provider.daq.mapper.DaqEquipmentDataGroupMapper;
@@ -39,6 +41,8 @@ public class DaqDataCollectServiceImpl extends BaseService<DaqDataCollect> imple
 
     @Override
     public List<DaqDataCollectDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId", user.getOrganizationId());
         return daqDataCollectMapper.findList(map);
     }
 

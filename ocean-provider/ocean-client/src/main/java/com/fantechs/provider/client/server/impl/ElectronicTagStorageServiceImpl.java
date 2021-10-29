@@ -790,6 +790,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                         ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
                         if (ptlJobOrder.getIfUrgent() == 1) {
                             ptlJobOrderDetPrintDTO.setIfUrgent("急");
+                        } else {
+                            ptlJobOrderDetPrintDTO.setIfUrgent("");
                         }
                         ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
                         ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());
@@ -817,6 +819,8 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                             ptlJobOrderDetPrintDTO.setRelatedOrderCode(ptlJobOrder.getRelatedOrderCode());
                             if (ptlJobOrder.getIfUrgent() == 1) {
                                 ptlJobOrderDetPrintDTO.setIfUrgent("急");
+                            } else {
+                                ptlJobOrderDetPrintDTO.setIfUrgent("");
                             }
                             ptlJobOrderDetPrintDTO.setMaterialName(ptlJobOrderDetDto.getMaterialName());
                             ptlJobOrderDetPrintDTO.setMaterialCode(ptlJobOrderDetDto.getMaterialCode());

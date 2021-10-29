@@ -13,8 +13,10 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRe
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseFile;
+import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFile;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStation;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
@@ -214,6 +216,13 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
             }
         }
 
+        //获取维修工序
+        SearchBaseProcess searchBaseProcess = new SearchBaseProcess();
+        searchBaseProcess.setProcessCategoryCode("repair");
+        List<BaseProcess> baseProcesses = baseFeignApi.findProcessList(searchBaseProcess).getData();
+        if(StringUtils.isEmpty(baseProcesses)){
+            throw new BizErrorException("未维护维修工序");
+        }
 
         //设值返回
         mesSfcRepairOrderDto.setWorkOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
@@ -223,6 +232,8 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         }else if(SNCodeType == 2){
             mesSfcRepairOrderDto.setSemiProductBarcode(SNCode);
         }
+        mesSfcRepairOrderDto.setCurrentProcessId(baseProcesses.get(0).getProcessId());
+        mesSfcRepairOrderDto.setCurrentProcessName(baseProcesses.get(0).getProcessName());
         mesSfcRepairOrderDto.setMaterialId(mesPmWorkOrderDto.getMaterialId());
         mesSfcRepairOrderDto.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
         mesSfcRepairOrderDto.setMaterialDesc(mesPmWorkOrderDto.getMaterialDesc());

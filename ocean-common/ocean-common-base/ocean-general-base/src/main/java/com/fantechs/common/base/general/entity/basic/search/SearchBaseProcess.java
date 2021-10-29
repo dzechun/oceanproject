@@ -62,6 +62,12 @@ public class SearchBaseProcess extends BaseQuery implements Serializable {
     private String processCategoryName;
 
     /**
+     * 工序类别编码
+     */
+    @ApiModelProperty(name = "processCategoryCode",value = "工序类别编码")
+    private String processCategoryCode;
+
+    /**
      * 员工ID
      */
     @ApiModelProperty(name = "staffId",value = "员工ID")
