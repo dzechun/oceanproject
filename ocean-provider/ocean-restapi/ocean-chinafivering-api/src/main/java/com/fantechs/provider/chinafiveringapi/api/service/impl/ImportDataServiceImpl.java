@@ -42,9 +42,9 @@ import java.util.stream.Collectors;
 public class ImportDataServiceImpl implements ImportDataService {
 
     // Webservice接口地址(测试环境)
-    //private final String address = "http://mattest.cwcec.com/LocWebServices/WebService1.asmx";
+    private final String address = "http://mattest.cwcec.com/LocWebServices/WebService1.asmx";
     //Webservice接口地址(生产环境)
-    private final String address = "http://mat.cwcec.com/LocWebServices/WebService1.asmx";
+    //private final String address = "http://mat.cwcec.com/LocWebServices/WebService1.asmx";
 
     @Resource
     BaseFeignApi baseFeignApi;
@@ -597,6 +597,9 @@ public class ImportDataServiceImpl implements ImportDataService {
             String str = s2.substring(indexb, indexe + 1);
             List<SysUser> listUser = BeanUtils.jsonToListObject(str, SysUser.class);
 
+            //登录
+            //securityFeignApi.login("admin","123456",1004L,null);
+
             //获取供应商角色ID
             Long roleId=null;
             SearchSysRole searchSysRole=new SearchSysRole();
@@ -615,22 +618,25 @@ public class ImportDataServiceImpl implements ImportDataService {
                 if(StringUtils.isNotEmpty(responseEntityUser.getData())){
                     //用户ID
                     Long userId=responseEntityUser.getData().getUserId();
-
-                    //找供应商ID
-                    Long supplierId=null;
-                    SearchBaseSupplier searchBaseSupplier=new SearchBaseSupplier();
-                    searchBaseSupplier.setSupplierName(user.getUserName());
-                    searchBaseSupplier.setOrganizationId(orgId);
-                    ResponseEntity<List<BaseSupplier>> responseEntitySupplier= baseFeignApi.findSupplierList(searchBaseSupplier);
-                    if(StringUtils.isNotEmpty(responseEntitySupplier)){
-                        supplierId=responseEntitySupplier.getData().get(0).getSupplierId();
+                    if(StringUtils.isNotEmpty(userId)) {
+                        //找供应商ID
+                        if (StringUtils.isNotEmpty(user.getUserName())) {
+                            Long supplierId = null;
+                            SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
+                            searchBaseSupplier.setSupplierName(user.getUserName());
+                            searchBaseSupplier.setOrganizationId(orgId);
+                            ResponseEntity<List<BaseSupplier>> responseEntitySupplier = baseFeignApi.findSupplierList(searchBaseSupplier);
+                            if (StringUtils.isNotEmpty(responseEntitySupplier.getData())) {
+                                supplierId = responseEntitySupplier.getData().get(0).getSupplierId();
+                            }
+                            //增加用户绑定供应商
+                            BaseSupplierReUser baseSupplierReUser = new BaseSupplierReUser();
+                            baseSupplierReUser.setSupplierId(supplierId);
+                            baseSupplierReUser.setUserId(userId);
+                            baseSupplierReUser.setOrganizationId(orgId);
+                            baseFeignApi.saveByApi(baseSupplierReUser);
+                        }
                     }
-                    //增加用户绑定供应商
-                    BaseSupplierReUser baseSupplierReUser=new BaseSupplierReUser();
-                    baseSupplierReUser.setSupplierId(supplierId);
-                    baseSupplierReUser.setUserId(userId);
-                    baseSupplierReUser.setOrganizationId(orgId);
-                    baseFeignApi.saveByApi(baseSupplierReUser);
                 }
             }
 

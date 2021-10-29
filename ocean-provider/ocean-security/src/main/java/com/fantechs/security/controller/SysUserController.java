@@ -141,4 +141,10 @@ public class SysUserController {
         return  ControllerUtil.returnDataSuccess(sysHtUsers, (int)page.getTotal());
     }
 
+    @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
+    @PostMapping("/saveByApi")
+    public ResponseEntity<SysUser> saveByApi(@ApiParam(value = "必传：userCode、userName、password、status",required = true)@RequestBody @Validated SysUser sysUser) {
+        return ControllerUtil.returnDataSuccess(sysUserService.saveByApi(sysUser),1);
+    }
+
 }
