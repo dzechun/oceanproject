@@ -15,5 +15,9 @@ public class SearchDaqDataCollect extends BaseQuery implements Serializable {
     @ApiModelProperty(name="equipmentCode",value = "设备编码")
     private String equipmentCode;
 
-
+    /**
+     * 采集时间
+     */
+    @ApiModelProperty(name="startTime" ,value="采集时间(YYYY-MM-DD)")
+    private String collectTime;
 }

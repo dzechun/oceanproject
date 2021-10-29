@@ -98,6 +98,9 @@
             <if test="processCategoryName!=null and processCategoryName!=''">
                 and spc.process_category_name like CONCAT('%', #{processCategoryName}, '%')
             </if>
+            <if test="processCategoryCode!=null and processCategoryCode!=''">
+                and spc.process_category_code = #{processCategoryCode}
+            </if>
             <if test="status!=null">
                 and sp.status=#{status}
             </if>

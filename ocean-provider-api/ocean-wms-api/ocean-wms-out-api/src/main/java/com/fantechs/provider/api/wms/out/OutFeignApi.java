@@ -2,10 +2,11 @@ package com.fantechs.provider.api.wms.out;
 
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
+import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +30,14 @@ public interface OutFeignApi {
     @ApiOperation("获取详情")
     @PostMapping("/wmsOutDeliveryOrder/detail")
     ResponseEntity<WmsOutDeliveryOrder> details(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
+    @ApiOperation("列表")
+    @PostMapping("/wmsOutDeliveryOrder/findList")
+    ResponseEntity<List<WmsOutDeliveryOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutDeliveryOrder searchWmsOutDeliveryOrder);
+
+    @ApiOperation("修改")
+    @PostMapping("/wmsOutDeliveryOrder/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsOutDeliveryOrder.update.class) WmsOutDeliveryOrder wmsOutDeliveryOrder);
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/wmsOutDeliveryOrder/add")

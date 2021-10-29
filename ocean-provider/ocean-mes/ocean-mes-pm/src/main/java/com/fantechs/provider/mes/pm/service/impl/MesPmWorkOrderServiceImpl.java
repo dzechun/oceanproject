@@ -7,18 +7,26 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
+import com.fantechs.common.base.general.entity.basic.BaseProductMaterialReP;
+import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessReM;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.mes.pm.mapper.MesPmHtWorkOrderMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderBomMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
+import com.fantechs.provider.mes.pm.service.MesPmWorkOrderProcessReWoService;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +39,7 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> implements MesPmWorkOrderService {
 
     @Resource
@@ -39,6 +48,10 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     private MesPmHtWorkOrderMapper smtHtWorkOrderMapper;
     @Resource
     private MesPmWorkOrderBomMapper mesPmWorkOrderBomMapper;
+    @Resource
+    private MesPmWorkOrderProcessReWoService mesPmWorkOrderProcessReWoService;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -256,6 +269,45 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     @Override
     public int batchUpdate(List<MesPmWorkOrder> mesPmWorkOrders) {
         return mesPmWorkOrderMapper.batchUpdate(mesPmWorkOrders);
+    }
+
+    @Override
+    public int batchSave(List<MesPmWorkOrder> pmWorkOrders){
+        // 产品关键物料清单
+        SearchBaseProductProcessReM searchBaseProductProcessReM = new SearchBaseProductProcessReM();
+        searchBaseProductProcessReM.setPageSize(999999);
+        List<BaseProductProcessReM> baseProductProcessReMS = baseFeignApi.findList(searchBaseProductProcessReM).getData();
+        for (MesPmWorkOrder order : pmWorkOrders){
+            mesPmWorkOrderMapper.insertUseGeneratedKeys(order);
+
+            // 工单关键物料清单
+            MesPmWorkOrderProcessReWo reWo = new MesPmWorkOrderProcessReWo();
+            boolean flag = false;
+            for (BaseProductProcessReM baseProductProcessReM : baseProductProcessReMS){
+                if (order.getMaterialId().equals(baseProductProcessReM.getMaterialId())){
+                    BeanUtils.copyProperties(baseProductProcessReM, reWo);
+
+                    List<MesPmWorkOrderMaterialRePDto> list = new ArrayList<>();
+                    for (BaseProductMaterialReP baseProductMaterialReP : baseProductProcessReM.getList()){
+                        MesPmWorkOrderMaterialRePDto mesPmWorkOrderMaterialRePDto = new MesPmWorkOrderMaterialRePDto();
+                        BeanUtils.copyProperties(baseProductMaterialReP, mesPmWorkOrderMaterialRePDto);
+//                        log.info("====================mesPmWorkOrderMaterialRePDto" + JSON.toJSONString(mesPmWorkOrderMaterialRePDto));
+                        list.add(mesPmWorkOrderMaterialRePDto);
+                    }
+                    reWo.setList(list);
+
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag){
+                reWo.setWorkOrderId(order.getWorkOrderId());
+                reWo.setCreateTime(new Date());
+                reWo.setModifiedTime(new Date());
+                mesPmWorkOrderProcessReWoService.save(reWo);
+            }
+        }
+        return 1;
     }
 
     public  void savebom(MesPmWorkOrderDto mesPmWorkOrderDto , SysUser user){
