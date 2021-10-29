@@ -184,5 +184,14 @@ public class MesSfcWorkOrderBarcode extends ValidGroup implements Serializable {
     @ApiModelProperty(name= "materialCode", value = "产品料号")
     private String materialCode;
 
+    @Transient
+    private Long salesOrderDetId;
+
+    @Transient
+    private BigDecimal orderQty;
+
+    @Transient
+    private String salesOrderCode;
+
     private static final long serialVersionUID = 1L;
 }

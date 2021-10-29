@@ -110,4 +110,8 @@ public interface OMFeignApi {
     @PostMapping("/omSalesCodeReSpc/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesCodeReSpc.update.class) OmSalesCodeReSpc omSalesCodeReSpc);
 
+    @ApiOperation("销售订单明细列表")
+    @PostMapping("/omSalesOrderDet/findList")
+    ResponseEntity<List<OmSalesOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDetDto searchOmSalesOrderDetDto);
+
 }

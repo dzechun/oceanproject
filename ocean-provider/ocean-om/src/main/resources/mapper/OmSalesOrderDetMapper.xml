@@ -85,7 +85,7 @@
         left join ocean_v2.sys_user sumod on sod.modified_user_id = sumod.user_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                and date_format(so.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                and date_format(oso.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
 
             <if test="status != null">
@@ -101,7 +101,10 @@
             <if test="salesOrderCode != null">
                 and oso.sales_order_code = #{salesOrderCode}
             </if>
-
+            <if test="salesOrderDetId!=null and salesOrderDetId!=''">
+                and sod.sales_order_det_id = #{salesOrderDetId}
+            </if>
         </where>
+        order by oso.modified_time desc
     </select>
 </mapper>

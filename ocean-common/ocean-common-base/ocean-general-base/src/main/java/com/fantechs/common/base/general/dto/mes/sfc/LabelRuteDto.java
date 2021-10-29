@@ -60,7 +60,7 @@ public class LabelRuteDto implements Serializable {
     /**
      * 打印数量
      */
-    @ApiModelProperty(name = "oncePrintQty",value = "打印数量")
+    @ApiModelProperty(name = "oncePrintQty",value = "可打印数量")
     private int oncePrintQty;
 
     /**
@@ -68,4 +68,10 @@ public class LabelRuteDto implements Serializable {
      */
     @ApiModelProperty(name = "labelCategoryId",value = "标签类别id")
     private String labelCategoryId;
+
+    /**
+     * 标签打印数量
+     */
+    @ApiModelProperty(name = "size",value = "标签打印数量")
+    private Integer size;
 }

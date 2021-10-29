@@ -13,6 +13,8 @@ import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
+import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
@@ -24,6 +26,7 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -32,6 +35,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
@@ -46,6 +50,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,6 +78,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     private RedisUtil redisUtil;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private OMFeignApi omFeignApi;
 
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
@@ -129,7 +136,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                     //获取默认模版
                     labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("01");
                 }
-            } else if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 57) {//获取销售类别模版
+            } else if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 57 && mesSfcWorkOrderBarcode.getOption1().equals("4")) {//获取销售类别模版
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02", mesSfcWorkOrderBarcode.getWorkOrderId());
                 if (StringUtils.isEmpty(labelRuteDto) || StringUtils.isEmpty(labelRuteDto.getLabelName())) {
                     //获取默认模版
@@ -138,6 +145,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                         throw new BizErrorException("未匹配到默认模版");
                     }
                 }
+            }else if(mesSfcWorkOrderBarcode.getLabelCategoryId() == 57 && mesSfcWorkOrderBarcode.getOption1().equals("5")){
+                labelRuteDto = mesSfcWorkOrderBarcodeMapper.findOmRule(mesSfcWorkOrderBarcode.getWorkOrderId());
             }
             //PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(mesSfcWorkOrderBarcode.getLabelCategoryId(), mesSfcWorkOrderBarcode.getWorkOrderId());
 
@@ -151,7 +160,10 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             if(StringUtils.isEmpty(printModel)){
                 throw new BizErrorException("获取视图数据信息失败，请检查视图");
             }
-            printModel.setSize(1);
+            if(StringUtils.isEmpty(labelRuteDto.getSize())){
+                labelRuteDto.setSize(1);
+            }
+            printModel.setSize(labelRuteDto.getSize());
             if(StringUtils.isEmpty(labelRuteDto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取标签信息失败");
             }
@@ -196,16 +208,29 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     public LabelRuteDto findLabelRute(Long workOrderId, Byte barcodeType) {
         LabelRuteDto labelRuteDto = null;
-        //查询工单是否绑定条码规则
-        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-        searchMesPmWorkOrder.setWorkOrderId(workOrderId);
-        MesPmWorkOrderDto mesPmWorkOrder = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
-        if(StringUtils.isEmpty(mesPmWorkOrder.getBarcodeRuleSetId())){
-            throw new BizErrorException("工单未绑定条码规则");
+        Long materialId = null;
+        if(barcodeType==5){
+            //查询销售订单明细
+            SearchOmSalesOrderDetDto salesOrderDetDto = new SearchOmSalesOrderDetDto();
+            salesOrderDetDto.setSalesOrderDetId(workOrderId);
+            OmSalesOrderDetDto omSalesOrderDetDto = omFeignApi.findList(salesOrderDetDto).getData().get(0);
+            materialId = omSalesOrderDetDto.getMaterialId();
+        }else {
+            //查询工单是否绑定条码规则
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(workOrderId);
+            MesPmWorkOrderDto mesPmWorkOrder = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
+            if(StringUtils.isEmpty(mesPmWorkOrder.getBarcodeRuleSetId())){
+                throw new BizErrorException("工单未绑定条码规则");
+            }
+            materialId = mesPmWorkOrder.getMaterialId();
+        }
+        if(StringUtils.isEmpty(materialId)){
+            throw new BizErrorException("获取物料信息失败");
         }
         //查询物料是否绑定标签模版
         SearchBaseLabelMaterial searchBaseLabelMaterial = new SearchBaseLabelMaterial();
-        searchBaseLabelMaterial.setMaterialId(mesPmWorkOrder.getMaterialId().toString());
+        searchBaseLabelMaterial.setMaterialId(materialId.toString());
         if(barcodeType==2){
             searchBaseLabelMaterial.setLabelCategoryCode("01");
         }else if(barcodeType==4){
@@ -215,13 +240,17 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(StringUtils.isEmpty(baseLabelMaterialDtos) || baseLabelMaterialDtos.size()<1){
             throw new BizErrorException("物料未绑定标签模版");
         }
-
         switch (barcodeType){
             case 2:
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("01",workOrderId);
                 break;
             case 4:
                 labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02",workOrderId);
+                break;
+            case 5:
+                labelRuteDto = mesSfcWorkOrderBarcodeMapper.findOmRule(workOrderId);
+                break;
+            default:
                 break;
         }
         if(StringUtils.isEmpty(labelRuteDto)||StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())){
@@ -280,19 +309,34 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Transactional(rollbackFor = RuntimeException.class)
     public List<MesSfcWorkOrderBarcode> add(MesSfcWorkOrderBarcode record) {
         SysUser sysUser = currentUser();
-        if(StringUtils.isEmpty(record.getWorkOrderId())){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"绑定单据唯一码不能为空");
-        }
 //        if(record.getBarcodeType()==(byte)4){
 //            MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(record.getWorkOrderId()).getData();
 //            record.setWorkOrderId(mesPmWorkOrder.getSalesOrderId());
 //        }
         switch (record.getBarcodeType()){
             case 2:
+                if(StringUtils.isEmpty(record.getWorkOrderId())){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"绑定单据唯一码不能为空");
+                }
                 record.setLabelCategoryId(mesSfcWorkOrderBarcodeMapper.finByTypeId("产品条码"));
+                record.setOption1(record.getBarcodeType().toString());
                 break;
             case 4:
+                if(StringUtils.isEmpty(record.getWorkOrderId())){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"绑定单据唯一码不能为空");
+                }
                 record.setLabelCategoryId(mesSfcWorkOrderBarcodeMapper.finByTypeId("销售订单条码"));
+                record.setOption1(record.getBarcodeType().toString());
+                break;
+            case 5:
+                if(StringUtils.isEmpty(record.getSalesOrderDetId())){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"绑定单据唯一码不能为空");
+                }
+                record.setLabelCategoryId(Long.parseLong("57"));
+                record.setWorkOrderId(record.getSalesOrderDetId());
+                record.setWorkOrderQty(StringUtils.isEmpty(record.getOrderQty())? BigDecimal.ZERO:record.getOrderQty());
+                record.setWorkOrderCode(record.getSalesOrderCode());
+                record.setOption1(record.getBarcodeType().toString());
                 break;
         }
         //判断条码产生数量不能大于工单数量

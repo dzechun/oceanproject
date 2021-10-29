@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @Author mr.lei
@@ -42,7 +43,7 @@ public class PackingOutboundModel implements Serializable {
     @ApiModelProperty(name = "orderDate",value = "领料时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Excel(name = "领料时间", height = 20, width = 30,orderNum="4",databaseFormat = "yyyy-MM-dd HH:mm:ss")
-    private Data orderDate;
+    private Date orderDate;
 
     /**
      *材料编码
