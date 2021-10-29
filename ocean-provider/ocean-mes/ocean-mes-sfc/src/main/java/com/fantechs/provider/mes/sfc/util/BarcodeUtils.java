@@ -1075,8 +1075,8 @@ public class BarcodeUtils {
                 //设置产线ID
                 updateProcessDto.setProLineId(baseProLinelist.getData().get(0).getProLineId());
             }
-            if("2".equals(checkType) && StringUtils.isEmpty(stationCode))
-                throw new Exception("工位编码不能为空");
+//            if("2".equals(checkType) && StringUtils.isEmpty(stationCode))
+//                throw new Exception("工位编码不能为空");
             if(StringUtils.isNotEmpty(stationCode)){
                 ResponseEntity<List<BaseStation>> responseEntityStation=barcodeUtils.deviceInterFaceUtils.getStation(stationCode,orgId);
                 if(StringUtils.isEmpty(responseEntityStation.getData())){
@@ -1281,9 +1281,9 @@ public class BarcodeUtils {
             updateProcessDto.setBarCode(barcodeCode);
 
             //检查工段
-            if("2".equals(checkType) && StringUtils.isEmpty(sectionCode)){
-                throw new Exception("工段编码不能为空");
-            }
+//            if("2".equals(checkType) && StringUtils.isEmpty(sectionCode)){
+//                throw new Exception("工段编码不能为空");
+//            }
             if (StringUtils.isNotEmpty(sectionCode)) {
                 ResponseEntity<List<BaseWorkshopSection>> baseWorkshopSectionList = barcodeUtils.deviceInterFaceUtils.getWorkshopSection(sectionCode, orgId);
                 if (StringUtils.isEmpty(baseWorkshopSectionList.getData())) {
