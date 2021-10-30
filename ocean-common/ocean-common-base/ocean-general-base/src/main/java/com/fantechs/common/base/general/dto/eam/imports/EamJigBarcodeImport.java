@@ -11,10 +11,10 @@ import java.io.Serializable;
 public class EamJigBarcodeImport implements Serializable {
 
     /**
-     * 资产编码(必填)
+     * 资产编码
      */
-    @Excel(name = "资产编码(必填)",  height = 20, width = 30)
-    @ApiModelProperty(name="assetCode" ,value="资产编码(必填)")
+    @Excel(name = "资产编码",  height = 20, width = 30)
+    @ApiModelProperty(name="assetCode" ,value="资产编码")
     private String assetCode;
 
     /**
