@@ -8,12 +8,9 @@ import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
 import com.fantechs.common.base.general.dto.eam.EamJigDto;
 import com.fantechs.common.base.general.dto.eam.EamSparePartReJigDto;
 import com.fantechs.common.base.general.dto.eam.imports.EamJigImport;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionStandardDet;
-import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
@@ -26,7 +23,6 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.fileserver.service.FileFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamJigService;
@@ -36,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -163,12 +158,16 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         List<String> assetCodes = new ArrayList<>();
 
         for (EamJigBarcode eamJigBarcode : eamJigBarcodeList) {
-            if(StringUtils.isEmpty(eamJigBarcode.getJigBarcode(),eamJigBarcode.getAssetCode())){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "资产条码和治具条码不能为空");
+            if(StringUtils.isEmpty(eamJigBarcode.getJigBarcode())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "治具条码不能为空");
             }
 
-            if(jigBarcodes.contains(eamJigBarcode.getJigBarcode())||assetCodes.contains(eamJigBarcode.getAssetCode())){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "条码重复");
+            if(jigBarcodes.contains(eamJigBarcode.getJigBarcode())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "治具条码重复");
+            }
+
+            if(assetCodes.contains(eamJigBarcode.getAssetCode())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "资产条码重复");
             }
 
             Example example = new Example(EamJigBarcode.class);
@@ -182,21 +181,23 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
             if (StringUtils.isNotEmpty(jigBarcode)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "治具条码重复");
             }
-
-            example.clear();
-            Example.Criteria criteria1 = example.createCriteria();
-            criteria1.andEqualTo("assetCode", eamJigBarcode.getAssetCode())
-                    .andEqualTo("orgId",user.getOrganizationId());
-            if(StringUtils.isNotEmpty(eamJigBarcode.getJigBarcodeId())){
-                criteria1.andNotEqualTo("jigBarcodeId",eamJigBarcode.getJigBarcodeId());
-            }
-            EamJigBarcode jigBarcode1 = eamJigBarcodeMapper.selectOneByExample(example);
-            if (StringUtils.isNotEmpty(jigBarcode1)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "资产条码重复");
-            }
-
             jigBarcodes.add(eamJigBarcode.getJigBarcode());
-            assetCodes.add(eamJigBarcode.getAssetCode());
+
+            if(StringUtils.isNotEmpty(eamJigBarcode.getAssetCode())) {
+                example.clear();
+                Example.Criteria criteria1 = example.createCriteria();
+                criteria1.andEqualTo("assetCode", eamJigBarcode.getAssetCode())
+                        .andEqualTo("orgId", user.getOrganizationId());
+                if (StringUtils.isNotEmpty(eamJigBarcode.getJigBarcodeId())) {
+                    criteria1.andNotEqualTo("jigBarcodeId", eamJigBarcode.getJigBarcodeId());
+                }
+                EamJigBarcode jigBarcode1 = eamJigBarcodeMapper.selectOneByExample(example);
+                if (StringUtils.isNotEmpty(jigBarcode1)) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "资产条码重复");
+                }
+                assetCodes.add(eamJigBarcode.getAssetCode());
+            }
+
         }
     }
 
