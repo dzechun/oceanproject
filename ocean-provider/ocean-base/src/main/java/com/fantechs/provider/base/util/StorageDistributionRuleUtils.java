@@ -581,14 +581,16 @@ public class StorageDistributionRuleUtils {
                             //查询该货品库容
                             List<BaseStorageCapacity> shiftStorageCapacity = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("materialId",wmsInnerInventory.getMaterialId()));
                             BigDecimal shiftCapacity = BigDecimal.ZERO;
-                            if(type==1){
-                                shiftCapacity = shiftStorageCapacity.get(0).getTypeACapacity();
-                            }else if(type==2){
-                                shiftCapacity = shiftStorageCapacity.get(0).getTypeBCapacity();
-                            }else if(type==3){
-                                shiftCapacity = shiftStorageCapacity.get(0).getTypeCCapacity();
-                            }else if(type==4){
-                                shiftCapacity = shiftStorageCapacity.get(0).getTypeDCapacity();
+                            if(StringUtils.isNotEmpty(shiftStorageCapacity)) {
+                                if (type == 1) {
+                                    shiftCapacity = shiftStorageCapacity.get(0).getTypeACapacity();
+                                } else if (type == 2) {
+                                    shiftCapacity = shiftStorageCapacity.get(0).getTypeBCapacity();
+                                } else if (type == 3) {
+                                    shiftCapacity = shiftStorageCapacity.get(0).getTypeCCapacity();
+                                } else if (type == 4) {
+                                    shiftCapacity = shiftStorageCapacity.get(0).getTypeDCapacity();
+                                }
                             }
                             //库存数/转换货品库容*货品库容
                             BigDecimal a = wmsInnerInventory.getPackingQty().divide(shiftCapacity,2).multiply(TypeCapacity);
