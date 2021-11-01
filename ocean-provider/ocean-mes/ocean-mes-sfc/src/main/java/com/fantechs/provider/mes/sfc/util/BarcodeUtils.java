@@ -621,10 +621,12 @@ public class BarcodeUtils {
     */
     public static BaseExecuteResultDto ChkLogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws Exception {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
+        byte result=1;//调用结果(0-失败 1-成功)
+        Long orgId = null;
         try {
+
             String pass = "Pass";
             String fail = "Fail";
-            Long orgId = null;
             String proName = "";
             String processName = "";
             String userName = "";
@@ -729,12 +731,13 @@ public class BarcodeUtils {
             baseExecuteResultDto.setSuccessMsg(pass + ",验证通过,产线名称:" + proName + ",工序名称:" + processName + ",用户名称:" + userName);
         }
         catch (Exception ex){
+            result=0;
             baseExecuteResultDto.setIsSuccess(false);
             baseExecuteResultDto.setFailMsg(ex.getMessage());
         }
 
         //记录请求参数及结果
-        //barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkLogUserInfoApiDto.toString());
+        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkLogUserInfoApiDto.toString());
 
         return baseExecuteResultDto;
     }
@@ -749,8 +752,10 @@ public class BarcodeUtils {
     public static BaseExecuteResultDto ChkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws Exception {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         UpdateProcessDto updateProcessDto=new UpdateProcessDto();
+        byte result=1;//调用结果(0-失败 1-成功)
+        Long orgId=0L;
         try {
-                Long orgId=0L;
+
                 //参数基础信息判断
                 baseExecuteResultDto=checkParameter(restapiChkSNRoutingApiDto.getWorkOrderCode(),restapiChkSNRoutingApiDto.getProCode(),restapiChkSNRoutingApiDto.getProcessCode(),
                         restapiChkSNRoutingApiDto.getBarcodeCode(),restapiChkSNRoutingApiDto.getPartBarcode(),
@@ -825,12 +830,13 @@ public class BarcodeUtils {
                 baseExecuteResultDto.setSuccessMsg(" 验证通过 ");
 
         }catch (Exception ex) {
+            result=0;
             baseExecuteResultDto.setIsSuccess(false);
             baseExecuteResultDto.setFailMsg(ex.getMessage());
         }
 
         //记录请求参数及结果
-        //barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkSNRoutingApiDto.toString());
+        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkSNRoutingApiDto.toString());
         return baseExecuteResultDto;
     }
 
@@ -847,8 +853,10 @@ public class BarcodeUtils {
     public static BaseExecuteResultDto SnDataTransfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         UpdateProcessDto updateProcessDto=new UpdateProcessDto();
+        byte result=1;//调用结果(0-失败 1-成功)
+        Long orgId=0L;
         try {
-            Long orgId=0L;
+
             //参数基础信息判断
             baseExecuteResultDto=checkParameter(restapiSNDataTransferApiDto.getWorkOrderCode(),restapiSNDataTransferApiDto.getProCode(),restapiSNDataTransferApiDto.getProcessCode(),
                     restapiSNDataTransferApiDto.getBarCode(),restapiSNDataTransferApiDto.getPartBarcode(),
@@ -964,12 +972,13 @@ public class BarcodeUtils {
             baseExecuteResultDto.setIsSuccess(true);
             baseExecuteResultDto.setSuccessMsg(" 过站成功 ");
         }catch (Exception ex) {
+            result=0;
             baseExecuteResultDto.setIsSuccess(false);
             baseExecuteResultDto.setFailMsg(ex.getMessage());
         }
 
         //记录请求参数及结果
-        //barcodeUtils.deviceInterFaceUtils.addLog((byte) 0, (byte) 2, (long) 1002, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiSNDataTransferApiDto.toString());
+        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiSNDataTransferApiDto.toString());
         return baseExecuteResultDto;
     }
 

@@ -58,6 +58,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 	private static final String LOGIN_URI = "/ocean-security/meslogin,/ocean-security/loginByOrgCode,/ocean-security/refreshtoken,/ocean-security/clientGetToken," +
 			"/ocean-security/userinfo,/ocean-security/logout,/ocean-fileserver/file/download,/ocean-fileserver/file/multipleFileBase64" +
 			",/ocean-fileserver/file/uploadToSVG,/ocean-imes-materialapi/material/api" +
+			",/ocean-security/sysRole/findList,/ocean-security/sysUser/saveByApi" +
 			",/ocean-security/sysSpecItem/findList,/ocean-exhibition-client/RCSAPI/agvCallback,/ocean-base/baseOrganization/findList"+
 			",/ocean-imes-materialapi/material/workOrder,/ocean-imes-materialapi/material/purchaseOrder,/ocean-esop/esopNews/findList" +
 			",/ocean-imes-materialapi/material/ChkLogUserInfo,/ocean-imes-materialapi/material/ChkSnRouting,/ocean-imes-materialapi/material/SnDataTransfer" +
@@ -78,7 +79,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			"/ocean-chinafivering-api/webServiceImport/getShelvesNo,/ocean-chinafivering-api/webServiceImport/getSubcontractor,"+
 			"/ocean-chinafivering-api/webServiceImport/getReqDetails,/ocean-chinafivering-api/webServiceImport/getVendorUserNameAndPwd,/ocean-qms/qmsInspectionOrder/autoAdd,"+
 			"/ocean-mes-sfc/mesSfcScanBarcode/chkLogUserInfo,/ocean-mes-sfc/mesSfcScanBarcode/chkSnRouting,/ocean-mes-sfc/mesSfcScanBarcode/snDataTransfer,"+
-			"/ocean-security/sysUser/findList,"+
+			"/ocean-security/sysUser/findList,/ocean-security/sysRole/findList,/ocean-security/sysUser/saveByApi,"+
 			"/ocean-guest-callagv/RCSAPI/agvCallback,/ocean-imes-materialapi/productBomApi,/ocean-esop-baseapi/getIssue/getAllIssue,/ocean-esop-baseapi/getWorkOrder/getAllWorkOrder";
 
 	/**
