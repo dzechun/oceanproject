@@ -53,6 +53,9 @@
             <if test="parentId != null">
                 and sm.parent_id = #{parentId}
             </if>
+            <if test="ifSubquery == 1">
+                and sm.parent_id != 0
+            </if>
             <if test="menuType != null">
                 and sm.menu_type = #{menuType}
             </if>

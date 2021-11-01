@@ -44,6 +44,13 @@ public class SysMenuInfoController {
         return ControllerUtil.returnDataSuccess(menuList, StringUtils.isEmpty(menuList)?0:1);
     }
 
+    @ApiOperation(value = "查询")
+    @PostMapping("/findList")
+    public ResponseEntity<List<SysMenuInfoDto>> findList(@RequestBody(required = false) SearchSysMenuInfo searchSysMenuInfo){
+        List<SysMenuInfoDto> menuList = sysMenuInfoService.findAll(ControllerUtil.dynamicConditionByEntity(searchSysMenuInfo),null);
+        return ControllerUtil.returnDataSuccess(menuList, StringUtils.isEmpty(menuList)?0:1);
+    }
+
     @ApiOperation("增加菜单")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：orderNum、menuName、menuType、parentId（如果没有父级传0）",required = true)@RequestBody @Validated SysMenuInfo sysMenuInfo){

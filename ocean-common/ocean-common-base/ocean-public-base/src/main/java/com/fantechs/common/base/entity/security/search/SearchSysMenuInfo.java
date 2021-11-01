@@ -41,4 +41,10 @@ public class SearchSysMenuInfo extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "menuType",value = "菜单类型")
     private Integer menuType;
+
+    /**
+     * 角色ID
+     */
+    @ApiModelProperty(name = "roleId",value = "菜单编码")
+    private Integer roleId;
 }

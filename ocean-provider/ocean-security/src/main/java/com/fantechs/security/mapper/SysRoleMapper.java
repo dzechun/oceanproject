@@ -7,6 +7,7 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SysRoleMapper extends MyMapper<SysRole> {
     List<SysRole> findRolesByUserId(@Param(value = "userId") Long userId);
@@ -18,4 +19,8 @@ public interface SysRoleMapper extends MyMapper<SysRole> {
     List<SysRoleDto> findMenuRoles(List<String> list);
 
     List<SysRoleDto> findByUserName(SearchSysRole searchSysRole);
+
+    List<SysRole> findByMeunId(Long menuId);
+
+    List<SysRoleDto> findByRoleId(Map<String,Object> map);
 }
