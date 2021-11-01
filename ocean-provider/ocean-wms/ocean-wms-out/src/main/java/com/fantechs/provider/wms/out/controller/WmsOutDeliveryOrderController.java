@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -197,5 +196,11 @@ public class WmsOutDeliveryOrderController {
     @ApiOperation(value = "领料出库单封单反写",hidden = true)
     public ResponseEntity sealOrder(@RequestParam Long deliveryOrderId){
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.sealOrder(deliveryOrderId));
+    }
+
+    @PostMapping("/overIssue")
+    @ApiOperation(value = "领料出库单封单回写接口",hidden = true)
+    public ResponseEntity overIssue(@RequestParam Long deliveryOrderId){
+        return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.overIssue(deliveryOrderId));
     }
 }

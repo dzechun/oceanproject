@@ -83,6 +83,13 @@ public class MesSfcProductPalletRePOServiceImpl extends BaseService<MesSfcProduc
         criteria.andEqualTo("orgId",user.getOrganizationId());
 
         MesSfcBarcodeProcess mesSfcBarcodeProcess=mesSfcBarcodeProcessMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(mesSfcBarcodeProcess)){
+            throw new Exception("找不到条码的过站记录-->"+barcode);
+        }
+
+        if(StringUtils.isEmpty(mesSfcBarcodeProcess.getSamePackageCode())){
+            throw new Exception("条码未绑定PO号-->"+barcode);
+        }
 
         // 绑定关系
         mesSfcBarcodeProcess.setSamePackageCode(newSamePackageCode);

@@ -23,7 +23,6 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJo
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJo;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
@@ -1195,6 +1194,19 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 example.createCriteria().andEqualTo("sourceOrderId",outDeliveryOrderId).andEqualTo("orderTypeId",8).andNotEqualTo("orderStatus",6);
                 List<WmsInnerJobOrder> wmsInnerJobOrders = wmsInnerJobOrderMapper.selectByExample(example);
                 num = this.sealOrderDet(wmsInnerJobOrders);
+
+                if(wmsInnerJobOrders.size()>0 && wmsInnerJobOrders.get(0).getOrderTypeId().equals(8L)) {
+                    SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+                    searchSysSpecItemFiveRing.setSpecCode("FiveRing");
+                    List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+                    if (itemListFiveRing.size() < 1) {
+                        throw new BizErrorException("配置项 FiveRing 获取失败");
+                    }
+                    SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+                    if ("1".equals(sysSpecItem.getParaValue())) {
+                        outFeignApi.overIssue(outDeliveryOrderId);
+                    }
+                }
             }
         }else if(type==1){
             //查询超过21天的作业单

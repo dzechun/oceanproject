@@ -74,4 +74,8 @@ public interface OutFeignApi {
     @PostMapping("/wmsOutDeliveryOrder/sealOrder")
     @ApiOperation(value = "领料出库单封单反写",hidden = true)
     ResponseEntity sealOrder(@RequestParam Long deliveryOrderId);
+
+    @PostMapping("/wmsOutDeliveryOrder/overIssue")
+    @ApiOperation(value = "领料出库单封单回写接口",hidden = true)
+    ResponseEntity overIssue(@RequestParam Long deliveryOrderId);
 }
