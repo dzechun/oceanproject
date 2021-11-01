@@ -56,11 +56,13 @@ public interface PickingOrderService {
     int retrographyStatus(WmsInnerJobOrderDet wmsInnerJobOrderDet);
 
     /**
-     * 新增装车作业单
+     * 快速发运
      * @param outDeliveryOrderId
      * @return
      */
     int autoOutOrder(Long outDeliveryOrderId,Byte orderTypeId);
 
     Map<String ,Object> checkBarcode(String barCode, Long jobOrderDetId);
+
+    int sealOrder(List<Long> outDeliveryOrderIds,Byte type);
 }

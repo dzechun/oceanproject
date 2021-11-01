@@ -105,6 +105,6 @@
                 and sod.sales_order_det_id = #{salesOrderDetId}
             </if>
         </where>
-        order by oso.modified_time desc
+        order by oso.modified_time desc,sod.customer_order_line_number asc
     </select>
 </mapper>

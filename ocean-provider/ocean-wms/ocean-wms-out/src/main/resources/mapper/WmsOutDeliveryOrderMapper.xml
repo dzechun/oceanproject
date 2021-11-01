@@ -203,4 +203,14 @@
       where wodo.delivery_order_id = #{item}
     </foreach>
   </update>
+
+  <select id="totalInventoryQty" resultType="java.math.BigDecimal">
+    SELECT sum(packing_qty) FROM wms_inner_inventory
+    <where>
+        qc_lock=0 AND stock_lock=0 AND lock_status=0 AND job_status=1 and warehouse_id=#{warehouseId} and material_id=#{materialId}
+        <if test="batchCode!=null and batchCode!=''">
+            and batch_code = #{batchCode}
+        </if>
+    </where>
+  </select>
 </mapper>
