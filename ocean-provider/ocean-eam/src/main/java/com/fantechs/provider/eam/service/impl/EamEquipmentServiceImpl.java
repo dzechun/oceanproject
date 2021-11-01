@@ -332,6 +332,7 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     public void barcodeIfRepeat(List<EamEquipmentBarcode> eamEquipmentBarcodeList,SysUser user){
         List<String> equipmentBarcodes = new ArrayList<>();
         List<String> assetCodes = new ArrayList<>();
+        List<String> equipmentSeqNums = new ArrayList<>();
 
         for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodeList) {
             if(StringUtils.isEmpty(eamEquipmentBarcode.getEquipmentBarcode())){
@@ -346,6 +347,10 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "资产条码重复");
             }
 
+            if(equipmentSeqNums.contains(eamEquipmentBarcode.getEquipmentSeqNum())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "设备序号重复");
+            }
+
             Example example = new Example(EamEquipmentBarcode.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("equipmentBarcode", eamEquipmentBarcode.getEquipmentBarcode())
@@ -357,20 +362,22 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
             if (StringUtils.isNotEmpty(equipmentBarcode)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "设备条码重复");
             }
-
-            example.clear();
-            Example.Criteria criteria2 = example.createCriteria();
-            criteria2.andEqualTo("equipmentSeqNum", eamEquipmentBarcode.getEquipmentSeqNum())
-                    .andEqualTo("orgId",user.getOrganizationId());
-            if(StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentBarcodeId())){
-                criteria2.andNotEqualTo("equipmentBarcodeId",eamEquipmentBarcode.getEquipmentBarcodeId());
-            }
-            EamEquipmentBarcode equipmentBarcodNum = eamEquipmentBarcodeMapper.selectOneByExample(example);
-            if (StringUtils.isNotEmpty(equipmentBarcodNum)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "设备序号重复");
-            }
-
             equipmentBarcodes.add(eamEquipmentBarcode.getEquipmentBarcode());
+
+            if(StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentSeqNum())) {
+                example.clear();
+                Example.Criteria criteria2 = example.createCriteria();
+                criteria2.andEqualTo("equipmentSeqNum", eamEquipmentBarcode.getEquipmentSeqNum())
+                        .andEqualTo("orgId", user.getOrganizationId());
+                if (StringUtils.isNotEmpty(eamEquipmentBarcode.getEquipmentBarcodeId())) {
+                    criteria2.andNotEqualTo("equipmentBarcodeId", eamEquipmentBarcode.getEquipmentBarcodeId());
+                }
+                EamEquipmentBarcode equipmentBarcodNum = eamEquipmentBarcodeMapper.selectOneByExample(example);
+                if (StringUtils.isNotEmpty(equipmentBarcodNum)) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "设备序号重复");
+                }
+                equipmentSeqNums.add(eamEquipmentBarcode.getEquipmentSeqNum());
+            }
 
 
             if(StringUtils.isNotEmpty(eamEquipmentBarcode.getAssetCode())) {
