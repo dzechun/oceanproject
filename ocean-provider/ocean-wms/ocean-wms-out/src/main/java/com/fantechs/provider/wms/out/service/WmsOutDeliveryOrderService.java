@@ -46,4 +46,7 @@ public interface WmsOutDeliveryOrderService extends IService<WmsOutDeliveryOrder
     int overIssue(Long deliveryOrderId);
 
     Map<String, Object> importExcel(List<WmsOutDeliveryOrderImport> wmsOutDeliveryOrderImports);
+
+    //封单
+    int sealOrder(Long outDeliveryOrderId);
 }

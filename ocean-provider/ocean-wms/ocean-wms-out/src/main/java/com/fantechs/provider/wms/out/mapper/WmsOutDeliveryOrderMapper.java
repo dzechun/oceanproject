@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +19,6 @@ public interface WmsOutDeliveryOrderMapper extends MyMapper<WmsOutDeliveryOrder>
      * @return
      */
     int batchUpdateStatus(List<Long> ids);
+
+    BigDecimal totalInventoryQty(Map<String ,Object> map);
 }

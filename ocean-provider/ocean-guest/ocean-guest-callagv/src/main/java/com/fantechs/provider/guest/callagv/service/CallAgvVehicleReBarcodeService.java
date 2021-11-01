@@ -22,7 +22,7 @@ public interface CallAgvVehicleReBarcodeService extends IService<CallAgvVehicleR
 
     String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Integer type) throws Exception;
 
-    String genAgvSchedulingTask(String taskTyp, List<String> positionCodeList) throws Exception;
+    String genAgvSchedulingTask(String taskTyp, List<String> positionCodeList, String podCode) throws Exception;
 
     int vehicleBarcodeUnbound(RequestBarcodeUnboundDTO requestBarcodeUnboundDTO);
 

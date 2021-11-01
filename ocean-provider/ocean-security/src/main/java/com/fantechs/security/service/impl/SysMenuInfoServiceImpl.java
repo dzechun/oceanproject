@@ -4,7 +4,6 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysMenuInListDTO;
 import com.fantechs.common.base.dto.security.SysMenuInfoDto;
 import com.fantechs.common.base.dto.security.SysRoleDto;
-import com.fantechs.common.base.entity.security.SysAuthRole;
 import com.fantechs.common.base.entity.security.SysMenuInfo;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -53,16 +52,23 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
             List<SysMenuInfoDto> removeObject = new LinkedList<>();
             for (int i = 0; i < tSysMenuinfos.size(); i++) {
                 SysMenuInfoDto tSysMenuinfo = tSysMenuinfos.get(i);
+
+                List<SysRole> byMeunId = sysRoleMapper.findByMeunId(tSysMenuinfo.getMenuId());
+
+
                 //---取菜单对应的所有角色
-                Example example1 = new Example(SysAuthRole.class);
-                Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("menuId", tSysMenuinfo.getMenuId());
-                List<SysAuthRole> tSysAuthforroles = sysAuthRoleMapper.selectByExample(example1);
+//                Example example1 = new Example(SysAuthRole.class);
+//                Example.Criteria criteria1 = example1.createCriteria();
+//                criteria1.andEqualTo("menuId", tSysMenuinfo.getMenuId());
+//                List<SysAuthRole> tSysAuthforroles = sysAuthRoleMapper.selectByExample(example1);
 
                 if (StringUtils.isNotEmpty(rolesId)) {
                     //---判断用户角色是否属于当前菜单
                     boolean isR = false;
-                    for (SysAuthRole tSysAuthforrole : tSysAuthforroles) {
+                    for (SysRole tSysAuthforrole : byMeunId) {
+                        if (tSysAuthforrole == null) {
+                            continue;
+                        }
                         if (rolesId.contains(tSysAuthforrole.getRoleId().toString())) {
                             isR = true;
                             break;
@@ -75,9 +81,9 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
                 }
 
                 List<SysRole> tSysRoles = new LinkedList<>();
-                if (tSysAuthforroles != null) {
-                    for (SysAuthRole tSysAuthforrole : tSysAuthforroles) {
-                        SysRole tSysRole = sysRoleMapper.selectByPrimaryKey(tSysAuthforrole.getRoleId());
+                if (byMeunId != null) {
+                    for (SysRole tSysRole : byMeunId) {
+//                        SysRole tSysRole = sysRoleMapper.selectByPrimaryKey(tSysAuthforrole.getRoleId());
 
                         if (StringUtils.isEmpty(tSysRole)||(StringUtils.isNotEmpty(tSysRole.getStatus()) && tSysRole.getStatus() == 0)) {
                             continue;
@@ -270,16 +276,21 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
 
     @Override
     public List<SysMenuInListDTO> findMenuList(Map<String, Object> map, List<String> roleIds) {
-
         //获取所有的父级目录
         List<SysMenuInfoDto> menuinfos = findAll(map,roleIds);
+
         List<SysMenuInListDTO> sysMenuInListDTO = null;
         //获取当前登录所属角色所有的子菜单
         List<SysMenuInfoDto> list = sysMenuInfoMapper.findByUsreId(roleIds,map.get("menuType"));
 
-        List<SysRoleDto> menuRoles = sysRoleMapper.findMenuRoles(roleIds==null?new ArrayList<>():roleIds);
-        Map<Long, List<SysRoleDto>> roleMap = menuRoles.stream().collect(Collectors.groupingBy(SysRoleDto::getMenuId));
-
+        Map<Long, List<SysRoleDto>> roleMap = null;
+        if (StringUtils.isNotEmpty(roleIds)) {
+            List<SysRoleDto> menuRoles = sysRoleMapper.findMenuRoles(roleIds==null?new ArrayList<>():roleIds);
+            roleMap = menuRoles.stream().collect(Collectors.groupingBy(SysRoleDto::getMenuId));
+        } else if (StringUtils.isNotEmpty(map.get("roleId"))) {
+            List<SysRoleDto> menuRoles = sysRoleMapper.findByRoleId(map);
+            roleMap = menuRoles.stream().collect(Collectors.groupingBy(SysRoleDto::getMenuId));
+        }
         if(StringUtils.isNotEmpty(menuinfos)){
             sysMenuInListDTO =new LinkedList<>();
             for (SysMenuInfoDto menuinfo : menuinfos) {
@@ -302,9 +313,11 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
                 count++;
                 SysMenuInListDTO tSysMenuinfoListDTO1 = new SysMenuInListDTO();
                 SysMenuInfoDto remove = menuList.remove(i);
-                List<SysRoleDto> roleDtos = roleMap.remove(remove.getMenuId());
-                if (StringUtils.isNotEmpty(roleDtos)){
-                    remove.getRoles().addAll(roleDtos);
+                if (roleMap != null) {
+                    List<SysRoleDto> roleDtos = roleMap.remove(remove.getMenuId());
+                    if (StringUtils.isNotEmpty(roleDtos)){
+                        remove.getRoles().addAll(roleDtos);
+                    }
                 }
                 tSysMenuinfoListDTO1.setSysMenuInfoDto(remove);
                 tSysMenuinfoListDTOList.add(tSysMenuinfoListDTO1);

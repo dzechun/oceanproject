@@ -159,6 +159,11 @@
                     #{orderStatus}
                 </foreach>
             </if>
+            <if test="sealOrder!=null and sealOrder==1">
+                and DATE_FORMAT(wipo.work_start_time,'%y-%m-%d')&lt;=DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 21 day),'%y-%m-%d')
+                and wipo.order_status!=6
+                and wipo.order_type_id=8
+            </if>
         </where>
         order by wipo.create_time desc
     </select>

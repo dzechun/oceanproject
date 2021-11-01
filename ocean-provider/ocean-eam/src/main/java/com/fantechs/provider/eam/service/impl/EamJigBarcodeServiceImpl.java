@@ -5,16 +5,11 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.imports.BaseShipmentEnterpriseImport;
 import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.dto.eam.imports.EamJigBarcodeImport;
-import com.fantechs.common.base.general.entity.basic.BaseShipmentEnterprise;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtShipmentEnterprise;
 import com.fantechs.common.base.general.entity.eam.EamJig;
 import com.fantechs.common.base.general.entity.eam.EamJigBarcode;
-import com.fantechs.common.base.general.entity.eam.EamJigCategory;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigBarcode;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJigCategory;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -165,7 +160,7 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
             String jigBarcode = eamJigBarcodeImport.getJigBarcode();
             String assetCode = eamJigBarcodeImport.getAssetCode();
             if (StringUtils.isEmpty(
-                    jigBarcode,assetCode
+                    jigBarcode
             )){
                 fail.add(i+4);
                 continue;
@@ -181,20 +176,22 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
                 continue;
             }
 
-            example.clear();
-            Example.Criteria criteria1 = example.createCriteria();
-            criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
-            criteria1.andEqualTo("assetCode",assetCode);
-            if (StringUtils.isNotEmpty(eamJigBarcodeMapper.selectOneByExample(example))){
-                fail.add(i+4);
-                continue;
+            if(StringUtils.isNotEmpty(assetCode)) {
+                example.clear();
+                Example.Criteria criteria1 = example.createCriteria();
+                criteria1.andEqualTo("orgId", currentUser.getOrganizationId());
+                criteria1.andEqualTo("assetCode", assetCode);
+                if (StringUtils.isNotEmpty(eamJigBarcodeMapper.selectOneByExample(example))) {
+                    fail.add(i + 4);
+                    continue;
+                }
             }
 
             //判断集合中是否已经存在同样的数据
             boolean tag = false;
             if (StringUtils.isNotEmpty(list)){
                 for (EamJigBarcode eamJigBarcode : list) {
-                    if (eamJigBarcode.getJigBarcode().equals(jigBarcode)||eamJigBarcode.getAssetCode().equals(assetCode)){
+                    if (eamJigBarcode.getJigBarcode().equals(jigBarcode)||(StringUtils.isNotEmpty(assetCode)&&eamJigBarcode.getAssetCode().equals(assetCode))){
                         tag = true;
                     }
                 }

@@ -237,7 +237,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                     && !baseStorageTaskPoint.getType().equals(baseStorageTaskPointList.get(0).getType())) {
                 taskTyp = temVehicle.getAgvTaskTemplateSecond();
             }
-            taskCode = genAgvSchedulingTask(taskTyp, positionCodeList);
+            taskCode = genAgvSchedulingTask(taskTyp, positionCodeList, temVehicle.getVehicleCode());
             log.info("==========启动agv执行" + message + "作业任务==============\r\n");
             baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
             baseStorageTaskPoint.setModifiedUserId(user.getUserId());
@@ -319,11 +319,12 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     /**
      * @param taskTyp          任务类型
      * @param positionCodeList 坐标列表
+     * @param podCode 货架编号
      * @return agv任务单号
      * @throws BizErrorException
      */
     @Override
-    public String genAgvSchedulingTask(String taskTyp, List<String> positionCodeList) throws Exception {
+    public String genAgvSchedulingTask(String taskTyp, List<String> positionCodeList, String podCode) throws Exception {
 
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("taskTyp", taskTyp);
@@ -336,6 +337,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             positionCodePathList.add(positionCodePath);
         }
         dataMap.put("positionCodePath", positionCodePathList);
+        dataMap.put("podCode", podCode);
 
         String AGVResult = agvFeignApi.genAgvSchedulingTask(dataMap).getData();
         log.info("启动AGV任务：param : " + JSONObject.toJSONString(dataMap) + " ;response : " + AGVResult + "\n\r");

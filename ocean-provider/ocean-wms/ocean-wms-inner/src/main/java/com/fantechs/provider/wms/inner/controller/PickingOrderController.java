@@ -82,4 +82,10 @@ public class PickingOrderController {
     public ResponseEntity autoOutOrder(@RequestParam Long outDeliveryOrderId,@RequestParam Byte orderTypeId){
         return ControllerUtil.returnCRUD(pickingOrderService.autoOutOrder(outDeliveryOrderId,orderTypeId));
     }
+
+    @PostMapping("/sealOrder")
+    @ApiOperation("封单")
+    public ResponseEntity sealOrder(@RequestBody(required = false) List<Long> outDeliveryOrderIds,@RequestParam(required = false) Byte type){
+        return ControllerUtil.returnCRUD(pickingOrderService.sealOrder(outDeliveryOrderIds,type));
+    }
 }

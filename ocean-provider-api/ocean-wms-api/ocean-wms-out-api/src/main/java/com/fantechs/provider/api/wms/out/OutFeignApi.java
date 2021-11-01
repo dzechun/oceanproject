@@ -71,4 +71,7 @@ public interface OutFeignApi {
     @PostMapping("/wmsOutDeliveryOrder/saveByApi")
     ResponseEntity saveByApi(@ApiParam(value = "必传：deliveryOrderCode",required = true)@RequestBody @Validated WmsOutDeliveryOrder wmsOutDeliveryOrder);
 
+    @PostMapping("/wmsOutDeliveryOrder/sealOrder")
+    @ApiOperation(value = "领料出库单封单反写",hidden = true)
+    ResponseEntity sealOrder(@RequestParam Long deliveryOrderId);
 }

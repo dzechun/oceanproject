@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.out.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -418,6 +419,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int createJobOrder(Long id,Long platformId) {
         Map<String, Object> map = new HashMap<>();
         map.put("deliveryOrderId", id);
@@ -453,6 +455,12 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             Map<Long, List<WmsOutDeliveryOrderDetDto>> listMap = new HashMap<>();
             //根据仓库id分组(一个仓库对应一个作业单)
             for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto : wmsOutDeliveryOrderDetList) {
+                //查询库存
+                BigDecimal totalInvQty = wmsOutDeliveryOrderMapper.totalInventoryQty(ControllerUtil.dynamicCondition("warehouseId",wmsOutDeliveryOrderDetDto.getWarehouseId(),"materialId",wmsOutDeliveryOrderDetDto.getMaterialId(),"batchCode",wmsOutDeliveryOrderDetDto.getBatchCode()));
+                if(StringUtils.isEmpty(totalInvQty) || totalInvQty.compareTo(wmsOutDeliveryOrderDetDto.getPackingQty())==-1){
+                    throw new BizErrorException("库存不足,无法创建作业单");
+                }
+
                 if (listMap.containsKey(wmsOutDeliveryOrderDetDto.getWarehouseId())) {
                     listMap.get(wmsOutDeliveryOrderDetDto.getWarehouseId()).add(wmsOutDeliveryOrderDetDto);
                 } else {
@@ -792,6 +800,29 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         resultMap.put("操作成功总数",success);
         resultMap.put("操作失败行数",fail);
         return resultMap;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
+    public int sealOrder(Long outDeliveryOrderId) {
+        WmsOutDeliveryOrder wmsOutDeliveryOrder  = wmsOutDeliveryOrderMapper.selectByPrimaryKey(outDeliveryOrderId);
+        if(StringUtils.isEmpty(wmsOutDeliveryOrder)){
+            throw new BizErrorException("单据信息获取失败");
+        }
+        Example example = new Example(WmsOutDeliveryOrderDet.class);
+        example.createCriteria().andEqualTo("deliveryOrderId",outDeliveryOrderId);
+        List<WmsOutDeliveryOrderDet> wmsOutDeliveryOrderDets = wmsOutDeliveryOrderDetMapper.selectByExample(example);
+        for (WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet : wmsOutDeliveryOrderDets) {
+            if(StringUtils.isEmpty(wmsOutDeliveryOrderDet.getDispatchQty())){
+                wmsOutDeliveryOrderDet.setDispatchQty(BigDecimal.ZERO);
+            }
+            wmsOutDeliveryOrderDet.setPickingQty(wmsOutDeliveryOrderDet.getDispatchQty());
+            wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
+        }
+        wmsOutDeliveryOrder.setOrderStatus((byte)5);
+        int num = wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrder);
+        return num;
     }
 
     @Override
