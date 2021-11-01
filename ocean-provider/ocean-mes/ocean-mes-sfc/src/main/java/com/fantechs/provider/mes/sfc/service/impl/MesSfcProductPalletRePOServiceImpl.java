@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcProductPalletRePOMapper;
@@ -63,6 +64,16 @@ public class MesSfcProductPalletRePOServiceImpl extends BaseService<MesSfcProduc
         String newSamePackageCode=mesSfcProductPalletRePODto.getNewSamePackageCode();
         String barcode=mesSfcProductPalletRePODto.getBarcode();
 
+        if(StringUtils.isEmpty(oldSamePackageCode)){
+            throw new Exception("原PO号不能为空");
+        }
+        if(StringUtils.isEmpty(newSamePackageCode)){
+            throw new Exception("新PO号不能为空");
+        }
+        if(oldSamePackageCode.equals(newSamePackageCode)){
+            throw new Exception("原PO号不能与新PO号相同");
+        }
+
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         Example example = new Example(MesSfcBarcodeProcess.class);
@@ -71,7 +82,6 @@ public class MesSfcProductPalletRePOServiceImpl extends BaseService<MesSfcProduc
         criteria.andEqualTo("barcode",barcode);
         criteria.andEqualTo("orgId",user.getOrganizationId());
 
-        //根据合同号和主项次号查找现有数据 存在则更新 不存在则新增
         MesSfcBarcodeProcess mesSfcBarcodeProcess=mesSfcBarcodeProcessMapper.selectOneByExample(example);
 
         // 绑定关系
