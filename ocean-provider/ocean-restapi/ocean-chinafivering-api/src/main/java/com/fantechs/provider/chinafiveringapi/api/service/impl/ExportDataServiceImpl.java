@@ -237,7 +237,7 @@ public class ExportDataServiceImpl implements ExportDataService {
         }
 
         //记录日志
-        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray,"writePackingLists");
+        logsUtils.addlog(result,(byte)1,1004L,str,jsonVoiceArray,"writeShelvesNo");
 
         return baseExecuteResultDto;
     }
@@ -272,8 +272,10 @@ public class ExportDataServiceImpl implements ExportDataService {
             baseExecuteResultDto.setFailMsg(ex.getMessage());
         }
 
+        String paraMeter="ISGUID:"+ISGUID+","+"userName:"+userName;
+
         //记录日志
-        logsUtils.addlog(result,(byte)1,1004L,str,"","writePackingLists");
+        logsUtils.addlog(result,(byte)1,1004L,str,paraMeter,"overIssue");
 
         return baseExecuteResultDto;
     }
