@@ -3,12 +3,11 @@ package com.fantechs.provider.base.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessCauseImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionExemptedListImport;
-import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCause;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionExemptedList;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtInventoryStatus;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -20,7 +19,6 @@ import com.fantechs.provider.base.service.BaseInspectionExemptedListService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.common.BaseMapper;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -91,7 +89,7 @@ public class BaseInspectionExemptedListServiceImpl extends BaseService<BaseInspe
         BeanUtils.copyProperties(baseInspectionExemptedList, baseHtInspectionExemptedList);
         baseHtInspectionExemptedListMapper.insert(baseHtInspectionExemptedList);
 
-        return baseInspectionExemptedListMapper.updateByPrimaryKeySelective(baseInspectionExemptedList);
+        return baseInspectionExemptedListMapper.updateByPrimaryKey(baseInspectionExemptedList);
     }
 
     @Override

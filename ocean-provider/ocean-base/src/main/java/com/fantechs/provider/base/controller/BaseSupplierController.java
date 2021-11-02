@@ -12,6 +12,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.base.service.BaseSupplierReUserService;
 import com.fantechs.provider.base.service.BaseSupplierService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -47,6 +48,8 @@ public class BaseSupplierController {
 
     @Resource
     private BaseSupplierService baseSupplierService;
+    @Resource
+    private BaseSupplierReUserService baseSupplierReUserService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -101,7 +104,7 @@ public class BaseSupplierController {
     public ResponseEntity<List<BaseSupplier>> findInspectionSupplierList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionExemptedList searchBaseInspectionExemptedList) {
         Page<Object> page = PageHelper.startPage(searchBaseInspectionExemptedList.getStartPage(), searchBaseInspectionExemptedList.getPageSize());
         List<BaseSupplier> list = baseSupplierService.findInspectionSupplierList(searchBaseInspectionExemptedList);
-        return ControllerUtil.returnDataSuccess(list,list.size());
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @PostMapping(value = "/export")
