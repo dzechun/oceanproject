@@ -73,7 +73,7 @@ public class LeisaiProcessInputOrderController {
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/batchUpdate")
     public ResponseEntity batchUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<LeisaiProcessInputOrder> list) {
-        return ControllerUtil.returnCRUD(leisaiProcessInputOrderService.batchSave(list));
+        return ControllerUtil.returnCRUD(leisaiProcessInputOrderService.batchUpdate(list));
     }
 
     @ApiOperation("获取详情")

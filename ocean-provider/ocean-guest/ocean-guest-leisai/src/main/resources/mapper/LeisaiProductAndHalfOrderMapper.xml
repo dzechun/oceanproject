@@ -80,8 +80,8 @@
       <if test="recorder != null and recorder!=''">
         and lpaho.recorder like CONCAT('%', #{recorder}, '%')
       </if>
-      <if test="processInputOrderCode != null and processInputOrderCode!=''">
-        and lpaho.process_input_order_code = #{processInputOrderCode}
+      <if test="productAndHalfOrderCode != null and productAndHalfOrderCode!=''">
+        and lpaho.product_and_half_order_code = #{productAndHalfOrderCode}
       </if>
       <if test="workOrderCode != null and workOrderCode!=''">
         and lpaho.work_order_code = #{workOrderCode}
