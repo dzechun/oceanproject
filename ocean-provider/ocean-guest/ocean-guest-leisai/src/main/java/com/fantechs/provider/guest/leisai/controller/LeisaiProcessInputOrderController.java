@@ -52,6 +52,12 @@ public class LeisaiProcessInputOrderController {
         return ControllerUtil.returnCRUD(leisaiProcessInputOrderService.save(leisaiProcessInputOrder));
     }
 
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<LeisaiProcessInputOrder> list) {
+        return ControllerUtil.returnCRUD(leisaiProcessInputOrderService.batchSave(list));
+    }
+
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
@@ -62,6 +68,12 @@ public class LeisaiProcessInputOrderController {
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=LeisaiProcessInputOrder.update.class) LeisaiProcessInputOrder leisaiProcessInputOrder) {
         return ControllerUtil.returnCRUD(leisaiProcessInputOrderService.update(leisaiProcessInputOrder));
+    }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<LeisaiProcessInputOrder> list) {
+        return ControllerUtil.returnCRUD(leisaiProcessInputOrderService.batchSave(list));
     }
 
     @ApiOperation("获取详情")

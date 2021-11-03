@@ -52,6 +52,12 @@ public class LeisaiProductAndHalfOrderController {
         return ControllerUtil.returnCRUD(leisaiProductAndHalfOrderService.save(leisaiProductAndHalfOrder));
     }
 
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<LeisaiProductAndHalfOrder> list) {
+        return ControllerUtil.returnCRUD(leisaiProductAndHalfOrderService.batchSave(list));
+    }
+
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
@@ -62,6 +68,12 @@ public class LeisaiProductAndHalfOrderController {
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=LeisaiProductAndHalfOrder.update.class) LeisaiProductAndHalfOrder leisaiProductAndHalfOrder) {
         return ControllerUtil.returnCRUD(leisaiProductAndHalfOrderService.update(leisaiProductAndHalfOrder));
+    }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<LeisaiProductAndHalfOrder> list) {
+        return ControllerUtil.returnCRUD(leisaiProductAndHalfOrderService.batchSave(list));
     }
 
     @ApiOperation("获取详情")

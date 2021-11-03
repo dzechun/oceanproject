@@ -17,4 +17,9 @@ public interface LeisaiProcessInputOrderService extends IService<LeisaiProcessIn
     List<LeisaiProcessInputOrderDto> findList(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<LeisaiProcessInputOrderImport> list);
+
+    int batchSave(List<LeisaiProcessInputOrder> list);
+
+    int batchUpdate(List<LeisaiProcessInputOrder> list);
+
 }

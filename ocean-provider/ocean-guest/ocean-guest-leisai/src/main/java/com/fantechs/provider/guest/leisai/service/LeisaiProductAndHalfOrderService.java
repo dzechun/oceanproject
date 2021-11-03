@@ -17,4 +17,8 @@ public interface LeisaiProductAndHalfOrderService extends IService<LeisaiProduct
     List<LeisaiProductAndHalfOrderDto> findList(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<LeisaiProductAndHalfOrderImport> leisaiProductAndHalfOrderImports);
+
+    int batchSave(List<LeisaiProductAndHalfOrder> list);
+
+    int batchUpdate(List<LeisaiProductAndHalfOrder> list);
 }
