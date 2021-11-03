@@ -163,7 +163,7 @@ order by mswob.create_time desc
         <where>
             id = #{id}
             <if test="_parameter.containsKey('labelCategoryId')">
-                <if test="labelCategoryId!=null and labelCategoryId！=''">
+                <if test="labelCategoryId!=null and labelCategoryId!=''">
                     and label_category_id = #{labelCategoryId}
                 </if>
             </if>

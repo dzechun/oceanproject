@@ -10,4 +10,6 @@ import java.util.Map;
 public interface BaseSupplierMapper extends MyMapper<BaseSupplier> {
 
     List<BaseSupplier> findList(Map<String, Object> map);
+
+    List<BaseSupplier> findInspectionSupplierList(Map<String, Object> map);
 }

@@ -117,4 +117,61 @@ public class LeisaiProductAndHalfOrderServiceImpl extends BaseService<LeisaiProd
         resultMap.put("操作失败行数",fail);
         return resultMap;
     }
+
+
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchSave(List<LeisaiProductAndHalfOrder> list) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        int i = 1;
+        if (StringUtils.isNotEmpty(list)){
+            List<LeisaiProductAndHalfOrder> addList = new ArrayList<>();
+            List<LeisaiHtProductAndHalfOrder> addHtList = new ArrayList<>();
+            for (LeisaiProductAndHalfOrder productAndHalfOrder : list) {
+                productAndHalfOrder.setCreateUserId(currentUser.getUserId());
+                productAndHalfOrder.setCreateTime(new Date());
+                productAndHalfOrder.setModifiedUserId(currentUser.getUserId());
+                productAndHalfOrder.setModifiedTime(new Date());
+                productAndHalfOrder.setOrgId(currentUser.getOrganizationId());
+                addList.add(productAndHalfOrder);
+
+                //新增履历表信息
+                LeisaiHtProductAndHalfOrder  htProductAndHalfOrder = new LeisaiHtProductAndHalfOrder();
+                BeanUtils.copyProperties(productAndHalfOrder, productAndHalfOrder);
+                addHtList.add(htProductAndHalfOrder);
+            }
+            if(StringUtils.isNotEmpty(addList))
+                i= leisaiProductAndHalfOrderMapper.insertList(addList);
+            if(StringUtils.isNotEmpty(addHtList))
+                leisaiHtProductAndHalfOrderMapper.insertList(addHtList);
+        }
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchUpdate(List<LeisaiProductAndHalfOrder> list) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        int i = 1;
+        if (StringUtils.isNotEmpty(list)){
+            List<LeisaiProductAndHalfOrder> addList = new ArrayList<>();
+            List<LeisaiHtProductAndHalfOrder> addHtList = new ArrayList<>();
+            for (LeisaiProductAndHalfOrder productAndHalfOrder : list) {
+                productAndHalfOrder.setModifiedUserId(currentUser.getUserId());
+                productAndHalfOrder.setModifiedTime(new Date());
+                productAndHalfOrder.setOrgId(currentUser.getOrganizationId());
+                leisaiProductAndHalfOrderMapper.updateByPrimaryKeySelective(productAndHalfOrder);
+
+                //新增履历表信息
+                LeisaiHtProductAndHalfOrder  htProductAndHalfOrder = new LeisaiHtProductAndHalfOrder();
+                BeanUtils.copyProperties(productAndHalfOrder, productAndHalfOrder);
+                leisaiHtProductAndHalfOrderMapper.updateByPrimaryKeySelective(htProductAndHalfOrder);
+            }
+
+        }
+        return i;
+    }
+
+
 }

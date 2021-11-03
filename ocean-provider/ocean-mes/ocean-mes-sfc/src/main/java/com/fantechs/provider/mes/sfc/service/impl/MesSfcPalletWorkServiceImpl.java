@@ -27,7 +27,6 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
@@ -77,8 +76,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     InFeignApi inFeignApi;
     @Resource
     SecurityFeignApi securityFeignApi;
-    @Resource
-    private OMFeignApi omFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -112,25 +109,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该条码对应的包箱未关闭，请先进行包箱关闭");
             }
 
-            if(requestPalletWorkScanDto.getPalletType() == 0){
-                // 判断是否同一工单
-                List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = mesSfcWorkOrderBarcodeService.findByWorkOrderGroup(map);
-                if(workOrderBarcodeDtos.size() > 1){
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012034);
-                }
-            }
-            //扫描的是箱码 判断是否为同一PO 2021-10-20
-            if(requestPalletWorkScanDto.getPalletType() == 2){
-                // 判断是否为同一PO
-                List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findByPOGroup(map);
-                if(mesSfcBarcodeProcessList.size() > 1){
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012034,"该包箱条码不属于同个PO，不可扫码");
-                }
-                else{
-                    samePackageCode=mesSfcBarcodeProcessList.get(0).getSamePackageCode();
-                }
-            }
-
             workOrderId = mesSfcProductCartonDtoList.get(0).getWorkOrderId();
             // 获取箱号绑定产品条码
             cartonCode = requestPalletWorkScanDto.getBarcode();
@@ -140,6 +118,32 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             for (MesSfcProductCartonDetDto mesSfcProductCartonDetDto : mesSfcProductCartonDetDtoList) {
                 MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = mesSfcWorkOrderBarcodeService.selectByKey(mesSfcProductCartonDetDto.getWorkOrderBarcodeId());
                 mesSfcWorkOrderBarcodeList.add(mesSfcWorkOrderBarcode);
+            }
+
+            if(requestPalletWorkScanDto.getPalletType() == 0){
+                // 判断是否同一工单
+                List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = mesSfcWorkOrderBarcodeService.findByWorkOrderGroup(map);
+                if(workOrderBarcodeDtos.size() > 1){
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012034);
+                }
+            }
+            //扫描的是箱码 判断是否为同一PO 2021-10-20
+            if(requestPalletWorkScanDto.getPalletType() == 2){
+                Map<String, Object> currentmap = new HashMap<>();
+                currentmap.put("workOrderBarcodeId", mesSfcProductCartonDetDtoList.get(0).getWorkOrderBarcodeId());
+                List<MesSfcBarcodeProcessDto> processServiceList = mesSfcBarcodeProcessService.findList(currentmap);
+                if (processServiceList.get(0).getSamePackageCode() == null){
+                    // PDA设置为同PO栈板，如果该条码没有PO号则按同料号走
+                    requestPalletWorkScanDto.setPalletType((byte) 1);
+                }else {
+                    // 判断是否为同一PO
+                    List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findByPOGroup(map);
+                    if(mesSfcBarcodeProcessList.size() > 1){
+                        throw new BizErrorException(ErrorCodeEnum.PDA40012034.getCode(),"该包箱条码不属于同个PO，不可扫码");
+                    }else{
+                        samePackageCode=mesSfcBarcodeProcessList.get(0).getSamePackageCode();
+                    }
+                }
             }
         } else {
             workOrderId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId();
@@ -165,13 +169,13 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if(processServiceList == null && processServiceList.size() <= 0){
                 throw new BizErrorException(ErrorCodeEnum.PDA40012000);
             }
+
+            if (requestPalletWorkScanDto.getPalletType() == 2 && processServiceList.get(0).getSamePackageCode() == null){
+                // PDA设置为同PO栈板，如果该条码没有PO号则按同料号走
+                requestPalletWorkScanDto.setPalletType((byte) 1);
+            }
+
             if(requestPalletWorkScanDto.getPalletType() == 0){
-//                Map<String, Object> map = new HashMap<>();
-//                map.put("workOrderBarcodeId", workOrderBarcodeId);
-//                List<MesSfcBarcodeProcessDto> processServiceList = mesSfcBarcodeProcessService.findList(map);
-//                if(processServiceList == null && processServiceList.size() <= 0){
-//                    throw new BizErrorException(ErrorCodeEnum.PDA40012000);
-//                }
 
                 if(StringUtils.isNotEmpty(processServiceList.get(0).getCartonCode())) {
                     map.clear();
@@ -184,7 +188,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     }
                 }
                 else{
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012034, "该产品条码未包箱，不可进行栈板扫码");
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012034.getCode(), "该产品条码未包箱，不可进行栈板扫码");
                 }
 
             }
@@ -197,13 +201,13 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
                     List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findByPOGroup(map);
                     if (mesSfcBarcodeProcessList.size() > 1) {
-                        throw new BizErrorException(ErrorCodeEnum.PDA40012034, "该包箱条码不属于同个PO，不可扫码");
+                        throw new BizErrorException(ErrorCodeEnum.PDA40012034.getCode(), "该包箱条码不属于同个PO，不可扫码");
                     } else {
                         samePackageCode = mesSfcBarcodeProcessList.get(0).getSamePackageCode();
                     }
                 }
                 else{
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012034, "该产品条码未包箱，不可进行栈板扫码");
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012034.getCode(), "该产品条码未包箱，不可进行栈板扫码");
                 }
             }
 

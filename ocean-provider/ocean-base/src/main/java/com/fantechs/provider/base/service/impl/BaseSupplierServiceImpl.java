@@ -5,7 +5,10 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseAddressDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
-import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.BaseSignature;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
+import com.fantechs.common.base.general.entity.basic.BaseSupplierAddress;
+import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionExemptedList;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -36,59 +39,15 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     @Resource
     private BaseSupplierAddressMapper baseSupplierAddressMapper;
     @Resource
-    private BaseInspectionExemptedListMapper baseInspectionExemptedListMapper;
-    @Resource
-    private BaseMaterialSupplierMapper baseMaterialSupplierMapper;
-    @Resource
-    private BaseMaterialMapper baseMaterialMapper;
-    @Resource
     private BaseHtSupplierMapper baseHtSupplierMapper;
     @Resource
     private BaseSupplierReUserMapper baseSupplierReUserMapper;
 
     @Override
     public List<BaseSupplier> findInspectionSupplierList(SearchBaseInspectionExemptedList searchBaseInspectionExemptedList) {
-        if(StringUtils.isEmpty(searchBaseInspectionExemptedList.getMaterialCode())){
-            throw new BizErrorException("产品料号不能为空");
-        }
-
-        Example example = new Example(BaseMaterial.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialCode",searchBaseInspectionExemptedList.getMaterialCode());
-        List<BaseMaterial> baseMaterials = baseMaterialMapper.selectByExample(example);
-
-        List<BaseInspectionExemptedList> baseInspectionExemptedLists = baseInspectionExemptedListMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInspectionExemptedList));
-        ArrayList<Long> idList = new ArrayList();
-        if(StringUtils.isNotEmpty(baseInspectionExemptedLists)){
-            for (BaseInspectionExemptedList baseInspectionExemptedList : baseInspectionExemptedLists){
-                if(baseInspectionExemptedList.getObjType()==1){
-                    idList.add(baseInspectionExemptedList.getSupplierId());
-                }else if(baseInspectionExemptedList.getObjType()==2){
-                    idList.add(baseInspectionExemptedList.getCustomerId());
-                }
-            }
-        }
-
-        Example example1 = new Example(BaseMaterialSupplier.class);
-        Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("materialId",baseMaterials.get(0).getMaterialId());
-        if(idList.size()>0){
-            criteria1.andNotIn("supplierId",idList);
-        }
-        List<BaseMaterialSupplier> baseMaterialSuppliers = baseMaterialSupplierMapper.selectByExample(example1);
-
-        if(StringUtils.isEmpty(baseMaterialSuppliers)){
-            throw new BizErrorException("没有符合条件的客户");
-        }
-
-        ArrayList<Long> ids = new ArrayList();
-        for (BaseMaterialSupplier baseMaterialSupplier: baseMaterialSuppliers){
-            ids.add(baseMaterialSupplier.getSupplierId());
-        }
-        Example example2 = new Example(BaseSupplier.class);
-        Example.Criteria criteria2 = example2.createCriteria();
-        criteria2.andIn("supplierId",ids);
-        List<BaseSupplier> baseSuppliers = baseSupplierMapper.selectByExample(example2);
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        searchBaseInspectionExemptedList.setOrgId(user.getOrganizationId());
+        List<BaseSupplier> baseSuppliers = baseSupplierMapper.findInspectionSupplierList(ControllerUtil.dynamicConditionByEntity(searchBaseInspectionExemptedList));
         return baseSuppliers;
     }
 
@@ -98,14 +57,12 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
             map.put("orgId", user.getOrganizationId());
             map.put("userId", user.getUserId());
-           /* Map<String, Object> mapReUser=new HashMap<>();
+            /*Map<String, Object> mapReUser=new HashMap<>();
             mapReUser.put("userId",user.getUserId());
             mapReUser.put("orgId",user.getOrganizationId());
             List<BaseSupplierReUser> list = baseSupplierReUserMapper.findList(mapReUser);
             if(StringUtils.isNotEmpty(list))
-                map.put("supplierId",list.get(0).getSupplierId());
-            else
-                map.put("supplierId","");*/
+                map.put("supplierId",list.get(0).getSupplierId());*/
         }
 
         return baseSupplierMapper.findList(map);

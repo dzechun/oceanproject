@@ -15,6 +15,8 @@ import java.io.Serializable;
 @Data
 public class SearchBaseSupplier extends BaseQuery implements Serializable {
     private static final long serialVersionUID = -2927770419793897574L;
+    @ApiModelProperty("供应商id")
+    private Long supplierId;
     @ApiModelProperty("供应商代码")
     private String supplierCode;
     @ApiModelProperty("供应商名称")

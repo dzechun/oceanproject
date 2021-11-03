@@ -115,4 +115,60 @@ public class LeisaiProcessInputOrderServiceImpl extends BaseService<LeisaiProces
         resultMap.put("操作失败行数",fail);
         return resultMap;
     }
+
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchSave(List<LeisaiProcessInputOrder> list) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        int i = 1;
+        if (StringUtils.isNotEmpty(list)){
+            List<LeisaiProcessInputOrder> addList = new ArrayList<>();
+            List<LeisaiHtProcessInputOrder> addHtList = new ArrayList<>();
+            for (LeisaiProcessInputOrder processInputOrder : list) {
+                processInputOrder.setCreateUserId(currentUser.getUserId());
+                processInputOrder.setCreateTime(new Date());
+                processInputOrder.setModifiedUserId(currentUser.getUserId());
+                processInputOrder.setModifiedTime(new Date());
+                processInputOrder.setOrgId(currentUser.getOrganizationId());
+                addList.add(processInputOrder);
+
+                //新增履历表信息
+                LeisaiHtProcessInputOrder leisaiHtProcessInputOrder = new LeisaiHtProcessInputOrder();
+                BeanUtils.copyProperties(processInputOrder, leisaiHtProcessInputOrder);
+                addHtList.add(leisaiHtProcessInputOrder);
+            }
+            if(StringUtils.isNotEmpty(addList))
+                i= leisaiProcessInputOrderMapper.insertList(addList);
+            if(StringUtils.isNotEmpty(addHtList))
+                leisaiHtProcessInputOrderMapper.insertList(addHtList);
+        }
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchUpdate(List<LeisaiProcessInputOrder> list) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        int i = 1;
+        if (StringUtils.isNotEmpty(list)){
+            List<LeisaiProcessInputOrder> addList = new ArrayList<>();
+            List<LeisaiHtProcessInputOrder> addHtList = new ArrayList<>();
+            for (LeisaiProcessInputOrder processInputOrder : list) {
+                processInputOrder.setModifiedUserId(currentUser.getUserId());
+                processInputOrder.setModifiedTime(new Date());
+                processInputOrder.setOrgId(currentUser.getOrganizationId());
+                leisaiProcessInputOrderMapper.updateByPrimaryKeySelective(processInputOrder);
+
+                //新增履历表信息
+                LeisaiHtProcessInputOrder leisaiHtProcessInputOrder = new LeisaiHtProcessInputOrder();
+                BeanUtils.copyProperties(processInputOrder, leisaiHtProcessInputOrder);
+                leisaiHtProcessInputOrderMapper.updateByPrimaryKeySelective(leisaiHtProcessInputOrder);
+            }
+        }
+        return i;
+    }
+
+
+
 }

@@ -95,4 +95,31 @@
         </where>
         order by ss.create_time desc
     </select>
+
+    <select id="findInspectionSupplierList" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        bo.organization_name
+        from fantech_imes_v2.base_supplier ss
+        left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
+        left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
+        <where>
+            <if test="materialCode!=null and materialCode!=''">
+                and ss.supplier_id in
+                (select bms.supplier_id from base_material_supplier bms
+                left JOIN base_material bm on bm.material_id = bms.material_id where bm.material_code = #{materialCode})
+                and ss.supplier_id not in
+                (select if(biel.obj_type = 1,biel.supplier_id,biel.customer_id) from base_inspection_exempted_list biel
+                left JOIN base_material bm on bm.material_id = biel.material_id where bm.material_code = #{materialCode})
+            </if>
+            <if test="status!=null">
+                and ss.status=#{status}
+            </if>
+            <if test="orgId!=null">
+                and ss.org_id=#{orgId}
+            </if>
+        </where>
+        order by ss.create_time desc
+    </select>
 </mapper>
