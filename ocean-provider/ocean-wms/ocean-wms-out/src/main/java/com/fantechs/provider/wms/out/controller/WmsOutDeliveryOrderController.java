@@ -192,14 +192,14 @@ public class WmsOutDeliveryOrderController {
         }
     }
 
+    @ApiOperation(value = "领料出库单封单反写")
     @PostMapping("/sealOrder")
-    @ApiOperation(value = "领料出库单封单反写",hidden = true)
     public ResponseEntity sealOrder(@RequestParam Long deliveryOrderId){
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.sealOrder(deliveryOrderId));
     }
 
+    @ApiOperation(value = "领料出库单封单回写接口")
     @PostMapping("/overIssue")
-    @ApiOperation(value = "领料出库单封单回写接口",hidden = true)
     public ResponseEntity overIssue(@RequestParam Long deliveryOrderId){
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.overIssue(deliveryOrderId));
     }
