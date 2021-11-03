@@ -617,6 +617,9 @@ public class ImportDataServiceImpl implements ImportDataService {
                 if(StringUtils.isEmpty(user.getUserName())){
                     user.setUserName(user.getUserCode());
                 }
+                if(StringUtils.isEmpty(user.getNickName())){
+                    user.setNickName(user.getUserName());
+                }
                 ResponseEntity<SysUser> responseEntityUser=securityFeignApi.saveByApi(user);
                 if(StringUtils.isNotEmpty(responseEntityUser.getData())){
                     //用户ID
@@ -633,11 +636,13 @@ public class ImportDataServiceImpl implements ImportDataService {
                                 supplierId = responseEntitySupplier.getData().get(0).getSupplierId();
                             }
                             //增加用户绑定供应商
-                            BaseSupplierReUser baseSupplierReUser = new BaseSupplierReUser();
-                            baseSupplierReUser.setSupplierId(supplierId);
-                            baseSupplierReUser.setUserId(userId);
-                            baseSupplierReUser.setOrganizationId(orgId);
-                            baseFeignApi.saveByApi(baseSupplierReUser);
+                            if(StringUtils.isNotEmpty(supplierId)) {
+                                BaseSupplierReUser baseSupplierReUser = new BaseSupplierReUser();
+                                baseSupplierReUser.setSupplierId(supplierId);
+                                baseSupplierReUser.setUserId(userId);
+                                baseSupplierReUser.setOrganizationId(orgId);
+                                baseFeignApi.saveByApi(baseSupplierReUser);
+                            }
                         }
                     }
                 }

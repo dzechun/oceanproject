@@ -362,12 +362,12 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
     public SysUser saveByApi(SysUser sysUser) {
         Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userName", sysUser.getUserName()).orEqualTo("userCode",sysUser.getUserCode());
+        criteria.andEqualTo("userCode", sysUser.getUserCode());
         SysUser oneByUser = sysUserMapper.selectOneByExample(example);
 
         if(StringUtils.isNotEmpty(oneByUser)){
-            //throw new BizErrorException("该用户的帐号/工号已存在。");
             sysUser.setModifiedTime(new Date());
+            sysUser.setUserId(oneByUser.getUserId());
             sysUserMapper.updateByPrimaryKeySelective(sysUser);
         }
         else{
