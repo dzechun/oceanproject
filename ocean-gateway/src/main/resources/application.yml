@@ -7,7 +7,7 @@ server:
      direct-buffers: true
 spring:
   profiles:
-    active: leisai
+    active: dev
   application:
     name: @pom.artifactId@
   servlet:

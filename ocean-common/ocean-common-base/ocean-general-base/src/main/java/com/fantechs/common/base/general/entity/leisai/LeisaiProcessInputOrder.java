@@ -45,7 +45,8 @@ public class LeisaiProcessInputOrder extends ValidGroup implements Serializable 
      * 完成日期
      */
     @ApiModelProperty(name="finishedTime",value = "完成日期")
-    @Excel(name = "完成日期", height = 20, width = 30,orderNum="2")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="2",exportFormat ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm")
     @Column(name = "finished_time")
     private Date finishedTime;
 

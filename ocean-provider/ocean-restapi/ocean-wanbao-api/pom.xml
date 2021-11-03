@@ -124,7 +124,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>C:/work/workSpace/d/wanbao</outputDirectory>
+            <outputDirectory>D:/IMES/lib/wanbao</outputDirectory>
             </configuration>
             </execution>
             </executions>

@@ -106,7 +106,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>C:/work/workSpace/d/base</outputDirectory>
+                            <outputDirectory>D:/IMES/lib/base</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

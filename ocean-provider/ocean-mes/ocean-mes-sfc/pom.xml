@@ -114,7 +114,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>C:/work/workSpace/d/sfc</outputDirectory>
+                            <outputDirectory>D:/IMES/lib/sfc</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
