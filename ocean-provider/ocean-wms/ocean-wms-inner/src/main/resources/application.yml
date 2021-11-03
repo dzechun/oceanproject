@@ -4,7 +4,7 @@ server:
 
 spring:
   profiles:
-    include: dev
+    include: wuhuan94
   application:
     name: @pom.artifactId@
 

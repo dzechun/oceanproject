@@ -6,7 +6,7 @@ spring:
   profiles:
     include: dev
   application:
-    name: @pom.artifactId@
+      name: @pom.artifactId@
   main:
     allow-bean-definition-overriding: true
 logging:

@@ -7,7 +7,7 @@ server:
      direct-buffers: true
 spring:
   profiles:
-    active: dev
+    active: leisai
   application:
     name: @pom.artifactId@
   servlet:
@@ -79,4 +79,4 @@ url:
   securityUrl: http://localhost:8768/ocean-security/clientGetToken
 
 constant-base:
-  orgId: 21
+  orgId: 29
