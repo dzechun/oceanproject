@@ -57,6 +57,9 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(emml.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
+      <if test="createTime!= null and createTime!= ''">
+        and date_format(emml.create_time, '%Y-%m-%d') = #{createTime}
+      </if>
       <if test="contractQtyOrderId != null and contractQtyOrderId!=''">
         and emml.contract_qty_order_id = #{contractQtyOrderId}
       </if>
@@ -74,6 +77,9 @@
       </if>
       <if test="operatorUserId != null">
         and emml.operator_user_id = #{operatorUserId}
+      </if>
+      <if test="operatorUserName != null and operatorUserName != ''">
+        and osu.nick_name like CONCAT('%', #{operatorUserName}, '%')
       </if>
       <if test="orgId!=null">
         and emml.org_id=#{orgId}

@@ -1,10 +1,14 @@
 package com.fantechs.common.base.general.entity.eng.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
+import java.util.Date;
 
 
 @Data
@@ -45,6 +49,18 @@ public class SearchEngMaterialMaintainLog extends BaseQuery implements Serializa
      */
     @ApiModelProperty(name="operatorUserId",value = "操作人id")
     private Long operatorUserId;
+
+    /**
+     * 操作人名称
+     */
+    @ApiModelProperty(name="operatorUserName",value = "操作人名称")
+    private String operatorUserName;
+
+    /**
+     * 日期
+     */
+    @ApiModelProperty(name="createTime",value = "日期")
+    private String createTime;
 
     private static final long serialVersionUID = 1L;
 }
