@@ -136,8 +136,11 @@
       <if test="locationNum != null and locationNum!=''">
         and ecqo.location_num like CONCAT('%', #{locationNum}, '%')
       </if>
-      <if test="materialCode != null and materialCode!=''">
+      <if test="materialCode != null and materialCode!='' and codeQueryMark!=1">
         and ecqo.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialCode != null and materialCode!='' and codeQueryMark==1">
+        and ecqo.material_code = #{materialCode}
       </if>
       <if test="materialName != null and materialName!=''">
         and bm.material_name like CONCAT('%', #{materialName}, '%')

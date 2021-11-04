@@ -248,6 +248,13 @@ public class SearchEngContractQtyOrderAndPurOrder extends BaseQuery implements S
     private String organizationName;
 
     /**
+     * 查询标识
+     */
+    @Transient
+    @ApiModelProperty(name = "codeQueryMark",value = "查询标识 1 为等值查询 不<>1为模糊查询")
+    private String codeQueryMark;
+
+    /**
      * 是否查询采购订单为空的数据
      */
     @Transient

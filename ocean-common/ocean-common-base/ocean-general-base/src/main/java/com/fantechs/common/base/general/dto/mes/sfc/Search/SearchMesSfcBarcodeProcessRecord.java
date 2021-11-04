@@ -15,6 +15,9 @@ public class SearchMesSfcBarcodeProcessRecord extends BaseQuery implements Seria
     @ApiModelProperty(name="barcode",value = "产品条码")
     private String barcode;
 
+    @ApiModelProperty(name="customerBarcode",value = "客户条码")
+    private String customerBarcode;
+
     @ApiModelProperty(name="workOrderId",value = "工单ID")
     private Long workOrderId;
 

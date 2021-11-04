@@ -75,13 +75,25 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
         MesSfcBarcodeProcessReport mesSfcBarcodeProcessReport = new MesSfcBarcodeProcessReport();
         Object tabId = map.get("tabId");
         map.put("orgId",user.getOrganizationId());
-        if (StringUtils.isEmpty(map.get("barcode"))) {
+        if (StringUtils.isEmpty(map.get("barcode")) && StringUtils.isEmpty(map.get("customerBarcode"))) {
             return null;
         }
         if (StringUtils.isNotEmpty(tabId) && Integer.valueOf(tabId.toString()) == 1 ||
                 (StringUtils.isNotEmpty(map.get("export")) && Integer.valueOf(map.get("export").toString())==1)) {
             SearchMesSfcBarcodeProcessRecord record = new SearchMesSfcBarcodeProcessRecord();
-            record.setBarcode(map.get("barcode").toString());
+            if(StringUtils.isNotEmpty(map.get("customerBarcode"))){
+                record.setCustomerBarcode(map.get("customerBarcode").toString());
+                record.setBarcode("");
+            }
+            else if(StringUtils.isNotEmpty(map.get("customerBarcode")) && StringUtils.isNotEmpty(map.get("barcode"))){
+                record.setCustomerBarcode("");
+                record.setBarcode(map.get("barcode").toString());
+            }
+            else{
+                record.setBarcode(map.get("barcode").toString());
+            }
+
+            //record.setBarcode(map.get("barcode").toString());
             ResponseEntity<List<MesSfcBarcodeProcessRecordDto>> data = sfcFeignApi.findList(record);
             List<MesSfcBarcodeProcessRecordDto> list = data.getData();
             PageHelper.getLocalPage().setTotal(data.getCount());

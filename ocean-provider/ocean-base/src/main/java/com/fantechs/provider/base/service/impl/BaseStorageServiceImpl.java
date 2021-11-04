@@ -21,6 +21,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
@@ -104,8 +105,9 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             String projectID="3919";
             List<EngReportStorageDto> listStorage=new ArrayList<>();
 
+            String uuid= UUIDUtils.getRawUUID();
             EngReportStorageDto engReportStorageDto=new EngReportStorageDto();
-            engReportStorageDto.setStorageId(baseStorage.getStorageId().toString());
+            engReportStorageDto.setStorageId(uuid);
             engReportStorageDto.setStorageCode(baseStorage.getStorageCode());
             engReportStorageDto.setStorageDesc(baseStorage.getStorageCode());
             engReportStorageDto.setStorageType("项目现场主仓库");
@@ -121,7 +123,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             fiveringFeignApi.writeShelvesNo(s3,projectID);
 
             //更新DHGUID
-            baseStorage.setOption1(baseStorage.getStorageId().toString());
+            baseStorage.setOption1(uuid);
             baseStorageMapper.updateByPrimaryKeySelective(baseStorage);
         }
         //五环库位回传结束

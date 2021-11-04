@@ -205,20 +205,25 @@ public class BarcodeUtils {
         mesSfcBarcodeProcess.setProcessCode(baseProcess.getProcessCode());
         mesSfcBarcodeProcess.setProcessName(baseProcess.getProcessName());
         // 更新工位、工段、产线
-        BaseStation baseStation = barcodeUtils.baseFeignApi.findStationDetail(dto.getNowStationId()).getData();
-        if (baseStation == null) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003, "没有找到对对应的工位");
+        if(StringUtils.isNotEmpty(dto.getNowStationId())) {
+            BaseStation baseStation = barcodeUtils.baseFeignApi.findStationDetail(dto.getNowStationId()).getData();
+            if (baseStation == null) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003, "没有找到对应的工位");
+            }
+            mesSfcBarcodeProcess.setStationId(baseStation.getStationId());
+            mesSfcBarcodeProcess.setStationCode(baseStation.getStationCode());
+            mesSfcBarcodeProcess.setStationName(baseStation.getStationName());
         }
-
         //从工段表 base_workshop_section 取出工段编码和工段名称 2021-08-02 huangshuijun
         ResponseEntity<BaseWorkshopSection> bwssResponseEntity = barcodeUtils.baseFeignApi.sectionDetail(baseProcess.getSectionId());
         BaseWorkshopSection baseWorkshopSection = bwssResponseEntity.getData();
         if(baseWorkshopSection == null)
             throw new BizErrorException(ErrorCodeEnum.PDA40012035);
 
-        mesSfcBarcodeProcess.setStationId(baseStation.getStationId());
-        mesSfcBarcodeProcess.setStationCode(baseStation.getStationCode());
-        mesSfcBarcodeProcess.setStationName(baseStation.getStationName());
+//        mesSfcBarcodeProcess.setStationId(baseStation.getStationId());
+//        mesSfcBarcodeProcess.setStationCode(baseStation.getStationCode());
+//        mesSfcBarcodeProcess.setStationName(baseStation.getStationName());
+
         mesSfcBarcodeProcess.setSectionId(baseProcess.getSectionId());//工段id
 //        mesSfcBarcodeProcess.setSectionCode(baseProcess.getSectionCode());//工段code
 //        mesSfcBarcodeProcess.setSectionName(baseProcess.getSectionName());//工段名称
@@ -1967,6 +1972,7 @@ public class BarcodeUtils {
                         .stationName(baseStation.getStationName())
                         .materialId(materialId)
                         .partBarcode(halfProductionSn)
+                        .materialCode(halfProductionSn)
                         .operatorUserId(userId)
                         .operatorTime(new Date())
                         .orgId(orgId)
