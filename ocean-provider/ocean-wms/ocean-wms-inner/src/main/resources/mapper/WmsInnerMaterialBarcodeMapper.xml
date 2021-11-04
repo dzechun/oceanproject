@@ -97,7 +97,7 @@
                 and lc.label_category_code = #{code}
             </if>
             <if test="orgId!=null">
-                and lc.org_id=#{orgId}
+                and br.org_id=#{orgId}
             </if>
         </where>
 
