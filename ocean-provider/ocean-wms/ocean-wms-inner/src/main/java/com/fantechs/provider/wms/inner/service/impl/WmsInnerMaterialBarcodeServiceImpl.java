@@ -78,13 +78,26 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
 
         if(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId() !=0 ){
-            //特殊处理，默认一个集合只有一个规则
+            //特殊处理，查询规则集合后，如果集合内有默认规则则使用默认规则
             SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
             searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId());
             ResponseEntity<List<BaseBarcodeRuleSetDetDto>> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet);
             if(StringUtils.isEmpty(barcodeRuleSetDetList.getData())) throw new BizErrorException("未找到对应条码集合");
-            if(barcodeRuleSetDetList.getData().size()>1) throw new BizErrorException("规则集合配置错误，该规则集合只能配置一条规则");
-            searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleSetDetList.getData().get(0).getBarcodeRuleId());
+
+            SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+            for (BaseBarcodeRuleSetDetDto dto : barcodeRuleSetDetList.getData()) {
+                searchBaseBarcodeRule.setBarcodeRuleId(dto.getBarcodeRuleId());
+
+                List<BaseBarcodeRuleDto> baseBarcodeRuleDtos = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
+                if(StringUtils.isNotEmpty(baseBarcodeRuleDtos) && "来料打印".equals(baseBarcodeRuleDtos.get(0).getLabelCategoryName()))
+                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleSetDetList.getData().get(0).getBarcodeRuleId());
+            }
+            if(StringUtils.isEmpty(searchBaseBarcodeRuleSpec.getBarcodeRuleId())) {
+                BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
+                searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+            }
+            //if(barcodeRuleSetDetList.getData().size()>1) throw new BizErrorException("规则集合配置错误，该规则集合只能配置一条规则");
+
         }else{
             //取系统配置默认编码
             BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
@@ -154,13 +167,26 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
             ResponseEntity<List<BaseBarcodeRuleSetDetDto>> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet);
             if (StringUtils.isEmpty(barcodeRuleSetDetList.getData())) throw new BizErrorException("未找到对应条码集合");
-            if (barcodeRuleSetDetList.getData().size() > 1) throw new BizErrorException("规则集合配置错误，该规则集合只能配置一条规则");
-
+            SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
+            for (BaseBarcodeRuleSetDetDto dto : barcodeRuleSetDetList.getData()) {
+                searchBaseBarcodeRule.setBarcodeRuleId(dto.getBarcodeRuleId());
+                List<BaseBarcodeRuleDto> baseBarcodeRuleDtos = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
+                if(StringUtils.isNotEmpty(baseBarcodeRuleDtos) && "来料打印".equals(baseBarcodeRuleDtos.get(0).getLabelCategoryName())) {
+                    labelRuteDto.setBarcodeRuleId(baseBarcodeRuleDtos.get(0).getBarcodeRuleId());
+                    labelRuteDto.setBarcodeRule(baseBarcodeRuleDtos.get(0).getBarcodeRule());
+                }
+            }
+            if(StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())) {
+                BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
+                labelRuteDto.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+                labelRuteDto.setBarcodeRule(baseBarCode.getBarcodeRule());
+            }
+            /*if (barcodeRuleSetDetList.getData().size() > 1) throw new BizErrorException("规则集合配置错误，该规则集合只能配置一条规则");
             SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
             searchBaseBarcodeRule.setBarcodeRuleSetId(barcodeRuleSetId);
             ResponseEntity<List<BaseBarcodeRuleDto>>  barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
             if (StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未找到对应条码");
-            labelRuteDto.setBarcodeRuleId(barcodeRulList.getData().get(0).getBarcodeRuleId());
+            labelRuteDto.setBarcodeRuleId(barcodeRulList.getData().get(0).getBarcodeRuleId());*/
         }else{
             //无id值则取默认生成规则
 
