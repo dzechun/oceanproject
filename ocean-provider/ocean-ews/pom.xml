@@ -62,7 +62,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>C:/work/ews</outputDirectory>
+                            <outputDirectory>D:/IMES/lib/ews</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

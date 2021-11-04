@@ -108,7 +108,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>C:/work/workSpace/d/ureport</outputDirectory>
+                            <outputDirectory>D:/IMES/lib/ureport</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

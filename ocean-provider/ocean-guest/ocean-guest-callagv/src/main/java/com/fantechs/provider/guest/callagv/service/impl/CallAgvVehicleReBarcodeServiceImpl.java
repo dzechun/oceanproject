@@ -6,10 +6,7 @@ import com.fantechs.common.base.agv.dto.PositionCodePath;
 import com.fantechs.common.base.agv.dto.RcsResponseDTO;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleBarcodeDTO;
-import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleReBarcodeDto;
-import com.fantechs.common.base.general.dto.callagv.RequestBarcodeUnboundDTO;
-import com.fantechs.common.base.general.dto.callagv.RequestCallAgvStockDTO;
+import com.fantechs.common.base.general.dto.callagv.*;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.callagv.CallAgvProductionInLog;
@@ -177,6 +174,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         baseStorageTaskPointUpdate.setStorageTaskPointStatus((byte) 2);
         baseStorageTaskPointUpdate.setModifiedUserId(user.getUserId());
         baseStorageTaskPointUpdate.setModifiedTime(new Date());
+        baseStorageTaskPointUpdate.setRemark("锁定配送目的点，等待货架：" + temVehicle.getVehicleCode() + "配送");
         baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPointUpdate);
 
         if (type == 2 || type == 3) {
@@ -231,24 +229,63 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             } else {
                 message = "空货架返回";
             }
+            Boolean taskBoolean = false;
             String taskTyp = temVehicle.getAgvTaskTemplate();
             if (StringUtils.isNotEmpty(baseStorageTaskPoint.getType(),
                     baseStorageTaskPointList.get(0).getType())
                     && !baseStorageTaskPoint.getType().equals(baseStorageTaskPointList.get(0).getType())) {
                 taskTyp = temVehicle.getAgvTaskTemplateSecond();
-            }
-            taskCode = genAgvSchedulingTask(taskTyp, positionCodeList, temVehicle.getVehicleCode());
-            log.info("==========启动agv执行" + message + "作业任务==============\r\n");
-            baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
-            baseStorageTaskPoint.setModifiedUserId(user.getUserId());
-            redisUtil.set("3-" + taskCode, JSONObject.toJSONString(baseStorageTaskPoint));
-            log.info("=========记录当前" + message + "作业对应的起始配送点 : key : " + "3-" + taskCode + " value : " + JSONObject.toJSONString(baseStorageTaskPoint) + "\r\n");
 
-            temVehicle.setStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
-            temVehicle.setModifiedUserId(user.getUserId());
-            temVehicle.setRemark(taskCode);
-            redisUtil.set("2-" + taskCode, JSONObject.toJSONString(temVehicle));
-            log.info("=========记录当前" + message + "作业载具对应的目的配送点 : key : " + "2-" + taskCode + " value : " + JSONObject.toJSONString(temVehicle) + "\r\n");
+                taskBoolean = true;
+            }
+
+            if (taskBoolean && StringUtils.isNotEmpty(redisUtil.get(baseStorageTaskPoint.getType()))) {
+                baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
+                baseStorageTaskPoint.setModifiedUserId(user.getUserId());
+
+                temVehicle.setStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
+                temVehicle.setModifiedUserId(user.getUserId());
+                temVehicle.setRemark("电梯任务等待队列中");
+                List<GenAgvSchedulingTaskDTO> genAgvSchedulingTaskDTOList = BeanUtils.convertJson(redisUtil.get(baseStorageTaskPoint.getType()).toString(), new TypeToken<List<GenAgvSchedulingTaskDTO>>() {
+                }.getType());
+                GenAgvSchedulingTaskDTO genAgvSchedulingTaskDTO = new GenAgvSchedulingTaskDTO();
+                genAgvSchedulingTaskDTO.setTaskTyp(taskTyp);
+                genAgvSchedulingTaskDTO.setPositionCodeList(positionCodeList);
+                genAgvSchedulingTaskDTO.setPodCode(temVehicle.getVehicleCode());
+                genAgvSchedulingTaskDTO.setBaseStorageTaskPoint(baseStorageTaskPoint);
+                genAgvSchedulingTaskDTO.setTemVehicle(temVehicle);
+                genAgvSchedulingTaskDTOList.add(genAgvSchedulingTaskDTO);
+                redisUtil.set(baseStorageTaskPoint.getType(), JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
+                log.info("==========记录AGV电梯任务队列 : key " + baseStorageTaskPoint.getType() + " , value : " + JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
+            } else {
+                taskCode = genAgvSchedulingTask(taskTyp, positionCodeList, temVehicle.getVehicleCode());
+                log.info("==========启动agv执行" + message + "作业任务==============\r\n");
+                baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
+                baseStorageTaskPoint.setModifiedUserId(user.getUserId());
+                redisUtil.set("3-" + taskCode, JSONObject.toJSONString(baseStorageTaskPoint));
+                log.info("=========记录当前" + message + "作业对应的起始配送点 : key : " + "3-" + taskCode + " value : " + JSONObject.toJSONString(baseStorageTaskPoint) + "\r\n");
+
+                temVehicle.setStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
+                temVehicle.setModifiedUserId(user.getUserId());
+                temVehicle.setRemark(taskCode);
+                redisUtil.set("2-" + taskCode, JSONObject.toJSONString(temVehicle));
+                log.info("=========记录当前" + message + "作业载具对应的目的配送点 : key : " + "2-" + taskCode + " value : " + JSONObject.toJSONString(temVehicle) + "\r\n");
+
+                if (taskBoolean) {
+                    redisUtil.set("4-" + taskCode, baseStorageTaskPoint.getType());
+                    log.info("=========记录AGV电梯任务作业对应的配送方式 : key : " + "4-" + taskCode + " value : " + baseStorageTaskPoint.getType() + "\r\n");
+                    List<GenAgvSchedulingTaskDTO> genAgvSchedulingTaskDTOList = new ArrayList<>();
+                    GenAgvSchedulingTaskDTO genAgvSchedulingTaskDTO = new GenAgvSchedulingTaskDTO();
+                    genAgvSchedulingTaskDTO.setTaskTyp(taskTyp);
+                    genAgvSchedulingTaskDTO.setPositionCodeList(positionCodeList);
+                    genAgvSchedulingTaskDTO.setPodCode(temVehicle.getVehicleCode());
+                    genAgvSchedulingTaskDTO.setBaseStorageTaskPoint(baseStorageTaskPoint);
+                    genAgvSchedulingTaskDTO.setTemVehicle(temVehicle);
+                    genAgvSchedulingTaskDTOList.add(genAgvSchedulingTaskDTO);
+                    redisUtil.set(baseStorageTaskPoint.getType(), JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
+                    log.info("==========记录AGV电梯任务队列 : key " + baseStorageTaskPoint.getType() + " , value : " + JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
+                }
+            }
         } catch (BizErrorException e) {
             throw new BizErrorException("启动agv执行" + message + "作业任务失败" + e.getMessage());
         }
@@ -319,7 +356,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     /**
      * @param taskTyp          任务类型
      * @param positionCodeList 坐标列表
-     * @param podCode 货架编号
+     * @param podCode          货架编号
      * @return agv任务单号
      * @throws BizErrorException
      */

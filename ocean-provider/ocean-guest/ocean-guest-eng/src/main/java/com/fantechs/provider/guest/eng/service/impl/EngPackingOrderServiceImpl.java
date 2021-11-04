@@ -98,20 +98,35 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public int register(EngPackingOrder engPackingOrder) {
+        if(engPackingOrder.getRegisterType() == 1){
+            engPackingOrder.setLeaveFactoryTime(new Date());
+        }else if(engPackingOrder.getRegisterType() == 2){
+            engPackingOrder.setLeavePortTime(new Date());
+        }else if(engPackingOrder.getRegisterType() == 3){
+            engPackingOrder.setArrivalPortTime(new Date());
+        }
+
+        return update(engPackingOrder);
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(EngPackingOrder engPackingOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         if(StringUtils.isNotEmpty(engPackingOrder.getLeaveFactoryTime()) && StringUtils.isNotEmpty(engPackingOrder.getArrivalTime())
         && engPackingOrder.getLeaveFactoryTime().after(engPackingOrder.getArrivalTime())){
-            throw new BizErrorException("出厂时间不能晚于出场时间");
+            throw new BizErrorException("出厂时间不能晚于到场时间");
         }
         if(StringUtils.isNotEmpty(engPackingOrder.getLeaveFactoryTime()) && StringUtils.isNotEmpty(engPackingOrder.getLeavePortTime())
                 && engPackingOrder.getLeaveFactoryTime().after(engPackingOrder.getLeavePortTime())){
-            throw new BizErrorException("出厂时间不能晚于离岗时间");
+            throw new BizErrorException("出厂时间不能晚于离港时间");
         }
         if(StringUtils.isNotEmpty(engPackingOrder.getLeavePortTime()) && StringUtils.isNotEmpty(engPackingOrder.getArrivalPortTime())
                 && engPackingOrder.getLeavePortTime().after(engPackingOrder.getArrivalPortTime())){
-            throw new BizErrorException("离岗时间不能晚于到岗时间");
+            throw new BizErrorException("离港时间不能晚于到港时间");
         }
         engPackingOrder.setModifiedUserId(user.getUserId());
         engPackingOrder.setModifiedTime(new Date());

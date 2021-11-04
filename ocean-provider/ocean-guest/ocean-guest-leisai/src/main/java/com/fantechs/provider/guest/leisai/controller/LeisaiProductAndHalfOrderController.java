@@ -73,7 +73,7 @@ public class LeisaiProductAndHalfOrderController {
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/batchUpdate")
     public ResponseEntity batchUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<LeisaiProductAndHalfOrder> list) {
-        return ControllerUtil.returnCRUD(leisaiProductAndHalfOrderService.batchSave(list));
+        return ControllerUtil.returnCRUD(leisaiProductAndHalfOrderService.batchUpdate(list));
     }
 
     @ApiOperation("获取详情")

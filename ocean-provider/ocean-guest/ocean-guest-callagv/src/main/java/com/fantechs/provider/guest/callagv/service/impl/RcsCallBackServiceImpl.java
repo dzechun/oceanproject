@@ -1,6 +1,8 @@
 package com.fantechs.provider.guest.callagv.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.agv.dto.AgvCallBackDTO;
+import com.fantechs.common.base.general.dto.callagv.GenAgvSchedulingTaskDTO;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -8,6 +10,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
+import com.fantechs.provider.guest.callagv.service.CallAgvVehicleReBarcodeService;
 import com.fantechs.provider.guest.callagv.service.RcsCallBackService;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -28,6 +32,9 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
 
     @Resource
     RedisUtil redisUtil;
+
+    @Resource
+    private CallAgvVehicleReBarcodeService callAgvVehicleReBarcodeService;
 
     @Override
     public String agvCallback(AgvCallBackDTO agvCallBackDTO) throws Exception {
@@ -51,6 +58,33 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                 BaseStorageTaskPoint baseStorageTaskPoint = BeanUtils.convertJson(redisUtil.get(agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode()).toString(), new TypeToken<BaseStorageTaskPoint>(){}.getType());
                 baseStorageTaskPoint.setModifiedTime(new Date());
                 baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPoint);
+            } else if ("4".equals(agvCallBackDTO.getMethod())) {
+                String type = redisUtil.get(agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode()).toString();
+                List<GenAgvSchedulingTaskDTO> genAgvSchedulingTaskDTOList = BeanUtils.convertJson(redisUtil.get(type).toString(), new TypeToken<List<GenAgvSchedulingTaskDTO>>() {}.getType());
+
+                if (genAgvSchedulingTaskDTOList.size() > 1) {
+                    String taskCode = callAgvVehicleReBarcodeService.genAgvSchedulingTask(genAgvSchedulingTaskDTOList.get(1).getTaskTyp(), genAgvSchedulingTaskDTOList.get(1).getPositionCodeList(), genAgvSchedulingTaskDTOList.get(1).getPodCode());
+                    log.info("==========启动agv执行下一个等待的电梯作业任务==============\r\n");
+
+                    BaseStorageTaskPoint baseStorageTaskPoint = genAgvSchedulingTaskDTOList.get(1).getBaseStorageTaskPoint();
+                    redisUtil.set("3-" + taskCode, JSONObject.toJSONString(baseStorageTaskPoint));
+                    log.info("=========记录下一个等待的电梯作业任务对应的起始配送点 : key : " + "3-" + taskCode + " value : " + JSONObject.toJSONString(baseStorageTaskPoint) + "\r\n");
+
+                    TemVehicle temVehicle = genAgvSchedulingTaskDTOList.get(1).getTemVehicle();
+                    temVehicle.setRemark(taskCode);
+                    redisUtil.set("2-" + taskCode, JSONObject.toJSONString(temVehicle));
+                    log.info("=========记录下一个等待的电梯作业任务载具对应的目的配送点 : key : " + "2-" + taskCode + " value : " + JSONObject.toJSONString(temVehicle) + "\r\n");
+
+                    genAgvSchedulingTaskDTOList.remove(0);
+                    redisUtil.set("4-" + taskCode, type);
+                    log.info("=========记录下一个等待的AGV电梯任务作业对应的配送方式 : key : " + "4-" + taskCode + " value : " + type + "\r\n");
+
+                    redisUtil.set(type, JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
+                    log.info("==========记录下一个等待的AGV电梯任务队列 : key " + type  + " , value : " + JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
+                } else {
+                    log.info("没有下个电梯等待任务，释放redis记录 key : " + type + " value : " + redisUtil.get(type) + "\r\n");
+                    redisUtil.del(type);
+                }
             }
             log.info("收到RCS系统回传AGV任务状态，释放对应的redis : " + agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode() + " value : " + redisUtil.get(agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode()) + "\r\n");
             redisUtil.del(agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode());

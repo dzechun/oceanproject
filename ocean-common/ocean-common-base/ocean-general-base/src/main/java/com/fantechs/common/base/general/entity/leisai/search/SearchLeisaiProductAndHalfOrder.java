@@ -12,8 +12,8 @@ public class SearchLeisaiProductAndHalfOrder extends BaseQuery implements Serial
     /**
      * 单据号
      */
-    @ApiModelProperty(name="processInputOrderCode",value = "单据号")
-    private String processInputOrderCode;
+    @ApiModelProperty(name="productAndHalfOrderCode",value = "单据号")
+    private String productAndHalfOrderCode;
 
     /**
      * 产品SN

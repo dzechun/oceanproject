@@ -21,4 +21,6 @@ public interface EngPackingOrderService extends IService<EngPackingOrder> {
 
     List<EngPackingOrderSummaryDetDto> checkQty(List<EngPackingOrderDto> engPackingOrderDtos);
 
+    int register(EngPackingOrder engPackingOrder);
+
 }

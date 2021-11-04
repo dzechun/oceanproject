@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -195,6 +196,13 @@ public class EngPackingOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "agoConfirmUserId",value = "到达登记人id")
     @Column(name = "ago_confirm_user_id")
     private Long agoConfirmUserId;
+
+    /**
+     * 登记类型（1-出厂 2-离港 3-到港）
+     */
+    @Transient
+    @ApiModelProperty(name="registerType",value = "登记类型（1-出厂 2-离港 3-到港）")
+    private Byte registerType;
 
     private static final long serialVersionUID = 1L;
 }
