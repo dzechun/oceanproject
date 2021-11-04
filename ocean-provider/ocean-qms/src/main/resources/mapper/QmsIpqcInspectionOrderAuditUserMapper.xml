@@ -33,6 +33,7 @@
     qiioau.inspection_order_audit_user_id,
     qiioau.ipqc_inspection_order_id,
     qiioau.audit_user_id,
+    qiioau.audit_dept_name,
     qiioau.audit_result,
     qiioau.`status`,
     qiioau.attachment_path,
@@ -50,7 +51,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    su.nick_name as audit_user_name,bd.dept_name as audit_dept_name,
+    su.nick_name as audit_user_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
