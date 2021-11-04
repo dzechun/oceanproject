@@ -4,13 +4,22 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.catalina.LifecycleState;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class SearchEngContractQtyOrderAndPurOrder extends BaseQuery implements Serializable {
+
+    /**
+     * 合同量单id集合
+     */
+    @Transient
+    @ApiModelProperty(name="contractQtyOrderIds",value = "合同量单id集合")
+    private List<Long> contractQtyOrderIds;
 
     /**
      * 请购单号

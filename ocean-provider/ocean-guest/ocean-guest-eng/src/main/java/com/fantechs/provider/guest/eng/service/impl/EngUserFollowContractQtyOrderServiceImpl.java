@@ -3,11 +3,13 @@ package com.fantechs.provider.guest.eng.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
 import com.fantechs.common.base.general.entity.eng.EngUserFollowContractQtyOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.guest.eng.mapper.EngUserFollowContractQtyOrderMapper;
+import com.fantechs.provider.guest.eng.service.EngContractQtyOrderAndPurOrderService;
 import com.fantechs.provider.guest.eng.service.EngUserFollowContractQtyOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,12 +28,34 @@ public class EngUserFollowContractQtyOrderServiceImpl extends BaseService<EngUse
 
     @Resource
     private EngUserFollowContractQtyOrderMapper engUserFollowContractQtyOrderMapper;
+    @Resource
+    private EngContractQtyOrderAndPurOrderService engContractQtyOrderAndPurOrderService;
 
     @Override
     public List<EngUserFollowContractQtyOrder> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
+        map.put("userId",user.getUserId());
         return engUserFollowContractQtyOrderMapper.findList(map);
+    }
+
+    @Override
+    public List<EngContractQtyOrderAndPurOrderDto> findFollowList(Map<String, Object> map) {
+        List<EngContractQtyOrderAndPurOrderDto> list= new ArrayList<>();
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        Example example = new Example(EngUserFollowContractQtyOrder.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId",user.getOrganizationId())
+                .andEqualTo("userId",user.getUserId());
+        List<EngUserFollowContractQtyOrder> engUserFollowContractQtyOrders = engUserFollowContractQtyOrderMapper.selectByExample(example);
+        if(StringUtils.isEmpty(engUserFollowContractQtyOrders)){
+            return list;
+        }
+
+        List<Long> contractQtyOrderIds = engUserFollowContractQtyOrders.stream().map(EngUserFollowContractQtyOrder::getContractQtyOrderId).collect(Collectors.toList());
+        map.put("contractQtyOrderIds",contractQtyOrderIds);
+        return engContractQtyOrderAndPurOrderService.findList(map);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.fantechs.provider.guest.eng.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
 import com.fantechs.common.base.general.entity.eng.EngUserFollowContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngUserFollowContractQtyOrder;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -39,6 +40,14 @@ public class EngUserFollowContractQtyOrderController {
 
     @Resource
     private EngUserFollowContractQtyOrderService engUserFollowContractQtyOrderService;
+
+    @ApiOperation("关注列表")
+    @PostMapping("/findFollowList")
+    public ResponseEntity<List<EngContractQtyOrderAndPurOrderDto>> findFollowList(@ApiParam(value = "查询对象")@RequestBody SearchEngUserFollowContractQtyOrder searchEngUserFollowContractQtyOrder) {
+        Page<Object> page = PageHelper.startPage(searchEngUserFollowContractQtyOrder.getStartPage(),searchEngUserFollowContractQtyOrder.getPageSize());
+        List<EngContractQtyOrderAndPurOrderDto> list = engUserFollowContractQtyOrderService.findFollowList(ControllerUtil.dynamicConditionByEntity(searchEngUserFollowContractQtyOrder));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
     @ApiOperation("关注")
     @PostMapping("/follow")

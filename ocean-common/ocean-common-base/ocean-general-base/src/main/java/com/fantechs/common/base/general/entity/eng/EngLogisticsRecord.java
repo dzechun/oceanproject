@@ -190,5 +190,12 @@ public class EngLogisticsRecord extends ValidGroup implements Serializable {
     @Excel(name = "接收用户名称", height = 20, width = 30,orderNum="14")
     private String receiveUserName;
 
+    /**
+     * 消息内容实体
+     */
+    @Transient
+    @ApiModelProperty(name = "Message",value = "消息内容实体")
+    private EngLogisticsRecordMessage Message;
+
     private static final long serialVersionUID = 1L;
 }

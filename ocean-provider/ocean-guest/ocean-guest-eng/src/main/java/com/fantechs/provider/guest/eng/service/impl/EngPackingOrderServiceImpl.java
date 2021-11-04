@@ -98,6 +98,21 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public int register(EngPackingOrder engPackingOrder) {
+        if(engPackingOrder.getRegisterType() == 1){
+            engPackingOrder.setLeaveFactoryTime(new Date());
+        }else if(engPackingOrder.getRegisterType() == 2){
+            engPackingOrder.setLeavePortTime(new Date());
+        }else if(engPackingOrder.getRegisterType() == 3){
+            engPackingOrder.setArrivalPortTime(new Date());
+        }
+
+        return update(engPackingOrder);
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(EngPackingOrder engPackingOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 

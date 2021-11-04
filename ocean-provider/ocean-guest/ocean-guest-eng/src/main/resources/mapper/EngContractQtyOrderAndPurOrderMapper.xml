@@ -100,6 +100,12 @@
     LEFT JOIN fantech_imes_v2.base_supplier bs ON ecqo.supplier_id = bs.supplier_id
     LEFT JOIN fantech_imes_v2.base_organization bo ON ecqo.org_id = bo.organization_id
     <where>
+      <if test="contractQtyOrderIds != null and contractQtyOrderIds.size >0">
+        and ecqo.contract_qty_order_id in
+        <foreach collection="contractQtyOrderIds" item="item" separator="," open="(" close=")">
+          #{item}
+        </foreach>
+      </if>
       <if test="purchaseReqOrderCode != null and purchaseReqOrderCode!=''">
         and epro.purchase_req_order_code like CONCAT('%', #{purchaseReqOrderCode}, '%')
       </if>

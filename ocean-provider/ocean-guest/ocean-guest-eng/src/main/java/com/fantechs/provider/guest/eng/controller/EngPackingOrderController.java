@@ -41,6 +41,12 @@ public class EngPackingOrderController {
     @Resource
     private EngHtPackingOrderService engHtPackingOrderService;
 
+    @ApiOperation(value = "登记",notes = "登记")
+    @PostMapping("/register")
+    public ResponseEntity register(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EngPackingOrder engPackingOrder) {
+        return ControllerUtil.returnCRUD(engPackingOrderService.register(engPackingOrder));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EngPackingOrder engPackingOrder) {

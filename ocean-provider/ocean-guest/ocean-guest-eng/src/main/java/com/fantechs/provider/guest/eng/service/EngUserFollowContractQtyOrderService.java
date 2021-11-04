@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.eng.service;
 
+import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
 import com.fantechs.common.base.general.entity.eng.EngUserFollowContractQtyOrder;
 import com.fantechs.common.base.support.IService;
 
@@ -19,4 +20,6 @@ public interface EngUserFollowContractQtyOrderService extends IService<EngUserFo
     int follow(String contractQtyOrderIds);
 
     int cancelFollow(String contractQtyOrderIds);
+
+    List<EngContractQtyOrderAndPurOrderDto> findFollowList(Map<String, Object> map);
 }

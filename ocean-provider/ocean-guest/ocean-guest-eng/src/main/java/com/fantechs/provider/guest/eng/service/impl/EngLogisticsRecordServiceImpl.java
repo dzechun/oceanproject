@@ -1,10 +1,8 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.eng.EngLogisticsRecord;
-import com.fantechs.common.base.general.entity.eng.EngUserFollowContractQtyOrder;
+import com.fantechs.common.base.general.entity.eng.EngLogisticsRecordMessage;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -12,7 +10,6 @@ import com.fantechs.provider.guest.eng.mapper.EngLogisticsRecordMapper;
 import com.fantechs.provider.guest.eng.service.EngLogisticsRecordService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -34,11 +31,15 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         return engLogisticsRecordMapper.findList(map);
     }
 
+
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EngLogisticsRecord record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
+        record.setMessageContent(record.getMessage() == null ? null : jointMessageContent(record.getMessage()));
+        record.setReadStatus(StringUtils.isEmpty(record.getReadStatus()) ? 0 : record.getReadStatus());
+        record.setStatus(StringUtils.isEmpty(record.getStatus()) ? 1 : record.getStatus());
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(user.getUserId());
@@ -46,6 +47,24 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         record.setOrgId(user.getOrganizationId());
 
         return engLogisticsRecordMapper.insertSelective(record);
+    }
+
+    //拼接消息内容
+    public String jointMessageContent(EngLogisticsRecordMessage engLogisticsRecordMessage){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("材料编码：").append(engLogisticsRecordMessage.getMaterialCode())
+                .append("，材料名称：").append(engLogisticsRecordMessage.getMaterialName())
+                .append("，合同号：").append(engLogisticsRecordMessage.getContractCode())
+                .append("，装置号：").append(engLogisticsRecordMessage.getDeviceCode())
+                .append("，主项号：").append(engLogisticsRecordMessage.getDominantTermCode())
+                .append("，位号：").append(engLogisticsRecordMessage.getLocationNum())
+                .append("，单位：").append(engLogisticsRecordMessage.getMainUnit())
+                .append("，规格：").append(engLogisticsRecordMessage.getMaterialDesc())
+                .append("，相关单号：").append(engLogisticsRecordMessage.getRelatedOrderCode())
+                .append("，时间：").append(engLogisticsRecordMessage.getChangeTime())
+                .append("，数量：").append(engLogisticsRecordMessage.getQty())
+                .append("，操作人：").append(engLogisticsRecordMessage.getOperateUser());
+        return stringBuilder.toString();
     }
 
     @Override
