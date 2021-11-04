@@ -84,6 +84,9 @@ spo.ago_confirm_user_id
     left join ocean_v2.sys_user s on spo.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON spo.org_id = bo.organization_id
     <where>
+      <if test="cartonCode != null and cartonCode!=''">
+        and spo.packing_order_id = (select packing_order_id from  eng_packing_order_summary where carton_code = #{cartonCode})
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(spo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

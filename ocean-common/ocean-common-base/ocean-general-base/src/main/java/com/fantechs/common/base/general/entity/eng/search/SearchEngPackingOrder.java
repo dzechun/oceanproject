@@ -96,6 +96,11 @@ public class SearchEngPackingOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="orderStatus",value = "订单状态(1-未到达 2-待收货 3-收货中 4-待上架 5-完成)")
     private List<Byte> orderStatus;
 
+    /**
+     * 包装箱号
+     */
+    @ApiModelProperty(name="cartonCode",value = "包装箱号")
+    private String cartonCode;
 
     /**
      * 装箱单号
