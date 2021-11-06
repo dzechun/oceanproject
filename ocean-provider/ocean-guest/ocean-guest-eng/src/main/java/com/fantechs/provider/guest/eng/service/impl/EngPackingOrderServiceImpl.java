@@ -13,21 +13,21 @@ import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
-import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummary;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrderSummaryDet;
+import com.fantechs.common.base.general.entity.eng.*;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrder;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngContractQtyOrderAndPurOrder;
+import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrderSummaryDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.guest.eng.mapper.*;
 import com.fantechs.provider.guest.eng.service.EngContractQtyOrderAndPurOrderService;
 import com.fantechs.provider.guest.eng.service.EngDataExportEngPackingOrderService;
+import com.fantechs.provider.guest.eng.service.EngLogisticsRecordService;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -36,10 +36,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -64,6 +61,10 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     private EngContractQtyOrderMapper engContractQtyOrderMapper;
     @Resource
     private EngContractQtyOrderAndPurOrderService engContractQtyOrderAndPurOrderService;
+    @Resource
+    private EngUserFollowContractQtyOrderMapper engUserFollowContractQtyOrderMapper;
+    @Resource
+    private EngLogisticsRecordService engLogisticsRecordService;
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
@@ -131,13 +132,82 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         engPackingOrder.setModifiedUserId(user.getUserId());
         engPackingOrder.setModifiedTime(new Date());
 
-        int i = engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
-
         EngHtPackingOrder engHtPackingOrder =new EngHtPackingOrder();
         BeanUtils.copyProperties(engPackingOrder, engHtPackingOrder);
         engHtPackingOrderMapper.insertSelective(engHtPackingOrder);
 
-        return i;
+
+        EngPackingOrder oldPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrder.getPackingOrderId());
+        if(StringUtils.isNotEmpty(engPackingOrder.getLeaveFactoryTime())&&
+                (oldPackingOrder.getLeaveFactoryTime()==null||engPackingOrder.getLeaveFactoryTime().compareTo(oldPackingOrder.getLeaveFactoryTime())!=0)){
+            saveRecord(engPackingOrder,user,(byte)1,"出厂");
+        }
+        if(StringUtils.isNotEmpty(engPackingOrder.getLeavePortTime())&&
+                (oldPackingOrder.getLeavePortTime()==null||engPackingOrder.getLeavePortTime().compareTo(oldPackingOrder.getLeavePortTime())!=0)){
+            saveRecord(engPackingOrder,user,(byte)2,"离港");
+        }
+        if(StringUtils.isNotEmpty(engPackingOrder.getArrivalPortTime())&&
+                (oldPackingOrder.getArrivalPortTime()==null||engPackingOrder.getArrivalPortTime().compareTo(oldPackingOrder.getArrivalPortTime())!=0)){
+            saveRecord(engPackingOrder,user,(byte)3,"到港");
+        }
+
+        return engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
+    }
+
+    public int saveRecord(EngPackingOrder engPackingOrder,SysUser user,Byte logisticsNode,String title){
+        List<EngLogisticsRecord> records = new LinkedList<>();
+        EngLogisticsRecord engLogisticsRecord = new EngLogisticsRecord();
+        engLogisticsRecord.setMaterialLogisticsNode(logisticsNode);
+        engLogisticsRecord.setTitle(title);
+
+        Map<String,Object> summaryDetMap = new HashMap<>();
+        summaryDetMap.put("orgId",user.getOrganizationId());
+        summaryDetMap.put("packingOrderId",engPackingOrder.getPackingOrderId());
+        List<EngPackingOrderSummaryDetDto> summaryDetList = engPackingOrderSummaryDetMapper.findList(summaryDetMap);
+        if(StringUtils.isNotEmpty(summaryDetList)) {
+            for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : summaryDetList) {
+                SearchEngContractQtyOrderAndPurOrder searchEngContractQtyOrderAndPurOrder = new SearchEngContractQtyOrderAndPurOrder();
+                searchEngContractQtyOrderAndPurOrder.setContractCode(engPackingOrderSummaryDetDto.getContractCode());
+                searchEngContractQtyOrderAndPurOrder.setPurchaseReqOrderCode(engPackingOrderSummaryDetDto.getPurchaseReqOrderCode());
+                searchEngContractQtyOrderAndPurOrder.setLocationNum(engPackingOrderSummaryDetDto.getLocationNum());
+                searchEngContractQtyOrderAndPurOrder.setDeviceCode(engPackingOrderSummaryDetDto.getDeviceCode());
+                searchEngContractQtyOrderAndPurOrder.setDominantTermCode(engPackingOrderSummaryDetDto.getDominantTermCode());
+                searchEngContractQtyOrderAndPurOrder.setMaterialCode(engPackingOrderSummaryDetDto.getMaterialCode());
+                List<EngContractQtyOrderAndPurOrderDto> contractQtyOrderAndPurOrderList = engContractQtyOrderAndPurOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchEngContractQtyOrderAndPurOrder));
+                if(StringUtils.isNotEmpty(contractQtyOrderAndPurOrderList)){
+                    EngContractQtyOrderAndPurOrderDto engContractQtyOrderAndPurOrderDto = contractQtyOrderAndPurOrderList.get(0);
+                    Example example = new Example(EngUserFollowContractQtyOrder.class);
+                    Example.Criteria criteria = example.createCriteria();
+                    criteria.andEqualTo("contractQtyOrderId",engContractQtyOrderAndPurOrderDto.getContractQtyOrderId());
+                    List<EngUserFollowContractQtyOrder> engUserFollowContractQtyOrders = engUserFollowContractQtyOrderMapper.selectByExample(example);
+                    if(StringUtils.isNotEmpty(engUserFollowContractQtyOrders)){
+                        //消息内容
+                        EngLogisticsRecordMessage engLogisticsRecordMessage = new EngLogisticsRecordMessage();
+                        engLogisticsRecordMessage.setMaterialCode(engContractQtyOrderAndPurOrderDto.getMaterialCode());
+                        engLogisticsRecordMessage.setMaterialName(engContractQtyOrderAndPurOrderDto.getMaterialName());
+                        engLogisticsRecordMessage.setContractCode(engContractQtyOrderAndPurOrderDto.getContractCode());
+                        engLogisticsRecordMessage.setDeviceCode(engContractQtyOrderAndPurOrderDto.getDeviceCode());
+                        engLogisticsRecordMessage.setDominantTermCode(engContractQtyOrderAndPurOrderDto.getDominantTermCode());
+                        engLogisticsRecordMessage.setLocationNum(engContractQtyOrderAndPurOrderDto.getLocationNum());
+                        engLogisticsRecordMessage.setMainUnit(engContractQtyOrderAndPurOrderDto.getMainUnit());
+                        engLogisticsRecordMessage.setMaterialDesc(engContractQtyOrderAndPurOrderDto.getMaterialDesc());
+                        engLogisticsRecordMessage.setRelatedOrderCode(engPackingOrder.getPackingOrderCode());
+                        engLogisticsRecordMessage.setChangeTime(new Date());
+                        engLogisticsRecordMessage.setQty(engPackingOrderSummaryDetDto.getQty());
+                        engLogisticsRecordMessage.setOperateUser(user.getUserName());
+
+                        engLogisticsRecord.setMessage(engLogisticsRecordMessage);
+                        engLogisticsRecord.setContractQtyOrderId(engContractQtyOrderAndPurOrderDto.getContractQtyOrderId());
+                        for (EngUserFollowContractQtyOrder engUserFollowContractQtyOrder : engUserFollowContractQtyOrders){
+                            engLogisticsRecord.setReceiveUserId(engUserFollowContractQtyOrder.getUserId());
+                            records.add(engLogisticsRecord);
+                        }
+                    }
+                }
+            }
+        }
+
+        return engLogisticsRecordService.batchSave(records);
     }
 
 
@@ -146,8 +216,6 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     public int submit(EngPackingOrder engPackingOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         check(engPackingOrder);
-
-
 
         engPackingOrder.setModifiedUserId(user.getUserId());
         engPackingOrder.setModifiedTime(new Date());
