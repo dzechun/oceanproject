@@ -193,5 +193,8 @@ public class MesSfcWorkOrderBarcode extends ValidGroup implements Serializable {
     @Transient
     private String salesOrderCode;
 
+    @Transient
+    private Long salesOrderId;
+
     private static final long serialVersionUID = 1L;
 }

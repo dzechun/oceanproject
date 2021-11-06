@@ -370,12 +370,19 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             //boolean hasKey = redisUtil.hasKey(barcodeRulList.get(0).getBarcodeRule());
             // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
             String orgIDStr=sysUser.getOrganizationId().toString();
-            boolean hasKey = redisUtil.hasKey(barcodeRulList.get(0).getBarcodeRule()+orgIDStr);
+
+            String key = barcodeRulList.get(0).getBarcodeRule()+orgIDStr;
+            //万宝销售条码打印 按销售订单更新流水号
+            if(StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")){
+                key = barcodeRulList.get(0).getBarcodeRule()+orgIDStr+":"+record.getSalesOrderId().toString();
+            }
+            boolean hasKey = redisUtil.hasKey(key);
+
             if(hasKey){
                 // 从redis获取上次生成条码
                 //Object redisRuleData = redisUtil.get(barcodeRulList.get(0).getBarcodeRule());
                 // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
-                Object redisRuleData = redisUtil.get(barcodeRulList.get(0).getBarcodeRule()+orgIDStr);
+                Object redisRuleData = redisUtil.get(key);
                 lastBarCode = String.valueOf(redisRuleData);
             }
             //获取最大流水号
@@ -390,7 +397,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             // 更新redis最新条码
             // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
             //redisUtil.set(barcodeRulList.get(0).getBarcodeRule(), rs.getData());
-            redisUtil.set(barcodeRulList.get(0).getBarcodeRule()+orgIDStr, rs.getData());
+            redisUtil.set(key, rs.getData());
+
+            if(StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5") &&(count+record.getQty()==record.getWorkOrderQty().intValue())){
+                //三秒后失效
+                redisUtil.expire(key,3);
+            }
 
             //待打印状态
             record.setBarcodeStatus((byte)3);
