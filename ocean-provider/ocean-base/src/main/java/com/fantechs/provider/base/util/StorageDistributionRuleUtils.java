@@ -580,6 +580,9 @@ public class StorageDistributionRuleUtils {
                             //转换数量
                             //查询该货品库容
                             List<BaseStorageCapacity> shiftStorageCapacity = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("materialId",wmsInnerInventory.getMaterialId()));
+                            if(shiftStorageCapacity.isEmpty()){
+                                break;
+                            }
                             BigDecimal shiftCapacity = BigDecimal.ZERO;
                             if(StringUtils.isNotEmpty(shiftStorageCapacity)) {
                                 if (type == 1) {
