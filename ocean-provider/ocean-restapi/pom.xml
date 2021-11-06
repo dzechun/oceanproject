@@ -20,6 +20,7 @@
         <module>ocean-imes-materialapi</module>
         <module>ocean-chinafivering-api</module>
         <module>ocean-wanbao-api</module>
+        <module>ocean-leisai-api</module>
     </modules>
 
 </project>
