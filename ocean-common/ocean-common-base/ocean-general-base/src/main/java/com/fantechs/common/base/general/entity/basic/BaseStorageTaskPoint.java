@@ -185,11 +185,33 @@ public class BaseStorageTaskPoint extends ValidGroup implements Serializable {
     private Byte isDelete;
 
     /**
+     * 仓库名称
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="6")
+    private String warehouseName;
+
+    /**
+     * 库区名称
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseAreaName" ,value="库区名称")
+    @Excel(name = "库区名称", height = 20, width = 30,orderNum="5")
+    private String warehouseAreaName;
+
+    /**
+     * 工作区名称
+     */
+    @Transient
+    @ApiModelProperty(name="workingAreaName" ,value="工作区名称")
+    private String workingAreaName;
+
+    /**
      * 仓库编码
      */
     @Transient
     @ApiModelProperty(name="warehouseCode" ,value="仓库编码")
-    @Excel(name = "仓库编码", height = 20, width = 30,orderNum="6")
     private String warehouseCode;
 
     /**
@@ -197,7 +219,6 @@ public class BaseStorageTaskPoint extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="warehouseAreaCode" ,value="库区编码")
-    @Excel(name = "库区编码", height = 20, width = 30,orderNum="5")
     private String warehouseAreaCode;
 
     /**

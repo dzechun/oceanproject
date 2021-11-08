@@ -50,10 +50,13 @@
     LEFT JOIN base_working_area bwa ON bs.working_area_id = bwa.working_area_id
     <where>
       <if test="vehicleCode != null and vehicleCode != ''">
-        and tv.vehicle_code = #{vehicleCode}
+        and tv.vehicle_code like CONCAT('%', #{vehicleCode}, '%')
       </if>
       <if test="vehicleName != null and vehicleName != ''">
         and tv.vehicle_name like CONCAT('%', #{vehicleName}, '%')
+      </if>
+      <if test="remark != null and remark != ''">
+        and tv.remark like CONCAT('%', #{remark}, '%')
       </if>
       <if test="vehicleStatus != null">
         and tv.vehicle_status = #{vehicleStatus}

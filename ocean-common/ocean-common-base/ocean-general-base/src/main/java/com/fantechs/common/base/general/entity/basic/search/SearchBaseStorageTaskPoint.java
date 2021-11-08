@@ -74,4 +74,10 @@ public class SearchBaseStorageTaskPoint extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name = "ifOrderByUsePriority",value = "是否按优先级排序(设1为按优先级排序)")
     private Integer ifOrderByUsePriority;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
 }
