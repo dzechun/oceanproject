@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "ocean-leisai-api")
 public interface LeisaiFeignApi {
 
-    @ApiOperation("获取合同量单")
+    @ApiOperation("同步箱号信息到WMS")
     @PostMapping("/leisaiSyncData/syncCartonData")
     ResponseEntity syncCartonData(@ApiParam(value = "必传：",required = true)@RequestBody @Validated LeisaiWmsCarton leisaiWmsCarton);
 }
