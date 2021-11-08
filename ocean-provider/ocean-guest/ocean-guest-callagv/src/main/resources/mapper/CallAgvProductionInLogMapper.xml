@@ -91,6 +91,9 @@
       <if test="productModel != null and productModel != ''">
         and cab.product_model like CONCAT('%', #{productModel}, '%')
       </if>
+      <if test="model != null and model != ''">
+        and SUBSTRING_INDEX(cab.product_model,'-',2) like CONCAT('%', #{model}, '%')
+      </if>
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and capil.operate_time <![CDATA[ >= ]]> #{startTime}
         and capil.operate_time <![CDATA[ <= ]]> DATE_FORMAT(#{endTime}, '%Y-%m-%d 23:59:59')
@@ -98,8 +101,13 @@
       <if test="orgId != null">
         and capil.org_id = #{orgId}
       </if>
+      <if test="qty != null">
+        group by model having sum(cab.qty) = #{qty}
+      </if>
+      <if test="qty == null">
+        group by model
+      </if>
     </where>
-    group by model
     order by capil.operate_time desc
   </select>
 
