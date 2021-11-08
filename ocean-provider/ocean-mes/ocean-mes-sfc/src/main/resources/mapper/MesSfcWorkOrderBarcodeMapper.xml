@@ -186,6 +186,17 @@ order by mswob.create_time desc
         where label_category_id = #{barcodeType}
           and work_order_id = #{workOrderId}
     </select>
+    <select id="saleOrderTotalQty" resultType="java.math.BigDecimal">
+        <choose>
+            <when test="type=1">
+                SELECT IFNULL(COUNT(*),0) FROM mes_sfc_work_order_barcode WHERE work_order_id IN(SELECT sales_order_det_id FROM om_sales_order_det WHERE sales_order_id=#{salesOrderId}) AND label_category_id=#{barcodeTypeId}
+            </when>
+            <otherwise>
+                SELECT sum(order_qty) FROM om_sales_order_det WHERE sales_order_id=#{salesOrderId}
+            </otherwise>
+        </choose>
+
+    </select>
     <select id="findVersion" resultType="java.lang.String">
         select label_version
         From base_label
