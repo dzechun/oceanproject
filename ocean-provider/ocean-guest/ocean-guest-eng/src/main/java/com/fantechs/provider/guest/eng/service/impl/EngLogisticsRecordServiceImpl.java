@@ -1,15 +1,26 @@
 package com.fantechs.provider.guest.eng.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.entity.eng.EngLogisticsRecord;
 import com.fantechs.common.base.general.entity.eng.EngLogisticsRecordMessage;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.guest.eng.config.RabbitConfig;
 import com.fantechs.provider.guest.eng.mapper.EngLogisticsRecordMapper;
 import com.fantechs.provider.guest.eng.service.EngLogisticsRecordService;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.core.ChannelCallback;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -23,6 +34,20 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
 
     @Resource
     private EngLogisticsRecordMapper engLogisticsRecordMapper;
+    @Resource
+    private AmqpTemplate rabbitTemplate;
+    @Resource
+    private RabbitAdmin rabbitAdmin;
+
+    @Override
+    public int getUnReadCount() {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        Example example = new Example(EngLogisticsRecord.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("receiveUserId",user.getUserId())
+                .andEqualTo("readStatus",0);
+        return engLogisticsRecordMapper.selectCountByExample(example);
+    }
 
     @Override
     public List<EngLogisticsRecord> findList(Map<String, Object> map) {
@@ -31,6 +56,15 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         return engLogisticsRecordMapper.findList(map);
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchSave(List<EngLogisticsRecord> list) {
+        int i = 0;
+        for (EngLogisticsRecord engLogisticsRecord : list){
+            i += save(engLogisticsRecord);
+        }
+        return i;
+    }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
@@ -46,7 +80,38 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         record.setModifiedTime(new Date());
         record.setOrgId(user.getOrganizationId());
 
-        return engLogisticsRecordMapper.insertSelective(record);
+        int i = engLogisticsRecordMapper.insertSelective(record);
+
+        //发消息
+        sendMessage(record.getReceiveUserId());
+
+        return i;
+    }
+
+    public void sendMessage(Long receiveUserId){
+        String queueName = "QUEUE_M" + receiveUserId;
+        try {
+            Queue queue = new Queue(queueName, true);
+            TopicExchange topicExchange = new TopicExchange(RabbitConfig.TOPIC_EXCHANGE_MESSAGE);
+            rabbitAdmin.declareQueue(queue);
+            rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(topicExchange).with(queueName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        AMQP.Queue.DeclareOk declareOk = rabbitAdmin.getRabbitTemplate().execute(
+                new ChannelCallback<AMQP.Queue.DeclareOk>() {
+                    @Override
+                    public AMQP.Queue.DeclareOk doInRabbit(Channel channel)
+                            throws Exception {
+                        return channel.queueDeclarePassive(queueName);
+                    }
+                });
+        if (declareOk.getMessageCount() == 0) {
+            String json = JSONObject.toJSONString(getUnReadCount());
+            byte[] bytes = json.getBytes();
+            this.rabbitTemplate.convertAndSend(RabbitConfig.TOPIC_EXCHANGE_MESSAGE, queueName, bytes);
+        }
     }
 
     //拼接消息内容

@@ -4,11 +4,14 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
 
 /**
  * 条码表
@@ -136,6 +139,22 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
     @Excel(name = "折弯机班次", height = 20, width = 30,orderNum="") 
     @Column(name = "zhe_wan_ji_shift")
     private String zheWanJiShift;
+
+    /**
+     * 材料厂家
+     */
+    @ApiModelProperty(name="materialFactory",value = "材料厂家")
+    @Excel(name = "材料厂家", height = 20, width = 30,orderNum="")
+    @Column(name = "material_factory")
+    private String materialFactory;
+
+    /**
+     * 材料规格
+     */
+    @ApiModelProperty(name="materialSpec",value = "材料规格")
+    @Excel(name = "材料规格", height = 20, width = 30,orderNum="")
+    @Column(name = "material_spec")
+    private String materialSpec;
 
     /**
      * 状态（0、无效 1、有效）

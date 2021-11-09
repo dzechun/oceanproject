@@ -39,10 +39,13 @@
     LEFT JOIN base_storage bs ON bstp.storage_id = bs.storage_id
     <where>
       <if test="vehicleCode != null and vehicleCode != ''">
-        and thv.vehicle_code = #{vehicleCode}
+        and thv.vehicle_code like CONCAT('%', #{vehicleCode}, '%')
       </if>
       <if test="vehicleName != null and vehicleName != ''">
         and thv.vehicle_name like CONCAT('%', #{vehicleName}, '%')
+      </if>
+      <if test="remark != null and remark != ''">
+        and thv.remark like CONCAT('%', #{remark}, '%')
       </if>
       <if test="vehicleStatus != null">
         and thv.vehicle_status = #{vehicleStatus}

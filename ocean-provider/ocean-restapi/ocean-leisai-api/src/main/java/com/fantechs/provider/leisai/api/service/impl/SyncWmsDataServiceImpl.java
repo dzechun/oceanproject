@@ -2,6 +2,7 @@ package com.fantechs.provider.leisai.api.service.impl;
 
 import com.fantechs.common.base.entity.security.SysApiLog;
 import com.fantechs.common.base.general.entity.leisai.LeisaiWmsCarton;
+import com.fantechs.common.base.general.entity.leisai.LeisaiWmsCartonDet;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.leisai.api.mapper.WmsCartonDetMapper;
 import com.fantechs.provider.leisai.api.mapper.WmsCartonMapper;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -35,12 +37,12 @@ public class SyncWmsDataServiceImpl implements SyncWmsDataService {
         wmsCartonMapper.save(leisaiWmsCarton);
 
         //保存WMS库 明细
-//        List<LeisaiWmsCartonDet> detList=leisaiWmsCarton.getLeisaiWmsCartonDetList();
-//        if(detList.size()>0){
-//            for (LeisaiWmsCartonDet leisaiWmsCartonDet : detList) {
-//                wmsCartonDetMapper.save(leisaiWmsCartonDet);
-//            }
-//        }
+        List<LeisaiWmsCartonDet> detList=leisaiWmsCarton.getLeisaiWmsCartonDetList();
+        if(detList.size()>0){
+            for (LeisaiWmsCartonDet leisaiWmsCartonDet : detList) {
+                wmsCartonDetMapper.save(leisaiWmsCartonDet);
+            }
+        }
         //DynamicDataSourceHolder.removeDataSource();
 
         // 记录日志
@@ -55,7 +57,7 @@ public class SyncWmsDataServiceImpl implements SyncWmsDataService {
         apiLog.setRequestTime(new Date());
         apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
 
-        //securityFeignApi.add(apiLog);
+        securityFeignApi.add(apiLog);
 
     }
 

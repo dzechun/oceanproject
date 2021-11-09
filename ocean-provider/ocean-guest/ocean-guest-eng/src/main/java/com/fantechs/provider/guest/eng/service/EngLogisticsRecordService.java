@@ -15,4 +15,6 @@ public interface EngLogisticsRecordService extends IService<EngLogisticsRecord> 
     List<EngLogisticsRecord> findList(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<EngLogisticsRecord> list);
+
+    int getUnReadCount();
 }

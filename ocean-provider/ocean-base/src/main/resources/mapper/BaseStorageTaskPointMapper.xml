@@ -35,6 +35,8 @@
     <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
     <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode" />
     <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName" />
     <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
     <result column="vehicle_id" jdbcType="BIGINT" property="vehicleId" />
     <result column="vehicle_code" jdbcType="VARCHAR" property="vehicleCode" />
@@ -69,7 +71,8 @@
 
   <select id="findList" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    sw.warehouse_code,swa.warehouse_area_code,bwa.working_area_code,bs.storage_code,
+    sw.warehouse_code,sw.warehouse_name,swa.warehouse_area_code,swa.warehouse_area_name,
+    bwa.working_area_code,bs.storage_code,
     tv.vehicle_id,tv.vehicle_code,tv.vehicle_name,
     u.user_name as createUserName, s.user_name as modifiedUserName,
     bo.organization_name
@@ -86,6 +89,9 @@
       <if test="storageTaskPointId != null">
         and bstp.storage_task_point_id = #{storageTaskPointId}
       </if>
+      <if test="remark!=null and remark!=''">
+        and bstp.remark like CONCAT('%', #{remark}, '%')
+      </if>
       <if test="taskPointCode!=null and taskPointCode!=''">
         and bstp.task_point_code like CONCAT('%', #{taskPointCode}, '%')
       </if>
@@ -94,6 +100,12 @@
       </if>
       <if test="taskPointType!=null">
         and bstp.task_point_type=#{taskPointType}
+      </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
+      <if test="warehouseAreaName!=null and warehouseAreaName!=''">
+        and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
       </if>
       <if test="warehouseCode!=null and warehouseCode!=''">
         and sw.warehouse_code like CONCAT('%', #{warehouseCode}, '%')

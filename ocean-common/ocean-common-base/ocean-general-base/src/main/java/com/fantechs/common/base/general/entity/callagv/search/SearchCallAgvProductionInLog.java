@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class SearchCallAgvProductionInLog extends BaseQuery implements Serializable {
@@ -38,6 +39,9 @@ public class SearchCallAgvProductionInLog extends BaseQuery implements Serializa
 
     @ApiModelProperty(name="model",value = "物料型号汇总")
     private String model;
+
+    @ApiModelProperty(name="qty",value = "数量")
+    private BigDecimal qty;
 
     @ApiModelProperty(name="ifGroupBy",value = "是否分组")
     private Integer ifGroupBy;

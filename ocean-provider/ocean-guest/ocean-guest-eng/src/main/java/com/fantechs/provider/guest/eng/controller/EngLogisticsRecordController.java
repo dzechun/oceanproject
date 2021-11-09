@@ -37,6 +37,18 @@ public class EngLogisticsRecordController {
     @Resource
     private EngLogisticsRecordService engLogisticsRecordService;
 
+    @ApiOperation(value = "获取未读信息数",notes = "获取未读信息数")
+    @PostMapping("/getUnReadCount")
+    public ResponseEntity getUnReadCount() {
+        return ControllerUtil.returnDataSuccess(engLogisticsRecordService.getUnReadCount(),1);
+    }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchSave")
+    public ResponseEntity batchSave(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<EngLogisticsRecord> list) {
+        return ControllerUtil.returnCRUD(engLogisticsRecordService.batchSave(list));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated EngLogisticsRecord engLogisticsRecord) {

@@ -40,6 +40,12 @@ public class SearchBaseStorageTaskPoint extends BaseQuery implements Serializabl
     private String warehouseCode;
 
     /**
+     * 仓库名称
+     */
+    @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    private String warehouseName;
+
+    /**
      * 库区id
      */
     @ApiModelProperty(name="warehouseAreaId",value = "库区id")
@@ -50,6 +56,12 @@ public class SearchBaseStorageTaskPoint extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="warehouseAreaCode",value = "库区编码")
     private String warehouseAreaCode;
+
+    /**
+     * 库区名称
+     */
+    @ApiModelProperty(name="warehouseAreaName",value = "库区名称")
+    private String warehouseAreaName;
 
     /**
      * 库位编码
@@ -74,4 +86,10 @@ public class SearchBaseStorageTaskPoint extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name = "ifOrderByUsePriority",value = "是否按优先级排序(设1为按优先级排序)")
     private Integer ifOrderByUsePriority;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
 }
