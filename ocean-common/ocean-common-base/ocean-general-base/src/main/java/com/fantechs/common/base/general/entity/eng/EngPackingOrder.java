@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.eng;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 ;
 ;
@@ -203,6 +205,9 @@ public class EngPackingOrder extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name="registerType",value = "登记类型（1-出厂 2-离港 3-到港）")
     private Byte registerType;
+
+    @Transient
+    private List<EngPackingOrderSummaryDetDto> summaryDetList;
 
     private static final long serialVersionUID = 1L;
 }

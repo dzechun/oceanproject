@@ -1,6 +1,7 @@
 package com.fantechs.provider.api.guest.eng;
 
 import com.fantechs.common.base.general.entity.eng.EngContractQtyOrder;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.eng.EngPurchaseReqOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
@@ -41,4 +42,8 @@ public interface EngFeignApi {
     @ApiOperation("返写移位")
     @PostMapping("/reportInnerJobOrder/writeQty")
     ResponseEntity<String> reportInnerJobOrder(@ApiParam(value = "对象，jobOrderId 必传",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInnerJobOrder);
+
+    @ApiOperation("入库-领料-发运材料日志")
+    @PostMapping("/engPackingOrder/saveRecord")
+    ResponseEntity saveRecord(EngPackingOrder engPackingOrder, @RequestParam Byte logisticsNode, @RequestParam String title);
 }

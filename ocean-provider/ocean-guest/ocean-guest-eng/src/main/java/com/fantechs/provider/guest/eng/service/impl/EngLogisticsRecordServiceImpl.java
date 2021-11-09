@@ -53,6 +53,7 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
     public List<EngLogisticsRecord> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
+        map.put("receiveUserId",user.getUserId());
         return engLogisticsRecordMapper.findList(map);
     }
 

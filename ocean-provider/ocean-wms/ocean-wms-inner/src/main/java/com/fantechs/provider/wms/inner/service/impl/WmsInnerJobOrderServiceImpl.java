@@ -10,6 +10,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.basic.JobRuleDto;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
@@ -23,6 +24,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
@@ -693,7 +695,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                     //上架作业更改库存
                     if (wmsInnerJobOrder.getJobOrderType() == (byte) 3) {
-                        num = this.Inventory(oldDto, wmsInnerJobOrderDetDto);
+                        num = this.Inventory(wmsInnerJobOrderDto,oldDto, wmsInnerJobOrderDetDto);
                     }
 
                     if (wmsInnerJobOrder.getJobOrderType() == (byte) 2) {
@@ -998,7 +1000,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
             } else {
                 //更改库存
-                num = this.Inventory(oldDto, wmsInnerJobOrderDetDto);
+                num = this.Inventory(wmsInnerJobOrderDto,oldDto, wmsInnerJobOrderDetDto);
             }
 
             //单一确认回写
@@ -1277,7 +1279,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         searchWmsInnerJobOrderDet.setJobOrderDetId(jobOrderDetId);
         List<WmsInnerJobOrderDetDto> wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet);
         //更改库存
-        num = this.Inventory(oldDto, wmsInnerJobOrderDetDto.get(0));
+        num = this.Inventory(wmsInnerJobOrderDto,oldDto, wmsInnerJobOrderDetDto.get(0));
         //是否条码上架
         if(wmsInnerJobOrderDto.getOrderTypeId()!=9L) {
             if (StringUtils.isEmpty(barcode)) {
@@ -1967,7 +1969,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      *
      * @return
      */
-    private int Inventory(WmsInnerJobOrderDetDto oldDto, WmsInnerJobOrderDetDto newDto) {
+    private int Inventory(WmsInnerJobOrderDto wmsInnerJobOrderDto,WmsInnerJobOrderDetDto oldDto, WmsInnerJobOrderDetDto newDto) {
         SysUser sysUser = currentUser();
         WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(oldDto.getJobOrderId());
         //旧
@@ -2041,6 +2043,32 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
         //记录库存日志
         InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,newDto,qty,newDto.getActualQty(),(byte)2,(byte)1);
+
+        //记录材料日志
+        //获取程序配置项
+        SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+        searchSysSpecItemFiveRing.setSpecCode("sendMaterialLogMessage");
+        List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+        if(itemListFiveRing.size()<1){
+            throw new BizErrorException("配置项 sendMaterialLogMessage 获取失败");
+        }
+        SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+        if("1".equals(sysSpecItem.getParaValue())) {
+            List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
+            EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto = new EngPackingOrderSummaryDetDto();
+            engPackingOrderSummaryDetDto.setContractCode(wmsInnerInventorys.getContractCode());
+            engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(wmsInnerInventorys.getPurchaseReqOrderCode());
+            engPackingOrderSummaryDetDto.setLocationNum(wmsInnerInventorys.getOption4());
+            engPackingOrderSummaryDetDto.setDeviceCode(wmsInnerInventorys.getOption1());
+            engPackingOrderSummaryDetDto.setDominantTermCode(wmsInnerInventorys.getOption2());
+            engPackingOrderSummaryDetDto.setMaterialCode(newDto.getMaterialCode());
+            engPackingOrderSummaryDetDto.setQty(newDto.getActualQty());
+            list.add(engPackingOrderSummaryDetDto);
+            EngPackingOrder engPackingOrder = new EngPackingOrder();
+            engPackingOrder.setPackingOrderCode(wmsInnerJobOrderDto.getRelatedOrderCode());
+            engPackingOrder.setSummaryDetList(list);
+            engFeignApi.saveRecord(engPackingOrder,(byte)5,"入库");
+        }
         return num;
     }
 

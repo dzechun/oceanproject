@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.eng.controller;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngHtPackingOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
@@ -108,6 +109,12 @@ public class EngPackingOrderController {
     public ResponseEntity<List<EngPackingOrderSummaryDetDto>> checkQty(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EngPackingOrder.update.class) List<EngPackingOrderDto> engPackingOrderDtos) {
         List<EngPackingOrderSummaryDetDto> list = engPackingOrderService.checkQty(engPackingOrderDtos);
         return ControllerUtil.returnDataSuccess(list,list.size());
+    }
+
+    @ApiOperation("入库-领料-发运材料日志")
+    @PostMapping("/saveRecord")
+    public ResponseEntity saveRecord(EngPackingOrder engPackingOrder,@RequestParam Byte logisticsNode, @RequestParam String title) {
+        return ControllerUtil.returnCRUD(engPackingOrderService.saveRecord(engPackingOrder,logisticsNode,title));
     }
 
     @PostMapping(value = "/export")

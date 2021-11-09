@@ -140,32 +140,38 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         EngPackingOrder oldPackingOrder = engPackingOrderMapper.selectByPrimaryKey(engPackingOrder.getPackingOrderId());
         if(StringUtils.isNotEmpty(engPackingOrder.getLeaveFactoryTime())&&
                 (oldPackingOrder.getLeaveFactoryTime()==null||engPackingOrder.getLeaveFactoryTime().compareTo(oldPackingOrder.getLeaveFactoryTime())!=0)){
-            saveRecord(engPackingOrder,user,(byte)1,"出厂");
+            saveRecord(engPackingOrder,(byte)1,"出厂");
         }
         if(StringUtils.isNotEmpty(engPackingOrder.getLeavePortTime())&&
                 (oldPackingOrder.getLeavePortTime()==null||engPackingOrder.getLeavePortTime().compareTo(oldPackingOrder.getLeavePortTime())!=0)){
-            saveRecord(engPackingOrder,user,(byte)2,"离港");
+            saveRecord(engPackingOrder,(byte)2,"离港");
         }
         if(StringUtils.isNotEmpty(engPackingOrder.getArrivalPortTime())&&
                 (oldPackingOrder.getArrivalPortTime()==null||engPackingOrder.getArrivalPortTime().compareTo(oldPackingOrder.getArrivalPortTime())!=0)){
-            saveRecord(engPackingOrder,user,(byte)3,"到港");
+            saveRecord(engPackingOrder,(byte)3,"到港");
         }
 
         return engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
     }
 
-    public int saveRecord(EngPackingOrder engPackingOrder,SysUser user,Byte logisticsNode,String title){
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int saveRecord(EngPackingOrder engPackingOrder,Byte logisticsNode,String title){
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<EngLogisticsRecord> records = new LinkedList<>();
         EngLogisticsRecord engLogisticsRecord = new EngLogisticsRecord();
         engLogisticsRecord.setMaterialLogisticsNode(logisticsNode);
         engLogisticsRecord.setTitle(title);
 
-        Map<String,Object> summaryDetMap = new HashMap<>();
-        summaryDetMap.put("orgId",user.getOrganizationId());
-        summaryDetMap.put("packingOrderId",engPackingOrder.getPackingOrderId());
-        List<EngPackingOrderSummaryDetDto> summaryDetList = engPackingOrderSummaryDetMapper.findList(summaryDetMap);
-        if(StringUtils.isNotEmpty(summaryDetList)) {
-            for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : summaryDetList) {
+        //领料出库单及发运单不需要查询装箱单
+        if(logisticsNode!=(byte)5 || logisticsNode!=(byte)6 || logisticsNode!=(byte)7){
+            Map<String,Object> summaryDetMap = new HashMap<>();
+            summaryDetMap.put("orgId",sysUser.getOrganizationId());
+            summaryDetMap.put("packingOrderId",engPackingOrder.getPackingOrderId());
+            engPackingOrder.setSummaryDetList(engPackingOrderSummaryDetMapper.findList(summaryDetMap));
+        }
+        if(StringUtils.isNotEmpty(engPackingOrder.getSummaryDetList())) {
+            for (EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto : engPackingOrder.getSummaryDetList()) {
                 SearchEngContractQtyOrderAndPurOrder searchEngContractQtyOrderAndPurOrder = new SearchEngContractQtyOrderAndPurOrder();
                 searchEngContractQtyOrderAndPurOrder.setContractCode(engPackingOrderSummaryDetDto.getContractCode());
                 searchEngContractQtyOrderAndPurOrder.setPurchaseReqOrderCode(engPackingOrderSummaryDetDto.getPurchaseReqOrderCode());
@@ -191,10 +197,10 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                         engLogisticsRecordMessage.setLocationNum(engContractQtyOrderAndPurOrderDto.getLocationNum());
                         engLogisticsRecordMessage.setMainUnit(engContractQtyOrderAndPurOrderDto.getMainUnit());
                         engLogisticsRecordMessage.setMaterialDesc(engContractQtyOrderAndPurOrderDto.getMaterialDesc());
-                        engLogisticsRecordMessage.setRelatedOrderCode(engPackingOrder.getPackingOrderCode());
+                        engLogisticsRecordMessage.setRelatedOrderCode(StringUtils.isNotEmpty(engPackingOrder.getPackingOrderCode())?engPackingOrder.getPackingOrderCode():null);
                         engLogisticsRecordMessage.setChangeTime(new Date());
                         engLogisticsRecordMessage.setQty(engPackingOrderSummaryDetDto.getQty());
-                        engLogisticsRecordMessage.setOperateUser(user.getUserName());
+                        engLogisticsRecordMessage.setOperateUser(sysUser.getUserName());
 
                         engLogisticsRecord.setMessage(engLogisticsRecordMessage);
                         engLogisticsRecord.setContractQtyOrderId(engContractQtyOrderAndPurOrderDto.getContractQtyOrderId());
@@ -206,7 +212,6 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                 }
             }
         }
-
         return engLogisticsRecordService.batchSave(records);
     }
 
