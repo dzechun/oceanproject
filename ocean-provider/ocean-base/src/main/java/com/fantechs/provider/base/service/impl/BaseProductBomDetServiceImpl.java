@@ -2,18 +2,13 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
-import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProductBom;
 import com.fantechs.common.base.general.entity.basic.BaseProductBomDet;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductBomDet;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBomDet;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -28,7 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wcz on 2020/10/12.
@@ -202,34 +200,10 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
 
 
     @Override
-    public BaseProductBomDet addOrUpdate(BaseProductBomDet baseProductBomDet) {
+    public int addOrUpdate(List<BaseProductBomDet> bseProductBomDets) {
 
-        Example example = new Example(BaseProductBomDet.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("productBomId", baseProductBomDet.getProductBomId());
-        criteria.andEqualTo("materialId", baseProductBomDet.getMaterialId());
-        List<BaseProductBomDet> baseProductBomDets = baseProductBomDetMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(baseProductBomDets)) {
-            throw new BizErrorException("零件料号已存在");
-        }
-        //添加组织，后续根据实际情况添加
-
-        SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
-        searchBaseOrganization.setOrganizationName("雷赛");
-        List<BaseOrganizationDto> organizationList = baseOrganizationMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
-        if(StringUtils.isEmpty(organizationList))  throw new BizErrorException("未查询到对应组织");
-        baseProductBomDet.setOrgId((organizationList.get(0).getOrganizationId()));
-
-        baseProductBomDet.setCreateTime(new Date());
-        baseProductBomDet.setModifiedTime(new Date());
-        int i = baseProductBomDetMapper.insertSelective(baseProductBomDet);
-        //新增产品BOM详细历史信息
-        /*BaseHtProductBomDet baseHtProductBomDet = new BaseHtProductBomDet();
-        BeanUtils.copyProperties(baseProductBomDet, baseHtProductBomDet);
-        int i = baseHtProductBomDetMapper.insertSelective(baseHtProductBomDet);
-        return i;*/
-
-        return baseProductBomDet;
+        int i = baseProductBomDetMapper.insertList(bseProductBomDets);
+        return i;
     }
 
     @Override

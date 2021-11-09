@@ -28,10 +28,7 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebService(serviceName = "PurchaseOrderService", // 与接口中指定的name一致
         targetNamespace = "http://purchaseOrderService.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
@@ -112,6 +109,8 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
                 omPurchaseOrder.setSalesReturnItem(purchaseOrderApiDto.getRETPO());
                 omPurchaseOrder.setOrderStatus((byte)1);
                 omPurchaseOrder.setStatus((byte)1);
+                omPurchaseOrder.setCreateUserId((long)99);
+                omPurchaseOrder.setCreateTime(new Date());
                 ResponseEntity<OmPurchaseOrder> omPurchaseOrderResponseEntity = oMFeignApi.saveByApi(omPurchaseOrder);
                 purchaseMap.put(purchaseOrderApiDto.getEBELN(),omPurchaseOrderResponseEntity.getData().getPurchaseOrderId());
             }
@@ -130,6 +129,8 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             purchaseOrderDet.setFactoryId(factoryList.getData().get(0).getFactoryId());
             purchaseOrderDet.setIsDelete((byte)1);
             purchaseOrderDet.setOrgId(orgId);
+            purchaseOrderDet.setCreateUserId((long)99);
+            purchaseOrderDet.setCreateTime(new Date());
             omPurchaseOrderDetList.add(purchaseOrderDet);
         }
         oMFeignApi.saveByApi(omPurchaseOrderDetList);

@@ -2,19 +2,18 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseProductBomImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductBom;
-import com.fantechs.common.base.general.dto.basic.imports.BaseProductBomImport;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBomDet;
 import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -424,25 +423,14 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
         else
             criteria.andEqualTo("productBomVersion", "0");
         BaseProductBom baseProductBomOld = baseProductBomMapper.selectOneByExample(example);
-        //添加组织，后续根据实际情况添加
-        baseProductBom.setOrgId(getOrId());
 
-
-        baseProductBom.setStatus((byte)1);
-        baseProductBom.setModifiedTime(new Date());
         if (StringUtils.isNotEmpty(baseProductBomOld)){
             baseProductBom.setProductBomId(baseProductBomOld.getProductBomId());
             baseProductBomMapper.updateByPrimaryKey(baseProductBom);
-
         }else{
             baseProductBom.setCreateTime(new Date());
             baseProductBomMapper.insertUseGeneratedKeys(baseProductBom);
         }
-
-        //新增产品BOM历史信息
-        /*BaseHtProductBom baseHtProductBom =new BaseHtProductBom();
-        BeanUtils.copyProperties(baseProductBom, baseHtProductBom);
-        int i = baseHtProductBomMapper.insertSelective(baseHtProductBom);*/
 
         return baseProductBom;
     }
