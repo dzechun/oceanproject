@@ -43,15 +43,35 @@
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.callagv.CallAgvBarcodeDto">
-
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    select <include refid="Base_Column_List"></include>
+    select <include refid="Base_Column_List"></include>,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name
     from call_agv_barcode cab
+    LEFT JOIN ocean_v2.sys_user su ON cab.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON cab.modified_user_id = sus.user_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON cab.org_id = bo.organization_id
     <where>
       <if test="barcode != null and barcode != ''">
         and cab.barcode = #{barcode}
+      </if>
+      <if test="productModel != null and productModel != ''">
+        and cab.product_model like CONCAT('%', #{productModel}, '%')
+      </if>
+      <if test="batchCode != null and batchCode != ''">
+        and cab.batch_code like CONCAT('%', #{batchCode}, '%')
+      </if>
+      <if test="processName != null and processName != ''">
+        and cab.process_name like CONCAT('%', #{processName}, '%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(cab.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
       <if test="orgId != null">
         and cab.org_id = #{orgId}

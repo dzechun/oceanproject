@@ -24,6 +24,8 @@ public class CallAgvAgvTaskServiceImpl extends BaseService<CallAgvAgvTask> imple
 
     @Override
     public List<CallAgvAgvTaskDto> findList(Map<String, Object> map) {
+        /*SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId", user.getOrganizationId());*/
         return callAgvAgvTaskMapper.findList(map);
     }
 

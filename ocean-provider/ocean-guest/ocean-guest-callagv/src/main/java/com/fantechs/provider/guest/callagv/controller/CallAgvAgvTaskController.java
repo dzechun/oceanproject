@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@Api(tags = "callAgvAgvTask控制器")
+@Api(tags = "任务管理控制器")
 @RequestMapping("/callAgvAgvTask")
 @Validated
 @Slf4j
