@@ -34,6 +34,7 @@ import com.fantechs.provider.guest.eng.mapper.EngContractQtyOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryDetMapper;
 import com.fantechs.provider.guest.eng.mapper.EngPackingOrderSummaryMapper;
+import com.fantechs.provider.guest.eng.service.EngPackingOrderService;
 import com.fantechs.provider.guest.eng.service.EngPackingOrderTakeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +63,8 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
     private BaseFeignApi baseFeignApi;
     @Resource
     private EngContractQtyOrderMapper engContractQtyOrderMapper;
+    @Resource
+    private EngPackingOrderService engPackingOrderService;
 
     @Override
     public List<EngPackingOrderDto> findList(Map<String, Object> map) {
@@ -92,6 +95,9 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
             engPackingOrder.setModifiedTime(new Date());
             engPackingOrder.setModifiedUserId(sysUser.getUserId());
             num+=engPackingOrderMapper.updateByPrimaryKeySelective(engPackingOrder);
+
+            //到场记录材料跟踪日志
+            engPackingOrderService.saveRecord(engPackingOrder,(byte)4,"到场");
         }
         return num;
     }

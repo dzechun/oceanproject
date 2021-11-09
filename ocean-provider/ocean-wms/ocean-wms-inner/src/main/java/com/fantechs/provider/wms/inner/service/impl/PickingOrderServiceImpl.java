@@ -8,12 +8,14 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -791,6 +793,30 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     acuQty = acuQty.subtract(acuQty);
                 }
                 num += wmsInnerInventoryMapper.updateByPrimaryKeySelective(innerInventory);
+            }
+            //记录材料日志
+            //获取程序配置项
+            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+            searchSysSpecItemFiveRing.setSpecCode("sendMaterialLogMessage");
+            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+            if(itemListFiveRing.size()<1){
+                throw new BizErrorException("配置项 sendMaterialLogMessage 获取失败");
+            }
+            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+            if("1".equals(sysSpecItem.getParaValue())) {
+                List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
+                EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto = new EngPackingOrderSummaryDetDto();
+                engPackingOrderSummaryDetDto.setContractCode(wmsInnerInventorys.getContractCode());
+                engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(wmsInnerInventorys.getPurchaseReqOrderCode());
+                engPackingOrderSummaryDetDto.setLocationNum(wmsInnerInventorys.getOption4());
+                engPackingOrderSummaryDetDto.setDeviceCode(wmsInnerInventorys.getOption1());
+                engPackingOrderSummaryDetDto.setDominantTermCode(wmsInnerInventorys.getOption2());
+                engPackingOrderSummaryDetDto.setMaterialCode(wmsInnerJobOrderDetDto.getMaterialCode());
+                engPackingOrderSummaryDetDto.setQty(wmsInnerJobOrderDetDto.getDistributionQty().subtract(acuQty));
+                list.add(engPackingOrderSummaryDetDto);
+                EngPackingOrder engPackingOrder = new EngPackingOrder();
+                engPackingOrder.setSummaryDetList(list);
+                engFeignApi.saveRecord(engPackingOrder,(byte)6,"出库");
             }
         }
         redisUtil.set(this.REDIS_KEY+wmsInnerJobOrderDetDto.getJobOrderDetId().toString(),bigDecimalMap);

@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.eng.service;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
@@ -23,4 +24,5 @@ public interface EngPackingOrderService extends IService<EngPackingOrder> {
 
     int register(EngPackingOrder engPackingOrder);
 
+    int saveRecord(EngPackingOrder engPackingOrder, Byte logisticsNode, String title);
 }
