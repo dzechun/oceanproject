@@ -46,7 +46,7 @@ public class SocketServiceImpl implements SocketService {
 
     private Hashtable hashtable = new Hashtable();
     private int port = 9302;   //端口
-    private int timeOut = 1000 * 60;   //超时时间
+    private int timeOut = 1000 * 60 * 10;   //超时时间
     private Map<String, Long> ipMap = new HashMap<>();
 
     @Scheduled(cron = "0 */1 * * * ?")
@@ -63,6 +63,18 @@ public class SocketServiceImpl implements SocketService {
                     log.info("==============检测到设备断开，设备ip："+key);
                     updateStatus(key, (byte) 3,null);
                     iterator.remove();
+
+                    //超时后关闭socket
+                    Socket socket = (Socket)hashtable.get(key);
+                    try {
+                        socket.shutdownInput();
+                        socket.shutdownOutput();
+                        socket.close();
+                        hashtable.remove(key);
+                        ipMap.remove(key);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -294,6 +306,7 @@ public class SocketServiceImpl implements SocketService {
             ipMap.remove(ip);
             e.printStackTrace();
         }
+
         return str;
     }
 
