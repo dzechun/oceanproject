@@ -794,30 +794,30 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
                 num += wmsInnerInventoryMapper.updateByPrimaryKeySelective(innerInventory);
             }
-            //记录材料日志
-            //获取程序配置项
-            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-            searchSysSpecItemFiveRing.setSpecCode("sendMaterialLogMessage");
-            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-            if(itemListFiveRing.size()<1){
-                throw new BizErrorException("配置项 sendMaterialLogMessage 获取失败");
-            }
-            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if("1".equals(sysSpecItem.getParaValue())) {
-                List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
-                EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto = new EngPackingOrderSummaryDetDto();
-                engPackingOrderSummaryDetDto.setContractCode(innerInventory.getContractCode());
-                engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(innerInventory.getPurchaseReqOrderCode());
-                engPackingOrderSummaryDetDto.setLocationNum(innerInventory.getOption4());
-                engPackingOrderSummaryDetDto.setDeviceCode(innerInventory.getOption1());
-                engPackingOrderSummaryDetDto.setDominantTermCode(innerInventory.getOption2());
-                engPackingOrderSummaryDetDto.setMaterialCode(wmsInnerJobOrderDetDto.getMaterialCode());
-                engPackingOrderSummaryDetDto.setQty(wmsInnerJobOrderDetDto.getDistributionQty().subtract(acuQty));
-                list.add(engPackingOrderSummaryDetDto);
-                EngPackingOrder engPackingOrder = new EngPackingOrder();
-                engPackingOrder.setSummaryDetList(list);
-                engFeignApi.saveRecord(engPackingOrder,(byte)6,"出库");
-            }
+//            //记录材料日志
+//            //获取程序配置项
+//            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+//            searchSysSpecItemFiveRing.setSpecCode("sendMaterialLogMessage");
+//            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+//            if(itemListFiveRing.size()<1){
+//                throw new BizErrorException("配置项 sendMaterialLogMessage 获取失败");
+//            }
+//            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+//            if("1".equals(sysSpecItem.getParaValue())) {
+//                List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
+//                EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto = new EngPackingOrderSummaryDetDto();
+//                engPackingOrderSummaryDetDto.setContractCode(innerInventory.getContractCode());
+//                engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(innerInventory.getPurchaseReqOrderCode());
+//                engPackingOrderSummaryDetDto.setLocationNum(innerInventory.getOption4());
+//                engPackingOrderSummaryDetDto.setDeviceCode(innerInventory.getOption1());
+//                engPackingOrderSummaryDetDto.setDominantTermCode(innerInventory.getOption2());
+//                engPackingOrderSummaryDetDto.setMaterialCode(wmsInnerJobOrderDetDto.getMaterialCode());
+//                engPackingOrderSummaryDetDto.setQty(wmsInnerJobOrderDetDto.getDistributionQty().subtract(acuQty));
+//                list.add(engPackingOrderSummaryDetDto);
+//                EngPackingOrder engPackingOrder = new EngPackingOrder();
+//                engPackingOrder.setSummaryDetList(list);
+//                engFeignApi.saveRecord(engPackingOrder,(byte)6,"出库");
+//            }
         }
         redisUtil.set(this.REDIS_KEY+wmsInnerJobOrderDetDto.getJobOrderDetId().toString(),bigDecimalMap);
         return num;

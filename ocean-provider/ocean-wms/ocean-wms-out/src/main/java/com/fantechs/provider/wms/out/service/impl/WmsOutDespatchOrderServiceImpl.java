@@ -206,8 +206,9 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                         engPackingOrderSummaryDetDto.setQty(wmsInnerJobOrderDetDto.getActualQty());
                         lists.add(engPackingOrderSummaryDetDto);
                         EngPackingOrder engPackingOrder = new EngPackingOrder();
+                        engPackingOrder.setPackingOrderCode(wmsInnerJobOrder.getRelatedOrderCode());
                         engPackingOrder.setSummaryDetList(lists);
-                        engFeignApi.saveRecord(engPackingOrder,(byte)7,"发运");
+                        engFeignApi.saveRecord(engPackingOrder,(byte)7,"出库");
                     }
                 }
             }

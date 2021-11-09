@@ -197,7 +197,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                         engLogisticsRecordMessage.setLocationNum(engContractQtyOrderAndPurOrderDto.getLocationNum());
                         engLogisticsRecordMessage.setMainUnit(engContractQtyOrderAndPurOrderDto.getMainUnit());
                         engLogisticsRecordMessage.setMaterialDesc(engContractQtyOrderAndPurOrderDto.getMaterialDesc());
-                        engLogisticsRecordMessage.setRelatedOrderCode(StringUtils.isNotEmpty(engPackingOrder.getPackingOrderCode())?engPackingOrder.getPackingOrderCode():null);
+                        engLogisticsRecordMessage.setRelatedOrderCode(engPackingOrder.getPackingOrderCode());
                         engLogisticsRecordMessage.setChangeTime(new Date());
                         engLogisticsRecordMessage.setQty(engPackingOrderSummaryDetDto.getQty());
                         engLogisticsRecordMessage.setOperateUser(sysUser.getUserName());

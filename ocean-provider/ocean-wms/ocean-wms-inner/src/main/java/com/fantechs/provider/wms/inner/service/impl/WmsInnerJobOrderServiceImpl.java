@@ -2066,7 +2066,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 engPackingOrderSummaryDetDto.setQty(newDto.getActualQty());
                 list.add(engPackingOrderSummaryDetDto);
                 EngPackingOrder engPackingOrder = new EngPackingOrder();
-                engPackingOrder.setPackingOrderCode(wmsInnerJobOrderDto.getRelatedOrderCode());
+                engPackingOrder.setPackingOrderCode(wmsInnerJobOrderDto.getJobOrderCode());
                 engPackingOrder.setSummaryDetList(list);
                 engFeignApi.saveRecord(engPackingOrder, (byte) 5, "入库");
             }
