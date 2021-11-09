@@ -156,6 +156,17 @@ public class SocketServiceImpl implements SocketService {
     }
 
     @Override
+    public void closeThird(){
+        Map<Thread, StackTraceElement[]> maps = Thread.getAllStackTraces();
+        for(Thread thirds : maps.keySet()){
+            if(thirds.getName().length()> 60 && thirds.getName().substring(thirds.getName().length()-21).equals("ocean-esop-9015.mv.db")){
+               thirds.interrupt();
+            }
+        }
+
+    }
+
+    @Override
     public  void openService() throws IOException{
         //创建一个服务端socket
         ServerSocket serverSocket=new ServerSocket(port);
@@ -239,7 +250,6 @@ public class SocketServiceImpl implements SocketService {
                 out =new PrintWriter(os);
                 out.write(outMsg);
                 out.flush();
-
 
                 //读取输入字段，判断是否断开
                 while(true) {

@@ -26,7 +26,6 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 条码表ID
      */
     @ApiModelProperty(name="barcodeId",value = "条码表ID")
-    @Excel(name = "条码表ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "barcode_id")
     private Long barcodeId;
@@ -35,14 +34,14 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 条码
      */
     @ApiModelProperty(name="barcode",value = "条码")
-    @Excel(name = "条码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "条码", height = 20, width = 30,orderNum="1")
     private String barcode;
 
     /**
      * 型号
      */
     @ApiModelProperty(name="productModel",value = "型号")
-    @Excel(name = "型号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "型号", height = 20, width = 30,orderNum="2")
     @Column(name = "product_model")
     private String productModel;
 
@@ -50,14 +49,14 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 批次
      */
     @ApiModelProperty(name="batch",value = "批次")
-    @Excel(name = "批次", height = 20, width = 30,orderNum="") 
+    @Excel(name = "批次", height = 20, width = 30,orderNum="3")
     private String batch;
 
     /**
      * 批号
      */
     @ApiModelProperty(name="batchCode",value = "批号")
-    @Excel(name = "批号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "批号", height = 20, width = 30,orderNum="4")
     @Column(name = "batch_code")
     private String batchCode;
 
@@ -65,14 +64,14 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 数量
      */
     @ApiModelProperty(name="qty",value = "数量")
-    @Excel(name = "数量", height = 20, width = 30,orderNum="") 
+    @Excel(name = "数量", height = 20, width = 30,orderNum="5")
     private BigDecimal qty;
 
     /**
      * 作业员
      */
     @ApiModelProperty(name="operatorUserName",value = "作业员")
-    @Excel(name = "作业员", height = 20, width = 30,orderNum="") 
+    @Excel(name = "作业员", height = 20, width = 30,orderNum="6")
     @Column(name = "operator_user_name")
     private String operatorUserName;
 
@@ -80,7 +79,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 工序名称
      */
     @ApiModelProperty(name="processName",value = "工序名称")
-    @Excel(name = "工序名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "工序名称", height = 20, width = 30,orderNum="7")
     @Column(name = "process_name")
     private String processName;
 
@@ -88,7 +87,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 保质期
      */
     @ApiModelProperty(name="shelfLife",value = "保质期")
-    @Excel(name = "保质期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "保质期", height = 20, width = 30,orderNum="8")
     @Column(name = "shelf_life")
     private String shelfLife;
 
@@ -96,7 +95,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 生产日期
      */
     @ApiModelProperty(name="productionDate",value = "生产日期")
-    @Excel(name = "生产日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "生产日期", height = 20, width = 30,orderNum="9")
     @Column(name = "production_date")
     private String productionDate;
 
@@ -104,7 +103,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 流水号
      */
     @ApiModelProperty(name="serialNumber",value = "流水号")
-    @Excel(name = "流水号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "流水号", height = 20, width = 30,orderNum="10")
     @Column(name = "serial_number")
     private String serialNumber;
 
@@ -112,7 +111,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 注塑机名称
      */
     @ApiModelProperty(name="zhuSuJiName",value = "注塑机名称")
-    @Excel(name = "注塑机名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "注塑机名称", height = 20, width = 30,orderNum="11")
     @Column(name = "zhu_su_ji_name")
     private String zhuSuJiName;
 
@@ -120,7 +119,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 注塑机班次
      */
     @ApiModelProperty(name="zhuSuJiShift",value = "注塑机班次")
-    @Excel(name = "注塑机班次", height = 20, width = 30,orderNum="") 
+    @Excel(name = "注塑机班次", height = 20, width = 30,orderNum="12")
     @Column(name = "zhu_su_ji_shift")
     private String zhuSuJiShift;
 
@@ -128,7 +127,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 折弯机名称
      */
     @ApiModelProperty(name="zheWanJiName",value = "折弯机名称")
-    @Excel(name = "折弯机名称", height = 20, width = 30,orderNum="") 
+    @Excel(name = "折弯机名称", height = 20, width = 30,orderNum="13")
     @Column(name = "zhe_wan_ji_name")
     private String zheWanJiName;
 
@@ -136,7 +135,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 折弯机班次
      */
     @ApiModelProperty(name="zheWanJiShift",value = "折弯机班次")
-    @Excel(name = "折弯机班次", height = 20, width = 30,orderNum="") 
+    @Excel(name = "折弯机班次", height = 20, width = 30,orderNum="14")
     @Column(name = "zhe_wan_ji_shift")
     private String zheWanJiShift;
 
@@ -144,7 +143,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 材料厂家
      */
     @ApiModelProperty(name="materialFactory",value = "材料厂家")
-    @Excel(name = "材料厂家", height = 20, width = 30,orderNum="")
+    @Excel(name = "材料厂家", height = 20, width = 30,orderNum="15")
     @Column(name = "material_factory")
     private String materialFactory;
 
@@ -152,7 +151,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 材料规格
      */
     @ApiModelProperty(name="materialSpec",value = "材料规格")
-    @Excel(name = "材料规格", height = 20, width = 30,orderNum="")
+    @Excel(name = "材料规格", height = 20, width = 30,orderNum="16")
     @Column(name = "material_spec")
     private String materialSpec;
 
@@ -160,21 +159,18 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -182,7 +178,6 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -190,7 +185,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="18",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -199,7 +194,6 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -207,7 +201,7 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="20",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -216,7 +210,6 @@ public class CallAgvBarcode extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 
