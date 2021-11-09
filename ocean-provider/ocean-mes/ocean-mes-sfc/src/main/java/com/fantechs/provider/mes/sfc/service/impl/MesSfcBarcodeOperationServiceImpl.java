@@ -92,6 +92,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .processId(dto.getProcessId())
                 .checkOrNot(dto.getCheckOrNot())
                 .packType(dto.getPackType())
+                .proLineId(dto.getProLineId())
                 .build());
 
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
@@ -346,24 +347,22 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                                     }
                                 }
                             }
-                            if (currentDtos.isEmpty()){
-                                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "销售编码管理PO数据不存在，请先为维护！");
-                            }
-                            // 排序，优先级最高的
-                            currentDtos = currentDtos.stream().sorted(Comparator.comparing(OmSalesCodeReSpc::getPriority)).collect(Collectors.toList());
-                            OmSalesCodeReSpc omSalesCodeReSpc = currentDtos.get(0);
-                            // 绑定关系
-                            mesSfcBarcodeProcess.setSamePackageCode(omSalesCodeReSpc.getSamePackageCode());
-                            mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
+                            if (!currentDtos.isEmpty() && currentDtos.size() > 0){
+                                // 排序，优先级最高的
+                                currentDtos = currentDtos.stream().sorted(Comparator.comparing(OmSalesCodeReSpc::getPriority)).collect(Collectors.toList());
+                                OmSalesCodeReSpc omSalesCodeReSpc = currentDtos.get(0);
+                                // 绑定关系
+                                mesSfcBarcodeProcess.setSamePackageCode(omSalesCodeReSpc.getSamePackageCode());
+                                mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
 
-                            // 增加以匹配数
-                            omSalesCodeReSpc.setMatchedQty(omSalesCodeReSpc.getMatchedQty() != null ? BigDecimal.ONE.add(omSalesCodeReSpc.getMatchedQty()) : BigDecimal.ONE);
-                            if (omSalesCodeReSpc.getMatchedQty().compareTo(omSalesCodeReSpc.getSamePackageCodeQty()) == 0){
-                                omSalesCodeReSpc.setSamePackageCodeStatus((byte) 3);
+                                // 增加以匹配数
+                                omSalesCodeReSpc.setMatchedQty(omSalesCodeReSpc.getMatchedQty() != null ? BigDecimal.ONE.add(omSalesCodeReSpc.getMatchedQty()) : BigDecimal.ONE);
+                                if (omSalesCodeReSpc.getMatchedQty().compareTo(omSalesCodeReSpc.getSamePackageCodeQty()) == 0){
+                                    omSalesCodeReSpc.setSamePackageCodeStatus((byte) 3);
+                                }
+                                omFeignApi.update(omSalesCodeReSpc);
                             }
-                            omFeignApi.update(omSalesCodeReSpc);
                         }
-
                         break;
                     }
                 }
