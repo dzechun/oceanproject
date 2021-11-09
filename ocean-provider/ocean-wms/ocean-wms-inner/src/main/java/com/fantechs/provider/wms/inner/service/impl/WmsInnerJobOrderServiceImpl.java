@@ -2044,30 +2044,32 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //记录库存日志
         InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,newDto,qty,newDto.getActualQty(),(byte)2,(byte)1);
 
-        //记录材料日志
-        //获取程序配置项
-        SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-        searchSysSpecItemFiveRing.setSpecCode("sendMaterialLogMessage");
-        List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-        if(itemListFiveRing.size()<1){
-            throw new BizErrorException("配置项 sendMaterialLogMessage 获取失败");
-        }
-        SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-        if("1".equals(sysSpecItem.getParaValue())) {
-            List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
-            EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto = new EngPackingOrderSummaryDetDto();
-            engPackingOrderSummaryDetDto.setContractCode(wmsInnerInventorys.getContractCode());
-            engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(wmsInnerInventorys.getPurchaseReqOrderCode());
-            engPackingOrderSummaryDetDto.setLocationNum(wmsInnerInventorys.getOption4());
-            engPackingOrderSummaryDetDto.setDeviceCode(wmsInnerInventorys.getOption1());
-            engPackingOrderSummaryDetDto.setDominantTermCode(wmsInnerInventorys.getOption2());
-            engPackingOrderSummaryDetDto.setMaterialCode(newDto.getMaterialCode());
-            engPackingOrderSummaryDetDto.setQty(newDto.getActualQty());
-            list.add(engPackingOrderSummaryDetDto);
-            EngPackingOrder engPackingOrder = new EngPackingOrder();
-            engPackingOrder.setPackingOrderCode(wmsInnerJobOrderDto.getRelatedOrderCode());
-            engPackingOrder.setSummaryDetList(list);
-            engFeignApi.saveRecord(engPackingOrder,(byte)5,"入库");
+        if(wmsInnerJobOrder.getOrderTypeId()==9L) {
+            //记录材料日志
+            //获取程序配置项
+            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+            searchSysSpecItemFiveRing.setSpecCode("sendMaterialLogMessage");
+            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+            if (itemListFiveRing.size() < 1) {
+                throw new BizErrorException("配置项 sendMaterialLogMessage 获取失败");
+            }
+            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+            if ("1".equals(sysSpecItem.getParaValue())) {
+                List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
+                EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto = new EngPackingOrderSummaryDetDto();
+                engPackingOrderSummaryDetDto.setContractCode(StringUtils.isNotEmpty(wmsInnerInventory.getContractCode())?wmsInnerInventory.getContractCode():null);
+                engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(StringUtils.isNotEmpty(wmsInnerInventory.getPurchaseReqOrderCode())?wmsInnerInventory.getPurchaseReqOrderCode():null);
+                engPackingOrderSummaryDetDto.setLocationNum(StringUtils.isNotEmpty(wmsInnerInventory.getOption4())?wmsInnerInventory.getOption4():null);
+                engPackingOrderSummaryDetDto.setDeviceCode(StringUtils.isNotEmpty(wmsInnerInventory.getOption1())?wmsInnerInventory.getOption1():null);
+                engPackingOrderSummaryDetDto.setDominantTermCode(StringUtils.isNotEmpty(wmsInnerInventory.getOption2())?wmsInnerInventory.getOption2():null);
+                engPackingOrderSummaryDetDto.setMaterialCode(newDto.getMaterialCode());
+                engPackingOrderSummaryDetDto.setQty(newDto.getActualQty());
+                list.add(engPackingOrderSummaryDetDto);
+                EngPackingOrder engPackingOrder = new EngPackingOrder();
+                engPackingOrder.setPackingOrderCode(wmsInnerJobOrderDto.getRelatedOrderCode());
+                engPackingOrder.setSummaryDetList(list);
+                engFeignApi.saveRecord(engPackingOrder, (byte) 5, "入库");
+            }
         }
         return num;
     }

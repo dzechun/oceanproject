@@ -806,11 +806,11 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             if("1".equals(sysSpecItem.getParaValue())) {
                 List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
                 EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto = new EngPackingOrderSummaryDetDto();
-                engPackingOrderSummaryDetDto.setContractCode(wmsInnerInventorys.getContractCode());
-                engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(wmsInnerInventorys.getPurchaseReqOrderCode());
-                engPackingOrderSummaryDetDto.setLocationNum(wmsInnerInventorys.getOption4());
-                engPackingOrderSummaryDetDto.setDeviceCode(wmsInnerInventorys.getOption1());
-                engPackingOrderSummaryDetDto.setDominantTermCode(wmsInnerInventorys.getOption2());
+                engPackingOrderSummaryDetDto.setContractCode(innerInventory.getContractCode());
+                engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(innerInventory.getPurchaseReqOrderCode());
+                engPackingOrderSummaryDetDto.setLocationNum(innerInventory.getOption4());
+                engPackingOrderSummaryDetDto.setDeviceCode(innerInventory.getOption1());
+                engPackingOrderSummaryDetDto.setDominantTermCode(innerInventory.getOption2());
                 engPackingOrderSummaryDetDto.setMaterialCode(wmsInnerJobOrderDetDto.getMaterialCode());
                 engPackingOrderSummaryDetDto.setQty(wmsInnerJobOrderDetDto.getDistributionQty().subtract(acuQty));
                 list.add(engPackingOrderSummaryDetDto);

@@ -164,7 +164,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         engLogisticsRecord.setTitle(title);
 
         //领料出库单及发运单不需要查询装箱单
-        if(logisticsNode!=(byte)5 || logisticsNode!=(byte)6 || logisticsNode!=(byte)7){
+        if(logisticsNode==1 || logisticsNode==2 || logisticsNode==3 || logisticsNode==4){
             Map<String,Object> summaryDetMap = new HashMap<>();
             summaryDetMap.put("orgId",sysUser.getOrganizationId());
             summaryDetMap.put("packingOrderId",engPackingOrder.getPackingOrderId());

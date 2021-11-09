@@ -113,7 +113,7 @@ public class EngPackingOrderController {
 
     @ApiOperation("入库-领料-发运材料日志")
     @PostMapping("/saveRecord")
-    public ResponseEntity saveRecord(EngPackingOrder engPackingOrder,@RequestParam Byte logisticsNode, @RequestParam String title) {
+    public ResponseEntity saveRecord(@RequestBody EngPackingOrder engPackingOrder,@RequestParam Byte logisticsNode, @RequestParam String title) {
         return ControllerUtil.returnCRUD(engPackingOrderService.saveRecord(engPackingOrder,logisticsNode,title));
     }
 
