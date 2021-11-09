@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "SI_MES_WORKORDER_REPORT_SAVE_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappodev.leisai.com:50000/dir/wsdl?p=ic/112f809eacc7313faee6f09a85f1268e")
+@WebServiceClient(name = "SI_MES_WORKORDER_REPORT_SAVE_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/112f809eacc7313faee6f09a85f1268e")
 public class SIMESWORKORDERREPORTSAVEOutService
     extends Service
 {
@@ -30,7 +30,7 @@ public class SIMESWORKORDERREPORTSAVEOutService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://sappodev.leisai.com:50000/dir/wsdl?p=ic/112f809eacc7313faee6f09a85f1268e");
+            url = new URL("http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/112f809eacc7313faee6f09a85f1268e");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

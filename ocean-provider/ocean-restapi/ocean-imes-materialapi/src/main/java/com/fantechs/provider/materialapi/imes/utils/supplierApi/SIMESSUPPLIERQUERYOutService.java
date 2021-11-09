@@ -1,14 +1,10 @@
 
 package com.fantechs.provider.materialapi.imes.utils.supplierApi;
 
+import javax.xml.namespace.QName;
+import javax.xml.ws.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
 
 
 /**
@@ -17,7 +13,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "SI_MES_SUPPLIER_QUERY_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappodev.leisai.com:50000/dir/wsdl?p=ic/dbb7f9ad37bf3f78b3d8b743d1a4c6a7")
+@WebServiceClient(name = "SI_MES_SUPPLIER_QUERY_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/dbb7f9ad37bf3f78b3d8b743d1a4c6a7")
 public class SIMESSUPPLIERQUERYOutService
     extends Service
 {
@@ -30,7 +26,7 @@ public class SIMESSUPPLIERQUERYOutService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://sappodev.leisai.com:50000/dir/wsdl?p=ic/dbb7f9ad37bf3f78b3d8b743d1a4c6a7");
+            url = new URL("http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/dbb7f9ad37bf3f78b3d8b743d1a4c6a7");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

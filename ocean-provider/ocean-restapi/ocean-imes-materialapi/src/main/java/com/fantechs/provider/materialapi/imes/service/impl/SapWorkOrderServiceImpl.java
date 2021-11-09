@@ -25,10 +25,7 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebService(serviceName = "WorkOrderService", // 与接口中指定的name一致
         targetNamespace = "http://workOrder.imes.materialapi.provider.fantechs.com", // 与接口中的命名空间一致,一般是接口的包名倒
@@ -98,11 +95,17 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 mesPmWorkOrder.setOrgId(orgId);
                 mesPmWorkOrder.setIsDelete((byte)1);
                 mesPmWorkOrder.setWorkOrderType((byte)0);
-                mesPmWorkOrder.setWorkOrderStatus((byte)0);
+                mesPmWorkOrder.setWorkOrderStatus((byte)1);
+                mesPmWorkOrder.setInventoryQty(BigDecimal.ZERO);
+                mesPmWorkOrder.setOutputQty(BigDecimal.ZERO);
+                mesPmWorkOrder.setProductionQty(BigDecimal.ZERO);
+                mesPmWorkOrder.setScheduledQty(BigDecimal.ZERO);
+                mesPmWorkOrder.setScrapQty(BigDecimal.ZERO);
+                mesPmWorkOrder.setCreateUserId((long)99);
+                mesPmWorkOrder.setCreateTime(new Date());
                 ResponseEntity<MesPmWorkOrder> mesPmWorkOrderResponseEntity = pmFeignApi.saveByApi(mesPmWorkOrder);
                 orderMap.put(restapiWorkOrderApiDto.getAUFNR(),mesPmWorkOrderResponseEntity.getData().getWorkOrderId());
             }
-
 
             if(StringUtils.isEmpty(bomMap.get(restapiWorkOrderApiDto.getRSPOS()))){
 
@@ -116,6 +119,8 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 bom.setPartMaterialId(baseMaterialss.get(0).getMaterialId());
                 bom.setOrgId(orgId);
                 bom.setIsDelete((byte)1);
+                bom.setCreateUserId((long)99);
+                bom.setCreateTime(new Date());
                 mesPmWorkOrderBomList.add(bom);
                 bomMap.put(restapiWorkOrderApiDto.getRSPOS(),restapiWorkOrderApiDto.getZJMATNR());
             }

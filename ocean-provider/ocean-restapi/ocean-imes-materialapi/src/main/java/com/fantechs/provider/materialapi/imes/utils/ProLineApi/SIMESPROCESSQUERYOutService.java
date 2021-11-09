@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "SI_MES_PROCESS_QUERY_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappodev.leisai.com:50000/dir/wsdl?p=ic/25bf425eee47327abc7315b463758e1f")
+@WebServiceClient(name = "SI_MES_PROCESS_QUERY_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/25bf425eee47327abc7315b463758e1f")
 public class SIMESPROCESSQUERYOutService
     extends Service
 {
@@ -30,7 +30,7 @@ public class SIMESPROCESSQUERYOutService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://sappodev.leisai.com:50000/dir/wsdl?p=ic/25bf425eee47327abc7315b463758e1f");
+            url = new URL("http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/25bf425eee47327abc7315b463758e1f");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

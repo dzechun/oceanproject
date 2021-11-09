@@ -112,9 +112,9 @@ public class BaseProductBomDetController {
 
     @ApiOperation(value = "接口新增或更新",notes = "接口新增或更新")
     @PostMapping("/addOrUpdate")
-    public ResponseEntity<BaseProductBomDet> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProductBomDet bseProductBomDet) {
-        BaseProductBomDet bseProductBomDets = baseProductBomDetService.addOrUpdate(bseProductBomDet);
-        return ControllerUtil.returnDataSuccess(bseProductBomDets, StringUtils.isEmpty(bseProductBomDets) ? 0 : 1);
+    public ResponseEntity addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated List<BaseProductBomDet> bseProductBomDets) {
+        int i = baseProductBomDetService.addOrUpdate(bseProductBomDets);
+        return ControllerUtil.returnCRUD(i);
     }
 
     @ApiOperation("接口批量删除")

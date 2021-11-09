@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.eng.EngLogisticsRecord;
 import com.fantechs.common.base.general.entity.eng.EngLogisticsRecordMessage;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.guest.eng.config.RabbitConfig;
 import com.fantechs.provider.guest.eng.mapper.EngLogisticsRecordMapper;
@@ -53,6 +54,7 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
     public List<EngLogisticsRecord> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
+        map.put("receiveUserId",user.getUserId());
         return engLogisticsRecordMapper.findList(map);
     }
 
@@ -117,6 +119,7 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
     //拼接消息内容
     public String jointMessageContent(EngLogisticsRecordMessage engLogisticsRecordMessage){
         StringBuilder stringBuilder = new StringBuilder();
+
         stringBuilder.append("材料编码：").append(engLogisticsRecordMessage.getMaterialCode())
                 .append("，材料名称：").append(engLogisticsRecordMessage.getMaterialName())
                 .append("，合同号：").append(engLogisticsRecordMessage.getContractCode())
@@ -126,7 +129,7 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
                 .append("，单位：").append(engLogisticsRecordMessage.getMainUnit())
                 .append("，规格：").append(engLogisticsRecordMessage.getMaterialDesc())
                 .append("，相关单号：").append(engLogisticsRecordMessage.getRelatedOrderCode())
-                .append("，时间：").append(engLogisticsRecordMessage.getChangeTime())
+                .append("，时间：").append(DateUtils.getDateString(engLogisticsRecordMessage.getChangeTime(),"yyyy-MM-dd HH:mm:ss"))
                 .append("，数量：").append(engLogisticsRecordMessage.getQty())
                 .append("，操作人：").append(engLogisticsRecordMessage.getOperateUser());
         return stringBuilder.toString();
