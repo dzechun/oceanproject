@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.callagv.CallAgvAgvTask">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="agv_task_id" jdbcType="BIGINT" property="agvTaskId" />
+    <result column="task_code" jdbcType="VARCHAR" property="taskCode" />
+    <result column="vehicle_id" jdbcType="BIGINT" property="vehicleId" />
+    <result column="start_storage_task_point_id" jdbcType="BIGINT" property="startStorageTaskPointId" />
+    <result column="end_storage_task_point_id" jdbcType="BIGINT" property="endStorageTaskPointId" />
+    <result column="task_status" jdbcType="TINYINT" property="taskStatus" />
+    <result column="operate_type" jdbcType="TINYINT" property="operateType" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.callagv.CallAgvAgvTaskDto">
+
+  </resultMap>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+
+  </select>
+</mapper>

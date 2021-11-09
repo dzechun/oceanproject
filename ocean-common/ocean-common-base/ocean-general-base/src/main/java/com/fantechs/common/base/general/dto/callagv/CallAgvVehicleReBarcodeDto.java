@@ -42,4 +42,7 @@ public class CallAgvVehicleReBarcodeDto extends CallAgvVehicleReBarcode implemen
 
     @ApiModelProperty(name="qty",value = "数量")
     private BigDecimal qty;
+
+    @ApiModelProperty(name="materialFactory",value = "厂家")
+    private String materialFactory;
 }
