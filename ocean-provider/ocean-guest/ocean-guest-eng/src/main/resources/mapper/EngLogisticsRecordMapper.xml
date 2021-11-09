@@ -64,6 +64,9 @@
       <if test="contractQtyOrderId!=null">
         and lr.contract_qty_order_id = #{contractQtyOrderId}
       </if>
+      <if test="receiveUserId!=null">
+        and lr.receive_user_id = #{receiveUserId}
+      </if>
       <if test="title!=null and title != ''">
         and lr.title like CONCAT('%', #{title}, '%')
       </if>
