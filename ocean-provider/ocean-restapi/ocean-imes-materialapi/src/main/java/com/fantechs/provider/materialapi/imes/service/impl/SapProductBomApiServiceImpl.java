@@ -139,6 +139,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
 
 
                     }
+                    baseFeignApi.addOrUpdate(detList);
                     logsUtils.addlog((byte) 1, (byte) 1, orgId, null, req.getMATNR());
                     return 1;
                 } else {
