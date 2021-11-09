@@ -13,4 +13,7 @@ public interface SocketService {
     void openService() throws IOException;
 
     int BatchInstructions(Long proLine,String code,Object url,String type);
+
+    void closeThird();
+
 }

@@ -71,7 +71,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			"/ocean-fileserver/file/uploadsFiles";
 	private static final String SWAGGER_URI = "/v2/api-docs";
 
-	private static final String CLIENT_URI = "/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder," +
+	private static final String CLIENT_URI = "/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder,/ocean-esop/esopEquipmentStatus/closeThird," +
 			"/ocean-wanbao-api/wanbaoSyncData/syncMaterialData,/ocean-wanbao-api/wanbaoSyncData/syncBarcodeData," +
 			"/ocean-wanbao-api/wanbaoSyncData/syncOrderData,/ocean-wanbao-api/wanbaoSyncData/syncSaleOrderData,/ocean-wanbao-api/wanbaoSyncData/syncOutDeliveryData," +
 			"/ocean-chinafivering-api/webServiceImport/getVendor,/ocean-chinafivering-api/webServiceImport/getIssueDetails,"+

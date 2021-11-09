@@ -39,5 +39,10 @@ public class SocketController {
         return ControllerUtil.returnCRUD(1);
     }
 
+    @GetMapping("/closeThird")
+    public ResponseEntity closeThird()  {
+        socketService.closeThird();
+        return ControllerUtil.returnCRUD(1);
+    }
 
 }
