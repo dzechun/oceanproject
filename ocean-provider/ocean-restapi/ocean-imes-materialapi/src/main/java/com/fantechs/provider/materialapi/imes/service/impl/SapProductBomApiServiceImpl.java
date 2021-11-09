@@ -84,8 +84,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                     BaseProductBom parentBomData = saveBaseProductBom(baseMaterial1.get(0), baseUtils.removeZero(parentList.get(0).getAENNR()), orgId);
                     BaseProductBom bomData = null;
 
-                    List<BaseProductBomDet> detList = null;
-                    List<BaseProductBom> bomList = null;
+                    List<BaseProductBomDet> detList = new ArrayList<>();
                     for (String code : materialCodes) {
                         BaseMaterial material = map.get(code);
                         if(StringUtils.isEmpty(material)) {
