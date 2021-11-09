@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "SI_MES_MATERIAL_QUERY_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappodev.leisai.com:50000/dir/wsdl?p=ic/098215a2ef473d4aaa6e4701f24f3cde")
+@WebServiceClient(name = "SI_MES_MATERIAL_QUERY_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/098215a2ef473d4aaa6e4701f24f3cde")
 public class SIMESMATERIALQUERYOutService
     extends Service
 {
@@ -30,7 +30,7 @@ public class SIMESMATERIALQUERYOutService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://sappodev.leisai.com:50000/dir/wsdl?p=ic/098215a2ef473d4aaa6e4701f24f3cde");
+            url = new URL("http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/098215a2ef473d4aaa6e4701f24f3cde");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

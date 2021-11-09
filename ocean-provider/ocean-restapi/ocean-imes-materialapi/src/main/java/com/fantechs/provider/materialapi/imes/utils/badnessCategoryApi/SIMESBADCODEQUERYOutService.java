@@ -1,14 +1,10 @@
 
 package com.fantechs.provider.materialapi.imes.utils.badnessCategoryApi;
 
+import javax.xml.namespace.QName;
+import javax.xml.ws.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
 
 
 /**
@@ -17,7 +13,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "SI_MES_BADCODE_QUERY_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappodev.leisai.com:50000/dir/wsdl?p=ic/8b4f43d3f01934ea8f398285e16ad1bc")
+@WebServiceClient(name = "SI_MES_BADCODE_QUERY_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/8b4f43d3f01934ea8f398285e16ad1bc")
 public class SIMESBADCODEQUERYOutService
     extends Service
 {
@@ -30,7 +26,7 @@ public class SIMESBADCODEQUERYOutService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://sappodev.leisai.com:50000/dir/wsdl?p=ic/8b4f43d3f01934ea8f398285e16ad1bc");
+            url = new URL("http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/8b4f43d3f01934ea8f398285e16ad1bc");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

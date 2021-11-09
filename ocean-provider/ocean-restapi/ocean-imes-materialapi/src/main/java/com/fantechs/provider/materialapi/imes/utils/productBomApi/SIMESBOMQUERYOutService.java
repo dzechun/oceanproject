@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "SI_MES_BOM_QUERY_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappodev.leisai.com:50000/dir/wsdl?p=ic/e1a7d294ffba3c4caeb8be62067c617d")
+@WebServiceClient(name = "SI_MES_BOM_QUERY_OutService", targetNamespace = "http://leisai.com/None_ECC", wsdlLocation = "http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/e1a7d294ffba3c4caeb8be62067c617d")
 public class SIMESBOMQUERYOutService
     extends Service
 {
@@ -30,7 +30,7 @@ public class SIMESBOMQUERYOutService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://sappodev.leisai.com:50000/dir/wsdl?p=ic/e1a7d294ffba3c4caeb8be62067c617d");
+            url = new URL("http://sappoprd.leisai.com:50000/dir/wsdl?p=ic/e1a7d294ffba3c4caeb8be62067c617d");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
