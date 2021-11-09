@@ -1,7 +1,6 @@
 package com.fantechs.provider.guest.callagv.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleBarcodeDTO;
 import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleReBarcodeDto;
 import com.fantechs.common.base.general.dto.callagv.RequestBarcodeUnboundDTO;
@@ -15,9 +14,9 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.guest.callagv.service.CallAgvVehicleReBarcodeService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -98,9 +97,10 @@ public class CallAgvVehicleReBarcodeController {
     public ResponseEntity callAgvDistribution(
             @ApiParam(value = "周转工具（货架）ID", required = true) @RequestParam Long vehicleId,
             @ApiParam(value = "库区ID（type：1-当前库区 2-目的库区 3-目的库区）", required = true) @RequestParam Long warehouseAreaId,
+            @ApiParam(value = "目标库位配送点ID") @RequestParam(required = false, defaultValue = "0") Long storageTaskPointId,
             @ApiParam(value = "AGV配送类型(1-备料完成配送 2-叫料配送 3-空货架返回)", required = true) @RequestParam Integer type) throws Exception {
 
-        return ControllerUtil.returnDataSuccess(callAgvVehicleReBarcodeService.callAgvDistribution(vehicleId, warehouseAreaId, type), 1);
+        return ControllerUtil.returnDataSuccess(callAgvVehicleReBarcodeService.callAgvDistribution(vehicleId, warehouseAreaId, storageTaskPointId, type), 1);
     }
 
     @ApiOperation("备料物料解绑")

@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.dto.callagv;
 
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
+import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTask;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,4 +25,7 @@ public class GenAgvSchedulingTaskDTO {
 
     @ApiModelProperty(name="temVehicle",value = "货架绑定目的点信息")
     private TemVehicle temVehicle;
+
+    @ApiModelProperty(name="callAgvAgvTask",value = "货架对应的AGV任务")
+    private CallAgvAgvTask callAgvAgvTask;
 }

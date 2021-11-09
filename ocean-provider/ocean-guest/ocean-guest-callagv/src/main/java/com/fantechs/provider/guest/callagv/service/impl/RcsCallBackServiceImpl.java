@@ -2,14 +2,19 @@ package com.fantechs.provider.guest.callagv.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.agv.dto.AgvCallBackDTO;
+import com.fantechs.common.base.general.dto.callagv.CallAgvAgvTaskDto;
 import com.fantechs.common.base.general.dto.callagv.GenAgvSchedulingTaskDTO;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
+import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTask;
+import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvAgvTask;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
+import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskMapper;
 import com.fantechs.provider.guest.callagv.service.CallAgvVehicleReBarcodeService;
 import com.fantechs.provider.guest.callagv.service.RcsCallBackService;
 import com.google.gson.reflect.TypeToken;
@@ -36,6 +41,9 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
     @Resource
     private CallAgvVehicleReBarcodeService callAgvVehicleReBarcodeService;
 
+    @Resource
+    private CallAgvAgvTaskMapper callAgvAgvTaskMapper;
+
     @Override
     public String agvCallback(AgvCallBackDTO agvCallBackDTO) throws Exception {
 
@@ -54,6 +62,17 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                 TemVehicle temVehicle = BeanUtils.convertJson(redisUtil.get(agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode()).toString(), new TypeToken<TemVehicle>(){}.getType());
                 temVehicle.setModifiedTime(new Date());
                 temVehicleFeignApi.update(temVehicle);
+
+                SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
+                searchCallAgvAgvTask.setTaskCode(agvCallBackDTO.getTaskCode());
+                List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
+                if (!callAgvAgvTaskDtoList.isEmpty()) {
+                    CallAgvAgvTask callAgvAgvTask = new CallAgvAgvTask();
+                    BeanUtils.autoFillEqFields(callAgvAgvTaskDtoList.get(0), callAgvAgvTask);
+                    callAgvAgvTask.setTaskStatus((byte) 3);
+                    callAgvAgvTask.setModifiedTime(new Date());
+                    callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
+                }
             } else if ("3".equals(agvCallBackDTO.getMethod())) {
                 BaseStorageTaskPoint baseStorageTaskPoint = BeanUtils.convertJson(redisUtil.get(agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode()).toString(), new TypeToken<BaseStorageTaskPoint>(){}.getType());
                 baseStorageTaskPoint.setModifiedTime(new Date());
@@ -65,6 +84,11 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                 if (genAgvSchedulingTaskDTOList.size() > 1) {
                     String taskCode = callAgvVehicleReBarcodeService.genAgvSchedulingTask(genAgvSchedulingTaskDTOList.get(1).getTaskTyp(), genAgvSchedulingTaskDTOList.get(1).getPositionCodeList(), genAgvSchedulingTaskDTOList.get(1).getPodCode());
                     log.info("==========启动agv执行下一个等待的电梯作业任务==============\r\n");
+
+                    CallAgvAgvTask callAgvAgvTask = genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask();
+                    callAgvAgvTask.setTaskCode(taskCode);
+                    callAgvAgvTask.setCreateTime(new Date());
+                    callAgvAgvTaskMapper.insertSelective(callAgvAgvTask);
 
                     BaseStorageTaskPoint baseStorageTaskPoint = genAgvSchedulingTaskDTOList.get(1).getBaseStorageTaskPoint();
                     redisUtil.set("3-" + taskCode, JSONObject.toJSONString(baseStorageTaskPoint));

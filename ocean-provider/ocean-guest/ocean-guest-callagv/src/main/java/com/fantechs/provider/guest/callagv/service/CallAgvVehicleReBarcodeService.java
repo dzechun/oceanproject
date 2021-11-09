@@ -20,7 +20,7 @@ public interface CallAgvVehicleReBarcodeService extends IService<CallAgvVehicleR
 
     int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException;
 
-    String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Integer type) throws Exception;
+    String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Long storageTaskPointId, Integer type) throws Exception;
 
     String genAgvSchedulingTask(String taskTyp, List<String> positionCodeList, String podCode) throws Exception;
 
