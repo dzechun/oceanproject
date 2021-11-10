@@ -83,11 +83,6 @@
         left join wms_pick_ticket wpt on wpt.WAREHOUSE_ID = ww.ID
         left join wms_bill_type wbt on wbt.id = wpt.BILL_TYPE_ID
         where ww.ID = #{warehouseId} AND wpt.CONTACT_DISTRICT is not null
-        <if test="billTypeNames != null" >
-            <foreach collection="billTypeNames" item="item" index="index" open="AND wbt.NAME in (" close=")" separator=",">
-                #{item}
-            </foreach>
-        </if>
 	    and wpt.CREATED_TIME BETWEEN DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 3 DAY),'%Y-%m-%d') and DATE_FORMAT(NOW(),'%Y-%m-%d')
     </select>
 

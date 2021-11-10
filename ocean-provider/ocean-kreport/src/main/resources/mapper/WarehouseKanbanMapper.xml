@@ -4,13 +4,20 @@
 
     <select id="findOrderQty" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.WarehouseKanban">
         select
-        ifnull(sum(CASE WHEN status = 'SF' THEN 1 else 0 end),0) as 'finishedOrderQty',
         ifnull(sum(
-            CASE WHEN status in('WF','RS') AND BE_CANCEL = 'N' AND REVIEW_STATUS in('NOT_REVIEWED','UNDER_REVIEW')  THEN 1 else 0 end
+            CASE WHEN status NOT in('SF','CA','CL') THEN 1 else 0 end
             ),0) as 'unfinishedOrderQty',
-        ifnull(sum(CASE WHEN status not in('WF','RS','SF','CA','CV','CL') AND BE_CANCEL = 'N' THEN 1 else 0 end),0) as 'pendingSalesQty'
+        ifnull(sum(CASE WHEN status NOT in('SF','CA','CL') AND REVIEW_STATUS!='REVIEW_COMPLETED' THEN 1 else 0 end),0) as 'pendingSalesQty'
         from wms_pick_ticket
         where WAREHOUSE_ID = #{warehouseId} and date_format(CREATED_TIME,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
+    </select>
+
+    <select id="findAccomplishQty" parameterType="map" resultType="long">
+        select
+            ifnull(sum(CASE WHEN status = 'SF' THEN 1 else 0 end),0) as 'finishedOrderQty'
+        from wms_pick_ticket wpt
+        left join wms_pick_ticket_log wptl on wptl.PICK_TICKET_ID = wpt.id
+        where wpt.WAREHOUSE_ID = #{warehouseId} and wptl.NODE = '发运' and date_format(wptl.`UPDATE_TIME`,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
     </select>
 
     <select id="findClaimGoods" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.BillsQtyStatistics">
@@ -30,8 +37,13 @@
 
     <select id="findDeliverGoods" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.BillsQtyStatistics">
         select
-            ifnull(sum(CASE WHEN status in('OP','EN','CK','RA','PA','FA','WK','WF') THEN 1 else 0 end),0) as 'unreceivedQty',
-            ifnull(sum(CASE WHEN status not in('CA','CL','CV') THEN 1 else 0 end),0) as 'total',
+            (
+                select
+                ifnull(sum(CASE WHEN status not in('PN','CA','CL') THEN 1 else 0 end),0)
+                from wms_asn
+                where WAREHOUSE_ID = #{warehouseId}
+            ) as 'unreceivedQty',
+            ifnull(sum(CASE WHEN status not in('CA','CL') THEN 1 else 0 end),0) as 'total',
             ifnull(sum(CASE WHEN status = 'SF' THEN 1 else 0 end),0) as 'receivedQty'
         from wms_pick_ticket
         where WAREHOUSE_ID = #{warehouseId}
@@ -45,19 +57,25 @@
 
     <select id="findOrderPicking" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.BillsQtyStatistics">
         select
-            ifnull(sum(CASE WHEN status in('OP','EN','CK','RA','PA','FA','WK','WF') THEN 1 else 0 end),0) as 'unreceivedQty',
-            ifnull(sum(CASE WHEN status not in('CA','CL','CV') THEN 1 else 0 end),0) as 'total',
-            ifnull(sum(CASE WHEN status not in('CA','CL','CV') THEN 1 else 0 end),0)
-                -
-            ifnull(sum(CASE WHEN status in('OP','EN','CK','RA','PA','FA','WK','WF') THEN 1 else 0 end),0) as 'receivedQty'
+        (
+        select
+        ifnull(sum(CASE WHEN status NOT in('SF','WF','CA','CL') THEN 1 else 0 end),0)
         from wms_pick_ticket
         where WAREHOUSE_ID = #{warehouseId}
-        <if test="isDay == null or isDay == 0">
-            and date_format(CREATED_TIME,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
-        </if>
-        <if test="isDay !=null and isDay == 1">
-            and date_format(CREATED_TIME,'%Y-%m')=date_format(now(),'%Y-%m')
-        </if>
+        ) as 'unreceivedQty',
+        (
+        select
+        ifnull(sum(CASE WHEN status NOT in('CA','CL') THEN 1 else 0 end),0)
+        from wms_pick_ticket
+        where WAREHOUSE_ID = #{warehouseId} AND DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d')= DATE_FORMAT(NOW(),'%Y-%m-%d')
+        ) as 'total',
+        (
+        select
+        count(1)
+        from wms_pick_ticket wpt
+        left join wms_pick_ticket_log wptl on wptl.PICK_TICKET_ID = wpt.id
+        where wpt.WAREHOUSE_ID = #{warehouseId} and wptl.NODE = '拣货完成' and date_format(wptl.`UPDATE_TIME`,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
+        ) as 'receivedQty'
     </select>
 
     <select id="findReplenishment" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.BillsQtyStatistics">
@@ -128,8 +146,7 @@
             sum(CASE WHEN CREATED_TIME BETWEEN DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 3 DAY),'%Y-%m-%d') and DATE_FORMAT(NOW(),'%Y-%m-%d') THEN 1 ELSE 0 END) as 'nearlyThreeDay',
             sum(CASE WHEN CREATED_TIME BETWEEN DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 7 DAY),'%Y-%m-%d') and DATE_FORMAT(NOW(),'%Y-%m-%d') THEN 1 ELSE 0 END) as 'nearlySevenDay'
         from wms_pick_ticket
-        where WAREHOUSE_ID = #{warehouseId} and STATUS not in('SF','CA','CL','CV') and
-	    CREATED_TIME BETWEEN DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 DAY),'%Y-%m-%d') and DATE_FORMAT(NOW(),'%Y-%m-%d')
+        where WAREHOUSE_ID = #{warehouseId} and STATUS not in('SF','CA','CL','CV')
     </select>
 
     <select id="findJobDocumentProgressList" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.JobDocumentProgress">
