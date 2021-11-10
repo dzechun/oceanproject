@@ -1,14 +1,17 @@
 package com.fantechs.provider.guest.eng.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngContractQtyOrderAndPurOrderDto;
 import com.fantechs.common.base.general.entity.eng.EngUserFollowContractQtyOrder;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngUserFollowContractQtyOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.guest.eng.mapper.EngUserFollowContractQtyOrderMapper;
 import com.fantechs.provider.guest.eng.service.EngUserFollowContractQtyOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -19,13 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -40,12 +46,28 @@ public class EngUserFollowContractQtyOrderController {
 
     @Resource
     private EngUserFollowContractQtyOrderService engUserFollowContractQtyOrderService;
+    @Resource
+    private EngUserFollowContractQtyOrderMapper engUserFollowContractQtyOrderMapper;
 
     @ApiOperation("关注列表")
     @PostMapping("/findFollowList")
     public ResponseEntity<List<EngContractQtyOrderAndPurOrderDto>> findFollowList(@ApiParam(value = "查询对象")@RequestBody SearchEngUserFollowContractQtyOrder searchEngUserFollowContractQtyOrder) {
+        List<EngContractQtyOrderAndPurOrderDto> list = new ArrayList<>();
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        Example example = new Example(EngUserFollowContractQtyOrder.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId",user.getOrganizationId())
+                .andEqualTo("userId",user.getUserId());
+        List<EngUserFollowContractQtyOrder> engUserFollowContractQtyOrders = engUserFollowContractQtyOrderMapper.selectByExample(example);
+        List<Long> contractQtyOrderIds = engUserFollowContractQtyOrders.stream().map(EngUserFollowContractQtyOrder::getContractQtyOrderId).collect(Collectors.toList());
+        searchEngUserFollowContractQtyOrder.setContractQtyOrderIds(contractQtyOrderIds);
+
         Page<Object> page = PageHelper.startPage(searchEngUserFollowContractQtyOrder.getStartPage(),searchEngUserFollowContractQtyOrder.getPageSize());
-        List<EngContractQtyOrderAndPurOrderDto> list = engUserFollowContractQtyOrderService.findFollowList(ControllerUtil.dynamicConditionByEntity(searchEngUserFollowContractQtyOrder));
+        if(StringUtils.isNotEmpty(engUserFollowContractQtyOrders)){
+            list = engUserFollowContractQtyOrderService.findFollowList(ControllerUtil.dynamicConditionByEntity(searchEngUserFollowContractQtyOrder));
+        }
+
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

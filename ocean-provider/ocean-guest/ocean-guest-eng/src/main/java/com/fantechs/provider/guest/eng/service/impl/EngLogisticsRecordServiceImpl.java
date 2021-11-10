@@ -86,13 +86,13 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         int i = engLogisticsRecordMapper.insertSelective(record);
 
         //发消息
-        sendMessage(record.getReceiveUserId());
+        sendMessage(record.getReceiveUserId(),user.getOrganizationId());
 
         return i;
     }
 
-    public void sendMessage(Long receiveUserId){
-        String queueName = "QUEUE_M" + receiveUserId;
+    public void sendMessage(Long receiveUserId,Long orgId){
+        String queueName = "QUEUE_M_" + receiveUserId + "_" + orgId;
         try {
             Queue queue = new Queue(queueName, true);
             TopicExchange topicExchange = new TopicExchange(RabbitConfig.TOPIC_EXCHANGE_MESSAGE);

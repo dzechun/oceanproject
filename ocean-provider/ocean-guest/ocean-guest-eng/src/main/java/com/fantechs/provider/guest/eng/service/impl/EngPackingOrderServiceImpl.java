@@ -159,9 +159,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     public int saveRecord(EngPackingOrder engPackingOrder,Byte logisticsNode,String title){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<EngLogisticsRecord> records = new LinkedList<>();
-        EngLogisticsRecord engLogisticsRecord = new EngLogisticsRecord();
-        engLogisticsRecord.setMaterialLogisticsNode(logisticsNode);
-        engLogisticsRecord.setTitle(title);
+
 
         //领料出库单及发运单不需要查询装箱单
         if(logisticsNode==1 || logisticsNode==2 || logisticsNode==3 || logisticsNode==4){
@@ -202,9 +200,13 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                         engLogisticsRecordMessage.setQty(engPackingOrderSummaryDetDto.getQty());
                         engLogisticsRecordMessage.setOperateUser(sysUser.getUserName());
 
-                        engLogisticsRecord.setMessage(engLogisticsRecordMessage);
-                        engLogisticsRecord.setContractQtyOrderId(engContractQtyOrderAndPurOrderDto.getContractQtyOrderId());
+
                         for (EngUserFollowContractQtyOrder engUserFollowContractQtyOrder : engUserFollowContractQtyOrders){
+                            EngLogisticsRecord engLogisticsRecord = new EngLogisticsRecord();
+                            engLogisticsRecord.setMaterialLogisticsNode(logisticsNode);
+                            engLogisticsRecord.setTitle(title);
+                            engLogisticsRecord.setMessage(engLogisticsRecordMessage);
+                            engLogisticsRecord.setContractQtyOrderId(engContractQtyOrderAndPurOrderDto.getContractQtyOrderId());
                             engLogisticsRecord.setReceiveUserId(engUserFollowContractQtyOrder.getUserId());
                             records.add(engLogisticsRecord);
                         }
