@@ -161,7 +161,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码未绑定产品条码");
                 }
                 workOrderBarcodeId = mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderBarcodeId();
-                workOrderId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId();
+                workOrderId = mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderId();
             }
 
             Map<String, Object> map = new HashMap<>();
