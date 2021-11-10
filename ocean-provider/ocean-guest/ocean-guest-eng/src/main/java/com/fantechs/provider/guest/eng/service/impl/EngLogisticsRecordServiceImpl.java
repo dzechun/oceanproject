@@ -46,7 +46,8 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         Example example = new Example(EngLogisticsRecord.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("receiveUserId",user.getUserId())
-                .andEqualTo("readStatus",0);
+                .andEqualTo("readStatus",0)
+                .andEqualTo("orgId",user.getOrganizationId());
         return engLogisticsRecordMapper.selectCountByExample(example);
     }
 
