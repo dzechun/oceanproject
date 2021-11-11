@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.dto.callagv;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTask;
+import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTaskBarcode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -76,7 +77,4 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
     @Excel(name = "总数量", height = 20, width = 30,orderNum="8")
     private BigDecimal totalQty;
 
-
-    @ApiModelProperty(name="货架关联物料条码列表",value = "货架关联物料条码列表")
-    private List<CallAgvVehicleReBarcodeDto> callAgvVehicleReBarcodeDtoList = new ArrayList<>();
 }

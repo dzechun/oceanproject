@@ -6,6 +6,8 @@ import com.fantechs.common.base.general.dto.callagv.CallAgvAgvTaskDto;
 import com.fantechs.common.base.general.dto.callagv.GenAgvSchedulingTaskDTO;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTask;
+import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTaskBarcode;
+import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleReBarcode;
 import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvAgvTask;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -14,6 +16,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
+import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskBarcodeMapper;
 import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskMapper;
 import com.fantechs.provider.guest.callagv.service.CallAgvVehicleReBarcodeService;
 import com.fantechs.provider.guest.callagv.service.RcsCallBackService;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -43,6 +47,9 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
 
     @Resource
     private CallAgvAgvTaskMapper callAgvAgvTaskMapper;
+
+    @Resource
+    private CallAgvAgvTaskBarcodeMapper callAgvAgvTaskBarcodeMapper;
 
     @Override
     public String agvCallback(AgvCallBackDTO agvCallBackDTO) throws Exception {
@@ -88,7 +95,15 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                     CallAgvAgvTask callAgvAgvTask = genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask();
                     callAgvAgvTask.setTaskCode(taskCode);
                     callAgvAgvTask.setCreateTime(new Date());
-                    callAgvAgvTaskMapper.insertSelective(callAgvAgvTask);
+                    callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
+                    List<CallAgvAgvTaskBarcode> barcodeList = callAgvAgvTask.getBarcodeList();
+                    if (StringUtils.isNotEmpty(barcodeList)) {
+                        for (CallAgvAgvTaskBarcode callAgvAgvTaskBarcode : barcodeList) {
+                            callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
+                            barcodeList.add(callAgvAgvTaskBarcode);
+                        }
+                        callAgvAgvTaskBarcodeMapper.insertList(barcodeList);
+                    }
 
                     BaseStorageTaskPoint baseStorageTaskPoint = genAgvSchedulingTaskDTOList.get(1).getBaseStorageTaskPoint();
                     redisUtil.set("3-" + taskCode, JSONObject.toJSONString(baseStorageTaskPoint));

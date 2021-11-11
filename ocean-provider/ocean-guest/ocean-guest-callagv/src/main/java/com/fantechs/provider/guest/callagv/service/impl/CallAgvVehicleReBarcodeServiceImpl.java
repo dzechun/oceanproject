@@ -9,10 +9,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.callagv.*;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageTaskPoint;
-import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTask;
-import com.fantechs.common.base.general.entity.callagv.CallAgvProductionInLog;
-import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleLog;
-import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleReBarcode;
+import com.fantechs.common.base.general.entity.callagv.*;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -22,10 +19,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.agv.AgvFeignApi;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
-import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskMapper;
-import com.fantechs.provider.guest.callagv.mapper.CallAgvProductionInLogMapper;
-import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleLogMapper;
-import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleReBarcodeMapper;
+import com.fantechs.provider.guest.callagv.mapper.*;
 import com.fantechs.provider.guest.callagv.service.CallAgvVehicleReBarcodeService;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +45,9 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
     @Resource
     private CallAgvAgvTaskMapper callAgvAgvTaskMapper;
+
+    @Resource
+    private CallAgvAgvTaskBarcodeMapper callAgvAgvTaskBarcodeMapper;
 
     @Resource
     private TemVehicleFeignApi temVehicleFeignApi;
@@ -277,6 +274,15 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                 genAgvSchedulingTaskDTO.setPodCode(temVehicle.getVehicleCode());
                 genAgvSchedulingTaskDTO.setBaseStorageTaskPoint(baseStorageTaskPoint);
                 genAgvSchedulingTaskDTO.setTemVehicle(temVehicle);
+                if (StringUtils.isNotEmpty(callAgvVehicleReBarcodeList)) {
+                    List<CallAgvAgvTaskBarcode> barcodeList = new LinkedList<>();
+                    for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
+                        CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
+                        callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
+                        barcodeList.add(callAgvAgvTaskBarcode);
+                    }
+                    callAgvAgvTask.setBarcodeList(barcodeList);
+                }
                 genAgvSchedulingTaskDTO.setCallAgvAgvTask(callAgvAgvTask);
                 genAgvSchedulingTaskDTOList.add(genAgvSchedulingTaskDTO);
                 redisUtil.set(baseStorageTaskPoint.getType(), JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
@@ -286,7 +292,17 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
                 callAgvAgvTask.setTaskCode(taskCode);
                 callAgvAgvTask.setCreateTime(new Date());
-                callAgvAgvTaskMapper.insertSelective(callAgvAgvTask);
+                callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
+                if (StringUtils.isNotEmpty(callAgvVehicleReBarcodeList)) {
+                    List<CallAgvAgvTaskBarcode> barcodeList = new LinkedList<>();
+                    for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
+                        CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
+                        callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
+                        callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
+                        barcodeList.add(callAgvAgvTaskBarcode);
+                    }
+                    callAgvAgvTaskBarcodeMapper.insertList(barcodeList);
+                }
 
                 log.info("==========启动agv执行" + message + "作业任务==============\r\n");
                 baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);

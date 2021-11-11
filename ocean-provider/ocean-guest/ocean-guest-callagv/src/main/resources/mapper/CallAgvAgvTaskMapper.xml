@@ -23,6 +23,9 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <collection property="barcodeList" ofType="com.fantechs.common.base.general.entity.callagv.CallAgvAgvTaskBarcode"
+                column="{agvTaskId=agv_task_id}" select="com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskBarcodeMapper.findList">
+    </collection>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.callagv.CallAgvAgvTaskDto">
