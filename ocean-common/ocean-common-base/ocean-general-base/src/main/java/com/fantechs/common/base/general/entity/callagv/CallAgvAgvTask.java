@@ -5,7 +5,9 @@ import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
 
@@ -128,6 +130,9 @@ public class CallAgvAgvTask extends ValidGroup implements Serializable {
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    @ApiModelProperty(name="物料条码列表",value = "物料条码列表")
+    private List<CallAgvAgvTaskBarcode> barcodeList = new ArrayList<>();
 
     private String option1;
 
