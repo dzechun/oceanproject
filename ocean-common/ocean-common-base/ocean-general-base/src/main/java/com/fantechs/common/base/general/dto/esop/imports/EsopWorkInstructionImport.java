@@ -109,4 +109,11 @@ public class EsopWorkInstructionImport implements Serializable {
     @Excel(name = "工艺要求及注意事项", height = 20, width = 30)
     private String processReqAndAnnouncements;
 
+    /**
+     * 是否直接显示视频(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifShowVideo",value = "是否直接显示视频(0-否 1-是)")
+    @Excel(name = "是否直接显示视频", height = 20, width = 30)
+    private Byte ifShowVideo;
+
 }

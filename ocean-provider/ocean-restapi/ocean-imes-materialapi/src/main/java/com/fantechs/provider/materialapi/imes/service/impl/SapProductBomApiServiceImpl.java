@@ -111,12 +111,13 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                         if (StringUtils.isEmpty(bomData)) throw new BizErrorException("保存失败");
 
                         for (DTMESBOM bom : res.getBOM()) {
-                            if (baseUtils.removeZero(bom.getMATNR()).equals(code)) {
+                            String detCode = baseUtils.removeZero(bom.getIDNRK());
+                            if (baseUtils.removeZero(bom.getMATNR()).equals(detCode)) {
                                 BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
                                 baseProductBomDet.setProductBomId(bomData.getProductBomId());
-                                BaseMaterial materials = map.get(code);
+                                BaseMaterial materials = map.get(detCode);
                                 if(StringUtils.isEmpty(materials)) {
-                                    List<BaseMaterial> bomMaterial = baseUtils.getBaseMaterial(baseUtils.removeZero(bom.getIDNRK()), orgId);
+                                    List<BaseMaterial> bomMaterial = baseUtils.getBaseMaterial(detCode, orgId);
                                     if (StringUtils.isEmpty(bomMaterial))
                                         throw new BizErrorException("未查询到对应物料编码:" + bom.getIDNRK());
                                     materials = bomMaterial.get(0);

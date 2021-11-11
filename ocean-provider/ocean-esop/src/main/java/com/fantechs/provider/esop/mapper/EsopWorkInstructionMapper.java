@@ -1,6 +1,7 @@
 package com.fantechs.provider.esop.mapper;
 
 import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionDto;
+import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionTreeDto;
 import com.fantechs.common.base.general.entity.esop.EsopWorkInstruction;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopWorkInstruction;
 import com.fantechs.common.base.mybatis.MyMapper;
@@ -12,4 +13,5 @@ import java.util.List;
 public interface EsopWorkInstructionMapper extends MyMapper<EsopWorkInstruction> {
     List<EsopWorkInstructionDto> findList(SearchEsopWorkInstruction searchEsopWorkInstruction);
 
+    List<EsopWorkInstructionTreeDto> findTreeList(SearchEsopWorkInstruction searchEsopWorkInstruction);
 }
