@@ -85,4 +85,11 @@ public class SearchEsopWorkInstruction extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name="equipmentSeqNum",value = "设备序号")
     private String equipmentSeqNum;
+
+    /**
+     * WI序号(文件编号)
+     */
+    @ApiModelProperty(name="workInstructionSeqNum",value = "WI序号(文件编号)")
+    private String workInstructionSeqNum;
+
 }
