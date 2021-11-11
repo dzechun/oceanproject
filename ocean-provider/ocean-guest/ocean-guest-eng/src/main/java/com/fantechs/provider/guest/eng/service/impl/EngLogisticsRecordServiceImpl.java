@@ -91,6 +91,7 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         return i;
     }
 
+
     public void sendMessage(Long receiveUserId,Long orgId){
         String queueName = "QUEUE_M_" + receiveUserId + "_" + orgId;
         try {
@@ -143,7 +144,13 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
-        return engLogisticsRecordMapper.updateByPrimaryKeySelective(entity);
+
+        int i = engLogisticsRecordMapper.updateByPrimaryKeySelective(entity);
+
+        //发消息
+        sendMessage(entity.getReceiveUserId(),user.getOrganizationId());
+
+        return i;
     }
 
     @Override
