@@ -99,7 +99,7 @@
         and caat.create_user_id = #{userId}
       </if>
       <if test="createTime != null and createTime != ''">
-        and and date_format(caat.create_time, '%Y-%m-%d') = #{createTime}
+        and date_format(caat.create_time, '%Y-%m-%d') = #{createTime}
       </if>
     </where>
     order by caat.create_time desc
