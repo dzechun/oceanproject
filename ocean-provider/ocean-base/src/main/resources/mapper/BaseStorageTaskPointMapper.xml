@@ -92,6 +92,12 @@
       <if test="remark!=null and remark!=''">
         and bstp.remark like CONCAT('%', #{remark}, '%')
       </if>
+      <if test="xyzCode!=null and xyzCode!=''">
+        and bstp.xyz_code like CONCAT('%', #{xyzCode}, '%')
+      </if>
+      <if test="usePriority != null">
+        and bstp.use_priority = #{usePriority}
+      </if>
       <if test="taskPointCode!=null and taskPointCode!=''">
         and bstp.task_point_code like CONCAT('%', #{taskPointCode}, '%')
       </if>

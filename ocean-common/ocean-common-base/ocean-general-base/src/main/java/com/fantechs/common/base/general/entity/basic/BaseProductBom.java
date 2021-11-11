@@ -32,7 +32,6 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 产品BOM ID
      */
     @ApiModelProperty(name="productBomId",value = "产品BOM ID")
-    @Excel(name = "产品BOM ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "product_bom_id")
     private Long productBomId;
@@ -57,7 +56,6 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 产品料号ID
      */
     @ApiModelProperty(name="materialId",value = "产品料号ID")
-    @Excel(name = "产品料号ID", height = 20, width = 30,orderNum="") 
     @Column(name = "material_id")
     private Long materialId;
 
@@ -89,7 +87,6 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
-    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -97,7 +94,6 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
-    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -114,7 +110,6 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
-    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -131,7 +126,6 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
-    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 
