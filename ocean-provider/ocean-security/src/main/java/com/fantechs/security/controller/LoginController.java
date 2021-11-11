@@ -57,8 +57,8 @@ public class LoginController {
 
     @PostMapping("/meslogin")
     @ApiOperation(value = "登陆接口")
-    public ResponseEntity meslogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId){
-        ResponseEntity responseEntity = securityFeignApi.login(username, password,orgId,null);
+    public ResponseEntity meslogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId , @RequestParam(value = "browserKernel") String browserKernel){
+        ResponseEntity responseEntity = securityFeignApi.login(username, password,orgId,null,browserKernel);
         return  responseEntity;
     }
 
@@ -71,7 +71,7 @@ public class LoginController {
         if (organizationDtos.isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "此组织编码不存在或已被删除，不可登录");
         }
-        ResponseEntity responseEntity = securityFeignApi.login(username, password, organizationDtos.get(0).getOrganizationId(),null);
+        ResponseEntity responseEntity = securityFeignApi.login(username, password, organizationDtos.get(0).getOrganizationId(),null,null);
         return responseEntity;
     }
 

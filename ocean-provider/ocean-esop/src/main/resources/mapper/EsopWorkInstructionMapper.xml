@@ -158,6 +158,10 @@
             <if test="processName!=null and processName!=''">
                 and sp.process_name = like CONCAT('%', #{processName}, '%')
             </if>
+            <if test="workInstructionSeqNum!=null and workInstructionSeqNum!=''">
+                and ewi.work_instruction_seq_num = #{workInstructionSeqNum}
+            </if>
+
         </where>
         order by ewi.modified_time desc
     </select>
@@ -207,6 +211,9 @@
             </if>
             <if test="processName!=null and processName!=''">
                 and sp.process_name = like CONCAT('%', #{processName}, '%')
+            </if>
+            <if test="workInstructionSeqNum!=null and workInstructionSeqNum!=''">
+                and ewi.work_instruction_seq_num = #{workInstructionSeqNum}
             </if>
         </where>
         group by ewi.work_instruction_seq_num
