@@ -6,8 +6,6 @@ import com.fantechs.common.base.general.dto.callagv.CallAgvAgvTaskDto;
 import com.fantechs.common.base.general.dto.callagv.GenAgvSchedulingTaskDTO;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTask;
-import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTaskBarcode;
-import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleReBarcode;
 import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvAgvTask;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -26,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -75,7 +72,7 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                 List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
                 if (!callAgvAgvTaskDtoList.isEmpty()) {
                     CallAgvAgvTask callAgvAgvTask = new CallAgvAgvTask();
-                    BeanUtils.autoFillEqFields(callAgvAgvTaskDtoList.get(0), callAgvAgvTask);
+                    callAgvAgvTask.setAgvTaskId(callAgvAgvTaskDtoList.get(0).getAgvTaskId());
                     callAgvAgvTask.setTaskStatus((byte) 3);
                     callAgvAgvTask.setModifiedTime(new Date());
                     callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
@@ -92,17 +89,16 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                     String taskCode = callAgvVehicleReBarcodeService.genAgvSchedulingTask(genAgvSchedulingTaskDTOList.get(1).getTaskTyp(), genAgvSchedulingTaskDTOList.get(1).getPositionCodeList(), genAgvSchedulingTaskDTOList.get(1).getPodCode());
                     log.info("==========启动agv执行下一个等待的电梯作业任务==============\r\n");
 
-                    CallAgvAgvTask callAgvAgvTask = genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask();
-                    callAgvAgvTask.setTaskCode(taskCode);
-                    callAgvAgvTask.setCreateTime(new Date());
-                    callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
-                    List<CallAgvAgvTaskBarcode> barcodeList = callAgvAgvTask.getBarcodeList();
-                    if (StringUtils.isNotEmpty(barcodeList)) {
-                        for (CallAgvAgvTaskBarcode callAgvAgvTaskBarcode : barcodeList) {
-                            callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
-                            barcodeList.add(callAgvAgvTaskBarcode);
-                        }
-                        callAgvAgvTaskBarcodeMapper.insertList(barcodeList);
+                    SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
+                    searchCallAgvAgvTask.setTaskCode(agvCallBackDTO.getTaskCode());
+                    List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
+                    if (!callAgvAgvTaskDtoList.isEmpty()) {
+                        CallAgvAgvTask callAgvAgvTask = genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask();
+                        callAgvAgvTask.setAgvTaskId(callAgvAgvTaskDtoList.get(0).getAgvTaskId());
+                        callAgvAgvTask.setTaskCode(taskCode);
+                        callAgvAgvTask.setTaskStatus((byte) 2);
+                        callAgvAgvTask.setModifiedTime(new Date());
+                        callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
                     }
 
                     BaseStorageTaskPoint baseStorageTaskPoint = genAgvSchedulingTaskDTOList.get(1).getBaseStorageTaskPoint();

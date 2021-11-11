@@ -12,10 +12,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageTas
 import com.fantechs.common.base.general.entity.callagv.*;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.BeanUtils;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.RedisUtil;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.agv.AgvFeignApi;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
@@ -28,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -234,7 +232,6 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         callAgvAgvTask.setVehicleId(vehicleId);
         callAgvAgvTask.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
         callAgvAgvTask.setEndStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
-        callAgvAgvTask.setTaskStatus((byte) 2);
         callAgvAgvTask.setOperateType(type.byteValue());
         callAgvAgvTask.setOrgId(user.getOrganizationId());
         callAgvAgvTask.setCreateUserId(user.getUserId());
@@ -268,21 +265,16 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                 temVehicle.setRemark("电梯任务等待队列中");
                 List<GenAgvSchedulingTaskDTO> genAgvSchedulingTaskDTOList = BeanUtils.convertJson(redisUtil.get(baseStorageTaskPoint.getType()).toString(), new TypeToken<List<GenAgvSchedulingTaskDTO>>() {
                 }.getType());
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                callAgvAgvTask.setTaskCode(taskTyp + "-" + temVehicle.getVehicleCode() + "-" + simpleDateFormat.format(new Date()));
+                callAgvAgvTask.setTaskStatus((byte) 1);
                 GenAgvSchedulingTaskDTO genAgvSchedulingTaskDTO = new GenAgvSchedulingTaskDTO();
                 genAgvSchedulingTaskDTO.setTaskTyp(taskTyp);
                 genAgvSchedulingTaskDTO.setPositionCodeList(positionCodeList);
                 genAgvSchedulingTaskDTO.setPodCode(temVehicle.getVehicleCode());
                 genAgvSchedulingTaskDTO.setBaseStorageTaskPoint(baseStorageTaskPoint);
                 genAgvSchedulingTaskDTO.setTemVehicle(temVehicle);
-                if (StringUtils.isNotEmpty(callAgvVehicleReBarcodeList)) {
-                    List<CallAgvAgvTaskBarcode> barcodeList = new LinkedList<>();
-                    for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
-                        CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
-                        callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
-                        barcodeList.add(callAgvAgvTaskBarcode);
-                    }
-                    callAgvAgvTask.setBarcodeList(barcodeList);
-                }
                 genAgvSchedulingTaskDTO.setCallAgvAgvTask(callAgvAgvTask);
                 genAgvSchedulingTaskDTOList.add(genAgvSchedulingTaskDTO);
                 redisUtil.set(baseStorageTaskPoint.getType(), JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
@@ -291,18 +283,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                 taskCode = genAgvSchedulingTask(taskTyp, positionCodeList, temVehicle.getVehicleCode());
 
                 callAgvAgvTask.setTaskCode(taskCode);
-                callAgvAgvTask.setCreateTime(new Date());
-                callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
-                if (StringUtils.isNotEmpty(callAgvVehicleReBarcodeList)) {
-                    List<CallAgvAgvTaskBarcode> barcodeList = new LinkedList<>();
-                    for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
-                        CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
-                        callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
-                        callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
-                        barcodeList.add(callAgvAgvTaskBarcode);
-                    }
-                    callAgvAgvTaskBarcodeMapper.insertList(barcodeList);
-                }
+                callAgvAgvTask.setTaskStatus((byte) 2);
 
                 log.info("==========启动agv执行" + message + "作业任务==============\r\n");
                 baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
@@ -331,6 +312,17 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                     log.info("==========记录AGV电梯任务队列 : key " + baseStorageTaskPoint.getType() + " , value : " + JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
                 }
             }
+
+            callAgvAgvTask.setCreateTime(new Date());
+            callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
+            List<CallAgvAgvTaskBarcode> callAgvAgvTaskBarcodeList = new LinkedList<>();
+            for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
+                CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
+                callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
+                callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
+                callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
+            }
+            callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
         } catch (BizErrorException e) {
             throw new BizErrorException("启动agv执行" + message + "作业任务失败" + e.getMessage());
         }
