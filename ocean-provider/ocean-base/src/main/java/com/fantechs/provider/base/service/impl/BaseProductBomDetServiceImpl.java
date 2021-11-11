@@ -201,8 +201,9 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
 
     @Override
     public int addOrUpdate(List<BaseProductBomDet> bseProductBomDets) {
-
-        int i = baseProductBomDetMapper.insertList(bseProductBomDets);
+        int i = 1;
+        if(StringUtils.isNotEmpty(bseProductBomDets))
+            i = baseProductBomDetMapper.insertList(bseProductBomDets);
         return i;
     }
 

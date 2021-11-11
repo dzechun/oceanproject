@@ -8,6 +8,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.esop.EsopWiReleaseDetDto;
 import com.fantechs.common.base.general.dto.esop.EsopWiReleaseDto;
 import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionDto;
+import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionTreeDto;
 import com.fantechs.common.base.general.dto.esop.imports.EsopWorkInstructionImport;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseProductModel;
@@ -452,6 +453,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
                 esopWorkInstruction.setModifiedUserId(user.getUserId());
                 esopWorkInstruction.setStatus((byte)1);
                 esopWorkInstruction.setOrgId(user.getOrganizationId());
+                esopWorkInstruction.setIfShowVideo(esopWorkInstructionImport.getIfShowVideo());
                 list.add(esopWorkInstruction);
             }
 
@@ -812,6 +814,23 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
             }
         }
         return 1;
+    }
+
+    @Override
+    public List<EsopWorkInstructionTreeDto> findTreeList(SearchEsopWorkInstruction searchEsopWorkInstruction) {
+        SysUser sysUser = currentUser();
+        searchEsopWorkInstruction.setOrgId(sysUser.getOrganizationId());
+        List<EsopWorkInstructionTreeDto> treeList = esopWorkInstructionMapper.findTreeList(searchEsopWorkInstruction);
+        if(StringUtils.isNotEmpty(treeList)){
+            for(EsopWorkInstructionTreeDto dto :treeList){
+                SearchEsopWorkInstruction workInstruction = new SearchEsopWorkInstruction();
+                workInstruction.setEquipmentSeqNum(dto.getWorkInstructionSeqNums());
+                workInstruction.setOrgId(sysUser.getOrganizationId());
+                List<EsopWorkInstructionDto> list = esopWorkInstructionMapper.findList(workInstruction);
+                dto.setEsopWorkInstructionDtos(list);
+            }
+        }
+        return treeList;
     }
 
 }

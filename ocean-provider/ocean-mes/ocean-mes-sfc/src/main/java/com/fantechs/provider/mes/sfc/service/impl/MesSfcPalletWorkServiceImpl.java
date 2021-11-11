@@ -146,14 +146,14 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 }
             }
         } else {
-            workOrderId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId();
             Long workOrderBarcodeId = null;
-            // 产品条码
             BaseLabelCategory labelCategory = baseFeignApi.findLabelCategoryDetail(mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId()).getData();
             if (labelCategory.getLabelCategoryCode().equals("01")) {
+                // 产品条码
                 workOrderBarcodeId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId();
-                // 销售订单条码
+                workOrderId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId();
             } else if (labelCategory.getLabelCategoryCode().equals("02")) {
+                // 销售订单条码
                 Map<String, Object> map = new HashMap<>();
                 map.put("partBarcode", requestPalletWorkScanDto.getBarcode());
                 List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
@@ -161,6 +161,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码未绑定产品条码");
                 }
                 workOrderBarcodeId = mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderBarcodeId();
+                workOrderId = mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderId();
             }
 
             Map<String, Object> map = new HashMap<>();

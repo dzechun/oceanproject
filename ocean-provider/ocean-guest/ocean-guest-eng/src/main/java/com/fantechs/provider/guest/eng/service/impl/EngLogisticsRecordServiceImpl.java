@@ -46,7 +46,8 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         Example example = new Example(EngLogisticsRecord.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("receiveUserId",user.getUserId())
-                .andEqualTo("readStatus",0);
+                .andEqualTo("readStatus",0)
+                .andEqualTo("orgId",user.getOrganizationId());
         return engLogisticsRecordMapper.selectCountByExample(example);
     }
 
@@ -85,13 +86,14 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         int i = engLogisticsRecordMapper.insertSelective(record);
 
         //发消息
-        sendMessage(record.getReceiveUserId());
+        sendMessage(record.getReceiveUserId(),user.getOrganizationId());
 
         return i;
     }
 
-    public void sendMessage(Long receiveUserId){
-        String queueName = "QUEUE_M" + receiveUserId;
+
+    public void sendMessage(Long receiveUserId,Long orgId){
+        String queueName = "QUEUE_M_" + receiveUserId + "_" + orgId;
         try {
             Queue queue = new Queue(queueName, true);
             TopicExchange topicExchange = new TopicExchange(RabbitConfig.TOPIC_EXCHANGE_MESSAGE);
@@ -142,7 +144,13 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
-        return engLogisticsRecordMapper.updateByPrimaryKeySelective(entity);
+
+        int i = engLogisticsRecordMapper.updateByPrimaryKeySelective(entity);
+
+        //发消息
+        sendMessage(entity.getReceiveUserId(),user.getOrganizationId());
+
+        return i;
     }
 
     @Override

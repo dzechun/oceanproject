@@ -221,4 +221,11 @@ public class EsopWorkInstruction extends ValidGroup implements Serializable {
     @Column(name = "approve_user_name")
     private String approveUserName;
 
+    /**
+     * 是否直接显示视频(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifShowVideo",value = "是否直接显示视频(0-否 1-是)")
+    @Column(name = "if_show_video")
+    private Byte ifShowVideo;
+
 }

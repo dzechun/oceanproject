@@ -41,20 +41,6 @@ public class EngUserFollowContractQtyOrderServiceImpl extends BaseService<EngUse
 
     @Override
     public List<EngContractQtyOrderAndPurOrderDto> findFollowList(Map<String, Object> map) {
-        List<EngContractQtyOrderAndPurOrderDto> list= new ArrayList<>();
-
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        Example example = new Example(EngUserFollowContractQtyOrder.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId",user.getOrganizationId())
-                .andEqualTo("userId",user.getUserId());
-        List<EngUserFollowContractQtyOrder> engUserFollowContractQtyOrders = engUserFollowContractQtyOrderMapper.selectByExample(example);
-        if(StringUtils.isEmpty(engUserFollowContractQtyOrders)){
-            return list;
-        }
-
-        List<Long> contractQtyOrderIds = engUserFollowContractQtyOrders.stream().map(EngUserFollowContractQtyOrder::getContractQtyOrderId).collect(Collectors.toList());
-        map.put("contractQtyOrderIds",contractQtyOrderIds);
         return engContractQtyOrderAndPurOrderService.findList(map);
     }
 

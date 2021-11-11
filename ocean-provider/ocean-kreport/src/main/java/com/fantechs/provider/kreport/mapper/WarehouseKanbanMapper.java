@@ -16,6 +16,11 @@ public interface WarehouseKanbanMapper extends MyMapper<WarehouseKanban> {
     WarehouseKanban findOrderQty(Map<String,Object> map);
 
     /**
+     * 完成订单数量
+     */
+    long findAccomplishQty(Map<String, Object> map);
+
+    /**
      * 当日/月收货统计
      */
     BillsQtyStatistics findClaimGoods(Map<String,Object> map);
