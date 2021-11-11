@@ -823,10 +823,8 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         List<EsopWorkInstructionTreeDto> treeList = esopWorkInstructionMapper.findTreeList(searchEsopWorkInstruction);
         if(StringUtils.isNotEmpty(treeList)){
             for(EsopWorkInstructionTreeDto dto :treeList){
-                SearchEsopWorkInstruction workInstruction = new SearchEsopWorkInstruction();
-                workInstruction.setEquipmentSeqNum(dto.getWorkInstructionSeqNums());
-                workInstruction.setOrgId(sysUser.getOrganizationId());
-                List<EsopWorkInstructionDto> list = esopWorkInstructionMapper.findList(workInstruction);
+                searchEsopWorkInstruction.setWorkInstructionSeqNum(dto.getWorkInstructionSeqNums());
+                List<EsopWorkInstructionDto> list = esopWorkInstructionMapper.findList(searchEsopWorkInstruction);
                 dto.setEsopWorkInstructionDtos(list);
             }
         }
