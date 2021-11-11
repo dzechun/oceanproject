@@ -1,8 +1,11 @@
 package com.fantechs.provider.kreport.service.impl;
 
+import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.general.entity.kreport.*;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.AddressUtils;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -27,19 +31,19 @@ public class LogisticsKanbanServiceImpl extends BaseService<LogisticsKanban> imp
 
     @Override
     public LogisticsKanban findKanbanData(Map<String, Object> map) {
-//        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-//        searchSysSpecItem.setSpecCode("carrierNames");
-//        List<SysSpecItem> carrierNames = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-//        if (StringUtils.isNotEmpty(carrierNames)){
-//            List<String> carrierNameList = Arrays.asList(carrierNames.get(0).getParaValue().split(","));
-//            map.put("carrierNames",carrierNameList);
-//        }
-//        searchSysSpecItem.setSpecCode("billTypeNames");
-//        List<SysSpecItem> billTypeNames = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-//        if (StringUtils.isNotEmpty(billTypeNames)){
-//            List<String> billTypeNameList = Arrays.asList(billTypeNames.get(0).getParaValue().split(","));
-//            map.put("billTypeNames",billTypeNameList);
-//        }
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("carrierNames");
+        List<SysSpecItem> carrierNames = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if (StringUtils.isNotEmpty(carrierNames)){
+            List<String> carrierNameList = Arrays.asList(carrierNames.get(0).getParaValue().split(","));
+            map.put("carrierNames",carrierNameList);
+        }
+        searchSysSpecItem.setSpecCode("billTypeNames");
+        List<SysSpecItem> billTypeNames = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if (StringUtils.isNotEmpty(billTypeNames)){
+            List<String> billTypeNameList = Arrays.asList(billTypeNames.get(0).getParaValue().split(","));
+            map.put("billTypeNames",billTypeNameList);
+        }
         int startPage = Integer.valueOf(map.get("startPage").toString()).intValue();
         int pageSize = Integer.valueOf(map.get("pageSize").toString());
         startPage = (startPage-1) * pageSize;
@@ -77,29 +81,45 @@ public class LogisticsKanbanServiceImpl extends BaseService<LogisticsKanban> imp
                 }
 
             }
+            Object address = redisUtil.get("address");
+            List<RadiationChart> radiationCharts = null;
+            if (StringUtils.isNotEmpty(address)) {
+                radiationCharts = JsonUtils.jsonToList(address.toString(), RadiationChart.class);
+            }
+            boolean isUpdate = false;
             for (RadiationChart radiationChart : radiationChartList) {
+                boolean b = false;
                 if (radiationChart.getDistrictName().contains("-")) {
                     continue;
                 }
-                lngAndLat = redisUtil.get(radiationChart.getDistrictName());
-                if (StringUtils.isNotEmpty(lngAndLat) && !lngAndLat.toString().contains("<")) {
-                    String[] split = lngAndLat.toString().split(",");
-                    radiationChart.setLng(split[0]);
-                    radiationChart.setLat(split[1]);
-                } else {
-                    String[] coordinate ;
-                    try {
-                        coordinate = AddressUtils.getCoordinate(radiationChart.getDistrictName());
-                        if (coordinate[0].contains("<")) {
-                            continue;
+                if (StringUtils.isNotEmpty(radiationCharts)) {
+                    for (RadiationChart chart : radiationCharts) {
+                        if (chart.getDistrictName().equals(radiationChart.getDistrictName()) && StringUtils.isNotEmpty(chart.getLng(),chart.getLat())) {
+                            radiationChart.setLng(chart.getLng());
+                            radiationChart.setLat(chart.getLat());
+
+                            b = true;
                         }
-                        radiationChart.setLng(coordinate[0]);
-                        radiationChart.setLat(coordinate[1]);
-                        redisUtil.set("address:"+radiationChart.getDistrictName(),coordinate[0]+","+coordinate[1],86400);
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
                 }
+                if (b) {
+                    continue;
+                }
+                isUpdate = true;
+                try {
+                    String[] coordinate = AddressUtils.getCoordinate(radiationChart.getDistrictName());
+                    if (coordinate[0].contains("<")) {
+                        continue;
+                    }
+                    radiationChart.setLng(coordinate[0]);
+                    radiationChart.setLat(coordinate[1]);
+//                    redisUtil.set("address:"+radiationChart.getDistrictName(),coordinate[0]+","+coordinate[1],86400);
+                } catch (Exception e) {
+                    continue;
+                }
+            }
+            if (isUpdate) {
+                redisUtil.set("address", JsonUtils.objectToJson(radiationChartList),24*60*60);
             }
         }
 //        List<TransportInformation> transportInformationList = logisticsKanbanMapper.findTransportInformationList(map);

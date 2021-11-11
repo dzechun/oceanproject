@@ -159,12 +159,10 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     public int saveRecord(EngPackingOrder engPackingOrder,Byte logisticsNode,String title){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<EngLogisticsRecord> records = new LinkedList<>();
-        EngLogisticsRecord engLogisticsRecord = new EngLogisticsRecord();
-        engLogisticsRecord.setMaterialLogisticsNode(logisticsNode);
-        engLogisticsRecord.setTitle(title);
+
 
         //领料出库单及发运单不需要查询装箱单
-        if(logisticsNode!=(byte)5 || logisticsNode!=(byte)6 || logisticsNode!=(byte)7){
+        if(logisticsNode==1 || logisticsNode==2 || logisticsNode==3 || logisticsNode==4){
             Map<String,Object> summaryDetMap = new HashMap<>();
             summaryDetMap.put("orgId",sysUser.getOrganizationId());
             summaryDetMap.put("packingOrderId",engPackingOrder.getPackingOrderId());
@@ -197,14 +195,18 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                         engLogisticsRecordMessage.setLocationNum(engContractQtyOrderAndPurOrderDto.getLocationNum());
                         engLogisticsRecordMessage.setMainUnit(engContractQtyOrderAndPurOrderDto.getMainUnit());
                         engLogisticsRecordMessage.setMaterialDesc(engContractQtyOrderAndPurOrderDto.getMaterialDesc());
-                        engLogisticsRecordMessage.setRelatedOrderCode(StringUtils.isNotEmpty(engPackingOrder.getPackingOrderCode())?engPackingOrder.getPackingOrderCode():null);
+                        engLogisticsRecordMessage.setRelatedOrderCode(engPackingOrder.getPackingOrderCode());
                         engLogisticsRecordMessage.setChangeTime(new Date());
                         engLogisticsRecordMessage.setQty(engPackingOrderSummaryDetDto.getQty());
                         engLogisticsRecordMessage.setOperateUser(sysUser.getUserName());
 
-                        engLogisticsRecord.setMessage(engLogisticsRecordMessage);
-                        engLogisticsRecord.setContractQtyOrderId(engContractQtyOrderAndPurOrderDto.getContractQtyOrderId());
+
                         for (EngUserFollowContractQtyOrder engUserFollowContractQtyOrder : engUserFollowContractQtyOrders){
+                            EngLogisticsRecord engLogisticsRecord = new EngLogisticsRecord();
+                            engLogisticsRecord.setMaterialLogisticsNode(logisticsNode);
+                            engLogisticsRecord.setTitle(title);
+                            engLogisticsRecord.setMessage(engLogisticsRecordMessage);
+                            engLogisticsRecord.setContractQtyOrderId(engContractQtyOrderAndPurOrderDto.getContractQtyOrderId());
                             engLogisticsRecord.setReceiveUserId(engUserFollowContractQtyOrder.getUserId());
                             records.add(engLogisticsRecord);
                         }

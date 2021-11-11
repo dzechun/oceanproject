@@ -33,5 +33,7 @@ public class CheckProductionDto implements Serializable {
     private Long workOrderId;
     // 包箱类型(1：工单包箱，2：料号包箱)
     private String packType;
+    // 产线ID
+    private Long proLineId;
 
 }

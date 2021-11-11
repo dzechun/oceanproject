@@ -22,4 +22,7 @@ public class SearchOmSalesOrderDetDto extends BaseQuery implements Serializable 
 
     @ApiModelProperty(name="salesOrderCode",value = "销售订单编码")
     private String salesOrderCode;
+
+    @ApiModelProperty(name="salesCode",value = "销售编码")
+    private String salesCode;
 }

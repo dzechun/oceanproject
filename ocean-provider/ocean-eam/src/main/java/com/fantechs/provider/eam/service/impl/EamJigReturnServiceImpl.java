@@ -116,7 +116,7 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
 
             //修改治具使用状态及使用次数
             EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(eamJigReturn.getJigBarcodeId());
-            eamJigBarcode.setUsageStatus(eamJigBarcode.getUsageStatus()==3 ? (byte)3 : (byte)1);
+            eamJigBarcode.setUsageStatus(eamJigBarcode.getUsageStatus()!=2 ? eamJigBarcode.getUsageStatus() : (byte)1);
             eamJigBarcode.setCurrentUsageTime(eamJigBarcode.getCurrentUsageTime()==null ?
                     eamJigReturn.getThisTimeUsageTime():
                     eamJigBarcode.getCurrentUsageTime()+eamJigReturn.getThisTimeUsageTime());

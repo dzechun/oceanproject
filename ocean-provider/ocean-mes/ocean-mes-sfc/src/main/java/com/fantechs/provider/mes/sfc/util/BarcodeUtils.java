@@ -130,7 +130,7 @@ public class BarcodeUtils {
 
         // 2、判断条码流程是否正确（流程表）
         if (record.getProcessId() != null) {
-            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
+            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getProLineId());
         }
 
         // 3、系统检查条码工单状态是否正确（工单表）
@@ -152,7 +152,7 @@ public class BarcodeUtils {
             MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto=new MesSfcWorkOrderBarcodeDto();
             mesSfcWorkOrderBarcodeDto.setWorkOrderBarcodeId(workOrderBarcodeId);
             mesSfcWorkOrderBarcodeDto.setBarcode(record.getBarCode());
-            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getStationId());
+            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getProLineId());
         }
         return true;
     }
@@ -384,6 +384,13 @@ public class BarcodeUtils {
         mesSfcBarcodeProcessRecord.setOption1(dto.getPassTime());
         barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
+        /**
+         * 日期：20211109
+         * 条码状态过站变更
+         */
+        MesSfcWorkOrderBarcode sfcWorkOrderBarcode = barcodeUtils.mesSfcWorkOrderBarcodeService.selectByKey(mesSfcBarcodeProcess.getWorkOrderBarcodeId());
+
+
 //        Map<String, Object> map = new HashMap<>();
 //        map.put("workOrderBarcodeId", dto.getBarCode());
 //        map.put("stationId", dto.getNowStationId());
@@ -402,6 +409,13 @@ public class BarcodeUtils {
                 // 2 调用此方法会把工单BOM删除 大忌
                 //barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
                 barcodeUtils.pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
+
+                /**
+                 * 日期：20211109
+                 * 更新条码状态  条码状态(0-待投产 1-投产中 2-已完成 3-待打印)
+                 */
+                sfcWorkOrderBarcode.setBarcodeStatus((byte) 1);
+                barcodeUtils.mesSfcWorkOrderBarcodeService.update(sfcWorkOrderBarcode);
             }
         }
         // 判断当前工序是否为产出工序，且是该条码在工单工序第一次过站，工单产出 +1
@@ -420,6 +434,13 @@ public class BarcodeUtils {
                 // 2 调用此方法会把工单BOM删除 大忌
                 //barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
                 barcodeUtils.pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
+
+                /**
+                 * 日期：20211109
+                 * 更新条码状态  条码状态(0-待投产 1-投产中 2-已完成 3-待打印)
+                 */
+                sfcWorkOrderBarcode.setBarcodeStatus((byte) 2);
+                barcodeUtils.mesSfcWorkOrderBarcodeService.update(sfcWorkOrderBarcode);
             }
         }
         return 1;
@@ -533,9 +554,9 @@ public class BarcodeUtils {
      *
      * @param mesSfcWorkOrderBarcodeDto 条码DTO
      * @param processId                 流程ID
-     * @param processId                 工位ID
+     * @param proLineId                 产线ID
      */
-    private static void checkBarcodeProcess(MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto, Long processId, Long stationId) {
+    private static void checkBarcodeProcess(MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto, Long processId, Long proLineId) {
         MesSfcBarcodeProcess mesSfcBarcodeProcess = barcodeUtils.mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .workOrderBarcodeId(mesSfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
                 .build());
@@ -543,6 +564,9 @@ public class BarcodeUtils {
             if (!processId.equals(mesSfcBarcodeProcess.getNextProcessId())) {
                 BaseProcess baseProcess = barcodeUtils.baseFeignApi.processDetail(processId).getData();
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003, baseProcess.getProcessName(), mesSfcBarcodeProcess.getNextProcessName());
+            }
+            if (!mesSfcBarcodeProcess.getProLineId().equals(proLineId)){
+                throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
             }
             // 已完成所有过站工序
             if (mesSfcBarcodeProcess.getNextProcessId().equals(0L)){
@@ -835,6 +859,7 @@ public class BarcodeUtils {
                 //checkProductionDto.setBarCode(restapiChkSNRoutingApiDto.getBarcodeCode());
                 checkProductionDto.setWorkOrderId(updateProcessDto.getWorkOrderId());
                 checkProductionDto.setProcessId(updateProcessDto.getNowProcessId());
+                checkProductionDto.setProLineId(updateProcessDto.getProLineId());
 
                 checkSN(checkProductionDto,updateProcessDto.getWorkOrderBarcodeId(),orgId);
 
@@ -955,6 +980,7 @@ public class BarcodeUtils {
             //标准条码流程检查
             checkProductionDto.setWorkOrderId(updateProcessDto.getWorkOrderId());
             checkProductionDto.setProcessId(updateProcessDto.getNowProcessId());
+            checkProductionDto.setProLineId(updateProcessDto.getProLineId());
             //checkSN(checkProductionDto);
             checkSN(checkProductionDto,updateProcessDto.getWorkOrderBarcodeId(),orgId);
 

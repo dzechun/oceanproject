@@ -26,4 +26,13 @@ public class SearchCallAgvAgvTask extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="taskStatus",value = "任务状态")
     private Integer taskStatus;
+
+    @ApiModelProperty(name="userID",value = "用户ID")
+    private Long userId;
+
+    @ApiModelProperty(name="createTime" ,value="创建时间(YYYY-MM-DD)")
+    private String createTime;
+
+    @ApiModelProperty(name="productModel",value = "物料型号")
+    private String productModel;
 }

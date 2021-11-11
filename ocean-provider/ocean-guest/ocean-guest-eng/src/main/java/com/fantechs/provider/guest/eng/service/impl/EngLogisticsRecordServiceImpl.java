@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.eng.EngLogisticsRecord;
 import com.fantechs.common.base.general.entity.eng.EngLogisticsRecordMessage;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.guest.eng.config.RabbitConfig;
 import com.fantechs.provider.guest.eng.mapper.EngLogisticsRecordMapper;
@@ -45,7 +46,8 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         Example example = new Example(EngLogisticsRecord.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("receiveUserId",user.getUserId())
-                .andEqualTo("readStatus",0);
+                .andEqualTo("readStatus",0)
+                .andEqualTo("orgId",user.getOrganizationId());
         return engLogisticsRecordMapper.selectCountByExample(example);
     }
 
@@ -84,13 +86,14 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
         int i = engLogisticsRecordMapper.insertSelective(record);
 
         //发消息
-        sendMessage(record.getReceiveUserId());
+        sendMessage(record.getReceiveUserId(),user.getOrganizationId());
 
         return i;
     }
 
-    public void sendMessage(Long receiveUserId){
-        String queueName = "QUEUE_M" + receiveUserId;
+
+    public void sendMessage(Long receiveUserId,Long orgId){
+        String queueName = "QUEUE_M_" + receiveUserId + "_" + orgId;
         try {
             Queue queue = new Queue(queueName, true);
             TopicExchange topicExchange = new TopicExchange(RabbitConfig.TOPIC_EXCHANGE_MESSAGE);
@@ -118,6 +121,7 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
     //拼接消息内容
     public String jointMessageContent(EngLogisticsRecordMessage engLogisticsRecordMessage){
         StringBuilder stringBuilder = new StringBuilder();
+
         stringBuilder.append("材料编码：").append(engLogisticsRecordMessage.getMaterialCode())
                 .append("，材料名称：").append(engLogisticsRecordMessage.getMaterialName())
                 .append("，合同号：").append(engLogisticsRecordMessage.getContractCode())
@@ -127,7 +131,7 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
                 .append("，单位：").append(engLogisticsRecordMessage.getMainUnit())
                 .append("，规格：").append(engLogisticsRecordMessage.getMaterialDesc())
                 .append("，相关单号：").append(engLogisticsRecordMessage.getRelatedOrderCode())
-                .append("，时间：").append(engLogisticsRecordMessage.getChangeTime())
+                .append("，时间：").append(DateUtils.getDateString(engLogisticsRecordMessage.getChangeTime(),"yyyy-MM-dd HH:mm:ss"))
                 .append("，数量：").append(engLogisticsRecordMessage.getQty())
                 .append("，操作人：").append(engLogisticsRecordMessage.getOperateUser());
         return stringBuilder.toString();
@@ -140,7 +144,13 @@ public class EngLogisticsRecordServiceImpl extends BaseService<EngLogisticsRecor
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
-        return engLogisticsRecordMapper.updateByPrimaryKeySelective(entity);
+
+        int i = engLogisticsRecordMapper.updateByPrimaryKeySelective(entity);
+
+        //发消息
+        sendMessage(entity.getReceiveUserId(),user.getOrganizationId());
+
+        return i;
     }
 
     @Override

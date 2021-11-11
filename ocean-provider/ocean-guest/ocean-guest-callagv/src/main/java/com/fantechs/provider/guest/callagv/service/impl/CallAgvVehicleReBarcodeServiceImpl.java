@@ -9,6 +9,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.callagv.*;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageTaskPoint;
+import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTask;
 import com.fantechs.common.base.general.entity.callagv.CallAgvProductionInLog;
 import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleLog;
 import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleReBarcode;
@@ -21,6 +22,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.agv.AgvFeignApi;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
+import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskMapper;
 import com.fantechs.provider.guest.callagv.mapper.CallAgvProductionInLogMapper;
 import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleLogMapper;
 import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleReBarcodeMapper;
@@ -46,6 +48,9 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
     @Resource
     private CallAgvProductionInLogMapper callAgvProductionInLogMapper;
+
+    @Resource
+    private CallAgvAgvTaskMapper callAgvAgvTaskMapper;
 
     @Resource
     private TemVehicleFeignApi temVehicleFeignApi;
@@ -130,7 +135,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     @Override
     @Transactional
     @LcnTransaction
-    public String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Integer type) throws Exception {
+    public String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Long storageTaskPointId, Integer type) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<String> positionCodeList = new LinkedList<>();
         TemVehicle temVehicle = temVehicleFeignApi.detail(vehicleId).getData();
@@ -152,36 +157,44 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         }
         positionCodeList.add(baseStorageTaskPoint.getXyzCode());
 
-        SearchBaseStorageTaskPoint searchBaseStorageTaskPoint = new SearchBaseStorageTaskPoint();
-        searchBaseStorageTaskPoint.setWarehouseAreaId(warehouseAreaId);
-        if (type == 1) {
-            searchBaseStorageTaskPoint.setTaskPointType((byte) 2);
+        BaseStorageTaskPoint baseStorageTaskPointEnd = new BaseStorageTaskPoint();
+        if (storageTaskPointId == 0) {
+            SearchBaseStorageTaskPoint searchBaseStorageTaskPoint = new SearchBaseStorageTaskPoint();
+            searchBaseStorageTaskPoint.setWarehouseAreaId(warehouseAreaId);
+            if (type == 1) {
+                searchBaseStorageTaskPoint.setTaskPointType((byte) 2);
+            }
+            searchBaseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
+            searchBaseStorageTaskPoint.setIfOrderByUsePriority(1);
+            List<BaseStorageTaskPoint> baseStorageTaskPointList = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint).getData();
+            if (StringUtils.isEmpty(baseStorageTaskPointList)) {
+                throw new BizErrorException("目的区域没有空闲的库位，请稍后再试");
+            }
+            positionCodeList.add(baseStorageTaskPointList.get(0).getXyzCode());
+            baseStorageTaskPointEnd = baseStorageTaskPointList.get(0);
+        } else {
+            baseStorageTaskPointEnd = baseFeignApi.baseStorageTaskPointDetail(storageTaskPointId).getData();
+            if (baseStorageTaskPointEnd.getStorageTaskPointStatus() != 1) {
+                throw new BizErrorException("目的库位对应的配送点被占用，请重新选择");
+            }
         }
-        searchBaseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
-        searchBaseStorageTaskPoint.setIfOrderByUsePriority(1);
-        List<BaseStorageTaskPoint> baseStorageTaskPointList = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint).getData();
-        if (StringUtils.isEmpty(baseStorageTaskPointList)) {
-            throw new BizErrorException("目的区域没有空闲的库位，请稍后再试");
-        }
-        positionCodeList.add(baseStorageTaskPointList.get(0).getXyzCode());
 
         temVehicle.setStorageTaskPointId(0l);
         temVehicle.setModifiedUserId(user.getUserId());
         temVehicle.setModifiedTime(new Date());
         temVehicleFeignApi.update(temVehicle);
 
-        BaseStorageTaskPoint baseStorageTaskPointUpdate = baseStorageTaskPointList.get(0);
-        baseStorageTaskPointUpdate.setStorageTaskPointStatus((byte) 2);
-        baseStorageTaskPointUpdate.setModifiedUserId(user.getUserId());
-        baseStorageTaskPointUpdate.setModifiedTime(new Date());
-        baseStorageTaskPointUpdate.setRemark("锁定配送目的点，等待货架：" + temVehicle.getVehicleCode() + "配送");
-        baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPointUpdate);
+        baseStorageTaskPointEnd.setStorageTaskPointStatus((byte) 2);
+        baseStorageTaskPointEnd.setModifiedUserId(user.getUserId());
+        baseStorageTaskPointEnd.setModifiedTime(new Date());
+        baseStorageTaskPointEnd.setRemark("锁定配送目的点，等待货架：" + temVehicle.getVehicleCode() + "配送");
+        baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPointEnd);
 
         if (type == 2 || type == 3) {
             CallAgvVehicleLog callAgvVehicleLog = new CallAgvVehicleLog();
             callAgvVehicleLog.setVehicleId(vehicleId);
             callAgvVehicleLog.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
-            callAgvVehicleLog.setEndStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
+            callAgvVehicleLog.setEndStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
             if (type == 2) {
                 callAgvVehicleLog.setOperatorType((byte) 2);
             } else {
@@ -203,14 +216,14 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
                 CallAgvProductionInLog callAgvProductionInLog = new CallAgvProductionInLog();
                 callAgvProductionInLog.setInWarehouseId(baseStorageTaskPoint.getWarehouseId());
-                callAgvProductionInLog.setOutWarehouseId(baseStorageTaskPointList.get(0).getWarehouseId());
+                callAgvProductionInLog.setOutWarehouseId(baseStorageTaskPointEnd.getWarehouseId());
                 callAgvProductionInLog.setInWarehouseAreaId(baseStorageTaskPoint.getWarehouseAreaId());
-                callAgvProductionInLog.setOutWarehouseAreaId(baseStorageTaskPointList.get(0).getWarehouseAreaId());
+                callAgvProductionInLog.setOutWarehouseAreaId(baseStorageTaskPointEnd.getWarehouseAreaId());
                 callAgvProductionInLog.setInStorageId(baseStorageTaskPoint.getStorageId());
-                callAgvProductionInLog.setOutStorageId(baseStorageTaskPointList.get(0).getStorageId());
+                callAgvProductionInLog.setOutStorageId(baseStorageTaskPointEnd.getStorageId());
                 callAgvProductionInLog.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
                 callAgvProductionInLog.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
-                callAgvProductionInLog.setEndStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
+                callAgvProductionInLog.setEndStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
                 callAgvProductionInLog.setOperateTime(new Date());
                 callAgvProductionInLog.setOrgId(user.getOrganizationId());
                 callAgvProductionInLog.setCreateUserId(user.getUserId());
@@ -218,6 +231,16 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                 callAgvProductionInLogMapper.insertSelective(callAgvProductionInLog);
             }
         }
+
+        // 记录AGV任务
+        CallAgvAgvTask callAgvAgvTask = new CallAgvAgvTask();
+        callAgvAgvTask.setVehicleId(vehicleId);
+        callAgvAgvTask.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
+        callAgvAgvTask.setEndStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
+        callAgvAgvTask.setTaskStatus((byte) 2);
+        callAgvAgvTask.setOperateType(type.byteValue());
+        callAgvAgvTask.setOrgId(user.getOrganizationId());
+        callAgvAgvTask.setCreateUserId(user.getUserId());
 
         String message = "";
         String taskCode = "";
@@ -232,8 +255,8 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             Boolean taskBoolean = false;
             String taskTyp = temVehicle.getAgvTaskTemplate();
             if (StringUtils.isNotEmpty(baseStorageTaskPoint.getType(),
-                    baseStorageTaskPointList.get(0).getType())
-                    && !baseStorageTaskPoint.getType().equals(baseStorageTaskPointList.get(0).getType())) {
+                    baseStorageTaskPointEnd.getType())
+                    && !baseStorageTaskPoint.getType().equals(baseStorageTaskPointEnd.getType())) {
                 taskTyp = temVehicle.getAgvTaskTemplateSecond();
 
                 taskBoolean = true;
@@ -243,7 +266,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                 baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
                 baseStorageTaskPoint.setModifiedUserId(user.getUserId());
 
-                temVehicle.setStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
+                temVehicle.setStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
                 temVehicle.setModifiedUserId(user.getUserId());
                 temVehicle.setRemark("电梯任务等待队列中");
                 List<GenAgvSchedulingTaskDTO> genAgvSchedulingTaskDTOList = BeanUtils.convertJson(redisUtil.get(baseStorageTaskPoint.getType()).toString(), new TypeToken<List<GenAgvSchedulingTaskDTO>>() {
@@ -254,18 +277,24 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                 genAgvSchedulingTaskDTO.setPodCode(temVehicle.getVehicleCode());
                 genAgvSchedulingTaskDTO.setBaseStorageTaskPoint(baseStorageTaskPoint);
                 genAgvSchedulingTaskDTO.setTemVehicle(temVehicle);
+                genAgvSchedulingTaskDTO.setCallAgvAgvTask(callAgvAgvTask);
                 genAgvSchedulingTaskDTOList.add(genAgvSchedulingTaskDTO);
                 redisUtil.set(baseStorageTaskPoint.getType(), JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
                 log.info("==========记录AGV电梯任务队列 : key " + baseStorageTaskPoint.getType() + " , value : " + JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
             } else {
                 taskCode = genAgvSchedulingTask(taskTyp, positionCodeList, temVehicle.getVehicleCode());
+
+                callAgvAgvTask.setTaskCode(taskCode);
+                callAgvAgvTask.setCreateTime(new Date());
+                callAgvAgvTaskMapper.insertSelective(callAgvAgvTask);
+
                 log.info("==========启动agv执行" + message + "作业任务==============\r\n");
                 baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
                 baseStorageTaskPoint.setModifiedUserId(user.getUserId());
                 redisUtil.set("3-" + taskCode, JSONObject.toJSONString(baseStorageTaskPoint));
                 log.info("=========记录当前" + message + "作业对应的起始配送点 : key : " + "3-" + taskCode + " value : " + JSONObject.toJSONString(baseStorageTaskPoint) + "\r\n");
 
-                temVehicle.setStorageTaskPointId(baseStorageTaskPointList.get(0).getStorageTaskPointId());
+                temVehicle.setStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
                 temVehicle.setModifiedUserId(user.getUserId());
                 temVehicle.setRemark(taskCode);
                 redisUtil.set("2-" + taskCode, JSONObject.toJSONString(temVehicle));

@@ -1,7 +1,10 @@
 package com.fantechs.provider.kreport.service.impl;
 
+import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.general.entity.kreport.*;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.kreport.mapper.WarehouseKanbanMapper;
 import com.fantechs.provider.kreport.service.WarehouseKanbanService;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -25,15 +29,17 @@ public class WarehouseKanbanServiceImpl extends BaseService<WarehouseKanban> imp
     @Override
     public WarehouseKanban findKanbanData(Map<String, Object> map) {
 
-//        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-//        searchSysSpecItem.setSpecCode("codes");
-//        List<SysSpecItem> carrierNames = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-//        if (StringUtils.isNotEmpty(carrierNames)){
-//            List<String> carrierNameList = Arrays.asList(carrierNames.get(0).getParaValue().split(","));
-//            map.put("codes",carrierNameList);
-//        }
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("codes");
+        List<SysSpecItem> carrierNames = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if (StringUtils.isNotEmpty(carrierNames)){
+            List<String> carrierNameList = Arrays.asList(carrierNames.get(0).getParaValue().split(","));
+            map.put("codes",carrierNameList);
+        }
 
         WarehouseKanban orderQty = warehouseKanbanMapper.findOrderQty(map);
+        long qty = warehouseKanbanMapper.findAccomplishQty(map);
+        orderQty.setFinishedOrderQty(new BigDecimal(qty));
         BillsQtyStatistics claimGoods = warehouseKanbanMapper.findClaimGoods(map);
         BillsQtyStatistics deliverGoods = warehouseKanbanMapper.findDeliverGoods(map);
         BillsQtyStatistics orderPicking = warehouseKanbanMapper.findOrderPicking(map);

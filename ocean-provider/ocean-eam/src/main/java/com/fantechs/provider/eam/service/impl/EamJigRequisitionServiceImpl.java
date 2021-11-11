@@ -104,9 +104,16 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
             throw new BizErrorException("查无此工单");
         }
 
-        if(!newMesPmWorkOrderDtos.get(0).getMaterialId().equals(oldMesPmWorkOrderDtos.get(0).getMaterialId())){
-            throw new BizErrorException("新旧工单的物料不一致，无法转换");
+        //配置项：工装治具中转是否限制两张工单的产品一致
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("JigConversionIfMaterialEqual");
+        List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(StringUtils.isNotEmpty(sysSpecItemList)&&Integer.parseInt(sysSpecItemList.get(0).getParaValue()) == 1){
+            if (!newMesPmWorkOrderDtos.get(0).getMaterialId().equals(oldMesPmWorkOrderDtos.get(0).getMaterialId())) {
+                throw new BizErrorException("新旧工单的物料不一致，无法转换");
+            }
         }
+
 
         //按治具id分组查询领用记录
         SearchEamJigRequisition searchEamJigRequisition = new SearchEamJigRequisition();

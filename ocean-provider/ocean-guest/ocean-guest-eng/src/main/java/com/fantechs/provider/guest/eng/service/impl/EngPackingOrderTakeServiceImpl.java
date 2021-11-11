@@ -838,16 +838,16 @@ public class EngPackingOrderTakeServiceImpl implements EngPackingOrderTakeServic
         qtyCriteria.andEqualTo("deviceCode",engPackingOrderSummaryDet.getDeviceCode());
         qtyCriteria.andEqualTo("materialCode",engPackingOrderSummaryDet.getMaterialId());
         List<EngContractQtyOrder> engContractQtyOrders = engContractQtyOrderMapper.selectByExample(qtyExample);
-        if(StringUtils.isEmpty(engContractQtyOrders))
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未查询到对应的合同量单");
-        EngContractQtyOrder order = engContractQtyOrders.get(0);
-        if(StringUtils.isEmpty(order.getAgoQty())){
-            order.setAgoQty(qty);
-        }else{
-            order.setAgoQty(order.getAgoQty().add(qty));
+        if(StringUtils.isNotEmpty(engContractQtyOrders)){
+            //throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未查询到对应的合同量单");
+            EngContractQtyOrder order = engContractQtyOrders.get(0);
+            if(StringUtils.isEmpty(order.getAgoQty())){
+                order.setAgoQty(qty);
+            }else{
+                order.setAgoQty(order.getAgoQty().add(qty));
+            }
+            engContractQtyOrderMapper.updateByPrimaryKeySelective(order);
         }
-        engContractQtyOrderMapper.updateByPrimaryKeySelective(order);
-
         return engPackingOrderSummaryDetMapper.updateByPrimaryKeySelective(engPackingOrderSummaryDet);
     }
 
