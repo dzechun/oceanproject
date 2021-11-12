@@ -1324,6 +1324,10 @@ public class BarcodeUtils {
                 }
             }
 
+            if(StringUtils.isEmpty(updateProcessDto.getWorkOrderBarcodeId())){
+                throw new Exception("系统中找不到条码的信息");
+            }
+
             //设置过站条码
             updateProcessDto.setBarCode(barcodeCode);
 
@@ -1983,7 +1987,12 @@ public class BarcodeUtils {
 
                 BaseProLine proLine = barcodeUtils.baseFeignApi.selectProLinesDetail(proLineId).getData();
                 BaseProcess baseProcess = barcodeUtils.baseFeignApi.processDetail(processId).getData();
-                BaseStation baseStation = barcodeUtils.baseFeignApi.findStationDetail(stationId).getData();
+                //BaseStation baseStation = barcodeUtils.baseFeignApi.findStationDetail(stationId).getData();
+
+                BaseStation baseStation=new BaseStation();
+                if(StringUtils.isNotEmpty(stationId)){
+                    baseStation = barcodeUtils.baseFeignApi.findStationDetail(stationId).getData();
+                }
 
                 // 绑定附件码跟条码关系
                 barcodeUtils.mesSfcKeyPartRelevanceService.save(MesSfcKeyPartRelevance.builder()

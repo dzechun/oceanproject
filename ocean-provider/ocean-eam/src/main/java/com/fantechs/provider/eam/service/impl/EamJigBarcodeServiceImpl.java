@@ -240,7 +240,11 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
         if (StringUtils.isEmpty(eamJigBarcode)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
-        eamJigBarcode.setCurrentUsageTime(eamJigBarcode.getCurrentUsageTime()+num);
+        Integer currentUsageTime=0;
+        if(StringUtils.isNotEmpty(eamJigBarcode.getCurrentUsageTime()))
+            currentUsageTime=eamJigBarcode.getCurrentUsageTime();
+
+        eamJigBarcode.setCurrentUsageTime(currentUsageTime+num);
         return eamJigBarcodeMapper.updateByPrimaryKeySelective(eamJigBarcode);
     }
 
