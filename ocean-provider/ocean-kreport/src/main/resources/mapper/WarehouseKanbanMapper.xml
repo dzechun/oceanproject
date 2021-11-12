@@ -70,6 +70,7 @@
         IFNULL(SUM(CASE WHEN STATUS NOT IN('CA','CL','WF','FN') THEN 1 ELSE 0 END),0)) AS receivedQty
         FROM wms_move_doc
         WHERE WAREHOUSE_ID = #{warehouseId}
+        AND CODE   REGEXP 'RE'
         <if test="isDay ==null or isDay == 0">
             and date_format(UPDATE_TIME,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
         </if>
