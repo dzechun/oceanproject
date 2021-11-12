@@ -84,13 +84,14 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
             } else if ("4".equals(agvCallBackDTO.getMethod())) {
                 String type = redisUtil.get(agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode()).toString();
                 List<GenAgvSchedulingTaskDTO> genAgvSchedulingTaskDTOList = BeanUtils.convertJson(redisUtil.get(type).toString(), new TypeToken<List<GenAgvSchedulingTaskDTO>>() {}.getType());
+                log.info("=========获取等待的电梯作业任务队列 : key : " + type + " value : " + JSONObject.toJSONString(genAgvSchedulingTaskDTOList) + "\r\n");
 
                 if (genAgvSchedulingTaskDTOList.size() > 1) {
                     String taskCode = callAgvVehicleReBarcodeService.genAgvSchedulingTask(genAgvSchedulingTaskDTOList.get(1).getTaskTyp(), genAgvSchedulingTaskDTOList.get(1).getPositionCodeList(), genAgvSchedulingTaskDTOList.get(1).getPodCode());
                     log.info("==========启动agv执行下一个等待的电梯作业任务==============\r\n");
 
                     SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
-                    searchCallAgvAgvTask.setTaskCode(agvCallBackDTO.getTaskCode());
+                    searchCallAgvAgvTask.setTaskCode(genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask().getTaskCode());
                     List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
                     if (!callAgvAgvTaskDtoList.isEmpty()) {
                         CallAgvAgvTask callAgvAgvTask = genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask();
