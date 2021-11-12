@@ -41,16 +41,32 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
      * 起始库区
      */
     @Transient
-    @ApiModelProperty(name = "startTaskPointName",value = "起始库区")
-    @Excel(name = "起始库区", height = 20, width = 30,orderNum="3")
-    private String startTaskPointName;
+    @ApiModelProperty(name = "inWarehouseAreaName",value = "起始库区")
+    @Excel(name = "起始库区", height = 20, width = 30,orderNum="")
+    private String inWarehouseAreaName;
 
     /**
      * 目标库区
      */
     @Transient
-    @ApiModelProperty(name = "endTaskPointName",value = "目标库区")
-    @Excel(name = "目标库区", height = 20, width = 30,orderNum="4")
+    @ApiModelProperty(name = "outWarehouseAreaName",value = "目标库区")
+    @Excel(name = "目标库区", height = 20, width = 30,orderNum="")
+    private String outWarehouseAreaName;
+
+    /**
+     * 起始配送点
+     */
+    @Transient
+    @ApiModelProperty(name = "startTaskPointName",value = "起始配送点")
+    @Excel(name = "起始配送点", height = 20, width = 30,orderNum="3")
+    private String startTaskPointName;
+
+    /**
+     * 目标配送点
+     */
+    @Transient
+    @ApiModelProperty(name = "endTaskPointName",value = "目标配送点")
+    @Excel(name = "目标配送点", height = 20, width = 30,orderNum="4")
     private String endTaskPointName;
 
     /**
