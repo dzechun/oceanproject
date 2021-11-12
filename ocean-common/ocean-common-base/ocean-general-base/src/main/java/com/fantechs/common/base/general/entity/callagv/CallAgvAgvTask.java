@@ -61,7 +61,7 @@ public class CallAgvAgvTask extends ValidGroup implements Serializable {
      * 任务状态(1-未开始 2-进行中 3-正常结束 4-异常 5-异常结束)
      */
     @ApiModelProperty(name="taskStatus",value = "任务状态(1-未开始 2-进行中 3-正常结束 4-异常 5-异常结束)")
-    @Excel(name = "任务状态(1-未开始 2-进行中 3-正常结束 4-异常 5-异常结束)", height = 20, width = 30,orderNum="6")
+    @Excel(name = "任务状态(1-未开始 2-进行中 3-正常结束 4-异常 5-异常结束)", height = 20, width = 30,orderNum="10")
     @Column(name = "task_status")
     private Byte taskStatus;
 
@@ -103,7 +103,7 @@ public class CallAgvAgvTask extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -119,7 +119,7 @@ public class CallAgvAgvTask extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

@@ -19,7 +19,7 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="11")
     private String createUserName;
 
     /**
@@ -27,7 +27,7 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="13")
     private String modifiedUserName;
 
     /**
@@ -42,7 +42,7 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
      */
     @Transient
     @ApiModelProperty(name = "inWarehouseAreaName",value = "起始库区")
-    @Excel(name = "起始库区", height = 20, width = 30,orderNum="")
+    @Excel(name = "起始库区", height = 20, width = 30,orderNum="6")
     private String inWarehouseAreaName;
 
     /**
@@ -50,7 +50,7 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
      */
     @Transient
     @ApiModelProperty(name = "outWarehouseAreaName",value = "目标库区")
-    @Excel(name = "目标库区", height = 20, width = 30,orderNum="")
+    @Excel(name = "目标库区", height = 20, width = 30,orderNum="8")
     private String outWarehouseAreaName;
 
     /**
@@ -58,7 +58,7 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
      */
     @Transient
     @ApiModelProperty(name = "startTaskPointName",value = "起始配送点")
-    @Excel(name = "起始配送点", height = 20, width = 30,orderNum="3")
+    @Excel(name = "起始配送点", height = 20, width = 30,orderNum="7")
     private String startTaskPointName;
 
     /**
@@ -66,7 +66,7 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
      */
     @Transient
     @ApiModelProperty(name = "endTaskPointName",value = "目标配送点")
-    @Excel(name = "目标配送点", height = 20, width = 30,orderNum="4")
+    @Excel(name = "目标配送点", height = 20, width = 30,orderNum="9")
     private String endTaskPointName;
 
     /**
@@ -74,7 +74,7 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
      */
     @Transient
     @ApiModelProperty(name = "vehicleName",value = "货架")
-    @Excel(name = "货架", height = 20, width = 30,orderNum="5")
+    @Excel(name = "货架", height = 20, width = 30,orderNum="3")
     private String vehicleName;
 
     /**
@@ -82,7 +82,7 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
      */
     @Transient
     @ApiModelProperty(name = "productModel",value = "物料型号")
-    @Excel(name = "物料型号", height = 20, width = 30,orderNum="7")
+    @Excel(name = "物料型号", height = 20, width = 30,orderNum="4")
     private String productModel;
 
     /**
@@ -90,7 +90,7 @@ public class CallAgvAgvTaskDto extends CallAgvAgvTask {
      */
     @Transient
     @ApiModelProperty(name = "totalQty",value = "总数量")
-    @Excel(name = "总数量", height = 20, width = 30,orderNum="8")
+    @Excel(name = "总数量", height = 20, width = 30,orderNum="5")
     private BigDecimal totalQty;
 
 }
