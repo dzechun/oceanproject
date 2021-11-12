@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.esop.EsopHtWorkInstructionDto;
 import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionDto;
+import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionTreeDto;
 import com.fantechs.common.base.general.dto.esop.imports.EsopWorkInstructionImport;
 import com.fantechs.common.base.general.entity.esop.EsopWorkInstruction;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopWorkInstruction;
@@ -169,6 +170,14 @@ public class EsopWorkInstructionController {
     @PostMapping("/censor")
     public ResponseEntity censor(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=EsopWorkInstruction.update.class) EsopWorkInstructionDto esopWorkInstructionDto) {
         return ControllerUtil.returnCRUD(esopWorkInstructionService.censor(esopWorkInstructionDto));
+    }
+
+    @ApiOperation("树状图列表")
+    @PostMapping("/findTreeList")
+    public ResponseEntity<List<EsopWorkInstructionTreeDto>> findTreeList(@ApiParam(value = "查询对象")@RequestBody SearchEsopWorkInstruction searchEsopWorkInstruction) {
+        Page<Object> page = PageHelper.startPage(searchEsopWorkInstruction.getStartPage(),searchEsopWorkInstruction.getPageSize());
+        List<EsopWorkInstructionTreeDto> list = esopWorkInstructionService.findTreeList(searchEsopWorkInstruction);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
 }

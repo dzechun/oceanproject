@@ -1,6 +1,7 @@
 package com.fantechs.provider.esop.service;
 
 import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionDto;
+import com.fantechs.common.base.general.dto.esop.EsopWorkInstructionTreeDto;
 import com.fantechs.common.base.general.dto.esop.imports.EsopWorkInstructionImport;
 import com.fantechs.common.base.general.entity.esop.EsopWorkInstruction;
 import com.fantechs.common.base.general.entity.esop.search.SearchEsopWorkInstruction;
@@ -31,4 +32,7 @@ public interface EsopWorkInstructionService extends IService<EsopWorkInstruction
     String download(HttpServletResponse response) throws IOException;
 
     int censor(EsopWorkInstructionDto EsopWorkInstructionDto);
+
+    List<EsopWorkInstructionTreeDto> findTreeList(SearchEsopWorkInstruction searchEsopWorkInstruction);
+
 }

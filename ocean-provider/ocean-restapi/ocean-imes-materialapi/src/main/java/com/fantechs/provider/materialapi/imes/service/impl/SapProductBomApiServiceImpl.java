@@ -84,8 +84,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                     BaseProductBom parentBomData = saveBaseProductBom(baseMaterial1.get(0), baseUtils.removeZero(parentList.get(0).getAENNR()), orgId);
                     BaseProductBom bomData = null;
 
-                    List<BaseProductBomDet> detList = null;
-                    List<BaseProductBom> bomList = null;
+                    List<BaseProductBomDet> detList = new ArrayList<>();
                     for (String code : materialCodes) {
                         BaseMaterial material = map.get(code);
                         if(StringUtils.isEmpty(material)) {
@@ -112,12 +111,13 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                         if (StringUtils.isEmpty(bomData)) throw new BizErrorException("保存失败");
 
                         for (DTMESBOM bom : res.getBOM()) {
-                            if (baseUtils.removeZero(bom.getMATNR()).equals(code)) {
+                            String detCode = baseUtils.removeZero(bom.getIDNRK());
+                            if (baseUtils.removeZero(bom.getMATNR()).equals(detCode)) {
                                 BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
                                 baseProductBomDet.setProductBomId(bomData.getProductBomId());
-                                BaseMaterial materials = map.get(code);
+                                BaseMaterial materials = map.get(detCode);
                                 if(StringUtils.isEmpty(materials)) {
-                                    List<BaseMaterial> bomMaterial = baseUtils.getBaseMaterial(baseUtils.removeZero(bom.getIDNRK()), orgId);
+                                    List<BaseMaterial> bomMaterial = baseUtils.getBaseMaterial(detCode, orgId);
                                     if (StringUtils.isEmpty(bomMaterial))
                                         throw new BizErrorException("未查询到对应物料编码:" + bom.getIDNRK());
                                     materials = bomMaterial.get(0);
@@ -140,6 +140,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
 
 
                     }
+                    baseFeignApi.addOrUpdate(detList);
                     logsUtils.addlog((byte) 1, (byte) 1, orgId, null, req.getMATNR());
                     return 1;
                 } else {

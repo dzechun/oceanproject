@@ -92,4 +92,16 @@ public class SearchBaseStorageTaskPoint extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="remark",value = "备注")
     private String remark;
+
+    /**
+     * 坐标编码
+     */
+    @ApiModelProperty(name="xyzCode",value = "坐标编码")
+    private String xyzCode;
+
+    /**
+     * 优先级
+     */
+    @ApiModelProperty(name="usePriority",value = "优先级")
+    private Integer usePriority;
 }

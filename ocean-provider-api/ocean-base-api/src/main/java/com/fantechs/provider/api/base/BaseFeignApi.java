@@ -388,7 +388,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("接口新增或修改产品bom详情表信息")
     @PostMapping("/baseProductBomDet/addOrUpdate")
-    ResponseEntity<BaseProductBomDet> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated BaseProductBomDet bseProductBomDet);
+    ResponseEntity<BaseProductBomDet> addOrUpdate(@ApiParam(value = "必传：productBomCode、materialId",required = true)@RequestBody @Validated List<BaseProductBomDet> bseProductBomDets);
 
     @ApiOperation("查询产品bom详情表信息")
     @PostMapping("/baseProductBomDet/findList")

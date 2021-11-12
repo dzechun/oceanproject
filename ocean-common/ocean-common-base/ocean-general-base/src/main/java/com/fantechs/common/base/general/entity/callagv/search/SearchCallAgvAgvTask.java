@@ -35,4 +35,7 @@ public class SearchCallAgvAgvTask extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="productModel",value = "物料型号")
     private String productModel;
+
+    @ApiModelProperty(name="ifToday",value = "是否只查当天的数据(0-否 1-是)")
+    private Integer ifToday;
 }

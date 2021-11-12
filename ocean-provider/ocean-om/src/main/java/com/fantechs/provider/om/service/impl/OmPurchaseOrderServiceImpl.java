@@ -13,6 +13,7 @@ import com.fantechs.provider.om.mapper.OmPurchaseOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmPurchaseOrderMapper;
 import com.fantechs.provider.om.service.OmPurchaseOrderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -120,4 +121,38 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
     public String findPurchaseMaterial(String purchaseOrderCode) {
         return omPurchaseOrderMapper.findPurchaseMaterial(purchaseOrderCode);
     }
+
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int update(OmPurchaseOrder omPurchaseOrder) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        omPurchaseOrder.setModifiedTime(new Date());
+        omPurchaseOrder.setModifiedUserId(user.getUserId());
+        int i = omPurchaseOrderMapper.updateByPrimaryKeySelective(omPurchaseOrder);
+
+        //删除详情表
+        Example example = new Example(OmPurchaseOrderDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("purchaseOrderId", omPurchaseOrder.getPurchaseOrderId());
+        omPurchaseOrderDetMapper.deleteByExample(example);
+
+        List<OmPurchaseOrderDet> list = omPurchaseOrder.getOmPurchaseOrderDetList();
+        if(StringUtils.isNotEmpty(list)) {
+            for (OmPurchaseOrderDet det : list) {
+                det.setPurchaseOrderId(omPurchaseOrder.getPurchaseOrderId());
+                det.setCreateUserId(user.getUserId());
+                det.setCreateTime(new Date());
+                det.setModifiedUserId(user.getUserId());
+                det.setModifiedTime(new Date());
+                det.setStatus((byte)1);
+                det.setOrgId(user.getOrganizationId());
+                det.setIsDelete((byte)1);
+            }
+            omPurchaseOrderDetMapper.insertList(list);
+        }
+
+        return i;
+    }
+
 }

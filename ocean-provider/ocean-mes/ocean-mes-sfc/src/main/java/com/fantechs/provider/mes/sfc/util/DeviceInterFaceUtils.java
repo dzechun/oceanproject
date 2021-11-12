@@ -288,7 +288,7 @@ public class DeviceInterFaceUtils {
         sysApiLog.setResponseTime(new Date());
         sysApiLog.setResponseData(responseData);
         sysApiLog.setRequestParameter(requestParameter);
-        //securityFeignApi.add(sysApiLog);
+        securityFeignApi.add(sysApiLog);
     }
 
 }

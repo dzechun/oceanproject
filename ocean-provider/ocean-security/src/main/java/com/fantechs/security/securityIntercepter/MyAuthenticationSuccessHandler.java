@@ -53,31 +53,38 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
             //---加入角色权限所对应的菜单名称
             List<SysRole> roles = loginUser.getRoles();
             List<String> roleIds = new  LinkedList<>();
+            String browserKernel = httpServletRequest.getParameter("browserKernel");
+            //menuType 1-windows(平板C端)访问  2-web(客户端) 3-PDA(移动设备) 4-安卓app访问系统
+            int menuType = 3;  //PDA
+            if(StringUtils.isEmpty(browserKernel)) {
+                log.info("==========================" + httpServletRequest.getHeader("user-agent"));
+                if (httpServletRequest.getHeader("user-agent").contains("Apache-HttpClient")) {
+                    menuType = 1;
+                } else if (!UserAgentUtil.CheckAgent(httpServletRequest.getHeader("user-agent"))) {
+                    menuType = 2;
+                }
 
-            //menuType 1-web(客户端) 2-pc 3-PDA(移动设备)
-            int menuType=3;  //PDA
-            log.info("=========================="+httpServletRequest.getHeader("user-agent"));
-            if(httpServletRequest.getHeader("user-agent").contains("Apache-HttpClient")){
-                menuType =1;
-            }else if(!UserAgentUtil.CheckAgent(httpServletRequest.getHeader("user-agent"))){
-                menuType=2;
+            }else{
+                menuType = Integer.valueOf(browserKernel);
             }
+
             if (StringUtils.isNotEmpty(roles)) {
-                for(SysRole role :roles){
+                for (SysRole role : roles) {
                     roleIds.add(role.getRoleId().toString());
                 }
                 //构建角色菜单树
                 roleMenuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
-                        "parentId","0",
-                        "menuType",menuType+""
-                ),roleIds);
+                            "parentId", "0",
+                            "menuType", menuType + ""
+                ), roleIds);
 
-                if(StringUtils.isNotEmpty(roleMenuList)){
+                if (StringUtils.isNotEmpty(roleMenuList)) {
                     loginUser.setMenuList(roleMenuList);
                     //获取所有菜单地址
                     getPermsSet(roleMenuList);
                 }
             }
+
         }
 
         //如何带有token将token删除

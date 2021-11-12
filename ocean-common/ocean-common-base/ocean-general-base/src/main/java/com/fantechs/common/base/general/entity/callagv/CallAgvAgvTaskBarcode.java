@@ -1,9 +1,7 @@
-package com.fantechs.common.base.general.entity.basic;
+package com.fantechs.common.base.general.entity.callagv;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
-import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,80 +11,65 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 ;
 ;
 
 /**
- * 产品BOM父料
- * base_product_bom
- * @author 81947
- * @date 2021-06-09 20:37:07
+ * 任务条码表
+ * call_agv_agv_task_barcode
+ * @author admin
+ * @date 2021-11-11 14:13:16
  */
 @Data
-@Table(name = "base_product_bom")
-public class BaseProductBom extends ValidGroup implements Serializable {
+@Table(name = "call_agv_agv_task_barcode")
+public class CallAgvAgvTaskBarcode extends ValidGroup implements Serializable {
     /**
-     * 产品BOM ID
+     * 任务条码表ID
      */
-    @ApiModelProperty(name="productBomId",value = "产品BOM ID")
+    @ApiModelProperty(name="agvTaskBarcodeId",value = "任务条码表ID")
+    @Excel(name = "任务条码表ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "product_bom_id")
-    private Long productBomId;
+    @Column(name = "agv_task_barcode_id")
+    private Long agvTaskBarcodeId;
 
     /**
-     * BOM编码
+     * AGV任务ID
      */
-    @ApiModelProperty(name="productBomCode",value = "BOM编码")
-    @Excel(name = "BOM编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "product_bom_code")
-    private String productBomCode;
+    @ApiModelProperty(name="agvTaskId",value = "AGV任务ID")
+    @Excel(name = "AGV任务ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "agv_task_id")
+    private Long agvTaskId;
 
     /**
-     * BOM版本号
+     * 条码ID
      */
-    @ApiModelProperty(name="productBomVersion",value = "BOM版本号")
-    @Excel(name = "BOM版本号", height = 20, width = 30,orderNum="") 
-    @Column(name = "product_bom_version")
-    private String productBomVersion;
-
-    /**
-     * 产品料号ID
-     */
-    @ApiModelProperty(name="materialId",value = "产品料号ID")
-    @Column(name = "material_id")
-    private Long materialId;
-
-    /**
-     * 节拍(秒)
-     */
-    @ApiModelProperty(name="takt",value = "节拍(秒)")
-    @Excel(name = "节拍(秒)", height = 20, width = 30,orderNum="") 
-    private Integer takt;
-
-    /**
-     * BOM状态(1-未核准 2-已核准)
-     */
-    @ApiModelProperty(name="bomStatus",value = "BOM状态(1-未核准 2-已核准)")
-    @Excel(name = "BOM状态(1-未核准 2-已核准)", height = 20, width = 30,orderNum="",replace = {"未核准_1", "已核准_2"})
-    @Column(name = "bom_status")
-    private Byte bomStatus;
+    @ApiModelProperty(name="barcodeId",value = "条码ID")
+    @Excel(name = "条码ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "barcode_id")
+    private Long barcodeId;
 
     /**
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="",replace = {"无效_0", "有效_1"})
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
     private Byte status;
 
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="") 
     private String remark;
 
     /**
      * 组织id
      */
     @ApiModelProperty(name="orgId",value = "组织id")
+    @Excel(name = "组织id", height = 20, width = 30,orderNum="") 
     @Column(name = "org_id")
     private Long orgId;
 
@@ -94,6 +77,7 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 创建人ID
      */
     @ApiModelProperty(name="createUserId",value = "创建人ID")
+    @Excel(name = "创建人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "create_user_id")
     private Long createUserId;
 
@@ -110,6 +94,7 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 修改人ID
      */
     @ApiModelProperty(name="modifiedUserId",value = "修改人ID")
+    @Excel(name = "修改人ID", height = 20, width = 30,orderNum="") 
     @Column(name = "modified_user_id")
     private Long modifiedUserId;
 
@@ -126,6 +111,7 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 逻辑删除（0、删除 1、正常）
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
+    @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
 
@@ -135,9 +121,19 @@ public class BaseProductBom extends ValidGroup implements Serializable {
 
     private String option3;
 
-    private static final long serialVersionUID = 1L;
-
-    @ApiModelProperty(name = "baseProductBomDets", value = "产品BOM集合")
+    /**
+     * 物料型号
+     */
+    @ApiModelProperty(name="productModel",value = "物料型号")
     @Transient
-    private List<BaseProductBomDetDto> baseProductBomDetDtos;
+    private String productModel;
+
+    /**
+     * 数量
+     */
+    @ApiModelProperty(name="qty",value = "数量")
+    @Transient
+    private BigDecimal qty;
+
+    private static final long serialVersionUID = 1L;
 }

@@ -9,23 +9,14 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.callagv.*;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageTaskPoint;
-import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTask;
-import com.fantechs.common.base.general.entity.callagv.CallAgvProductionInLog;
-import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleLog;
-import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleReBarcode;
+import com.fantechs.common.base.general.entity.callagv.*;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.BeanUtils;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.RedisUtil;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.agv.AgvFeignApi;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
-import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskMapper;
-import com.fantechs.provider.guest.callagv.mapper.CallAgvProductionInLogMapper;
-import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleLogMapper;
-import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleReBarcodeMapper;
+import com.fantechs.provider.guest.callagv.mapper.*;
 import com.fantechs.provider.guest.callagv.service.CallAgvVehicleReBarcodeService;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -51,6 +43,9 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
     @Resource
     private CallAgvAgvTaskMapper callAgvAgvTaskMapper;
+
+    @Resource
+    private CallAgvAgvTaskBarcodeMapper callAgvAgvTaskBarcodeMapper;
 
     @Resource
     private TemVehicleFeignApi temVehicleFeignApi;
@@ -237,7 +232,6 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         callAgvAgvTask.setVehicleId(vehicleId);
         callAgvAgvTask.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
         callAgvAgvTask.setEndStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
-        callAgvAgvTask.setTaskStatus((byte) 2);
         callAgvAgvTask.setOperateType(type.byteValue());
         callAgvAgvTask.setOrgId(user.getOrganizationId());
         callAgvAgvTask.setCreateUserId(user.getUserId());
@@ -271,6 +265,10 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                 temVehicle.setRemark("电梯任务等待队列中");
                 List<GenAgvSchedulingTaskDTO> genAgvSchedulingTaskDTOList = BeanUtils.convertJson(redisUtil.get(baseStorageTaskPoint.getType()).toString(), new TypeToken<List<GenAgvSchedulingTaskDTO>>() {
                 }.getType());
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                callAgvAgvTask.setTaskCode(taskTyp + "-" + temVehicle.getVehicleCode() + "-" + simpleDateFormat.format(new Date()));
+                callAgvAgvTask.setTaskStatus((byte) 1);
                 GenAgvSchedulingTaskDTO genAgvSchedulingTaskDTO = new GenAgvSchedulingTaskDTO();
                 genAgvSchedulingTaskDTO.setTaskTyp(taskTyp);
                 genAgvSchedulingTaskDTO.setPositionCodeList(positionCodeList);
@@ -285,8 +283,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                 taskCode = genAgvSchedulingTask(taskTyp, positionCodeList, temVehicle.getVehicleCode());
 
                 callAgvAgvTask.setTaskCode(taskCode);
-                callAgvAgvTask.setCreateTime(new Date());
-                callAgvAgvTaskMapper.insertSelective(callAgvAgvTask);
+                callAgvAgvTask.setTaskStatus((byte) 2);
 
                 log.info("==========启动agv执行" + message + "作业任务==============\r\n");
                 baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
@@ -314,6 +311,19 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                     redisUtil.set(baseStorageTaskPoint.getType(), JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
                     log.info("==========记录AGV电梯任务队列 : key " + baseStorageTaskPoint.getType() + " , value : " + JSONObject.toJSONString(genAgvSchedulingTaskDTOList));
                 }
+            }
+
+            callAgvAgvTask.setCreateTime(new Date());
+            callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
+            if(type != 3) {
+                List<CallAgvAgvTaskBarcode> callAgvAgvTaskBarcodeList = new LinkedList<>();
+                for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
+                    CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
+                    callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
+                    callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
+                    callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
+                }
+                callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
             }
         } catch (BizErrorException e) {
             throw new BizErrorException("启动agv执行" + message + "作业任务失败" + e.getMessage());

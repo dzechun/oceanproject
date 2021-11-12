@@ -14,6 +14,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
+import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskBarcodeMapper;
 import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskMapper;
 import com.fantechs.provider.guest.callagv.service.CallAgvVehicleReBarcodeService;
 import com.fantechs.provider.guest.callagv.service.RcsCallBackService;
@@ -44,6 +45,9 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
     @Resource
     private CallAgvAgvTaskMapper callAgvAgvTaskMapper;
 
+    @Resource
+    private CallAgvAgvTaskBarcodeMapper callAgvAgvTaskBarcodeMapper;
+
     @Override
     public String agvCallback(AgvCallBackDTO agvCallBackDTO) throws Exception {
 
@@ -68,7 +72,7 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                 List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
                 if (!callAgvAgvTaskDtoList.isEmpty()) {
                     CallAgvAgvTask callAgvAgvTask = new CallAgvAgvTask();
-                    BeanUtils.autoFillEqFields(callAgvAgvTaskDtoList.get(0), callAgvAgvTask);
+                    callAgvAgvTask.setAgvTaskId(callAgvAgvTaskDtoList.get(0).getAgvTaskId());
                     callAgvAgvTask.setTaskStatus((byte) 3);
                     callAgvAgvTask.setModifiedTime(new Date());
                     callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
@@ -80,15 +84,23 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
             } else if ("4".equals(agvCallBackDTO.getMethod())) {
                 String type = redisUtil.get(agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode()).toString();
                 List<GenAgvSchedulingTaskDTO> genAgvSchedulingTaskDTOList = BeanUtils.convertJson(redisUtil.get(type).toString(), new TypeToken<List<GenAgvSchedulingTaskDTO>>() {}.getType());
+                log.info("=========获取等待的电梯作业任务队列 : key : " + type + " value : " + JSONObject.toJSONString(genAgvSchedulingTaskDTOList) + "\r\n");
 
                 if (genAgvSchedulingTaskDTOList.size() > 1) {
                     String taskCode = callAgvVehicleReBarcodeService.genAgvSchedulingTask(genAgvSchedulingTaskDTOList.get(1).getTaskTyp(), genAgvSchedulingTaskDTOList.get(1).getPositionCodeList(), genAgvSchedulingTaskDTOList.get(1).getPodCode());
                     log.info("==========启动agv执行下一个等待的电梯作业任务==============\r\n");
 
-                    CallAgvAgvTask callAgvAgvTask = genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask();
-                    callAgvAgvTask.setTaskCode(taskCode);
-                    callAgvAgvTask.setCreateTime(new Date());
-                    callAgvAgvTaskMapper.insertSelective(callAgvAgvTask);
+                    SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
+                    searchCallAgvAgvTask.setTaskCode(genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask().getTaskCode());
+                    List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
+                    if (!callAgvAgvTaskDtoList.isEmpty()) {
+                        CallAgvAgvTask callAgvAgvTask = genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask();
+                        callAgvAgvTask.setAgvTaskId(callAgvAgvTaskDtoList.get(0).getAgvTaskId());
+                        callAgvAgvTask.setTaskCode(taskCode);
+                        callAgvAgvTask.setTaskStatus((byte) 2);
+                        callAgvAgvTask.setModifiedTime(new Date());
+                        callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
+                    }
 
                     BaseStorageTaskPoint baseStorageTaskPoint = genAgvSchedulingTaskDTOList.get(1).getBaseStorageTaskPoint();
                     redisUtil.set("3-" + taskCode, JSONObject.toJSONString(baseStorageTaskPoint));

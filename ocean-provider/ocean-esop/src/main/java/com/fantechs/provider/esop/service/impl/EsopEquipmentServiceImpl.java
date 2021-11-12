@@ -96,7 +96,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
             numCriteria.andEqualTo("proLineId", record.getProLineId());
             numCriteria.andEqualTo("orgId", record.getOrgId());
             if (StringUtils.isNotEmpty(esopEquipmentMapper.selectOneByExample(numExample))) {
-                throw new BizErrorException("同一产线的设备编码不能重复");
+                throw new BizErrorException("同一产线的设备序号不能重复");
             }
         }
 

@@ -16,6 +16,7 @@
     <result column="secrecy_grade" jdbcType="TINYINT" property="secrecyGrade" />
     <result column="wi_status" jdbcType="TINYINT" property="wiStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="if_show_video" jdbcType="TINYINT" property="ifShowVideo" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -66,6 +67,11 @@
     </collection>
   </resultMap>
 
+    <resultMap id="BaseResultMapTreeDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.esop.EsopWorkInstructionTreeDto">
+        <result column="work_instruction_seq_nums" jdbcType="VARCHAR" property="workInstructionSeqNums"/>
+
+    </resultMap>
+
   <sql id="BaseColumnList">
         ewi.work_instruction_id,
         ewi.work_instruction_code,
@@ -80,6 +86,7 @@
         ewi.manufacture_procedure,
         ewi.process_req_and_announcements,
         ewi.status,
+        ewi.if_show_video,
         ewi.remark,
         ewi.org_id,
         ewi.create_user_id,
@@ -151,7 +158,65 @@
             <if test="processName!=null and processName!=''">
                 and sp.process_name = like CONCAT('%', #{processName}, '%')
             </if>
+            <if test="workInstructionSeqNum!=null and workInstructionSeqNum!=''">
+                and ewi.work_instruction_seq_num = #{workInstructionSeqNum}
+            </if>
+
         </where>
+        order by ewi.modified_time desc
+    </select>
+
+    <select id="findTreeList" resultMap="BaseResultMapTreeDto">
+        SELECT ewi.work_instruction_seq_num as work_instruction_seq_nums
+        FROM esop_work_instruction ewi
+        LEFT JOIN base_material bm ON ewi.material_id = bm.material_id
+        LEFT JOIN base_material_tab bt ON bm.material_id = bt.material_id
+        LEFT JOIN base_product_model spm ON ewi.product_model_id = spm.product_model_id
+        LEFT JOIN base_process sp ON ewi.process_id = sp.process_id
+        <if test="proLineId!=null and proLineId!=''">
+            LEFT JOIN esop_wi_release_det ewrd  ON ewrd.work_instruction_id = ewi.work_instruction_id
+            LEFT JOIN esop_wi_release ewr ON ewr.wi_release_id = ewrd.wi_release_id
+            LEFT JOIN base_pro_line bpl ON bpl.pro_line_id = ewr.pro_line_id
+        </if>
+        LEFT JOIN ocean_v2.sys_user su ON ewi.create_user_id = su.user_id
+        LEFT JOIN ocean_v2.sys_user sus ON ewi.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON ewi.org_id = bo.organization_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                and ewi.org_id = #{orgId}
+            </if>
+            <if test="workInstructionName!=null and workInstructionName!=''">
+                and ewi.work_instruction_name like CONCAT('%', #{workInstructionName}, '%')
+            </if>
+            <if test="workInstructionCode!=null and workInstructionCode!=''">
+                and ewi.work_instruction_code = #{workInstructionCode}
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and bm.material_code = #{materialCode}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and ewi.material_id = #{materialId}
+            </if>
+            <if test="processId!=null and processId!=''">
+                and ewi.process_id = #{processId}
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and ewr.pro_line_id = #{proLineId}
+            </if>
+            <if test="proLineId!=null and proLineId!='' and  equipmentSeqNum!=null and equipmentSeqNum!=''">
+                and ewrd.wi_release_det_seq_num = #{equipmentSeqNum}
+            </if>
+            <if test="workInstructionId!=null and workInstructionId!=''">
+                and ewi.work_instruction_id = #{workInstructionId}
+            </if>
+            <if test="processName!=null and processName!=''">
+                and sp.process_name = like CONCAT('%', #{processName}, '%')
+            </if>
+            <if test="workInstructionSeqNum!=null and workInstructionSeqNum!=''">
+                and ewi.work_instruction_seq_num = #{workInstructionSeqNum}
+            </if>
+        </where>
+        group by ewi.work_instruction_seq_num
         order by ewi.modified_time desc
     </select>
 </mapper>
