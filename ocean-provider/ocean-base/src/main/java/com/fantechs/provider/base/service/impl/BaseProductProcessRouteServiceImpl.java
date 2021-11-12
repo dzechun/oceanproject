@@ -369,7 +369,7 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
                 return list;
             }
         }
-        if(StringUtils.isNotEmpty(map.get(""))) {
+        if(StringUtils.isNotEmpty(map.get("proLineId"))) {
             maps.remove("productModelId");
             maps.put("proLineId", map.get("proLineId"));
             list = baseProductProcessRouteMapper.findList(map);
