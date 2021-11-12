@@ -7,13 +7,15 @@
         ifnull(sum(
             CASE WHEN status NOT in('SF','CA','CL') THEN 1 else 0 end
             ),0) as 'unfinishedOrderQty',
-        ifnull(sum(CASE WHEN status NOT in('SF','CA','CL') AND REVIEW_STATUS!='REVIEW_COMPLETED' THEN 1 else 0 end),0) as 'pendingSalesQty'
+        ifnull(sum(CASE WHEN status NOT in('SF','CA','CL') AND REVIEW_STATUS!='REVIEW_COMPLETED' THEN 1 else 0 end),0) as 'pendingSalesQty',
+        count(1) as 'totalOrderQty',
+        ifnull(sum(CASE WHEN status in('CA','CL') THEN 1 else 0 end),0) as 'cancelOrderQty'
         from wms_pick_ticket
         where WAREHOUSE_ID = #{warehouseId} and date_format(CREATED_TIME,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
     </select>
 
     <select id="findAccomplishQty" parameterType="map" resultType="long">
-    SELECT  IFNULL(SUM(1),0) AS finishedOrderQty
+    SELECT  count(1) AS finishedOrderQty
     FROM
       wms_pick_ticket
     WHERE WAREHOUSE_ID = #{warehouseId}
