@@ -38,8 +38,8 @@ public class WarehouseKanbanServiceImpl extends BaseService<WarehouseKanban> imp
         }
 
         WarehouseKanban orderQty = warehouseKanbanMapper.findOrderQty(map);
-        long qty = warehouseKanbanMapper.findAccomplishQty(map);
-        orderQty.setFinishedOrderQty(new BigDecimal(qty));
+//        long qty = warehouseKanbanMapper.findAccomplishQty(map);
+//        orderQty.setFinishedOrderQty(new BigDecimal(qty));
         BillsQtyStatistics claimGoods = warehouseKanbanMapper.findClaimGoods(map);
         BillsQtyStatistics deliverGoods = warehouseKanbanMapper.findDeliverGoods(map);
         BillsQtyStatistics orderPicking = warehouseKanbanMapper.findOrderPicking(map);
