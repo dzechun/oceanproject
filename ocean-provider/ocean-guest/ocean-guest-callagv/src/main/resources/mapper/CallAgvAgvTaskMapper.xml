@@ -35,6 +35,8 @@
     <result column="start_task_point_name" jdbcType="VARCHAR" property="startTaskPointName"/>
     <result column="end_task_point_name" jdbcType="VARCHAR" property="endTaskPointName"/>
     <result column="vehicle_name" jdbcType="VARCHAR" property="vehicleName"/>
+    <result column="in_warehouse_area_name" jdbcType="VARCHAR" property="inWarehouseAreaName"/>
+    <result column="out_warehouse_area_name" jdbcType="VARCHAR" property="outWarehouseAreaName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -62,6 +64,8 @@
     select <include refid="Base_Column_List"></include>,
     sstp.task_point_name as start_task_point_name,
     estp.task_point_name as end_task_point_name,
+    bwai.warehouse_area_name as in_warehouse_area_name,
+    bwao.warehouse_area_name as out_warehouse_area_name,
     tv.vehicle_name,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
@@ -69,6 +73,8 @@
     from call_agv_agv_task caat
     LEFT JOIN fantech_imes_v2.base_storage_task_point sstp ON caat.start_storage_task_point_id = sstp.storage_task_point_id
     LEFT JOIN fantech_imes_v2.base_storage_task_point estp ON caat.end_storage_task_point_id = estp.storage_task_point_id
+    left join base_warehouse_area bwai on sstp.warehouse_area_id = bwai.warehouse_area_id
+    left join base_warehouse_area bwao on estp.warehouse_area_id = bwao.warehouse_area_id
     LEFT JOIN fantech_imes_v2.tem_vehicle tv ON caat.vehicle_id = tv.vehicle_id
     LEFT JOIN ocean_v2.sys_user su ON caat.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON caat.modified_user_id = sus.user_id
@@ -82,6 +88,12 @@
       </if>
       <if test="taskStatus != null">
         and caat.task_status = #{taskStatus}
+      </if>
+      <if test="inWarehouseAreaName != null and inWarehouseAreaName != ''">
+        and bwai.warehouse_area_name like CONCAT('%', #{inWarehouseAreaName}, '%')
+      </if>
+      <if test="outWarehouseAreaName != null and outWarehouseAreaName != ''">
+        and bwao.warehouse_area_name like CONCAT('%', #{outWarehouseAreaName}, '%')
       </if>
       <if test="startTaskPointName != null and startTaskPointName != ''">
         and sstp.task_point_name like CONCAT('%', #{startTaskPointName}, '%')

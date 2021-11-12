@@ -27,4 +27,16 @@ public class SearchWarehouseKanban  extends BaseQuery implements Serializable{
     @ApiModelProperty(name="isDay",value = "是否按照天查询(1、是 0、否)")
     private Byte isDay;
 
+    /**
+     * 开始时间
+     */
+    @ApiModelProperty(name="startDate",value = "开始时间")
+    private String startDate;
+
+    /**
+     * 结束时间
+     */
+    @ApiModelProperty(name="endDate",value = "结束时间")
+    private String endDate;
+
 }

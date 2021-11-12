@@ -40,7 +40,7 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * BOM编码
      */
     @ApiModelProperty(name="productBomCode",value = "BOM编码")
-    @Excel(name = "BOM编码", height = 20, width = 30,orderNum="") 
+    @Excel(name = "BOM编码", height = 20, width = 30,orderNum="1")
     @Column(name = "product_bom_code")
     private String productBomCode;
 
@@ -48,7 +48,7 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * BOM版本号
      */
     @ApiModelProperty(name="productBomVersion",value = "BOM版本号")
-    @Excel(name = "BOM版本号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "BOM版本号", height = 20, width = 30,orderNum="2")
     @Column(name = "product_bom_version")
     private String productBomVersion;
 
@@ -63,14 +63,14 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 节拍(秒)
      */
     @ApiModelProperty(name="takt",value = "节拍(秒)")
-    @Excel(name = "节拍(秒)", height = 20, width = 30,orderNum="") 
+    @Excel(name = "节拍(秒)", height = 20, width = 30,orderNum="3")
     private Integer takt;
 
     /**
      * BOM状态(1-未核准 2-已核准)
      */
     @ApiModelProperty(name="bomStatus",value = "BOM状态(1-未核准 2-已核准)")
-    @Excel(name = "BOM状态(1-未核准 2-已核准)", height = 20, width = 30,orderNum="",replace = {"未核准_1", "已核准_2"})
+    @Excel(name = "BOM状态(1-未核准 2-已核准)", height = 20, width = 30,orderNum="4",replace = {"未核准_1", "已核准_2"})
     @Column(name = "bom_status")
     private Byte bomStatus;
 
@@ -78,7 +78,7 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 状态（0、无效 1、有效）
      */
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="",replace = {"无效_0", "有效_1"})
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="5",replace = {"无效_0", "有效_1"})
     private Byte status;
 
     private String remark;
@@ -101,7 +101,7 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="21",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -117,7 +117,7 @@ public class BaseProductBom extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="23",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

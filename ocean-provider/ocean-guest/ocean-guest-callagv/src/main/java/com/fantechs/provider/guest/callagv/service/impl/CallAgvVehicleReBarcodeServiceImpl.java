@@ -315,14 +315,16 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
             callAgvAgvTask.setCreateTime(new Date());
             callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
-            List<CallAgvAgvTaskBarcode> callAgvAgvTaskBarcodeList = new LinkedList<>();
-            for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
-                CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
-                callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
-                callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
-                callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
+            if(type != 3) {
+                List<CallAgvAgvTaskBarcode> callAgvAgvTaskBarcodeList = new LinkedList<>();
+                for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
+                    CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
+                    callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
+                    callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
+                    callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
+                }
+                callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
             }
-            callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
         } catch (BizErrorException e) {
             throw new BizErrorException("启动agv执行" + message + "作业任务失败" + e.getMessage());
         }

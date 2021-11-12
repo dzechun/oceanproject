@@ -34,6 +34,18 @@ public class WarehouseKanban extends ValidGroup implements Serializable {
     private BigDecimal pendingSalesQty;
 
     /**
+     * 总订单数量
+     */
+    @ApiModelProperty(name="totalOrderQty",value = "总订单数量")
+    private BigDecimal totalOrderQty;
+
+    /**
+     * 取消订单数量
+     */
+    @ApiModelProperty(name="cancelOrderQty",value = "取消订单数量")
+    private BigDecimal cancelOrderQty;
+
+    /**
      * 收货统计
      */
     @ApiModelProperty(name="claimGoods",value = "收货统计")
