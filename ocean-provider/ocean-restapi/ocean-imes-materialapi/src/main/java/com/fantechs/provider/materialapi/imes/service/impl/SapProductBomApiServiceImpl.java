@@ -71,12 +71,12 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                         String materialCode = baseUtils.removeZero(bom.getMATNR());
                         materialCodes.add(materialCode);
                         if (materialCode.equals(searchSapProductBomApi.getMaterialCode())) {
-                            if (StringUtils.isNotEmpty(baseUtils.removeZero(bom.getAENNR())))
+                            if (StringUtils.isNotEmpty(bom.getAENNR()))
                                 parentList.add(bom);
                         }
                     }
                     Map<String,BaseMaterial> map = new HashMap<>();
-                    //保存bom表以及det表
+                    //保存第一层bom表以及det表
                     List<BaseMaterial> baseMaterial1 = baseUtils.getBaseMaterial(searchSapProductBomApi.getMaterialCode(), orgId);
                     if (StringUtils.isEmpty(baseMaterial1)) throw new BizErrorException("未查询到对应物料编码");
                     map.put(baseMaterial1.get(0).getMaterialCode(),baseMaterial1.get(0));
@@ -112,7 +112,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
 
                         for (DTMESBOM bom : res.getBOM()) {
                             String detCode = baseUtils.removeZero(bom.getIDNRK());
-                            if (baseUtils.removeZero(bom.getMATNR()).equals(detCode)) {
+                            if (baseUtils.removeZero(bom.getMATNR()).equals(code)) {
                                 BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
                                 baseProductBomDet.setProductBomId(bomData.getProductBomId());
                                 BaseMaterial materials = map.get(detCode);

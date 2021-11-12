@@ -80,7 +80,8 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 //工艺路线
                 SearchBaseProductProcessRoute searchBaseProductProcessRoute = new SearchBaseProductProcessRoute();
                 searchBaseProductProcessRoute.setOrgId(orgId);
-                searchBaseProductProcessRoute.setMaterialCode(restapiWorkOrderApiDto.getMATNR());
+                searchBaseProductProcessRoute.setMaterialCode(baseUtils.removeZero(restapiWorkOrderApiDto.getMATNR()));
+                searchBaseProductProcessRoute.setProLineId(proLines.get(0).getProLineId());
                 List<BaseProductProcessRoute> productProcessRoute = baseFeignApi.findListByCondition(searchBaseProductProcessRoute).getData();
                 if(StringUtils.isNotEmpty(productProcessRoute)) {
                     mesPmWorkOrder.setRouteId(productProcessRoute.get(0).getRouteId());
