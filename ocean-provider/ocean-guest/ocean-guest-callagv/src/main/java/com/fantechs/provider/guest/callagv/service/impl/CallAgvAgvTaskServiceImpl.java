@@ -50,7 +50,7 @@ public class CallAgvAgvTaskServiceImpl extends BaseService<CallAgvAgvTask> imple
 
         if (StringUtils.isNotEmpty(map.get("productModel"))) {
             String productModel = map.get("productModel").toString();
-            list = list.stream().filter(e -> e.getProductModel().contains(productModel)).collect(Collectors.toList());
+            list = list.stream().filter(e -> e.getProductModel() != null && e.getProductModel().contains(productModel)).collect(Collectors.toList());
         }
 
         return list;
