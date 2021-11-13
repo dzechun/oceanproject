@@ -95,11 +95,20 @@
       <if test="outWarehouseAreaName != null and outWarehouseAreaName != ''">
         and bwao.warehouse_area_name like CONCAT('%', #{outWarehouseAreaName}, '%')
       </if>
+      <if test="taskStatusList != null and taskStatusList.size() > 0">
+        and caat.task_status in
+        <foreach collection="taskStatusList" index="index" separator="," item="item" open="(" close=")">
+          #{item}
+        </foreach>
+      </if>
       <if test="startTaskPointName != null and startTaskPointName != ''">
         and sstp.task_point_name like CONCAT('%', #{startTaskPointName}, '%')
       </if>
       <if test="endTaskPointName != null and endTaskPointName != ''">
         and estp.task_point_name like CONCAT('%', #{endTaskPointName}, '%')
+      </if>
+      <if test="vehicleId != null">
+        and tv.vehicle_id = #{vehicleId}
       </if>
       <if test="vehicleName != null and vehicleName != ''">
         and tv.vehicle_name like CONCAT('%', #{vehicleName}, '%')

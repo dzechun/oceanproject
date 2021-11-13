@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchCallAgvAgvTask extends BaseQuery implements Serializable {
@@ -27,6 +28,9 @@ public class SearchCallAgvAgvTask extends BaseQuery implements Serializable {
     @ApiModelProperty(name="outWarehouseAreaName",value = "目标库区")
     private String outWarehouseAreaName;
 
+    @ApiModelProperty(name="vehicleId",value = "货架ID")
+    private Long vehicleId;
+
     @ApiModelProperty(name="vehicleName",value = "货架")
     private String vehicleName;
 
@@ -44,4 +48,7 @@ public class SearchCallAgvAgvTask extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="ifToday",value = "是否只查当天的数据(0-否 1-是)")
     private Integer ifToday;
+
+    @ApiModelProperty(name="taskStatusList",value = "任务状态列表")
+    private List<Integer> taskStatusList;
 }
