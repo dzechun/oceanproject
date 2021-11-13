@@ -111,16 +111,16 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_jig ej
-    left join fantech_imes_v2.eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
-    left join fantech_imes_v2.base_warehouse bw on ej.warehouse_id=bw.warehouse_id
-    left join fantech_imes_v2.base_warehouse_area bwa on ej.warehouse_area_id=bwa.warehouse_area_id
-    left join fantech_imes_v2.base_working_area bwo on ej.working_area_id=bwo.working_area_id
-    left join fantech_imes_v2.base_storage bs on ej.storage_id=bs.storage_id
-    left join ocean_v2.sys_user su on ej.user_id=su.user_id
-    left join ocean_v2.sys_user u on ej.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ej.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ej.org_id = bo.organization_id
+    from eam_jig ej
+    left join eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
+    left join base_warehouse bw on ej.warehouse_id=bw.warehouse_id
+    left join base_warehouse_area bwa on ej.warehouse_area_id=bwa.warehouse_area_id
+    left join base_working_area bwo on ej.working_area_id=bwo.working_area_id
+    left join base_storage bs on ej.storage_id=bs.storage_id
+    left join sys_user su on ej.user_id=su.user_id
+    left join sys_user u on ej.create_user_id=u.user_id
+    left join sys_user s on ej.modified_user_id=s.user_id
+    left join base_organization bo ON ej.org_id = bo.organization_id
     <where>
       <if test="jigCategoryId != null">
         and ej.jig_category_id = #{jigCategoryId}

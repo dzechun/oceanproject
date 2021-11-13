@@ -67,13 +67,13 @@
 #     sm.material_code, sm.material_desc,sm.material_version,
 #     sbr.barcode_rule,
       bo.organization_name
-    from fantech_imes_v2.base_ht_package_specification shps
-#     LEFT JOIN fantech_imes_v2.base_barcode_rule sbr ON shps.barcode_rule_id = sbr.barcode_rule_id
-#     LEFT JOIN fantech_imes_v2.base_material sm ON shps.material_id = sm.material_id
-#     LEFT JOIN fantech_imes_v2.base_packing_unit spu ON shps.packing_unit_id = spu.packing_unit_id
-    LEFT JOIN ocean_v2.sys_user su  ON shps.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON shps.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON shps.org_id = bo.organization_id
+    from base_ht_package_specification shps
+#     LEFT JOIN base_barcode_rule sbr ON shps.barcode_rule_id = sbr.barcode_rule_id
+#     LEFT JOIN base_material sm ON shps.material_id = sm.material_id
+#     LEFT JOIN base_packing_unit spu ON shps.packing_unit_id = spu.packing_unit_id
+    LEFT JOIN sys_user su  ON shps.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON shps.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON shps.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(shps.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -67,15 +67,15 @@
         LEFT JOIN smt_order so ON so.order_id = swo.order_id
         left join smt_supplier sss ON sss.supplier_id = so.supplier_id
 
-        LEFT JOIN ocean_v2.sys_user su ON smei.create_user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user sus ON smei.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON smei.organization_id = bo.organization_id
-        LEFT JOIN fantech_imes_v2.smt_storage_inventory ssi ON ssi.storage_id = smei.storage_id and ssi.material_id =
+        LEFT JOIN sys_user su ON smei.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON smei.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON smei.organization_id = bo.organization_id
+        LEFT JOIN smt_storage_inventory ssi ON ssi.storage_id = smei.storage_id and ssi.material_id =
         smei.material_id
-        LEFT JOIN fantech_imes_v2.smt_storage ss on smei.storage_id = ss.storage_id
-        LEFT JOIN fantech_imes_v2.smt_warehouse sw on sw.warehouse_id = ss.warehouse_id
-        LEFT JOIN fantech_imes_v2.smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
-        LEFT JOIN fantech_imes_v2.smt_material sm on sm.material_id = smei.material_id
+        LEFT JOIN smt_storage ss on smei.storage_id = ss.storage_id
+        LEFT JOIN smt_warehouse sw on sw.warehouse_id = ss.warehouse_id
+        LEFT JOIN smt_warehouse_area swa on swa.warehouse_area_id = ss.warehouse_area_id
+        LEFT JOIN smt_material sm on sm.material_id = smei.material_id
         <where>
             <if test="supplierName != null and supplierName != ''">
                 and sss.supplier_name like CONCAT('%', #{supplierName}, '%')

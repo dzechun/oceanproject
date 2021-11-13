@@ -43,8 +43,8 @@
     SELECT<include refid="BaseColumnList"/>
     FROM esop_ht_wi_f_t_and_inspection_tool ehwft
     LEFT JOIN esop_ht_work_instruction ehwi ON ehwft.work_instruction_id = ehwi.work_instruction_id
-    LEFT JOIN ocean_v2.sys_user su ON ehwft.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON ehwft.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su ON ehwft.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON ehwft.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON ehwft.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">

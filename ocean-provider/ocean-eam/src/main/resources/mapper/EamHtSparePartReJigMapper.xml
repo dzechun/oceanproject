@@ -63,15 +63,15 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_spare_part_re_jig eeb
-    left join fantech_imes_v2.eam_spare_part eebp on eeb.spare_part_id=eebp.spare_part_id
-    left join fantech_imes_v2.base_warehouse bw on eebp.warehouse_id=bw.warehouse_id
-    left join fantech_imes_v2.base_warehouse_area bwa on eebp.warehouse_area_id=bwa.warehouse_area_id
-    left join fantech_imes_v2.base_working_area bwo on eebp.working_area_id=bwo.working_area_id
-    left join fantech_imes_v2.base_storage bs on eebp.storage_id=bs.storage_id
-    left join ocean_v2.sys_user u on eeb.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eeb.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON eeb.org_id = bo.organization_id
+    from eam_ht_spare_part_re_jig eeb
+    left join eam_spare_part eebp on eeb.spare_part_id=eebp.spare_part_id
+    left join base_warehouse bw on eebp.warehouse_id=bw.warehouse_id
+    left join base_warehouse_area bwa on eebp.warehouse_area_id=bwa.warehouse_area_id
+    left join base_working_area bwo on eebp.working_area_id=bwo.working_area_id
+    left join base_storage bs on eebp.storage_id=bs.storage_id
+    left join sys_user u on eeb.create_user_id=u.user_id
+    left join sys_user s on eeb.modified_user_id=s.user_id
+    left join base_organization bo ON eeb.org_id = bo.organization_id
     <where>
       <if test="jigId != null and jigId!= ''">
         and eeb.jig_id = #{jigId}

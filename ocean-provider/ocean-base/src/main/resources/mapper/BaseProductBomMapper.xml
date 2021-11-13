@@ -73,8 +73,8 @@
         bo.organization_name
         from base_product_bom spb
         left join base_material sm on spb.material_id=sm.material_id
-        left join ocean_v2.sys_user u on spb.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on spb.modified_user_id=s.user_id
+        left join sys_user u on spb.create_user_id=u.user_id
+        left join sys_user s on spb.modified_user_id=s.user_id
         left join base_organization bo ON spb.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

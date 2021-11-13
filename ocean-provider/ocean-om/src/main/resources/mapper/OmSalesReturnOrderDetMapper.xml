@@ -69,8 +69,8 @@ osrod.modified_time
            LEFT JOIN base_warehouse bw ON bw.warehouse_id = osrod.warehouse_id
            LEFT JOIN base_material bm ON osrod.material_id = bm.material_id
            left join base_material_tab bmb ON bm.material_id = bmb.material_id
-           left join ocean_v2.sys_user su on osrod.create_user_id = su.user_id
-           left join ocean_v2.sys_user sus on osrod.modified_user_id = sus.user_id
+           left join sys_user su on osrod.create_user_id = su.user_id
+           left join sys_user sus on osrod.modified_user_id = sus.user_id
            left join base_organization bo on osrod.org_id = bo.organization_id
 <where>
   <if test="salesReturnOrderId !=null and salesReturnOrderId!=''">

@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>com.fantechs.common.config</groupId>
-            <artifactId>ocean-base-config</artifactId>
+            <artifactId>ocean-imes-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

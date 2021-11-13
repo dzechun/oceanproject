@@ -40,7 +40,7 @@
     u.user_name AS create_user_name
     FROM wms_inner_job_order_det wijod
     JOIN wms_inner_inventory wii ON wijod.source_det_id=wii.inventory_id
-    LEFT JOIN ocean_v2.sys_user u ON wijod.create_user_id=u.user_id
+    LEFT JOIN sys_user u ON wijod.create_user_id=u.user_id
     LEFT JOIN wms_inner_job_order wijo ON wijod.job_order_id= wijo.job_order_id
     LEFT JOIN base_material bm ON wijod.material_id= bm.material_id
     LEFT JOIN eng_contract_qty_order ecqo ON wii.contract_code=ecqo.contract_code AND bm.material_code=ecqo.material_code

@@ -85,8 +85,8 @@ mswob.create_barcode_time,
         bm.material_name
         END 'material_name'
         FROM mes_sfc_work_order_barcode mswob
-        LEFT JOIN ocean_v2.sys_user su ON mswob.create_user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user sus ON mswob.modified_user_id = sus.user_id
+        LEFT JOIN sys_user su ON mswob.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON mswob.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON mswob.org_id = bo.organization_id
         LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
         left join om_sales_order_det sod on mswob.work_order_id = sod.sales_order_det_id
@@ -292,13 +292,13 @@ order by mswob.create_time desc
         </where>
     </select>
     <select id="findSysUser" resultType="java.lang.String">
-        SELECT su.`password` FROM ocean_v2.sys_user_role sur
-        LEFT JOIN ocean_v2.sys_role sr ON sur.role_id = sr.role_id
-        LEFT JOIN ocean_v2.sys_user su ON sur.user_id = su.user_id
+        SELECT su.`password` FROM sys_user_role sur
+        LEFT JOIN sys_role sr ON sur.role_id = sr.role_id
+        LEFT JOIN sys_user su ON sur.user_id = su.user_id
         WHERE sr.role_code=015 AND su.user_code=#{userCode}
     </select>
 
     <select id="findLabelView" resultType="java.lang.String">
-        SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA= 'fantech_imes_v2' AND TABLE_NAME = #{labelCode}
+        SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA= 'fantech_imes_v2_1' AND TABLE_NAME = #{labelCode}
     </select>
 </mapper>

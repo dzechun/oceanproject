@@ -57,12 +57,12 @@
     bmo.material_owner_name,bw.warehouse_name,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_ht_inventory_status bhis
-    left join fantech_imes_v2.base_material_owner bmo on bhis.material_owner_id=bmo.material_owner_id
-    left join fantech_imes_v2.base_warehouse bw on bhis.warehouse_id=bw.warehouse_id
-    left join ocean_v2.sys_user u on bhis.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bhis.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo on bhis.org_id = bo.organization_id
+    from base_ht_inventory_status bhis
+    left join base_material_owner bmo on bhis.material_owner_id=bmo.material_owner_id
+    left join base_warehouse bw on bhis.warehouse_id=bw.warehouse_id
+    left join sys_user u on bhis.create_user_id=u.user_id
+    left join sys_user s on bhis.modified_user_id=s.user_id
+    left join base_organization bo on bhis.org_id = bo.organization_id
     <where>
       <if test="warehouseId!=null">
         and bhis.warehouse_id = #{warehouseId}

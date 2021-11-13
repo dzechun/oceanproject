@@ -54,9 +54,9 @@
     s.user_name as modified_user_name,
     bo.organization_name
     from esop_ht_issue_attachment ehia
-    left join ocean_v2.sys_user u on ehia.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehia.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehia.org_id = bo.organization_id
+    left join sys_user u on ehia.create_user_id=u.user_id
+    left join sys_user s on ehia.modified_user_id=s.user_id
+    left join base_organization bo ON ehia.org_id = bo.organization_id
     <where>
       <if test="issueId!=null">
         and ehia.issue_id = #{issueId}

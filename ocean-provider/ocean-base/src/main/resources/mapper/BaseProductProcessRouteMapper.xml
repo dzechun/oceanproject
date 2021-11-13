@@ -65,14 +65,14 @@
     bo.organization_name,
     sr.route_name, sr.route_code, sr.route_desc,
     u.user_name as create_user_name,s.user_name as modified_user_name
-    from fantech_imes_v2.base_product_process_route sppr
-    left join fantech_imes_v2.base_pro_line spl on sppr.pro_line_id=spl.pro_line_id
-    left join fantech_imes_v2.base_product_model spm on sppr.product_model_id=spm.product_model_id
-    left join fantech_imes_v2.base_material sm on sppr.material_id=sm.material_id
-    left join ocean_v2.sys_user u on sppr.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on sppr.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_route sr on sppr.route_id = sr.route_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON sppr.org_id = bo.organization_id
+    from base_product_process_route sppr
+    left join base_pro_line spl on sppr.pro_line_id=spl.pro_line_id
+    left join base_product_model spm on sppr.product_model_id=spm.product_model_id
+    left join base_material sm on sppr.material_id=sm.material_id
+    left join sys_user u on sppr.create_user_id=u.user_id
+    left join sys_user s on sppr.modified_user_id=s.user_id
+    left join base_route sr on sppr.route_id = sr.route_id
+    LEFT JOIN base_organization bo ON sppr.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sppr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

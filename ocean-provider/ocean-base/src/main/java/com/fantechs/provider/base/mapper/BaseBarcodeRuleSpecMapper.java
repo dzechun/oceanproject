@@ -17,7 +17,7 @@ public interface BaseBarcodeRuleSpecMapper extends MyMapper<BaseBarcodeRuleSpec>
 
     int updateBatch(List<BaseBarcodeRuleSpec> list);
 
-    @Select("select information_schema.routines.SPECIFIC_NAME from information_schema.routines where routine_schema='fantech_imes_v2' and routine_type = 'FUNCTION' AND information_schema.routines.SPECIFIC_NAME LIKE CONCAT('BARCODE','%')")
+    @Select("select information_schema.routines.SPECIFIC_NAME from information_schema.routines where routine_schema='fantech_imes_v2_1' and routine_type = 'FUNCTION' AND information_schema.routines.SPECIFIC_NAME LIKE CONCAT('BARCODE','%')")
     List<String> findFunction();
 
     String executeFunction(@Param("functionName")String functionName, @Param("params")String params);

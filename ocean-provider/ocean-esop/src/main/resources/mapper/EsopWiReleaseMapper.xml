@@ -90,9 +90,9 @@
         LEFT JOIN esop_equipment ee ON ewr.pro_line_id = ee.pro_line_id
     </if>
     LEFT JOIN base_pro_line bpl ON ewr.pro_line_id = bpl.pro_line_id
-      left join ocean_v2.sys_user u on ewr.create_user_id=u.user_id
-      left join ocean_v2.sys_user s on ewr.modified_user_id=s.user_id
-      left join fantech_imes_v2.base_organization bo ON ewr.org_id = bo.organization_id
+      left join sys_user u on ewr.create_user_id=u.user_id
+      left join sys_user s on ewr.modified_user_id=s.user_id
+      left join base_organization bo ON ewr.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">
         and ewr.org_id = #{orgId}

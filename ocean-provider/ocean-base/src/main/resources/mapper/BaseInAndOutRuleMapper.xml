@@ -50,11 +50,11 @@
      bw.warehouse_name,
      su.user_name as create_user_name,
      sus.user_name as modified_user_name,
-     bo.organization_name FROM fantech_imes_v2.base_in_and_out_rule biaor
-    LEFT JOIN fantech_imes_v2.base_warehouse bw ON biaor.warehouse_id= bw.warehouse_id
-    LEFT JOIN ocean_v2.sys_user su ON biaor.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON biaor.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON biaor.org_id = bo.organization_id
+     bo.organization_name FROM base_in_and_out_rule biaor
+    LEFT JOIN base_warehouse bw ON biaor.warehouse_id= bw.warehouse_id
+    LEFT JOIN sys_user su ON biaor.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON biaor.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON biaor.org_id = bo.organization_id
     <where>
       <if test="warehouseName!=null and warehouseName!=''">
         and bw.warehouse_name LIKE CONCAT('%',#{warehouseName},'%')

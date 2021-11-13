@@ -46,9 +46,9 @@
         FROM base_worker bw
         LEFT JOIN base_warehouse bwh ON bw.warehouse_id = bwh.warehouse_id
         LEFT JOIN base_organization bo ON bw.org_id = bo.organization_id
-        LEFT JOIN ocean_v2.sys_user su ON bw.user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user suc ON bw.create_user_id = suc.user_id
-        LEFT JOIN ocean_v2.sys_user sumod ON bw.modified_user_id = sumod.user_id
+        LEFT JOIN sys_user su ON bw.user_id = su.user_id
+        LEFT JOIN sys_user suc ON bw.create_user_id = suc.user_id
+        LEFT JOIN sys_user sumod ON bw.modified_user_id = sumod.user_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 AND date_format(bw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -95,9 +95,9 @@
         FROM base_worker bw
         LEFT JOIN base_warehouse bwh ON bw.warehouse_id = bwh.warehouse_id
         LEFT JOIN base_organization bo ON bw.org_id = bo.organization_id
-        LEFT JOIN ocean_v2.sys_user su ON bw.user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user suc ON bw.create_user_id = suc.user_id
-        LEFT JOIN ocean_v2.sys_user sumod ON bw.modified_user_id = sumod.user_id
+        LEFT JOIN sys_user su ON bw.user_id = su.user_id
+        LEFT JOIN sys_user suc ON bw.create_user_id = suc.user_id
+        LEFT JOIN sys_user sumod ON bw.modified_user_id = sumod.user_id
         <where>
             <if test="_parameter != null">
                 AND bw.worker_id = #{_parameter}

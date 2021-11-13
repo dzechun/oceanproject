@@ -61,13 +61,13 @@
     sp.sample_plan_code,bstr.sample_transition_rule_code,bspa.aql_value,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_ht_sample_process bhsp
-    left join fantech_imes_v2.base_sample_plan sp on bhsp.sample_plan_id=sp.sample_plan_id
-    left join fantech_imes_v2.base_sample_transition_rule bstr on bhsp.sample_transition_rule_id=bstr.sample_transition_rule_id
-    left join fantech_imes_v2.base_sample_plan_aql bspa on bhsp.sample_plan_aql_id=bspa.sample_plan_aql_id
-    left join ocean_v2.sys_user u on bhsp.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bhsp.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo on bhsp.org_id = bo.organization_id
+    from base_ht_sample_process bhsp
+    left join base_sample_plan sp on bhsp.sample_plan_id=sp.sample_plan_id
+    left join base_sample_transition_rule bstr on bhsp.sample_transition_rule_id=bstr.sample_transition_rule_id
+    left join base_sample_plan_aql bspa on bhsp.sample_plan_aql_id=bspa.sample_plan_aql_id
+    left join sys_user u on bhsp.create_user_id=u.user_id
+    left join sys_user s on bhsp.modified_user_id=s.user_id
+    left join base_organization bo on bhsp.org_id = bo.organization_id
     <where>
       <if test="sampleProcessCode!=null and sampleProcessCode!=''">
         and bhsp.sample_process_code like CONCAT('%', #{sampleProcessCode}, '%')

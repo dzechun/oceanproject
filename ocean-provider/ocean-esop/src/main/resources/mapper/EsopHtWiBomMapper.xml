@@ -51,8 +51,8 @@
     FROM esop_ht_wi_bom ehwb
     LEFT JOIN base_material bm ON ehwb.material_id = bm.material_id
     LEFT JOIN esop_ht_work_instruction ehwi ON ehwb.work_instruction_id = ehwi.work_instruction_id
-    LEFT JOIN ocean_v2.sys_user su ON ehwb.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON ehwb.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su ON ehwb.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON ehwb.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON ehwb.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">

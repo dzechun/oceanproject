@@ -55,8 +55,8 @@
     LEFT JOIN esop_work_instruction ewi ON ewb.work_instruction_id = ewi.work_instruction_id
     LEFT JOIN base_material bm ON ewb.material_id = bm.material_id
     LEFT JOIN base_material_tab bt ON bm.material_id = bt.material_id
-    LEFT JOIN ocean_v2.sys_user su ON ewb.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON ewb.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su ON ewb.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON ewb.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON ewb.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">

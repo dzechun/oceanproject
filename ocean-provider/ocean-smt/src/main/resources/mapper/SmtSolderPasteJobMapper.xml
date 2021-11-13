@@ -59,9 +59,9 @@ spj.modified_time
     LEFT JOIN smt_solder_paste ssp ON spj.solder_paste_id = ssp.solder_paste_id
     LEFT join base_material bm ON ssp.material_id = bm.material_id
     left join wms_inner_material_barcode wimb on wimb.material_barcode_id = spj.material_barcode_id
-    left join ocean_v2.sys_user u on spj.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on spj.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON spj.org_id = bo.organization_id
+    left join sys_user u on spj.create_user_id=u.user_id
+    left join sys_user s on spj.modified_user_id=s.user_id
+    left join base_organization bo ON spj.org_id = bo.organization_id
     where spj.org_id =#{orgId}
 order BY spj.create_time desc
   </select>

@@ -75,11 +75,11 @@
     bs.supplier_name,
     bo.organization_name
     from eng_contract_qty_order ecqo
-    left join fantech_imes_v2.base_material bm on ecqo.material_code=bm.material_code
-    left join ocean_v2.sys_user u on ecqo.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ecqo.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_supplier bs ON ecqo.supplier_id = bs.supplier_id
-    left join fantech_imes_v2.base_organization bo ON ecqo.org_id = bo.organization_id
+    left join base_material bm on ecqo.material_code=bm.material_code
+    left join sys_user u on ecqo.create_user_id=u.user_id
+    left join sys_user s on ecqo.modified_user_id=s.user_id
+    left join base_supplier bs ON ecqo.supplier_id = bs.supplier_id
+    left join base_organization bo ON ecqo.org_id = bo.organization_id
     <where>
       <if test="contractCode != null and contractCode!='' and codeQueryMark!=1">
         and ecqo.contract_code like CONCAT('%', #{contractCode}, '%')

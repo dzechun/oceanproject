@@ -68,14 +68,14 @@
     bii.inspection_item_desc as inspection_item_desc_small,bii.inspection_item_standard,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_inspection_standard_det bisd
-    left join fantech_imes_v2.base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
-    left join fantech_imes_v2.base_inspection_item bii2 on bii.parent_id=bii2.inspection_item_id
-    left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
-    left join fantech_imes_v2.base_sample_plan_aql bspa on bsp.sample_plan_aql_id=bspa.sample_plan_aql_id
-    left join ocean_v2.sys_user u on bisd.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bisd.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo on bisd.org_id = bo.organization_id
+    from base_inspection_standard_det bisd
+    left join base_inspection_item bii on bisd.inspection_item_id=bii.inspection_item_id
+    left join base_inspection_item bii2 on bii.parent_id=bii2.inspection_item_id
+    left join base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
+    left join base_sample_plan_aql bspa on bsp.sample_plan_aql_id=bspa.sample_plan_aql_id
+    left join sys_user u on bisd.create_user_id=u.user_id
+    left join sys_user s on bisd.modified_user_id=s.user_id
+    left join base_organization bo on bisd.org_id = bo.organization_id
     <where>
       <if test="inspectionStandardId!=null and inspectionStandardId!=''">
         and bisd.inspection_standard_id = #{inspectionStandardId}

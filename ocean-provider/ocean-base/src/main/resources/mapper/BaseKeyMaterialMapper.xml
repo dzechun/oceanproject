@@ -74,15 +74,15 @@
         sm2.material_code AS part_material_code, sm2.material_desc AS part_material_desc, sm2.version AS
         part_material_version,
         sp.process_name AS process_name, ss.station_name AS station_name, bo.organization_name
-        FROM fantech_imes_v2.base_key_material skm
-        LEFT JOIN ocean_v2.sys_user su ON skm.create_user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user sus ON skm.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.base_product_model spm ON skm.product_model_id = spm.product_model_id
-        LEFT JOIN fantech_imes_v2.base_material sm1 ON skm.material_id = sm1.material_id
-        LEFT JOIN fantech_imes_v2.base_material sm2 ON skm.part_material_id = sm2.material_id
-        LEFT JOIN fantech_imes_v2.base_process sp ON skm.process_id = sp.process_id
-        LEFT JOIN fantech_imes_v2.base_station ss ON skm.station_id = ss.station_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON skm.org_id = bo.organization_id
+        FROM base_key_material skm
+        LEFT JOIN sys_user su ON skm.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON skm.modified_user_id = sus.user_id
+        LEFT JOIN base_product_model spm ON skm.product_model_id = spm.product_model_id
+        LEFT JOIN base_material sm1 ON skm.material_id = sm1.material_id
+        LEFT JOIN base_material sm2 ON skm.part_material_id = sm2.material_id
+        LEFT JOIN base_process sp ON skm.process_id = sp.process_id
+        LEFT JOIN base_station ss ON skm.station_id = ss.station_id
+        LEFT JOIN base_organization bo ON skm.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(skm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

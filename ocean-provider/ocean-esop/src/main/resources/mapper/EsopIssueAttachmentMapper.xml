@@ -54,9 +54,9 @@
     s.user_name as modified_user_name,
     bo.organization_name
     from esop_issue_attachment eia
-    left join ocean_v2.sys_user u on eia.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eia.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON eia.org_id = bo.organization_id
+    left join sys_user u on eia.create_user_id=u.user_id
+    left join sys_user s on eia.modified_user_id=s.user_id
+    left join base_organization bo ON eia.org_id = bo.organization_id
     <where>
       <if test="issueId!=null">
         and eia.issue_id = #{issueId}

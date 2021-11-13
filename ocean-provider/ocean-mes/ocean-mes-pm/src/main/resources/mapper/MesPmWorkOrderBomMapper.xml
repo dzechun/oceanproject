@@ -77,8 +77,8 @@
     LEFT JOIN base_material bm ON mpwob.part_material_id = bm.material_id
     LEFT JOIN base_material bml ON mpwob.sub_material_id = bml.material_id
     LEFT JOIN base_process bp ON mpwob.process_id = bp.process_id
-    LEFT JOIN ocean_v2.sys_user u ON mpwob.create_user_id = u.user_id
-    LEFT JOIN ocean_v2.sys_user s ON mpwob.modified_user_id = s.user_id
+    LEFT JOIN sys_user u ON mpwob.create_user_id = u.user_id
+    LEFT JOIN sys_user s ON mpwob.modified_user_id = s.user_id
     LEFT JOIN base_organization bo ON mpwob.org_id = bo.organization_id
     <where>
       mpwob.single_qty > 0

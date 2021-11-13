@@ -80,9 +80,9 @@
         left join om_sales_order oso on sod.sales_order_id=oso.sales_order_id
         left join base_material bm on sod.material_id = bm.material_id
         left join base_warehouse bw on sod.warehouse_id = bw.warehouse_id
-        left join ocean_v2.sys_user suc on sod.create_user_id = suc.user_id
+        left join sys_user suc on sod.create_user_id = suc.user_id
         left join base_organization bo on sod.org_id = bo.organization_id
-        left join ocean_v2.sys_user sumod on sod.modified_user_id = sumod.user_id
+        left join sys_user sumod on sod.modified_user_id = sumod.user_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(oso.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

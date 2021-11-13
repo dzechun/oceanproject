@@ -59,10 +59,10 @@
     s.user_name as modified_user_name,
     bo.organization_name
     from eam_equipment_maintain_order_det eemod
-    left join fantech_imes_v2.eam_equipment_maintain_project_item eempi on eemod.equipment_maintain_project_item_id=eempi.equipment_maintain_project_item_id
-    left join ocean_v2.sys_user u on eemod.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eemod.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON eemod.org_id = bo.organization_id
+    left join eam_equipment_maintain_project_item eempi on eemod.equipment_maintain_project_item_id=eempi.equipment_maintain_project_item_id
+    left join sys_user u on eemod.create_user_id=u.user_id
+    left join sys_user s on eemod.modified_user_id=s.user_id
+    left join base_organization bo ON eemod.org_id = bo.organization_id
     <where>
       <if test="orderIds != null and orderIds.size() > 0">
         and eemod.equipment_maintain_order_id

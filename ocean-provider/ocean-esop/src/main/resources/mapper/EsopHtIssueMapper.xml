@@ -57,9 +57,9 @@
     left join base_material bm on ehi.material_id=bm.material_id
     left join base_material_tab bmt on ehi.material_id=bmt.material_id
     left join base_product_model bpm on bmt.product_model_id=bpm.product_model_id
-    left join ocean_v2.sys_user u on ehi.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehi.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehi.org_id = bo.organization_id
+    left join sys_user u on ehi.create_user_id=u.user_id
+    left join sys_user s on ehi.modified_user_id=s.user_id
+    left join base_organization bo ON ehi.org_id = bo.organization_id
     <where>
       <if test="issueCode != null and issueCode!=''">
         and ehi.issue_code like CONCAT('%', #{issueCode}, '%')

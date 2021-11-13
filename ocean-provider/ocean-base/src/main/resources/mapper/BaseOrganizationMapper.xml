@@ -41,8 +41,8 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
     FROM base_organization bo
-    LEFT JOIN ocean_v2.sys_user su ON bo.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON bo.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su ON bo.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON bo.modified_user_id = sus.user_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -70,11 +70,11 @@
   </select>
 
   <delete id="deleteUserByOrganization" parameterType="long">
-    DELETE FROM ocean_v2.sys_organization_user WHERE org_id = #{organizationId}
+    DELETE FROM sys_organization_user WHERE org_id = #{organizationId}
   </delete>
 
   <insert id="insertUser" parameterType="java.util.List">
-    INSERT INTO ocean_v2.sys_organization_user(org_id, user_id)
+    INSERT INTO sys_organization_user(org_id, user_id)
     VALUES
     <foreach collection="list" item="item" separator=",">
       (#{item.organizationId},#{item.userId})
@@ -83,8 +83,8 @@
 
   <select id="findOrganizationByUserId" parameterType="long" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>
-    from fantech_imes_v2.base_organization bo
-    left join ocean_v2.sys_organization_user sou on bo.organization_id = sou.org_id
+    from base_organization bo
+    left join sys_organization_user sou on bo.organization_id = sou.org_id
     where sou.user_id = #{userId}
   </select>
 </mapper>

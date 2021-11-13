@@ -71,10 +71,10 @@
     s.user_name as modified_user_name,
     bo.organization_name
     from eng_ht_packing_order_summary_det shposd
-    left join ocean_v2.sys_user su on shposd.audit_user_id=su.user_id
-    left join ocean_v2.sys_user u on shposd.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on shposd.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON shposd.org_id = bo.organization_id
+    left join sys_user su on shposd.audit_user_id=su.user_id
+    left join sys_user u on shposd.create_user_id=u.user_id
+    left join sys_user s on shposd.modified_user_id=s.user_id
+    left join base_organization bo ON shposd.org_id = bo.organization_id
     <where>
 
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

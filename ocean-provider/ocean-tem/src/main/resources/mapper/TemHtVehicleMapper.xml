@@ -33,8 +33,8 @@
     suc.user_code as createUserCode,
     sum.user_code as modifiedUserCode
     from tem_ht_vehicle thv
-    LEFT JOIN ocean_v2.sys_user suc ON thv.create_user_id = suc.user_id
-    LEFT JOIN ocean_v2.sys_user sum ON thv.modified_user_id = sum.user_id
+    LEFT JOIN sys_user suc ON thv.create_user_id = suc.user_id
+    LEFT JOIN sys_user sum ON thv.modified_user_id = sum.user_id
     LEFT JOIN base_storage_task_point bstp ON thv.storage_task_point_id = bstp.storage_task_point_id
     LEFT JOIN base_storage bs ON bstp.storage_id = bs.storage_id
     <where>

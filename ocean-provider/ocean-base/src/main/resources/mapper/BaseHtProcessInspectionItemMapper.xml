@@ -51,13 +51,13 @@
     bm.material_code,bm.material_desc,bm.material_version,bpm.product_model_name,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_ht_process_inspection_item bhpii
-    left join fantech_imes_v2.base_material bm on bhpii.material_id=bm.material_id
-    left join fantech_imes_v2.base_material_tab bmt on bhpii.material_id=bmt.material_id
-    left join fantech_imes_v2.base_product_model bpm on bmt.product_model_id=bpm.product_model_id
-    left join ocean_v2.sys_user u on bhpii.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bhpii.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo on bhpii.org_id = bo.organization_id
+    from base_ht_process_inspection_item bhpii
+    left join base_material bm on bhpii.material_id=bm.material_id
+    left join base_material_tab bmt on bhpii.material_id=bmt.material_id
+    left join base_product_model bpm on bmt.product_model_id=bpm.product_model_id
+    left join sys_user u on bhpii.create_user_id=u.user_id
+    left join sys_user s on bhpii.modified_user_id=s.user_id
+    left join base_organization bo on bhpii.org_id = bo.organization_id
     <where>
       <if test="processInspectionItemCode!=null and processInspectionItemCode!=''">
         and bhpii.process_inspection_item_code like CONCAT('%', #{processInspectionItemCode}, '%')

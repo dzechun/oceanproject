@@ -53,11 +53,11 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_equ_repair_order_replacement eheror
-    left join fantech_imes_v2.base_material bm on eheror.material_id = bm.material_id
-    left join ocean_v2.sys_user u on eheror.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eheror.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON eheror.org_id = bo.organization_id
+    from eam_ht_equ_repair_order_replacement eheror
+    left join base_material bm on eheror.material_id = bm.material_id
+    left join sys_user u on eheror.create_user_id=u.user_id
+    left join sys_user s on eheror.modified_user_id=s.user_id
+    left join base_organization bo ON eheror.org_id = bo.organization_id
     <where>
       <if test="equipmentRepairOrderId != null">
         and eheror.equipment_repair_order_id = #{equipmentRepairOrderId}

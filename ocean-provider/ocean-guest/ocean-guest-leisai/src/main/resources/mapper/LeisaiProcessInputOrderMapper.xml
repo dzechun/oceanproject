@@ -73,8 +73,8 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name
     from leisai_process_input_order lpio
-    left join ocean_v2.sys_user u on lpio.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on lpio.modified_user_id=s.user_id
+    left join sys_user u on lpio.create_user_id=u.user_id
+    left join sys_user s on lpio.modified_user_id=s.user_id
     <where>
       <if test="recorder != null and recorder!=''">
         and lpio.recorder like CONCAT('%', #{recorder}, '%')

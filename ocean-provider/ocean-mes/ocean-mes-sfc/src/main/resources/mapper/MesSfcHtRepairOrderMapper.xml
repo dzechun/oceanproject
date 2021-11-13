@@ -78,16 +78,16 @@
     s.user_name as modified_user_name,
     bo.organization_name
     FROM mes_sfc_ht_repair_order mshro
-    left join fantech_imes_v2.mes_pm_work_order mpwo ON mshro.work_order_id = mpwo.work_order_id
-    left join fantech_imes_v2.mes_sfc_work_order_barcode mswob ON mshro.work_order_barcode_id = mswob.work_order_barcode_id
-    left join fantech_imes_v2.base_material bm ON mshro.material_id = bm.material_id
-    left join fantech_imes_v2.base_pro_line bpl ON mshro.pro_line_id = bpl.pro_line_id
-    left join fantech_imes_v2.base_route br ON mshro.route_id = br.route_id
-    left join fantech_imes_v2.base_process bbp ON mshro.bad_process_id = bbp.process_id
-    left join fantech_imes_v2.base_process cbp ON mshro.current_process_id = cbp.process_id
-    left join ocean_v2.sys_user u on mshro.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on mshro.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON mshro.org_id = bo.organization_id
+    left join mes_pm_work_order mpwo ON mshro.work_order_id = mpwo.work_order_id
+    left join mes_sfc_work_order_barcode mswob ON mshro.work_order_barcode_id = mswob.work_order_barcode_id
+    left join base_material bm ON mshro.material_id = bm.material_id
+    left join base_pro_line bpl ON mshro.pro_line_id = bpl.pro_line_id
+    left join base_route br ON mshro.route_id = br.route_id
+    left join base_process bbp ON mshro.bad_process_id = bbp.process_id
+    left join base_process cbp ON mshro.current_process_id = cbp.process_id
+    left join sys_user u on mshro.create_user_id=u.user_id
+    left join sys_user s on mshro.modified_user_id=s.user_id
+    left join base_organization bo ON mshro.org_id = bo.organization_id
     <where>
       <if test="repairOrderCode != null and repairOrderCode!=''">
         and mshro.repair_order_code like CONCAT('%', #{repairOrderCode}, '%')

@@ -46,8 +46,8 @@
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
     bwas.warehouse_area_name
     from base_ht_working_area bhwa
-    left join ocean_v2.sys_user su on bhwa.create_user_id = su.user_id
-    left join ocean_v2.sys_user sus on bhwa.modified_user_id = sus.user_id
+    left join sys_user su on bhwa.create_user_id = su.user_id
+    left join sys_user sus on bhwa.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON bhwa.org_id = bo.organization_id
     LEFT JOIN base_warehouse_area bwas ON bwas.warehouse_area_id = bhwa.warehouse_area_id
     <where>

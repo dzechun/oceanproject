@@ -69,18 +69,18 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_jig_requisition ehjr
-    left join fantech_imes_v2.eam_jig_return ejret on ehjr.jig_requisition_id=ejret.jig_requisition_id
-    left join fantech_imes_v2.eam_jig ej on ehjr.jig_id=ej.jig_id
-    left join fantech_imes_v2.base_warehouse bw on ej.warehouse_id=bw.warehouse_id
-    left join fantech_imes_v2.base_warehouse_area bwa on ej.warehouse_area_id=bwa.warehouse_area_id
-    left join fantech_imes_v2.base_storage bs on ej.storage_id=bs.storage_id
-    left join fantech_imes_v2.eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
-    left join fantech_imes_v2.eam_jig_barcode ejb on ehjr.jig_barcode_id=ejb.jig_barcode_id
-    left join fantech_imes_v2.mes_pm_work_order wo on ehjr.work_order_id=wo.work_order_id
-    left join ocean_v2.sys_user u on ehjr.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehjr.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehjr.org_id = bo.organization_id
+    from eam_ht_jig_requisition ehjr
+    left join eam_jig_return ejret on ehjr.jig_requisition_id=ejret.jig_requisition_id
+    left join eam_jig ej on ehjr.jig_id=ej.jig_id
+    left join base_warehouse bw on ej.warehouse_id=bw.warehouse_id
+    left join base_warehouse_area bwa on ej.warehouse_area_id=bwa.warehouse_area_id
+    left join base_storage bs on ej.storage_id=bs.storage_id
+    left join eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
+    left join eam_jig_barcode ejb on ehjr.jig_barcode_id=ejb.jig_barcode_id
+    left join mes_pm_work_order wo on ehjr.work_order_id=wo.work_order_id
+    left join sys_user u on ehjr.create_user_id=u.user_id
+    left join sys_user s on ehjr.modified_user_id=s.user_id
+    left join base_organization bo ON ehjr.org_id = bo.organization_id
     <where>
       <if test="requisitionStatus!=null">
         and isnull(ejret.jig_return_id)=#{requisitionStatus}

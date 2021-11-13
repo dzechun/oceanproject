@@ -74,8 +74,8 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name
     from leisai_product_and_half_order lpaho
-    left join ocean_v2.sys_user u on lpaho.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on lpaho.modified_user_id=s.user_id
+    left join sys_user u on lpaho.create_user_id=u.user_id
+    left join sys_user s on lpaho.modified_user_id=s.user_id
     <where>
       <if test="recorder != null and recorder!=''">
         and lpaho.recorder like CONCAT('%', #{recorder}, '%')

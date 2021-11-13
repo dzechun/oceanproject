@@ -52,11 +52,11 @@
     biaort.in_and_out_rule_type_name,
     su.user_name as create_user_name,
     sus.user_name as modified_user_name,
-    bo.organization_name FROM fantech_imes_v2.base_ht_in_and_out_rule_det bhiaord
-    LEFT JOIN fantech_imes_v2.base_in_and_out_rule_type biaort ON bhiaord.in_and_out_rule_type_id= biaort.in_and_out_rule_type_id
-    LEFT JOIN ocean_v2.sys_user su ON bhiaord.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON bhiaord.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bhiaord.org_id = bo.organization_id
+    bo.organization_name FROM base_ht_in_and_out_rule_det bhiaord
+    LEFT JOIN base_in_and_out_rule_type biaort ON bhiaord.in_and_out_rule_type_id= biaort.in_and_out_rule_type_id
+    LEFT JOIN sys_user su ON bhiaord.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON bhiaord.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON bhiaord.org_id = bo.organization_id
     <where>
       <if test="inAndOutRuleId!=null">
         and bhiaord.in_and_out_rule_id = #{inAndOutRuleId}

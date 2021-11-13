@@ -59,9 +59,9 @@
     bo.organization_name
     from eam_ht_equipment_maintain_project eemp
     LEFT JOIN eam_equipment_category eec ON eemp.equipment_category_id = eec.equipment_category_id
-    left join ocean_v2.sys_user u on eemp.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eemp.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON eemp.org_id = bo.organization_id
+    left join sys_user u on eemp.create_user_id=u.user_id
+    left join sys_user s on eemp.modified_user_id=s.user_id
+    left join base_organization bo ON eemp.org_id = bo.organization_id
     <where>
       <if test="equipmentCategoryId != null">
         and eemp.equipment_category_id = #{equipmentCategoryId}

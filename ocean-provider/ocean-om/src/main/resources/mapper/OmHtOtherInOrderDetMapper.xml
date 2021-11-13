@@ -65,8 +65,8 @@ oiod.modified_time
     FROM om_ht_other_in_order_det oiod
     LEFT JOIN base_material bm ON oiod.material_id = bm.material_id
     left join base_material_tab bmb ON bm.material_id = bmb.material_id
-    left join ocean_v2.sys_user su on oiod.create_user_id = su.user_id
-    left join ocean_v2.sys_user sus on oiod.modified_user_id = sus.user_id
+    left join sys_user su on oiod.create_user_id = su.user_id
+    left join sys_user sus on oiod.modified_user_id = sus.user_id
     left join base_organization bo on oiod.org_id = bo.organization_id
     <where>
       <if test="otherInOrderId !=null and otherInOrderId!=''">

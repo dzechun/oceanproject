@@ -50,8 +50,8 @@
     SELECT<include refid="BaseColumnList"/>
     FROM esop_ht_wi_quality_standards ehwqs
     LEFT JOIN esop_ht_work_instruction ehwi ON ehwqs.work_instruction_id = ehwi.work_instruction_id
-    LEFT JOIN ocean_v2.sys_user su ON ehwqs.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON ehwqs.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su ON ehwqs.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON ehwqs.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON ehwqs.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">

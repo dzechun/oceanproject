@@ -34,7 +34,7 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
-  
+
   <sql id="Base_Column_List">
     cab.barcode_id, cab.barcode, cab.product_model, cab.batch, cab.batch_code, cab.qty, cab.operator_user_name, cab.process_name, cab.shelf_life,
     cab.production_date, cab.serial_number, cab.zhu_su_ji_name, cab.zhu_su_ji_shift, cab.zhe_wan_ji_name, cab.zhe_wan_ji_shift, cab.material_factory,
@@ -54,9 +54,9 @@
     sus.user_name AS modified_user_name,
     bo.organization_name
     from call_agv_barcode cab
-    LEFT JOIN ocean_v2.sys_user su ON cab.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON cab.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON cab.org_id = bo.organization_id
+    LEFT JOIN sys_user su ON cab.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON cab.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON cab.org_id = bo.organization_id
     <where>
       <if test="barcode != null and barcode != ''">
         and cab.barcode = #{barcode}

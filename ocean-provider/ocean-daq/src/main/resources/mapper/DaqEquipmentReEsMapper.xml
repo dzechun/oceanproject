@@ -62,8 +62,8 @@
     from daq_equipment_re_es eere
     left join daq_equipment ee on eere.equipment_id=ee.equipment_id
     LEFT JOIN daq_equipment_data_group_re_dc dedgrd ON ee.equipment_id = dedgrd.equipment_id
-    left join ocean_v2.sys_user u on eere.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eere.modified_user_id=s.user_id
+    left join sys_user u on eere.create_user_id=u.user_id
+    left join sys_user s on eere.modified_user_id=s.user_id
     <where>
       <if test="equipmentId != null and equipmentId!=''">
         and eere.equipment_id = #{equipmentId}

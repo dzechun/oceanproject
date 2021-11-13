@@ -57,7 +57,7 @@
                  LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
                  LEFT JOIN base_material bm ON wii.material_id = bm.material_id
                  LEFT JOIN base_inventory_status bis ON wii.inventory_status_id = bis.inventory_status_id
-                 LEFT JOIN fantech_imes_v2.base_organization bo ON wii.org_id = bo.organization_id,(SELECT @i:=0)j
+                 LEFT JOIN base_organization bo ON wii.org_id = bo.organization_id,(SELECT @i:=0)j
         <where>
             bs.storage_type = 1
             <if test="warehouseId!=null and warehouseId!=''">

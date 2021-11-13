@@ -36,5 +36,6 @@
         <module>ocean-daq</module>    <!-- 数据采集 -->
         <module>ocean-esop</module>    <!-- esop -->
         <module>ocean-guest</module>    <!-- 定制化模块 -->
+        <module>ocean-kreport</module>
     </modules>
 </project>

@@ -56,14 +56,14 @@
         sp.process_name,
         p.process_name as previous_process_name,
         bo.organization_name
-        from fantech_imes_v2.base_route_process srp
-        left join fantech_imes_v2.base_route sr on srp.route_id=sr.route_id
-        left join fantech_imes_v2.base_workshop_section ws on srp.section_id=ws.section_id
-        left join fantech_imes_v2.base_process sp on srp.process_id=sp.process_id
-        left join fantech_imes_v2.base_process_category bpc on sp.process_category_id=bpc.process_category_id
-        left join fantech_imes_v2.base_process sps on srp.next_process_id=sps.process_id
-        left join fantech_imes_v2.base_process p on srp.previous_process_id=p.process_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON srp.org_id = bo.organization_id
+        from base_route_process srp
+        left join base_route sr on srp.route_id=sr.route_id
+        left join base_workshop_section ws on srp.section_id=ws.section_id
+        left join base_process sp on srp.process_id=sp.process_id
+        left join base_process_category bpc on sp.process_category_id=bpc.process_category_id
+        left join base_process sps on srp.next_process_id=sps.process_id
+        left join base_process p on srp.previous_process_id=p.process_id
+        LEFT JOIN base_organization bo ON srp.org_id = bo.organization_id
         <where>
             <if test="routeId != null">
                 and srp.route_id=#{routeId}

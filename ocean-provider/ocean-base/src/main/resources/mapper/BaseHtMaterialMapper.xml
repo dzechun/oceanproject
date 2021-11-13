@@ -54,11 +54,11 @@
     select <include refid="Base_Column_List"></include>,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_ht_material shm
-    LEFT JOIN fantech_imes_v2.base_material_tab bt on shm.material_id = bt.material_id
-    left join ocean_v2.sys_user u on shm.create_user_id= u.user_id
-    left join ocean_v2.sys_user s on shm.modified_user_id= s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON shm.org_id = bo.organization_id
+    from base_ht_material shm
+    LEFT JOIN base_material_tab bt on shm.material_id = bt.material_id
+    left join sys_user u on shm.create_user_id= u.user_id
+    left join sys_user s on shm.modified_user_id= s.user_id
+    LEFT JOIN base_organization bo ON shm.org_id = bo.organization_id
     <where>
         <if test="materialProperty!=null">
             and bt.material_property=#{materialProperty}

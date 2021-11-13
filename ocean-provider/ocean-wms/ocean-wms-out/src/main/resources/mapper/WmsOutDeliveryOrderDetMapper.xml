@@ -114,17 +114,17 @@ wodod.option10
     bis.inventory_status_name,
     bp.platform_name,
     CASE WHEN IFNULL(wodod.packing_unit_name,'')='' THEN bmt.main_unit ELSE wodod.packing_unit_name END AS packing_unit_name
-    from fantech_imes_v2.wms_out_delivery_order_det wodod
-    LEFT JOIN fantech_imes_v2.base_material bm ON wodod.material_id = bm.material_id
-    LEFT JOIN fantech_imes_v2.base_warehouse bw ON wodod.warehouse_id = bw.warehouse_id
-    LEFT JOIN fantech_imes_v2.base_storage bs ON wodod.storage_id = bs.storage_id
-    LEFT JOIN fantech_imes_v2.base_storage bss ON wodod.picking_storage_id = bss.storage_id
-    LEFT JOIN fantech_imes_v2.base_material_tab bmt ON wodod.material_id = bmt.material_id
+    from wms_out_delivery_order_det wodod
+    LEFT JOIN base_material bm ON wodod.material_id = bm.material_id
+    LEFT JOIN base_warehouse bw ON wodod.warehouse_id = bw.warehouse_id
+    LEFT JOIN base_storage bs ON wodod.storage_id = bs.storage_id
+    LEFT JOIN base_storage bss ON wodod.picking_storage_id = bss.storage_id
+    LEFT JOIN base_material_tab bmt ON wodod.material_id = bmt.material_id
     LEFT JOIN base_inventory_status bis ON wodod.inventory_status_id = bis.inventory_status_id
     LEFT JOIN base_platform bp on bp.platform_id = wodod.platform_id
-    LEFT JOIN ocean_v2.sys_user su ON wodod.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON wodod.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON wodod.org_id = bo.organization_id
+    LEFT JOIN sys_user su ON wodod.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wodod.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wodod.org_id = bo.organization_id
     <where>
       <if test="deliveryOrderId != null">
         and wodod.delivery_order_id = #{deliveryOrderId}

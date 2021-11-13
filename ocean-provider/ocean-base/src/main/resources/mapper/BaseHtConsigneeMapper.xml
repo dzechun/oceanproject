@@ -65,11 +65,11 @@
     select
     <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     bo.organization_name,bmo.material_owner_name
-    from fantech_imes_v2.base_ht_consignee bhc
-    LEFT JOIN fantech_imes_v2.base_material_owner bmo on bhc.material_owner_id=bmo.material_owner_id
-    LEFT JOIN ocean_v2.sys_user su ON bhc.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON bhc.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bhc.org_id = bo.organization_id
+    from base_ht_consignee bhc
+    LEFT JOIN base_material_owner bmo on bhc.material_owner_id=bmo.material_owner_id
+    LEFT JOIN sys_user su ON bhc.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON bhc.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON bhc.org_id = bo.organization_id
     <where>
       <if test="consigneeCode != null and consigneeCode!=''">
         and bhc.consignee_code like CONCAT('%', #{consigneeCode}, '%')

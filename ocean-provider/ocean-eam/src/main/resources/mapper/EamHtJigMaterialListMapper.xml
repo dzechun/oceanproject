@@ -54,11 +54,11 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_jig_material_list ehjml
-    left join fantech_imes_v2.base_material bm on ehjml.material_id=bm.material_id
-    left join ocean_v2.sys_user u on ehjml.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehjml.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehjml.org_id = bo.organization_id
+    from eam_ht_jig_material_list ehjml
+    left join base_material bm on ehjml.material_id=bm.material_id
+    left join sys_user u on ehjml.create_user_id=u.user_id
+    left join sys_user s on ehjml.modified_user_id=s.user_id
+    left join base_organization bo ON ehjml.org_id = bo.organization_id
     <where>
       <if test="jigMaterialId!=null">
         and ehjml.jig_material_id = #{jigMaterialId}

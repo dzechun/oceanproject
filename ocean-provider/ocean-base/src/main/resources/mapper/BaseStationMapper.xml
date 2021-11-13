@@ -54,12 +54,12 @@
         sp.process_code,sp.process_name,
         s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.base_station ss
-        left join fantech_imes_v2.base_process sp on ss.process_id=sp.process_id
-        left join fantech_imes_v2.base_workshop_section sws on ss.section_id=sws.section_id
-        left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
+        from base_station ss
+        left join base_process sp on ss.process_id=sp.process_id
+        left join base_workshop_section sws on ss.section_id=sws.section_id
+        left join sys_user u on ss.create_user_id=u.user_id
+        left join sys_user s on ss.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON ss.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -65,8 +65,8 @@
         from om_ht_sales_order hso
         left join base_supplier bs on hso.supplier_id = bs.supplier_id
         left join base_barcode_rule_set bbrs on hso.barcode_rule_set_id = bbrs.barcode_rule_set_id
-        left join ocean_v2.sys_user su on hso.create_user_id = su.user_id
-        left join ocean_v2.sys_user sus on hso.modified_user_id = sus.user_id
+        left join sys_user su on hso.create_user_id = su.user_id
+        left join sys_user sus on hso.modified_user_id = sus.user_id
         left join base_organization bo on hso.org_id = bo.organization_id
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">

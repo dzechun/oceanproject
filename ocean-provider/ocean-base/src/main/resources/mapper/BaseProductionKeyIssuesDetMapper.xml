@@ -52,10 +52,10 @@
     SELECT<include refid="Base_Column_List"/>,
     su.user_name as create_user_name,
     sus.user_name as modified_user_name,
-    bo.organization_name FROM fantech_imes_v2.base_production_key_issues_det bpkid
-    left join ocean_v2.sys_user su ON bpkid.create_user_id = su.user_id
-    left join ocean_v2.sys_user sus ON bpkid.modified_user_id = sus.user_id
-    left join fantech_imes_v2.base_organization bo ON bpkid.org_id = bo.organization_id
+    bo.organization_name FROM base_production_key_issues_det bpkid
+    left join sys_user su ON bpkid.create_user_id = su.user_id
+    left join sys_user sus ON bpkid.modified_user_id = sus.user_id
+    left join base_organization bo ON bpkid.org_id = bo.organization_id
     <where>
       <if test="productionKeyIssuesId!=null">
         and bpkid.production_key_issues_id = #{productionKeyIssuesId}

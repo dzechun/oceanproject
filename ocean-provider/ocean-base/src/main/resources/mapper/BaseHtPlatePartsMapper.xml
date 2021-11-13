@@ -49,14 +49,14 @@
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
       sm.material_code,sm.material_name,sm.material_desc,bt.material_quality,spm.product_model_name,bt.color,spm.product_model_name,
       sps.package_specification_code,sps.package_specification_name
-      from fantech_imes_v2.base_ht_plate_parts bhpp
-      LEFT JOIN ocean_v2.sys_user su ON bhpp.create_user_id = su.user_id
-      LEFT JOIN ocean_v2.sys_user sus ON bhpp.modified_user_id = sus.user_id
-      LEFT JOIN fantech_imes_v2.base_organization bo ON bhpp.org_id = bo.organization_id
-      LEFT JOIN fantech_imes_v2.base_material sm ON sm.material_id = bhpp.material_id
-      LEFT JOIN fantech_imes_v2.base_material_tab bt ON bt.material_id = sm.material_id
-      LEFT JOIN fantech_imes_v2.base_product_model spm ON spm.product_model_id = bt.product_model_id
-      LEFT JOIN fantech_imes_v2.base_package_specification sps ON sps.package_specification_id = bt.package_specification_id
+      from base_ht_plate_parts bhpp
+      LEFT JOIN sys_user su ON bhpp.create_user_id = su.user_id
+      LEFT JOIN sys_user sus ON bhpp.modified_user_id = sus.user_id
+      LEFT JOIN base_organization bo ON bhpp.org_id = bo.organization_id
+      LEFT JOIN base_material sm ON sm.material_id = bhpp.material_id
+      LEFT JOIN base_material_tab bt ON bt.material_id = sm.material_id
+      LEFT JOIN base_product_model spm ON spm.product_model_id = bt.product_model_id
+      LEFT JOIN base_package_specification sps ON sps.package_specification_id = bt.package_specification_id
       <where>
           <if test="platePartsId != null and platePartsId!=''">
               and bhpp.plate_parts_id like CONCAT('%', #{platePartsId}, '%')

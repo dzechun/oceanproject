@@ -42,11 +42,11 @@
         <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         scm.queue_name, scm.client_name,
         bo.organization_name
-        from fantech_imes_v2.ptl_equipment se
-        LEFT JOIN ocean_v2.sys_user su ON se.create_user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user sus ON se.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.ptl_client_manage scm on se.client_id = scm.client_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON se.org_id = bo.organization_id
+        from ptl_equipment se
+        LEFT JOIN sys_user su ON se.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON se.modified_user_id = sus.user_id
+        LEFT JOIN ptl_client_manage scm on se.client_id = scm.client_id
+        LEFT JOIN base_organization bo ON se.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(se.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

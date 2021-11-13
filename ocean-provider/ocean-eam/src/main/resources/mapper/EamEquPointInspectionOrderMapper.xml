@@ -73,9 +73,9 @@
     LEFT JOIN eam_equipment_category eec ON ee.equipment_category_id = eec.equipment_category_id
     LEFT JOIN eam_equipment_barcode eeb ON eepio.equipment_barcode_id = eeb.equipment_barcode_id
     LEFT JOIN eam_equ_point_inspection_project eepip ON eepio.equ_point_inspection_project_id = eepip.equ_point_inspection_project_id
-    left join ocean_v2.sys_user u on eepio.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eepio.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON eepio.org_id = bo.organization_id
+    left join sys_user u on eepio.create_user_id=u.user_id
+    left join sys_user s on eepio.modified_user_id=s.user_id
+    left join base_organization bo ON eepio.org_id = bo.organization_id
     <where>
       <if test="equipmentBarcodeId != null">
         and eepio.equipment_barcode_id = #{equipmentBarcodeId}

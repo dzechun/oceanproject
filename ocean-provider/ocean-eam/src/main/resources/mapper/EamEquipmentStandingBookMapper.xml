@@ -69,12 +69,12 @@
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,bo.organization_name AS organization_name
     FROM eam_equipment_standing_book eesb
-    left join fantech_imes_v2.eam_equipment_barcode eeb on eesb.equipment_barcode_id=eeb.equipment_barcode_id
-    left join fantech_imes_v2.eam_equipment ee on eeb.equipment_id=ee.equipment_id
-    left join fantech_imes_v2.eam_equipment_category eec on ee.equipment_category_id=eec.equipment_category_id
-    left join fantech_imes_v2.base_dept bd on eesb.dept_id=bd.dept_id
-    LEFT JOIN ocean_v2.sys_user su ON eesb.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON eesb.modified_user_id = sus.user_id
+    left join eam_equipment_barcode eeb on eesb.equipment_barcode_id=eeb.equipment_barcode_id
+    left join eam_equipment ee on eeb.equipment_id=ee.equipment_id
+    left join eam_equipment_category eec on ee.equipment_category_id=eec.equipment_category_id
+    left join base_dept bd on eesb.dept_id=bd.dept_id
+    LEFT JOIN sys_user su ON eesb.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON eesb.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON eesb.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">

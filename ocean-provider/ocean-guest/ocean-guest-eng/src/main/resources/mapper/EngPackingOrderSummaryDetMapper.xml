@@ -113,9 +113,9 @@
         and sposd.dominant_term_code =ecqo.dominant_term_code
     LEFT JOIN base_storage bs on sposd.receiving_storage_id = bs.storage_id
     LEFT JOIn base_storage bss on sposd.putaway_storage_id = bss.storage_id
-    left join ocean_v2.sys_user u on sposd.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on sposd.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON sposd.org_id = bo.organization_id
+    left join sys_user u on sposd.create_user_id=u.user_id
+    left join sys_user s on sposd.modified_user_id=s.user_id
+    left join base_organization bo ON sposd.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sposd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

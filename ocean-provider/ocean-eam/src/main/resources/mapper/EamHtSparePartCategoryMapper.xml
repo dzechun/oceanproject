@@ -49,10 +49,10 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_spare_part_category ehspc
-    left join ocean_v2.sys_user u on ehspc.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehspc.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehspc.org_id = bo.organization_id
+    from eam_ht_spare_part_category ehspc
+    left join sys_user u on ehspc.create_user_id=u.user_id
+    left join sys_user s on ehspc.modified_user_id=s.user_id
+    left join base_organization bo ON ehspc.org_id = bo.organization_id
     <where>
       <if test="sparePartCategoryCode != null and sparePartCategoryCode!= ''">
         and ehspc.spare_part_category_code like CONCAT('%',  #{sparePartCategoryCode},'%')

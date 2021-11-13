@@ -63,12 +63,12 @@
     s.user_name as modified_user_name,
     bo.organization_name
     FROM mes_sfc_repair_order_bad_phenotype_repair msrobpr
-    left join fantech_imes_v2.base_material bm ON msrobpr.replace_material_id = bm.material_id
-    left join fantech_imes_v2.base_badness_cause bbc ON msrobpr.badness_cause_id = bbc.badness_cause_id
-    left join fantech_imes_v2.base_badness_duty bbd ON msrobpr.badness_duty_id = bbd.badness_duty_id
-    left join ocean_v2.sys_user u on msrobpr.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on msrobpr.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON msrobpr.org_id = bo.organization_id
+    left join base_material bm ON msrobpr.replace_material_id = bm.material_id
+    left join base_badness_cause bbc ON msrobpr.badness_cause_id = bbc.badness_cause_id
+    left join base_badness_duty bbd ON msrobpr.badness_duty_id = bbd.badness_duty_id
+    left join sys_user u on msrobpr.create_user_id=u.user_id
+    left join sys_user s on msrobpr.modified_user_id=s.user_id
+    left join base_organization bo ON msrobpr.org_id = bo.organization_id
     <where>
       <if test="repairOrderBadPhenotypeId != null">
         and msrobpr.repair_order_bad_phenotype_id = #{repairOrderBadPhenotypeId}

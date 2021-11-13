@@ -169,10 +169,10 @@
     left join base_factory bf on ee.factory_id=bf.factory_id
     left join base_process bp on ee.process_id=bp.process_id
     left join eam_equipment_maintain_project emp on ee.equipment_maintain_project_id=emp.equipment_maintain_project_id
-    left join ocean_v2.sys_user su on ee.equipment_mgt_user_id=su.user_id
-    left join ocean_v2.sys_user u on ee.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ee.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ee.org_id = bo.organization_id
+    left join sys_user su on ee.equipment_mgt_user_id=su.user_id
+    left join sys_user u on ee.create_user_id=u.user_id
+    left join sys_user s on ee.modified_user_id=s.user_id
+    left join base_organization bo ON ee.org_id = bo.organization_id
     <where>
       <if test="equipmentCode != null and equipmentCode!='' and codeQueryMark!=1">
         and ee.equipment_code like CONCAT('%', #{equipmentCode}, '%')

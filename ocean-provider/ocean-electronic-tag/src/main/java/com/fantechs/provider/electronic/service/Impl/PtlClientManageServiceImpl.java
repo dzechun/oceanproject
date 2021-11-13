@@ -40,7 +40,7 @@ public class PtlClientManageServiceImpl extends BaseService<PtlClientManage> imp
         ptlClientManage.setModifiedTime(new Date());
         ptlClientManage.setSecretKey(UUIDUtils.getUUID());
         ptlClientManageMapper.insertUseGeneratedKeys(ptlClientManage);
-        ptlClientManage.setQueueName("ocean_v2.ablepick" + ptlClientManage.getClientId());
+        ptlClientManage.setQueueName("ablepick" + ptlClientManage.getClientId());
         return ptlClientManageMapper.updateByPrimaryKeySelective(ptlClientManage);
     }
 

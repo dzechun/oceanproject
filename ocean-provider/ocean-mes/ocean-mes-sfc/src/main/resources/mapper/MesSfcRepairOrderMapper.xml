@@ -84,16 +84,16 @@
     s.user_name as modified_user_name,
     bo.organization_name
     FROM mes_sfc_repair_order msro
-    left join fantech_imes_v2.mes_pm_work_order mpwo ON msro.work_order_id = mpwo.work_order_id
-    left join fantech_imes_v2.base_material bm ON msro.material_id = bm.material_id
-    left join fantech_imes_v2.base_material_tab bmt ON msro.material_id = bmt.material_id
-    left join fantech_imes_v2.base_pro_line bpl ON msro.pro_line_id = bpl.pro_line_id
-    left join fantech_imes_v2.base_route br ON msro.route_id = br.route_id
-    left join fantech_imes_v2.base_process bbp ON msro.bad_process_id = bbp.process_id
-    left join fantech_imes_v2.base_process cbp ON msro.current_process_id = cbp.process_id
-    left join ocean_v2.sys_user u on msro.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on msro.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON msro.org_id = bo.organization_id
+    left join mes_pm_work_order mpwo ON msro.work_order_id = mpwo.work_order_id
+    left join base_material bm ON msro.material_id = bm.material_id
+    left join base_material_tab bmt ON msro.material_id = bmt.material_id
+    left join base_pro_line bpl ON msro.pro_line_id = bpl.pro_line_id
+    left join base_route br ON msro.route_id = br.route_id
+    left join base_process bbp ON msro.bad_process_id = bbp.process_id
+    left join base_process cbp ON msro.current_process_id = cbp.process_id
+    left join sys_user u on msro.create_user_id=u.user_id
+    left join sys_user s on msro.modified_user_id=s.user_id
+    left join base_organization bo ON msro.org_id = bo.organization_id
     <where>
       <if test="repairOrderId != null">
         and msro.repair_order_id = #{repairOrderId}

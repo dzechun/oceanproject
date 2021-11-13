@@ -85,15 +85,15 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_jig_repair_order ehjro
-    left join fantech_imes_v2.eam_jig ej on ehjro.jig_id = ej.jig_id
-    left join fantech_imes_v2.base_badness_cause bbc on ehjro.badness_cause_id = bbc.badness_cause_id
-    left join fantech_imes_v2.base_badness_duty bbd on ehjro.badness_duty_id = bbd.badness_duty_id
-    left join fantech_imes_v2.base_badness_phenotype bbp on ehjro.badness_phenotype_id = bbp.badness_phenotype_id
-    left join ocean_v2.sys_user su on ehjro.repair_user_id=su.user_id
-    left join ocean_v2.sys_user u on ehjro.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehjro.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehjro.org_id = bo.organization_id
+    from eam_ht_jig_repair_order ehjro
+    left join eam_jig ej on ehjro.jig_id = ej.jig_id
+    left join base_badness_cause bbc on ehjro.badness_cause_id = bbc.badness_cause_id
+    left join base_badness_duty bbd on ehjro.badness_duty_id = bbd.badness_duty_id
+    left join base_badness_phenotype bbp on ehjro.badness_phenotype_id = bbp.badness_phenotype_id
+    left join sys_user su on ehjro.repair_user_id=su.user_id
+    left join sys_user u on ehjro.create_user_id=u.user_id
+    left join sys_user s on ehjro.modified_user_id=s.user_id
+    left join base_organization bo ON ehjro.org_id = bo.organization_id
     <where>
       <if test="jigRepairOrderCode != null and jigRepairOrderCode!=''">
         and ehjro.jig_repair_order_code like CONCAT('%', #{jigRepairOrderCode}, '%')

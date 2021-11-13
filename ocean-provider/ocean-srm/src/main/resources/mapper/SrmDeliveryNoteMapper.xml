@@ -46,13 +46,13 @@
     (CASE WHEN order_type = 0 THEN '订单数量' WHEN order_type = 1 THEN '订单数量' END) AS order_quantity,
     (CASE WHEN order_type = 0 THEN '计划交货日期' WHEN order_type = 1 THEN '计划交货日期' END) AS plan_delivery_date,
     (CASE WHEN order_type = 0 THEN '需用时间' WHEN order_type = 1 THEN '需用时间' END) AS need_time
-    from fantech_imes_v2.srm_delivery_note sdn
-    LEFT JOIN ocean_v2.sys_user su ON sdn.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON sdn.modified_user_id = sus.user_id
-    --     LEFT JOIN fantech_imes_v2.送货计划表
-    --     LEFT JOIN fantech_imes_v2.采购订单表
-    LEFT JOIN ocean_v2.sys_user ssu ON sdn.delivery_man = ssu.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON sdn.organization_id = bo.organization_id
+    from srm_delivery_note sdn
+    LEFT JOIN sys_user su ON sdn.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON sdn.modified_user_id = sus.user_id
+    --     LEFT JOIN 送货计划表
+    --     LEFT JOIN 采购订单表
+    LEFT JOIN sys_user ssu ON sdn.delivery_man = ssu.user_id
+    LEFT JOIN base_organization bo ON sdn.organization_id = bo.organization_id
     <where>
       <if test="asnCode != null and asnCode != ''">
         and sdn.asn_code like CONCAT('%', #{asnCode}, '%')
@@ -72,7 +72,7 @@
 
   <select id="getMax" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>
-    from fantech_imes_v2.srm_delivery_note sdn ORDER BY sdn.delivery_note_id desc limit 1
+    from srm_delivery_note sdn ORDER BY sdn.delivery_note_id desc limit 1
   </select>
 
 </mapper>

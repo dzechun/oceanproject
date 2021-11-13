@@ -68,14 +68,14 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_jig_scrap_order ejso
-    left join fantech_imes_v2.base_dept d on ejso.use_dept_id=d.dept_id
-    left join fantech_imes_v2.base_dept bd on ejso.apply_dept_id=bd.dept_id
-    left join ocean_v2.sys_user su on ejso.apply_user_id=su.user_id
-    left join ocean_v2.sys_user sus on ejso.use_user_id=sus.user_id
-    left join ocean_v2.sys_user u on ejso.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ejso.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ejso.org_id = bo.organization_id
+    from eam_jig_scrap_order ejso
+    left join base_dept d on ejso.use_dept_id=d.dept_id
+    left join base_dept bd on ejso.apply_dept_id=bd.dept_id
+    left join sys_user su on ejso.apply_user_id=su.user_id
+    left join sys_user sus on ejso.use_user_id=sus.user_id
+    left join sys_user u on ejso.create_user_id=u.user_id
+    left join sys_user s on ejso.modified_user_id=s.user_id
+    left join base_organization bo ON ejso.org_id = bo.organization_id
     <where>
       <if test="jigScrapOrderCode != null and jigScrapOrderCode!=''">
         and ejso.jig_scrap_order_code like CONCAT('%', #{jigScrapOrderCode}, '%')

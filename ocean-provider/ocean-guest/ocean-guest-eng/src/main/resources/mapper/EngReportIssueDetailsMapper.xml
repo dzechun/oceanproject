@@ -25,7 +25,7 @@
     u.user_name AS create_user_name
     FROM wms_out_delivery_order_det wodod
     JOIN wms_out_delivery_order wodo ON wodod.delivery_order_id=wodo.delivery_order_id
-    LEFT JOIN ocean_v2.sys_user u ON wodo.modified_user_id=u.user_id
+    LEFT JOIN sys_user u ON wodo.modified_user_id=u.user_id
     <where>
       <if test="jobOrderId!=null and jobOrderId!=''">
         and wodod.delivery_order_id = #{jobOrderId} and IFNULL(wodod.picking_qty,0)>0

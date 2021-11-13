@@ -91,11 +91,11 @@ wohdo.audit_status,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.wms_out_ht_delivery_order wohdo
-    LEFT JOIN fantech_imes_v2.base_material_owner bmo ON wohdo.material_owner_id = bmo.material_owner_id
-    LEFT JOIN ocean_v2.sys_user su ON wohdo.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON wohdo.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON wohdo.org_id = bo.organization_id
+    from wms_out_ht_delivery_order wohdo
+    LEFT JOIN base_material_owner bmo ON wohdo.material_owner_id = bmo.material_owner_id
+    LEFT JOIN sys_user su ON wohdo.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wohdo.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wohdo.org_id = bo.organization_id
     <where>
       <if test="orderTypeId != null">
         and wohdo.order_type_id = #{orderTypeId}

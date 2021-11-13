@@ -72,13 +72,13 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_jig_barcode ejb
-    left join fantech_imes_v2.eam_jig ej on ej.jig_id=ejb.jig_id
-    left join fantech_imes_v2.eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
-    left join ocean_v2.sys_user su on ej.user_id=su.user_id
-    left join ocean_v2.sys_user u on ejb.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ejb.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ejb.org_id = bo.organization_id
+    from eam_jig_barcode ejb
+    left join eam_jig ej on ej.jig_id=ejb.jig_id
+    left join eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
+    left join sys_user su on ej.user_id=su.user_id
+    left join sys_user u on ejb.create_user_id=u.user_id
+    left join sys_user s on ejb.modified_user_id=s.user_id
+    left join base_organization bo ON ejb.org_id = bo.organization_id
     <where>
       <if test="jigId != null">
         and ejb.jig_id = #{jigId}

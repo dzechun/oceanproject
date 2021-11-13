@@ -60,9 +60,9 @@
     from daq_equipment ee
     LEFT JOIN daq_equipment_data_group_re_dc eedgrd ON ee.equipment_id = eedgrd.equipment_id
     LEFT JOIN daq_equipment_data_group eedg ON eedgrd.equipment_data_group_id = eedg.equipment_data_group_id
-    LEFT JOIN ocean_v2.sys_user u ON ee.create_user_id = u.user_id
-    LEFT JOIN ocean_v2.sys_user s ON ee.modified_user_id = s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON ee.org_id = bo.organization_id
+    LEFT JOIN sys_user u ON ee.create_user_id = u.user_id
+    LEFT JOIN sys_user s ON ee.modified_user_id = s.user_id
+    LEFT JOIN base_organization bo ON ee.org_id = bo.organization_id
     <where>
       <if test="equipmentCode != null and equipmentCode!=''">
         and ee.equipment_code like CONCAT('%', #{equipmentCode}, '%')

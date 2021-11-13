@@ -53,13 +53,13 @@
     bc.supplier_code as customer_code,bc.supplier_name as customer_name,
     su.user_name as create_user_name,
     sus.user_name as modified_user_name,
-    bo.organization_name FROM fantech_imes_v2.base_inspection_exempted_list biel
-    LEFT JOIN fantech_imes_v2.base_material bm ON biel.material_id= bm.material_id
-    LEFT JOIN fantech_imes_v2.base_supplier bs ON biel.supplier_id= bs.supplier_id
-    LEFT JOIN fantech_imes_v2.base_supplier bc ON biel.customer_id= bc.supplier_id
-    LEFT JOIN ocean_v2.sys_user su ON biel.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON biel.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON biel.org_id = bo.organization_id
+    bo.organization_name FROM base_inspection_exempted_list biel
+    LEFT JOIN base_material bm ON biel.material_id= bm.material_id
+    LEFT JOIN base_supplier bs ON biel.supplier_id= bs.supplier_id
+    LEFT JOIN base_supplier bc ON biel.customer_id= bc.supplier_id
+    LEFT JOIN sys_user su ON biel.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON biel.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON biel.org_id = bo.organization_id
     <where>
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code LIKE CONCAT('%',#{materialCode},'%')

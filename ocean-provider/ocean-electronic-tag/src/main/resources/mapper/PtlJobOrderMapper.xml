@@ -33,7 +33,7 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
-  
+
   <sql id="Base_Column_List">
     pjo.job_order_id, pjo.job_order_code, pjo.job_order_type, pjo.related_order_code, pjo.despatch_order_code, pjo.if_urgent, pjo.warehouse_id, pjo.warehouse_name,
     pjo.vehicle_id, pjo.worker_user_id, pjo.worker_user_name, pjo.order_status, pjo.pick_back_status, pjo.if_already_print, pjo.activation_time,
@@ -44,7 +44,7 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.electronic.dto.PtlJobOrderDto">
 
   </resultMap>
-  
+
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
     tv.vehicle_code as vehicleCode,
@@ -56,9 +56,9 @@
     bwa.warehouse_area_code as warehouseAreaCode,
     bwa.warehouse_area_name as warehouseAreaName
     from ptl_job_order pjo
-    LEFT JOIN ocean_v2.sys_user suw ON pjo.worker_user_id = suw.user_id
-    LEFT JOIN ocean_v2.sys_user suc ON pjo.create_user_id = suc.user_id
-    LEFT JOIN ocean_v2.sys_user sum ON pjo.modified_user_id = sum.user_id
+    LEFT JOIN sys_user suw ON pjo.worker_user_id = suw.user_id
+    LEFT JOIN sys_user suc ON pjo.create_user_id = suc.user_id
+    LEFT JOIN sys_user sum ON pjo.modified_user_id = sum.user_id
     LEFT JOIN tem_vehicle tv ON pjo.vehicle_id = tv.vehicle_id
     LEFT JOIN ptl_job_order_det pjod ON pjo.job_order_id = pjod.job_order_id
     LEFT JOIN base_storage bs ON pjod.storage_id = bs.storage_id

@@ -73,9 +73,9 @@
     LEFT JOIN eam_equipment_category eec ON ee.equipment_category_id = eec.equipment_category_id
     LEFT JOIN eam_equipment_barcode eeb ON eemo.equipment_barcode_id = eeb.equipment_barcode_id
     LEFT JOIN eam_equipment_maintain_project eemp ON eemo.equipment_maintain_project_id = eemp.equipment_maintain_project_id
-    LEFT JOIN ocean_v2.sys_user u ON eemo.create_user_id = u.user_id
-    LEFT JOIN ocean_v2.sys_user s ON eemo.modified_user_id = s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON eemo.org_id = bo.organization_id
+    LEFT JOIN sys_user u ON eemo.create_user_id = u.user_id
+    LEFT JOIN sys_user s ON eemo.modified_user_id = s.user_id
+    LEFT JOIN base_organization bo ON eemo.org_id = bo.organization_id
     <where>
       <if test="equipmentCategoryId != null">
         and ee.equipment_category_id = #{equipmentCategoryId}

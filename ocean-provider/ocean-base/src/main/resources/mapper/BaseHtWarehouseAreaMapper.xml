@@ -57,11 +57,11 @@
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         sw.warehouse_name,
         bo.organization_name
-        FROM fantech_imes_v2.base_ht_warehouse_area shwa
-        LEFT JOIN ocean_v2.sys_user su ON shwa.create_user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user sus ON shwa.modified_user_id = sus.user_id
-        LEfT JOIN fantech_imes_v2.base_warehouse sw ON shwa.warehouse_id= sw.warehouse_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON shwa.org_id = bo.organization_id
+        FROM base_ht_warehouse_area shwa
+        LEFT JOIN sys_user su ON shwa.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON shwa.modified_user_id = sus.user_id
+        LEfT JOIN base_warehouse sw ON shwa.warehouse_id= sw.warehouse_id
+        LEFT JOIN base_organization bo ON shwa.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(shwa.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

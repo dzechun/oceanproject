@@ -63,12 +63,12 @@
     bmo.material_owner_code,bmo.material_owner_name,bmo.material_owner_short_name,bmo.link_man_name,
     bmo.link_man_phone,bmo.fax_number,bmo.e_mail_address,bmo.address,bmo.material_owner_desc,
     bo.organization_name
-    from fantech_imes_v2.base_material_owner_re_wh bmorw
-    left join fantech_imes_v2.base_warehouse bw on bmorw.warehouse_id=bw.warehouse_id
-    left join fantech_imes_v2.base_material_owner bmo on bmorw.material_owner_id=bmo.material_owner_id
-    left join ocean_v2.sys_user u on bmorw.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bmorw.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON bmorw.org_id = bo.organization_id
+    from base_material_owner_re_wh bmorw
+    left join base_warehouse bw on bmorw.warehouse_id=bw.warehouse_id
+    left join base_material_owner bmo on bmorw.material_owner_id=bmo.material_owner_id
+    left join sys_user u on bmorw.create_user_id=u.user_id
+    left join sys_user s on bmorw.modified_user_id=s.user_id
+    left join base_organization bo ON bmorw.org_id = bo.organization_id
     <where>
       <if test="materialOwnerId!=null and materialOwnerId!=''">
         and bmorw.material_owner_id like CONCAT('%', #{materialOwnerId}, '%')

@@ -56,14 +56,14 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_return_order_det erod
-    left join fantech_imes_v2.eam_equipment ee on erod.equipment_id=ee.equipment_id
-    left join fantech_imes_v2.eam_equipment_category eec on ee.equipment_category_id=eec.equipment_category_id
-    left join fantech_imes_v2.base_warehouse bw on ee.warehouse_id=bw.warehouse_id
-    left join fantech_imes_v2.eam_return_order ero on erod.return_order_id=ero.return_order_id
-    left join ocean_v2.sys_user u on erod.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on erod.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON erod.org_id = bo.organization_id
+    from eam_return_order_det erod
+    left join eam_equipment ee on erod.equipment_id=ee.equipment_id
+    left join eam_equipment_category eec on ee.equipment_category_id=eec.equipment_category_id
+    left join base_warehouse bw on ee.warehouse_id=bw.warehouse_id
+    left join eam_return_order ero on erod.return_order_id=ero.return_order_id
+    left join sys_user u on erod.create_user_id=u.user_id
+    left join sys_user s on erod.modified_user_id=s.user_id
+    left join base_organization bo ON erod.org_id = bo.organization_id
     <where>
       <if test="equipmentCode != null and equipmentCode!=''">
         and ee.equipment_code like CONCAT('%', #{equipmentCode}, '%')

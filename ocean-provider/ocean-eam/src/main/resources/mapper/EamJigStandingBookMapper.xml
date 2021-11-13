@@ -68,14 +68,14 @@
     s.user_name as modified_user_name,
     bd.dept_name,
     bo.organization_name
-    from fantech_imes_v2.eam_jig_standing_book ei
-    left join fantech_imes_v2.eam_jig_barcode ejb on ei.jig_barcode_id=ejb.jig_barcode_id
-    left join fantech_imes_v2.eam_jig ej on ejb.jig_id=ej.jig_id
-    left join fantech_imes_v2.eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
-    left join ocean_v2.sys_user u on ei.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ei.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_dept bd on ei.dept_id=bd.dept_id
-    left join fantech_imes_v2.base_organization bo ON ei.org_id = bo.organization_id
+    from eam_jig_standing_book ei
+    left join eam_jig_barcode ejb on ei.jig_barcode_id=ejb.jig_barcode_id
+    left join eam_jig ej on ejb.jig_id=ej.jig_id
+    left join eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
+    left join sys_user u on ei.create_user_id=u.user_id
+    left join sys_user s on ei.modified_user_id=s.user_id
+    left join base_dept bd on ei.dept_id=bd.dept_id
+    left join base_organization bo ON ei.org_id = bo.organization_id
     <where>
       <if test="assetCode != null and assetCode!=''">
         and ejb.asset_code like CONCAT('%', #{assetCode}, '%')

@@ -76,9 +76,9 @@
     bo.organization_name
     from esop_ht_equipment ehe
     left join base_warehouse bw on ehe.warehouse_id=bw.warehouse_id
-    left join ocean_v2.sys_user u on ehe.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehe.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehe.org_id = bo.organization_id
+    left join sys_user u on ehe.create_user_id=u.user_id
+    left join sys_user s on ehe.modified_user_id=s.user_id
+    left join base_organization bo ON ehe.org_id = bo.organization_id
     <where>
       <if test="equipmentCode != null and equipmentCode!=''">
         and ehe.equipment_code like CONCAT('%', #{equipmentCode}, '%')

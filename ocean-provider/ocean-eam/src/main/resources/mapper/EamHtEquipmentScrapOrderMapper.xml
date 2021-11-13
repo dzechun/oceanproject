@@ -65,14 +65,14 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_equipment_scrap_order eheso
-    left join fantech_imes_v2.base_dept d on eheso.use_dept_id=d.dept_id
-    left join fantech_imes_v2.base_dept bd on eheso.apply_dept_id=bd.dept_id
-    left join ocean_v2.sys_user su on eheso.apply_user_id=su.user_id
-    left join ocean_v2.sys_user sus on eheso.use_user_id=sus.user_id
-    left join ocean_v2.sys_user u on eheso.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eheso.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON eheso.org_id = bo.organization_id
+    from eam_ht_equipment_scrap_order eheso
+    left join base_dept d on eheso.use_dept_id=d.dept_id
+    left join base_dept bd on eheso.apply_dept_id=bd.dept_id
+    left join sys_user su on eheso.apply_user_id=su.user_id
+    left join sys_user sus on eheso.use_user_id=sus.user_id
+    left join sys_user u on eheso.create_user_id=u.user_id
+    left join sys_user s on eheso.modified_user_id=s.user_id
+    left join base_organization bo ON eheso.org_id = bo.organization_id
     <where>
       <if test="equipmentScrapOrderCode != null and equipmentScrapOrderCode!=''">
         and eheso.equipment_scrap_order_code like CONCAT('%', #{equipmentScrapOrderCode}, '%')

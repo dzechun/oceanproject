@@ -44,10 +44,10 @@
     select <include refid="Base_Column_List"></include>,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_process_inspection_item_item bpiii
-    left join ocean_v2.sys_user u on bpiii.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bpiii.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo on bpiii.org_id = bo.organization_id
+    from base_process_inspection_item_item bpiii
+    left join sys_user u on bpiii.create_user_id=u.user_id
+    left join sys_user s on bpiii.modified_user_id=s.user_id
+    left join base_organization bo on bpiii.org_id = bo.organization_id
     <where>
       <if test="processInspectionItemId!=null">
         and bpiii.process_inspection_item_id = #{processInspectionItemId}

@@ -74,9 +74,9 @@ ssp.option3
     FROM smt_ht_solder_paste ssp
     LEFT join base_material bm ON ssp.material_id = bm.material_id
     LEFT JOIn base_pro_line bpl ON ssp.pro_line_id = bpl.pro_line_id
-    left join ocean_v2.sys_user u on ssp.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ssp.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ssp.org_id = bo.organization_id
+    left join sys_user u on ssp.create_user_id=u.user_id
+    left join sys_user s on ssp.modified_user_id=s.user_id
+    left join base_organization bo ON ssp.org_id = bo.organization_id
     <where>
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code like CONCAT('%',#{materialCode},'%')

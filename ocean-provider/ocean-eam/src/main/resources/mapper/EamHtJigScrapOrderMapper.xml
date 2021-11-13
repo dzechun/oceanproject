@@ -65,14 +65,14 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_jig_scrap_order ehjso
-    left join fantech_imes_v2.base_dept d on ehjso.use_dept_id=d.dept_id
-    left join fantech_imes_v2.base_dept bd on ehjso.apply_dept_id=bd.dept_id
-    left join ocean_v2.sys_user su on ehjso.apply_user_id=su.user_id
-    left join ocean_v2.sys_user sus on ehjso.use_user_id=sus.user_id
-    left join ocean_v2.sys_user u on ehjso.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehjso.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehjso.org_id = bo.organization_id
+    from eam_ht_jig_scrap_order ehjso
+    left join base_dept d on ehjso.use_dept_id=d.dept_id
+    left join base_dept bd on ehjso.apply_dept_id=bd.dept_id
+    left join sys_user su on ehjso.apply_user_id=su.user_id
+    left join sys_user sus on ehjso.use_user_id=sus.user_id
+    left join sys_user u on ehjso.create_user_id=u.user_id
+    left join sys_user s on ehjso.modified_user_id=s.user_id
+    left join base_organization bo ON ehjso.org_id = bo.organization_id
     <where>
       <if test="jigScrapOrderCode != null and jigScrapOrderCode!=''">
         and ehjso.jig_scrap_order_code like CONCAT('%', #{jigScrapOrderCode}, '%')

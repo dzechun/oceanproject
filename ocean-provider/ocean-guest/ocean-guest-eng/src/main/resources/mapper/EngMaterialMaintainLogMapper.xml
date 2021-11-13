@@ -50,7 +50,7 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"></include>,bm.material_code,bm.material_name,bm.material_desc,osu.nick_name as operator_user_name
     from eng_material_maintain_log emml
-    left join ocean_v2.sys_user osu on osu.user_id = emml.operator_user_id
+    left join sys_user osu on osu.user_id = emml.operator_user_id
     left join eng_contract_qty_order ecqo on ecqo.contract_qty_order_id = emml.contract_qty_order_id
     left join base_material bm on ecqo.material_code=bm.material_code
     <where>

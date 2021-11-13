@@ -48,12 +48,12 @@
         ssu.supplier_name as supplierName,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.base_signature ss
-        left join fantech_imes_v2.base_material sm on ss.material_id=sm.material_id
-        left join fantech_imes_v2.base_supplier ssu on ss.supplier_id=ssu.supplier_id
-        left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
+        from base_signature ss
+        left join base_material sm on ss.material_id=sm.material_id
+        left join base_supplier ssu on ss.supplier_id=ssu.supplier_id
+        left join sys_user u on ss.create_user_id=u.user_id
+        left join sys_user s on ss.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON ss.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

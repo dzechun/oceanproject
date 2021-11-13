@@ -89,8 +89,8 @@
     left join base_sample_plan_aql bspa on bsp.sample_plan_aql_id=bspa.sample_plan_aql_id
     left join base_badness_category bbc on qiiod.badness_category_id=bbc.badness_category_id
     left join qms_ipqc_inspection_order_det_sample qiiods on qiiod.ipqc_inspection_order_det_id=qiiods.ipqc_inspection_order_det_id
-    left join ocean_v2.sys_user u on qiiod.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on qiiod.modified_user_id=s.user_id
+    left join sys_user u on qiiod.create_user_id=u.user_id
+    left join sys_user s on qiiod.modified_user_id=s.user_id
     left join base_dept bd on s.dept_id=bd.dept_id
     left join base_organization bo ON qiiod.org_id = bo.organization_id
     <where>

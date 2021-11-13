@@ -117,8 +117,8 @@
         left JOIN base_platform bp on wipod.platform_id = bp.platform_id
         LEFT JOIN base_inventory_status bis ON wipod.inventory_status_id = bis.inventory_status_id
         LEFT JOIN base_material bm ON wipod.material_id = bm.material_id
-        LEFT JOIN ocean_v2.sys_user su ON wipod.create_user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user sus ON wipod.modified_user_id = sus.user_id
+        LEFT JOIN sys_user su ON wipod.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON wipod.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wipod.org_id = bo.organization_id
         <where>
             <if test="jobOrderId!=null and jobOrderId!=''">

@@ -55,13 +55,13 @@
     bm.material_code,bm.material_name,bm.material_desc,bm.material_version,bmt.material_property,mpwo.work_order_code,
     su.user_name as create_user_name,
     sus.user_name as modified_user_name,
-    bo.organization_name FROM fantech_imes_v2.mes_pm_ht_production_key_issues_order mphpkio
-    left join fantech_imes_v2.mes_pm_work_order mpwo on mphpkio.work_order_id=mpwo.work_order_id
-    left join fantech_imes_v2.base_material bm on mphpkio.material_id=bm.material_id
-    left join fantech_imes_v2.base_material_tab bmt on bm.material_id=bmt.material_id
-    left join ocean_v2.sys_user su ON mphpkio.create_user_id = su.user_id
-    left join ocean_v2.sys_user sus ON mphpkio.modified_user_id = sus.user_id
-    left join fantech_imes_v2.base_organization bo ON mphpkio.org_id = bo.organization_id
+    bo.organization_name FROM mes_pm_ht_production_key_issues_order mphpkio
+    left join mes_pm_work_order mpwo on mphpkio.work_order_id=mpwo.work_order_id
+    left join base_material bm on mphpkio.material_id=bm.material_id
+    left join base_material_tab bmt on bm.material_id=bmt.material_id
+    left join sys_user su ON mphpkio.create_user_id = su.user_id
+    left join sys_user sus ON mphpkio.modified_user_id = sus.user_id
+    left join base_organization bo ON mphpkio.org_id = bo.organization_id
     <where>
       <if test="workOrderCode!=null and workOrderCode!=''">
         and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')

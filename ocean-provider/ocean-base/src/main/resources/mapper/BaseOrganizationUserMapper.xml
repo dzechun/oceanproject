@@ -25,9 +25,9 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"/>,bo.organization_code, bo.organization_name, bo.organization_desc
-    FROM ocean_v2.sys_organization_user bou
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bou.org_id = bo.organization_id
-    LEFT JOIN ocean_v2.sys_user suss ON bou.user_id = suss.user_id
+    FROM sys_organization_user bou
+    LEFT JOIN base_organization bo ON bou.org_id = bo.organization_id
+    LEFT JOIN sys_user suss ON bou.user_id = suss.user_id
     <where>
       <if test="userId!=null and userId!=''">
         and bo.userId=#{userId}

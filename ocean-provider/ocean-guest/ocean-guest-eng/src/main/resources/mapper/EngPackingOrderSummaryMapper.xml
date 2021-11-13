@@ -97,9 +97,9 @@ spos.putaway_storage_id
     left join base_supplier bs on spo.supplier_id=bs.supplier_id
     left join base_material bm on spos.material_id=bm.material_id
     left join base_storage bss on spos.putaway_storage_id = bss.storage_id
-    left join ocean_v2.sys_user u on spos.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on spos.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON spos.org_id = bo.organization_id
+    left join sys_user u on spos.create_user_id=u.user_id
+    left join sys_user s on spos.modified_user_id=s.user_id
+    left join base_organization bo ON spos.org_id = bo.organization_id
     <where>
 
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

@@ -52,14 +52,14 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_jig_material ehjm
-    left join fantech_imes_v2.eam_jig ej on ehjm.jig_id=ej.jig_id
-    left join fantech_imes_v2.base_warehouse bw on ej.warehouse_id=bw.warehouse_id
-    left join fantech_imes_v2.base_warehouse_area bwa on ej.warehouse_area_id=bwa.warehouse_area_id
-    left join fantech_imes_v2.base_storage bs on ej.storage_id=bs.storage_id
-    left join ocean_v2.sys_user u on ehjm.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehjm.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehjm.org_id = bo.organization_id
+    from eam_ht_jig_material ehjm
+    left join eam_jig ej on ehjm.jig_id=ej.jig_id
+    left join base_warehouse bw on ej.warehouse_id=bw.warehouse_id
+    left join base_warehouse_area bwa on ej.warehouse_area_id=bwa.warehouse_area_id
+    left join base_storage bs on ej.storage_id=bs.storage_id
+    left join sys_user u on ehjm.create_user_id=u.user_id
+    left join sys_user s on ehjm.modified_user_id=s.user_id
+    left join base_organization bo ON ehjm.org_id = bo.organization_id
     <where>
       <if test="jigId!=null">
         and ehjm.jig_id = #{jigId}

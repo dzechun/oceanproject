@@ -72,7 +72,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultDtoMap">
     select msbpr.*,su.user_name as 'operatorUserName' from mes_sfc_barcode_process_record msbpr
-    LEFT JOIN ocean_v2.sys_user su ON msbpr.operator_user_id = su.user_id
+    LEFT JOIN sys_user su ON msbpr.operator_user_id = su.user_id
     <where>
       <if test="workOrderBarcodeId != null">
         and msbpr.work_order_barcode_id = #{workOrderBarcodeId}

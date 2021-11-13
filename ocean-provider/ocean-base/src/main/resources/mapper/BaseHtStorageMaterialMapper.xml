@@ -55,14 +55,14 @@
            swa.warehouse_area_name as warehouseAreaName,
            u.user_name as createUserName,s.user_name as modifiedUserName,
            bo.organization_name,bmo.material_owner_name
-    from fantech_imes_v2.base_ht_storage_material shsm
-    left join fantech_imes_v2.base_storage ss on shsm.storage_id=ss.storage_id
-    left join fantech_imes_v2.base_material sm on shsm.material_id=sm.material_id
-    left join fantech_imes_v2.base_warehouse sw on ss.warehouse_id=sw.warehouse_id
-    left join fantech_imes_v2.base_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
-    left join ocean_v2.sys_user u on shsm.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on shsm.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON shsm.org_id = bo.organization_id
+    from base_ht_storage_material shsm
+    left join base_storage ss on shsm.storage_id=ss.storage_id
+    left join base_material sm on shsm.material_id=sm.material_id
+    left join base_warehouse sw on ss.warehouse_id=sw.warehouse_id
+    left join base_warehouse_area swa on ss.warehouse_area_id=swa.warehouse_area_id
+    left join sys_user u on shsm.create_user_id=u.user_id
+    left join sys_user s on shsm.modified_user_id=s.user_id
+    LEFT JOIN base_organization bo ON shsm.org_id = bo.organization_id
     LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = shsm.material_owner_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

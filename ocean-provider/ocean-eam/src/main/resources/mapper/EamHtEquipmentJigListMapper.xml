@@ -54,11 +54,11 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_equipment_jig_list ehejl
-    left join fantech_imes_v2.eam_jig ej ON ehejl.jig_id = ej.jig_id
-    left join ocean_v2.sys_user u on ehejl.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehejl.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehejl.org_id = bo.organization_id
+    from eam_ht_equipment_jig_list ehejl
+    left join eam_jig ej ON ehejl.jig_id = ej.jig_id
+    left join sys_user u on ehejl.create_user_id=u.user_id
+    left join sys_user s on ehejl.modified_user_id=s.user_id
+    left join base_organization bo ON ehejl.org_id = bo.organization_id
     <where>
       <if test="equipmentJigId != null">
         and ehejl.equipment_jig_id =  #{equipmentJigId}

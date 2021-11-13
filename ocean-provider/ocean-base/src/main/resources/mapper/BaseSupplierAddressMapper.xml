@@ -37,7 +37,7 @@
     <select id="findList" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
-        from fantech_imes_v2.base_supplier_address ssa
+        from base_supplier_address ssa
         <where>
             <if test="supplierAddressId != null and supplierAddressId != ''">
                 and ssa.supplier_address_id like CONCAT('%', #{supplierAddressId}, '%')

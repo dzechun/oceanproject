@@ -70,10 +70,10 @@
     left join base_factory bf on ehn.factory_id=bf.factory_id
     left join base_work_shop bws on ehn.work_shop_id=bws.work_shop_id
     left join base_pro_line bpl on ehn.pro_line_id=bpl.pro_line_id
-    left join ocean_v2.sys_user su on ehn.audit_user_id=su.user_id
-    left join ocean_v2.sys_user u on ehn.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehn.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehn.org_id = bo.organization_id
+    left join sys_user su on ehn.audit_user_id=su.user_id
+    left join sys_user u on ehn.create_user_id=u.user_id
+    left join sys_user s on ehn.modified_user_id=s.user_id
+    left join base_organization bo ON ehn.org_id = bo.organization_id
     <where>
       <if test="newsCode != null and newsCode!=''">
         and ehn.news_code like CONCAT('%', #{newsCode}, '%')

@@ -23,10 +23,10 @@
     bm.material_name,
     mskpr.part_barcode AS sales_barcode,
     case when LENGTH(mskpr.part_barcode)>12 then LEFT(mskpr.part_barcode,12) else mskpr.part_barcode end as sales_code
-    from fantech_imes_v2.mes_sfc_barcode_process msbp
-    left join fantech_imes_v2.base_material bm on msbp.material_id=bm.material_id
-    left join fantech_imes_v2.om_sales_code_re_spc oscrs on msbp.same_package_code=oscrs.same_package_code
-    left join fantech_imes_v2.mes_sfc_key_part_relevance mskpr on msbp.work_order_barcode_id=mskpr.work_order_barcode_id
+    from mes_sfc_barcode_process msbp
+    left join base_material bm on msbp.material_id=bm.material_id
+    left join om_sales_code_re_spc oscrs on msbp.same_package_code=oscrs.same_package_code
+    left join mes_sfc_key_part_relevance mskpr on msbp.work_order_barcode_id=mskpr.work_order_barcode_id
     <where>
       <if test="barcode != null and barcode!=''">
         AND msbp.barcode = #{barcode}

@@ -50,11 +50,11 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_equipment_param eep
-    left join fantech_imes_v2.eam_equipment_category eec on eep.equipment_category_id=eec.equipment_category_id
-    left join ocean_v2.sys_user u on eep.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eep.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON eep.org_id = bo.organization_id
+    from eam_equipment_param eep
+    left join eam_equipment_category eec on eep.equipment_category_id=eec.equipment_category_id
+    left join sys_user u on eep.create_user_id=u.user_id
+    left join sys_user s on eep.modified_user_id=s.user_id
+    left join base_organization bo ON eep.org_id = bo.organization_id
     <where>
       <if test="equipmentCategoryName != null and equipmentCategoryName!=''">
         and eec.equipment_category_name like CONCAT('%', #{equipmentCategoryName}, '%')

@@ -44,10 +44,10 @@
     select <include refid="Base_Column_List"></include>,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_ht_supplier_re_user bhsru
-    left join ocean_v2.sys_user u on bhsru.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bhsru.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bhsru.organization_id = bo.organization_id
+    from base_ht_supplier_re_user bhsru
+    left join sys_user u on bhsru.create_user_id=u.user_id
+    left join sys_user s on bhsru.modified_user_id=s.user_id
+    LEFT JOIN base_organization bo ON bhsru.organization_id = bo.organization_id
     <where>
       <if test="userId != null">
         and bhsru.user_id  = #{userId}

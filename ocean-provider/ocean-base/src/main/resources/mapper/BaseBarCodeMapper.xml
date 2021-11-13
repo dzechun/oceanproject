@@ -89,14 +89,14 @@
         <if test="barCodeType==2">
             ,wobp.work_order_card_id as barcode
         </if>
-        from fantech_imes_v2.smt_work_order swo
-        left join fantech_imes_v2.base_material sm on swo.material_id=sm.material_id
+        from smt_work_order swo
+        left join base_material sm on swo.material_id=sm.material_id
         LEFT JOIN base_material_tab bt on bt.material_id = sm.material_id
         left join base_product_model spm on spm.product_model_id = bt.product_model_id
-        left join fantech_imes_v2.base_route sr on swo.route_id=sr.route_id
-        left join fantech_imes_v2.base_pro_line spl on swo.pro_line_id=spl.pro_line_id
+        left join base_route sr on swo.route_id=sr.route_id
+        left join base_pro_line spl on swo.pro_line_id=spl.pro_line_id
         <if test="barCodeType==1">
-            left join fantech_imes_v2.base_barcode_rule_set_det wobp on wobp.barcode_rule_set_id = swo.barcode_rule_set_id
+            left join base_barcode_rule_set_det wobp on wobp.barcode_rule_set_id = swo.barcode_rule_set_id
 			LEFT JOIN base_barcode_rule br ON wobp.barcode_rule_id = br.barcode_rule_id
         </if>
         <if test="barCodeType==2">
@@ -128,9 +128,9 @@
         LEFT JOIN bcm_label_material blm ON bc.label_material_id = blm.label_material_id
         LEFT JOIN bcm_label bl ON blm.label_id = bl.label_id
         LEFT JOIN base_work_order sw on bc.work_order_id = sw.work_order_id
-        LEFT JOIN ocean_v2.sys_user su ON bl.create_user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user sus ON bl.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON bc.org_id = bo.organization_id
+        LEFT JOIN sys_user su ON bl.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON bl.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON bc.org_id = bo.organization_id
         <where>
             <if test="workOrderCode!=null and workOrderCode!=''">
                 and sw.work_order_code = #{workOrderCode}

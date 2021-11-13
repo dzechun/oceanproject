@@ -10,7 +10,7 @@
                  LEFT JOIN wms_out_delivery_order wodo ON wodod.delivery_order_id = wodo.delivery_order_id
                  LEFT JOIN base_material bm ON wodod.material_id = bm.material_id
                  LEFT JOIN base_supplier bs ON wodo.customer_id = bs.supplier_id
-                 LEFT JOIN ocean_v2.sys_user su ON wodo.modified_user_id = su.user_id
+                 LEFT JOIN sys_user su ON wodo.modified_user_id = su.user_id
         <where>
             wodo.order_type_id=8 AND wodod.packing_qty>0
             <if test="professionName!=null and professionName!=''">

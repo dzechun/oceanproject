@@ -60,10 +60,10 @@
     select  <include refid="Base_Column_List"></include>,
     u.user_name as createUserName, s.user_name as modifiedUserName,
     bo.organization_name
-    from fantech_imes_v2.base_ht_warehouse shw
-    left join ocean_v2.sys_user u on shw.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on shw.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON shw.org_id = bo.organization_id
+    from base_ht_warehouse shw
+    left join sys_user u on shw.create_user_id=u.user_id
+    left join sys_user s on shw.modified_user_id=s.user_id
+    LEFT JOIN base_organization bo ON shw.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(shw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

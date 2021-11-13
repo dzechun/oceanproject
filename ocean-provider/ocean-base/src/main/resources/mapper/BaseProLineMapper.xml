@@ -48,12 +48,12 @@
         ws.work_shop_name as workShopName,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.base_pro_line spl
-        left join ocean_v2.sys_user u on spl.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on spl.modified_user_id=s.user_id
-        left join fantech_imes_v2.base_factory f on spl.factory_id=f.factory_id
-        left join fantech_imes_v2.base_work_shop ws on spl.work_shop_id= ws.work_shop_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON spl.org_id = bo.organization_id
+        from base_pro_line spl
+        left join sys_user u on spl.create_user_id=u.user_id
+        left join sys_user s on spl.modified_user_id=s.user_id
+        left join base_factory f on spl.factory_id=f.factory_id
+        left join base_work_shop ws on spl.work_shop_id= ws.work_shop_id
+        LEFT JOIN base_organization bo ON spl.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(spl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

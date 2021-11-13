@@ -97,9 +97,9 @@ wivd.option3
     LEFT JOIN base_material bm ON wivd.material_id = bm.material_id
     LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wivd.inventory_status_id
     LEFT JOIN base_supplier bss on bss.supplier_id = wivd.supplier_id
-    left join ocean_v2.sys_user s  ON wivd.stock_user_id = s.user_id
-    LEFT JOIN ocean_v2.sys_user su  ON wivd.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON wivd.modified_user_id = sus.user_id
+    left join sys_user s  ON wivd.stock_user_id = s.user_id
+    LEFT JOIN sys_user su  ON wivd.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wivd.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wivd.org_id = bo.organization_id
     <where>
         <if test="stockOrderId !=null and stockOrderId!=''">

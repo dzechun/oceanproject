@@ -49,8 +49,8 @@
     SELECT<include refid="BaseColumnList"/>
     FROM esop_wi_quality_standards ewqs
     LEFT JOIN esop_work_instruction ewi ON ewqs.work_instruction_id = ewi.work_instruction_id
-    LEFT JOIN ocean_v2.sys_user su ON ewqs.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON ewqs.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su ON ewqs.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON ewqs.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON ewqs.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">

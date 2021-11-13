@@ -55,12 +55,12 @@
     bm.material_code,bm.material_name,bm.material_desc,bm.material_version,bmt.material_property,
     su.user_name as create_user_name,
     sus.user_name as modified_user_name,
-    bo.organization_name FROM fantech_imes_v2.base_production_key_issues bpki
-    left join fantech_imes_v2.base_material bm on bpki.material_id=bm.material_id
-    left join fantech_imes_v2.base_material_tab bmt on bm.material_id=bmt.material_id
-    left join ocean_v2.sys_user su ON bpki.create_user_id = su.user_id
-    left join ocean_v2.sys_user sus ON bpki.modified_user_id = sus.user_id
-    left join fantech_imes_v2.base_organization bo ON bpki.org_id = bo.organization_id
+    bo.organization_name FROM base_production_key_issues bpki
+    left join base_material bm on bpki.material_id=bm.material_id
+    left join base_material_tab bmt on bm.material_id=bmt.material_id
+    left join sys_user su ON bpki.create_user_id = su.user_id
+    left join sys_user sus ON bpki.modified_user_id = sus.user_id
+    left join base_organization bo ON bpki.org_id = bo.organization_id
     <where>
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')

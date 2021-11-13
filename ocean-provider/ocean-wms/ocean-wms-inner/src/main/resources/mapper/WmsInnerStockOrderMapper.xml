@@ -54,8 +54,8 @@ wiv.modified_time
     FROM wms_inner_stock_order wiv
     LEFT JOIN base_material_owner bmo ON wiv.material_owner_id=bmo.material_owner_id
     LEFT JOIN base_warehouse bw ON wiv.warehouse_id = bw.warehouse_id
-    LEFT JOIN ocean_v2.sys_user su  ON wiv.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON wiv.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su  ON wiv.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wiv.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wiv.org_id = bo.organization_id
     <where>
         <if test="materialOwnerName!=null and materialOwnerName!=''">

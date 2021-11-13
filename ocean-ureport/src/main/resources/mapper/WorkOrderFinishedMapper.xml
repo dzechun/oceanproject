@@ -44,7 +44,7 @@
             INNER JOIN
                 (select mpmp.package_manager_id from mes_package_manager mpmp
 	            INNER JOIN wms_out_delivery_order_pallet wodop ON mpmp.bar_code = wodop.pallet_code and wodop.status = 1) as mpmp ON mpm.parent_id = mpmp.package_manager_id) mpmp ON swo.work_order_id = mpmp.work_order_id
-        LEFT JOIN ocean_v2.sys_user osu ON mpm.create_user_id = osu.user_id
+        LEFT JOIN sys_user osu ON mpm.create_user_id = osu.user_id
         <where>
             <if test="supplierName != null and supplierName != ''">
                 and ss.supplier_name like CONCAT('%', #{supplierName}, '%')

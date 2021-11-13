@@ -37,24 +37,24 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    bhs.ht_staff_id, 
-	bhs.staff_id, 
-	bhs.team_id, 
-	bhs.staff_code, 
-	bhs.staff_name, 
-	bhs.staff_desc, 
-	bhs.identity_number, 
-	bhs.is_team_piecework, 
-	bhs.`status`, 
-	bhs.remark, 
+    bhs.ht_staff_id,
+	bhs.staff_id,
+	bhs.team_id,
+	bhs.staff_code,
+	bhs.staff_name,
+	bhs.staff_desc,
+	bhs.identity_number,
+	bhs.is_team_piecework,
+	bhs.`status`,
+	bhs.remark,
 	bhs.org_id,
-	bhs.create_user_id, 
-	bhs.create_time, 
-	bhs.modified_user_id, 
-	bhs.modified_time, 
+	bhs.create_user_id,
+	bhs.create_time,
+	bhs.modified_user_id,
+	bhs.modified_time,
 	bhs.is_delete
   </sql>
-  
+
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
       select
       <include refid="Base_Column_List"></include>,
@@ -62,12 +62,12 @@
       bt.team_code,bt.team_name,bt.team_desc,
       sws.work_shop_code,sws.work_shop_name,sws.work_shop_desc,
       sf.factory_code,sf.factory_name,sf.factory_desc
-      from fantech_imes_v2.base_ht_staff bhs
-      left join fantech_imes_v2.base_team bt on bhs.team_id = bt.team_id
-      left join fantech_imes_v2.base_work_shop sws on bt.work_shop_id = sws.work_shop_id
-      left join fantech_imes_v2.base_factory sf on sws.factory_id = sf.factory_id
-      left join ocean_v2.sys_user su on bhs.create_user_id = su.user_id
-      left join ocean_v2.sys_user sus on bhs.modified_user_id = sus.user_id
+      from base_ht_staff bhs
+      left join base_team bt on bhs.team_id = bt.team_id
+      left join base_work_shop sws on bt.work_shop_id = sws.work_shop_id
+      left join base_factory sf on sws.factory_id = sf.factory_id
+      left join sys_user su on bhs.create_user_id = su.user_id
+      left join sys_user sus on bhs.modified_user_id = sus.user_id
       <where>
           <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
               and date_format(bhs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

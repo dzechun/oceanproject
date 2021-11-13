@@ -73,10 +73,10 @@
     left join base_factory bf on en.factory_id=bf.factory_id
     left join base_work_shop bws on en.work_shop_id=bws.work_shop_id
     left join base_pro_line bpl on en.pro_line_id=bpl.pro_line_id
-    left join ocean_v2.sys_user su on en.audit_user_id=su.user_id
-    left join ocean_v2.sys_user u on en.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on en.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON en.org_id = bo.organization_id
+    left join sys_user su on en.audit_user_id=su.user_id
+    left join sys_user u on en.create_user_id=u.user_id
+    left join sys_user s on en.modified_user_id=s.user_id
+    left join base_organization bo ON en.org_id = bo.organization_id
     <where>
       <if test="newsCode != null and newsCode!=''">
         and en.news_code like CONCAT('%', #{newsCode}, '%')

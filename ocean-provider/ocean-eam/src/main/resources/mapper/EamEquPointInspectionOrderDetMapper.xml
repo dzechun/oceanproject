@@ -59,10 +59,10 @@
     s.user_name as modified_user_name,
     bo.organization_name
     from eam_equ_point_inspection_order_det eepiod
-    left join fantech_imes_v2.eam_equ_point_inspection_project_item eepipi on eepiod.equ_point_inspection_project_item_id=eepipi.equ_point_inspection_project_item_id
-    left join ocean_v2.sys_user u on eepiod.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eepiod.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON eepiod.org_id = bo.organization_id
+    left join eam_equ_point_inspection_project_item eepipi on eepiod.equ_point_inspection_project_item_id=eepipi.equ_point_inspection_project_item_id
+    left join sys_user u on eepiod.create_user_id=u.user_id
+    left join sys_user s on eepiod.modified_user_id=s.user_id
+    left join base_organization bo ON eepiod.org_id = bo.organization_id
     <where>
       <if test="orderIds != null and orderIds.size() > 0">
         and eepiod.equ_point_inspection_order_id

@@ -41,8 +41,8 @@
     bwa.working_area_code as working_area_code,
     bs.storage_code as storageCode, bs.storage_name as storageName
     from tem_vehicle tv
-    LEFT JOIN ocean_v2.sys_user suc ON tv.create_user_id = suc.user_id
-    LEFT JOIN ocean_v2.sys_user sum ON tv.modified_user_id = sum.user_id
+    LEFT JOIN sys_user suc ON tv.create_user_id = suc.user_id
+    LEFT JOIN sys_user sum ON tv.modified_user_id = sum.user_id
     LEFT JOIN base_storage_task_point bstp ON tv.storage_task_point_id = bstp.storage_task_point_id
     LEFT JOIN base_storage bs ON bstp.storage_id = bs.storage_id
     LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id

@@ -56,10 +56,10 @@
     s.user_name as modified_user_name,
     bo.organization_name
     from eng_logistics_record lr
-    left join ocean_v2.sys_user su on lr.receive_user_id=su.user_id
-    left join ocean_v2.sys_user u on lr.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on lr.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON lr.org_id = bo.organization_id
+    left join sys_user su on lr.receive_user_id=su.user_id
+    left join sys_user u on lr.create_user_id=u.user_id
+    left join sys_user s on lr.modified_user_id=s.user_id
+    left join base_organization bo ON lr.org_id = bo.organization_id
     <where>
       <if test="contractQtyOrderId!=null">
         and lr.contract_qty_order_id = #{contractQtyOrderId}

@@ -65,11 +65,11 @@
     select <include refid="Base_Column_List"></include>,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name,bmo.material_owner_name
-    from fantech_imes_v2.base_consignee bc
-    left join fantech_imes_v2.base_material_owner bmo on bc.material_owner_id=bmo.material_owner_id
-    left join ocean_v2.sys_user u on bc.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bc.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON bc.org_id = bo.organization_id
+    from base_consignee bc
+    left join base_material_owner bmo on bc.material_owner_id=bmo.material_owner_id
+    left join sys_user u on bc.create_user_id=u.user_id
+    left join sys_user s on bc.modified_user_id=s.user_id
+    left join base_organization bo ON bc.org_id = bo.organization_id
     <where>
       <if test="consigneeCode != null and consigneeCode!=''">
         and bc.consignee_code like CONCAT('%', #{consigneeCode}, '%')

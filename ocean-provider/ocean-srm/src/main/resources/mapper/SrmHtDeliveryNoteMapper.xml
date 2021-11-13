@@ -49,8 +49,8 @@
 
   <select id="findList" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>, bo.organization_name
-    from fantech_imes_v2.srm_ht_delivery_note shdn
-    LEFT JOIN fantech_imes_v2.base_organization bo ON shdn.organization_id = bo.organization_id
+    from srm_ht_delivery_note shdn
+    LEFT JOIN base_organization bo ON shdn.organization_id = bo.organization_id
     <where>
       <if test="asnCode != null and asnCode != ''">
         and shdn.asn_code like CONCAT('%', #{asnCode}, '%')

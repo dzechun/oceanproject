@@ -51,10 +51,10 @@
     sf.factory_name,sf.factory_code,
     u.user_name as createUserName,
     s.user_name as modifiedUserName
-    from fantech_imes_v2.base_dept sd
-    left join ocean_v2.sys_user u on sd.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on sd.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_factory sf on sd.factory_id=sf.factory_id
+    from base_dept sd
+    left join sys_user u on sd.create_user_id=u.user_id
+    left join sys_user s on sd.modified_user_id=s.user_id
+    left join base_factory sf on sd.factory_id=sf.factory_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -92,15 +92,15 @@
     sf.factory_name,
     u.user_name as createUserName,
     s.user_name as modifiedUserName
-    from fantech_imes_v2.base_dept sd
-    left join ocean_v2.sys_user u on sd.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on sd.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_factory sf on sd.factory_id=sf.factory_id
+    from base_dept sd
+    left join sys_user u on sd.create_user_id=u.user_id
+    left join sys_user s on sd.modified_user_id=s.user_id
+    left join base_factory sf on sd.factory_id=sf.factory_id
     where sd.parent_id=#{parentId}
   </select>
 
   <!--<select id="findList_COUNT" parameterType="map" resultType="Long">
-    select count(sd.dept_id) from fantech_imes_v2.base_dept sd
+    select count(sd.dept_id) from base_dept sd
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

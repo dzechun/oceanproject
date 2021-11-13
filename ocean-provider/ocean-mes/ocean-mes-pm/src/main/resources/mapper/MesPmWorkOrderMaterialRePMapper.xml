@@ -53,8 +53,8 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,bm.material_code,bm.material_name,bm.material_version,sbm.material_code AS 'sub_material_code'
     from mes_pm_work_order_material_re_p mpwomrp
-    LEFT JOIN ocean_v2.sys_user su ON mpwomrp.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON mpwomrp.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su ON mpwomrp.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON mpwomrp.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON mpwomrp.org_id = bo.organization_id
     LEFT JOIN base_material bm ON bm.material_id = mpwomrp.material_id
     LEFT JOIN base_material sbm ON sbm.material_id = mpwomrp.sub_material_id

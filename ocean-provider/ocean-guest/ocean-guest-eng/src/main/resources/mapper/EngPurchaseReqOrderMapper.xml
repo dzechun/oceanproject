@@ -77,10 +77,10 @@
     bo.organization_name,
     bm.material_desc
     from eng_purchase_req_order ecqo
-    left join fantech_imes_v2.base_material bm on ecqo.material_code=bm.material_code
-    left join ocean_v2.sys_user u on ecqo.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ecqo.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ecqo.org_id = bo.organization_id
+    left join base_material bm on ecqo.material_code=bm.material_code
+    left join sys_user u on ecqo.create_user_id=u.user_id
+    left join sys_user s on ecqo.modified_user_id=s.user_id
+    left join base_organization bo ON ecqo.org_id = bo.organization_id
     <where>
       <if test="purchaseReqOrderCode != null and purchaseReqOrderCode!=''">
         and ecqo.purchase_req_order_code like CONCAT('%', #{purchaseReqOrderCode}, '%')

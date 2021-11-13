@@ -53,11 +53,11 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_jig_maintain_project ehjmp
-    left join fantech_imes_v2.eam_jig_category ejc ON ehjmp.jig_category_id = ejc.jig_category_id
-    left join ocean_v2.sys_user u on ehjmp.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehjmp.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehjmp.org_id = bo.organization_id
+    from eam_ht_jig_maintain_project ehjmp
+    left join eam_jig_category ejc ON ehjmp.jig_category_id = ejc.jig_category_id
+    left join sys_user u on ehjmp.create_user_id=u.user_id
+    left join sys_user s on ehjmp.modified_user_id=s.user_id
+    left join base_organization bo ON ehjmp.org_id = bo.organization_id
     <where>
       <if test="jigMaintainProjectCode != null and jigMaintainProjectCode!=''">
         and ehjmp.jig_maintain_project_code like CONCAT('%', #{jigMaintainProjectCode}, '%')

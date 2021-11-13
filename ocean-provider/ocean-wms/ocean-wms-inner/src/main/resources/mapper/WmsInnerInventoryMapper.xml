@@ -117,8 +117,8 @@ wii.option5
     LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
     LEFT JOIN base_material bm ON wii.material_id = bm.material_id
     LEFT JOIN base_supplier bss ON wii.supplier_id = bss.supplier_id
-    LEFT JOIN ocean_v2.sys_user su  ON wii.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON wii.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su  ON wii.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wii.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wii.org_id = bo.organization_id
     LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wii.inventory_status_id
     <where>

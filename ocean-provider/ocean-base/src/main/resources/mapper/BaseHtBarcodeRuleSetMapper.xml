@@ -29,10 +29,10 @@
         shbrs.ht_barcode_rule_set_id,shbrs.barcode_rule_set_id,shbrs.barcode_rule_set_code,shbrs.barcode_rule_set_name,shbrs.barcode_rule_set_desc,shbrs.status,shbrs.create_user_id,
         u.user_name as create_user_name,shbrs.create_time,shbrs.modified_user_id,s.user_name as
         modified_user_name,shbrs.modified_time,shbrs.is_delete, shbrs.org_id, shbrs.remark, bo.organization_name
-        from fantech_imes_v2.base_ht_barcode_rule_set shbrs
-        left join ocean_v2.sys_user u on shbrs.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on shbrs.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON shbrs.org_id = bo.organization_id
+        from base_ht_barcode_rule_set shbrs
+        left join sys_user u on shbrs.create_user_id=u.user_id
+        left join sys_user s on shbrs.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON shbrs.org_id = bo.organization_id
         <where>
             1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

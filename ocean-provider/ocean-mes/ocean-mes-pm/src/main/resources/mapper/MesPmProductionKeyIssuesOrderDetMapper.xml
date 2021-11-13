@@ -55,11 +55,11 @@
     bpkid.judge_type,bpkid.if_must_pass,
     su.user_name as create_user_name,
     sus.user_name as modified_user_name,
-    bo.organization_name FROM fantech_imes_v2.mes_pm_production_key_issues_order_det mppkiod
-    left join fantech_imes_v2.base_production_key_issues_det bpkid on mppkiod.production_key_issues_det_id=bpkid.production_key_issues_det_id
-    left join ocean_v2.sys_user su ON mppkiod.create_user_id = su.user_id
-    left join ocean_v2.sys_user sus ON mppkiod.modified_user_id = sus.user_id
-    left join fantech_imes_v2.base_organization bo ON mppkiod.org_id = bo.organization_id
+    bo.organization_name FROM mes_pm_production_key_issues_order_det mppkiod
+    left join base_production_key_issues_det bpkid on mppkiod.production_key_issues_det_id=bpkid.production_key_issues_det_id
+    left join sys_user su ON mppkiod.create_user_id = su.user_id
+    left join sys_user sus ON mppkiod.modified_user_id = sus.user_id
+    left join base_organization bo ON mppkiod.org_id = bo.organization_id
     <where>
       <if test="productionKeyIssuesOrderId!=null">
         and mppkiod.production_key_issues_order_id = #{productionKeyIssuesOrderId}

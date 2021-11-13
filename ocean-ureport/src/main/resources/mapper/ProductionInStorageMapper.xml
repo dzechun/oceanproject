@@ -54,7 +54,7 @@
                  LEFT JOIN base_storage bs ON wijod.in_storage_id = bs.storage_id
                  LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
                  LEFT JOIN base_material bm ON wijod.material_id = bm.material_id
-                 LEFT JOIN fantech_imes_v2.base_organization bo ON wijod.org_id = bo.organization_id,(SELECT @i:=0)j
+                 LEFT JOIN base_organization bo ON wijod.org_id = bo.organization_id,(SELECT @i:=0)j
         <where>
             wiao.order_type_id = 4 AND wijo.order_type_id=4 AND wijo.order_status=5
             <if test="warehouseId!=null and warehouseId!=''">
@@ -106,7 +106,7 @@
         LEFT JOIN base_storage bs ON wijod.in_storage_id = bs.storage_id
         LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
         LEFT JOIN base_material bm ON wijod.material_id = bm.material_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON wijod.org_id = bo.organization_id,(SELECT @i:=0)j
+        LEFT JOIN base_organization bo ON wijod.org_id = bo.organization_id,(SELECT @i:=0)j
         <where>
             wiao.order_type_id = 4 AND wijo.order_type_id=4 AND wijo.order_status=5
             <if test="warehouseId!=null and warehouseId!=''">
@@ -167,7 +167,7 @@
                  LEFT JOIN base_storage bs ON wijod.in_storage_id = bs.storage_id
                  LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
                  LEFT JOIN base_material bm ON wijod.material_id = bm.material_id
-                LEFT JOIN fantech_imes_v2.base_organization bo ON wijod.org_id = bo.organization_id,(SELECT @i:=0)j
+                LEFT JOIN base_organization bo ON wijod.org_id = bo.organization_id,(SELECT @i:=0)j
         <where>
             wiao.order_type_id = 4 AND wijo.order_type_id=4 AND wijod.order_status=5 AND wiid.barcode IS NOT NULL
             <if test="warehouseId!=null and warehouseId!=''">

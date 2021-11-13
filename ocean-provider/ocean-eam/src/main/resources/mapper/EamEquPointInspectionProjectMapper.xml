@@ -58,9 +58,9 @@
     bo.organization_name
     from eam_equ_point_inspection_project eepip
     LEFT JOIN eam_equipment_category eec ON eepip.equipment_category_id = eec.equipment_category_id
-    left join ocean_v2.sys_user u on eepip.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on eepip.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON eepip.org_id = bo.organization_id
+    left join sys_user u on eepip.create_user_id=u.user_id
+    left join sys_user s on eepip.modified_user_id=s.user_id
+    left join base_organization bo ON eepip.org_id = bo.organization_id
     <where>
       <if test="equipmentCategoryId != null">
         and eepip.equipment_category_id = #{equipmentCategoryId}

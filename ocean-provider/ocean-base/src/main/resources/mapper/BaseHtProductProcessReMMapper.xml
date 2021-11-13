@@ -56,13 +56,13 @@
     bhws.section_name,bhpc.process_category_name,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_ht_product_process_re_m bhpprm
-    left join fantech_imes_v2.base_process bhp on bhpprm.process_id=bhp.process_id
-    left join fantech_imes_v2.base_workshop_section bhws on bhws.section_id=bhp.section_id
-    left join fantech_imes_v2.base_process_category bhpc on bhpc.process_category_id=bhp.process_category_id
-    left join ocean_v2.sys_user u on bhpprm.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bhpprm.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bhpprm.org_id = bo.organization_id
+    from base_ht_product_process_re_m bhpprm
+    left join base_process bhp on bhpprm.process_id=bhp.process_id
+    left join base_workshop_section bhws on bhws.section_id=bhp.section_id
+    left join base_process_category bhpc on bhpc.process_category_id=bhp.process_category_id
+    left join sys_user u on bhpprm.create_user_id=u.user_id
+    left join sys_user s on bhpprm.modified_user_id=s.user_id
+    LEFT JOIN base_organization bo ON bhpprm.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhpprm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

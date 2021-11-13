@@ -52,13 +52,13 @@
         select <include refid="Base_Column_List"></include>,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.base_supplier ss
-        left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
+        from base_supplier ss
+        left join sys_user u on ss.create_user_id=u.user_id
+        left join sys_user s on ss.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON ss.org_id = bo.organization_id
         <if test="addressDetail!=null and addressDetail!=''">
-            LEFT JOIN fantech_imes_v2.base_supplier_address ssa ON ssa.supplier_id = ss.supplier_id
-            LEFT JOIN fantech_imes_v2.base_address sa ON sa.address_id = ssa.address_id
+            LEFT JOIN base_supplier_address ssa ON ssa.supplier_id = ss.supplier_id
+            LEFT JOIN base_address sa ON sa.address_id = ssa.address_id
         </if>
         <where>
             <if test="userId!=null and orgId!=null and supplierType==1">
@@ -100,10 +100,10 @@
         select <include refid="Base_Column_List"></include>,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.base_supplier ss
-        left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
+        from base_supplier ss
+        left join sys_user u on ss.create_user_id=u.user_id
+        left join sys_user s on ss.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON ss.org_id = bo.organization_id
         <where>
             <if test="materialCode!=null and materialCode!=''">
                 and ss.supplier_id in

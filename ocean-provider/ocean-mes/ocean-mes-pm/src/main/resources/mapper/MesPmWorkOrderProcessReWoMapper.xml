@@ -54,8 +54,8 @@
     bp.process_code,bp.process_name,bp.process_desc,bws.section_name,bpc.process_category_name,mpwo.work_order_code,
     bm.material_code,bm.material_desc,bm.material_version
     from mes_pm_work_order_process_re_wo mpwoprw
-    LEFT JOIN ocean_v2.sys_user su ON mpwoprw.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON mpwoprw.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su ON mpwoprw.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON mpwoprw.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON mpwoprw.org_id = bo.organization_id
     LEFT JOIN mes_pm_work_order mpwo ON mpwoprw.work_order_id = mpwo.work_order_id
     LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id

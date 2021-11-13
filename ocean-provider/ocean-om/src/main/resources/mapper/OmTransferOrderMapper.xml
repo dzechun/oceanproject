@@ -69,8 +69,8 @@ oto.option3
                   LEFT JOIN base_material_owner bmo ON oto.material_owner_id = bmo.material_owner_id
                   LEFT JOIN base_warehouse bw ON oto.out_warehouse_id = bw.warehouse_id
                   LEFT JOIN base_warehouse bw1 ON oto.in_warehouse_id = bw1.warehouse_id
-                  left join ocean_v2.sys_user su on oto.create_user_id = su.user_id
-                  left join ocean_v2.sys_user sus on oto.modified_user_id = sus.user_id
+                  left join sys_user su on oto.create_user_id = su.user_id
+                  left join sys_user sus on oto.modified_user_id = sus.user_id
                   left join base_organization bo on oto.org_id = bo.organization_id
 <where>
     <if test="orgId!=null and orgId!=''">

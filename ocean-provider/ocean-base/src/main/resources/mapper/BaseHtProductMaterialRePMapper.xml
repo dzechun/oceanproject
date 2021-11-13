@@ -55,11 +55,11 @@
     bm.material_code,bm.material_desc,bm.material_version,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_ht_product_material_re_p bhpmrp
-    left join fantech_imes_v2.base_ht_material bm on bhpmrp.material_id=bm.material_id
-    left join ocean_v2.sys_user u on bhpmrp.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bhpmrp.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON bhpmrp.org_id = bo.organization_id
+    from base_ht_product_material_re_p bhpmrp
+    left join base_ht_material bm on bhpmrp.material_id=bm.material_id
+    left join sys_user u on bhpmrp.create_user_id=u.user_id
+    left join sys_user s on bhpmrp.modified_user_id=s.user_id
+    LEFT JOIN base_organization bo ON bhpmrp.org_id = bo.organization_id
     <where>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(bhpmrp.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

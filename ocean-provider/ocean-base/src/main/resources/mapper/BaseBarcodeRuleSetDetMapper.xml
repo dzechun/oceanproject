@@ -34,12 +34,12 @@
         ssi.spec_name as barcode_rule_category_name,sbrsd.create_user_id, u.user_name as
         create_user_name,sbrsd.create_time,sbrsd.modified_user_id,
         s.user_name as modified_user_name,sbrsd.modified_time,sbrsd.is_delete, sbrsd.org_id, sbrsd.remark, bo.organization_name
-        from fantech_imes_v2.base_barcode_rule_set_det sbrsd
-        left join fantech_imes_v2.base_barcode_rule sbr on sbrsd.barcode_rule_id=sbr.barcode_rule_id
-        left join ocean_v2.sys_spec_item ssi on sbr.barcode_rule_category_id=ssi.spec_id
-        left join ocean_v2.sys_user u on sbrsd.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on sbrsd.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON sbrsd.org_id = bo.organization_id
+        from base_barcode_rule_set_det sbrsd
+        left join base_barcode_rule sbr on sbrsd.barcode_rule_id=sbr.barcode_rule_id
+        left join sys_spec_item ssi on sbr.barcode_rule_category_id=ssi.spec_id
+        left join sys_user u on sbrsd.create_user_id=u.user_id
+        left join sys_user s on sbrsd.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON sbrsd.org_id = bo.organization_id
         <where>
             1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

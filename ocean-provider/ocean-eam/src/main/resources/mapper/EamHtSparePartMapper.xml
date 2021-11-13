@@ -81,15 +81,15 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_spare_part ehsp
-    left join fantech_imes_v2.eam_spare_part_category espc on ehsp.spare_part_category_id=espc.spare_part_category_id
-    left join fantech_imes_v2.base_warehouse bw on ehsp.warehouse_id=bw.warehouse_id
-    left join fantech_imes_v2.base_warehouse_area bwa on ehsp.warehouse_area_id=bwa.warehouse_area_id
-    left join fantech_imes_v2.base_working_area bwo on ehsp.working_area_id=bwo.working_area_id
-    left join fantech_imes_v2.base_storage bs on ehsp.storage_id=bs.storage_id
-    left join ocean_v2.sys_user u on ehsp.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehsp.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehsp.org_id = bo.organization_id
+    from eam_ht_spare_part ehsp
+    left join eam_spare_part_category espc on ehsp.spare_part_category_id=espc.spare_part_category_id
+    left join base_warehouse bw on ehsp.warehouse_id=bw.warehouse_id
+    left join base_warehouse_area bwa on ehsp.warehouse_area_id=bwa.warehouse_area_id
+    left join base_working_area bwo on ehsp.working_area_id=bwo.working_area_id
+    left join base_storage bs on ehsp.storage_id=bs.storage_id
+    left join sys_user u on ehsp.create_user_id=u.user_id
+    left join sys_user s on ehsp.modified_user_id=s.user_id
+    left join base_organization bo ON ehsp.org_id = bo.organization_id
     <where>
       <if test="sparePartCode != null and sparePartCode!= ''">
         and ehsp.spare_part_code like CONCAT('%',  #{sparePartCode},'%')

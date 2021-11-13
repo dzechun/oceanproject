@@ -56,14 +56,14 @@
         'materialVersion',bmo.material_owner_name as 'materialOwnerName',
         su.user_name
         create_user_name,sus.user_name as modified_user_name, bo.organization_name
-        FROM fantech_imes_v2.base_safe_stock os
-        LEFT JOIN fantech_imes_v2.base_material_owner bmo ON os.material_owner_id=bmo.material_owner_id
-        LEFT JOIN fantech_imes_v2.base_warehouse sw ON os.warehouse_id=sw.warehouse_id
-        LEFT JOIN fantech_imes_v2.base_material_category smc ON os.material_category_id = smc.material_category_id
-        LEFT JOIN fantech_imes_v2.base_material sm ON os.material_id = sm.material_id
-        LEFT JOIN ocean_v2.sys_user su ON os.create_user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user sus ON os.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON os.org_id = bo.organization_id
+        FROM base_safe_stock os
+        LEFT JOIN base_material_owner bmo ON os.material_owner_id=bmo.material_owner_id
+        LEFT JOIN base_warehouse sw ON os.warehouse_id=sw.warehouse_id
+        LEFT JOIN base_material_category smc ON os.material_category_id = smc.material_category_id
+        LEFT JOIN base_material sm ON os.material_id = sm.material_id
+        LEFT JOIN sys_user su ON os.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON os.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON os.org_id = bo.organization_id
         <where>
             <if test="warehouseId != null">
                 and sw.warehouse_id = #{warehouseId}
@@ -102,10 +102,10 @@
         order by os.create_time desc
     </select>
     <select id="selectCountByWare" resultType="java.math.BigDecimal">
-        SELECT sum(ssi.quantity) FROM fantech_imes_v2.base_storage_inventory ssi
-        LEFT JOIN fantech_imes_v2.base_storage ss ON ssi.storage_id=ss.storage_id
-        LEFT JOIN fantech_imes_v2.base_warehouse_area wa ON ss.warehouse_area_id =wa.warehouse_area_id
-        LEFT JOIN fantech_imes_v2.base_warehouse sw ON wa.warehouse_id=sw.warehouse_id
+        SELECT sum(ssi.quantity) FROM base_storage_inventory ssi
+        LEFT JOIN base_storage ss ON ssi.storage_id=ss.storage_id
+        LEFT JOIN base_warehouse_area wa ON ss.warehouse_area_id =wa.warehouse_area_id
+        LEFT JOIN base_warehouse sw ON wa.warehouse_id=sw.warehouse_id
         <where>
             <if test="warehouseId != null">
                 and sw.warehouse_id = #{warehouseId}
@@ -117,9 +117,9 @@
     </select>
     <select id="selectCountByCate" resultType="java.math.BigDecimal">
         SELECT sum(ssi.quantity)
-        FROM fantech_imes_v2.base_storage_inventory ssi
-                 LEFT JOIN fantech_imes_v2.base_material_tab bt ON ssi.material_id = bt.material_id
-                 LEFT JOIN fantech_imes_v2.base_material_category smc ON bt.material_type = smc.material_category_id
+        FROM base_storage_inventory ssi
+                 LEFT JOIN base_material_tab bt ON ssi.material_id = bt.material_id
+                 LEFT JOIN base_material_category smc ON bt.material_type = smc.material_category_id
         WHERE smc.material_category_id = #{materialCategoryId}
     </select>
     <select id="selectCountByCode" resultType="java.math.BigDecimal">

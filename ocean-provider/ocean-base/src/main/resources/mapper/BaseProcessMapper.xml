@@ -61,12 +61,12 @@
         spc.process_category_name as processCategoryName,spc.process_category_code as processCategoryCode,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
-        from fantech_imes_v2.base_process sp
-        left join fantech_imes_v2.base_workshop_section sws on sp.section_id=sws.section_id
-        left join fantech_imes_v2.base_process_category spc on sp.process_category_id=spc.process_category_id
-        left join ocean_v2.sys_user u on sp.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on sp.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON sp.org_id = bo.organization_id
+        from base_process sp
+        left join base_workshop_section sws on sp.section_id=sws.section_id
+        left join base_process_category spc on sp.process_category_id=spc.process_category_id
+        left join sys_user u on sp.create_user_id=u.user_id
+        left join sys_user s on sp.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON sp.org_id = bo.organization_id
         <where>
             <if test="processId!=null">
                 and sp.process_id=#{processId}

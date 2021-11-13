@@ -62,13 +62,13 @@
         sml.material_code as sub_material_code, sp.process_name,
         u.user_name as create_user_name, s.user_name as modified_user_name,
         bo.organization_name
-        from fantech_imes_v2.base_ht_product_bom_det shpbd
-        left join fantech_imes_v2.base_material sm on shpbd.part_material_id=sm.material_id
-        left join fantech_imes_v2.base_material sml on shpbd.sub_material_id=sml.material_id
-        left join fantech_imes_v2.base_process sp on shpbd.process_id=sp.process_id
-        left join ocean_v2.sys_user u on shpbd.create_user_id=u.user_id
-        left join ocean_v2.sys_user s on shpbd.modified_user_id=s.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON shpbd.org_id = bo.organization_id
+        from base_ht_product_bom_det shpbd
+        left join base_material sm on shpbd.part_material_id=sm.material_id
+        left join base_material sml on shpbd.sub_material_id=sml.material_id
+        left join base_process sp on shpbd.process_id=sp.process_id
+        left join sys_user u on shpbd.create_user_id=u.user_id
+        left join sys_user s on shpbd.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON shpbd.org_id = bo.organization_id
         <where>
             1=1
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">

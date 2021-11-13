@@ -26,27 +26,27 @@
         select * from (
             select so.contract_code,ss.supplier_name,qpi.pda_inspection_code,swo.work_order_code,sm.material_code,spm.product_model_name,sm.material_desc,
                 mpm.bar_code AS pallet_code,mpm.total AS pallet_total,(
-                    select sum(qpid.inspection_quantity) from fantech_imes_v2.qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id
+                    select sum(qpid.inspection_quantity) from qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id
                 ) AS 'inspection_quantity',(
-                    select sum(qpid.qualified_quantity) from fantech_imes_v2.qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id
+                    select sum(qpid.qualified_quantity) from qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id
                 ) AS 'qualified_quantity',(
-                    select max(qpid.create_time) from fantech_imes_v2.qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id
+                    select max(qpid.create_time) from qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id
                 ) AS 'inspection_time',
                 su.user_name AS surveyor,(
-                    select  if(count(*)!=0,'不合格','合格') from fantech_imes_v2.qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id and
+                    select  if(count(*)!=0,'不合格','合格') from qms_pda_inspection_det qpid where qpid.pda_inspection_id = qpi.pda_inspection_id and
                     inspection_result in (0,2)
                 ) AS 'inspection_result',
                 qpi.feedback_time,ssu.user_name AS 'feedback_user_name',qpi.feedback_matters
-            from  fantech_imes_v2.qms_pda_inspection qpi
-            left join fantech_imes_v2.mes_package_manager mpm ON mpm.package_manager_id = qpi.package_manager_id
-            left join fantech_imes_v2.smt_work_order swo ON swo.work_order_id = mpm.work_order_id
-            left join fantech_imes_v2.smt_order so ON so.order_id = swo.order_id
-            left join fantech_imes_v2.smt_supplier ss ON ss.supplier_id = so.supplier_id
-            left join fantech_imes_v2.smt_material sm ON sm.material_id = swo.material_id
-            left join fantech_imes_v2.base_tab bt ON bt.material_id = sm.material_id
-            left join fantech_imes_v2.smt_product_model spm ON spm.product_model_id = bt.product_model_id
-            left join ocean_v2.sys_user su ON su.user_id = qpi.surveyor_id
-            left join ocean_v2.sys_user ssu ON ssu.user_id = qpi.feedback_user_id
+            from  qms_pda_inspection qpi
+            left join mes_package_manager mpm ON mpm.package_manager_id = qpi.package_manager_id
+            left join smt_work_order swo ON swo.work_order_id = mpm.work_order_id
+            left join smt_order so ON so.order_id = swo.order_id
+            left join smt_supplier ss ON ss.supplier_id = so.supplier_id
+            left join smt_material sm ON sm.material_id = swo.material_id
+            left join base_tab bt ON bt.material_id = sm.material_id
+            left join smt_product_model spm ON spm.product_model_id = bt.product_model_id
+            left join sys_user su ON su.user_id = qpi.surveyor_id
+            left join sys_user ssu ON ssu.user_id = qpi.feedback_user_id
         ) qa
         <where>
             <if test="contractCode != null and contractCode != ''">

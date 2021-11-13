@@ -73,8 +73,8 @@ oio.option3
     (SELECT IFNULL(SUM(bmb.gross_weight*oiod.order_qty),0) FROM om_other_in_order_det oiod left join base_material_tab bmb ON oiod.material_id = bmb.material_id where oiod.other_in_order_id = oio.other_in_order_id) as total_gross_weight
     FROM om_ht_other_in_order oio
     LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = oio.material_owner_id
-    left join ocean_v2.sys_user su on oio.create_user_id = su.user_id
-    left join ocean_v2.sys_user sus on oio.modified_user_id = sus.user_id
+    left join sys_user su on oio.create_user_id = su.user_id
+    left join sys_user sus on oio.modified_user_id = sus.user_id
     left join base_organization bo on oio.org_id = bo.organization_id
     <where>
       <if test="otherInOrderCode!=null and otherInOrderCode!=''">

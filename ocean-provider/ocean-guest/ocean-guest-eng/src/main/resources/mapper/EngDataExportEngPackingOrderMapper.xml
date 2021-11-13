@@ -54,7 +54,7 @@
     LEFT JOIN eng_packing_order epo ON epos.packing_order_id=epo.packing_order_id
     LEFT JOIN eng_packing_order_summary_det eposdet ON epos.packing_order_summary_id=eposdet.packing_order_summary_id
     LEFT JOIN base_material bm ON eposdet.material_id=bm.material_id
-    LEFT JOIN ocean_v2.sys_user ouser ON epos.create_user_id=ouser.user_id
+    LEFT JOIN sys_user ouser ON epos.create_user_id=ouser.user_id
     <where>
       <if test="packingOrderId!=null and packingOrderId!=''">
         and epos.packing_order_id = #{packingOrderId}

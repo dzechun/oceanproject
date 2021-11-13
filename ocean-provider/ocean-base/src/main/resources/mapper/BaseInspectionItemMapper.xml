@@ -47,10 +47,10 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_inspection_item bii
-    left join ocean_v2.sys_user u on bii.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bii.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo on bii.organization_id = bo.organization_id
+    from base_inspection_item bii
+    left join sys_user u on bii.create_user_id=u.user_id
+    left join sys_user s on bii.modified_user_id=s.user_id
+    left join base_organization bo on bii.organization_id = bo.organization_id
     <where>
       bii.inspection_item_type = 1
       <if test="inspectionItemCode!=null and inspectionItemCode!= ''">
@@ -77,10 +77,10 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_inspection_item bii
-    left join ocean_v2.sys_user u on bii.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bii.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo on bii.organization_id = bo.organization_id
+    from base_inspection_item bii
+    left join sys_user u on bii.create_user_id=u.user_id
+    left join sys_user s on bii.modified_user_id=s.user_id
+    left join base_organization bo on bii.organization_id = bo.organization_id
     <where>
       bii.inspection_item_type = 2
       <if test="inspectionItemCode!=null and inspectionItemCode!= ''">

@@ -25,10 +25,10 @@
     u.user_name as createUserName,sc.create_time,sc.modified_user_id,
     s.user_name as modifiedUserName, sc.modified_time,sc.is_delete, sc.org_id,
     sc.remark, bo.organization_name
-    from fantech_imes_v2.base_customer sc
-    left join ocean_v2.sys_user u on sc.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on sc.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON sc.org_id = bo.organization_id
+    from base_customer sc
+    left join sys_user u on sc.create_user_id=u.user_id
+    left join sys_user s on sc.modified_user_id=s.user_id
+    LEFT JOIN base_organization bo ON sc.org_id = bo.organization_id
     <where>
       <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
         AND date_format(sc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

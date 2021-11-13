@@ -55,11 +55,11 @@
     bm.material_code,bm.material_name,
     u.user_name as create_user_name, s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.base_storage_capacity bsc
-    left join fantech_imes_v2.base_material bm on bsc.material_id=bm.material_id
-    left join ocean_v2.sys_user u on bsc.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on bsc.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo on bsc.org_id = bo.organization_id
+    from base_storage_capacity bsc
+    left join base_material bm on bsc.material_id=bm.material_id
+    left join sys_user u on bsc.create_user_id=u.user_id
+    left join sys_user s on bsc.modified_user_id=s.user_id
+    left join base_organization bo on bsc.org_id = bo.organization_id
     <where>
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')

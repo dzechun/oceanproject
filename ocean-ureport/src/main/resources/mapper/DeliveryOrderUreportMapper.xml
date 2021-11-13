@@ -62,7 +62,7 @@
         LEFT JOIN smt_material m ON m.material_id = dod.material_id
         LEFT JOIN base_tab t ON t.material_id = dod.material_id
         LEFT JOIN smt_product_model pmo ON pmo.product_model_id = t.product_model_id
-        LEFT JOIN ocean_v2.sys_user s ON s.user_id = dod.modified_user_id
+        LEFT JOIN sys_user s ON s.user_id = dod.modified_user_id
         <where>
             <if test="warehouseName != null and warehouseName != ''">
                 and w.warehouse_name like CONCAT('%', #{warehouseName}, '%')

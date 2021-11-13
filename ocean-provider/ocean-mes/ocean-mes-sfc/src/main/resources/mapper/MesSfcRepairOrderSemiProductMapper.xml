@@ -52,10 +52,10 @@
     s.user_name as modified_user_name,
     bo.organization_name
     FROM mes_sfc_repair_order_semi_product msrosp
-    left join fantech_imes_v2.base_material bm ON msrosp.material_id = bm.material_id
-    left join ocean_v2.sys_user u on msrosp.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on msrosp.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON msrosp.org_id = bo.organization_id
+    left join base_material bm ON msrosp.material_id = bm.material_id
+    left join sys_user u on msrosp.create_user_id=u.user_id
+    left join sys_user s on msrosp.modified_user_id=s.user_id
+    left join base_organization bo ON msrosp.org_id = bo.organization_id
     <where>
       <if test="repairOrderId != null">
         and msrosp.repair_order_id = #{repairOrderId}

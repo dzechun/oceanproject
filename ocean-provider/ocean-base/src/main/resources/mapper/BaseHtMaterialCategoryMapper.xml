@@ -46,10 +46,10 @@
         select<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         bo.organization_name
-        from fantech_imes_v2.base_ht_material_category shmc
-        LEFT JOIN ocean_v2.sys_user su ON shmc.create_user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user sus ON shmc.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON shmc.org_id = bo.organization_id
+        from base_ht_material_category shmc
+        LEFT JOIN sys_user su ON shmc.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON shmc.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON shmc.org_id = bo.organization_id
         <where>
             <if test="materialCategoryCode != null and materialCategoryCode != ''">
                 and shmc.material_category_code like CONCAT('%', #{materialCategoryCode}, '%')

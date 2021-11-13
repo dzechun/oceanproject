@@ -64,14 +64,14 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_jig_point_inspection_order ejpio
-    left join fantech_imes_v2.eam_jig_point_inspection_project ejpip on ejpio.jig_point_inspection_project_id=ejpip.jig_point_inspection_project_id
-    left join fantech_imes_v2.eam_jig ej on ejpio.jig_id=ej.jig_id
-    left join fantech_imes_v2.eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
-    left join fantech_imes_v2.eam_jig_barcode ejb on ejpio.jig_barcode_id=ejb.jig_barcode_id
-    left join ocean_v2.sys_user u on ejpio.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ejpio.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ejpio.org_id = bo.organization_id
+    from eam_jig_point_inspection_order ejpio
+    left join eam_jig_point_inspection_project ejpip on ejpio.jig_point_inspection_project_id=ejpip.jig_point_inspection_project_id
+    left join eam_jig ej on ejpio.jig_id=ej.jig_id
+    left join eam_jig_category ejc on ej.jig_category_id=ejc.jig_category_id
+    left join eam_jig_barcode ejb on ejpio.jig_barcode_id=ejb.jig_barcode_id
+    left join sys_user u on ejpio.create_user_id=u.user_id
+    left join sys_user s on ejpio.modified_user_id=s.user_id
+    left join base_organization bo ON ejpio.org_id = bo.organization_id
     <where>
       <if test="jigPointInspectionOrderCode != null and jigPointInspectionOrderCode!=''">
         and ejpio.jig_point_inspection_order_code like CONCAT('%', #{jigPointInspectionOrderCode}, '%')

@@ -58,9 +58,9 @@
         modified_user_name,
         bo.organization_name
         FROM base_address sa
-        LEFT JOIN ocean_v2.sys_user su ON sa.create_user_id = su.user_id
-        LEFT JOIN ocean_v2.sys_user sus ON sa.modified_user_id = sus.user_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON sa.org_id = bo.organization_id
+        LEFT JOIN sys_user su ON sa.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON sa.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON sa.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(sa.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -95,14 +95,14 @@
 
     <select id="findBySupplierId" resultMap="BaseResultMapDto">
         select <include refid="Base_Column_List"></include>,ssa.if_default
-        from fantech_imes_v2.base_supplier_address ssa
-        LEFT JOIN fantech_imes_v2.base_address sa ON sa.address_id = ssa.address_id
+        from base_supplier_address ssa
+        LEFT JOIN base_address sa ON sa.address_id = ssa.address_id
         where ssa.supplier_id =#{supplierId}
     </select>
 
     <select id="findDelete" resultType="long">
         select ssa.supplier_address_id
-        from fantech_imes_v2.base_supplier_address ssa where ssa.supplier_id = #{supplierId}
+        from base_supplier_address ssa where ssa.supplier_id = #{supplierId}
         <foreach collection="list" index="index" item="item" open="and ssa.address_id not in (" close=")" separator=",">
             <if test="item.addressId != null and item.addressId != ''">
                 #{item.addressId}
@@ -114,18 +114,18 @@
     <select id="findAdd" resultMap="BaseResultMapDto">
         select
         <include refid="Base_Column_List"></include>
-        from fantech_imes_v2.base_address sa
+        from base_address sa
         <where>
             sa.address_id in (
             select ssa.address_id
-            from fantech_imes_v2.base_supplier_address ssa where ssa.supplier_id = #{supplierId}
+            from base_supplier_address ssa where ssa.supplier_id = #{supplierId}
             )
         </where>
     </select>
 
     <update id="batchUpdate" parameterType="java.util.List">
         <foreach collection="list" item="item" separator=";">
-            update fantech_imes_v2.base_address sa set
+            update base_address sa set
             sa.province_code = #{item.provinceCode},
             sa.city_code = #{item.cityCode},
             sa.classify_code = #{item.classifyCode},

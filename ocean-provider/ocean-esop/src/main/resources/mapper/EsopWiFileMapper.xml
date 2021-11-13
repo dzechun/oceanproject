@@ -46,8 +46,8 @@
     SELECT<include refid="BaseColumnList"/>
     FROM esop_wi_file ewf
     LEFT JOIN esop_work_instruction ewi ON ewf.work_instruction_id = ewi.work_instruction_id
-    LEFT JOIN ocean_v2.sys_user su ON ewf.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON ewf.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su ON ewf.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON ewf.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON ewf.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">

@@ -52,8 +52,8 @@
     select <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
     bo.organization_name,bss.sample_standard_name
     FROM base_sample_plan AS bsp
-    LEFT JOIN ocean_v2.sys_user su ON bsp.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON bsp.modified_user_id = sus.user_id
+    LEFT JOIN sys_user su ON bsp.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON bsp.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON bsp.org_id = bo.organization_id
     LEFT JOIN base_sample_standard bss ON bss.sample_standard_id = bsp.sample_standard_id
     <where>

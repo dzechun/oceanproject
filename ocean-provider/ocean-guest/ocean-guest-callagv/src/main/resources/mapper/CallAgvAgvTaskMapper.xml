@@ -64,12 +64,12 @@
     sus.user_name AS modified_user_name,
     bo.organization_name
     from call_agv_agv_task caat
-    LEFT JOIN fantech_imes_v2.base_storage_task_point sstp ON caat.start_storage_task_point_id = sstp.storage_task_point_id
-    LEFT JOIN fantech_imes_v2.base_storage_task_point estp ON caat.end_storage_task_point_id = estp.storage_task_point_id
-    LEFT JOIN fantech_imes_v2.tem_vehicle tv ON caat.vehicle_id = tv.vehicle_id
-    LEFT JOIN ocean_v2.sys_user su ON caat.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON caat.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON caat.org_id = bo.organization_id
+    LEFT JOIN base_storage_task_point sstp ON caat.start_storage_task_point_id = sstp.storage_task_point_id
+    LEFT JOIN base_storage_task_point estp ON caat.end_storage_task_point_id = estp.storage_task_point_id
+    LEFT JOIN tem_vehicle tv ON caat.vehicle_id = tv.vehicle_id
+    LEFT JOIN sys_user su ON caat.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON caat.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON caat.org_id = bo.organization_id
     <where>
       <if test="operateType != null">
         and caat.operate_type = #{operateType}

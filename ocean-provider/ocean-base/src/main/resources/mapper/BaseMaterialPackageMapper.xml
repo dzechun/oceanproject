@@ -44,11 +44,11 @@
         sm.material_code, sm.material_desc,sm.material_name, sm.material_version,
         sp.process_name,
         sbr.barcode_rule
-        from fantech_imes_v2.base_material_package smp
-        left join fantech_imes_v2.base_material sm on smp.material_id = sm.material_id
-        left join fantech_imes_v2.base_process sp on smp.process_id = sp.process_id
-        left join fantech_imes_v2.base_barcode_rule sbr on smp.barcode_rule_id = sbr.barcode_rule_id
-        left join fantech_imes_v2.base_packing_unit spu on smp.packing_unit_id = spu.packing_unit_id
+        from base_material_package smp
+        left join base_material sm on smp.material_id = sm.material_id
+        left join base_process sp on smp.process_id = sp.process_id
+        left join base_barcode_rule sbr on smp.barcode_rule_id = sbr.barcode_rule_id
+        left join base_packing_unit spu on smp.packing_unit_id = spu.packing_unit_id
         <where>
             <if test="packageSpecificationId!= null">
                 and smp.package_specification_id = #{packageSpecificationId}

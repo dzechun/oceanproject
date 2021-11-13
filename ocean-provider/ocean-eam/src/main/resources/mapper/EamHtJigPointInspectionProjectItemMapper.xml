@@ -55,10 +55,10 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.eam_ht_jig_point_inspection_project_item ehjpipi
-    left join ocean_v2.sys_user u on ehjpipi.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on ehjpipi.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON ehjpipi.org_id = bo.organization_id
+    from eam_ht_jig_point_inspection_project_item ehjpipi
+    left join sys_user u on ehjpipi.create_user_id=u.user_id
+    left join sys_user s on ehjpipi.modified_user_id=s.user_id
+    left join base_organization bo ON ehjpipi.org_id = bo.organization_id
     <where>
       <if test="jigPointInspectionProjectId != null">
         and ehjpipi.jig_point_inspection_project_id = #{jigPointInspectionProjectId}

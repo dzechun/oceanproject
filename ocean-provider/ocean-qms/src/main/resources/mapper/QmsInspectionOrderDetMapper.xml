@@ -78,12 +78,12 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.qms_inspection_order_det qiod
-    left join fantech_imes_v2.base_inspection_standard_det bisd on qiod.inspection_standard_det_id=bisd.inspection_standard_det_id
-    left join fantech_imes_v2.base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
-    left join ocean_v2.sys_user u on qiod.create_user_id=u.user_id
-    left join ocean_v2.sys_user s on qiod.modified_user_id=s.user_id
-    left join fantech_imes_v2.base_organization bo ON qiod.org_id = bo.organization_id
+    from qms_inspection_order_det qiod
+    left join base_inspection_standard_det bisd on qiod.inspection_standard_det_id=bisd.inspection_standard_det_id
+    left join base_sample_process bsp on bisd.sample_process_id=bsp.sample_process_id
+    left join sys_user u on qiod.create_user_id=u.user_id
+    left join sys_user s on qiod.modified_user_id=s.user_id
+    left join base_organization bo ON qiod.org_id = bo.organization_id
     <where>
       <if test="inspectionOrderId != null">
         and qiod.inspection_order_id = #{inspectionOrderId}
