@@ -423,8 +423,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             callAgvVehicleLog.setOperatorType((byte) 5);
             callAgvVehicleLog.setRemark("移出货架");
 
-            BaseStorageTaskPoint baseStorageTaskPoint = new BaseStorageTaskPoint();
-            baseStorageTaskPoint.setStorageTaskPointId(temVehicle.getStorageTaskPointId());
+            BaseStorageTaskPoint baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(temVehicle.getStorageTaskPointId()).getData();
             baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
             baseStorageTaskPoint.setModifiedUserId(user.getUserId());
             baseStorageTaskPoint.setModifiedTime(new Date());
@@ -504,7 +503,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         temVehicle.setModifiedTime(new Date());
         temVehicleFeignApi.update(temVehicle);
 
-        return 0;
+        return 1;
     }
 
     /**
