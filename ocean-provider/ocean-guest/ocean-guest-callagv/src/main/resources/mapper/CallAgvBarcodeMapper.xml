@@ -70,6 +70,36 @@
       <if test="processName != null and processName != ''">
         and cab.process_name like CONCAT('%', #{processName}, '%')
       </if>
+      <if test="batch != null and batch != ''">
+        and cab.batch like CONCAT('%', #{batch}, '%')
+      </if>
+      <if test="serialNumber != null and serialNumber != ''">
+        and cab.serial_number like CONCAT('%', #{serialNumber}, '%')
+      </if>
+      <if test="zhuSuJiName != null and zhuSuJiName != ''">
+        and cab.zhu_su_ji_name like CONCAT('%', #{zhuSuJiName}, '%')
+      </if>
+      <if test="zhuSuJiShift != null and zhuSuJiShift != ''">
+        and cab.zhu_su_ji_shift like CONCAT('%', #{zhuSuJiShift}, '%')
+      </if>
+      <if test="zheWanJiName != null and zheWanJiName != ''">
+        and cab.zhe_wan_ji_name like CONCAT('%', #{zheWanJiName}, '%')
+      </if>
+      <if test="zheWanJiShift != null and zheWanJiShift != ''">
+        and cab.zhe_wan_ji_shift like CONCAT('%', #{zheWanJiShift}, '%')
+      </if>
+      <if test="materialFactory != null and materialFactory != ''">
+        and cab.material_factory like CONCAT('%', #{materialFactory}, '%')
+      </if>
+      <if test="materialSpec != null and materialSpec != ''">
+        and cab.material_spec like CONCAT('%', #{materialSpec}, '%')
+      </if>
+      <if test="materialSpec != null and materialSpec != ''">
+        and cab.material_spec like CONCAT('%', #{materialSpec}, '%')
+      </if>
+      <if test="productionDate != null and productionDate != ''">
+        and cab.production_date like CONCAT('%', #{productionDate}, '%')
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(cab.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
