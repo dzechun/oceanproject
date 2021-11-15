@@ -5,10 +5,8 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.EamJigBarcodeDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentBarcode;
-import com.fantechs.common.base.general.entity.eam.EamJig;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -17,6 +15,7 @@ import com.fantechs.provider.eam.mapper.EamEquipmentBarcodeMapper;
 import com.fantechs.provider.eam.mapper.EamEquipmentMapper;
 import com.fantechs.provider.eam.service.EamEquipmentBarcodeService;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +55,11 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
         if (StringUtils.isEmpty(eamEquipmentBarcode)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
-        eamEquipmentBarcode.setCurrentUsageTime(eamEquipmentBarcode.getCurrentUsageTime()+num);
+        Integer currentUsageTime=0;
+        if(StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageTime()))
+            currentUsageTime=eamEquipmentBarcode.getCurrentUsageTime();
+
+        eamEquipmentBarcode.setCurrentUsageTime(currentUsageTime+num);
         return eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
     }
 

@@ -16,7 +16,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "产品料号", height = 20, width = 30)
+    @Excel(name = "产品料号", height = 20, width = 30,orderNum = "6")
     private String materialCode;
 
     /**
@@ -24,7 +24,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialName" ,value="物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30)
+    @Excel(name = "物料名称", height = 20, width = 30,orderNum = "7")
     private String materialName;
 
     /**
@@ -32,7 +32,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialVersion" ,value="版本")
-    @Excel(name = "产品料号版本", height = 20, width = 30)
+    @Excel(name = "产品料号版本", height = 20, width = 30,orderNum = "8")
     private String materialVersion;
 
     /**
@@ -40,7 +40,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "产品料号描述", height = 20, width = 30)
+    @Excel(name = "产品料号描述", height = 20, width = 30,orderNum = "9")
     private String materialDesc;
 
     /**
@@ -48,7 +48,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="submaterialCode" ,value="替代物料编码")
-    @Excel(name = "替代物料编码", height = 20, width = 30)
+    @Excel(name = "替代物料编码", height = 20, width = 30,orderNum = "10")
     private String subMaterialCode;
 
     /**
@@ -56,7 +56,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="submaterialName" ,value="替代物料名称")
-    @Excel(name = "替代物料名称", height = 20, width = 30)
+    @Excel(name = "替代物料名称", height = 20, width = 30,orderNum = "11")
     private String subMaterialName;
 
     /**
@@ -64,7 +64,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="subversion" ,value="替代物料版本")
-    @Excel(name = "替代物料版本", height = 20, width = 30)
+    @Excel(name = "替代物料版本", height = 20, width = 30,orderNum = "12")
     private String subVersion;
 
     /**
@@ -72,14 +72,14 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="submaterialDesc" ,value="替代物料描述")
-    @Excel(name = "替代物料描述", height = 20, width = 30)
+    @Excel(name = "替代物料描述", height = 20, width = 30,orderNum = "13")
     private String subMaterialDesc;
 
     /**
      * 线别代码
      */
     @ApiModelProperty(name="proCode" ,value="线别代码")
-    @Excel(name = "线别代码", height = 20, width = 30)
+    @Excel(name = "线别代码", height = 20, width = 30,orderNum = "14")
     @Transient
     private String proCode;
 
@@ -87,7 +87,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      * 线别名称
      */
     @ApiModelProperty(name="proName" ,value="线别名称")
-    @Excel(name = "线别名称", height = 20, width = 30)
+    @Excel(name = "线别名称", height = 20, width = 30,orderNum = "15")
     @Transient
     private String proName;
 
@@ -95,7 +95,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      * 线别描述
      */
     @ApiModelProperty(name="proDesc" ,value="线别描述")
-    @Excel(name = "线别描述", height = 20, width = 30)
+    @Excel(name = "线别描述", height = 20, width = 30,orderNum = "16")
     @Transient
     private String proDesc;
 
@@ -111,7 +111,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="createUserName" ,value="创建账号名称")
-    @Excel(name = "创建账号", height = 20, width = 30)
+    @Excel(name = "创建账号", height = 20, width = 30,orderNum = "20")
     private String createUserName;
 
     /**
@@ -119,14 +119,14 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="modifiedUserName" ,value="修改账号名称")
-    @Excel(name = "修改账号", height = 20, width = 30)
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum = "22")
     private String modifiedUserName;
 
     /**
      * 工序代码
      */
     @ApiModelProperty(name="processCode" ,value="线别代码")
-    @Excel(name = "工序代码", height = 20, width = 30)
+    @Excel(name = "工序代码", height = 20, width = 30,orderNum = "17")
     @Transient
     private String processCode;
 
@@ -134,7 +134,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      * 工序名称
      */
     @ApiModelProperty(name="processName" ,value="工序名称")
-    @Excel(name = "工序名称", height = 20, width = 30)
+    @Excel(name = "工序名称", height = 20, width = 30,orderNum = "18")
     @Transient
     private String processName;
 
@@ -142,7 +142,7 @@ public class BaseProductBomDto extends BaseProductBom implements Serializable {
      * 工序描述
      */
     @ApiModelProperty(name="processDesc" ,value="工序描述")
-    @Excel(name = "工序描述", height = 20, width = 30)
+    @Excel(name = "工序描述", height = 20, width = 30,orderNum = "19")
     @Transient
     private String processDesc;
 

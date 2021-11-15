@@ -94,6 +94,9 @@
       <if test="equipmentName != null and equipmentName!=''">
         and ee.equipment_name like CONCAT('%', #{equipmentName}, '%')
       </if>
+      <if test="equipmentCategoryName != null and equipmentCategoryName!=''">
+        and eec.equipment_category_name like CONCAT('%', #{equipmentCategoryName}, '%')
+      </if>
       <if test="status!=null">
         and eemo.status = #{status}
       </if>

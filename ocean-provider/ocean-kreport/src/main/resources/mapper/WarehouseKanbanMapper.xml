@@ -7,18 +7,21 @@
         ifnull(sum(
             CASE WHEN status NOT in('SF','CA','CL') THEN 1 else 0 end
             ),0) as 'unfinishedOrderQty',
-        ifnull(sum(CASE WHEN status NOT in('SF','CA','CL') AND REVIEW_STATUS!='REVIEW_COMPLETED' THEN 1 else 0 end),0) as 'pendingSalesQty'
+        IFNULL(SUM(CASE WHEN STATUS ='SF' THEN 1 ELSE 0 END),0) AS 'finishedOrderQty',
+        ifnull(sum(CASE WHEN status NOT in('SF','CA','CL') AND REVIEW_STATUS!='REVIEW_COMPLETED' THEN 1 else 0 end),0) as 'pendingSalesQty',
+        count(1) as 'totalOrderQty',
+        ifnull(sum(CASE WHEN status in('CA','CL') THEN 1 else 0 end),0) as 'cancelOrderQty'
         from wms_pick_ticket
-        where WAREHOUSE_ID = #{warehouseId} and date_format(CREATED_TIME,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
+        where WAREHOUSE_ID = #{warehouseId} and date_format(UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="findAccomplishQty" parameterType="map" resultType="long">
-    SELECT  IFNULL(SUM(1),0) AS finishedOrderQty
-    FROM
-      wms_pick_ticket
-    WHERE WAREHOUSE_ID = #{warehouseId}
-    AND   STATUS ='SF'
-    AND DATE_FORMAT(UPDATE_TIME, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
+--     SELECT  count(1) AS finishedOrderQty
+--     FROM
+--       wms_pick_ticket
+--     WHERE WAREHOUSE_ID = #{warehouseId}
+--     AND   STATUS ='SF'
+--     AND DATE_FORMAT(UPDATE_TIME, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="findClaimGoods" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.BillsQtyStatistics">
@@ -27,13 +30,8 @@
             IFNULL(SUM(CASE WHEN STATUS not in('CA','CL') THEN 1 else 0 end),0) as 'total',
             IFNULL(SUM(CASE WHEN STATUS not in('CA','CL') THEN 1 else 0 end),0) - ifnull(sum(CASE WHEN status in('OP','EN','PR') THEN 1 else 0 end),0) as 'receivedQty'
         from wms_asn
-        where WAREHOUSE_ID = #{warehouseId}
-        <if test="isDay ==null or isDay == 0">
-            and date_format(CREATED_TIME,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
-        </if>
-        <if test="isDay !=null and isDay == 1">
-            and date_format(CREATED_TIME,'%Y-%m')=date_format(now(),'%Y-%m')
-        </if>
+        where WAREHOUSE_ID = #{warehouseId} and date_format(CREATED_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+
     </select>
 
     <select id="findDeliverGoods" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.BillsQtyStatistics">
@@ -42,13 +40,8 @@
             IFNULL(sum(CASE WHEN STATUS not in('CA','CL') THEN 1 else 0 end),0) as 'total',
             IFNULL(sum(CASE WHEN STATUS = 'SF' THEN 1 else 0 end),0) as 'receivedQty'
         from wms_pick_ticket
-        where WAREHOUSE_ID = #{warehouseId}
-        <if test="isDay ==null or isDay == 0">
-            and date_format(UPDATE_TIME,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
-        </if>
-        <if test="isDay !=null and isDay == 1">
-            and date_format(UPDATE_TIME,'%Y-%m')=date_format(now(),'%Y-%m')
-        </if>
+        where WAREHOUSE_ID = #{warehouseId} and date_format(UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+
     </select>
 
     <select id="findOrderPicking" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.BillsQtyStatistics">
@@ -70,12 +63,8 @@
         IFNULL(SUM(CASE WHEN STATUS NOT IN('CA','CL','WF','FN') THEN 1 ELSE 0 END),0)) AS receivedQty
         FROM wms_move_doc
         WHERE WAREHOUSE_ID = #{warehouseId}
-        <if test="isDay ==null or isDay == 0">
-            and date_format(UPDATE_TIME,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
-        </if>
-        <if test="isDay !=null and isDay == 1">
-            and date_format(UPDATE_TIME,'%Y-%m')=date_format(now(),'%Y-%m')
-        </if>
+        AND CODE   REGEXP 'RE' and date_format(UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+
     </select>
 
     <select id="findInventoriesStill" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.InventoryStatistics">
@@ -141,7 +130,7 @@
             wpt.STATUS as 'status',
             wpt.LAST_OPERATOR as 'lastOperator'
         from wms_pick_ticket wpt
-        where wpt.STATUS = 'WK' and wpt.WAREHOUSE_ID = #{warehouseId}
+        where wpt.WAREHOUSE_ID = #{warehouseId} and wpt.STATUS = 'WK' and date_format(UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="findPersonnelPickingRankingList" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.PersonnelPickingRanking">
@@ -156,7 +145,7 @@
             wa.LAST_OPERATOR_UNIKEY as 'unikey',
             ifnull(COUNT( 1 ) ,0) as 'putawayQty'
         from wms_asn wa
-        where wa.WAREHOUSE_ID = #{warehouseId} and wa.STATUS = 'PN'
+        where wa.WAREHOUSE_ID = #{warehouseId} and wa.STATUS = 'PN'  and date_format(wa.UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
         GROUP BY wa.LAST_OPERATOR
     </select>
 
@@ -170,7 +159,7 @@
                 wpt.LAST_OPERATOR_UNIKEY,
                 COUNT(1)
             from wms_pick_ticket wpt
-            where wpt.WAREHOUSE_ID = #{warehouseId} and wpt.STATUS = 'WF'
+            where wpt.WAREHOUSE_ID = #{warehouseId} and wpt.STATUS = 'WF'  and date_format(wpt.UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
             GROUP BY wpt.LAST_OPERATOR
             UNION all
             SELECT
@@ -180,7 +169,7 @@
             FROM
                 wms_wave_doc wwd
             WHERE
-                wwd.WAREHOUSE_ID = #{warehouseId}  AND wwd.STATUS = 'PN'
+                wwd.WAREHOUSE_ID = #{warehouseId}  AND wwd.STATUS = 'PN'  and date_format(wwd.UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
             GROUP BY wwd.LAST_OPERATOR
         ) d
         GROUP BY d.LAST_OPERATOR
@@ -192,7 +181,7 @@
             ifnull(COUNT( 1 ) ,0) as 'recheckQty'
         FROM
             wms_pick_ticket wpt
-        WHERE wpt.WAREHOUSE_ID = #{warehouseId} AND wpt.STATUS = 'SF'
+        WHERE wpt.WAREHOUSE_ID = #{warehouseId} AND wpt.STATUS = 'SF'  and date_format(wpt.UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
         GROUP BY wpt.LAST_OPERATOR
     </select>
 
@@ -201,7 +190,7 @@
             wmd.LAST_OPERATOR_UNIKEY AS 'unikey',
             ifnull(COUNT( 1 ) ,0)  as 'replenishmentQty'
         from wms_move_doc wmd
-        WHERE wmd.WAREHOUSE_ID = #{warehouseId} AND wmd.TYPE = 'RE' AND wmd.STATUS = 'WF'
+        WHERE wmd.WAREHOUSE_ID = #{warehouseId} and date_format(wmd.UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate} AND wmd.TYPE = 'RE' AND wmd.STATUS = 'WF'
         GROUP BY wmd.LAST_OPERATOR
     </select>
 
@@ -215,7 +204,7 @@
             ifnull(sum(CASE WHEN status in('OP','EN','RA','PA','FA') THEN 1 else 0 end),0) as 'waitingPickingQty'
         from wms_wave_doc wwd
         where WAREHOUSE_ID = #{warehouseId}
-        and date_format(UPDATE_TIME,'%Y-%m')=date_format(now(),'%Y-%m')
+        and date_format(UPDATE_TIME,'%Y-%m') BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="findOperationOverview" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.OperationOverview">
@@ -227,7 +216,7 @@
             ifnull(sum(CASE WHEN status = 'WF' THEN 1 else 0 end),0) as 'jobCompleteQty',
             ifnull(sum(CASE WHEN status = 'SF' THEN 1 else 0 end),0) as 'shippedQty'
         from wms_pick_ticket
-        where DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d')=DATE_FORMAT(NOW(),'%Y-%m-%d')
+        where DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
         and WAREHOUSE_ID = #{warehouseId}
     </select>
 
@@ -256,12 +245,15 @@
         left join (
             select sum(wiii.QTY_BASE_QTY) 'total_qty',wiii.WAREHOUSE_ID from wms_inventory wiii where wiii.WAREHOUSE_ID = #{warehouseId}
         )twi on wii.WAREHOUSE_ID = twi.WAREHOUSE_ID
-        WHERE wii.WAREHOUSE_ID = #{warehouseId} AND wii.OPERATION_STATUS = 'N'  AND wl.TYPE = 'ST' and wi.CODE in ('AA1259','ZY842')
-        <!--        <if test="codes != null and codes != ''">-->
-<!--            <foreach collection="codes" item="item" index="index"  separator="," close=")" open="and wi.CODE in (">-->
-<!--                #{item}-->
-<!--            </foreach>-->
-<!--        </if>-->
+        WHERE wii.WAREHOUSE_ID = #{warehouseId} AND wii.OPERATION_STATUS = 'N'  AND wl.TYPE = 'ST'
+        <if test="codes != null">
+            <foreach collection="codes" item="item" index="index"  separator="," close=")" open="and wi.CODE in (">
+                #{item}
+            </foreach>
+        </if>
+        <if test="codes == null ">
+           and 1 = 2
+        </if>
         GROUP BY wi.ID
     </select>
 

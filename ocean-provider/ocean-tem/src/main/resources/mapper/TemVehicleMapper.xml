@@ -61,6 +61,12 @@
       <if test="vehicleStatus != null">
         and tv.vehicle_status = #{vehicleStatus}
       </if>
+      <if test="storageId != null">
+        and bs.storage_id = #{storageId}
+      </if>
+      <if test="storageCode != null and storageCode != ''">
+        and bs.storage_code like CONCAT('%', #{storageCode}, '%')
+      </if>
       <if test="warehouseAreaId != null">
         and bwha.warehouse_area_id = #{warehouseAreaId}
       </if>
