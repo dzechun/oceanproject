@@ -464,6 +464,8 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     }
 
     @Override
+    @Transactional
+    @LcnTransaction
     public int materialTransfer(RequestCallAgvStockDTO requestCallAgvStockDTO) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         TemVehicle temVehicle = temVehicleFeignApi.detail(requestCallAgvStockDTO.getVehicleId()).getData();
