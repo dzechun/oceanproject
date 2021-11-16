@@ -1,7 +1,9 @@
 package com.fantechs.provider.eam.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
+import com.fantechs.common.base.general.dto.eam.imports.EamJigMaterialImport;
 import com.fantechs.common.base.general.entity.eam.EamJigMaterial;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigMaterial;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigMaterial;
@@ -16,14 +18,17 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +38,7 @@ import java.util.List;
 @Api(tags = "治具绑定产品")
 @RequestMapping("/eamJigMaterial")
 @Validated
+@Slf4j
 public class EamJigMaterialController {
 
     @Resource
@@ -91,6 +97,31 @@ public class EamJigMaterialController {
         EasyPoiUtils.exportExcel(list, "导出信息", "治具绑定产品", EamJigMaterialDto.class, "治具绑定产品.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入治具绑定产品信息",notes = "从excel导入治具绑定产品信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<EamJigMaterialImport> eamJigMaterialImports = EasyPoiUtils.importExcel(file, 2, 1, EamJigMaterialImport.class);
+            Map<String, Object> resultMap = eamJigMaterialService.importExcel(eamJigMaterialImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        }catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 }

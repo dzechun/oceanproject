@@ -260,7 +260,7 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
                 Example examplEamMaterial = new Example(EamEquipmentMaterial.class);
                 Example.Criteria criteriaEamMaterial = examplEamMaterial.createCriteria();
                 criteriaEamMaterial.andEqualTo("equipmentId", equipmentId);
-                EamEquipmentMaterial eamEquipmentMaterial = eamEquipmentMaterialMapper.selectOneByExample(criteriaEamMaterial);
+                EamEquipmentMaterial eamEquipmentMaterial = eamEquipmentMaterialMapper.selectOneByExample(examplEamMaterial);
                 if (StringUtils.isNotEmpty(eamEquipmentMaterial)) {
                     equipmentMaterialId = eamEquipmentMaterial.getEquipmentMaterialId();
                 }
@@ -285,7 +285,7 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
                     Example.Criteria criteriaEamML = examplEamEJL.createCriteria();
                     criteriaEamML.andEqualTo("equipmentMaterialId", equipmentMaterialId);
                     criteriaEamML.andEqualTo("materialId",item.getMaterialId());
-                    EamEquipmentMaterialList eamEquipmentMaterialList = eamEquipmentMaterialListMapper.selectOneByExample(criteriaEamML);
+                    EamEquipmentMaterialList eamEquipmentMaterialList = eamEquipmentMaterialListMapper.selectOneByExample(examplEamEJL);
                     if(StringUtils.isEmpty(eamEquipmentMaterialList)) {
                         EamEquipmentMaterialList eamEquipmentMaterialListNew=new EamEquipmentMaterialList();
                         eamEquipmentMaterialListNew.setEquipmentMaterialId(equipmentMaterialId);

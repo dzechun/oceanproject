@@ -251,7 +251,7 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
                 Example examplEamEJ = new Example(EamEquipmentJig.class);
                 Example.Criteria criteriaEamEJ = examplEamEJ.createCriteria();
                 criteriaEamEJ.andEqualTo("equipmentId", equipmentId);
-                EamEquipmentJig eamEquipmentJig = eamEquipmentJigMapper.selectOneByExample(criteriaEamEJ);
+                EamEquipmentJig eamEquipmentJig = eamEquipmentJigMapper.selectOneByExample(examplEamEJ);
                 if (StringUtils.isNotEmpty(eamEquipmentJig)) {
                     equipmentJigId = eamEquipmentJig.getEquipmentJigId();
                 }
@@ -276,7 +276,7 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
                     Example.Criteria criteriaEamEJL = examplEamEJL.createCriteria();
                     criteriaEamEJL.andEqualTo("equipmentJigId", equipmentJigId);
                     criteriaEamEJL.andEqualTo("jigId",item.getJigId());
-                    EamEquipmentJigList eamEquipmentJigList = eamEquipmentJigListMapper.selectOneByExample(criteriaEamEJL);
+                    EamEquipmentJigList eamEquipmentJigList = eamEquipmentJigListMapper.selectOneByExample(examplEamEJL);
                     if(StringUtils.isEmpty(eamEquipmentJigList)) {
                         EamEquipmentJigList equipmentJigListNew=new EamEquipmentJigList();
                         equipmentJigListNew.setEquipmentJigId(equipmentJigId);

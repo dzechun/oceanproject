@@ -1443,7 +1443,7 @@ public class BarcodeUtils {
                 SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
                 searchMesPmWorkOrderBom.setWorkOrderId(workOrderId);
                 searchMesPmWorkOrderBom.setPartMaterialId(partMaterialId);
-                searchMesPmWorkOrderBom.setProcessId(processId);
+                //searchMesPmWorkOrderBom.setProcessId(processId);
                 ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = barcodeUtils.deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
                 if (StringUtils.isEmpty(responseEntityBom.getData())) {
 

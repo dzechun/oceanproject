@@ -268,7 +268,7 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
                 Example examplEamMaterial = new Example(EamJigMaterial.class);
                 Example.Criteria criteriaEamMaterial = examplEamMaterial.createCriteria();
                 criteriaEamMaterial.andEqualTo("jigId", jigId);
-                EamJigMaterial EamJigMaterial = eamJigMaterialMapper.selectOneByExample(criteriaEamMaterial);
+                EamJigMaterial EamJigMaterial = eamJigMaterialMapper.selectOneByExample(examplEamMaterial);
                 if (StringUtils.isNotEmpty(EamJigMaterial)) {
                     jigMaterialId = EamJigMaterial.getJigMaterialId();
                 }
@@ -293,7 +293,7 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
                     Example.Criteria criteriaEamML = examplEamEJL.createCriteria();
                     criteriaEamML.andEqualTo("jigMaterialId", jigMaterialId);
                     criteriaEamML.andEqualTo("materialId",item.getMaterialId());
-                    EamJigMaterialList eamJigMaterialList = eamJigMaterialListMapper.selectOneByExample(criteriaEamML);
+                    EamJigMaterialList eamJigMaterialList = eamJigMaterialListMapper.selectOneByExample(examplEamEJL);
                     if(StringUtils.isEmpty(eamJigMaterialList)) {
                         EamJigMaterialList eamJigMaterialListNew=new EamJigMaterialList();
                         eamJigMaterialListNew.setJigMaterialId(jigMaterialId);
