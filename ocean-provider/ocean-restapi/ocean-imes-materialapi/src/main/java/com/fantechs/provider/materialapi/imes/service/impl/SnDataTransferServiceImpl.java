@@ -1,7 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiSNDataTransferApiDto;
 import com.fantechs.common.base.utils.JsonUtils;
@@ -27,7 +26,6 @@ public class SnDataTransferServiceImpl implements SnDataTransferService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
     public String SnDataTransfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception {
         /*
          * 1 验证传参基础信息是否正确
