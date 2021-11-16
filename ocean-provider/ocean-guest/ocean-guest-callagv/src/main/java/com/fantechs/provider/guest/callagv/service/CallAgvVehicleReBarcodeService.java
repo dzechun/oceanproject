@@ -14,7 +14,7 @@ import java.util.Map;
 public interface CallAgvVehicleReBarcodeService extends IService<CallAgvVehicleReBarcode> {
     List<CallAgvVehicleReBarcodeDto> findList(Map<String, Object> map);
 
-    int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException;
+    List<CallAgvVehicleReBarcode> callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException;
 
     String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Long storageTaskPointId, Integer type) throws Exception;
 

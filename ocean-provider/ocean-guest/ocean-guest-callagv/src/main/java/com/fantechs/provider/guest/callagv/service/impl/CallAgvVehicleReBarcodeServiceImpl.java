@@ -71,7 +71,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     @Override
     @Transactional
     @LcnTransaction
-    public int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException {
+    public List<CallAgvVehicleReBarcode> callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         TemVehicle temVehicle = temVehicleFeignApi.detail(requestCallAgvStockDTO.getVehicleId()).getData();
         if (temVehicle.getStatus() != 1) {
@@ -96,14 +96,18 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             }
             throw new BizErrorException("条码：" + barCodeList.toString() + "已绑定其他货架，不能重复备料！");
         }
+        List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = new LinkedList<>();
         for (Long id : requestCallAgvStockDTO.getBarcodeIdList()) {
             CallAgvVehicleReBarcode callAgvVehicleReBarcode = new CallAgvVehicleReBarcode();
             callAgvVehicleReBarcode.setBarcodeId(id);
             callAgvVehicleReBarcode.setVehicleId(requestCallAgvStockDTO.getVehicleId());
+            callAgvVehicleReBarcode.setStatus((byte) 1);
             callAgvVehicleReBarcode.setOrgId(user.getOrganizationId());
             callAgvVehicleReBarcode.setCreateUserId(user.getUserId());
             callAgvVehicleReBarcode.setCreateTime(new Date());
-            callAgvVehicleReBarcodeMapper.insertSelective(callAgvVehicleReBarcode);
+            callAgvVehicleReBarcode.setIsDelete((byte) 1);
+            callAgvVehicleReBarcodeMapper.insertUseGeneratedKeys(callAgvVehicleReBarcode);
+            callAgvVehicleReBarcodeList.add(callAgvVehicleReBarcode);
 
             CallAgvVehicleLog callAgvVehicleLog = new CallAgvVehicleLog();
             callAgvVehicleLog.setBarcodeId(id);
@@ -126,7 +130,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         baseStorageTaskPoint.setModifiedTime(new Date());
         baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPoint);
 
-        return requestCallAgvStockDTO.getBarcodeIdList().size();
+        return callAgvVehicleReBarcodeList;
     }
 
     @Override
@@ -236,8 +240,10 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         callAgvAgvTask.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
         callAgvAgvTask.setEndStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
         callAgvAgvTask.setOperateType(type.byteValue());
+        callAgvAgvTask.setStatus((byte) 1);
         callAgvAgvTask.setOrgId(user.getOrganizationId());
         callAgvAgvTask.setCreateUserId(user.getUserId());
+        callAgvAgvTask.setIsDelete((byte) 1);
 
         String message = "";
         String taskCode = "";
@@ -340,6 +346,13 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     @LcnTransaction
     public int vehicleBarcodeUnbound(RequestBarcodeUnboundDTO requestBarcodeUnboundDTO) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
+        searchCallAgvAgvTask.setVehicleId(requestBarcodeUnboundDTO.getVehicleId());
+        searchCallAgvAgvTask.setTaskStatusList(Arrays.asList(1,2));
+        List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
+        if (!callAgvAgvTaskDtoList.isEmpty()) {
+            throw new BizErrorException("当前货架正在执行任务，请稍后再试");
+        }
         TemVehicle temVehicle = temVehicleFeignApi.detail(requestBarcodeUnboundDTO.getVehicleId()).getData();
         if (requestBarcodeUnboundDTO.getType() == 1) {
             temVehicle.setVehicleStatus((byte) 1);
@@ -406,7 +419,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         searchCallAgvAgvTask.setTaskStatusList(Arrays.asList(1,2));
         List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
         if (!callAgvAgvTaskDtoList.isEmpty()) {
-            throw new BizErrorException("当前货架获取正在执行任务，请稍后再试");
+            throw new BizErrorException("当前货架正在执行任务，请稍后再试");
         }
         TemVehicle temVehicle = temVehicleFeignApi.detail(vehicleId).getData();
         if (type == 1 && (StringUtils.isEmpty(temVehicle.getStorageTaskPointId()) || temVehicle.getStorageTaskPointId() == 0)) {
