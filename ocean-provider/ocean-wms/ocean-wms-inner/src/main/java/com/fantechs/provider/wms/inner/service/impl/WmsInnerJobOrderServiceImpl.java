@@ -720,7 +720,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                                 .andEqualTo("stockLock", 0)
                                 .andEqualTo("qcLock", 0)
                                 .andEqualTo("lockStatus", 0)
-                                .andGreaterThan("packingQty", 0)
                                 .andEqualTo("orgId",sysUser.getOrganizationId());
                         if (StringUtils.isNotEmpty(wmsInnerInventory)){
                             criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
@@ -930,7 +929,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("stockLock", 0)
                         .andEqualTo("qcLock", 0)
                         .andEqualTo("lockStatus", 0)
-                        .andGreaterThan("packingQty", 0)
                         .andEqualTo("orgId",sysUser.getOrganizationId());
                 if (StringUtils.isNotEmpty(wmsInnerInventory)){
                     criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
