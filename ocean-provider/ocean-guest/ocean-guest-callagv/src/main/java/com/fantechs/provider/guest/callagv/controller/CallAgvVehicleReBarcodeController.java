@@ -87,9 +87,10 @@ public class CallAgvVehicleReBarcodeController {
 
     @ApiOperation("备料作业")
     @PostMapping("callAgvStock")
-    public ResponseEntity callAgvStock(@ApiParam(value = "请求对象", required = true) @RequestBody RequestCallAgvStockDTO requestCallAgvStockDTO) throws Exception {
+    public ResponseEntity<List<CallAgvVehicleReBarcode>> callAgvStock(@ApiParam(value = "请求对象", required = true) @RequestBody RequestCallAgvStockDTO requestCallAgvStockDTO) throws Exception {
 
-        return ControllerUtil.returnCRUD(callAgvVehicleReBarcodeService.callAgvStock(requestCallAgvStockDTO));
+        List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = callAgvVehicleReBarcodeService.callAgvStock(requestCallAgvStockDTO);
+        return ControllerUtil.returnDataSuccess(callAgvVehicleReBarcodeList, callAgvVehicleReBarcodeList.size());
     }
 
     @ApiOperation("AGV配送")

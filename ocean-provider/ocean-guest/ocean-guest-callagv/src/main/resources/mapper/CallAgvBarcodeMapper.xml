@@ -59,7 +59,7 @@
     LEFT JOIN fantech_imes_v2.base_organization bo ON cab.org_id = bo.organization_id
     <where>
       <if test="barcode != null and barcode != ''">
-        and cab.barcode = #{barcode}
+        and cab.barcode like CONCAT('%', #{barcode}, '%')
       </if>
       <if test="productModel != null and productModel != ''">
         and cab.product_model like CONCAT('%', #{productModel}, '%')
