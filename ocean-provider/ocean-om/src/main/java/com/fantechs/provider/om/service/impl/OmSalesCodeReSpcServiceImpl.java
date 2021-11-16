@@ -161,7 +161,13 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "同个销售编码不能存在相同优先级");
         }
 
-
+        omSalesCodeReSpc.setIsDelete((byte) 1);
+        omSalesCodeReSpc.setCreateTime(new Date());
+        omSalesCodeReSpc.setCreateUserId(user.getUserId());
+        omSalesCodeReSpc.setModifiedTime(new Date());
+        omSalesCodeReSpc.setModifiedUserId(user.getUserId());
+        omSalesCodeReSpc.setStatus((byte) 1);
+        omSalesCodeReSpc.setOrgId(user.getOrganizationId());
         int i = omSalesCodeReSpcMapper.insertSelective(omSalesCodeReSpc);
 
         // 保存履历表

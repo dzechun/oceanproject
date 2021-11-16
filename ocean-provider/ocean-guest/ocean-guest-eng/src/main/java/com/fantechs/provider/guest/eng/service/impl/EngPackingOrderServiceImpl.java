@@ -210,8 +210,6 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                         engLogisticsRecordMessage.setChangeTime(new Date());
                         engLogisticsRecordMessage.setQty(engPackingOrderSummaryDetDto.getQty());
                         engLogisticsRecordMessage.setOperateUser(sysUser.getUserName());
-
-
                         for (EngUserFollowContractQtyOrder engUserFollowContractQtyOrder : engUserFollowContractQtyOrders){
                             EngLogisticsRecord engLogisticsRecord = new EngLogisticsRecord();
                             engLogisticsRecord.setMaterialLogisticsNode(logisticsNode);
@@ -221,6 +219,12 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                             engLogisticsRecord.setReceiveUserId(engUserFollowContractQtyOrder.getUserId());
                             records.add(engLogisticsRecord);
                         }
+                    }
+                    if(logisticsNode==5){
+                        BigDecimal agoQty = StringUtils.isNotEmpty(engContractQtyOrderAndPurOrderDto.getAgoQty())?new BigDecimal(engContractQtyOrderAndPurOrderDto.getAgoQty()):BigDecimal.ZERO;
+                        agoQty = agoQty.add(engPackingOrderSummaryDetDto.getQty());
+                        engContractQtyOrderAndPurOrderDto.setAgoQty(agoQty.toString());
+                        engContractQtyOrderAndPurOrderService.update(engContractQtyOrderAndPurOrderDto);
                     }
                 }
             }
