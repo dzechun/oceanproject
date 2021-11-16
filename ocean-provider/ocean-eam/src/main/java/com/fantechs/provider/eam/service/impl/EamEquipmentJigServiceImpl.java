@@ -185,8 +185,13 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<EamEquipmentJigImport> eamEquipmentJigImports) throws ParseException {
-
+    public Map<String, Object> importExcel(List<EamEquipmentJigImport> eamEquipmentJigImportsTemp) throws ParseException {
+        List<EamEquipmentJigImport> eamEquipmentJigImports=new ArrayList<>();
+        for (EamEquipmentJigImport eamEquipmentJigImport : eamEquipmentJigImportsTemp) {
+            if(StringUtils.isNotEmpty(eamEquipmentJigImport.getEquipmentCode())){
+                eamEquipmentJigImports.add(eamEquipmentJigImport);
+            }
+        }
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);

@@ -199,8 +199,13 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<EamJigMaterialImport> eamJigMaterialImports) throws ParseException {
-
+    public Map<String, Object> importExcel(List<EamJigMaterialImport> eamJigMaterialImportsTemp) throws ParseException {
+        List<EamJigMaterialImport> eamJigMaterialImports=new ArrayList<>();
+        for (EamJigMaterialImport eamJigMaterialImport : eamJigMaterialImportsTemp) {
+            if(StringUtils.isNotEmpty(eamJigMaterialImport.getJigCode())){
+                eamJigMaterialImports.add(eamJigMaterialImport);
+            }
+        }
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);

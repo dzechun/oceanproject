@@ -196,10 +196,15 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(MesSfcWorkOrderBarcode entity) {
-        SysUser sysUser = currentUser();
-        entity.setModifiedUserId(sysUser.getUserId());
-        entity.setModifiedTime(new Date());
-        entity.setOrgId(sysUser.getOrganizationId());
+        if(entity.getOrgId()==1000L){
+            entity.setModifiedTime(new Date());
+        }
+        else {
+            SysUser sysUser = currentUser();
+            entity.setModifiedUserId(sysUser.getUserId());
+            entity.setModifiedTime(new Date());
+            entity.setOrgId(sysUser.getOrganizationId());
+        }
         return mesSfcWorkOrderBarcodeMapper.updateByPrimaryKeySelective(entity);
     }
 

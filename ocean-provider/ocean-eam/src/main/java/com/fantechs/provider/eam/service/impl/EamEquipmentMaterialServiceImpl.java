@@ -191,8 +191,13 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<EamEquipmentMaterialImport> eamEquipmentMaterialImports) throws ParseException {
-
+    public Map<String, Object> importExcel(List<EamEquipmentMaterialImport> eamEquipmentMaterialImportsTemp) throws ParseException {
+        List<EamEquipmentMaterialImport> eamEquipmentMaterialImports=new ArrayList<>();
+        for (EamEquipmentMaterialImport eamEquipmentMaterialImport : eamEquipmentMaterialImportsTemp) {
+            if(StringUtils.isNotEmpty(eamEquipmentMaterialImport.getEquipmentCode())){
+                eamEquipmentMaterialImports.add(eamEquipmentMaterialImport);
+            }
+        }
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);

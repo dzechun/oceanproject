@@ -565,9 +565,9 @@ public class BarcodeUtils {
                 BaseProcess baseProcess = barcodeUtils.baseFeignApi.processDetail(processId).getData();
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003, baseProcess.getProcessName(), mesSfcBarcodeProcess.getNextProcessName());
             }
-            if (!mesSfcBarcodeProcess.getProLineId().equals(proLineId)){
-                throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
-            }
+//            if (!mesSfcBarcodeProcess.getProLineId().equals(proLineId)){
+//                throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
+//            }
             // 已完成所有过站工序
             if (mesSfcBarcodeProcess.getNextProcessId().equals(0L)){
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码已完成所有工序过站");
