@@ -4,15 +4,19 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentMaterialDto;
+import com.fantechs.common.base.general.dto.eam.imports.EamEquipmentMaterialImport;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterial;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterialList;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentParam;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentParamList;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentMaterial;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentParam;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.eam.mapper.EamEquipmentMapper;
 import com.fantechs.provider.eam.mapper.EamEquipmentMaterialListMapper;
 import com.fantechs.provider.eam.mapper.EamEquipmentMaterialMapper;
 import com.fantechs.provider.eam.mapper.EamHtEquipmentMaterialMapper;
@@ -23,10 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -41,6 +44,10 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
     private EamEquipmentMaterialListMapper eamEquipmentMaterialListMapper;
     @Resource
     private EamHtEquipmentMaterialMapper eamHtEquipmentMaterialMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
+    @Resource
+    private EamEquipmentMapper eamEquipmentMapper;
 
     @Override
     public List<EamEquipmentMaterialDto> findList(Map<String, Object> map) {
@@ -181,4 +188,125 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
 
         return eamEquipmentMaterialMapper.deleteByIds(ids);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<EamEquipmentMaterialImport> eamEquipmentMaterialImports) throws ParseException {
+
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+
+        //排除不合法的数据
+        Iterator<EamEquipmentMaterialImport> iterator = eamEquipmentMaterialImports.iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            EamEquipmentMaterialImport eamEquipmentMaterialImport = iterator.next();
+            String equipmentCode = eamEquipmentMaterialImport.getEquipmentCode();
+            String equipmentName = eamEquipmentMaterialImport.getEquipmentName();
+            String materialCode = eamEquipmentMaterialImport.getMaterialCode();
+            String usageQty = eamEquipmentMaterialImport.getUsageQty().toString();
+
+            //判断必传字段
+            if (StringUtils.isEmpty(
+                    equipmentCode,equipmentName,materialCode,usageQty
+            )) {
+                fail.add(i + 4);
+                iterator.remove();
+                i++;
+                continue;
+            }
+
+            //判断物料信息是否存在
+            SearchBaseMaterial searchBaseMaterial=new SearchBaseMaterial();
+            searchBaseMaterial.setMaterialCode(materialCode);
+            ResponseEntity<List<BaseMaterial>> baseMaterialList=baseFeignApi.findList(searchBaseMaterial);
+            if(StringUtils.isNotEmpty(baseMaterialList.getData())){
+                BaseMaterial baseMaterial=baseMaterialList.getData().get(0);
+                if (StringUtils.isEmpty(baseMaterial)){
+                    fail.add(i + 4);
+                    iterator.remove();
+                    i++;
+                    continue;
+                }
+                eamEquipmentMaterialImport.setMaterialId(baseMaterial.getMaterialId());
+                i++;
+            }
+
+        }
+
+        //对合格数据进行分组
+        Map<String, List<EamEquipmentMaterialImport>> map = eamEquipmentMaterialImports.stream().collect(Collectors.groupingBy(EamEquipmentMaterialImport::getEquipmentCode, HashMap::new, Collectors.toList()));
+        Set<String> codeList = map.keySet();
+        for (String code : codeList) {
+            List<EamEquipmentMaterialImport> eamEquipmentMaterialImports1 = map.get(code);
+
+            //判断设备编码
+            Long equipmentId=null;
+            Long equipmentMaterialId=null;
+            Example example = new Example(EamEquipment.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("equipmentCode",code);
+            EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(eamEquipment)){
+                equipmentId=eamEquipment.getEquipmentId();
+            }
+            if(StringUtils.isNotEmpty(equipmentId)) {
+                Example examplEamMaterial = new Example(EamEquipmentMaterial.class);
+                Example.Criteria criteriaEamMaterial = examplEamMaterial.createCriteria();
+                criteriaEamMaterial.andEqualTo("equipmentId", equipmentId);
+                EamEquipmentMaterial eamEquipmentMaterial = eamEquipmentMaterialMapper.selectOneByExample(criteriaEamMaterial);
+                if (StringUtils.isNotEmpty(eamEquipmentMaterial)) {
+                    equipmentMaterialId = eamEquipmentMaterial.getEquipmentMaterialId();
+                }
+            }
+            //新增表头 EamEquipmentMaterial
+            if(StringUtils.isEmpty(equipmentMaterialId)){
+                EamEquipmentMaterial eamEquipmentMaterialNew=new EamEquipmentMaterial();
+                eamEquipmentMaterialNew.setEquipmentId(equipmentId);
+                eamEquipmentMaterialNew.setStatus((byte)1);
+                eamEquipmentMaterialNew.setOrgId(currentUser.getOrganizationId());
+                eamEquipmentMaterialNew.setCreateUserId(currentUser.getUserId());
+                eamEquipmentMaterialNew.setCreateTime(new Date());
+                eamEquipmentMaterialMapper.insertUseGeneratedKeys(eamEquipmentMaterialNew);
+                equipmentMaterialId=eamEquipmentMaterialNew.getEquipmentMaterialId();
+            }
+            //新增明细 EamEquipmentMaterialList
+            if(StringUtils.isNotEmpty(equipmentMaterialId)) {
+                List<EamEquipmentMaterialList> eamEquipmentMaterialLists=new ArrayList<>();
+                for (EamEquipmentMaterialImport item : eamEquipmentMaterialImports1) {
+
+                    Example examplEamEJL = new Example(EamEquipmentMaterialList.class);
+                    Example.Criteria criteriaEamML = examplEamEJL.createCriteria();
+                    criteriaEamML.andEqualTo("equipmentMaterialId", equipmentMaterialId);
+                    criteriaEamML.andEqualTo("materialId",item.getMaterialId());
+                    EamEquipmentMaterialList eamEquipmentMaterialList = eamEquipmentMaterialListMapper.selectOneByExample(criteriaEamML);
+                    if(StringUtils.isEmpty(eamEquipmentMaterialList)) {
+                        EamEquipmentMaterialList eamEquipmentMaterialListNew=new EamEquipmentMaterialList();
+                        eamEquipmentMaterialListNew.setEquipmentMaterialId(equipmentMaterialId);
+                        eamEquipmentMaterialListNew.setMaterialId(item.getMaterialId());
+                        eamEquipmentMaterialListNew.setUsageQty(item.getUsageQty());
+                        eamEquipmentMaterialListNew.setOrgId(currentUser.getOrganizationId());
+                        eamEquipmentMaterialListNew.setCreateUserId(currentUser.getUserId());
+                        eamEquipmentMaterialListNew.setCreateTime(new Date());
+                        eamEquipmentMaterialLists.add(eamEquipmentMaterialListNew);
+                    }
+
+                }
+
+                if(eamEquipmentMaterialLists.size()>0){
+                    success += eamEquipmentMaterialListMapper.insertList(eamEquipmentMaterialLists);
+                }
+            }
+        }
+        resultMap.put("操作成功总数", success);
+        resultMap.put("操作失败行", fail);
+        return resultMap;
+    }
+
 }
