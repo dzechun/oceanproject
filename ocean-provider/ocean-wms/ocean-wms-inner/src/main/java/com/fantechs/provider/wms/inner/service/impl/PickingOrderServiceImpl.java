@@ -1141,7 +1141,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     throw new BizErrorException("暂无可发运数量");
                 }
 
-                if(dets.stream().filter(li->li.getActualQty().compareTo(li.getDistributionQty())==-1).collect(Collectors.toList()).size()>0){
+                if(dets.stream().filter(li->StringUtils.isNotEmpty(li.getActualQty()) && li.getActualQty().compareTo(li.getDistributionQty())==-1).collect(Collectors.toList()).size()>0){
                     //获取配置项
                     //获取程序配置项
                     SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
