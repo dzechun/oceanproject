@@ -1446,6 +1446,27 @@ public class BarcodeUtils {
                 searchMesPmWorkOrderBom.setProcessId(processId);
                 ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = barcodeUtils.deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
                 if (StringUtils.isEmpty(responseEntityBom.getData())) {
+
+                    //半成品物料编号
+                    String partMaterialCode="";
+                    if(StringUtils.isNotEmpty(partMaterialId)) {
+                        ResponseEntity<BaseMaterial> baseMaterialEntity = barcodeUtils.baseFeignApi.materialDetail(partMaterialId);
+                        if(StringUtils.isEmpty(baseMaterialEntity.getData())){
+                            throw new Exception("半成品条码相应物料ID找不到物料信息-->"+partMaterialId.toString());
+                        }
+                        partMaterialCode=baseMaterialEntity.getData().getMaterialCode();
+                    }
+
+                    //成品物料编号
+                    String materialCode="";
+                    if(StringUtils.isNotEmpty(materialId)) {
+                        ResponseEntity<BaseMaterial> baseMaterialEntity = barcodeUtils.baseFeignApi.materialDetail(materialId);
+                        if(StringUtils.isEmpty(baseMaterialEntity.getData())){
+                            throw new Exception("成品条码相应物料ID找不到物料信息-->"+materialId.toString());
+                        }
+                        materialCode=baseMaterialEntity.getData().getMaterialCode();
+                    }
+
                     //工单BOM找不到半成品信息
                     //通过配置项是否找产品BOM ProductBomCheckRelation
 //                    String paraValue = getSysSpecItemValue("ProductBomCheckRelation");
@@ -1468,7 +1489,7 @@ public class BarcodeUtils {
 
 //                    }
 
-                    throw new Exception("当前工序找不到成品条码与半成品条码的关系");
+                    throw new Exception("当前工序找不到成品条码与半成品条码的关系 产品物料编码-->"+materialCode+" 半成品物料编码-->"+partMaterialCode);
                 }
             }
 
