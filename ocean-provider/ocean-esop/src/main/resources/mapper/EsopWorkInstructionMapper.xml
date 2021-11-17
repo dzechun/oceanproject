@@ -69,7 +69,9 @@
 
     <resultMap id="BaseResultMapTreeDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.esop.EsopWorkInstructionTreeDto">
         <result column="work_instruction_seq_nums" jdbcType="VARCHAR" property="workInstructionSeqNums"/>
-
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+        <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
     </resultMap>
 
   <sql id="BaseColumnList">
@@ -167,7 +169,8 @@
     </select>
 
     <select id="findTreeList" resultMap="BaseResultMapTreeDto">
-        SELECT ewi.work_instruction_seq_num as work_instruction_seq_nums
+        SELECT ewi.work_instruction_seq_num as work_instruction_seq_nums,spm.product_model_code as product_model_code,
+        spm.product_model_name as product_model_name,spm.product_model_desc as product_model_desc
         FROM esop_work_instruction ewi
         LEFT JOIN base_material bm ON ewi.material_id = bm.material_id
         LEFT JOIN base_material_tab bt ON bm.material_id = bt.material_id

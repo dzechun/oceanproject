@@ -117,6 +117,7 @@
     left join fantech_imes_v2.base_warehouse_area bwa on ej.warehouse_area_id=bwa.warehouse_area_id
     left join fantech_imes_v2.base_working_area bwo on ej.working_area_id=bwo.working_area_id
     left join fantech_imes_v2.base_storage bs on ej.storage_id=bs.storage_id
+    left join fantech_imes_v2.eam_jig_barcode ejb on ej.jig_id=ejb.jig_id
     left join ocean_v2.sys_user su on ej.user_id=su.user_id
     left join ocean_v2.sys_user u on ej.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ej.modified_user_id=s.user_id
@@ -148,6 +149,9 @@
       </if>
       <if test="orgId!=null">
         and ej.org_id=#{orgId}
+      </if>
+      <if test="jigBarcode!= null and jigBarcode!=''">
+        and ejb.jig_barcode = #{jigBarcode}
       </if>
     </where>
     order by ej.create_time desc

@@ -44,4 +44,11 @@ public class SearchEamJig extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="jigCategoryName",value = "治具类别")
     private String jigCategoryName;
+
+
+    /**
+     * 治具条码
+     */
+    @ApiModelProperty(name="jigBarcode",value = "治具条码")
+    private String jigBarcode;
 }
