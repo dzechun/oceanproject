@@ -61,6 +61,7 @@
     epro.surplus_qty,
     epro.purchase_req_qty,
     ecqo.pur_qty,
+    ecqo.ago_qty,
     epro.material_grade,
     ecqo.material_purpose,
     ecqo.location_num,
