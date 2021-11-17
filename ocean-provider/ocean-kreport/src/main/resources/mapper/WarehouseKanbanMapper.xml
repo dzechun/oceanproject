@@ -7,20 +7,21 @@
         ifnull(sum(
             CASE WHEN status NOT in('SF','CA','CL') THEN 1 else 0 end
             ),0) as 'unfinishedOrderQty',
+        IFNULL(SUM(CASE WHEN STATUS ='SF' THEN 1 ELSE 0 END),0) AS 'finishedOrderQty',
         ifnull(sum(CASE WHEN status NOT in('SF','CA','CL') AND REVIEW_STATUS!='REVIEW_COMPLETED' THEN 1 else 0 end),0) as 'pendingSalesQty',
         count(1) as 'totalOrderQty',
         ifnull(sum(CASE WHEN status in('CA','CL') THEN 1 else 0 end),0) as 'cancelOrderQty'
         from wms_pick_ticket
-        where WAREHOUSE_ID = #{warehouseId} and date_format(CREATED_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+        where WAREHOUSE_ID = #{warehouseId} and date_format(UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="findAccomplishQty" parameterType="map" resultType="long">
-    SELECT  count(1) AS finishedOrderQty
-    FROM
-      wms_pick_ticket
-    WHERE WAREHOUSE_ID = #{warehouseId}
-    AND   STATUS ='SF'
-    AND DATE_FORMAT(UPDATE_TIME, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+--     SELECT  count(1) AS finishedOrderQty
+--     FROM
+--       wms_pick_ticket
+--     WHERE WAREHOUSE_ID = #{warehouseId}
+--     AND   STATUS ='SF'
+--     AND DATE_FORMAT(UPDATE_TIME, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="findClaimGoods" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.BillsQtyStatistics">
@@ -144,7 +145,7 @@
             wa.LAST_OPERATOR_UNIKEY as 'unikey',
             ifnull(COUNT( 1 ) ,0) as 'putawayQty'
         from wms_asn wa
-        where wa.WAREHOUSE_ID = #{warehouseId} and wa.STATUS = 'PN'  and date_format(wa.PDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+        where wa.WAREHOUSE_ID = #{warehouseId} and wa.STATUS = 'PN'  and date_format(wa.UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
         GROUP BY wa.LAST_OPERATOR
     </select>
 
@@ -245,7 +246,7 @@
             select sum(wiii.QTY_BASE_QTY) 'total_qty',wiii.WAREHOUSE_ID from wms_inventory wiii where wiii.WAREHOUSE_ID = #{warehouseId}
         )twi on wii.WAREHOUSE_ID = twi.WAREHOUSE_ID
         WHERE wii.WAREHOUSE_ID = #{warehouseId} AND wii.OPERATION_STATUS = 'N'  AND wl.TYPE = 'ST'
-        <if test="codes != null and codes != ''">
+        <if test="codes != null">
             <foreach collection="codes" item="item" index="index"  separator="," close=")" open="and wi.CODE in (">
                 #{item}
             </foreach>

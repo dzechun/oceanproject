@@ -5,18 +5,16 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentJigDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentJigListDto;
+import com.fantechs.common.base.general.dto.eam.imports.EamEquipmentJigImport;
+import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentJig;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentJigList;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterial;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterialList;
+import com.fantechs.common.base.general.entity.eam.EamJig;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentJig;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentMaterial;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.eam.mapper.EamEquipmentJigListMapper;
-import com.fantechs.provider.eam.mapper.EamEquipmentJigMapper;
-import com.fantechs.provider.eam.mapper.EamHtEquipmentJigMapper;
+import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamEquipmentJigService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -24,10 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -42,6 +39,10 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
     private EamHtEquipmentJigMapper eamHtEquipmentJigMapper;
     @Resource
     private EamEquipmentJigListMapper eamEquipmentJigListMapper;
+    @Resource
+    private EamJigMapper eamJigMapper;
+    @Resource
+    private EamEquipmentMapper eamEquipmentMapper;
 
     @Override
     public List<EamEquipmentJigDto> findList(Map<String, Object> map) {
@@ -181,4 +182,127 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
 
         return eamEquipmentJigMapper.deleteByIds(ids);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<EamEquipmentJigImport> eamEquipmentJigImportsTemp) throws ParseException {
+        List<EamEquipmentJigImport> eamEquipmentJigImports=new ArrayList<>();
+        for (EamEquipmentJigImport eamEquipmentJigImport : eamEquipmentJigImportsTemp) {
+            if(StringUtils.isNotEmpty(eamEquipmentJigImport.getEquipmentCode())){
+                eamEquipmentJigImports.add(eamEquipmentJigImport);
+            }
+        }
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(currentUser)) {
+            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+
+        //排除不合法的数据
+        Iterator<EamEquipmentJigImport> iterator = eamEquipmentJigImports.iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            EamEquipmentJigImport eamEquipmentJigImport = iterator.next();
+            String equipmentCode = eamEquipmentJigImport.getEquipmentCode();
+            String equipmentName = eamEquipmentJigImport.getEquipmentName();
+            String jigCode = eamEquipmentJigImport.getJigCode();
+            String usageQty = eamEquipmentJigImport.getUsageQty().toString();
+
+            //判断必传字段
+            if (StringUtils.isEmpty(
+                    equipmentCode,equipmentName,jigCode,usageQty
+            )) {
+                fail.add(i + 4);
+                iterator.remove();
+                i++;
+                continue;
+            }
+
+            //判断治具信息是否存在
+            Example example1 = new Example(EamJig.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("jigCode",jigCode);
+            EamJig eamJig = eamJigMapper.selectOneByExample(example1);
+            if (StringUtils.isEmpty(eamJig)){
+                fail.add(i + 4);
+                iterator.remove();
+                i++;
+                continue;
+            }
+            eamEquipmentJigImport.setJigId(eamJig.getJigId());
+            i++;
+        }
+
+        //对合格数据进行分组
+        Map<String, List<EamEquipmentJigImport>> map = eamEquipmentJigImports.stream().collect(Collectors.groupingBy(EamEquipmentJigImport::getEquipmentCode, HashMap::new, Collectors.toList()));
+        Set<String> codeList = map.keySet();
+        for (String code : codeList) {
+            List<EamEquipmentJigImport> eamEquipmentJigImports1 = map.get(code);
+
+            //判断设备编码
+            Long equipmentId=null;
+            Long equipmentJigId=null;
+            Example example = new Example(EamEquipment.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("equipmentCode",code);
+            EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(eamEquipment)){
+                equipmentId=eamEquipment.getEquipmentId();
+            }
+            if(StringUtils.isNotEmpty(equipmentId)) {
+                Example examplEamEJ = new Example(EamEquipmentJig.class);
+                Example.Criteria criteriaEamEJ = examplEamEJ.createCriteria();
+                criteriaEamEJ.andEqualTo("equipmentId", equipmentId);
+                EamEquipmentJig eamEquipmentJig = eamEquipmentJigMapper.selectOneByExample(examplEamEJ);
+                if (StringUtils.isNotEmpty(eamEquipmentJig)) {
+                    equipmentJigId = eamEquipmentJig.getEquipmentJigId();
+                }
+            }
+            //新增表头 EquipmentJigId
+            if(StringUtils.isEmpty(equipmentJigId)){
+                EamEquipmentJig eamEquipmentJigNew=new EamEquipmentJig();
+                eamEquipmentJigNew.setEquipmentId(equipmentId);
+                eamEquipmentJigNew.setStatus((byte)1);
+                eamEquipmentJigNew.setOrgId(currentUser.getOrganizationId());
+                eamEquipmentJigNew.setCreateUserId(currentUser.getUserId());
+                eamEquipmentJigNew.setCreateTime(new Date());
+                eamEquipmentJigMapper.insertUseGeneratedKeys(eamEquipmentJigNew);
+                equipmentJigId=eamEquipmentJigNew.getEquipmentJigId();
+            }
+            //新增明细 EamEquipmentJigList
+            if(StringUtils.isNotEmpty(equipmentJigId)) {
+                List<EamEquipmentJigList> eamEquipmentJigLists=new ArrayList<>();
+                for (EamEquipmentJigImport item : eamEquipmentJigImports1) {
+
+                    Example examplEamEJL = new Example(EamEquipmentJigList.class);
+                    Example.Criteria criteriaEamEJL = examplEamEJL.createCriteria();
+                    criteriaEamEJL.andEqualTo("equipmentJigId", equipmentJigId);
+                    criteriaEamEJL.andEqualTo("jigId",item.getJigId());
+                    EamEquipmentJigList eamEquipmentJigList = eamEquipmentJigListMapper.selectOneByExample(examplEamEJL);
+                    if(StringUtils.isEmpty(eamEquipmentJigList)) {
+                        EamEquipmentJigList equipmentJigListNew=new EamEquipmentJigList();
+                        equipmentJigListNew.setEquipmentJigId(equipmentJigId);
+                        equipmentJigListNew.setJigId(item.getJigId());
+                        equipmentJigListNew.setUsageQty(item.getUsageQty());
+                        equipmentJigListNew.setOrgId(currentUser.getOrganizationId());
+                        equipmentJigListNew.setCreateUserId(currentUser.getUserId());
+                        equipmentJigListNew.setCreateTime(new Date());
+                        eamEquipmentJigLists.add(equipmentJigListNew);
+                    }
+
+                }
+
+                if(eamEquipmentJigLists.size()>0){
+                    success += eamEquipmentJigListMapper.insertList(eamEquipmentJigLists);
+                }
+            }
+        }
+        resultMap.put("操作成功总数", success);
+        resultMap.put("操作失败行", fail);
+        return resultMap;
+    }
+
 }

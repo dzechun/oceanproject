@@ -502,7 +502,7 @@ public class BarcodeUtils {
      */
     public static void printBarCode(PrintCarCodeDto dto) {
         LabelRuteDto labelRuteDto = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findRule(dto.getLabelTypeCode(), dto.getWorkOrderId());
-        PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(ControllerUtil.dynamicCondition("labelCode",labelRuteDto.getLabelCode(),"id",dto.getWorkOrderId(),"labelCategoryId",labelRuteDto.getLabelCategoryId()));
+        PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(ControllerUtil.dynamicCondition("labelCode",labelRuteDto.getLabelCode(),"id",dto.getWorkOrderId()));
         if(StringUtils.isEmpty(printModel)) {
             printModel = new PrintModel();
         }
@@ -565,9 +565,9 @@ public class BarcodeUtils {
                 BaseProcess baseProcess = barcodeUtils.baseFeignApi.processDetail(processId).getData();
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003, baseProcess.getProcessName(), mesSfcBarcodeProcess.getNextProcessName());
             }
-            if (!mesSfcBarcodeProcess.getProLineId().equals(proLineId)){
-                throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
-            }
+//            if (!mesSfcBarcodeProcess.getProLineId().equals(proLineId)){
+//                throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
+//            }
             // 已完成所有过站工序
             if (mesSfcBarcodeProcess.getNextProcessId().equals(0L)){
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码已完成所有工序过站");
@@ -1324,6 +1324,10 @@ public class BarcodeUtils {
                 }
             }
 
+            if(StringUtils.isEmpty(updateProcessDto.getWorkOrderBarcodeId())){
+                throw new Exception("系统中找不到条码的信息");
+            }
+
             //设置过站条码
             updateProcessDto.setBarCode(barcodeCode);
 
@@ -1439,9 +1443,30 @@ public class BarcodeUtils {
                 SearchMesPmWorkOrderBom searchMesPmWorkOrderBom = new SearchMesPmWorkOrderBom();
                 searchMesPmWorkOrderBom.setWorkOrderId(workOrderId);
                 searchMesPmWorkOrderBom.setPartMaterialId(partMaterialId);
-                searchMesPmWorkOrderBom.setProcessId(processId);
+                //searchMesPmWorkOrderBom.setProcessId(processId);
                 ResponseEntity<List<MesPmWorkOrderBomDto>> responseEntityBom = barcodeUtils.deviceInterFaceUtils.getWorkOrderBomList(searchMesPmWorkOrderBom);
                 if (StringUtils.isEmpty(responseEntityBom.getData())) {
+
+                    //半成品物料编号
+                    String partMaterialCode="";
+                    if(StringUtils.isNotEmpty(partMaterialId)) {
+                        ResponseEntity<BaseMaterial> baseMaterialEntity = barcodeUtils.baseFeignApi.materialDetail(partMaterialId);
+                        if(StringUtils.isEmpty(baseMaterialEntity.getData())){
+                            throw new Exception("半成品条码相应物料ID找不到物料信息-->"+partMaterialId.toString());
+                        }
+                        partMaterialCode=baseMaterialEntity.getData().getMaterialCode();
+                    }
+
+                    //成品物料编号
+                    String materialCode="";
+                    if(StringUtils.isNotEmpty(materialId)) {
+                        ResponseEntity<BaseMaterial> baseMaterialEntity = barcodeUtils.baseFeignApi.materialDetail(materialId);
+                        if(StringUtils.isEmpty(baseMaterialEntity.getData())){
+                            throw new Exception("成品条码相应物料ID找不到物料信息-->"+materialId.toString());
+                        }
+                        materialCode=baseMaterialEntity.getData().getMaterialCode();
+                    }
+
                     //工单BOM找不到半成品信息
                     //通过配置项是否找产品BOM ProductBomCheckRelation
 //                    String paraValue = getSysSpecItemValue("ProductBomCheckRelation");
@@ -1464,7 +1489,7 @@ public class BarcodeUtils {
 
 //                    }
 
-                    throw new Exception("当前工序找不到成品条码与半成品条码的关系");
+                    throw new Exception("当前工序找不到成品条码与半成品条码的关系 产品物料编码-->"+materialCode+" 半成品物料编码-->"+partMaterialCode);
                 }
             }
 
@@ -1983,7 +2008,12 @@ public class BarcodeUtils {
 
                 BaseProLine proLine = barcodeUtils.baseFeignApi.selectProLinesDetail(proLineId).getData();
                 BaseProcess baseProcess = barcodeUtils.baseFeignApi.processDetail(processId).getData();
-                BaseStation baseStation = barcodeUtils.baseFeignApi.findStationDetail(stationId).getData();
+                //BaseStation baseStation = barcodeUtils.baseFeignApi.findStationDetail(stationId).getData();
+
+                BaseStation baseStation=new BaseStation();
+                if(StringUtils.isNotEmpty(stationId)){
+                    baseStation = barcodeUtils.baseFeignApi.findStationDetail(stationId).getData();
+                }
 
                 // 绑定附件码跟条码关系
                 barcodeUtils.mesSfcKeyPartRelevanceService.save(MesSfcKeyPartRelevance.builder()

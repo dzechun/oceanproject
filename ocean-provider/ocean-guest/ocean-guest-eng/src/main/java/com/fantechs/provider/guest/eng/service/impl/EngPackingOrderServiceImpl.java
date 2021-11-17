@@ -36,6 +36,8 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -100,12 +102,21 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int register(EngPackingOrder engPackingOrder) {
-        if(engPackingOrder.getRegisterType() == 1){
-            engPackingOrder.setLeaveFactoryTime(new Date());
-        }else if(engPackingOrder.getRegisterType() == 2){
-            engPackingOrder.setLeavePortTime(new Date());
-        }else if(engPackingOrder.getRegisterType() == 3){
-            engPackingOrder.setArrivalPortTime(new Date());
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String s = sdf.format(new Date());
+            Date date = sdf.parse(s);
+
+            if(engPackingOrder.getRegisterType() == 1){
+                engPackingOrder.setLeaveFactoryTime(date);
+            }else if(engPackingOrder.getRegisterType() == 2){
+                engPackingOrder.setLeavePortTime(date);
+            }else if(engPackingOrder.getRegisterType() == 3){
+                engPackingOrder.setArrivalPortTime(date);
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         return update(engPackingOrder);
@@ -199,8 +210,6 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                         engLogisticsRecordMessage.setChangeTime(new Date());
                         engLogisticsRecordMessage.setQty(engPackingOrderSummaryDetDto.getQty());
                         engLogisticsRecordMessage.setOperateUser(sysUser.getUserName());
-
-
                         for (EngUserFollowContractQtyOrder engUserFollowContractQtyOrder : engUserFollowContractQtyOrders){
                             EngLogisticsRecord engLogisticsRecord = new EngLogisticsRecord();
                             engLogisticsRecord.setMaterialLogisticsNode(logisticsNode);
@@ -210,6 +219,12 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                             engLogisticsRecord.setReceiveUserId(engUserFollowContractQtyOrder.getUserId());
                             records.add(engLogisticsRecord);
                         }
+                    }
+                    if(logisticsNode==5){
+                        BigDecimal agoQty = StringUtils.isNotEmpty(engContractQtyOrderAndPurOrderDto.getAgoQty())?new BigDecimal(engContractQtyOrderAndPurOrderDto.getAgoQty()):BigDecimal.ZERO;
+                        agoQty = agoQty.add(engPackingOrderSummaryDetDto.getQty());
+                        engContractQtyOrderAndPurOrderDto.setAgoQty(agoQty.toString());
+                        engContractQtyOrderAndPurOrderService.update(engContractQtyOrderAndPurOrderDto);
                     }
                 }
             }

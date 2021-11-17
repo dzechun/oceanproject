@@ -10,15 +10,11 @@ import com.fantechs.common.base.support.IService;
 
 import java.util.List;
 import java.util.Map;
-/**
- *
- * Created by leifengzhi on 2021/09/10.
- */
 
 public interface CallAgvVehicleReBarcodeService extends IService<CallAgvVehicleReBarcode> {
     List<CallAgvVehicleReBarcodeDto> findList(Map<String, Object> map);
 
-    int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException;
+    List<CallAgvVehicleReBarcode> callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException;
 
     String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Long storageTaskPointId, Integer type) throws Exception;
 
@@ -27,4 +23,8 @@ public interface CallAgvVehicleReBarcodeService extends IService<CallAgvVehicleR
     int vehicleBarcodeUnbound(RequestBarcodeUnboundDTO requestBarcodeUnboundDTO);
 
     List<CallAgvVehicleBarcodeDTO> findCallAgvVehicleList(Map<String, Object> map);
+
+    int vehicleDisplacement(Long vehicleId, Long storageTaskPointId, Integer type) throws Exception;
+
+    int materialTransfer(RequestCallAgvStockDTO requestCallAgvStockDTO);
 }

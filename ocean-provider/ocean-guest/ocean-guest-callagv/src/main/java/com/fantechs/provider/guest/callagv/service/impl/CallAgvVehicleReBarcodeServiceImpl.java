@@ -10,7 +10,9 @@ import com.fantechs.common.base.general.dto.callagv.*;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.callagv.*;
+import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvAgvTask;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.agv.AgvFeignApi;
@@ -69,7 +71,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     @Override
     @Transactional
     @LcnTransaction
-    public int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException {
+    public List<CallAgvVehicleReBarcode> callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         TemVehicle temVehicle = temVehicleFeignApi.detail(requestCallAgvStockDTO.getVehicleId()).getData();
         if (temVehicle.getStatus() != 1) {
@@ -94,14 +96,18 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             }
             throw new BizErrorException("条码：" + barCodeList.toString() + "已绑定其他货架，不能重复备料！");
         }
+        List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = new LinkedList<>();
         for (Long id : requestCallAgvStockDTO.getBarcodeIdList()) {
             CallAgvVehicleReBarcode callAgvVehicleReBarcode = new CallAgvVehicleReBarcode();
             callAgvVehicleReBarcode.setBarcodeId(id);
             callAgvVehicleReBarcode.setVehicleId(requestCallAgvStockDTO.getVehicleId());
+            callAgvVehicleReBarcode.setStatus((byte) 1);
             callAgvVehicleReBarcode.setOrgId(user.getOrganizationId());
             callAgvVehicleReBarcode.setCreateUserId(user.getUserId());
             callAgvVehicleReBarcode.setCreateTime(new Date());
-            callAgvVehicleReBarcodeMapper.insertSelective(callAgvVehicleReBarcode);
+            callAgvVehicleReBarcode.setIsDelete((byte) 1);
+            callAgvVehicleReBarcodeMapper.insertUseGeneratedKeys(callAgvVehicleReBarcode);
+            callAgvVehicleReBarcodeList.add(callAgvVehicleReBarcode);
 
             CallAgvVehicleLog callAgvVehicleLog = new CallAgvVehicleLog();
             callAgvVehicleLog.setBarcodeId(id);
@@ -124,7 +130,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         baseStorageTaskPoint.setModifiedTime(new Date());
         baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPoint);
 
-        return requestCallAgvStockDTO.getBarcodeIdList().size();
+        return callAgvVehicleReBarcodeList;
     }
 
     @Override
@@ -172,6 +178,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             if (baseStorageTaskPointEnd.getStorageTaskPointStatus() != 1) {
                 throw new BizErrorException("目的库位对应的配送点被占用，请重新选择");
             }
+            positionCodeList.add(baseStorageTaskPointEnd.getXyzCode());
         }
 
         temVehicle.setStorageTaskPointId(0l);
@@ -233,8 +240,10 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         callAgvAgvTask.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
         callAgvAgvTask.setEndStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
         callAgvAgvTask.setOperateType(type.byteValue());
+        callAgvAgvTask.setStatus((byte) 1);
         callAgvAgvTask.setOrgId(user.getOrganizationId());
         callAgvAgvTask.setCreateUserId(user.getUserId());
+        callAgvAgvTask.setIsDelete((byte) 1);
 
         String message = "";
         String taskCode = "";
@@ -337,6 +346,13 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     @LcnTransaction
     public int vehicleBarcodeUnbound(RequestBarcodeUnboundDTO requestBarcodeUnboundDTO) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
+        searchCallAgvAgvTask.setVehicleId(requestBarcodeUnboundDTO.getVehicleId());
+        searchCallAgvAgvTask.setTaskStatusList(Arrays.asList(1,2));
+        List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
+        if (!callAgvAgvTaskDtoList.isEmpty()) {
+            throw new BizErrorException("当前货架正在执行任务，请稍后再试");
+        }
         TemVehicle temVehicle = temVehicleFeignApi.detail(requestBarcodeUnboundDTO.getVehicleId()).getData();
         if (requestBarcodeUnboundDTO.getType() == 1) {
             temVehicle.setVehicleStatus((byte) 1);
@@ -390,6 +406,119 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         }
 
         return callAgvVehicleBarcodeDTOList;
+    }
+
+    @Override
+    @Transactional
+    @LcnTransaction
+    public int vehicleDisplacement(Long vehicleId, Long storageTaskPointId, Integer type) throws Exception {
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
+        searchCallAgvAgvTask.setVehicleId(vehicleId);
+        searchCallAgvAgvTask.setTaskStatusList(Arrays.asList(1,2));
+        List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
+        if (!callAgvAgvTaskDtoList.isEmpty()) {
+            throw new BizErrorException("当前货架正在执行任务，请稍后再试");
+        }
+        TemVehicle temVehicle = temVehicleFeignApi.detail(vehicleId).getData();
+        if (type == 1 && (StringUtils.isEmpty(temVehicle.getStorageTaskPointId()) || temVehicle.getStorageTaskPointId() == 0)) {
+            throw new BizErrorException("当前货架未绑定库位配送点，无法进行移出操作");
+        }
+        if (type == 2 && StringUtils.isNotEmpty(temVehicle.getStorageTaskPointId()) && temVehicle.getStorageTaskPointId() != 0) {
+            throw new BizErrorException("当前货架已绑定库位配送点，无法进行移入操作");
+        }
+        CallAgvVehicleLog callAgvVehicleLog = new CallAgvVehicleLog();
+        callAgvVehicleLog.setVehicleId(vehicleId);
+
+        if (type == 1) {
+            callAgvVehicleLog.setStartStorageTaskPointId(temVehicle.getStorageTaskPointId());
+            callAgvVehicleLog.setOperatorType((byte) 5);
+            callAgvVehicleLog.setRemark("移出货架");
+
+            BaseStorageTaskPoint baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(temVehicle.getStorageTaskPointId()).getData();
+            baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
+            baseStorageTaskPoint.setModifiedUserId(user.getUserId());
+            baseStorageTaskPoint.setModifiedTime(new Date());
+            baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPoint);
+
+            temVehicle.setStorageTaskPointId(0l);
+            temVehicle.setModifiedUserId(user.getUserId());
+            temVehicle.setModifiedTime(new Date());
+            temVehicleFeignApi.update(temVehicle);
+        } else {
+            callAgvVehicleLog.setEndStorageTaskPointId(storageTaskPointId);
+            callAgvVehicleLog.setRemark("移入货架");
+
+            BaseStorageTaskPoint baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(storageTaskPointId).getData();
+            if (StringUtils.isEmpty(baseStorageTaskPoint)) {
+                throw new BizErrorException("未找到对应的移入库位，请重新扫码");
+            }
+            if (baseStorageTaskPoint.getStorageTaskPointStatus() == 2) {
+                throw new BizErrorException("库位已被占用，请重新扫码");
+            }
+            baseStorageTaskPoint.setStorageTaskPointStatus((byte) 2);
+            baseStorageTaskPoint.setModifiedUserId(user.getUserId());
+            baseStorageTaskPoint.setModifiedTime(new Date());
+            baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPoint);
+
+            temVehicle.setStorageTaskPointId(storageTaskPointId);
+            temVehicle.setModifiedUserId(user.getUserId());
+            temVehicle.setModifiedTime(new Date());
+            temVehicleFeignApi.update(temVehicle);
+        }
+
+        callAgvVehicleLog.setOrgId(user.getOrganizationId());
+        callAgvVehicleLog.setCreateUserId(user.getUserId());
+        callAgvVehicleLog.setCreateTime(new Date());
+        callAgvVehicleLogMapper.insertSelective(callAgvVehicleLog);
+
+        return 1;
+    }
+
+    @Override
+    @Transactional
+    @LcnTransaction
+    public int materialTransfer(RequestCallAgvStockDTO requestCallAgvStockDTO) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        TemVehicle temVehicle = temVehicleFeignApi.detail(requestCallAgvStockDTO.getVehicleId()).getData();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("barcodeIdList", requestCallAgvStockDTO.getBarcodeIdList());
+        List<CallAgvVehicleReBarcodeDto> callAgvVehicleReBarcodeDtoList = findList(map);
+        if (!callAgvVehicleReBarcodeDtoList.isEmpty()) {
+            List<String> barCodeList = new LinkedList<>();
+            for (CallAgvVehicleReBarcodeDto callAgvVehicleReBarcodeDto : callAgvVehicleReBarcodeDtoList) {
+                barCodeList.add(callAgvVehicleReBarcodeDto.getBarcode());
+            }
+            throw new BizErrorException("条码：" + barCodeList.toString() + "已绑定其他货架，不能移入该物料！");
+        }
+
+        for (Long id : requestCallAgvStockDTO.getBarcodeIdList()) {
+            CallAgvVehicleReBarcode callAgvVehicleReBarcode = new CallAgvVehicleReBarcode();
+            callAgvVehicleReBarcode.setBarcodeId(id);
+            callAgvVehicleReBarcode.setVehicleId(requestCallAgvStockDTO.getVehicleId());
+            callAgvVehicleReBarcode.setOrgId(user.getOrganizationId());
+            callAgvVehicleReBarcode.setCreateUserId(user.getUserId());
+            callAgvVehicleReBarcode.setCreateTime(new Date());
+            callAgvVehicleReBarcodeMapper.insertSelective(callAgvVehicleReBarcode);
+
+            CallAgvVehicleLog callAgvVehicleLog = new CallAgvVehicleLog();
+            callAgvVehicleLog.setBarcodeId(id);
+            callAgvVehicleLog.setVehicleId(requestCallAgvStockDTO.getVehicleId());
+            callAgvVehicleLog.setOperatorType((byte) 1);
+            callAgvVehicleLog.setOrgId(user.getOrganizationId());
+            callAgvVehicleLog.setCreateUserId(user.getUserId());
+            callAgvVehicleLog.setCreateTime(new Date());
+            callAgvVehicleLog.setRemark("移入物料");
+            callAgvVehicleLogMapper.insertSelective(callAgvVehicleLog);
+        }
+        temVehicle.setVehicleStatus((byte) 3);
+        temVehicle.setModifiedUserId(user.getUserId());
+        temVehicle.setModifiedTime(new Date());
+        temVehicleFeignApi.update(temVehicle);
+
+        return 1;
     }
 
     /**

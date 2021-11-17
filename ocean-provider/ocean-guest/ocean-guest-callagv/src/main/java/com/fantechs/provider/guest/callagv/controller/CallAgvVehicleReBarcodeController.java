@@ -87,9 +87,10 @@ public class CallAgvVehicleReBarcodeController {
 
     @ApiOperation("备料作业")
     @PostMapping("callAgvStock")
-    public ResponseEntity callAgvStock(@ApiParam(value = "请求对象", required = true) @RequestBody RequestCallAgvStockDTO requestCallAgvStockDTO) throws Exception {
+    public ResponseEntity<List<CallAgvVehicleReBarcode>> callAgvStock(@ApiParam(value = "请求对象", required = true) @RequestBody RequestCallAgvStockDTO requestCallAgvStockDTO) throws Exception {
 
-        return ControllerUtil.returnCRUD(callAgvVehicleReBarcodeService.callAgvStock(requestCallAgvStockDTO));
+        List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = callAgvVehicleReBarcodeService.callAgvStock(requestCallAgvStockDTO);
+        return ControllerUtil.returnDataSuccess(callAgvVehicleReBarcodeList, callAgvVehicleReBarcodeList.size());
     }
 
     @ApiOperation("AGV配送")
@@ -116,5 +117,22 @@ public class CallAgvVehicleReBarcodeController {
         Page<Object> page = PageHelper.startPage(searchCallAgvVehicleReBarcode.getStartPage(), searchCallAgvVehicleReBarcode.getPageSize());
         List<CallAgvVehicleBarcodeDTO> list = callAgvVehicleReBarcodeService.findCallAgvVehicleList(ControllerUtil.dynamicConditionByEntity(searchCallAgvVehicleReBarcode));
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
+    }
+
+    @ApiOperation("货架移位")
+    @PostMapping("/vehicleDisplacement")
+    public ResponseEntity vehicleDisplacement(
+            @ApiParam(value = "周转工具（货架）ID", required = true) @RequestParam Long vehicleId,
+            @ApiParam(value = "库位配送点ID") @RequestParam(required = false, defaultValue = "0") Long storageTaskPointId,
+            @ApiParam(value = "AGV配送类型(1-移出货架 2-移入货架（库位配送点ID必须要有）)", required = true) @RequestParam Integer type) throws Exception {
+
+        return ControllerUtil.returnDataSuccess(callAgvVehicleReBarcodeService.vehicleDisplacement(vehicleId, storageTaskPointId, type), 1);
+    }
+
+    @ApiOperation("物料移库")
+    @PostMapping("materialTransfer")
+    public ResponseEntity materialTransfer(@ApiParam(value = "请求对象", required = true) @RequestBody RequestCallAgvStockDTO requestCallAgvStockDTO) throws Exception {
+
+        return ControllerUtil.returnCRUD(callAgvVehicleReBarcodeService.materialTransfer(requestCallAgvStockDTO));
     }
 }

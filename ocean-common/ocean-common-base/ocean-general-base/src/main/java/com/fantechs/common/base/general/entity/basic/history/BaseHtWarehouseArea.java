@@ -83,7 +83,7 @@ public class BaseHtWarehouseArea implements Serializable {
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
     @Column(name = "org_id")
-    private Long organizationId;
+    private Long orgId;
 
     /**
      * 组织名称

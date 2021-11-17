@@ -483,7 +483,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //盘点
                 if(wmsInventoryVerification.getProjectType()==(byte)1){
                     //是否存在差异量 不存在则解锁库存盘点锁 存在则进行复盘
-                    if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty())&&wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==0){
+                    if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty()) || wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==0){
                         wmsInventoryVerificationDets.add(wmsInventoryVerificationDet);
                     }
                 }
@@ -655,11 +655,15 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
                         .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
-                        .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
                         .andEqualTo("stockLock",lockType==(byte) 2?0:1)
                         .andEqualTo("orgId",sysUser.getOrganizationId())
                         .andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty()).andEqualTo("qcLock", 0)
                         .andEqualTo("lockStatus", 0);
+                if(StringUtils.isNotEmpty(wmsInnerStockOrderDet.getBatchCode())){
+                    criteria.andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode());
+                }else {
+                    criteria.andIsNull("batchCode");
+                }
                 if(lockType==(byte) 1){
                     criteria.andEqualTo("relevanceOrderCode",wmsInventoryVerification.getStockOrderCode());
                 }
@@ -734,11 +738,15 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("warehouseId",wmsInnerStockOrder.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
                     .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
-                    .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
                     .andEqualTo("relevanceOrderCode",wmsInnerStockOrder.getRelatedOrderCode())
                     .andEqualTo("stockLock",1)
                     .andEqualTo("orgId",wmsInnerStockOrder.getOrganizationId())
                     .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
+            if(StringUtils.isNotEmpty(wmsInnerStockOrderDet.getBatchCode())){
+                criteria.andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode());
+            }else {
+                criteria.andIsNull("batchCode");
+            }
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
             example.clear();
             criteria = example.createCriteria();

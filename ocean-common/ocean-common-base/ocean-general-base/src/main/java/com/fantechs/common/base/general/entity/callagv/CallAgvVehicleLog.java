@@ -1,13 +1,19 @@
 package com.fantechs.common.base.general.entity.callagv;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 货架日志表
@@ -62,8 +68,8 @@ public class CallAgvVehicleLog extends ValidGroup implements Serializable {
     /**
      * 操作类型(1-备料 2-叫料 3-解绑 4-空货架移动)
      */
-    @ApiModelProperty(name="operatorType",value = "操作类型(1-备料 2-叫料 3-解绑 4-空货架移动)")
-    @Excel(name = "操作类型(1-备料 2-叫料 3-解绑 4-空货架移动)", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="operatorType",value = "操作类型(1-备料 2-叫料 3-解绑 4-空货架移动 5-货架移位)")
+    @Excel(name = "操作类型(1-备料 2-叫料 3-解绑 4-空货架移动 5-货架移位)", height = 20, width = 30,orderNum="")
     @Column(name = "operator_type")
     private Byte operatorType;
 
