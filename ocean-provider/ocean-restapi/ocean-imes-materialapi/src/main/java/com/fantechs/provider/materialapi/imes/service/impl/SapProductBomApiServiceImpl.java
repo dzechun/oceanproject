@@ -63,8 +63,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                 Long orgId = orgIdList.get(0).getOrganizationId();
                 if (StringUtils.isNotEmpty(res) && "S".equals(res.getTYPE())) {
                     if (StringUtils.isEmpty(res.getBOM())) throw new BizErrorException("请求结果为空");
-
-                    //区分成品以及半成品
+                    //区分表头和det表的数据
                     List<DTMESBOM> parentList = new ArrayList<DTMESBOM>();
                     HashSet<String> materialCodes = new HashSet<String>();
                     for (DTMESBOM bom : res.getBOM()) {
@@ -75,41 +74,49 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                                 parentList.add(bom);
                         }
                     }
+
+                    //增加集合，减少重复查询
                     Map<String,BaseMaterial> map = new HashMap<>();
+                    Map<String,Long> productBomIds = new HashMap<>();
                     //保存第一层bom表以及det表
                     List<BaseMaterial> baseMaterial1 = baseUtils.getBaseMaterial(searchSapProductBomApi.getMaterialCode(), orgId);
                     if (StringUtils.isEmpty(baseMaterial1)) throw new BizErrorException("未查询到对应物料编码");
                     map.put(baseMaterial1.get(0).getMaterialCode(),baseMaterial1.get(0));
 
-                    BaseProductBom parentBomData = saveBaseProductBom(baseMaterial1.get(0), baseUtils.removeZero(parentList.get(0).getAENNR()), orgId);
-                    BaseProductBom bomData = null;
+                    if(StringUtils.isNotEmpty(parentList)) {
+                        BaseProductBom parentBomData = saveBaseProductBom(baseMaterial1.get(0), baseUtils.removeZero(parentList.get(0).getAENNR()), orgId);
+                        BaseProductBom bomData = null;
 
-                    List<BaseProductBomDet> detList = new ArrayList<>();
-                    for (String code : materialCodes) {
-                        BaseMaterial material = map.get(code);
-                        if(StringUtils.isEmpty(material)) {
-                            List<BaseMaterial> baseMaterials = baseUtils.getBaseMaterial(code, orgId);
-                            if (StringUtils.isEmpty(baseMaterials)) throw new BizErrorException("未查询到对应物料编码:" + code);
-                            material = baseMaterials.get(0);
-                        }
+                        List<BaseProductBomDet> detList = new ArrayList<>();
+                        for (String code : materialCodes) {
+                            BaseMaterial material = map.get(code);
+                            if (StringUtils.isEmpty(material)) {
+                                List<BaseMaterial> baseMaterials = baseUtils.getBaseMaterial(code, orgId);
+                                if (StringUtils.isEmpty(baseMaterials))
+                                    throw new BizErrorException("未查询到对应物料编码:" + code);
+                                material = baseMaterials.get(0);
+                            }
 
-                        if (searchSapProductBomApi.getMaterialCode().equals(code)) {
-                            bomData = parentBomData;
-                        } else {
-                            bomData = saveBaseProductBom(material, "0", orgId);
+                            if (searchSapProductBomApi.getMaterialCode().equals(code)) {
+                                bomData = parentBomData;
+                            } else {
+                                bomData = saveBaseProductBom(material, "0", orgId);
 
-                            BaseProductBomDet subBomDet = new BaseProductBomDet();
-                            subBomDet.setProductBomId(parentBomData.getProductBomId());
-                            subBomDet.setMaterialId(material.getMaterialId());
-                            subBomDet.setIfHaveLowerLevel((byte) 1);
-                            subBomDet.setIsDelete((byte) 1);
-                            subBomDet.setStatus((byte) 1);
-                            detList.add(subBomDet);
-                         //   baseFeignApi.addOrUpdate(subBomDet);
-                        }
+                                BaseProductBomDet subBomDet = new BaseProductBomDet();
+                                if (StringUtils.isNotEmpty(parentBomData))
+                                    subBomDet.setProductBomId(parentBomData.getProductBomId());
+                                subBomDet.setMaterialId(material.getMaterialId());
+                                subBomDet.setIfHaveLowerLevel((byte) 1);
+                                subBomDet.setIsDelete((byte) 1);
+                                subBomDet.setStatus((byte) 1);
+                                detList.add(subBomDet);
+                                //   baseFeignApi.addOrUpdate(subBomDet);
+                            }
 
-                        if (StringUtils.isEmpty(bomData)) throw new BizErrorException("保存失败");
+                            if (StringUtils.isEmpty(bomData)) throw new BizErrorException("保存失败");
 
+                            productBomIds.put(code, bomData.getProductBomId());
+                            //循环放到此处为二层结构，放到下面则为三层
                         for (DTMESBOM bom : res.getBOM()) {
                             String detCode = baseUtils.removeZero(bom.getIDNRK());
                             if (baseUtils.removeZero(bom.getMATNR()).equals(code)) {
@@ -138,9 +145,40 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                             }
                         }
 
+                        }
 
+                        /*for (DTMESBOM bom : res.getBOM()) {
+                            String detCode = baseUtils.removeZero(bom.getIDNRK());
+                            if (materialCodes.contains(baseUtils.removeZero(bom.getMATNR()))) {
+                                BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
+                                //   baseProductBomDet.setProductBomId(bomData.getProductBomId());
+                                //获取表头的id
+                                baseProductBomDet.setProductBomId(productBomIds.get(baseUtils.removeZero(bom.getMATNR())));
+                                BaseMaterial materials = map.get(detCode);
+                                if (StringUtils.isEmpty(materials)) {
+                                    List<BaseMaterial> bomMaterial = baseUtils.getBaseMaterial(detCode, orgId);
+                                    if (StringUtils.isEmpty(bomMaterial))
+                                        throw new BizErrorException("未查询到对应物料编码:" + bom.getIDNRK());
+                                    materials = bomMaterial.get(0);
+                                }
+
+                                baseProductBomDet.setMaterialId(materials.getMaterialId());
+                                baseProductBomDet.setUsageQty(new BigDecimal(bom.getMENGE().trim()));
+                                baseProductBomDet.setBaseQty(new BigDecimal(bom.getBMENG().trim()));
+                                baseProductBomDet.setRemark(bom.getMAKTXZ());
+                                baseProductBomDet.setIfHaveLowerLevel((byte) 0);
+                                baseProductBomDet.setIsDelete((byte) 1);
+                                baseProductBomDet.setStatus((byte) 1);
+                                baseProductBomDet.setOrgId(orgId);
+                                baseProductBomDet.setCreateTime(new Date());
+                                baseProductBomDet.setCreateUserId((long) 99);
+                                detList.add(baseProductBomDet);
+                                //    baseFeignApi.addOrUpdate(baseProductBomDet);
+                            }
+                        }*/
+
+                        baseFeignApi.addOrUpdate(detList);
                     }
-                    baseFeignApi.addOrUpdate(detList);
                     logsUtils.addlog((byte) 1, (byte) 1, orgId, null, req.getMATNR());
                     return 1;
                 } else {
