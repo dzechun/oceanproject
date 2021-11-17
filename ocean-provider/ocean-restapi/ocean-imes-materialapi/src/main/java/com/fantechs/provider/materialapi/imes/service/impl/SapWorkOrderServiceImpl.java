@@ -49,7 +49,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         Map<String,Long> orderMap = new HashMap<String,Long>();
         Map<String,String> bomMap = new HashMap<String,String>();
         List<MesPmWorkOrderBom> mesPmWorkOrderBomList = new ArrayList<MesPmWorkOrderBom>();
-
+        HashSet codeSet = new HashSet();
         List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
         if(StringUtils.isEmpty(orgIdList)) return "未查询到对应的组织信息";
         Long orgId = orgIdList.get(0).getOrganizationId();
@@ -108,8 +108,9 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 orderMap.put(restapiWorkOrderApiDto.getAUFNR(),mesPmWorkOrderResponseEntity.getData().getWorkOrderId());
             }
 
-            if(StringUtils.isEmpty(bomMap.get(restapiWorkOrderApiDto.getRSPOS()))){
-
+            String zMaterialCode = baseUtils.removeZero(restapiWorkOrderApiDto.getZJMATNR());
+            if(StringUtils.isEmpty(bomMap.get(restapiWorkOrderApiDto.getRSPOS()))&& !codeSet.contains(zMaterialCode)){
+                codeSet.add(zMaterialCode);
                 MesPmWorkOrderBom bom = new MesPmWorkOrderBom();
                 if (StringUtils.isNotEmpty(restapiWorkOrderApiDto.getMENGE()))
                 bom.setSingleQty(new BigDecimal(restapiWorkOrderApiDto.getMENGE().trim()));
@@ -125,8 +126,8 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 mesPmWorkOrderBomList.add(bom);
                 bomMap.put(restapiWorkOrderApiDto.getRSPOS(),restapiWorkOrderApiDto.getZJMATNR());
             }
-            pmFeignApi.addMesPmWorkOrderBom(mesPmWorkOrderBomList);
         }
+        pmFeignApi.addMesPmWorkOrderBom(mesPmWorkOrderBomList);
         logsUtils.addlog((byte)1,(byte)2,orgId,null,null);
         return "success";
     }

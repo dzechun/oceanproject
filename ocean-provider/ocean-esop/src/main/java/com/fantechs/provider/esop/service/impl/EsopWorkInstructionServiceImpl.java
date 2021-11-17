@@ -164,6 +164,8 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         esopWorkInstructionDto.setStatus((byte)1);
         esopWorkInstructionDto.setWiStatus((byte)1);
         esopWorkInstructionDto.setOrgId(user.getOrganizationId());
+        esopWorkInstructionDto.setWorkInstructionSeqNum(esopWorkInstructionDto.getWorkInstructionSeqNum().trim());
+        esopWorkInstructionDto.setWorkInstructionName(esopWorkInstructionDto.getWorkInstructionName().trim());
         esopWorkInstructionMapper.insertUseGeneratedKeys(esopWorkInstructionDto);
 
         EsopHtWorkInstruction esopHtWorkInstruction = new EsopHtWorkInstruction();
@@ -188,6 +190,8 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         if(StringUtils.isEmpty(EsopWorkInstructionDto.getWorkInstructionId()))
             throw new BizErrorException("id不能为空");
         EsopWorkInstructionDto.setWiStatus((byte)1);
+        EsopWorkInstructionDto.setWorkInstructionSeqNum(EsopWorkInstructionDto.getWorkInstructionSeqNum().trim());
+        EsopWorkInstructionDto.setWorkInstructionName(EsopWorkInstructionDto.getWorkInstructionName().trim());
         esopWorkInstructionMapper.updateByPrimaryKeySelective(EsopWorkInstructionDto);
 
         Example example = new Example(EsopWorkInstruction.class);
@@ -800,6 +804,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
 
         Long workInstructionId=EsopWorkInstructionDto.getWorkInstructionId();
         Example exampleWiRDet = new Example(EsopWiReleaseDet.class);
+
         Example.Criteria criteriaWiRDet = exampleWiRDet.createCriteria();
         criteriaWiRDet.andEqualTo("workInstructionId", workInstructionId);
         criteriaWiRDet.andEqualTo("orgId", user.getOrganizationId());
@@ -821,13 +826,13 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         SysUser sysUser = currentUser();
         searchEsopWorkInstruction.setOrgId(sysUser.getOrganizationId());
         List<EsopWorkInstructionTreeDto> treeList = esopWorkInstructionMapper.findTreeList(searchEsopWorkInstruction);
-        if(StringUtils.isNotEmpty(treeList)){
+       /* if(StringUtils.isNotEmpty(treeList)){
             for(EsopWorkInstructionTreeDto dto :treeList){
                 searchEsopWorkInstruction.setWorkInstructionSeqNum(dto.getWorkInstructionSeqNums());
                 List<EsopWorkInstructionDto> list = esopWorkInstructionMapper.findList(searchEsopWorkInstruction);
                 dto.setEsopWorkInstructionDtos(list);
             }
-        }
+        }*/
         return treeList;
     }
 
