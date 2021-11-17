@@ -224,7 +224,10 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
                         BigDecimal agoQty = StringUtils.isNotEmpty(engContractQtyOrderAndPurOrderDto.getAgoQty())?new BigDecimal(engContractQtyOrderAndPurOrderDto.getAgoQty()):BigDecimal.ZERO;
                         agoQty = agoQty.add(engPackingOrderSummaryDetDto.getQty());
                         engContractQtyOrderAndPurOrderDto.setAgoQty(agoQty.toString());
-                        engContractQtyOrderAndPurOrderService.update(engContractQtyOrderAndPurOrderDto);
+                        EngContractQtyOrder engContractQtyOrder = new EngContractQtyOrder();
+                        engContractQtyOrder.setContractQtyOrderId(engContractQtyOrderAndPurOrderDto.getContractQtyOrderId());
+                        engContractQtyOrder.setAgoQty(agoQty);
+                        engContractQtyOrderMapper.updateByPrimaryKeySelective(engContractQtyOrder);
                     }
                 }
             }
