@@ -670,7 +670,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         for(Map<String, Long> maps : list){
             map.put(String.valueOf( maps.get("material_code")),maps.get("material_id"));
         }
-        System.out.println("----map----"+map);
         return map;
     }
+
 }

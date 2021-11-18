@@ -17,4 +17,6 @@ public interface BaseMaterialMapper extends MyMapper<BaseMaterial> {
     int batchUpdateByCode(List<BaseMaterial> baseMaterials);
 
     List<Map<String, Long>> findIdByCode(List<String> materialCodes);
+
+    List<BaseMaterialDto> findtestList(Map<String, Object> map);
 }

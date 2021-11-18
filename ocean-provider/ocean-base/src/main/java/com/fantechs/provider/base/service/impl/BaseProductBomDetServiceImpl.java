@@ -12,10 +12,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.mapper.BaseHtProductBomDetMapper;
-import com.fantechs.provider.base.mapper.BaseOrganizationMapper;
-import com.fantechs.provider.base.mapper.BaseProductBomDetMapper;
-import com.fantechs.provider.base.mapper.BaseProductBomMapper;
+import com.fantechs.provider.api.qms.OMFeignApi;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseProductBomDetService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -41,9 +39,11 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
     @Resource
     private BaseProductBomMapper baseProductBomMapper;
     @Resource
-    private BaseOrganizationMapper baseOrganizationMapper;
-
-
+    private BaseSupplierMapper baseSupplierMapper;
+    @Resource
+    private OMFeignApi oMFeignApi;
+    @Resource
+    private BaseMaterialMapper baseMaterialMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -209,21 +209,11 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
 
     @Override
     public int batchApiDelete(Long productBomId) {
-        String ids = null;
-        List<BaseProductBomDetDto> baseProductBomDetDtos = baseProductBomDetMapper.findNextLevelProductBomDet(productBomId);
-
-        for(BaseProductBomDetDto  baseProductBomDetDto : baseProductBomDetDtos){
-            if (StringUtils.isEmpty(baseProductBomDetDto)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-            }
-            if(ids == null){
-                ids =  baseProductBomDetDto.getProductBomDetId().toString();
-            }else{
-                ids = ids +","+ baseProductBomDetDto.getProductBomDetId();
-            }
-        }
-         if(StringUtils.isNotEmpty(ids))
-             baseProductBomDetMapper.deleteByIds(ids);
-        return 1;
+        Example example = new Example(BaseProductBomDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("productBomId",productBomId);
+        int i = baseProductBomDetMapper.deleteByExample(example);
+        return i;
     }
+
 }
