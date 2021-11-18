@@ -66,6 +66,9 @@
       <if test="materialCodePrefix!=null and materialCodePrefix!=''">
         and bsc.material_code_prefix like CONCAT('%', #{materialCodePrefix}, '%')
       </if>
+        <if test="CodePrefix!=null and CodePrefix!=''">
+          and bsc.material_code_prefix = #{CodePrefix}
+        </if>
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
