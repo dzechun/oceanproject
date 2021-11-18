@@ -71,6 +71,10 @@ public class FileCheckUtil {
 		// 文件后缀,统一转换小写
 		String suffix = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 
+		if("txt".equals(suffix)){
+			return true;
+		}
+
 		String realCode = FILE_TYPE_MAP.get(suffix);
 		if (StringUtils.isNotEmpty(realCode)) {
 			return true;

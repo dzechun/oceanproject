@@ -821,26 +821,34 @@ public class BarcodeUtils {
 
                 if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getBarcodeCode())) {
                     //检查设备与产品绑定关系
-                    baseExecuteResultDto = checkEquiProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(), updateProcessDto.getEquipmentCode(), updateProcessDto.getMaterialId(), orgId);
-                    if (baseExecuteResultDto.getIsSuccess() == false)
-                        throw new Exception(baseExecuteResultDto.getFailMsg());
+                    if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getEquipmentBarCode())) {
+                        baseExecuteResultDto = checkEquiProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(), updateProcessDto.getEquipmentCode(), updateProcessDto.getMaterialId(), orgId);
+                        if (baseExecuteResultDto.getIsSuccess() == false)
+                            throw new Exception(baseExecuteResultDto.getFailMsg());
+                    }
 
                     //检查治具与产品绑定关系
-                    baseExecuteResultDto = checkJigProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(), restapiChkSNRoutingApiDto.getEamJigBarCode(), updateProcessDto.getMaterialId(), orgId);
-                    if (baseExecuteResultDto.getIsSuccess() == false)
-                        throw new Exception(baseExecuteResultDto.getFailMsg());
+                    if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getEamJigBarCode())) {
+                        baseExecuteResultDto = checkJigProRelation(restapiChkSNRoutingApiDto.getBarcodeCode(), restapiChkSNRoutingApiDto.getEamJigBarCode(), updateProcessDto.getMaterialId(), orgId);
+                        if (baseExecuteResultDto.getIsSuccess() == false)
+                            throw new Exception(baseExecuteResultDto.getFailMsg());
+                    }
                 }
 
                 if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getPartBarcode())) {
                     //检查设备与半成品绑定关系
-                    baseExecuteResultDto = checkEquiHalfProRelation(updateProcessDto.getEquipmentCode(), partMaterialId, orgId);
-                    if (baseExecuteResultDto.getIsSuccess() == false)
-                        throw new Exception(baseExecuteResultDto.getFailMsg());
+                    if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getEquipmentBarCode())) {
+                        baseExecuteResultDto = checkEquiHalfProRelation(updateProcessDto.getEquipmentCode(), partMaterialId, orgId);
+                        if (baseExecuteResultDto.getIsSuccess() == false)
+                            throw new Exception(baseExecuteResultDto.getFailMsg());
+                    }
 
                     //检查治具与半成品绑定关系
-                    baseExecuteResultDto = checkJigHalfProRelation(restapiChkSNRoutingApiDto.getEamJigBarCode(), partMaterialId, orgId);
-                    if (baseExecuteResultDto.getIsSuccess() == false)
-                        throw new Exception(baseExecuteResultDto.getFailMsg());
+                    if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getEamJigBarCode())) {
+                        baseExecuteResultDto = checkJigHalfProRelation(restapiChkSNRoutingApiDto.getEamJigBarCode(), partMaterialId, orgId);
+                        if (baseExecuteResultDto.getIsSuccess() == false)
+                            throw new Exception(baseExecuteResultDto.getFailMsg());
+                    }
                 }
 
                 //产前关键事项是否已完成
@@ -940,26 +948,34 @@ public class BarcodeUtils {
 
             if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getBarCode())) {
                 //检查设备与产品绑定关系
-                baseExecuteResultDto = checkEquiProRelation(restapiSNDataTransferApiDto.getBarCode(), updateProcessDto.getEquipmentCode(), updateProcessDto.getMaterialId(), orgId);
-                if (baseExecuteResultDto.getIsSuccess() == false)
-                    throw new Exception(baseExecuteResultDto.getFailMsg());
+                if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getEquipmentBarCode())) {
+                    baseExecuteResultDto = checkEquiProRelation(restapiSNDataTransferApiDto.getBarCode(), updateProcessDto.getEquipmentCode(), updateProcessDto.getMaterialId(), orgId);
+                    if (baseExecuteResultDto.getIsSuccess() == false)
+                        throw new Exception(baseExecuteResultDto.getFailMsg());
+                }
 
                 //检查治具与产品绑定关系
-                baseExecuteResultDto = checkJigProRelation(restapiSNDataTransferApiDto.getBarCode(), restapiSNDataTransferApiDto.getEamJigBarCode(), updateProcessDto.getMaterialId(), orgId);
-                if (baseExecuteResultDto.getIsSuccess() == false)
-                    throw new Exception(baseExecuteResultDto.getFailMsg());
+                if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getEamJigBarCode())) {
+                    baseExecuteResultDto = checkJigProRelation(restapiSNDataTransferApiDto.getBarCode(), restapiSNDataTransferApiDto.getEamJigBarCode(), updateProcessDto.getMaterialId(), orgId);
+                    if (baseExecuteResultDto.getIsSuccess() == false)
+                        throw new Exception(baseExecuteResultDto.getFailMsg());
+                }
             }
 
             if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getPartBarcode())) {
                 //检查设备与半成品绑定关系
-                baseExecuteResultDto = checkEquiHalfProRelation(updateProcessDto.getEquipmentCode(), partMaterialId, orgId);
-                if (baseExecuteResultDto.getIsSuccess() == false)
-                    throw new Exception(baseExecuteResultDto.getFailMsg());
+                if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getEquipmentBarCode())) {
+                    baseExecuteResultDto = checkEquiHalfProRelation(updateProcessDto.getEquipmentCode(), partMaterialId, orgId);
+                    if (baseExecuteResultDto.getIsSuccess() == false)
+                        throw new Exception(baseExecuteResultDto.getFailMsg());
+                }
 
                 //检查治具与半成品绑定关系
-                baseExecuteResultDto = checkJigHalfProRelation(restapiSNDataTransferApiDto.getEamJigBarCode(), partMaterialId, orgId);
-                if (baseExecuteResultDto.getIsSuccess() == false)
-                    throw new Exception(baseExecuteResultDto.getFailMsg());
+                if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getEamJigBarCode())) {
+                    baseExecuteResultDto = checkJigHalfProRelation(restapiSNDataTransferApiDto.getEamJigBarCode(), partMaterialId, orgId);
+                    if (baseExecuteResultDto.getIsSuccess() == false)
+                        throw new Exception(baseExecuteResultDto.getFailMsg());
+                }
             }
 
             //产前关键事项是否已完成
@@ -995,14 +1011,18 @@ public class BarcodeUtils {
             }
 
             //返写治具条码使用次数 暂时默认治具使用次数为 1
-            baseExecuteResultDto=upJigBarcodeUseTimes(restapiSNDataTransferApiDto.getEamJigBarCode(),orgId);
-            if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+            if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getEamJigBarCode())) {
+                baseExecuteResultDto = upJigBarcodeUseTimes(restapiSNDataTransferApiDto.getEamJigBarCode(), orgId);
+                if (baseExecuteResultDto.getIsSuccess() == false)
+                    throw new Exception(baseExecuteResultDto.getFailMsg());
+            }
 
             //返写设备条码使用次数 暂时默认次数为1
-            baseExecuteResultDto=upEquipmentBarCodeUseTimes(updateProcessDto.getEquipmentBarcodeId());
-            if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
+            if(StringUtils.isNotEmpty(restapiSNDataTransferApiDto.getEquipmentBarCode())) {
+                baseExecuteResultDto = upEquipmentBarCodeUseTimes(updateProcessDto.getEquipmentBarcodeId());
+                if (baseExecuteResultDto.getIsSuccess() == false)
+                    throw new Exception(baseExecuteResultDto.getFailMsg());
+            }
 
             //过站
             barcodeUtils.updateProcess(updateProcessDto);
