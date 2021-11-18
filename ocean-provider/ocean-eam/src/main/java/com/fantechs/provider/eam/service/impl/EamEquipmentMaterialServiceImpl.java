@@ -4,6 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentMaterialDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentMaterialListDto;
 import com.fantechs.common.base.general.dto.eam.imports.EamEquipmentMaterialImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -314,4 +315,15 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
         return resultMap;
     }
 
+    @Override
+    public List<EamEquipmentMaterialListDto> findExportList(Map<String, Object> map) {
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (StringUtils.isEmpty(user)) {
+                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            }
+            map.put("orgId", user.getOrganizationId());
+        }
+        return eamEquipmentMaterialListMapper.findExportList(map);
+    }
 }

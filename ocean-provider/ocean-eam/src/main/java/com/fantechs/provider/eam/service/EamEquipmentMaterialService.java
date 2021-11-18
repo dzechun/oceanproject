@@ -1,6 +1,7 @@
 package com.fantechs.provider.eam.service;
 
 import com.fantechs.common.base.general.dto.eam.EamEquipmentMaterialDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentMaterialListDto;
 import com.fantechs.common.base.general.dto.eam.imports.EamEquipmentMaterialImport;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterial;
 import com.fantechs.common.base.support.IService;
@@ -16,6 +17,6 @@ import java.util.Map;
 
 public interface EamEquipmentMaterialService extends IService<EamEquipmentMaterial> {
     List<EamEquipmentMaterialDto> findList(Map<String, Object> map);
-
+    List<EamEquipmentMaterialListDto> findExportList(Map<String, Object> map);
     Map<String, Object> importExcel(List<EamEquipmentMaterialImport> eamEquipmentMaterialImports) throws ParseException;
 }

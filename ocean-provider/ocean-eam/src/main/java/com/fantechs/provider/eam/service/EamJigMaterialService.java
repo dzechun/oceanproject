@@ -1,6 +1,7 @@
 package com.fantechs.provider.eam.service;
 
 import com.fantechs.common.base.general.dto.eam.EamJigMaterialDto;
+import com.fantechs.common.base.general.dto.eam.EamJigMaterialListDto;
 import com.fantechs.common.base.general.dto.eam.imports.EamJigMaterialImport;
 import com.fantechs.common.base.general.entity.eam.EamJigMaterial;
 import com.fantechs.common.base.support.IService;
@@ -22,4 +23,6 @@ public interface EamJigMaterialService extends IService<EamJigMaterial> {
     int update(EamJigMaterialDto record);
 
     Map<String, Object> importExcel(List<EamJigMaterialImport> eamJigMaterialImports) throws ParseException;
+
+    List<EamJigMaterialListDto> findExportList(Map<String, Object> map);
 }

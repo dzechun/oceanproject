@@ -8,10 +8,8 @@ import com.fantechs.common.base.general.dto.restapi.DTMESBOM;
 import com.fantechs.common.base.general.dto.restapi.DTMESBOMQUERYREQ;
 import com.fantechs.common.base.general.dto.restapi.DTMESBOMQUERYRES;
 import com.fantechs.common.base.general.dto.restapi.SearchSapProductBomApi;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProductBom;
 import com.fantechs.common.base.general.entity.basic.BaseProductBomDet;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
@@ -86,8 +84,10 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
 
                     Map<String,Long> productBomIds = new HashMap<>();
                     //保存第一层bom表以及det表
-                    if (StringUtils.isEmpty(data.get(searchSapProductBomApi.getMaterialCode()))) throw new BizErrorException("未查询到对应物料编码");
-
+                    if (StringUtils.isEmpty(data.get(searchSapProductBomApi.getMaterialCode()))) {
+                        // throw new BizErrorException("未查询到对应物料编码");
+                        return 1;
+                    }
                     if(StringUtils.isNotEmpty(parentList)) {
                         BaseProductBom parentBomData = saveBaseProductBom(data.get(searchSapProductBomApi.getMaterialCode()), baseUtils.removeZero(parentList.get(0).getAENNR()), orgId);
                         BaseProductBom bomData = null;
@@ -113,8 +113,8 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
 
                             productBomIds.put(code, bomData.getProductBomId());
                         for (DTMESBOM bom : res.getBOM()) {
-                            String detCode = baseUtils.removeZero(bom.getIDNRK());
-                            if (baseUtils.removeZero(bom.getMATNR()).equals(code)) {
+                            if (baseUtils.removeZero(bom.getMATNR()).equals(code) && StringUtils.isNotEmpty(bom.getIDNRK())) {
+                                String detCode = baseUtils.removeZero(bom.getIDNRK());
                                 BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
                                 baseProductBomDet.setProductBomId(bomData.getProductBomId());
                                 baseProductBomDet.setMaterialId(data.get(detCode));
@@ -174,29 +174,6 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
         productBom.setStatus((byte) 1);
         pproductBom = baseFeignApi.addOrUpdate(productBom);
         return pproductBom.getData();
-    }
-
-
-    @Override
-    public void getBom() {
-        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-        searchBaseMaterial.setMaterialCode("8");
-        searchBaseMaterial.setCodeQueryMark(2);
-        searchBaseMaterial.setOrganizationId((long)1000);
-        searchBaseMaterial.setPageSize(9999);
-        List<BaseMaterial> data = baseFeignApi.findList(searchBaseMaterial).getData();
-        System.out.println("-------------------data------------"+data.size());
-        for(BaseMaterial str : data){
-            SearchSapProductBomApi searchSapProductBomApi = new SearchSapProductBomApi();
-            searchSapProductBomApi.setMaterialCode(str.getMaterialCode());
-            try {
-                this.getProductBom(searchSapProductBomApi);
-            } catch (ParseException e) {
-                continue;
-               // e.printStackTrace();
-            }
-        }
-
     }
 
 }

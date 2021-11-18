@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.dto.eam;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentJig;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentJigList;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,7 +16,7 @@ public class EamEquipmentJigListDto extends EamEquipmentJigList implements Seria
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="4")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="9")
     private String createUserName;
 
     /**
@@ -25,7 +24,7 @@ public class EamEquipmentJigListDto extends EamEquipmentJigList implements Seria
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="6")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
     private String modifiedUserName;
 
     /**
@@ -39,7 +38,7 @@ public class EamEquipmentJigListDto extends EamEquipmentJigList implements Seria
      * 治具编码
      */
     @ApiModelProperty(name="jigCode",value = "治具编码")
-    @Excel(name = "治具编码", height = 20, width = 30,orderNum="1")
+    @Excel(name = "治具编码", height = 20, width = 30,orderNum="5")
     @Transient
     private String jigCode;
 
@@ -47,7 +46,7 @@ public class EamEquipmentJigListDto extends EamEquipmentJigList implements Seria
      * 治具名称
      */
     @ApiModelProperty(name="jigName",value = "治具名称")
-    @Excel(name = "治具名称", height = 20, width = 30,orderNum="2")
+    @Excel(name = "治具名称", height = 20, width = 30,orderNum="6")
     @Transient
     private String jigName;
 
@@ -55,7 +54,7 @@ public class EamEquipmentJigListDto extends EamEquipmentJigList implements Seria
      * 治具描述
      */
     @ApiModelProperty(name="jigDesc",value = "治具描述")
-    @Excel(name = "治具描述", height = 20, width = 30,orderNum="3")
+    @Excel(name = "治具描述", height = 20, width = 30,orderNum="7")
     @Transient
     private String jigDesc;
 
@@ -63,7 +62,7 @@ public class EamEquipmentJigListDto extends EamEquipmentJigList implements Seria
      * 治具型号
      */
     @ApiModelProperty(name="jigModel",value = "治具型号")
-    @Excel(name = "治具型号", height = 20, width = 30,orderNum="4")
+    @Excel(name = "治具型号", height = 20, width = 30,orderNum="8")
     @Transient
     private String jigModel;
 
@@ -75,10 +74,35 @@ public class EamEquipmentJigListDto extends EamEquipmentJigList implements Seria
     private Long equipmentId;
 
     /**
+     * 设备编码
+     */
+    @ApiModelProperty(name="equipmentCode",value = "设备编码")
+    @Excel(name = "设备编码", height = 20, width = 30,orderNum="1")
+    @Transient
+    private String equipmentCode;
+
+    /**
      * 设备名称
      */
     @ApiModelProperty(name="equipmentName",value = "设备名称")
+    @Excel(name = "设备名称", height = 20, width = 30,orderNum="2")
     @Transient
     private String equipmentName;
+
+    /**
+     * 设备描述
+     */
+    @ApiModelProperty(name="equipmentDesc",value = "设备描述")
+    @Excel(name = "设备描述", height = 20, width = 30,orderNum="3")
+    @Transient
+    private String equipmentDesc;
+
+    /**
+     * 设备型号
+     */
+    @ApiModelProperty(name="equipmentModel",value = "设备型号")
+    @Excel(name = "设备型号", height = 20, width = 30,orderNum="4")
+    @Transient
+    private String equipmentModel;
 
 }

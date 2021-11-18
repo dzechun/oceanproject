@@ -10,6 +10,4 @@ public interface SapProductBomApiService {
 
     int getProductBom(SearchSapProductBomApi searchSapProductBomApi) throws ParseException;
 
-
-    void getBom();
 }

@@ -3,6 +3,7 @@ package com.fantechs.provider.eam.controller;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentJigDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentJigListDto;
 import com.fantechs.common.base.general.dto.eam.imports.EamEquipmentJigImport;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentJig;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentJig;
@@ -91,10 +92,10 @@ public class EamEquipmentJigController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchEamEquipmentJig searchEamEquipmentJig){
-    List<EamEquipmentJigDto> list = eamEquipmentJigService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentJig));
+    List<EamEquipmentJigListDto> list = eamEquipmentJigService.findExportList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentJig));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "设备绑定治具", EamEquipmentJigDto.class, "设备绑定治具.xls", response);
+        EasyPoiUtils.exportExcel(list, "导出信息", "设备绑定治具", EamEquipmentJigListDto.class, "设备绑定治具.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

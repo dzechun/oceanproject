@@ -1,6 +1,7 @@
 package com.fantechs.provider.eam.service;
 
 import com.fantechs.common.base.general.dto.eam.EamEquipmentJigDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentJigListDto;
 import com.fantechs.common.base.general.dto.eam.imports.EamEquipmentJigImport;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentJig;
 import com.fantechs.common.base.support.IService;
@@ -22,4 +23,6 @@ public interface EamEquipmentJigService extends IService<EamEquipmentJig> {
     int update(EamEquipmentJigDto entity);
 
     Map<String, Object> importExcel(List<EamEquipmentJigImport> eamEquipmentJigImports) throws ParseException;
+
+    List<EamEquipmentJigListDto> findExportList(Map<String, Object> map);
 }

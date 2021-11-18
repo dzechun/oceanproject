@@ -11,4 +11,7 @@ import java.util.Map;
 @Mapper
 public interface EamJigMaterialListMapper extends MyMapper<EamJigMaterialList> {
     List<EamJigMaterialListDto> findList(Map<String,Object> map);
+
+    List<EamJigMaterialListDto> findExportList(Map<String,Object> map);
+
 }
