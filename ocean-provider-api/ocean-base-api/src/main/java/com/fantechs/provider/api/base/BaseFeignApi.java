@@ -571,4 +571,9 @@ public interface BaseFeignApi {
     @ApiOperation("列表")
     @PostMapping("/baseProductProcessReM/findList")
     ResponseEntity<List<BaseProductProcessReM>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessReM searchBaseProductProcessReM);
+
+    @ApiOperation("根据物料编码查询物料id")
+    @PostMapping("/baseMaterial/findIdByCode")
+    ResponseEntity<Map<String, Long>> findIdByCode(@ApiParam(value = "物料编码集合",required = true)@RequestBody List<String> materialCodes);
+
 }

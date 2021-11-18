@@ -4,22 +4,17 @@ package com.fantechs.provider.base.service.impl;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
-import com.fantechs.common.base.general.dto.basic.BaseMaterialDto;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.basic.imports.BaseMaterialImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterial;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseTabDto;
-import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
-import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
-import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
-import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -665,5 +660,17 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         BeanUtils.copyProperties(baseMaterial, baseHtMaterial);
         baseHtMaterialMapper.insertSelective(baseHtMaterial);
         return baseMaterial;
+    }
+
+
+    @Override
+    public  Map<String, Long> findIdByCode(List<String> materialCodes) {
+        List<Map<String, Long>> list = baseMaterialMapper.findIdByCode(materialCodes);
+        Map<String, Long> map = new HashMap<>();
+        for(Map<String, Long> maps : list){
+            map.put(String.valueOf( maps.get("material_code")),maps.get("material_id"));
+        }
+        System.out.println("----map----"+map);
+        return map;
     }
 }

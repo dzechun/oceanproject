@@ -170,4 +170,11 @@ public class BaseMaterialController {
         BaseMaterial material = baseMaterialService.saveApi(baseMaterial);
         return ControllerUtil.returnDataSuccess(material,1);
     }
+
+    @ApiOperation("根据物料编码查询物料id")
+    @PostMapping("/findIdByCode")
+    public ResponseEntity<Map<String, Long>> findIdByCode(@ApiParam(value = "物料编码集合",required = true)@RequestBody List<String> materialCodes){
+        Map<String, Long> map = baseMaterialService.findIdByCode(materialCodes);
+        return ControllerUtil.returnDataSuccess(map ,1);
+    }
 }
