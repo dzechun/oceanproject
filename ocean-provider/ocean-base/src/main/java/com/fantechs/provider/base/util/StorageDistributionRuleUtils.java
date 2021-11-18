@@ -538,7 +538,7 @@ public class StorageDistributionRuleUtils {
         if(baseMaterialList.getMaterialCode().length()<8){
             throw new BizErrorException("物料编码错误，长度小于规定8位，无法匹配库容");
         }
-        String strMaterialCode = baseMaterialList.getMaterialCode().substring(8);
+        String strMaterialCode = baseMaterialList.getMaterialCode().substring(0,8);
         List<BaseStorageCapacity> baseStorageCapacities = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("CodePrefix",strMaterialCode));
 
         //查询库位下的所以货品及数量
@@ -594,7 +594,7 @@ public class StorageDistributionRuleUtils {
                             if(baseMaterialList.getMaterialCode().length()<8){
                                 throw new BizErrorException("物料编码错误，长度小于规定8位，无法匹配库容");
                             }
-                            String substring = baseMaterial.getMaterialCode().substring(8);
+                            String substring = baseMaterial.getMaterialCode().substring(0,8);
 
                             //转换数量
                             //查询该货品库容
