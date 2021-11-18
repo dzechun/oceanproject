@@ -69,9 +69,9 @@ public class LoginController {
         organization.setOrganizationCode(orgCode);
         List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(organization).getData();
         if (organizationDtos.isEmpty()){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404, "此组织编码不存在或已被删除，不可登录");
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此组织编码不存在或已被删除，不可登录");
         }
-        ResponseEntity responseEntity = securityFeignApi.login(username, password, organizationDtos.get(0).getOrganizationId(),null,null);
+        ResponseEntity responseEntity = securityFeignApi.login(username, password, organizationDtos.get(0).getOrganizationId(),"2",null);
         return responseEntity;
     }
 

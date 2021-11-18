@@ -57,11 +57,11 @@ public class BaseStorageCapacityServiceImpl extends BaseService<BaseStorageCapac
 
         Example example = new Example(BaseStorageCapacity.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialId",record.getMaterialId())
+        criteria.andEqualTo("materialCodePrefix",record.getMaterialCodePrefix())
                 .andEqualTo("orgId",user.getOrganizationId());
         BaseStorageCapacity baseStorageCapacity = baseStorageCapacityMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(baseStorageCapacity)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"已存在该物料的库容信息");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"已存在该物料编码前缀的库容信息");
         }
 
         record.setCreateUserId(user.getUserId());
@@ -86,12 +86,12 @@ public class BaseStorageCapacityServiceImpl extends BaseService<BaseStorageCapac
 
         Example example = new Example(BaseStorageCapacity.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("materialId",entity.getMaterialId())
+        criteria.andEqualTo("materialCodePrefix",entity.getMaterialCodePrefix())
                 .andEqualTo("orgId",user.getOrganizationId())
                 .andNotEqualTo("storageCapacityId",entity.getStorageCapacityId());
         BaseStorageCapacity baseStorageCapacity = baseStorageCapacityMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(baseStorageCapacity)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"已存在该物料的库容信息");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"已存在该物料编码前缀的库容信息");
         }
 
         entity.setModifiedTime(new Date());
@@ -132,16 +132,16 @@ public class BaseStorageCapacityServiceImpl extends BaseService<BaseStorageCapac
         for (int i = 0; i < baseStorageCapacityImports.size(); i++) {
             BaseStorageCapacityImport baseStorageCapacityImport = baseStorageCapacityImports.get(i);
 
-            String materialCode = baseStorageCapacityImport.getMaterialCode();
+            String materialCodePrefix = baseStorageCapacityImport.getMaterialCodePrefix();
             if (StringUtils.isEmpty(
-                    materialCode
+                    materialCodePrefix
             )){
                 fail.add(i+4);
                 continue;
             }
 
             //判断物料是否存在
-            Example example = new Example(BaseMaterial.class);
+            /*Example example = new Example(BaseMaterial.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("organizationId", currentUser.getOrganizationId())
                     .andEqualTo("materialCode",materialCode);
@@ -150,13 +150,13 @@ public class BaseStorageCapacityServiceImpl extends BaseService<BaseStorageCapac
                 fail.add(i+4);
                 continue;
             }
-            baseStorageCapacityImport.setMaterialId(baseMaterial.getMaterialId());
+            baseStorageCapacityImport.setMaterialId(baseMaterial.getMaterialId());*/
 
             //判断是否重复
             Example example1 = new Example(BaseStorageCapacity.class);
             Example.Criteria criteria1 = example1.createCriteria();
             criteria1.andEqualTo("orgId", currentUser.getOrganizationId())
-                    .andEqualTo("materialId",baseStorageCapacityImport.getMaterialId());
+                    .andEqualTo("materialCodePrefix",baseStorageCapacityImport.getMaterialCodePrefix());
             if (StringUtils.isNotEmpty(baseStorageCapacityMapper.selectOneByExample(example1))){
                 fail.add(i+4);
                 continue;
@@ -166,7 +166,7 @@ public class BaseStorageCapacityServiceImpl extends BaseService<BaseStorageCapac
             boolean tag = false;
             if (StringUtils.isNotEmpty(list)){
                 for (BaseStorageCapacity baseStorageCapacity : list) {
-                    if (baseStorageCapacity.getMaterialCode().equals(materialCode)){
+                    if (baseStorageCapacity.getMaterialCodePrefix().equals(materialCodePrefix)){
                         tag = true;
                     }
                 }

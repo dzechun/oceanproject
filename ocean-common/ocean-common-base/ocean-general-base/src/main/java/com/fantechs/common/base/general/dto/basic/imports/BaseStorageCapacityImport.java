@@ -13,17 +13,24 @@ import java.math.BigDecimal;
 public class BaseStorageCapacityImport implements Serializable {
 
     /**
+     * 物料编码前缀
+     */
+    @Excel(name = "物料编码前缀(必填)",  height = 20, width = 30)
+    @ApiModelProperty(name="materialCodePrefix" ,value="物料编码前缀")
+    private String materialCodePrefix;
+
+    /**
      * 物料编码
      */
-    @Excel(name = "物料编码(必填)",  height = 20, width = 30)
+  /*  @Excel(name = "物料编码(必填)",  height = 20, width = 30)
     @ApiModelProperty(name="materialCode" ,value="物料编码")
-    private String materialCode;
+    private String materialCode;*/
 
     /**
      * 物料id
      */
-    @ApiModelProperty(name="materialId" ,value="物料id")
-    private Long materialId;
+   /* @ApiModelProperty(name="materialId" ,value="物料id")
+    private Long materialId;*/
 
     /**
      * A类容量

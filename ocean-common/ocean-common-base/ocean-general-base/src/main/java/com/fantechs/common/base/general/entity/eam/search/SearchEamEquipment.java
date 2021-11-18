@@ -50,4 +50,10 @@ public class SearchEamEquipment extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="equipmentModel",value = "设备型号")
     private String equipmentModel;
+
+    /**
+     * 设备条码
+     */
+    @ApiModelProperty(name="equipmentBarcode",value = "设备条码")
+    private String equipmentBarcode;
 }
