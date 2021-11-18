@@ -24,4 +24,7 @@ public interface BaseMaterialService extends IService<BaseMaterial>{
     Map<String, Object> importExcel(List<BaseMaterialImport> baseMaterialImports);
 
     BaseMaterial saveApi(BaseMaterial baseMaterial);
+
+    Map<String, Long> findIdByCode(List<String> materialCodes);
+
 }

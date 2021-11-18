@@ -68,6 +68,7 @@
         LEFT JOIN fantech_imes_v2.base_material_tab bt on sm.material_id = bt.material_id
         LEFT JOIN fantech_imes_v2.base_material_category bmc on bmc.material_category_id = bt.material_category_id
         <where>
+             /*sm.material_code like '80%'*/
             <if test="materialProperty!=null">
                 and bt.material_property=#{materialProperty}
             </if>
@@ -86,6 +87,7 @@
             <if test="materialCode!=null and materialCode!='' and codeQueryMark!=1">
                 and sm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>
+
             <if test="materialName!=null and materialName!=''">
                 and sm.material_name like CONCAT('%', #{materialName}, '%')
             </if>
@@ -143,4 +145,14 @@
             where material_code =#{item.materialCode}
         </foreach>
     </update>
+
+    <select id="findIdByCode" resultType="java.util.Map" parameterType="list">
+        select  sm.material_code, sm.material_id
+        from base_material sm
+        <where>
+            <foreach collection="list" item="item" open="sm.material_code in (" close=")" separator="," >
+                #{item}
+            </foreach>
+        </where>
+    </select>
 </mapper>

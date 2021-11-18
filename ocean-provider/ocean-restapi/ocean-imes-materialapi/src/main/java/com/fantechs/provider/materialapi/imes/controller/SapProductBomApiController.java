@@ -34,4 +34,13 @@ public class SapProductBomApiController {
     public ResponseEntity getSupplier(@ApiParam(value = "查询对象")@RequestBody SearchSapProductBomApi searchSapProductBomApi) throws ParseException {
         return ControllerUtil.returnCRUD(sapProductBomApiService.getProductBom(searchSapProductBomApi));
     }
+
+
+    @ApiOperation("同步Bom")
+    @PostMapping("/getBom")
+    public ResponseEntity getBom() {
+        sapProductBomApiService.getBom();
+        System.out.println("========================================接口结束");
+        return ControllerUtil.returnCRUD(1);
+    }
 }

@@ -5,6 +5,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
@@ -13,6 +14,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.base.service.BaseMaterialService;
 import com.fantechs.provider.base.service.BaseStorageCapacityService;
 import com.fantechs.provider.base.service.BaseStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ public class StorageDistributionRuleUtils {
     private SecurityFeignApi securityFeignApi;
     @Autowired
     private BaseStorageCapacityService baseStorageCapacityService;
+    @Autowired
+    private BaseMaterialService baseMaterialService;
 
     //声明对象
     private static StorageDistributionRuleUtils storageDistributionRuleUtils;
@@ -49,6 +53,7 @@ public class StorageDistributionRuleUtils {
         storageDistributionRuleUtils = this;
         storageDistributionRuleUtils.baseStorageService = this.baseStorageService;
         storageDistributionRuleUtils.securityFeignApi = this.securityFeignApi;
+        storageDistributionRuleUtils.baseMaterialService = this.baseMaterialService;
         storageDistributionRuleUtils.baseStorageCapacityService = this.baseStorageCapacityService;
     }
 
@@ -528,7 +533,13 @@ public class StorageDistributionRuleUtils {
         if(storages.isEmpty()){
             throw new BizErrorException("获取库位信息失败");
         }
-        List<BaseStorageCapacity> baseStorageCapacities = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("materialId",materialId));
+        //获取物料编码并截取前八位数
+        BaseMaterial baseMaterialList = storageDistributionRuleUtils.baseMaterialService.findList(ControllerUtil.dynamicCondition("materialId",materialId)).get(0);
+        if(baseMaterialList.getMaterialCode().length()<8){
+            throw new BizErrorException("物料编码错误，长度小于规定8位，无法匹配库容");
+        }
+        String strMaterialCode = baseMaterialList.getMaterialCode().substring(8);
+        List<BaseStorageCapacity> baseStorageCapacities = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("CodePrefix",strMaterialCode));
 
         //查询库位下的所以货品及数量
         List<WmsInnerInventory> wmsInnerInventories = storageDistributionRuleUtils.baseStorageCapacityService.wmsList(ControllerUtil.dynamicCondition("storageId",storageId));
@@ -577,9 +588,17 @@ public class StorageDistributionRuleUtils {
                     BigDecimal qty = baseStorageCapacities.get(0).getTypeACapacity();
                     for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
                         if(!Objects.equals(wmsInnerInventory.getMaterialId(), materialId)){
+
+                            //获取物料编码并截取前八位数
+                            BaseMaterial baseMaterial = storageDistributionRuleUtils.baseMaterialService.findList(ControllerUtil.dynamicCondition("materialId",wmsInnerInventory.getMaterialId())).get(0);
+                            if(baseMaterialList.getMaterialCode().length()<8){
+                                throw new BizErrorException("物料编码错误，长度小于规定8位，无法匹配库容");
+                            }
+                            String substring = baseMaterial.getMaterialCode().substring(8);
+
                             //转换数量
                             //查询该货品库容
-                            List<BaseStorageCapacity> shiftStorageCapacity = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("materialId",wmsInnerInventory.getMaterialId()));
+                            List<BaseStorageCapacity> shiftStorageCapacity = storageDistributionRuleUtils.baseStorageCapacityService.findList(ControllerUtil.dynamicCondition("CodePrefix",substring));
                             if(shiftStorageCapacity.isEmpty()){
                                 break;
                             }

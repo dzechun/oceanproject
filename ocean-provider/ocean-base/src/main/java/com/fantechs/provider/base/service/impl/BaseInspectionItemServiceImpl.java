@@ -3,15 +3,10 @@ package com.fantechs.provider.base.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessCauseImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionItemImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
-import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCause;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionExemptedList;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionItem;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionStandardDet;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionItem;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionItem;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -19,6 +14,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseHtInspectionItemMapper;
 import com.fantechs.provider.base.mapper.BaseInspectionItemMapper;
+import com.fantechs.provider.base.mapper.BaseInspectionStandardDetMapper;
 import com.fantechs.provider.base.service.BaseInspectionItemService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -40,6 +36,10 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
     private BaseInspectionItemMapper baseInspectionItemMapper;
     @Resource
     private BaseHtInspectionItemMapper baseHtInspectionItemMapper;
+    @Resource
+    private BaseInspectionStandardDetMapper baseInspectionStandardDetMapper;
+
+
 
     @Override
     public List<BaseInspectionItem> findList(Map<String, Object> map) {
@@ -226,6 +226,13 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
             if(StringUtils.isEmpty(baseInspectionItem)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+            Example example = new Example(BaseInspectionStandardDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("inspectionItemId", id);
+            List<BaseInspectionStandardDet> baseInspectionStandardDets = baseInspectionStandardDetMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(baseInspectionStandardDets))
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004);
+
             BaseHtInspectionItem baseHtInspectionItem = new BaseHtInspectionItem();
             BeanUtils.copyProperties(baseInspectionItem, baseHtInspectionItem);
             list.add(baseHtInspectionItem);

@@ -7,6 +7,7 @@
     -->
     <id column="storage_capacity_id" jdbcType="BIGINT" property="storageCapacityId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="material_code_prefix" jdbcType="VARCHAR" property="materialCodePrefix" />
     <result column="type_a_capacity" jdbcType="DECIMAL" property="typeACapacity" />
     <result column="type_b_capacity" jdbcType="DECIMAL" property="typeBCapacity" />
     <result column="type_c_capacity" jdbcType="DECIMAL" property="typeCCapacity" />
@@ -33,6 +34,7 @@
   <sql id="Base_Column_List">
     bsc.storage_capacity_id,
     bsc.material_id,
+    bsc.material_code_prefix,
     bsc.type_a_capacity,
     bsc.type_b_capacity,
     bsc.type_c_capacity,
@@ -61,6 +63,12 @@
     left join ocean_v2.sys_user s on bsc.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo on bsc.org_id = bo.organization_id
     <where>
+      <if test="materialCodePrefix!=null and materialCodePrefix!=''">
+        and bsc.material_code_prefix like CONCAT('%', #{materialCodePrefix}, '%')
+      </if>
+        <if test="CodePrefix!=null and CodePrefix!=''">
+          and bsc.material_code_prefix = #{CodePrefix}
+        </if>
       <if test="materialCode!=null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
