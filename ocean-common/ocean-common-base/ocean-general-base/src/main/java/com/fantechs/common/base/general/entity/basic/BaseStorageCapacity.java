@@ -43,6 +43,14 @@ public class BaseStorageCapacity extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
+     * 物料编码前缀
+     */
+    @ApiModelProperty(name="materialCodePrefix",value = "物料编码前缀")
+    @Excel(name = "物料编码前缀", height = 20, width = 30,orderNum="2")
+    @Column(name = "material_code_prefix")
+    private String materialCodePrefix;
+
+    /**
      * A类容量
      */
     @ApiModelProperty(name="typeACapacity",value = "A类容量")
@@ -139,7 +147,7 @@ public class BaseStorageCapacity extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialCode" ,value="物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="1")
+    //@Excel(name = "物料编码", height = 20, width = 30,orderNum="1")
     private String materialCode;
 
     /**
@@ -147,7 +155,7 @@ public class BaseStorageCapacity extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="materialName" ,value="物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="2")
+    //@Excel(name = "物料名称", height = 20, width = 30,orderNum="2")
     private String materialName;
 
     /**

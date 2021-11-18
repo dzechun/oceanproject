@@ -204,6 +204,9 @@
       <if test="equipmentMacAddress != null and equipmentMacAddress!=''">
         and ee.equipment_mac_address = #{equipmentMacAddress}
       </if>
+      <if test="equipmentBarcode!= null and equipmentBarcode!=''">
+        and ee.equipment_id = ( select equipment_id from eam_equipment_barcode where equipment_barcode = #{equipmentBarcode} )
+      </if>
     </where>
     order by ee.create_time desc
   </select>
