@@ -31,6 +31,20 @@ public class BaseSupplierImport implements Serializable {
     private String supplierDesc;
 
     /**
+     * 国家名称
+     */
+    @ApiModelProperty("国家名称")
+    @Excel(name = "国家名称", height = 20, width = 30)
+    private String countryName;
+
+    /**
+     * 大区名称
+     */
+    @ApiModelProperty("大区名称")
+    @Excel(name = "大区名称", height = 20, width = 30)
+    private String regionName;
+
+    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")

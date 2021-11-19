@@ -6,6 +6,8 @@
         <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="supplier_desc" jdbcType="VARCHAR" property="supplierDesc"/>
+        <result column="country_name" jdbcType="VARCHAR" property="countryName"/>
+        <result column="region_name" jdbcType="VARCHAR" property="regionName"/>
         <result column="supplier_type" jdbcType="TINYINT" property="supplierType"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
@@ -29,6 +31,8 @@
         ss.supplier_code,
         ss.supplier_name,
         ss.supplier_desc,
+        ss.country_name,
+        ss.region_name,
         ss.address_id,
         ss.supplier_abbreviation,
         ss.supplier_logo,
@@ -76,6 +80,12 @@
             </if>
             <if test="supplierDesc!=null and supplierDesc!=''">
                 and ss.supplier_desc like CONCAT('%', #{supplierDesc}, '%')
+            </if>
+            <if test="countryName!=null and countryName!=''">
+                and ss.country_name like CONCAT('%', #{countryName}, '%')
+            </if>
+            <if test="regionName!=null and regionName!=''">
+                and ss.region_name like CONCAT('%', #{regionName}, '%')
             </if>
             <if test="supplierType!=null and supplierType!=''">
                 and ss.supplier_type=#{supplierType}

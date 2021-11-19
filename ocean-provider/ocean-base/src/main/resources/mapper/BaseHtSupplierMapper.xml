@@ -16,9 +16,11 @@
     <result column="liaison_man" jdbcType="VARCHAR" property="liaisonMan" />
     <result column="telephone" jdbcType="VARCHAR" property="telephone" />
     <result column="supplier_type" jdbcType="TINYINT" property="supplierType" />
+    <result column="country_name" jdbcType="VARCHAR" property="countryName"/>
+    <result column="region_name" jdbcType="VARCHAR" property="regionName"/>
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -35,6 +37,8 @@
     ss.supplier_code,
     ss.supplier_name,
     ss.supplier_desc,
+    ss.country_name,
+    ss.region_name,
     ss.address_id,
     ss.supplier_abbreviation,
     ss.supplier_logo,
@@ -43,7 +47,7 @@
     ss.supplier_type,
     ss.`status`,
     ss.remark,
-    ss.organization_id,
+    ss.org_id,
     ss.create_user_id,
     ss.create_time,
     ss.modified_user_id,
@@ -61,7 +65,7 @@
     from fantech_imes_v2.base_ht_supplier ss
     left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
     left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON ss.organization_id = bo.organization_id
+    LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
     <where>
       <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
         AND date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -75,6 +79,12 @@
       <if test="supplierDesc!=null and supplierDesc!=''">
         and ss.supplier_desc like CONCAT('%', #{supplierDesc}, '%')
       </if>
+      <if test="countryName!=null and countryName!=''">
+        and ss.country_name like CONCAT('%', #{countryName}, '%')
+      </if>
+      <if test="regionName!=null and regionName!=''">
+        and ss.region_name like CONCAT('%', #{regionName}, '%')
+      </if>
       <if test="supplierType!=null and supplierType!=''">
         and ss.supplier_type=#{supplierType}
       </if>
@@ -85,7 +95,7 @@
         and ss.status=#{status}
       </if>
       <if test="orgId!=null">
-        and ss.organization_id=#{orgId}
+        and ss.org_id=#{orgId}
       </if>
     </where>
     order by ss.create_time desc
