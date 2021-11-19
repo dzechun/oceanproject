@@ -59,7 +59,7 @@
         and bbp.org_id=#{orgId}
       </if>
     </where>
-    order by bbp.create_time desc
+    order by bbp.badness_phenotype_code,bbp.create_time desc
   </select>
 
 
