@@ -86,14 +86,18 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
 
             //判断当日是否有工单，有则作为插单
             Example example2 = new Example(MesPmDailyPlan.class);
-            example2.createCriteria().andEqualTo("planTime",list.get(0).getPlanDate());
+            example2.createCriteria().andEqualTo("planTime",list.get(0).getPlanDate())
+                                    .andEqualTo("orgId",user.getOrganizationId());
             List<MesPmDailyPlan> mesPmDailyPlan2 = mesPmDailyPlanMapper.selectByExample(example2);
 
             List<MesPmDailyPlan> addList = new ArrayList<>();
             for (MesPmDailyPlan mesPmDailyPlan : list) {
                 Example example = new Example(MesPmDailyPlan.class);
-                example.createCriteria().andEqualTo("workOrderId",mesPmDailyPlan.getWorkOrderId() == null ? -1 : mesPmDailyPlan.getWorkOrderId());
+                example.createCriteria().andEqualTo("workOrderId",mesPmDailyPlan.getWorkOrderId() == null ? -1 : mesPmDailyPlan.getWorkOrderId())
+                                        .andEqualTo("planTime",list.get(0).getPlanDate())
+                                        .andEqualTo("orgId",user.getOrganizationId());
                 MesPmDailyPlan mesPmDailyPlan1 = mesPmDailyPlanMapper.selectOneByExample(example);
+                if(StringUtils.isNotEmpty(mesPmDailyPlan1)) throw new BizErrorException("同一工单无法在同一日期中排产两次");
 
                 //返写工单排产数量
                 Example example1 = new Example(MesPmWorkOrder.class);
