@@ -205,7 +205,7 @@
         and ee.equipment_mac_address = #{equipmentMacAddress}
       </if>
       <if test="equipmentBarcode!= null and equipmentBarcode!=''">
-        and ee.equipment_id = ( select equipment_id from eam_equipment_barcode where equipment_barcode = #{equipmentBarcode} )
+        and ee.equipment_id in ( select equipment_id from eam_equipment_barcode where equipment_barcode like CONCAT('%', #{equipmentBarcode}, '%') )
       </if>
     </where>
     order by ee.create_time desc

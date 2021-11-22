@@ -69,7 +69,7 @@
         and bii.organization_id=#{orgId}
       </if>
     </where>
-    order by bii.create_time desc
+    order by bii.inspection_item_code,bii.create_time desc
   </select>
 
   <select id="findDetList" parameterType="map" resultMap="BaseResultMap">
@@ -99,6 +99,6 @@
         and bii.organization_id=#{orgId}
       </if>
     </where>
-    order by bii.inspection_item_code
+    order by bii.inspection_item_code,bii.create_time desc
   </select>
 </mapper>

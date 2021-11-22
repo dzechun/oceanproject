@@ -12,7 +12,6 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseProductBomDetService;
 import org.springframework.beans.BeanUtils;
@@ -40,8 +39,6 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
     private BaseProductBomMapper baseProductBomMapper;
     @Resource
     private BaseSupplierMapper baseSupplierMapper;
-    @Resource
-    private OMFeignApi oMFeignApi;
     @Resource
     private BaseMaterialMapper baseMaterialMapper;
 
