@@ -38,6 +38,8 @@ public class InventoryAgeUreportServiceImpl extends BaseService<InventoryAge> im
         String range3 = rangeList.get(2).get("range");
         String range4 = rangeList.get(3).get("range");
         String range5 = rangeList.get(4).get("range");
+        String range6 = rangeList.get(5).get("range");
+        String range7 = rangeList.get(6).get("range");
 
         map.put("rangeStart1",range1.split("-")[0]);
         map.put("rangeEnd1",range1.split("-")[1]);
@@ -47,7 +49,11 @@ public class InventoryAgeUreportServiceImpl extends BaseService<InventoryAge> im
         map.put("rangeEnd3",range3.split("-")[1]);
         map.put("rangeStart4",range4.split("-")[0]);
         map.put("rangeEnd4",range4.split("-")[1]);
-        map.put("rangeStart5",range5);
+        map.put("rangeStart5",range5.split("-")[0]);
+        map.put("rangeEnd5",range5.split("-")[1]);
+        map.put("rangeStart6",range6.split("-")[0]);
+        map.put("rangeEnd6",range6.split("-")[1]);
+        map.put("rangeStart7",range7);
         List<InventoryAge> list = inventoryAgeUreportMapper.findList(map);
 
         return list;
