@@ -96,7 +96,6 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
                             baseMaterial.setMaterialId(data.get(materialCode));
                             updateList.add(baseMaterial);
                         }
-
                     }
                     baseFeignApi.addList(addList);
                     baseFeignApi.batchUpdateByCode(updateList);
