@@ -108,5 +108,14 @@ public class PalletAutoAsnDto extends WmsInAsnOrderDet implements Serializable {
      * 条码集合
      */
     @ApiModelProperty(name = "barCodeList",value = "条码集合")
-    List<String> barCodeList;
+    List<BarPODto> barCodeList;
+
+    @ApiModelProperty(name = "customerName",value ="客户id" )
+    private String customerName;
+
+    @ApiModelProperty(name = "salesManName",value = "业务员")
+    private String salesManName;
+
+    @ApiModelProperty(name = "salesOrderCode",value = "销售编码")
+    private String salesOrderCode;
 }

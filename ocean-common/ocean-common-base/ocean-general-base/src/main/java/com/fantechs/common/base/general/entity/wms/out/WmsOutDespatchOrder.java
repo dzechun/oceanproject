@@ -186,5 +186,19 @@ public class WmsOutDespatchOrder extends ValidGroup implements Serializable {
     @ApiModelProperty("装车单明细")
     private List<WmsOutDespatchOrderReJo> wmsOutDespatchOrderReJo;
 
+    /**
+     * 报关地点
+     */
+    @ApiModelProperty(name = "clearanceLocale",value = "报关地点")
+    @Column(name = "clearance_locale")
+    private String clearanceLocale;
+
+    /**
+     * 起运港
+     */
+    @ApiModelProperty(name = "originHarbor",value = "起运港")
+    @Column(name = "origin_harbor")
+    private String originHarbor;
+
     private static final long serialVersionUID = 1L;
 }
