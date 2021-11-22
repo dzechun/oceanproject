@@ -84,5 +84,6 @@
         and sal.api_module like CONCAT('%',#{apiModule},'%')
       </if>
     </where>
+    order by sal.create_time desc
   </select>
 </mapper>
