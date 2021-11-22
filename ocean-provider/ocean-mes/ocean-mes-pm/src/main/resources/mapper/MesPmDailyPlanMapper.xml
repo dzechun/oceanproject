@@ -7,7 +7,8 @@
     -->
     <id column="daily_plan_id" jdbcType="BIGINT" property="dailyPlanId" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
-    <result column="schedule_qty" jdbcType="DECIMAL" property="scheduleQty" />
+    <result column="seq_num" jdbcType="VARCHAR" property="seqNum" />
+    <result column="schedule_qty" jdbcType="DECIMAL" property="scheduledQty" />
     <result column="finished_qty" jdbcType="DECIMAL" property="finishedQty" />
     <result column="plan_time" jdbcType="TIMESTAMP" property="planTime" />
     <result column="if_order_inserting" jdbcType="TINYINT" property="ifOrderInserting" />
@@ -26,6 +27,7 @@
 
   <sql id="Base_Column_List">
     mpdp.daily_plan_id,
+    mpdp.seq_num,
     mpdp.work_order_id,
     mpdp.schedule_qty,
     mpdp.finished_qty,
@@ -45,7 +47,6 @@
     <result column="work_order_qty" jdbcType="VARCHAR" property="workOrderQty"/>
     <result column="no_schedule_qty" jdbcType="VARCHAR" property="noScheduleQty"/>
     <result column="production_qty" jdbcType="VARCHAR" property="productionQty"/>
-    <result column="scheduled_qty" jdbcType="VARCHAR" property="scheduledQty"/>
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan"
@@ -54,8 +55,7 @@
     mpwo.material_id,mpwo.work_order_qty AS work_order_qty,mpwo.production_qty as production_qty,mpwo.work_order_status,
     mpwo.pro_line_id,bpl.pro_name AS proName,mpwo.scheduled_qty as scheduled_qty,
     date_format(mpdp.plan_time, '%Y-%m-%d') AS planDate,mpwo.work_order_code as work_order_code,
-    bpl.pro_name as pro_name,bm.material_name as material_name,bm.material_code as material_code,bm.material_desc as material_desc,
-    (mpwo.work_order_qty-mpwo.scheduled_qty) AS no_schedule_qty
+    bpl.pro_name as pro_name,bm.material_name as material_name,bm.material_code as material_code,bm.material_desc as material_desc
     from mes_pm_daily_plan mpdp
     LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
     LEFT JOIN base_pro_line bpl ON  mpwo.pro_line_id =bpl.pro_line_id
@@ -89,7 +89,7 @@
         and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>
-    order by mpdp.create_time desc
+    order by mpdp.seq_num asc
   </select>
 
 

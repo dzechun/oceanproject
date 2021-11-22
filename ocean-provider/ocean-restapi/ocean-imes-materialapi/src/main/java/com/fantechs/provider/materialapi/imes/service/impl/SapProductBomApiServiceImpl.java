@@ -48,7 +48,6 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
     public int getProductBom(SearchSapProductBomApi searchSapProductBomApi) throws ParseException {
         if(lock.tryLock()) {
             try {
-                System.out.println("=============code============"+searchSapProductBomApi.getMaterialCode());
                 Authenticator.setDefault(new BasicAuthenticator(userName, password));
                 SIMESBOMQUERYOutService service = new SIMESBOMQUERYOutService();
                 SIMESBOMQUERYOut out = service.getHTTPPort();
@@ -85,8 +84,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                     Map<String,Long> productBomIds = new HashMap<>();
                     //保存第一层bom表以及det表
                     if (StringUtils.isEmpty(data.get(searchSapProductBomApi.getMaterialCode()))) {
-                        // throw new BizErrorException("未查询到对应物料编码");
-                        return 1;
+                         throw new BizErrorException("未查询到对应物料编码");
                     }
                     if(StringUtils.isNotEmpty(parentList)) {
                         BaseProductBom parentBomData = saveBaseProductBom(data.get(searchSapProductBomApi.getMaterialCode()), baseUtils.removeZero(parentList.get(0).getAENNR()), orgId);
@@ -112,34 +110,32 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                             if (StringUtils.isEmpty(bomData)) throw new BizErrorException("保存失败");
 
                             productBomIds.put(code, bomData.getProductBomId());
-                        for (DTMESBOM bom : res.getBOM()) {
-                            if (baseUtils.removeZero(bom.getMATNR()).equals(code) && StringUtils.isNotEmpty(bom.getIDNRK())) {
-                                String detCode = baseUtils.removeZero(bom.getIDNRK());
-                                BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
-                                baseProductBomDet.setProductBomId(bomData.getProductBomId());
-                                baseProductBomDet.setMaterialId(data.get(detCode));
-                                baseProductBomDet.setUsageQty(new BigDecimal(bom.getMENGE().trim()));
-                                baseProductBomDet.setBaseQty(new BigDecimal(bom.getBMENG().trim()));
-                                baseProductBomDet.setRemark(bom.getMAKTXZ());
-                                baseProductBomDet.setIfHaveLowerLevel((byte) 0);
-                                baseProductBomDet.setIsDelete((byte) 1);
-                                baseProductBomDet.setStatus((byte) 1);
-                                baseProductBomDet.setOrgId(orgId);
-                                baseProductBomDet.setCreateTime(new Date());
-                                baseProductBomDet.setCreateUserId((long)99);
-                                detList.add(baseProductBomDet);
+                            for (DTMESBOM bom : res.getBOM()) {
+                                if (baseUtils.removeZero(bom.getMATNR()).equals(code) && StringUtils.isNotEmpty(bom.getIDNRK())) {
+                                    String detCode = baseUtils.removeZero(bom.getIDNRK());
+                                    BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
+                                    baseProductBomDet.setProductBomId(bomData.getProductBomId());
+                                    baseProductBomDet.setMaterialId(data.get(detCode));
+                                    baseProductBomDet.setUsageQty(new BigDecimal(bom.getMENGE().trim()));
+                                    baseProductBomDet.setBaseQty(new BigDecimal(bom.getBMENG().trim()));
+                                    baseProductBomDet.setRemark(bom.getMAKTXZ());
+                                    baseProductBomDet.setIfHaveLowerLevel((byte) 0);
+                                    baseProductBomDet.setIsDelete((byte) 1);
+                                    baseProductBomDet.setStatus((byte) 1);
+                                    baseProductBomDet.setOrgId(orgId);
+                                    baseProductBomDet.setCreateTime(new Date());
+                                    baseProductBomDet.setCreateUserId((long)99);
+                                    detList.add(baseProductBomDet);
+                                }
                             }
                         }
-                        }
-
                         baseFeignApi.addOrUpdate(detList);
                     }
                     logsUtils.addlog((byte) 1, (byte) 1, orgId, null, req.getMATNR());
                     return 1;
                 } else {
                     logsUtils.addlog((byte) 0, (byte) 1, orgId, res.getTYPE() + "--" + res.getMESSAGE(), req.getMATNR());
-                    return 1;
-                    // throw new BizErrorException("接口请求失败,错误信息为：" + res.getMESSAGE());
+                    throw new BizErrorException("接口请求失败,错误信息为：" + res.getMESSAGE());
                 }
             }finally {
                 lock.unlock();

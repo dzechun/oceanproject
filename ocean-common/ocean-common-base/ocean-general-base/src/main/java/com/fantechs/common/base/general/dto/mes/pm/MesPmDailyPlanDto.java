@@ -33,15 +33,6 @@ public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
     @Transient
     private BigDecimal productionQty;
 
-
-    /**
-     * 当前排产数量
-     */
-    @ApiModelProperty(name="scheduledQty",value = "当前排产数量")
-    @Transient
-    private BigDecimal scheduledQty;
-
-
     /**
      * 物料名称.
      */

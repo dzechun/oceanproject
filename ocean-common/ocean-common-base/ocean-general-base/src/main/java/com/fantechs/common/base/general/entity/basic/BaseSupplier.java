@@ -56,6 +56,22 @@ public class BaseSupplier extends ValidGroup implements Serializable {
     private String supplierDesc;
 
     /**
+     * 国家名称
+     */
+    @ApiModelProperty(name="countryName",value = "国家名称")
+    @Excel(name = "国家名称", height = 20, width = 30)
+    @Column(name = "country_name")
+    private String countryName;
+
+    /**
+     * 大区名称
+     */
+    @ApiModelProperty(name="regionName",value = "大区名称")
+    @Excel(name = "大区名称", height = 20, width = 30)
+    @Column(name = "region_name")
+    private String regionName;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
