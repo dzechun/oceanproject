@@ -4,8 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
-import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
-import com.fantechs.common.base.general.dto.wms.in.WmsInHtAsnOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.*;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
@@ -33,8 +32,6 @@ import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
@@ -937,9 +934,9 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         //List<String> barcodes = this.checkBarcode(productPalletId);
         //String barCode = this.checkBarcode(productPalletId);
         int num = 0;
-        for (String barcode : palletAutoAsnDto.getBarCodeList()) {
+        for (BarPODto barcode : palletAutoAsnDto.getBarCodeList()) {
             //按条码查询是否存在库存
-            WmsInnerInventoryDet wmsInnerInventoryDet = innerFeignApi.findByDet(barcode).getData();
+            WmsInnerInventoryDet wmsInnerInventoryDet = innerFeignApi.findByDet(barcode.getBarCode()).getData();
             if(StringUtils.isNotEmpty(wmsInnerInventoryDet)){
                 throw new BizErrorException("重复入库");
             }
@@ -947,7 +944,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventoryDet= new WmsInnerInventoryDet();
             wmsInnerInventoryDet.setStorageId(wmsInAsnOrderDet.getStorageId());
             wmsInnerInventoryDet.setMaterialId(wmsInAsnOrderDet.getMaterialId());
-            wmsInnerInventoryDet.setBarcode(barcode);
+            wmsInnerInventoryDet.setBarcode(barcode.getBarCode());
             wmsInnerInventoryDet.setMaterialQty(BigDecimal.ONE);
             wmsInnerInventoryDet.setProductionDate(wmsInAsnOrderDet.getProductionDate());
             wmsInnerInventoryDet.setProductionBatchCode(wmsInnerInventoryDet.getProductionBatchCode());
@@ -959,7 +956,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventoryDet.setOption1(palletAutoAsnDto.getCustomerName());
             wmsInnerInventoryDet.setOption2(palletAutoAsnDto.getSalesManName());
             wmsInnerInventoryDet.setOption3(palletAutoAsnDto.getSalesOrderCode());
-            wmsInnerInventoryDet.setOption4(palletAutoAsnDto.getPOCode());
+            wmsInnerInventoryDet.setOption4(barcode.getPOCode());
             wmsInnerInventoryDets.add(wmsInnerInventoryDet);
             ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
             if(responseEntity.getCode()!=0){

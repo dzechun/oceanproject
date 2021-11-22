@@ -168,6 +168,21 @@ wiid.option5
         <if test="orgId!=null and orgId!=''">
             and wiid.org_id = #{orgId}
         </if>
+        <if test="option1!=null and option1!=''">
+            and wiid.option1 like CONCAT('%',#{option1},'%')
+        </if>
+        <if test="option2!=null and option2!=''">
+            and wiid.option2 like CONCAT('%',#{option2},'%')
+        </if>
+            <if test="option3!=null and option3!=''">
+                and wiid.option3 like CONCAT('%',#{option3},'%')
+            </if>
+            <if test="option4!=null and option4!=''">
+                and wiid.option4 like CONCAT('%',#{option4},'%')
+            </if>
+            <if test="option5!=null and option5!=''">
+                and wiid.option5 like CONCAT('%',#{option5},'%')
+            </if>
         </where>
         order by wiid.create_time desc
     </select>
