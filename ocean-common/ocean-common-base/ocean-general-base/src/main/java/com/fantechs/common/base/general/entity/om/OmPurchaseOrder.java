@@ -1,14 +1,21 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 采购订单
@@ -64,7 +71,8 @@ public class OmPurchaseOrder extends ValidGroup implements Serializable {
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "订单日期", height = 20, width = 30,orderNum="")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -96,7 +104,8 @@ public class OmPurchaseOrder extends ValidGroup implements Serializable {
      * 制单日期
      */
     @ApiModelProperty(name="makeOrderDate",value = "制单日期")
-    @Excel(name = "制单日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "制单日期", height = 20, width = 30,orderNum="")
+    @JSONField(format ="yyyy-MM-dd")
     @Column(name = "make_order_date")
     private Date makeOrderDate;
 
