@@ -2,6 +2,8 @@ package com.fantechs.service.impl;
 
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.dto.MonthInDto;
+import com.fantechs.dto.MonthOutDto;
 import com.fantechs.entity.MonthInOutModel;
 import com.fantechs.mapper.MonthInOutMapper;
 import com.fantechs.service.MonthInOutService;
@@ -22,7 +24,14 @@ public class MonthInOutServiceImpl implements MonthInOutService {
     private MonthInOutMapper monthInOutMapper;
 
     @Override
-    public List<MonthInOutModel> findOutList(Map<String, Object> map) {
+    public List<MonthInDto> findInList(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
+        return monthInOutMapper.findInList(map);
+    }
+
+    @Override
+    public List<MonthOutDto> findOutList(Map<String, Object> map) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
         return monthInOutMapper.findOutList(map);

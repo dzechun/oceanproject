@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class InventoryAgeUreportServiceImpl extends BaseService<InventoryAge> implements InventoryAgeUreportService {
@@ -33,30 +31,26 @@ public class InventoryAgeUreportServiceImpl extends BaseService<InventoryAge> im
         searchSysSpecItem.setSpecCode("InventoryAgeRange");
         List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
         List<Map<String, String>> rangeList = JSONArray.parseObject(sysSpecItemList.get(0).getParaValue(), List.class);
-        String range1 = rangeList.get(0).get("range");
-        String range2 = rangeList.get(1).get("range");
-        String range3 = rangeList.get(2).get("range");
-        String range4 = rangeList.get(3).get("range");
-        String range5 = rangeList.get(4).get("range");
-        String range6 = rangeList.get(5).get("range");
-        String range7 = rangeList.get(6).get("range");
 
-        map.put("rangeStart1",range1.split("-")[0]);
-        map.put("rangeEnd1",range1.split("-")[1]);
-        map.put("rangeStart2",range2.split("-")[0]);
-        map.put("rangeEnd2",range2.split("-")[1]);
-        map.put("rangeStart3",range3.split("-")[0]);
-        map.put("rangeEnd3",range3.split("-")[1]);
-        map.put("rangeStart4",range4.split("-")[0]);
-        map.put("rangeEnd4",range4.split("-")[1]);
-        map.put("rangeStart5",range5.split("-")[0]);
-        map.put("rangeEnd5",range5.split("-")[1]);
-        map.put("rangeStart6",range6.split("-")[0]);
-        map.put("rangeEnd6",range6.split("-")[1]);
-        map.put("rangeStart7",range7);
-        List<InventoryAge> list = inventoryAgeUreportMapper.findList(map);
+        String range = "";
+        List<Map<String, Object>> ranges = new LinkedList<>();
+        for (int i = 0; i < rangeList.size(); i++){
+            range = rangeList.get(i).get("range");
+            String[] split = range.split("-");
+            Map<String, Object> rangeMap = new HashMap<>();
+            if(split.length > 1) {
+                rangeMap.put("rangeStart", split[0]);
+                rangeMap.put("rangeEnd", split[1]);
+                rangeMap.put("detCount", "detCount"+(i+1));
+            }else {
+                rangeMap.put("rangeStart", split[0]);
+                rangeMap.put("detCount", "detCount"+(i+1));
+            }
+            ranges.add(rangeMap);
+        }
+        map.put("ranges",ranges);
 
-        return list;
+        return inventoryAgeUreportMapper.findList(map);
     }
 
     @Override

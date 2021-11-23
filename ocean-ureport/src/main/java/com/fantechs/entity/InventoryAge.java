@@ -225,14 +225,32 @@ public class InventoryAge implements Serializable {
     /**
      * 明细数量6
      */
-    @ApiModelProperty(name = "detCount5",value = "明细数量6")
+    @ApiModelProperty(name = "detCount6",value = "明细数量6")
     @Excel(name = "库存半年以上数量", height = 20, width = 30,orderNum="22")
     private Integer detCount6;
 
     /**
      * 明细数量7
      */
-    @ApiModelProperty(name = "detCount5",value = "明细数量7")
+    @ApiModelProperty(name = "detCount7",value = "明细数量7")
     @Excel(name = "库存一年以上数量", height = 20, width = 30,orderNum="23")
     private Integer detCount7;
+
+    /**
+     * 明细数量8
+     */
+    @ApiModelProperty(name = "detCount8",value = "明细数量8")
+    private Integer detCount8;
+
+    /**
+     * 明细数量9
+     */
+    @ApiModelProperty(name = "detCount9",value = "明细数量9")
+    private Integer detCount9;
+
+    /**
+     * 明细数量10
+     */
+    @ApiModelProperty(name = "detCount10",value = "明细数量10")
+    private Integer detCount10;
 }

@@ -94,13 +94,13 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
         EsopWiRelease.setStatus((byte)1);
         EsopWiRelease.setReleaseStatus((byte)1);
         EsopWiRelease.setOrgId(sysUser.getOrganizationId());
-        int i = esopWiReleaseMapper.insertUseGeneratedKeys(EsopWiRelease);
+        int i = esopWiReleaseMapper.insertSelective(EsopWiRelease);
         List<EsopWiReleaseDet> dets = saveDet(EsopWiReleaseDto,sysUser,EsopWiRelease.getWiReleaseId());
 
         //添加履历表
         EsopHtWiRelease EsopHtWiRelease = new EsopHtWiRelease();
         BeanUtils.autoFillEqFields(EsopWiRelease, EsopHtWiRelease);
-        esopHtWiReleaseMapper.insertUseGeneratedKeys(EsopHtWiRelease);
+        esopHtWiReleaseMapper.insertSelective(EsopHtWiRelease);
 
         List<EsopHtWiReleaseDet> htDets = new ArrayList<>();
         if(StringUtils.isNotEmpty(dets)) {
@@ -180,6 +180,7 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
         List<EsopWiReleaseDet> dets = new ArrayList<>();
         if(StringUtils.isNotEmpty(EsopWiReleaseDto.getEsopWiReleaseDetDtos())) {
             for (EsopWiReleaseDetDto EsopWiReleaseDetDto :  EsopWiReleaseDto.getEsopWiReleaseDetDtos()) {
+                if(StringUtils.isEmpty(EsopWiReleaseDetDto.getWiReleaseDetSeqNum()))  throw new BizErrorException("wi发布序号不能为空");
                 EsopWiReleaseDet wiReleaseDet = new EsopWiReleaseDet();
                 BeanUtils.autoFillEqFields(EsopWiReleaseDetDto, wiReleaseDet);
                 wiReleaseDet.setCreateUserId(sysUser.getUserId());
