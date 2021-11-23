@@ -81,7 +81,7 @@ public class EngPackingOrderSummaryServiceImpl extends BaseService<EngPackingOrd
         engPackingOrderSummaryDto.setStatus((byte)1);
         engPackingOrderSummaryDto.setOrgId(user.getOrganizationId());
 
-        int i = engPackingOrderSummaryMapper.insertUseGeneratedKeys(engPackingOrderSummaryDto);
+        int i = engPackingOrderSummaryMapper.insertSelective(engPackingOrderSummaryDto);
 
         EngHtPackingOrderSummary engHtPackingOrderSummary =new EngHtPackingOrderSummary();
         BeanUtils.copyProperties(engPackingOrderSummaryDto, engHtPackingOrderSummary);
