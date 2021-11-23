@@ -116,6 +116,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wms.setDistributionQty(qty);
             wms.setActualQty(qty);
             wms.setOrderStatus((byte)5);
+            wms.setWorkStartTime(new Date());
             num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wms);
             searchWmsInnerJobOrderDet.setJobOrderDetId(wms.getJobOrderDetId());
 
@@ -133,6 +134,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsInnerJobOrderDet.setOrderStatus((byte)5);
             wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setModifiedTime(new Date());
+            wmsInnerJobOrderDet.setWorkStartTime(new Date());
             num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
             searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
         }
@@ -538,6 +540,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                             .actualQty(wmsInnerJobOrderDet.getDistributionQty())
                             .modifiedUserId(sysUser.getUserId())
                             .modifiedTime(new Date())
+                                    .workStartTime(new Date())
                             .build());
 
                     //更改库存为正常状态
@@ -606,6 +609,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 wms.setPlanQty(wmsInPutawayOrderDet.getActualQty());
                 wms.setDistributionQty(wmsInPutawayOrderDet.getActualQty());
                 wms.setOrderStatus((byte)5);
+                wms.setWorkStartTime(new Date());
                 num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wms);
                 jobOrderDetId = wms.getJobOrderDetId();
 
@@ -622,6 +626,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 wmsInPutawayOrderDet.setOrderStatus((byte)5);
                 wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
                 wmsInPutawayOrderDet.setModifiedTime(new Date());
+                wmsInPutawayOrderDet.setWorkStartTime(new Date());
                 num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
                 jobOrderDetId = wmsInPutawayOrderDet.getJobOrderDetId();
             }
@@ -1063,6 +1068,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                 .jobOrderId(wmsInnerJobOrderDet.getJobOrderId())
                 .orderStatus(by)
+                        .workEndtTime(by==6?new Date():null)
                 .build());
     }
 
