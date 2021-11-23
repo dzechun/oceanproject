@@ -8,8 +8,6 @@ import com.fantechs.common.base.general.dto.restapi.DTMESMATERIALQUERYREQ;
 import com.fantechs.common.base.general.dto.restapi.DTMESMATERIALQUERYRES;
 import com.fantechs.common.base.general.dto.restapi.SearchSapMaterialApi;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapMaterialApiService;
@@ -23,9 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.net.Authenticator;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 
@@ -55,14 +51,12 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
                 DTMESMATERIALQUERYREQ req = new DTMESMATERIALQUERYREQ();
                 List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
                 if (StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
-
+                Long orgId = orgIdList.get(0).getOrganizationId();
                 if (StringUtils.isEmpty(searchSapMaterialApi.getStartTime()) && StringUtils.isEmpty(searchSapMaterialApi.getEndTime())) {
                     String endTime = DateUtil.format(new Date(), "yyyyMMdd");
                     req.setERSDA("20180101");
                     req.setERSDAEND(endTime);
                 } else if (StringUtils.isNotEmpty(searchSapMaterialApi.getStartTime()) || StringUtils.isNotEmpty(searchSapMaterialApi.getEndTime())) {
-                    //(StringUtils.isEmpty(searchSapMaterialApi.getStartTime()) || StringUtils.isEmpty(searchSapMaterialApi.getEndTime()))
-
                     req.setERSDA(searchSapMaterialApi.getStartTime());
                     req.setERSDAEND(searchSapMaterialApi.getEndTime());
                 } else {
@@ -74,10 +68,34 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
                     if (StringUtils.isEmpty(res.getMATS())) throw new BizErrorException("请求结果为空");
                     List<BaseMaterial> addList = new ArrayList<BaseMaterial>();
                     List<BaseMaterial> updateList = new ArrayList<BaseMaterial>();
-                    for (DTMESMATERIAL material : res.getMATS()) {
+                    //查询返回的所有物料
+                    HashSet<String> allMaterialCode = new HashSet<String>();
+                    for(DTMESMATERIAL material : res.getMATS()){
                         if (StringUtils.isEmpty(material.getMATNR())) throw new BizErrorException("新增或更新失败，物料编码为空");
-                        //判断物料信息为新增或者修改，并填充
-                        saveAndUpdate(material, addList, updateList);
+                        allMaterialCode.add(baseUtils.removeZero(material.getMATNR()));
+                    }
+                    List<String> str =new ArrayList(allMaterialCode);
+                    Map<String, Long> data = baseFeignApi.findIdByCode(str).getData();
+
+                    for (DTMESMATERIAL material : res.getMATS()) {
+                        String materialCode =baseUtils.removeZero(material.getMATNR());
+                        BaseMaterial baseMaterial = new BaseMaterial();
+                        baseMaterial.setOrganizationId(orgId);
+                        baseMaterial.setMaterialName(material.getMAKTX());
+                        baseMaterial.setMaterialDesc(material.getMAKTX());
+                        baseMaterial.setMaterialCode(materialCode);
+                        baseMaterial.setCreateTime(new Date());
+                        baseMaterial.setModifiedTime(new Date());
+                        baseMaterial.setStatus((byte)1);
+                        baseMaterial.setSystemSource("ERP");
+                        baseMaterial.setIsDelete((byte)1);
+                        //判断更新或者新增
+                        if(StringUtils.isEmpty(data.get(materialCode))){
+                            addList.add(baseMaterial);
+                        }else{
+                            baseMaterial.setMaterialId(data.get(materialCode));
+                            updateList.add(baseMaterial);
+                        }
                     }
                     baseFeignApi.addList(addList);
                     baseFeignApi.batchUpdateByCode(updateList);
@@ -94,35 +112,4 @@ public class SapMaterialApiServiceImpl implements SapMaterialApiService {
         throw new BizErrorException("正在同步物料，请勿重新操作");
     }
 
-    public void saveAndUpdate(DTMESMATERIAL material, List<BaseMaterial> addList, List<BaseMaterial> updateList){
-        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-        String materialCode =baseUtils.removeZero(material.getMATNR());
-        List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
-        if(StringUtils.isEmpty(orgIdList)) throw new BizErrorException("未查询到对应组织");
-        Long orgId = orgIdList.get(0).getOrganizationId();
-        searchBaseMaterial.setMaterialCode(materialCode);
-        searchBaseMaterial.setOrganizationId(orgId);
-        ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
-        BaseMaterial baseMaterial = new BaseMaterial();
-        baseMaterial.setOrganizationId(orgId);
-
-        if(StringUtils.isEmpty(list.getData())){
-            baseMaterial.setMaterialName(material.getMAKTX());
-            baseMaterial.setMaterialDesc(material.getMAKTX());
-            baseMaterial.setMaterialCode(materialCode);
-            baseMaterial.setCreateTime(new Date());
-            baseMaterial.setModifiedTime(new Date());
-            baseMaterial.setStatus((byte)1);
-            baseMaterial.setSystemSource("ERP");
-            baseMaterial.setIsDelete((byte)1);
-            addList.add(baseMaterial);
-        }else{
-            baseMaterial = list.getData().get(0);
-            baseMaterial.setMaterialName(material.getMAKTX());
-            baseMaterial.setMaterialDesc(material.getMAKTX());
-            baseMaterial.setSystemSource("ERP");
-            updateList.add(baseMaterial);
-        }
-
-    }
 }
