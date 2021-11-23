@@ -47,6 +47,9 @@ public class SysMenuInfoController {
     @ApiOperation(value = "查询")
     @PostMapping("/findList")
     public ResponseEntity<List<SysMenuInfoDto>> findList(@RequestBody(required = false) SearchSysMenuInfo searchSysMenuInfo){
+        if (StringUtils.isEmpty(searchSysMenuInfo.getParentId()) || searchSysMenuInfo.getParentId() == 0) {
+            searchSysMenuInfo.setParentId(StringUtils.isNotEmpty(searchSysMenuInfo.getMenuName()) || StringUtils.isNotEmpty(searchSysMenuInfo.getPremenuId())?null:0);
+        }
         List<SysMenuInfoDto> menuList = sysMenuInfoService.findAll(ControllerUtil.dynamicConditionByEntity(searchSysMenuInfo),null);
         return ControllerUtil.returnDataSuccess(menuList, StringUtils.isEmpty(menuList)?0:1);
     }

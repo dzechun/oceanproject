@@ -6,9 +6,9 @@
         select
         ifnull(sum(
             CASE WHEN status NOT in('SF','CA','CL') THEN 1 else 0 end
-            ),0) as 'unfinishedOrderQty',
+            ),0) unfinishedOrderQty,
         IFNULL(SUM(CASE WHEN STATUS ='SF' THEN 1 ELSE 0 END),0) AS 'finishedOrderQty',
-        ifnull(sum(CASE WHEN status NOT in('SF','CA','CL') AND REVIEW_STATUS!='REVIEW_COMPLETED' THEN 1 else 0 end),0) as 'pendingSalesQty',
+        ifnull(sum(CASE WHEN status NOT in('SF','CA','CL','EQ') AND REVIEW_STATUS!='REVIEW_COMPLETED' THEN 1 else 0 end),0) as 'pendingSalesQty',
         count(1) as 'totalOrderQty',
         ifnull(sum(CASE WHEN status in('CA','CL') THEN 1 else 0 end),0) as 'cancelOrderQty'
         from wms_pick_ticket
@@ -26,11 +26,11 @@
 
     <select id="findClaimGoods" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.BillsQtyStatistics">
         select
-            IFNULL(SUM(CASE WHEN STATUS NOT IN('PN','CA','CL')THEN 1 ELSE 0 END),0) AS unreceivedQty,
+            IFNULL(SUM(CASE WHEN STATUS IN('PN','CA','CL')THEN 1 ELSE 0 END),0) AS unreceivedQty,
             IFNULL(SUM(CASE WHEN STATUS not in('CA','CL') THEN 1 else 0 end),0) as 'total',
             IFNULL(SUM(CASE WHEN STATUS not in('CA','CL') THEN 1 else 0 end),0) - ifnull(sum(CASE WHEN status in('OP','EN','PR') THEN 1 else 0 end),0) as 'receivedQty'
         from wms_asn
-        where WAREHOUSE_ID = #{warehouseId} and date_format(CREATED_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+        where WAREHOUSE_ID = #{warehouseId} and date_format(UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
 
     </select>
 
@@ -51,7 +51,7 @@
         IFNULL(SUM(CASE WHEN STATUS NOT IN('CA','CL') THEN 1 ELSE 0 END),0) - IFNULL(SUM(CASE WHEN STATUS NOT IN('SF','WF','CA','CL') THEN 1 ELSE 0 END),0)  AS receivedQty
     FROM WMS_PICK_TICKET
     WHERE WAREHOUSE_ID = #{warehouseId}
-    AND DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d')= DATE_FORMAT(NOW(),'%Y-%m-%d')
+    AND DATE_FORMAT(UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate} and status != 'OP'
     </select>
 
     <select id="findReplenishment" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.BillsQtyStatistics">
@@ -118,7 +118,7 @@
             sum(CASE WHEN CREATED_TIME BETWEEN DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 7 DAY),'%Y-%m-%d') and DATE_FORMAT(NOW(),'%Y-%m-%d') THEN 1 ELSE 0 END) as 'nearlySevenDay'
         from wms_pick_ticket
         where WAREHOUSE_ID = #{warehouseId} and STATUS not in('SF','CA','CL','CV')
-    </select>
+   </select>
 
     <select id="findJobDocumentProgressList" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.JobDocumentProgress">
         select
@@ -204,7 +204,7 @@
             ifnull(sum(CASE WHEN status in('OP','EN','RA','PA','FA') THEN 1 else 0 end),0) as 'waitingPickingQty'
         from wms_wave_doc wwd
         where WAREHOUSE_ID = #{warehouseId}
-        and date_format(UPDATE_TIME,'%Y-%m') BETWEEN #{startDate} AND #{endDate}
+        and date_format(UPDATE_TIME,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="findOperationOverview" parameterType="map" resultType="com.fantechs.common.base.general.entity.kreport.OperationOverview">
