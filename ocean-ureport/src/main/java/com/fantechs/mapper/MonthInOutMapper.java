@@ -1,5 +1,7 @@
 package com.fantechs.mapper;
 
+import com.fantechs.dto.MonthInDto;
+import com.fantechs.dto.MonthOutDto;
 import com.fantechs.entity.MonthInOutModel;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,7 +15,7 @@ import java.util.Map;
 
 @Mapper
 public interface MonthInOutMapper {
-    List<MonthInOutModel> findInList(Map<String,Object> map);
+    List<MonthInDto> findInList(Map<String,Object> map);
 
-    List<MonthInOutModel> findOutList(Map<String,Object> map);
+    List<MonthOutDto> findOutList(Map<String,Object> map);
 }

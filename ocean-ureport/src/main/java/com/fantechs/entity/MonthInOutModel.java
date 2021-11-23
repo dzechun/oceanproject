@@ -80,19 +80,4 @@ public class MonthInOutModel implements Serializable {
     @ApiModelProperty(name = "materialDesc",value = "产品描述")
     @Excel(name = "产品描述",height = 20, width = 30,orderNum="9")
     private String materialDesc;
-
-    /**
-     * 本月出库累计
-     */
-    @ApiModelProperty(name = "qty",value = "本月出库累计")
-    @Excel(name = "本月出库累计",height = 20, width = 30,orderNum="10")
-    private BigDecimal qty;
-
-    /**
-     * 出库日期
-     */
-    @ApiModelProperty(name = "outDate",value = "出库日期")
-    @Excel(name = "出库日期",exportFormat = "yyyy-MM-dd",height = 20, width = 30,orderNum="11")
-    @JSONField(format ="yyyy-MM-dd")
-    private Date outDate;
 }
