@@ -163,7 +163,9 @@
             <if test="workInstructionSeqNum!=null and workInstructionSeqNum!=''">
                 and ewi.work_instruction_seq_num = #{workInstructionSeqNum}
             </if>
-
+            <if test="productModelCode!=null and productModelCode!=''">
+                and spm.product_model_code = #{productModelCode}
+            </if>
         </where>
         order by ewi.modified_time desc
     </select>
@@ -217,6 +219,9 @@
             </if>
             <if test="workInstructionSeqNum!=null and workInstructionSeqNum!=''">
                 and ewi.work_instruction_seq_num = #{workInstructionSeqNum}
+            </if>
+            <if test="productModelCode!=null and productModelCode!=''">
+                and spm.product_model_code = #{productModelCode}
             </if>
         </where>
         group by ewi.work_instruction_seq_num
