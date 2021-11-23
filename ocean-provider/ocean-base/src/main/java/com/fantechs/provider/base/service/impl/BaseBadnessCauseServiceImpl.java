@@ -39,9 +39,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     @Override
     public List<BaseBadnessCauseDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId",user.getOrganizationId());
         return baseBadnessCauseMapper.findList(map);
     }
@@ -49,9 +46,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     @Override
     public int save(BaseBadnessCause baseBadnessCause) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseBadnessCause.class);
         Example.Criteria criteria = example.createCriteria();
@@ -82,9 +76,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     @Override
     public int update(BaseBadnessCause baseBadnessCause) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseBadnessCause.class);
         Example.Criteria criteria = example.createCriteria();
@@ -110,9 +101,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     @Override
     public int batchDelete(String ids) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         LinkedList<BaseHtBadnessCause> htList = new LinkedList<>();
         String[] idArray = ids.split(",");
@@ -135,9 +123,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseBadnessCauseImport> baseBadnessCauseImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

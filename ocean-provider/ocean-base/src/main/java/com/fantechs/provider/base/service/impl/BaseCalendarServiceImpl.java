@@ -46,9 +46,6 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
     @Override
     public int save(BaseCalendar baseCalendar) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //新增日历
         baseCalendar.setCreateTime(new Date());
@@ -63,9 +60,6 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
     @Override
     public int update(BaseCalendar baseCalendar) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         baseCalendar.setModifiedUserId(user.getUserId());
         baseCalendar.setModifiedTime(new Date());
@@ -77,9 +71,6 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
@@ -95,9 +86,6 @@ public class BaseCalendarServiceImpl extends BaseService<BaseCalendar> implement
     @Override
     public List<BaseCalendarDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         //获取日历

@@ -42,7 +42,7 @@ public class BaseWorkingAreaReWServiceImpl extends BaseService<BaseWorkingAreaRe
 
     @Override
     public int save(BaseWorkingAreaReW baseWorkingAreaReW) {
-        SysUser currentUserInfo = this.getCurrentUserInfo();
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
 
         baseWorkingAreaReW.setWorkingAreaReWId(null);
 
@@ -61,7 +61,7 @@ public class BaseWorkingAreaReWServiceImpl extends BaseService<BaseWorkingAreaRe
 
     @Override
     public int batchDelete(String ids) {
-        SysUser currentUserInfo = this.getCurrentUserInfo();
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         for(String id : ids.split(",")) {
             BaseWorkingAreaReW baseWorkingAreaReW = baseWorkingAreaReWMapper.selectByPrimaryKey(id);
             if(StringUtils.isEmpty(baseWorkingAreaReW)) {
@@ -81,7 +81,7 @@ public class BaseWorkingAreaReWServiceImpl extends BaseService<BaseWorkingAreaRe
 
     @Override
     public int update(BaseWorkingAreaReW baseWorkingAreaReW) {
-        SysUser currentUserInfo = this.getCurrentUserInfo();
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
 
         baseWorkingAreaReW.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
         baseWorkingAreaReW.setModifiedUserId(currentUserInfo.getUserId());
@@ -94,21 +94,10 @@ public class BaseWorkingAreaReWServiceImpl extends BaseService<BaseWorkingAreaRe
     @Override
     public List<BaseWorkingAreaReWDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseWorkingAreaReWMapper.findList(map);
     }
 
-    private SysUser getCurrentUserInfo() {
-        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }else{
-            return currentUserInfo;
-        }
-    }
 
     private void recordHistory(BaseWorkingAreaReW baseWorkingAreaReW, SysUser currentUserInfo, String operation) {
 

@@ -69,7 +69,7 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
     }
 
     @Override
-    public EsopNews selectByKey(Object key) {
+    public EsopNews selectByKey(Long key) {
         EsopNews EsopNews = esopNewsMapper.selectByPrimaryKey(key);
 
         Example example = new Example(EsopNewsAttachment.class);

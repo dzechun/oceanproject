@@ -50,9 +50,6 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
     @Override
     public List<BaseUnitPriceDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseUnitPriceDto> list = baseUnitPriceMapper.findList(map);
         if (StringUtils.isNotEmpty(list)){
@@ -72,9 +69,6 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseUnitPrice baseUnitPrice) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseUnitPrice.class);
         Example.Criteria criteria = example.createCriteria();
@@ -125,9 +119,6 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseUnitPrice baseUnitPrice) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseUnitPrice.class);
         Example.Criteria criteria = example.createCriteria();
@@ -175,9 +166,6 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] idsArr = ids.split(",");
         List<BaseHtUnitPrice>  baseHtUnitPrices = new LinkedList<>();
@@ -211,9 +199,6 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseUnitPriceImport> baseUnitPriceImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
@@ -323,7 +308,7 @@ public class BaseUnitPriceServiceImpl extends BaseService<BaseUnitPrice> impleme
                 BeanUtils.copyProperties(baseUnitPrice,baseHtUnitPrice);
                 baseHtUnitPrice.setModifiedTime(new Date());
                 baseHtUnitPrice.setModifiedUserId(currentUser.getUserId());
-                baseHtUnitPriceMapper.insert(baseHtUnitPrice);
+                baseHtUnitPriceMapper.insertSelective(baseHtUnitPrice);
             }
 
             //新增单价明细

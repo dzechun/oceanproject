@@ -64,9 +64,6 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
     @Override
     public List<EamJigReturnDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamJigReturnMapper.findList(map);
@@ -81,9 +78,6 @@ public class EamJigReturnServiceImpl extends BaseService<EamJigReturn> implement
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchSave(List<EamJigReturn> list) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("IsJigCanContinueUse");

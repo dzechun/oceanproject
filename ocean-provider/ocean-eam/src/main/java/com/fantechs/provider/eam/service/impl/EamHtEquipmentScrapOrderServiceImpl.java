@@ -28,9 +28,6 @@ public class EamHtEquipmentScrapOrderServiceImpl extends BaseService<EamHtEquipm
     @Override
     public List<EamHtEquipmentScrapOrder> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamHtEquipmentScrapOrderMapper.findList(map);

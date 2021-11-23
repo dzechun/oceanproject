@@ -51,9 +51,6 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
       @Transactional(rollbackFor = Exception.class)
       public int save(BaseRoute baseRoute) {
           SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-          if(StringUtils.isEmpty(currentUser)){
-              throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-          }
 
           Example example = new Example(BaseRoute.class);
           Example.Criteria criteria = example.createCriteria();
@@ -83,9 +80,6 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
       @Transactional(rollbackFor = Exception.class)
       public int update(BaseRoute baseRoute) {
           SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-          if(StringUtils.isEmpty(currentUser)){
-              throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-          }
 
           Example example = new Example(BaseRoute.class);
           Example.Criteria criteria = example.createCriteria();
@@ -118,9 +112,6 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
          List<BaseHtRoute> list=new ArrayList<>();
 
          SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-         if(StringUtils.isEmpty(currentUser)){
-             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-         }
 
          String[] routeIds = ids.split(",");
          for (String routeId : routeIds) {
@@ -150,9 +141,6 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
     public List<BaseRoute> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return baseRouteMapper.findList(map);
@@ -161,9 +149,6 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
     @Override
     public int addOrUpdateRoute(BaseRoute baseRoute) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         BaseRoute baseRoute1 = baseRouteMapper.selectByPrimaryKey(baseRoute.getRouteId());
         if (ClassCompareUtil.compareObject(baseRoute, baseRoute1)){
@@ -224,11 +209,7 @@ public class BaseRouteServiceImpl extends BaseService<BaseRoute> implements Base
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseRouteImport> baseRouteImports) throws ParseException {
-
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

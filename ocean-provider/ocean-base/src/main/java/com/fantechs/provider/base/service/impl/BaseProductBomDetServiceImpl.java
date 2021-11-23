@@ -46,9 +46,6 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseProductBomDet baseProductBomDet) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
 
         Example example = new Example(BaseProductBomDet.class);
@@ -101,9 +98,6 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseProductBomDet baseProductBomDet) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         BaseProductBom baseProductBom = baseProductBomMapper.selectByPrimaryKey(baseProductBomDet.getProductBomId());
         if (baseProductBom.getMaterialId().equals(baseProductBomDet.getMaterialId())) {
@@ -142,9 +136,6 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
         List<BaseHtProductBomDet> list = new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] productBomDetIds = ids.split(",");
         for (String productBomDetId : productBomDetIds) {
@@ -167,9 +158,6 @@ public class BaseProductBomDetServiceImpl extends BaseService<BaseProductBomDet>
     @Override
     public List<BaseProductBomDet> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseProductBomDetMapper.findList(map);
     }

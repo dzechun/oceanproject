@@ -41,9 +41,6 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
     @Override
     public List<BaseSampleProcess> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseSampleProcessMapper.findList(map);
     }
@@ -85,9 +82,6 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseSampleProcess baseSampleProcess) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseSampleProcess.class);
         Example.Criteria criteria = example.createCriteria();
@@ -108,7 +102,7 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
 
         BaseHtSampleProcess baseHtSampleProcess = new BaseHtSampleProcess();
         BeanUtils.copyProperties(baseSampleProcess, baseHtSampleProcess);
-        baseHtSampleProcessMapper.insert(baseHtSampleProcess);
+        baseHtSampleProcessMapper.insertSelective(baseHtSampleProcess);
 
         return i;
     }
@@ -117,9 +111,6 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseSampleProcess baseSampleProcess) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseSampleProcess.class);
         Example.Criteria criteria = example.createCriteria();
@@ -138,7 +129,7 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
 
         BaseHtSampleProcess baseHtSampleProcess = new BaseHtSampleProcess();
         BeanUtils.copyProperties(baseSampleProcess, baseHtSampleProcess);
-        baseHtSampleProcessMapper.insert(baseHtSampleProcess);
+        baseHtSampleProcessMapper.insertSelective(baseHtSampleProcess);
 
         return i;
     }
@@ -147,9 +138,6 @@ public class BaseSampleProcessServiceImpl extends BaseService<BaseSampleProcess>
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtSampleProcess> list = new ArrayList<>();
         String[] idArry = ids.split(",");

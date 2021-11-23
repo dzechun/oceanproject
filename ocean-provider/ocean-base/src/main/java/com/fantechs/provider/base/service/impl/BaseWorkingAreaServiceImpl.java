@@ -48,9 +48,6 @@ public class BaseWorkingAreaServiceImpl extends BaseService<BaseWorkingArea> imp
     public List<BaseWorkingAreaDto> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return baseWorkingAreaMapper.findList(map);
@@ -59,9 +56,6 @@ public class BaseWorkingAreaServiceImpl extends BaseService<BaseWorkingArea> imp
     @Override
     public int save(BaseWorkingArea record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         this.codeIfRepeat(record);
 
@@ -76,7 +70,7 @@ public class BaseWorkingAreaServiceImpl extends BaseService<BaseWorkingArea> imp
 
         BaseHtWorkingArea baseHtWorkingArea = new BaseHtWorkingArea();
         BeanUtils.copyProperties(record,baseHtWorkingArea);
-        baseHtWorkingAreaMapper.insert(baseHtWorkingArea);
+        baseHtWorkingAreaMapper.insertSelective(baseHtWorkingArea);
 
         return i;
     }
@@ -84,9 +78,6 @@ public class BaseWorkingAreaServiceImpl extends BaseService<BaseWorkingArea> imp
     @Override
     public int update(BaseWorkingArea entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         this.codeIfRepeat(entity);
 
@@ -96,7 +87,7 @@ public class BaseWorkingAreaServiceImpl extends BaseService<BaseWorkingArea> imp
         entity.setStatus(entity.getStatus() == null ? 1 : entity.getStatus());
         BaseHtWorkingArea baseHtWorkingArea = new BaseHtWorkingArea();
         BeanUtils.copyProperties(entity,baseHtWorkingArea);
-        baseHtWorkingAreaMapper.insert(baseHtWorkingArea);
+        baseHtWorkingAreaMapper.insertSelective(baseHtWorkingArea);
 
         return baseWorkingAreaMapper.updateByPrimaryKeySelective(entity);
     }
@@ -104,9 +95,6 @@ public class BaseWorkingAreaServiceImpl extends BaseService<BaseWorkingArea> imp
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtWorkingArea> list = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -127,9 +115,6 @@ public class BaseWorkingAreaServiceImpl extends BaseService<BaseWorkingArea> imp
 
     private void codeIfRepeat(BaseWorkingArea entity){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseWorkingArea.class);
         Example.Criteria criteria = example.createCriteria();
@@ -149,9 +134,6 @@ public class BaseWorkingAreaServiceImpl extends BaseService<BaseWorkingArea> imp
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseWorkingAreaImport> baseWorkingAreaImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

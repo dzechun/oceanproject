@@ -58,9 +58,6 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
     @Override
     public List<BaseInspectionStandard> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseInspectionStandard> baseInspectionStandards = baseInspectionStandardMapper.findList(map);
         SearchBaseInspectionStandardDet searchBaseInspectionStandardDet = new SearchBaseInspectionStandardDet();
@@ -80,9 +77,6 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseInspectionStandard baseInspectionStandard) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断编码是否重复
         Example example = new Example(BaseInspectionStandard.class);
@@ -142,7 +136,7 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         //履历
         BaseHtInspectionStandard baseHtInspectionStandard = new BaseHtInspectionStandard();
         BeanUtils.copyProperties(baseInspectionStandard, baseHtInspectionStandard);
-        baseHtInspectionStandardMapper.insert(baseHtInspectionStandard);
+        baseHtInspectionStandardMapper.insertSelective(baseHtInspectionStandard);
 
         return i;
     }
@@ -151,9 +145,6 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseInspectionStandard baseInspectionStandard) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断编码是否重复
         Example example = new Example(BaseInspectionStandard.class);
@@ -226,7 +217,7 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         //履历
         BaseHtInspectionStandard baseHtInspectionStandard = new BaseHtInspectionStandard();
         BeanUtils.copyProperties(baseInspectionStandard, baseHtInspectionStandard);
-        baseHtInspectionStandardMapper.insert(baseHtInspectionStandard);
+        baseHtInspectionStandardMapper.insertSelective(baseHtInspectionStandard);
 
         return i;
     }
@@ -235,9 +226,6 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtInspectionStandard> list = new ArrayList<>();
         String[] idArry = ids.split(",");
@@ -267,9 +255,6 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseInspectionStandardImport> baseInspectionStandardImports) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
