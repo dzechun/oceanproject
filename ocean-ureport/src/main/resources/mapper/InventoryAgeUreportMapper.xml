@@ -59,22 +59,21 @@
                 bmt.product_category,
                 bpm.product_model_name,
                 wii.po_code,
+        <foreach collection="ranges" index="index" item="item">
+            <if test="item.rangeEnd!=null and item.rangeEnd!=''">
+                (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id =
+                wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
+                and DATEDIFF(NOW(),wiid.create_time) &gt;= #{item.rangeStart} and DATEDIFF(NOW(),wiid.create_time) &lt;=
+                #{item.rangeEnd}) as #{item.detCount},
+            </if>
+            <if test="item.rangeEnd==null or item.rangeEnd==''">
+                (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id =
+                wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
+                and DATEDIFF(NOW(),wiid.create_time) &gt;= #{item.rangeStart}) as #{item.detCount},
+            </if>
+        </foreach>
         (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart1} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd1}) as detCount1,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart2} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd2}) as detCount2,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart3} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd3}) as detCount3,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart4} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd4}) as detCount4,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart5} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd5}) as detCount5,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart6} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd6}) as detCount6,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart7}) as detCount7,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart1}) as qty
+        and DATEDIFF(NOW(),wiid.create_time) &gt;= 1) as qty
                FROM wms_inner_inventory wii
                  LEFT JOIN om_sales_order so ON wii.sales_order_code = so.sales_order_code
                  LEFT JOIN base_supplier bsp ON so.supplier_id = bsp.supplier_id
@@ -123,6 +122,10 @@
             </if>
             <if test="storageCode!=null and storageCode!=''">
                 and bs.storage_code =#{storageCode}
+            </if>
+            <if test="qty!=null">
+                and (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
+                and DATEDIFF(NOW(),wiid.create_time) &gt;= 1) = #{qty}
             </if>
         </where>
         order by wii.create_time desc
