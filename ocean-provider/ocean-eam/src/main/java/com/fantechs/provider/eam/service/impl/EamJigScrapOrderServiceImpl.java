@@ -50,9 +50,6 @@ public class EamJigScrapOrderServiceImpl extends BaseService<EamJigScrapOrder> i
     @Override
     public List<EamJigScrapOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamJigScrapOrderMapper.findList(map);
@@ -116,9 +113,6 @@ public class EamJigScrapOrderServiceImpl extends BaseService<EamJigScrapOrder> i
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigScrapOrderDto record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //this.codeIfRepeat(record);
 
@@ -154,7 +148,7 @@ public class EamJigScrapOrderServiceImpl extends BaseService<EamJigScrapOrder> i
 
         EamHtJigScrapOrder eamHtJigScrapOrder = new EamHtJigScrapOrder();
         BeanUtils.copyProperties(record,eamHtJigScrapOrder);
-        int i = eamHtJigScrapOrderMapper.insert(eamHtJigScrapOrder);
+        int i = eamHtJigScrapOrderMapper.insertSelective(eamHtJigScrapOrder);
 
         return i;
     }
@@ -163,9 +157,6 @@ public class EamJigScrapOrderServiceImpl extends BaseService<EamJigScrapOrder> i
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigScrapOrderDto entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //this.codeIfRepeat(entity);
 
@@ -201,7 +192,7 @@ public class EamJigScrapOrderServiceImpl extends BaseService<EamJigScrapOrder> i
 
         EamHtJigScrapOrder eamHtJigScrapOrder = new EamHtJigScrapOrder();
         BeanUtils.copyProperties(entity,eamHtJigScrapOrder);
-        int i = eamHtJigScrapOrderMapper.insert(eamHtJigScrapOrder);
+        int i = eamHtJigScrapOrderMapper.insertSelective(eamHtJigScrapOrder);
 
         return i;
     }
@@ -218,9 +209,6 @@ public class EamJigScrapOrderServiceImpl extends BaseService<EamJigScrapOrder> i
 
     private void codeIfRepeat(EamJigScrapOrderDto eamJigScrapOrderDto){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断编码是否重复
         Example example = new Example(EamJigScrapOrder.class);
@@ -241,9 +229,6 @@ public class EamJigScrapOrderServiceImpl extends BaseService<EamJigScrapOrder> i
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJigScrapOrder> htList = new ArrayList<>();
         String[] idsArr  = ids.split(",");

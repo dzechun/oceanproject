@@ -97,7 +97,7 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
     }
 
     @Override
-    public EsopIssue selectByKey(Object key) {
+    public EsopIssue selectByKey(Long key) {
         EsopIssue EsopIssue = esopIssueMapper.selectByPrimaryKey(key);
 
         Example example = new Example(EsopIssueAttachment.class);

@@ -48,9 +48,6 @@ public class BaseConsigneeServiceImpl extends BaseService<BaseConsignee> impleme
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseConsignee baseConsignee) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseConsignee.class);
         Example.Criteria criteria = example.createCriteria();
@@ -72,7 +69,7 @@ public class BaseConsigneeServiceImpl extends BaseService<BaseConsignee> impleme
         //新增收货人履历
         BaseHtConsignee baseHtConsignee =new BaseHtConsignee();
         BeanUtils.copyProperties(baseConsignee, baseHtConsignee);
-        baseHtConsigneeMapper.insert(baseHtConsignee);
+        baseHtConsigneeMapper.insertSelective(baseHtConsignee);
         return i;
     }
 
@@ -80,9 +77,6 @@ public class BaseConsigneeServiceImpl extends BaseService<BaseConsignee> impleme
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseConsignee baseConsignee) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseConsignee.class);
         Example.Criteria criteria = example.createCriteria();
@@ -101,7 +95,7 @@ public class BaseConsigneeServiceImpl extends BaseService<BaseConsignee> impleme
 
         BaseHtConsignee baseHtConsignee = new BaseHtConsignee();
         BeanUtils.copyProperties(baseConsignee, baseHtConsignee);
-        baseHtConsigneeMapper.insert(baseHtConsignee);
+        baseHtConsigneeMapper.insertSelective(baseHtConsignee);
 
         return i;
     }
@@ -110,9 +104,6 @@ public class BaseConsigneeServiceImpl extends BaseService<BaseConsignee> impleme
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtConsignee> list = new ArrayList<>();
         String[] idArry = ids.split(",");

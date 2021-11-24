@@ -32,6 +32,7 @@ public class DataSourceConfig {
      //   map.put("primary", dbProperties.getPrimary());
         map.put("secondary", dbProperties.getSecondary());
         map.put("thirdary", dbProperties.getThirdary());
+        map.put("fourth", dbProperties.getFourth());
 
         //3.存放数据源集
         dynamicDataSource.setTargetDataSources(map);

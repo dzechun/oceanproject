@@ -16,12 +16,23 @@
         <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
         <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
         <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
+        <result column="sales_user_name" jdbcType="VARCHAR" property="salesUserName"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="country_name" jdbcType="VARCHAR" property="countryName"/>
+        <result column="region_name" jdbcType="VARCHAR" property="regionName"/>
+        <result column="brand_name" jdbcType="VARCHAR" property="brandName"/>
+        <result column="product_category" jdbcType="VARCHAR" property="productCategory"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+        <result column="po_code" jdbcType="VARCHAR" property="poCode"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     </resultMap>
 
     <resultMap id="BaseResultDetMap" type="com.fantechs.entity.InventoryAgeDet">
         <id column="inventory_det_id" jdbcType="BIGINT" property="inventoryDetId" />
         <result column="serial_number" jdbcType="INTEGER" property="serialNumber"/>
         <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+        <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus"/>
     </resultMap>
 
     <select id="findList" resultMap="BaseResultMap">
@@ -35,27 +46,44 @@
                 wii.material_id,
                 bm.material_code,
                 bm.material_name,
+                bm.material_desc,
                 wii.packing_unit_name,
                 wii.inventory_id,
                 wii.inventory_status_id,
                 bis.inventory_status_name,
+                so.sales_order_code,
+                so.sales_user_name,
+                bsp.supplier_name,
+                bsp.country_name,
+                bsp.region_name,
+                bmt.brand_name,
+                bmt.product_category,
+                bpm.product_model_name,
+                wii.po_code,
+        <foreach collection="ranges" index="index" item="item">
+            <if test="item.rangeEnd!=null and item.rangeEnd!=''">
+                (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id =
+                wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
+                and DATEDIFF(NOW(),wiid.create_time) &gt;= #{item.rangeStart} and DATEDIFF(NOW(),wiid.create_time) &lt;=
+                #{item.rangeEnd}) as #{item.detCount},
+            </if>
+            <if test="item.rangeEnd==null or item.rangeEnd==''">
+                (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id =
+                wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
+                and DATEDIFF(NOW(),wiid.create_time) &gt;= #{item.rangeStart}) as #{item.detCount},
+            </if>
+        </foreach>
         (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart1} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd1}) as detCount1,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart2} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd2}) as detCount2,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart3} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd3}) as detCount3,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart4} and DATEDIFF(NOW(),wiid.create_time) &lt;= #{rangeEnd4}) as detCount4,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart5}) as detCount5,
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= #{rangeStart1}) as qty
+        and DATEDIFF(NOW(),wiid.create_time) &gt;= 1) as qty
                FROM wms_inner_inventory wii
+                 LEFT JOIN om_sales_order so ON wii.sales_order_code = so.sales_order_code
+                 LEFT JOIN base_supplier bsp ON so.supplier_id = bsp.supplier_id
                  LEFT JOIN base_warehouse bw ON wii.warehouse_id = bw.warehouse_id
                  LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
                  LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
                  LEFT JOIN base_material bm ON wii.material_id = bm.material_id
+                 LEFT JOIN base_material_tab bmt ON bm.material_id = bmt.material_id
+                 LEFT JOIN base_product_model bpm ON bmt.product_model_id = bpm.product_model_id
                  LEFT JOIN base_inventory_status bis ON wii.inventory_status_id = bis.inventory_status_id
                  LEFT JOIN fantech_imes_v2.base_organization bo ON wii.org_id = bo.organization_id,(SELECT @i:=0)j
         <where>
@@ -75,14 +103,40 @@
             <if test="orgId!=null and orgId!=''">
                 and bo.organization_id =#{orgId}
             </if>
+            <if test="salesOrderCode!=null and salesOrderCode!=''">
+                and so.sales_order_code =#{salesOrderCode}
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and bm.material_code =#{materialCode}
+            </if>
+            <if test="salesUserName!=null and salesUserName!=''">
+                and so.sales_user_name =#{salesUserName}
+            </if>
+            <if test="productModelName!=null and productModelName!=''">
+                and bpm.product_model_name =#{productModelName}
+            </if>
+            <if test="supplierName!=null and supplierName!=''">
+                and bsp.supplier_name =#{supplierName}
+            </if>
+            <if test="poCode!=null and poCode!=''">
+                and wii.po_code =#{poCode}
+            </if>
+            <if test="storageCode!=null and storageCode!=''">
+                and bs.storage_code =#{storageCode}
+            </if>
+            <if test="qty!=null">
+                and (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
+                and DATEDIFF(NOW(),wiid.create_time) &gt;= 1) = #{qty}
+            </if>
         </where>
-        order by wii.create_time desc
+        order by serial_number
     </select>
 
     <select id="findDetList" resultMap="BaseResultDetMap">
         SELECT
         (@i:=@i+1) as serial_number,
         wiid.barcode,
+        wiid.barcode_status,
         wiid.inventory_det_id
         FROM wms_inner_inventory_det wiid,(SELECT @i:=0)j
         <where>

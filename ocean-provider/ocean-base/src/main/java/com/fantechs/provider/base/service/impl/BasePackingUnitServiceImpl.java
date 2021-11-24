@@ -36,9 +36,6 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
     @Transactional(rollbackFor = Exception.class)
     public int save(BasePackingUnit basePackingUnit) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUserInfo)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BasePackingUnit.class);
         Example.Criteria criteria = example.createCriteria();
@@ -57,7 +54,7 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
 
         BaseHtPackingUnit baseHtPackingUnit = new BaseHtPackingUnit();
         BeanUtils.copyProperties(basePackingUnit, baseHtPackingUnit);
-        baseHtPackingUnitMapper.insert(baseHtPackingUnit);
+        baseHtPackingUnitMapper.insertSelective(baseHtPackingUnit);
 
         return i;
     }
@@ -66,9 +63,6 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
     @Transactional(rollbackFor = Exception.class)
     public int update(BasePackingUnit basePackingUnit) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUserInfo)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BasePackingUnit.class);
         Example.Criteria criteria = example.createCriteria();
@@ -87,7 +81,7 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
 
         BaseHtPackingUnit baseHtPackingUnit = new BaseHtPackingUnit();
         BeanUtils.copyProperties(basePackingUnit, baseHtPackingUnit);
-        baseHtPackingUnitMapper.insert(baseHtPackingUnit);
+        baseHtPackingUnitMapper.insertSelective(baseHtPackingUnit);
 
         return i;
     }
@@ -96,9 +90,7 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUserInfo)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         LinkedList<BaseHtPackingUnit> baseHtPackingUnits = new LinkedList<>();
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
@@ -120,9 +112,6 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
     @Override
     public List<BasePackingUnitDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return basePackingUnitMapper.findList(map);
     }
@@ -131,9 +120,7 @@ public class BasePackingUnitServiceImpl extends BaseService<BasePackingUnit> imp
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BasePackingUnitImport> basePackingUnitImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

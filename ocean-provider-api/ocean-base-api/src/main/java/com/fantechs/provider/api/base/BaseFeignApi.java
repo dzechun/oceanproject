@@ -378,6 +378,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseSupplier/saveByApi")
     ResponseEntity saveByApi(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody @Validated BaseSupplier baseSupplier);
 
+    @ApiOperation(value = "新增并返回ID",notes = "新增并返回ID")
+    @PostMapping("/baseSupplier/saveForReturnID")
+    ResponseEntity<Long> saveForReturnID(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody BaseSupplier baseSupplier);
+
     @ApiOperation("根据条件查询产品关键事项列表")
     @PostMapping("/baseProductionKeyIssues/findList")
     ResponseEntity<List<BaseProductionKeyIssues>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductionKeyIssues searchBaseProductionKeyIssues);
@@ -415,7 +419,7 @@ public interface BaseFeignApi {
     ResponseEntity<BaseWorkshopSection> addOrUpdate(@ApiParam(value = "必传：baseWorkshopSection",required = true)@RequestBody @Validated BaseWorkshopSection baseWorkshopSection);
 
     @ApiOperation("新增或修改工序表信息")
-    @PostMapping("/baseProcess/addOrUpdate")
+    @PostMapping("baseFeignApi/addOrUpdate")
     ResponseEntity<BaseProcess> addOrUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseProcess baseProcess);
 
     @ApiOperation(value = "新增或修改工艺路线表信息",notes = "新增或修改工艺路线表信息")

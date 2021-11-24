@@ -23,6 +23,10 @@ public class SearchBaseSupplier extends BaseQuery implements Serializable {
     private String supplierName;
     @ApiModelProperty("供应商描述")
     private String supplierDesc;
+    @ApiModelProperty("国家名称")
+    private String countryName;
+    @ApiModelProperty("大区名称")
+    private String regionName;
     @ApiModelProperty("身份标识（1、供应商 2、客户）")
     private Byte supplierType;
     @ApiModelProperty("供应商地址")

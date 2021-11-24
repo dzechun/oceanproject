@@ -1,8 +1,6 @@
 package com.fantechs.common.base.general.entity.basic;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -12,7 +10,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
 
 @Table(name = "base_route_process")
 @Data
@@ -176,5 +173,9 @@ public class BaseRouteProcess extends ValidGroup implements Serializable {
     @ApiModelProperty(name="organizationName",value = "组织名称")
     @Transient
     private String organizationName;
+
+    @ApiModelProperty(name="processCode",value = "工序编码")
+    @Transient
+    private String processCode;
 
 }

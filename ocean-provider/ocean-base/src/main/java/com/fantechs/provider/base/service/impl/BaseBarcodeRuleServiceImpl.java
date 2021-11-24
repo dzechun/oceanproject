@@ -54,9 +54,6 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseBarcodeRule baseBarcodeRule) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseBarcodeRule.class);
         Example.Criteria criteria = example.createCriteria();
@@ -94,9 +91,6 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseBarcodeRule baseBarcodeRule) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseBarcodeRule.class);
         Example.Criteria criteria = example.createCriteria();
@@ -129,9 +123,6 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
         List<BaseHtBarcodeRule> list=new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] barcodeRuleIds = ids.split(",");
         for (String barcodeRuleId : barcodeRuleIds) {
@@ -163,9 +154,6 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
     @Override
     public List<BaseBarcodeRuleDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId",user.getOrganizationId());
         return baseBarcodeRuleMapper.findList(map);
     }
@@ -174,9 +162,7 @@ public class BaseBarcodeRuleServiceImpl extends BaseService<BaseBarcodeRule> imp
     @Transactional(rollbackFor = Exception.class)
     public int preserve(BaseBarcodeRule baseBarcodeRule) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         int i=0;
         Long barcodeRuleId = baseBarcodeRule.getBarcodeRuleId();
         if(StringUtils.isEmpty(barcodeRuleId)){

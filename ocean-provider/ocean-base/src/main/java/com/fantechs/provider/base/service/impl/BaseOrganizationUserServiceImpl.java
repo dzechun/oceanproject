@@ -30,9 +30,6 @@ public class BaseOrganizationUserServiceImpl extends BaseService<BaseOrganizatio
     @Override
     public int save(BaseOrganizationUser baseOrganizationUser) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseOrganizationUser.class);
         Example.Criteria criteria = example.createCriteria();
@@ -49,9 +46,6 @@ public class BaseOrganizationUserServiceImpl extends BaseService<BaseOrganizatio
     @Override
     public int update(BaseOrganizationUser baseOrganizationUser) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseOrganizationUser.class);
         Example.Criteria criteria = example.createCriteria();
@@ -69,9 +63,6 @@ public class BaseOrganizationUserServiceImpl extends BaseService<BaseOrganizatio
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {

@@ -49,9 +49,6 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
     @Override
     public List<BaseStaffDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseStaffMapper.findList(map);
     }
@@ -60,9 +57,6 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseStaff baseStaff) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断编码是否重复
         Example example = new Example(BaseStaff.class);
@@ -104,9 +98,6 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseStaff baseStaff) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断编码是否重复
         Example example = new Example(BaseStaff.class);
@@ -152,9 +143,6 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
@@ -177,9 +165,6 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
     public Map<String, Object> importExcel(List<BaseStaffImport> baseStaffImports) {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
@@ -260,7 +245,7 @@ public class BaseStaffServiceImpl extends BaseService<BaseStaff> implements Base
             //新增员工履历
             BaseHtStaff baseHtStaff = new BaseHtStaff();
             BeanUtils.copyProperties(baseStaff, baseHtStaff);
-            baseHtStaffMapper.insert(baseHtStaff);
+            baseHtStaffMapper.insertSelective(baseHtStaff);
 
             for (BaseStaffImport baseStaffImport : baseStaffImportList1) {
                 //新增员工工种关系

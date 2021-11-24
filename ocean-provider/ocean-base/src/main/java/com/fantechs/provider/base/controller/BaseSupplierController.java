@@ -179,4 +179,10 @@ public class BaseSupplierController {
     public ResponseEntity saveByApi(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody @Validated BaseSupplier baseSupplier) {
         return ControllerUtil.returnCRUD(baseSupplierService.saveByApi(baseSupplier));
     }
+
+    @ApiOperation(value = "新增并返回ID",notes = "新增并返回ID")
+    @PostMapping("/saveForReturnID")
+    public ResponseEntity<Long> saveForReturnID(@ApiParam(value = "必传：supplierCode、supplierName",required = true)@RequestBody BaseSupplier baseSupplier){
+        return ControllerUtil.returnSuccess("成功", baseSupplierService.saveForReturnID(baseSupplier));
+    }
 }

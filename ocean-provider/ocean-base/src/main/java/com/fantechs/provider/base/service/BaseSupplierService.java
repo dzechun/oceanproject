@@ -20,4 +20,11 @@ public interface BaseSupplierService extends IService<BaseSupplier> {
     List<BaseSupplier> findAll(Map<String, Object> map);
     List<BaseHtSupplier> findHtList(Map<String, Object> map);
     int saveByApi (BaseSupplier baseSupplier);
+
+    /**
+     * 新增并返回ID
+     * @param baseSupplier
+     * @return
+     */
+    Long saveForReturnID(BaseSupplier baseSupplier);
 }

@@ -82,7 +82,7 @@
         and bsp.status = #{status}
       </if>
     </where>
-    order by bsp.create_time desc
+    order by bsp.sample_plan_code,bsp.create_time desc
   </select>
 
 </mapper>

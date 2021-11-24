@@ -65,9 +65,6 @@ public class EamEquipmentMaintainProjectItemServiceImpl extends BaseService<EamE
 
     private SysUser getUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 }

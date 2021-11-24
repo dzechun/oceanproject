@@ -21,4 +21,5 @@ public interface QmsInspectionOrderService extends IService<QmsInspectionOrder> 
     int thirdInspection(QmsInspectionOrder qmsInspectionOrder);
     int batchQualified(Long inspectionOrderId);
     int batchSubmit(Long inspectionOrderId);
+    QmsInspectionOrder selectByKey(Long key);
 }

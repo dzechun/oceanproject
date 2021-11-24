@@ -72,7 +72,7 @@ public class BaseLabelVariableServiceImpl extends BaseService<BaseLabelVariable>
 
         BaseHtLabelVariable baseHtLabelVariable = new BaseHtLabelVariable();
         BeanUtils.copyProperties(record,baseHtLabelVariable);
-        int i = baseHtLabelVariableMapper.insert(baseHtLabelVariable);
+        int i = baseHtLabelVariableMapper.insertSelective(baseHtLabelVariable);
 
         return i;
     }
@@ -87,7 +87,7 @@ public class BaseLabelVariableServiceImpl extends BaseService<BaseLabelVariable>
 
         BaseHtLabelVariable baseHtLabelVariable = new BaseHtLabelVariable();
         BeanUtils.copyProperties(entity,baseHtLabelVariable);
-        baseHtLabelVariableMapper.insert(baseHtLabelVariable);
+        baseHtLabelVariableMapper.insertSelective(baseHtLabelVariable);
 
         return baseLabelVariableMapper.updateByPrimaryKeySelective(entity);
     }

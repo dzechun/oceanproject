@@ -1,14 +1,9 @@
 package com.fantechs.common.base.general.dto.wms.in;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -108,5 +103,14 @@ public class PalletAutoAsnDto extends WmsInAsnOrderDet implements Serializable {
      * 条码集合
      */
     @ApiModelProperty(name = "barCodeList",value = "条码集合")
-    List<String> barCodeList;
+    List<BarPODto> barCodeList;
+
+    @ApiModelProperty(name = "customerName",value ="客户名称" )
+    private String customerName;
+
+    @ApiModelProperty(name = "salesManName",value = "业务员")
+    private String salesManName;
+
+    @ApiModelProperty(name = "salesOrderCode",value = "销售编码")
+    private String salesOrderCode;
 }

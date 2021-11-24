@@ -105,7 +105,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
         record.setModifiedUserId(user.getUserId());
         record.setModifiedTime(new Date());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
-        esopEquipmentMapper.insertUseGeneratedKeys(record);
+        esopEquipmentMapper.insertSelective(record);
 
         EsopHtEquipment EsopHtEquipment = new EsopHtEquipment();
         BeanUtils.copyProperties(record, EsopHtEquipment);

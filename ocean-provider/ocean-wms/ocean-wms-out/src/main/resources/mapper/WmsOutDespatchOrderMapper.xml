@@ -25,6 +25,8 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="clearance_locale" jdbcType="VARCHAR" property="clearanceLocale"/>
+    <result column="origin_harbor" jdbcType="VARCHAR" property="originHarbor"/>
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderDto">
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
@@ -53,7 +55,9 @@ wodo.create_user_id,
 wodo.create_time,
 wodo.modified_user_id,
 wodo.modified_time,
-wodo.is_delete
+wodo.is_delete,
+wodo.origin_harbor,
+wodo.clearance_locale
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT <include refid="Base_Column_List"/>,bw.warehouse_name,bse.shipment_enterprise_name,su.user_name AS create_user_name,

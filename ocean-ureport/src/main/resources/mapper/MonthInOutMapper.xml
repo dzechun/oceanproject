@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.MonthInOutMapper">
+    <resultMap id="base_column_list_in" type="com.fantechs.dto.MonthInDto">
+
+    </resultMap>
+    <resultMap id="base_column_list_out" type="com.fantechs.dto.MonthOutDto">
+
+    </resultMap>
+<!--    月入报表-->
+    <select id="findInList" resultMap="base_column_list_in">
+        SELECT oso.sales_user_name 'salesUserName',bs.region_name 'regionName',bs.country_name 'countryName',bs.supplier_id 'supplierId',bs.supplier_name 'supplierName',
+        bmt.brand_name 'brandName',bmt.product_category 'productCategory',bpm.product_model_code 'productModelCode',bm.material_id 'materialId',bm.material_code 'materialCode',
+        bm.material_desc 'materialDesc',count(*) 'qty',mspcd.create_time 'inDate'
+        FROM mes_sfc_product_carton_det mspcd
+        LEFT JOIN mes_sfc_work_order_barcode mswob ON mspcd.work_order_barcode_id = mswob.work_order_barcode_id
+        LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
+        LEFT JOIN om_sales_order oso ON mpwo.sales_order_id = oso.sales_order_id
+        LEFT JOIN base_supplier bs ON oso.supplier_id = bs.supplier_id
+        LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON bm.material_id = bmt.material_id
+        LEFT JOIN base_product_model bpm ON bmt.product_model_id = bpm.product_model_id
+        <where>
+            <choose>
+                <when test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                    and DATE_FORMAT(mspcd.create_time,'%y%m') between DATE_FORMAT(#{startTime},'%y%m') and DATE_FORMAT(#{endTime},'%y%m')
+                </when>
+                <otherwise>
+                    and DATE_FORMAT(mspcd.create_time,'%y%m') = DATE_FORMAT(now(),'%y%m')
+                </otherwise>
+            </choose>
+            <if test="orgId!=null and orgId!=''">
+                AND mspcd.org_id=#{orgId}
+            </if>
+            <if test="salesUserName!=null and salesUserName!=''">
+                and oso.sales_user_name like CONCAT('%',#{salesUserName},'%')
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and bm.material_code like CONCAT('%',#{materialCode},'%')
+            </if>
+            <if test="supplierName!=null and supplierName!=''">
+                and bs.supplier_name like CONCAT('%',#{supplierName},'%')
+            </if>
+            <if test="productModelCode!=null and productModelCode!=''">
+                and bpm.product_model_code like CONCAT('%',#{productModelCode},'%')
+            </if>
+        </where>
+        GROUP BY oso.sales_user_name,bs.supplier_id,bm.material_id
+    </select>
+<!--    月入条码明细-->
+    <select id="findInListBarCode" resultType="java.lang.String">
+        SELECT mswob.barcode
+        FROM mes_sfc_product_carton_det mspcd
+                 LEFT JOIN mes_sfc_work_order_barcode mswob ON mspcd.work_order_barcode_id = mswob.work_order_barcode_id
+                 LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
+                 LEFT JOIN om_sales_order oso ON mpwo.sales_order_id = oso.sales_order_id
+        <where>
+            oso.sales_user_name=#{salesUserName} and oso.supplier_id=#{supplierId} and mpwo.material_id =#{materialId}
+            <choose>
+                <when test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                    and DATE_FORMAT(mspcd.create_time,'%y%m') between DATE_FORMAT(#{startTime},'%y%m') and DATE_FORMAT(#{endTime},'%y%m')
+                </when>
+                <otherwise>
+                    and DATE_FORMAT(mspcd.create_time,'%y%m') = DATE_FORMAT(now(),'%y%m')
+                </otherwise>
+            </choose>
+            <if test="orgId!=null and orgId!=''">
+                AND mspcd.org_id=#{orgId}
+            </if>
+        </where>
+        GROUP BY mswob.work_order_barcode_id
+    </select>
+<!--月出报表-->
+    <select id="findOutList" resultMap="base_column_list_out">
+        SELECT oso.sales_user_name 'salesUserName',bs.region_name 'regionName',bs.country_name 'countryName',bs.supplier_id 'supplierId',bs.supplier_name 'supplierName',
+                bmt.brand_name 'brandName',bmt.product_category 'productCategory',bpm.product_model_code 'productModelCode',bm.material_id 'materialId',bm.material_code 'materialCode',
+                bm.material_desc 'materialDesc',sum(wijod.actual_qty) 'qty',wijod.work_end_time 'outDate'
+        FROM wms_inner_job_order_det wijod
+                 LEFT JOIN wms_inner_job_order wijo ON wijod.job_order_id = wijo.job_order_id
+                 LEFT JOIN wms_out_delivery_order_det wodod ON wijod.source_det_id = wodod.delivery_order_det_id
+                 LEFT JOIN wms_out_delivery_order wodo ON wodod.delivery_order_id = wodo.delivery_order_id
+                 LEFT JOIN om_sales_order oso ON wodod.source_order_id = oso.sales_order_id AND wodo.order_type_id=1
+                 LEFT JOIN base_supplier bs ON oso.supplier_id = bs.supplier_id
+                 LEFT JOIN base_material bm ON wijod.material_id = bm.material_id
+                 LEFT JOIN base_material_tab bmt ON bm.material_id = bmt.material_id
+                 LEFT JOIN base_product_model bpm ON bmt.product_model_id = bpm.product_model_id
+        <where>
+            wijod.actual_qty>0  AND wijo.job_order_type=4 AND wijod.order_status=6
+            <choose>
+                <when test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                    and DATE_FORMAT(wijod.work_end_time,'%y%m') between DATE_FORMAT(#{startTime},'%y%m') and DATE_FORMAT(#{endTime},'%y%m')
+                </when>
+                <otherwise>
+                    and DATE_FORMAT(wijod.work_end_time,'%y%m') = DATE_FORMAT(now(),'%y%m')
+                </otherwise>
+            </choose>
+            <if test="orgId!=null and orgId!=''">
+                AND wijod.org_id=#{orgId}
+            </if>
+            <if test="salesUserName!=null and salesUserName!=''">
+                and oso.sales_user_name like CONCAT('%',#{salesUserName},'%')
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and bm.material_code like CONCAT('%',#{materialCode},'%')
+            </if>
+            <if test="supplierName!=null and supplierName!=''">
+                and bs.supplier_name like CONCAT('%',#{supplierName},'%')
+            </if>
+            <if test="productModelCode!=null and productModelCode!=''">
+                and bpm.product_model_code like CONCAT('%',#{productModelCode},'%')
+            </if>
+        </where>
+        GROUP BY oso.sales_user_name,bs.supplier_id,bm.material_id
+    </select>
+<!--    月出条码明细-->
+    <select id="findOutListBarCode" resultType="java.lang.String">
+        SELECT wiid.barcode
+        FROM wms_inner_job_order_det wijod
+        LEFT JOIN wms_inner_job_order wijo ON wijod.job_order_id = wijo.job_order_id
+        LEFT JOIN wms_out_delivery_order_det wodod ON wijod.source_det_id = wodod.delivery_order_det_id
+        LEFT JOIN wms_out_delivery_order wodo ON wodod.delivery_order_id = wodo.delivery_order_id
+        LEFT JOIN wms_inner_inventory_det wiid ON wiid.delivery_order_code = wodo.delivery_order_code
+        LEFT JOIN om_sales_order oso ON wodod.source_order_id = oso.sales_order_id AND wodo.order_type_id=1
+        <where>
+            oso.sales_user_name=#{salesUserName} and oso.supplier_id=#{supplierId} and wijod.material_id =#{materialId}
+            <choose>
+                <when test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                    and DATE_FORMAT(wijod.work_end_time,'%y%m') between DATE_FORMAT(#{startTime},'%y%m') and DATE_FORMAT(#{endTime},'%y%m')
+                </when>
+                <otherwise>
+                    and DATE_FORMAT(wijod.work_end_time,'%y%m') = DATE_FORMAT(now(),'%y%m')
+                </otherwise>
+            </choose>
+            <if test="orgId!=null and orgId!=''">
+                AND mspcd.org_id=#{orgId}
+            </if>
+        </where>
+        GROUP BY wiid.barcode
+    </select>
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.WorkOrderUreportMapper">
+    <resultMap id="base_column_list" type="com.fantechs.dto.WorkOrderUreportDto">
+
+    </resultMap>
+    <select id="findList" resultMap="base_column_list">
+        SELECT
+            ( CASE WHEN INSTR( bm.material_name, '三星' ) > 1 THEN '三星计划' ELSE '万宝计划' END ) AS type,
+            bpl.pro_name AS proName,
+            mpwo.work_order_code AS workOrderCode,
+            bm.material_code AS materialCode,
+            bpm.product_model_code AS productModelCode,
+            mpwo.plan_start_time AS planStartTime,
+            mpwo.actual_start_time AS actualStartTime,
+            mpwo.scheduled_qty AS scheduledQty,
+            mpwo.production_qty AS productionQty,
+            mpwo.actual_end_time AS actualEndTime,
+            mpwo.work_order_status AS workOrderStatus
+        FROM
+            mes_pm_work_order mpwo
+        LEFT JOIN base_pro_line bpl ON mpwo.pro_line_id = bpl.pro_line_id
+        LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON mpwo.material_id = bmt.material_id
+        LEFT JOIN base_product_model bpm ON bmt.product_model_id = bpm.product_model_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                AND mpwo.org_id = #{orgId}
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(mpwo.actual_end_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                AND bm.material_code like CONCAT('%',#{materialCode},'%')
+            </if>
+            <if test="proName!=null and proName!=''">
+                AND bpl.pro_name like CONCAT('%',#{proName},'%')
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                AND mpwo.work_order_code like CONCAT('%',#{workOrderCode},'%')
+            </if>
+            <if test="productModelCode!=null and productModelCode!=''">
+                AND bpm.product_model_code like CONCAT('%',#{productModelCode},'%')
+            </if>
+            <if test="workOrderStatus!=null and workOrderStatus!=''">
+                AND mpwo.work_order_status = #{productModelCode}
+            </if>
+        </where>
+    </select>
+</mapper>

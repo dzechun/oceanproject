@@ -19,6 +19,12 @@ public interface MiddleOutDeliveryOrderMapper extends MyMapper<MiddleOutDelivery
     List<MiddleOutDeliveryOrder> findOutDeliveryData(Map<String, Object> map);
 
     /**
+     * 万宝-查询内销出库订单
+     * @return
+     */
+    List<MiddleOutDeliveryOrder> findOutDeliveryDataFormIMS(Map<String, Object> map);
+
+    /**
      * 插入中间库
      * @param order
      * @return

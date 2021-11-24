@@ -90,7 +90,7 @@ public class EngPackingOrderSummaryDetServiceImpl extends BaseService<EngPacking
             throw new BizErrorException("添加失败，未查询到上级数据"+engPackingOrderSummary.getCartonCode());
         }
 
-        int i = engPackingOrderSummaryDetMapper.insertUseGeneratedKeys(engPackingOrderSummaryDetDto);
+        int i = engPackingOrderSummaryDetMapper.insertSelective(engPackingOrderSummaryDetDto);
 
         EngHtPackingOrderSummaryDet engHtPackingOrderSummaryDet =new EngHtPackingOrderSummaryDet();
         BeanUtils.copyProperties(engPackingOrderSummaryDetDto, engHtPackingOrderSummaryDet);

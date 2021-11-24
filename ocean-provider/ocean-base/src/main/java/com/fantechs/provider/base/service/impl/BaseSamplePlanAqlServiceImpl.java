@@ -6,7 +6,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseSamplePlanAqlDto;
 import com.fantechs.common.base.general.entity.basic.BaseSamplePlanAcRe;
 import com.fantechs.common.base.general.entity.basic.BaseSamplePlanAql;
-import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -38,9 +37,6 @@ public class BaseSamplePlanAqlServiceImpl extends BaseService<BaseSamplePlanAql>
     @Override
     public List<BaseSamplePlanAqlDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseSamplePlanAqlMapper.findList(map);
     }
@@ -110,9 +106,6 @@ public class BaseSamplePlanAqlServiceImpl extends BaseService<BaseSamplePlanAql>
     @Override
     public int save(BaseSamplePlanAql record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());
@@ -141,9 +134,6 @@ public class BaseSamplePlanAqlServiceImpl extends BaseService<BaseSamplePlanAql>
     @Override
     public int update(BaseSamplePlanAql entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
@@ -164,9 +154,6 @@ public class BaseSamplePlanAqlServiceImpl extends BaseService<BaseSamplePlanAql>
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseSamplePlanAcRe.class);
 
         String[] idsArr  = ids.split(",");

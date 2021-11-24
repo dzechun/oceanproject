@@ -150,7 +150,7 @@
         and ej.org_id=#{orgId}
       </if>
       <if test="jigBarcode!= null and jigBarcode!=''">
-        and ej.jig_id = ( select jig_id from eam_jig_barcode where jig_barcode = #{jigBarcode} )
+        and ej.jig_id in ( select jig_id from eam_jig_barcode where jig_barcode like CONCAT('%', #{jigBarcode}, '%') )
       </if>
     </where>
     order by ej.create_time desc

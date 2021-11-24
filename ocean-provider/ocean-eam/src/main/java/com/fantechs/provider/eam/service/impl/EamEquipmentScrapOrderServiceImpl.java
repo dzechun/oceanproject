@@ -5,10 +5,13 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.*;
-import com.fantechs.common.base.general.entity.eam.*;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentScrapOrderDetDto;
+import com.fantechs.common.base.general.dto.eam.EamEquipmentScrapOrderDto;
+import com.fantechs.common.base.general.entity.eam.EamEquipment;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentBarcode;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentScrapOrder;
+import com.fantechs.common.base.general.entity.eam.EamEquipmentScrapOrderDet;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentScrapOrder;
-import com.fantechs.common.base.general.entity.eam.history.EamHtJigScrapOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -47,9 +50,6 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
     @Override
     public List<EamEquipmentScrapOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         
         return eamEquipmentScrapOrderMapper.findList(map);
@@ -113,9 +113,6 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipmentScrapOrderDto record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //this.codeIfRepeat(record);
 
@@ -151,7 +148,7 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
 
         EamHtEquipmentScrapOrder eamHtEquipmentScrapOrder = new EamHtEquipmentScrapOrder();
         BeanUtils.copyProperties(record,eamHtEquipmentScrapOrder);
-        int i = eamHtEquipmentScrapOrderMapper.insert(eamHtEquipmentScrapOrder);
+        int i = eamHtEquipmentScrapOrderMapper.insertSelective(eamHtEquipmentScrapOrder);
 
         return i;
     }
@@ -160,9 +157,6 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquipmentScrapOrderDto entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //this.codeIfRepeat(entity);
 
@@ -198,7 +192,7 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
 
         EamHtEquipmentScrapOrder eamHtEquipmentScrapOrder = new EamHtEquipmentScrapOrder();
         BeanUtils.copyProperties(entity,eamHtEquipmentScrapOrder);
-        int i = eamHtEquipmentScrapOrderMapper.insert(eamHtEquipmentScrapOrder);
+        int i = eamHtEquipmentScrapOrderMapper.insertSelective(eamHtEquipmentScrapOrder);
 
         return i;
     }
@@ -215,9 +209,6 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
 
     private void codeIfRepeat(EamEquipmentScrapOrderDto eamEquipmentScrapOrderDto){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断编码是否重复
         Example example = new Example(EamEquipmentScrapOrder.class);
@@ -238,9 +229,6 @@ public class EamEquipmentScrapOrderServiceImpl extends BaseService<EamEquipmentS
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtEquipmentScrapOrder> htList = new ArrayList<>();
         String[] idsArr  = ids.split(",");

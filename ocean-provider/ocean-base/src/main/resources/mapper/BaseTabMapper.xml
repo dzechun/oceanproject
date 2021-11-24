@@ -17,6 +17,8 @@
       <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
       <result column="simple_name" jdbcType="VARCHAR" property="simpleName" />
       <result column="english_describe" jdbcType="VARCHAR" property="englishDescribe" />
+      <result column="brand_name" jdbcType="VARCHAR" property="brandName" />
+      <result column="product_category" jdbcType="VARCHAR" property="productCategory" />
       <result column="material_property" jdbcType="TINYINT" property="materialProperty" />
       <result column="image" jdbcType="VARCHAR" property="image" />
       <result column="is_batch" jdbcType="TINYINT" property="isBatch" />
@@ -98,6 +100,8 @@
 	bmt.supplier_id,
 	bmt.simple_name,
 	bmt.english_describe,
+    bmt.brand_name,
+    bmt.product_category,
 	bmt.material_property,
 	bmt.image,
 	bmt.is_quality_test,

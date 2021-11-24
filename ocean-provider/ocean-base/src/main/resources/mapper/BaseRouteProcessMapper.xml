@@ -24,6 +24,7 @@
         <result column="previous_process_name" jdbcType="BIGINT" property="previousProcessName"/>
         <result column="section_name" jdbcType="VARCHAR" property="sectionName"/>
         <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+        <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="readiness_time" jdbcType="TIMESTAMP" property="readinessTime" />
         <result column="standard_time" jdbcType="TIMESTAMP" property="standardTime" />
@@ -54,6 +55,7 @@
         sr.route_name,
         ws.section_name,
         sp.process_name,
+        sp.process_code,
         p.process_name as previous_process_name,
         bo.organization_name
         from fantech_imes_v2.base_route_process srp

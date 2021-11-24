@@ -79,9 +79,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseSupplier record) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         Example example = new Example(BaseSupplier.class);
         example.createCriteria().andEqualTo("supplierCode",record.getSupplierCode())
                                 .andEqualTo("supplierType",record.getSupplierType())
@@ -304,5 +302,23 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
             baseSupplierMapper.updateByPrimaryKeySelective(baseSupplier);
         }
         return i;
+    }
+
+    @Override
+    public Long saveForReturnID(BaseSupplier baseSupplier) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        baseSupplier.setCreateTime(new Date());
+        baseSupplier.setCreateUserId(currentUser.getUserId());
+        baseSupplier.setModifiedUserId(currentUser.getUserId());
+        baseSupplier.setModifiedTime(new Date());
+        baseSupplier.setIsDelete((byte) 1);
+        baseSupplier.setOrganizationId(currentUser.getOrganizationId());
+        baseSupplierMapper.insertUseGeneratedKeys(baseSupplier);
+
+        //新增历史信息
+        BaseHtSupplier baseHtSupplier = new BaseHtSupplier();
+        BeanUtils.copyProperties(baseSupplier, baseHtSupplier);
+        baseHtSupplierMapper.insertSelective(baseHtSupplier);
+        return baseSupplier.getSupplierId();
     }
 }

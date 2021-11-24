@@ -40,9 +40,6 @@ public class BaseProcessInspectionItemServiceImpl extends BaseService<BaseProces
     @Override
     public List<BaseProcessInspectionItem> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseProcessInspectionItemMapper.findList(map);
     }
@@ -51,9 +48,6 @@ public class BaseProcessInspectionItemServiceImpl extends BaseService<BaseProces
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseProcessInspectionItem baseProcessInspectionItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断编码是否重复
         Example example = new Example(BaseProcessInspectionItem.class);
@@ -92,7 +86,7 @@ public class BaseProcessInspectionItemServiceImpl extends BaseService<BaseProces
         //履历
         BaseHtProcessInspectionItem baseHtProcessInspectionItem = new BaseHtProcessInspectionItem();
         BeanUtils.copyProperties(baseProcessInspectionItem, baseHtProcessInspectionItem);
-        baseHtProcessInspectionItemMapper.insert(baseHtProcessInspectionItem);
+        baseHtProcessInspectionItemMapper.insertSelective(baseHtProcessInspectionItem);
 
         return i;
     }
@@ -101,9 +95,6 @@ public class BaseProcessInspectionItemServiceImpl extends BaseService<BaseProces
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseProcessInspectionItem baseProcessInspectionItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断编码是否重复
         Example example = new Example(BaseProcessInspectionItem.class);
@@ -156,14 +147,14 @@ public class BaseProcessInspectionItemServiceImpl extends BaseService<BaseProces
                 baseProcessInspectionItemItem.setModifiedTime(new Date());
                 baseProcessInspectionItemItem.setStatus(StringUtils.isEmpty(baseProcessInspectionItemItem.getStatus())?1:baseProcessInspectionItemItem.getStatus());
                 baseProcessInspectionItemItem.setOrgId(user.getOrganizationId());
-                baseProcessInspectionItemItemMapper.insert(baseProcessInspectionItemItem);
+                baseProcessInspectionItemItemMapper.insertSelective(baseProcessInspectionItemItem);
             }
         }
 
         //履历
         BaseHtProcessInspectionItem baseHtProcessInspectionItem = new BaseHtProcessInspectionItem();
         BeanUtils.copyProperties(baseProcessInspectionItem, baseHtProcessInspectionItem);
-        baseHtProcessInspectionItemMapper.insert(baseHtProcessInspectionItem);
+        baseHtProcessInspectionItemMapper.insertSelective(baseHtProcessInspectionItem);
 
         return i;
     }
@@ -172,9 +163,6 @@ public class BaseProcessInspectionItemServiceImpl extends BaseService<BaseProces
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtProcessInspectionItem> list = new ArrayList<>();
         String[] idArry = ids.split(",");

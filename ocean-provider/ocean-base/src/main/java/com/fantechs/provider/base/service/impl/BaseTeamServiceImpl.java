@@ -42,9 +42,6 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
     @Override
     public List<BaseTeamDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseTeamMapper.findList(map);
     }
@@ -52,9 +49,6 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
     @Override
     public int save(BaseTeam baseTeam) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseTeam.class);
         Example.Criteria criteria = example.createCriteria();
@@ -81,9 +75,6 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
     @Override
     public int update(BaseTeam baseTeam) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseTeam.class);
         Example.Criteria criteria = example.createCriteria();
@@ -109,9 +100,6 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtTeam> baseHtTeams = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -134,9 +122,7 @@ public class BaseTeamServiceImpl  extends BaseService<BaseTeam> implements BaseT
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseTeamImport> baseTeamImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

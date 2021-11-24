@@ -93,6 +93,10 @@ public class MiddleOutDeliveryOrder implements Serializable {
     @Column(name = "sales_code")
     private String salesCode;
 
+    @ApiModelProperty(name="relatedOrderCode1",value = "相关单号")
+    @Column(name = "related_order_code_1")
+    private String relatedOrderCode1;
+
     @ApiModelProperty(name="option1",value = "扩展字段1")
     @Column(name = "option1")
     private String option1;

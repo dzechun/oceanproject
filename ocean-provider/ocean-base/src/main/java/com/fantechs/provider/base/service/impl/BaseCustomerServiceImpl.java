@@ -34,9 +34,6 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
     @Override
     public List<BaseCustomer> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseCustomerMapper.findList(map);
     }
@@ -45,9 +42,6 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseCustomer baseCustomer) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseCustomer.class);
         Example.Criteria criteria = example.createCriteria();
@@ -74,9 +68,6 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
         int i=0;
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] customerIds = ids.split(",");
         for (String customerId : customerIds) {
@@ -93,9 +84,6 @@ public class BaseCustomerServiceImpl extends BaseService<BaseCustomer> implement
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseCustomer baseCustomer) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseCustomer.class);
         Example.Criteria criteria = example.createCriteria();

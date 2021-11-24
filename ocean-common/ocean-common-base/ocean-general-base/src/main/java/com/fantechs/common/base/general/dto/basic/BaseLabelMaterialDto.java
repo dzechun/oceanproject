@@ -21,6 +21,11 @@ public class BaseLabelMaterialDto extends BaseLabelMaterial implements Serializa
     @ApiModelProperty(name = "materialCode",value = "物料编码")
     @Excel(name = "物料编码",height = 20,width = 30,orderNum = "1")
     private String materialCode;
+
+    @Transient
+    @ApiModelProperty(name = "materialName",value = "物料名字")
+    @Excel(name = "物料名字",height = 20,width = 30,orderNum = "1")
+    private String materialName;
     /**
      * 物料版本
      */

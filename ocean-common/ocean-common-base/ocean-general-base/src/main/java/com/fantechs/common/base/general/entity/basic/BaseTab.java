@@ -120,6 +120,22 @@ public class BaseTab extends ValidGroup implements Serializable {
     private String englishDescribe;
 
     /**
+     * 品牌名称
+     */
+    @ApiModelProperty(name="brandName",value = "品牌名称")
+    @Excel(name = "品牌名称", height = 20, width = 30)
+    @Column(name = "brand_name")
+    private String brandName;
+
+    /**
+     * 产品分类
+     */
+    @ApiModelProperty(name="productCategory",value = "产品分类")
+    @Excel(name = "产品分类", height = 20, width = 30)
+    @Column(name = "product_category")
+    private String productCategory;
+
+    /**
      * 物料属性(0.半成品，1.成品)
      */
     @ApiModelProperty(name="materialProperty",value = "物料属性(0.半成品，1.成品)")

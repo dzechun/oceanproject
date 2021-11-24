@@ -1,15 +1,22 @@
 package com.fantechs.common.base.general.entity.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
+
+;
+;
 
 /**
  * 日计划
@@ -30,6 +37,14 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     private Long dailyPlanId;
 
     /**
+     * 序号
+     */
+    @ApiModelProperty(name="seqNum",value = "序号")
+    @Excel(name = "序号", height = 20, width = 30)
+    @Column(name = "seq_num")
+    private String seqNum;
+
+    /**
      * 工单ID
      */
     @ApiModelProperty(name="workOrderId",value = "工单ID")
@@ -40,10 +55,10 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     /**
      * 排产数量
      */
-    @ApiModelProperty(name="scheduleQty",value = "排产数量")
+    @ApiModelProperty(name="scheduledQty",value = "排产数量")
     @Excel(name = "排产数量", height = 20, width = 30,orderNum="") 
     @Column(name = "schedule_qty")
-    private BigDecimal scheduleQty;
+    private BigDecimal scheduledQty;
 
     /**
      * 完成数量

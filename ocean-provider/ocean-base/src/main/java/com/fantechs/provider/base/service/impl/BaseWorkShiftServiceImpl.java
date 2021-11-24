@@ -40,9 +40,6 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
     @Override
     public int save(BaseWorkShift baseWorkShift) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseWorkShift.class);
         Example.Criteria criteria1 = example.createCriteria();
@@ -66,7 +63,7 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
         //新增班次履历
         BaseHtWorkShift baseHtWorkShift = new BaseHtWorkShift();
         BeanUtils.copyProperties(baseWorkShift,baseHtWorkShift);
-        baseHtWorkShiftMapper.insert(baseHtWorkShift);
+        baseHtWorkShiftMapper.insertSelective(baseHtWorkShift);
 
         return i;
     }
@@ -74,9 +71,6 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
     @Override
     public int update(BaseWorkShift baseWorkShift) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseWorkShift.class);
         Example.Criteria criteria1 = example.createCriteria();
@@ -96,7 +90,7 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
 
         BaseHtWorkShift baseHtWorkShift = new BaseHtWorkShift();
         BeanUtils.copyProperties(baseWorkShift,baseHtWorkShift);
-        baseHtWorkShiftMapper.insert(baseHtWorkShift);
+        baseHtWorkShiftMapper.insertSelective(baseHtWorkShift);
 
         return baseWorkShiftMapper.updateByPrimaryKeySelective(baseWorkShift);
     }
@@ -104,9 +98,6 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtWorkShift> baseHtWorkShifts = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -128,9 +119,6 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
     @Override
     public List<BaseWorkShiftDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseWorkShiftMapper.findList(map);
     }
@@ -139,9 +127,6 @@ public class BaseWorkShiftServiceImpl extends BaseService<BaseWorkShift> impleme
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseWorkShiftImport> baseWorkShiftImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

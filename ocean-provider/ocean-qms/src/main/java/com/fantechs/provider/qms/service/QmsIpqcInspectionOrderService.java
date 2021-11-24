@@ -21,4 +21,5 @@ public interface QmsIpqcInspectionOrderService extends IService<QmsIpqcInspectio
     String uploadFile(MultipartFile file);
     QmsIpqcInspectionOrder createOrder( SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder);
     int PDASubmit(QmsIpqcInspectionOrder qmsIpqcInspectionOrder);
+    QmsIpqcInspectionOrder selectByKey(Long key);
 }

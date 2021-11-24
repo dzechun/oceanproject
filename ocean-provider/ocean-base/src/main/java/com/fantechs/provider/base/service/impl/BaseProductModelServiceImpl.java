@@ -54,9 +54,6 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseProductModel baseProductModel) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProductModel.class);
         Example.Criteria criteria = example.createCriteria();
@@ -84,9 +81,7 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseProductModel baseProductModel) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         Example example = new Example(BaseProductModel.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
@@ -114,15 +109,10 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
         int i = 0;
         List<BaseHtProductModel> list = new ArrayList<>();
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         String[] idsArr = ids.split(",");
         for (String productModelId : idsArr) {
             BaseProductModel baseProductModel = baseProductModelMapper.selectByPrimaryKey(productModelId);
-            if (StringUtils.isEmpty(baseProductModel)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
 
             //被物料引用
             SearchBaseTab searchBaseTab = new SearchBaseTab();
@@ -162,9 +152,6 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseProductModelImport> baseProductModelImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

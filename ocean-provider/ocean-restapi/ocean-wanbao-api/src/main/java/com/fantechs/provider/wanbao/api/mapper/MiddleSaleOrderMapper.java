@@ -19,6 +19,12 @@ public interface MiddleSaleOrderMapper extends MyMapper<MiddleSaleOrder> {
     List<MiddleSaleOrder> findSaleOrderData(Map<String, Object> map);
 
     /**
+     * 万宝-IMS销售订单信息查询
+     * @return
+     */
+    List<MiddleSaleOrder> findSaleOrderFormIMS(Map<String, Object> map);
+
+    /**
      * 插入中间库
      * @param saleOrder
      * @return

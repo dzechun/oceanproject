@@ -49,9 +49,6 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
     public List<BaseWorkShopDto> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return baseWorkShopMapper.findList(map);
@@ -61,9 +58,6 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseWorkShop baseWorkShop) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseWorkShop.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("organizationId", user.getOrganizationId());
@@ -82,7 +76,7 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
 
         BaseHtWorkShop baseHtWorkShop = new BaseHtWorkShop();
         BeanUtils.copyProperties(baseWorkShop, baseHtWorkShop);
-        int i = baseHtWorkShopMapper.insert(baseHtWorkShop);
+        int i = baseHtWorkShopMapper.insertSelective(baseHtWorkShop);
 
         return i;
     }
@@ -91,9 +85,6 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<BaseHtWorkShop> list=new LinkedList<>();
         String[] idsArr =  ids.split(",");
         for(String id : idsArr){
@@ -132,9 +123,6 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseWorkShop baseWorkShop) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseWorkShop.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("organizationId", user.getOrganizationId());
@@ -152,7 +140,7 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
         BaseHtWorkShop baseHtWorkShop = new BaseHtWorkShop();
         BeanUtils.copyProperties(baseWorkShop, baseHtWorkShop);
 
-        baseHtWorkShopMapper.insert(baseHtWorkShop);
+        baseHtWorkShopMapper.insertSelective(baseHtWorkShop);
 
         return baseWorkShopMapper.updateByPrimaryKeySelective(baseWorkShop);
     }
@@ -161,9 +149,6 @@ public class BaseWorkShopServiceImpl extends BaseService<BaseWorkShop> implement
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseWorkShopImport> baseWorkShopImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

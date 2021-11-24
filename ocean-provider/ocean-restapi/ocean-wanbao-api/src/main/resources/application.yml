@@ -26,6 +26,12 @@ spring:
       username: sa
       password: 2020@WB
       driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    fourth:
+      jdbc-url: jdbc:oracle:thin:@192.168.5.23:1521:orcl
+      type: com.alibaba.druid.pool.DruidDataSource
+      username: wbquery
+      password: wbquery
+      driverClassName: oracle.jdbc.OracleDriver
 #    primary:
 #      jdbc-url: jdbc:oracle:thin:@192.168.204.160:1521:ORCL
 #      type: com.alibaba.druid.pool.DruidDataSource
@@ -44,6 +50,12 @@ spring:
 #      username: sa
 #      password: Jf@2020
 #      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#    fourth:
+#      jdbc-url: jdbc:oracle:thin:@192.168.5.33:1521:orcl
+#      type: com.alibaba.druid.pool.DruidDataSource
+#      username: gzeos
+#      password: gzeos
+#      driverClassName: oracle.jdbc.OracleDriver
 
 
 logging:

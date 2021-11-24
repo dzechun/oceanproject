@@ -43,6 +43,37 @@ public class FileUploadController {
 	@Autowired
 	private BaidubceConfig baidubceConfig;
 
+	@ApiOperation("多文件上传")
+	@PostMapping(
+			value = {"/uploadsFiles"},
+			consumes = {"multipart/form-data"}
+	)
+	public ResponseEntity uploadMultipleFiles(@ApiParam(value = "文件必传", required = true) @RequestPart("files") MultipartFile[] files) throws IOException {
+		Map<String, Object> data = new HashMap();
+		MultipartFile[] var3 = files;
+		int var4 = files.length;
+
+		for (int var5 = 0; var5 < var4; ++var5) {
+			MultipartFile file = var3[var5];
+			String fileName = file.getOriginalFilename();
+			if (!FileCheckUtil.checkFileType(fileName)) {
+				return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.GL99990100.getCode());
+			}
+
+			String path = "";
+			path = this.fdfsClient.uploadFile(file);
+			Object url = data.get("url");
+			if (StringUtils.isNotEmpty(new Object[]{url})) {
+				data.put("url", url + "," + path);
+			} else {
+				data.put("url", path);
+			}
+		}
+
+		return ControllerUtil.returnDataSuccess(data, 1);
+	}
+
+
 	/**
 	 * 上传单个文件
 	 * @param

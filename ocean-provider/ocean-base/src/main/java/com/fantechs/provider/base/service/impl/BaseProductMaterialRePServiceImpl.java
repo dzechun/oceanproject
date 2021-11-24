@@ -40,9 +40,6 @@ public class BaseProductMaterialRePServiceImpl extends BaseService<BaseProductMa
     @Override
     public List<BaseProductMaterialReP> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseProductMaterialRePMapper.findList(map);
     }
@@ -50,9 +47,6 @@ public class BaseProductMaterialRePServiceImpl extends BaseService<BaseProductMa
     @Override
     public List<BaseHtProductMaterialReP> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseHtProductMaterialRePMapper.findHtList(map);
     }
@@ -61,9 +55,6 @@ public class BaseProductMaterialRePServiceImpl extends BaseService<BaseProductMa
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseProductMaterialReP baseProductMaterialReP) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         baseProductMaterialReP.setCreateUserId(user.getUserId());
         baseProductMaterialReP.setCreateTime(new Date());
@@ -75,7 +66,7 @@ public class BaseProductMaterialRePServiceImpl extends BaseService<BaseProductMa
 
         BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
         BeanUtils.copyProperties(baseProductMaterialReP, baseHtProductMaterialReP);
-        baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
+        baseHtProductMaterialRePMapper.insertSelective(baseHtProductMaterialReP);
 
         return i;
 
@@ -85,9 +76,6 @@ public class BaseProductMaterialRePServiceImpl extends BaseService<BaseProductMa
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseProductMaterialReP baseProductMaterialReP) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         baseProductMaterialReP.setModifiedUserId(user.getUserId());
         baseProductMaterialReP.setModifiedTime(new Date());
@@ -96,7 +84,7 @@ public class BaseProductMaterialRePServiceImpl extends BaseService<BaseProductMa
 
         BaseHtProductMaterialReP baseHtProductMaterialReP = new BaseHtProductMaterialReP();
         BeanUtils.copyProperties(baseProductMaterialReP, baseHtProductMaterialReP);
-        baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
+        baseHtProductMaterialRePMapper.insertSelective(baseHtProductMaterialReP);
 
         return i;
     }
@@ -105,9 +93,6 @@ public class BaseProductMaterialRePServiceImpl extends BaseService<BaseProductMa
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtProductMaterialReP> list = new ArrayList<>();
         String[] idArry = ids.split(",");

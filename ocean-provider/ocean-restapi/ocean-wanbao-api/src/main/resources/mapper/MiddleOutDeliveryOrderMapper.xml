@@ -19,6 +19,7 @@
         <result column="dispatch_qty" jdbcType="DECIMAL" property="dispatchQty"/>
         <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
         <result column="sales_code" jdbcType="TIMESTAMP" property="salesCode"/>
+        <result column="related_order_code_1" jdbcType="VARCHAR" property="relatedOrderCode1"/>
         <result column="option1" jdbcType="VARCHAR" property="option1" />
         <result column="option2" jdbcType="VARCHAR" property="option2" />
         <result column="option3" jdbcType="VARCHAR" property="option3" />
@@ -47,29 +48,14 @@
         sh.so_number AS delivery_order_code,
         sh.schedule_ship_date AS plan_despatch_date,
         sh.actual_ship_date AS actual_despatch_date,
---         sh.cancel_number AS option1,
         sh.customer_number AS customer_code,
         sh.customer_name AS customer_name,
---         sh.payment_type_name AS option2,
---         sh.oa_days AS option3,
---         sh.bn_number AS option4,
---         sh.virtual_container_no AS option5,
---         sh.so_type_name AS option6,
---         sh.container_type_name AS option7,
---         sh.salesname AS option8,
---         sh.export_country_name AS option9,
         sh.status_name AS audit_status,
         sh.delivery_status_name AS order_status,
---         sh.declaration_flag AS option10,
         sl.mo_number AS sales_order_code,
---         sl.qo_number AS option11,
---         sl.manual_number AS option12,
---         sl.version_number AS option13,
         sl.po_number AS customer_order_code,
---         sl.lc_numbers AS option14,
         sl.customer_model AS product_model_code,
         msib.segment1 AS material_code,
---         sld.factory_code AS material_code,
         sld.product_name AS material_name,
         sld.product_code AS sales_code,
         sld.quantity_plan_ship AS packing_qty,
@@ -91,6 +77,48 @@
         </where>
         ORDER BY
         sh.so_number
+    </select>
+
+    <select id="findOutDeliveryDataFormIMS" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        sh.sor_no AS delivery_order_code,
+        -- 	sh.STATUS AS order_status,
+        sh.creation_date AS order_date,
+        -- 	ao.operatorname,
+        cc.customer_name AS customer_name,
+        cc.CUSTOMER_CODE AS customer_code,
+        -- 	sh.transport_type 运输方式,
+        -- 	sh.caculatetype 计算方式,
+        -- 	sh.deliverytype 提货方式,
+        sp.material_code AS material_code,,
+        sp.material_description AS material_name,
+        sp.quantity AS packing_qty,
+        sp.real_quantity AS dispatch_qty,
+        -- 	sp.real_quantity2 实收数量,
+        -- 	sp.volume 体积,
+        -- 	sp.real_amount,
+        -- 	sp.sum_amount,
+        -- 	sp.source_type 来源类型,
+        sp.source_no AS related_order_code_1
+        FROM
+        crm_lg_sor_header sh,
+        crm_lg_sor_product sp,
+        crm_ctm_customer cc,
+        ac_operator ao
+        <where>
+            sp.sor_header_id = sh.sor_header_id
+            AND cc.customer_id = sh.customer_id
+            AND sh.created_by = ao.operatorid
+            AND sh.status = '已生成出库单'
+            and sh.last_update_date >= TO_DATE('2021-08-01' , 'YYYY-MM-DD' )
+            <if test="date != null and date != ''">
+                and sh.last_update_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
+            </if>
+        </where>
+        ORDER BY
+        sh.creation_date,
+        sh.sor_header_id,
+        sp.sor_line_id
     </select>
 
     <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleOutDeliveryOrder">

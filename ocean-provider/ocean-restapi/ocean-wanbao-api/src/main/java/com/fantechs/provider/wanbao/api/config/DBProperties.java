@@ -13,4 +13,5 @@ public class DBProperties {
     private HikariDataSource primary;
     private HikariDataSource secondary;
     private HikariDataSource thirdary;
+    private HikariDataSource fourth;
 }

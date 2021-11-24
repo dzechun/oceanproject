@@ -55,9 +55,6 @@ public class EamSparePartCategoryServiceImpl extends BaseService<EamSparePartCat
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamSparePartCategory record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamSparePartCategory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -78,7 +75,7 @@ public class EamSparePartCategoryServiceImpl extends BaseService<EamSparePartCat
         //履历
         EamHtSparePartCategory eamHtSparePartCategory = new EamHtSparePartCategory();
         BeanUtils.copyProperties(record, eamHtSparePartCategory);
-        int i = eamHtSparePartCategoryMapper.insert(eamHtSparePartCategory);
+        int i = eamHtSparePartCategoryMapper.insertSelective(eamHtSparePartCategory);
         return i;
     }
 
@@ -86,9 +83,6 @@ public class EamSparePartCategoryServiceImpl extends BaseService<EamSparePartCat
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamSparePartCategory entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamSparePartCategory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -106,7 +100,7 @@ public class EamSparePartCategoryServiceImpl extends BaseService<EamSparePartCat
         //履历
         EamHtSparePartCategory eamHtSparePartCategory = new EamHtSparePartCategory();
         BeanUtils.copyProperties(entity, eamHtSparePartCategory);
-        int i = eamHtSparePartCategoryMapper.insert(eamHtSparePartCategory);
+        int i = eamHtSparePartCategoryMapper.insertSelective(eamHtSparePartCategory);
         return i;
     }
 
@@ -114,9 +108,6 @@ public class EamSparePartCategoryServiceImpl extends BaseService<EamSparePartCat
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<EamHtSparePartCategory> list = new ArrayList<>();
         String[] idArry = ids.split(",");
         for (String id : idArry) {
