@@ -6,9 +6,13 @@
         <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="supplier_desc" jdbcType="VARCHAR" property="supplierDesc"/>
-        <result column="e_mail" jdbcType="VARCHAR" property="eMail"/>
-        <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
         <result column="supplier_type" jdbcType="TINYINT" property="supplierType"/>
+        <result column="supplier_abbreviation" jdbcType="VARCHAR" property="supplierAbbreviation"/>
+        <result column="supplier_logo" jdbcType="VARCHAR" property="supplierLogo"/>
+        <result column="liaison_man" jdbcType="VARCHAR" property="liaisonMan"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="e_mail" jdbcType="VARCHAR" property="email"/>
+        <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
         <result column="if_appoint_deliver" jdbcType="TINYINT" property="ifAppointDeliver"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
@@ -39,8 +43,8 @@
         ss.telephone,
         ss.e_mail,
         ss.mobile_phone,
-        ss.supplier_type,
         ss.if_appoint_deliver,
+        ss.supplier_type,
         ss.`status`,
         ss.remark,
         ss.org_id,

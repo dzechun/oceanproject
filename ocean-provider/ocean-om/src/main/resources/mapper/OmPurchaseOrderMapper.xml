@@ -114,7 +114,7 @@
       </if>
     </where>
     group by opo.purchase_order_id
-    order by opo.modified_time desc
+    order by opo.purchase_order_code desc
   </select>
   <select id="findPurchaseMaterial" resultType="java.lang.String">
     SELECT material_id FROM om_purchase_order opm
