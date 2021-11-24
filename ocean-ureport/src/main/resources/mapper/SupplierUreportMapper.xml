@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.SupplierUreportMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.entity.BaseSupplierInfo">
+        <id column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="address_detail" jdbcType="VARCHAR" property="addressDetail"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
+        <result column="e_mail" jdbcType="VARCHAR" property="email"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    </resultMap>
+
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        bs.supplier_id,
+        bs.supplier_code,
+        bs.supplier_name,
+        ba.address_detail,
+        bs.telephone,
+        bs.mobile_phone,
+        bs.e_mail,
+        bs.remark,
+        bs.create_time,
+        bs.modified_time,
+        u.user_name as create_user_name,
+        s.user_name as modified_user_name
+        from base_supplier bs
+        LEFT JOIN base_supplier_address bsa ON bsa.supplier_id = bs.supplier_id
+        LEFT JOIN base_address ba ON bsa.address_id = ba.address_id
+        left join sys_user u on bs.create_user_id=u.user_id
+        left join sys_user s on bs.modified_user_id=s.user_id
+        <where>
+            <if test="supplierCode!=null and supplierCode!=''">
+                and bs.supplier_code like CONCAT('%', #{supplierCode}, '%')
+            </if>
+            <if test="supplierName!=null and supplierName!=''">
+                and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(bs.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="orgId!=null">
+                and bs.org_id=#{orgId}
+            </if>
+        </where>
+        order by bs.create_time desc
+    </select>
+</mapper>
