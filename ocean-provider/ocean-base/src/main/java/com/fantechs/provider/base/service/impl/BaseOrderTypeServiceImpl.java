@@ -59,6 +59,15 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
+        example.clear();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("orgId",null);
+        criteria1.andEqualTo("orderTypeCode",baseOrderType.getOrderTypeCode());
+        List<BaseOrderType> baseOrderTypes1 = baseOrderTypeMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(baseOrderTypes1)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
         baseOrderType.setCreateTime(new Date());
         baseOrderType.setCreateUserId(currentUser.getUserId());
         baseOrderType.setModifiedTime(new Date());
@@ -90,6 +99,16 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
                 .andNotEqualTo("orderTypeId",baseOrderType.getOrderTypeId());
         List<BaseOrderType> baseOrderTypes = baseOrderTypeMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseOrderTypes)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        example.clear();
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("orgId",null);
+        criteria1.andEqualTo("orderTypeCode",baseOrderType.getOrderTypeCode())
+                .andNotEqualTo("orderTypeId",baseOrderType.getOrderTypeId());
+        List<BaseOrderType> baseOrderTypes1 = baseOrderTypeMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(baseOrderTypes1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 

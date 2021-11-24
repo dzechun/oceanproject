@@ -27,4 +27,11 @@ public class SearchOmPurchaseOrder extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
     private Byte status;
+
+    @ApiModelProperty(name="userId",value = "用户ID")
+    private Long userId;
+
+    @ApiModelProperty(name="ifSupplierFind",value = "是否组织查询（0、否 1、是）")
+    private Byte ifSupplierFind;
+
 }

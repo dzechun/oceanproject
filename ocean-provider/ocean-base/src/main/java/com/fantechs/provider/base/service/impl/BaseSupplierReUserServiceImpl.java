@@ -70,6 +70,17 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
         i = baseSupplierReUserMapper.deleteByExample(example);
 
         List<BaseSupplierReUser> list = new ArrayList<>();
+
+
+        if (StringUtils.isNotEmpty(userIds)) {
+            example.clear();
+            example.createCriteria().andIn("userId",userIds).andEqualTo("organizationId",user.getOrganizationId());
+            List<BaseSupplierReUser> baseSupplierReUsers = baseSupplierReUserMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(baseSupplierReUsers)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"用户重复绑定供应商");
+            }
+        }
+
         for (Long userId : userIds) {
             BaseSupplierReUser supplierReUser = new BaseSupplierReUser();
             supplierReUser.setSupplierId(supplierId);

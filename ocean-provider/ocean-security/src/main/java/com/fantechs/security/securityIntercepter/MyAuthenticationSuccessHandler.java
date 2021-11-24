@@ -5,9 +5,13 @@ import com.fantechs.common.base.dto.security.SysMenuInListDTO;
 import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.*;
+import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.security.filter.CustomWebAuthenticationDetails;
 import com.fantechs.security.service.SysMenuInfoService;
 import com.fantechs.security.utils.MySecurityTool;
 import org.slf4j.Logger;
@@ -37,6 +41,8 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
 
     @Autowired
     private SysMenuInfoService sysMenuInfoService;
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Resource
     private RedisUtil redisUtil;
@@ -92,6 +98,22 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         //---生成token
         SysUser sysUser = MySecurityTool.getCurrentLoginUser();
         sysUser.setAuthority(permsSet);
+
+        CustomWebAuthenticationDetails details = (CustomWebAuthenticationDetails) authentication.getDetails();
+        String organizationid = details.getOrganizationid();
+        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
+        searchBaseSupplierReUser.setUserId(sysUser.getUserId());
+        if (StringUtils.isNotEmpty(organizationid)) {
+            searchBaseSupplierReUser.setOrgId(new Long(organizationid));
+        }
+
+        List<BaseSupplierReUser> baseSupplierReUserList = baseFeignApi.findList(searchBaseSupplierReUser).getData();
+        if (StringUtils.isNotEmpty(baseSupplierReUserList)) {
+            sysUser.setSupplierId(baseSupplierReUserList.get(0).getSupplierId());
+            sysUser.setSupplierCode(baseSupplierReUserList.get(0).getSupplierCode());
+            sysUser.setSupplierName(baseSupplierReUserList.get(0).getSupplierName());
+        }
+
         String token = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,null);
         String refreshToken = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,getIpAddress(httpServletRequest));
         TokenUtil.save(token,sysUser);

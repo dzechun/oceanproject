@@ -96,6 +96,9 @@
             <if test="status!=null">
                 and ss.status=#{status}
             </if>
+            <if test="ifAppointDeliver!=null">
+                and ss.if_appoint_deliver=#{ifAppointDeliver}
+            </if>
             <if test="addressDetail!=null and addressDetail!=''">
                 and sa.address_detail like CONCAT('%', #{addressDetail}, '%')
             </if>

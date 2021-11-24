@@ -50,13 +50,19 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+
+    <result column="e_mail" jdbcType="VARCHAR" property="eMail"/>
+    <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
+    <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+    <result column="complete_detail" jdbcType="VARCHAR" property="completeDetail"/>
   </resultMap>
 
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select
     <include refid="Base_Column_List"/>,
-    bs.supplier_code as supplierCode, bs.supplier_name as supplierName,bc.currency_name as currencyName,
+    bs.supplier_code as supplierCode, bs.supplier_name as supplierName,bs.e_mail,bs.mobile_phone,bs.telephone,ba.complete_detail,
+    bc.currency_name as currencyName,
     bd.dept_code as deptCode, bd.dept_name as deptName,sum(opod.material_total_price) as totalPrice,
     supu.nick_name as purchaseUserName, supu.nick_name as makeOrderUserName, supu.nick_name as auditUserName,
     u.user_name as create_user_name,
@@ -75,8 +81,15 @@
     left join sys_user u on opo.create_user_id=u.user_id
     left join sys_user s on opo.modified_user_id=s.user_id
     left join base_organization bo on opo.org_id = bo.organization_id
+    left join base_supplier_re_user bsru on bsru.supplier_id = bs.supplier_id
+    left join base_address ba on ba.address_id = bs.address_id
     <where>
-
+      <if test="userId != null">
+        and bsru.user_id = #{userId}
+      </if>
+      <if test="supplierId != null">
+        and opo.supplier_id = #{supplierId}
+      </if>
       <if test="status != null">
         and opo.status = #{status}
       </if>
@@ -101,7 +114,7 @@
       </if>
     </where>
     group by opo.purchase_order_id
-    order by opo.create_time desc
+    order by opo.purchase_order_code desc
   </select>
   <select id="findPurchaseMaterial" resultType="java.lang.String">
     SELECT material_id FROM om_purchase_order opm

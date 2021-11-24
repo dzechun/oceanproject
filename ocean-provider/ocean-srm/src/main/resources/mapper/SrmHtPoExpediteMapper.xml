@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.srm.mapper.SrmHtPoExpediteMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.srm.history.SrmHtPoExpedite">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_po_expedite_id" jdbcType="BIGINT" property="htPoExpediteId" />
+    <result column="po_expedite_id" jdbcType="BIGINT" property="poExpediteId" />
+    <result column="purchase_order_id" jdbcType="BIGINT" property="purchaseOrderId" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+    <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
+    <result column="purchase_dept_name" jdbcType="VARCHAR" property="purchaseDeptName" />
+    <result column="makeOrder_user_name" jdbcType="VARCHAR" property="makeOrderUserName" />
+    <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
+    <result column="order_remark" jdbcType="VARCHAR" property="orderRemark" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+    <collection property="list" ofType="com.fantechs.common.base.general.entity.srm.history.SrmHtPoExpediteRecord"
+                column="{poExpediteId=po_expedite_id}" select="com.fantechs.provider.srm.mapper.SrmHtPoExpediteRecordMapper.findList"></collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    shpe.ht_po_expedite_id,
+    shpe.po_expedite_id,
+    shpe.purchase_order_id,
+    shpe.supplier_id,
+    shpe.status,
+    shpe.remark,
+    shpe.org_id,
+    shpe.create_user_id,
+    shpe.create_time,
+    shpe.modified_user_id,
+    shpe.modified_time
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map" >
+    select <include refid="Base_Column_List"></include>,
+    csu.user_name as create_user_name,
+    msu.user_name as modified_user_name,
+    opo.purchase_order_code,
+    bs.supplier_name,
+    opo.order_status,
+    opo.order_date,
+    bd.dept_name as purchase_dept_name,
+    mosu.user_name as makeOrder_user_name,
+    opo.make_order_date,
+    opo.remark as order_remark
+    from srm_ht_po_expedite shpe
+    left join om_purchase_order opo on opo.purchase_order_id = shpe.purchase_order_id
+    left join base_supplier bs on bs.supplier_id = shpe.supplier_id
+    left join sys_user csu on csu.user_id = shpe.create_user_id
+    left join sys_user msu on msu.user_id = shpe.modified_user_id
+    left join base_dept bd on bd.dept_id = opo.purchase_dept_id
+    left join sys_user mosu on mosu.user_id = opo.make_order_user_id
+    <where>
+      <if test="supplierId != null">
+        and shpe.supplier_id = #{supplierId}
+      </if>
+      <if test="purchaseOrderCode != null and purchaseOrderCode != ''">
+        and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
+      </if>
+      <if test="orderStatus != null ">
+        and opo.order_status = #{orderStatus}
+      </if>
+      <if test="supplierName != null and supplierName != ''">
+        and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
+      </if>
+      <if test="purchaseDeptName != null and purchaseDeptName != ''">
+        and bd.dept_name like CONCAT('%', #{purchaseDeptName}, '%')
+      </if>
+      <if test="makeOrderUserName != null and makeOrderUserName != ''">
+        and mosu.user_name like CONCAT('%', #{makeOrderUserName}, '%')
+      </if>
+      <if test="orderRemark != null and orderRemark != ''">
+        and opo.remark like CONCAT('%', #{orderRemark}, '%')
+      </if>
+      <if test="orgId != null">
+        and shpe.org_id = #{orgId}
+      </if>
+      <if test="createUserId != null">
+        and shpe.create_user_id = #{createUserId}
+      </if>
+      <if test="modifiedUserId != null">
+        and shpe.modified_user_id = #{modifiedUserId}
+      </if>
+      <if test="remark != null and remark != ''">
+        and shpe.remark like CONCAT('%', #{remark}, '%')
+      </if>
+      <if test="orderDateStart != null and orderDateStart != '' and orderDateEnd != null and orderDateEnd != ''">
+        and date_format(shpe.order_date, '%Y-%m-%d') between #{orderDateStart} and #{orderDateEnd}
+      </if>
+      <if test="makeOrderDateStart != null and makeOrderDateStart != '' and makeOrderDateEnd != null and makeOrderDateEnd != ''">
+        and date_format(shpe.make_order_date, '%Y-%m-%d') between #{makeOrderDateStart} and #{makeOrderDateEnd}
+      </if>
+      <if test="modifiedTimeStart != null and modifiedTimeStart != '' and modifiedTimeEnd != null and modifiedTimeEnd != ''">
+        and date_format(shpe.modified_time, '%Y-%m-%d') between #{modifiedTimeStart} and #{modifiedTimeEnd}
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(shpe.create_time, '%Y-%m-%d') between #{startTime} and #{endTime}
+      </if>
+    </where>
+    order by shpe.create_time
+  </select>
+
+</mapper>

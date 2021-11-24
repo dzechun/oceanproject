@@ -1,10 +1,12 @@
 package com.fantechs.common.base.general.entity.basic.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -31,4 +33,6 @@ public class SearchBaseSupplier extends BaseQuery implements Serializable {
     private Byte codeQueryMark;
     @ApiModelProperty(name="organizationId",value = "组织id")
     private Long organizationId;
+    @ApiModelProperty("是否预约发货（0、否 1、是）")
+    private Byte ifAppointDeliver;
 }
