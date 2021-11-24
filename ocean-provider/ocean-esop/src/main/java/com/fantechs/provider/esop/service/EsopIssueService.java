@@ -16,4 +16,6 @@ public interface EsopIssueService extends IService<EsopIssue> {
     List<EsopIssueDto> findList(Map<String, Object> map);
 
     int batchAdd(List<EsopIssue> EsopIssues);
+
+    EsopIssue selectByKey(Long key);
 }

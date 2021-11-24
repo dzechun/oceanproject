@@ -6,19 +6,17 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.qms.QmsIpqcInspectionOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionStandard;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionStandardDet;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
-import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionStandard;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionWay;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
-import com.fantechs.common.base.general.entity.qms.*;
+import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder;
+import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet;
+import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIpqcInspectionOrder;
-import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -30,23 +28,14 @@ import com.fantechs.provider.qms.mapper.QmsHtIpqcInspectionOrderMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderMapper;
-import com.fantechs.provider.qms.service.QmsInspectionOrderDetService;
-import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderDetService;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderService;
-import feign.Response;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -77,9 +66,6 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
     public List<QmsIpqcInspectionOrder> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         List<QmsIpqcInspectionOrder> qmsIpqcInspectionOrders = qmsIpqcInspectionOrderMapper.findList(map);
@@ -162,14 +148,16 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
 
 
     @Override
-    public QmsIpqcInspectionOrder selectByKey(Object key) {
+    public QmsIpqcInspectionOrder selectByKey(Long key) {
         Map<String,Object> map = new HashMap<>();
         map.put("ipqcInspectionOrderId",key);
         QmsIpqcInspectionOrder qmsIpqcInspectionOrder = qmsIpqcInspectionOrderMapper.findList(map).get(0);
-        SearchQmsIpqcInspectionOrderDet searchQmsIpqcInspectionOrderDet = new SearchQmsIpqcInspectionOrderDet();
-        searchQmsIpqcInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
-        List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDetList = qmsIpqcInspectionOrderDetMapper.findDetList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrderDet));
-        qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDetList);
+        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrder)) {
+            SearchQmsIpqcInspectionOrderDet searchQmsIpqcInspectionOrderDet = new SearchQmsIpqcInspectionOrderDet();
+            searchQmsIpqcInspectionOrderDet.setIpqcInspectionOrderId(qmsIpqcInspectionOrder.getIpqcInspectionOrderId());
+            List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDetList = qmsIpqcInspectionOrderDetMapper.findDetList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrderDet));
+            qmsIpqcInspectionOrder.setQmsIpqcInspectionOrderDets(qmsIpqcInspectionOrderDetList);
+        }
 
         return qmsIpqcInspectionOrder;
     }
@@ -179,9 +167,6 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(QmsIpqcInspectionOrder qmsIpqcInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //新增IPQC检验单
         qmsIpqcInspectionOrder.setIpqcInspectionOrderCode(CodeUtils.getId("IPQC-"));
@@ -214,7 +199,7 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         //履历
         QmsHtIpqcInspectionOrder qmsHtIpqcInspectionOrder = new QmsHtIpqcInspectionOrder();
         BeanUtils.copyProperties(qmsIpqcInspectionOrder, qmsHtIpqcInspectionOrder);
-        qmsHtIpqcInspectionOrderMapper.insert(qmsHtIpqcInspectionOrder);
+        qmsHtIpqcInspectionOrderMapper.insertSelective(qmsHtIpqcInspectionOrder);
 
         return i;
     }
@@ -223,9 +208,6 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(QmsIpqcInspectionOrder qmsIpqcInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //修改IPQC检验单
         qmsIpqcInspectionOrder.setModifiedUserId(user.getUserId());
@@ -236,7 +218,7 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         //履历
         QmsHtIpqcInspectionOrder qmsHtIpqcInspectionOrder = new QmsHtIpqcInspectionOrder();
         BeanUtils.copyProperties(qmsIpqcInspectionOrder, qmsHtIpqcInspectionOrder);
-        qmsHtIpqcInspectionOrderMapper.insert(qmsHtIpqcInspectionOrder);
+        qmsHtIpqcInspectionOrderMapper.insertSelective(qmsHtIpqcInspectionOrder);
 
         //原来有的明细只更新
         ArrayList<Long> idList = new ArrayList<>();
@@ -297,9 +279,6 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
     @Transactional(rollbackFor = Exception.class)
     public int PDASubmit(QmsIpqcInspectionOrder qmsIpqcInspectionOrder){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //修改IPQC检验单
         qmsIpqcInspectionOrder.setModifiedUserId(user.getUserId());
@@ -377,9 +356,6 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<QmsHtIpqcInspectionOrder> list = new ArrayList<>();
         String[] idArry = ids.split(",");

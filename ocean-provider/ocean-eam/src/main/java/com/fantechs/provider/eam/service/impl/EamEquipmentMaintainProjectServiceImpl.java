@@ -80,7 +80,7 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
         // 新增保养项目履历
         EamHtEquipmentMaintainProject eamHtEquipmentMaintainProject = new EamHtEquipmentMaintainProject();
         BeanUtil.copyProperties(eamEquipmentMaintainProject, eamHtEquipmentMaintainProject);
-        int i = eamHtEquipmentMaintainProjectMapper.insert(eamHtEquipmentMaintainProject);
+        int i = eamHtEquipmentMaintainProjectMapper.insertSelective(eamHtEquipmentMaintainProject);
 
         //保养项目事项
         List<EamEquipmentMaintainProjectItem> items = eamEquipmentMaintainProject.getItems();
@@ -115,7 +115,7 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
         // 新增保养项目履历
         EamHtEquipmentMaintainProject eamHtEquipmentMaintainProject = new EamHtEquipmentMaintainProject();
         BeanUtil.copyProperties(eamEquipmentMaintainProject, eamHtEquipmentMaintainProject);
-        int i = eamHtEquipmentMaintainProjectMapper.insert(eamHtEquipmentMaintainProject);
+        int i = eamHtEquipmentMaintainProjectMapper.insertSelective(eamHtEquipmentMaintainProject);
 
         // 批量删除保养项目事项
         ArrayList<Long> idList = new ArrayList<>();
@@ -211,9 +211,6 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
 
     private SysUser getUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 }

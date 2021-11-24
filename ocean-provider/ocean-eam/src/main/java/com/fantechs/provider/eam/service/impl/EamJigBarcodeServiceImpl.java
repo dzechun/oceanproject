@@ -46,9 +46,6 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
     public List<EamJigBarcodeDto> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
 
@@ -59,9 +56,6 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigBarcode record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamJigBarcode.class);
         Example.Criteria criteria = example.createCriteria();
@@ -83,7 +77,7 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
 
         EamHtJigBarcode eamHtJigBarcode = new EamHtJigBarcode();
         BeanUtils.copyProperties(record, eamHtJigBarcode);
-        int i = eamHtJigBarcodeMapper.insert(eamHtJigBarcode);
+        int i = eamHtJigBarcodeMapper.insertSelective(eamHtJigBarcode);
 
         return i;
     }
@@ -92,9 +86,6 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigBarcode entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamJigBarcode.class);
         Example.Criteria criteria = example.createCriteria();
@@ -110,7 +101,7 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
 
         EamHtJigBarcode eamHtJigBarcode = new EamHtJigBarcode();
         BeanUtils.copyProperties(entity, eamHtJigBarcode);
-        eamHtJigBarcodeMapper.insert(eamHtJigBarcode);
+        eamHtJigBarcodeMapper.insertSelective(eamHtJigBarcode);
 
         return eamJigBarcodeMapper.updateByPrimaryKeySelective(entity);
     }
@@ -119,9 +110,6 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJigBarcode> list = new ArrayList<>();
         String[] idArry = ids.split(",");
@@ -145,9 +133,6 @@ public class EamJigBarcodeServiceImpl extends BaseService<EamJigBarcode> impleme
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<EamJigBarcodeImport> eamJigBarcodeImports,Long jigId) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

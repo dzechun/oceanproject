@@ -65,9 +65,6 @@ public class EamEquipmentMaintainOrderDetServiceImpl extends BaseService<EamEqui
 
     private SysUser getUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 }

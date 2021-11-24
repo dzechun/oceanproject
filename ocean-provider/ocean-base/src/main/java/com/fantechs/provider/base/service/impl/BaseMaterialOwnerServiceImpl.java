@@ -73,9 +73,6 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseMaterialOwner baseMaterialOwner) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseMaterialOwner.class);
         Example.Criteria criteria = example.createCriteria();
@@ -111,7 +108,7 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
 
         BaseHtMaterialOwner baseHtMaterialOwner = new BaseHtMaterialOwner();
         BeanUtils.copyProperties(baseMaterialOwner, baseHtMaterialOwner);
-        baseHtMaterialOwnerMapper.insert(baseHtMaterialOwner);
+        baseHtMaterialOwnerMapper.insertSelective(baseHtMaterialOwner);
 
         return i;
     }
@@ -120,9 +117,6 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseMaterialOwner baseMaterialOwner) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseMaterialOwner.class);
         Example.Criteria criteria = example.createCriteria();
@@ -162,7 +156,7 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
 
         BaseHtMaterialOwner baseHtMaterialOwner = new BaseHtMaterialOwner();
         BeanUtils.copyProperties(baseMaterialOwner, baseHtMaterialOwner);
-        baseHtMaterialOwnerMapper.insert(baseHtMaterialOwner);
+        baseHtMaterialOwnerMapper.insertSelective(baseHtMaterialOwner);
 
         return i;
     }
@@ -171,9 +165,6 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtMaterialOwner> list = new ArrayList<>();
         String[] idArry = ids.split(",");
@@ -202,9 +193,6 @@ public class BaseMaterialOwnerServiceImpl extends BaseService<BaseMaterialOwner>
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseMaterialOwnerDto> baseMaterialOwnerDtos) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

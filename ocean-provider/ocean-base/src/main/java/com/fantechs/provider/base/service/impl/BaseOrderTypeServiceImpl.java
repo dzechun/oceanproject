@@ -36,9 +36,6 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
     @Override
     public List<BaseOrderTypeDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseOrderTypeMapper.findList(map);
     }
@@ -46,9 +43,6 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
     @Override
     public int save(BaseOrderType baseOrderType) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseOrderType.class);
         Example.Criteria criteria = example.createCriteria();
@@ -79,9 +73,6 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
     @Override
     public int update(BaseOrderType baseOrderType) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseOrderType.class);
         Example.Criteria criteria = example.createCriteria();
@@ -110,9 +101,6 @@ public class BaseOrderTypeServiceImpl extends BaseService<BaseOrderType> impleme
     @Override
     public int batchDelete(String ids) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] idArray = ids.split(",");
 

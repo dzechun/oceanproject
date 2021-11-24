@@ -201,9 +201,6 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
     @Override
     public List<BaseWorkerDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseWorkerDto> baseWorkerDtoList = baseWorkerMapper.findList(map);
         for(BaseWorkerDto baseWorkerDto : baseWorkerDtoList) {
@@ -217,11 +214,7 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
 
     private SysUser getCurrentUserInfo() {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }else{
-            return currentUserInfo;
-        }
+        return currentUserInfo;
     }
 
     private void recordHistory(BaseWorker baseWorker, SysUser currentUserInfo, String operation) {
@@ -239,11 +232,7 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseWorkerImport> baseWorkerImports) {
-
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

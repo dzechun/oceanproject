@@ -37,9 +37,6 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
     @Override
     public List<BaseBadnessPhenotypeDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId",user.getOrganizationId());
         return baseBadnessPhenotypeMapper.findList(map);
     }
@@ -47,9 +44,6 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
     @Override
     public int save(BaseBadnessPhenotype record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         this.codeIfRepeat(record);
 
@@ -63,7 +57,7 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
 
         BaseHtBadnessPhenotype baseHtBadnessPhenotype = new BaseHtBadnessPhenotype();
         BeanUtils.copyProperties(record,baseHtBadnessPhenotype);
-        baseHtBadnessPhenotypeMapper.insert(baseHtBadnessPhenotype);
+        baseHtBadnessPhenotypeMapper.insertSelective(baseHtBadnessPhenotype);
 
         return i;
     }
@@ -71,9 +65,6 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
     @Override
     public int update(BaseBadnessPhenotype entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         this.codeIfRepeat(entity);
 
@@ -82,7 +73,7 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
         entity.setOrgId(user.getOrganizationId());
         BaseHtBadnessPhenotype baseHtBadnessPhenotype = new BaseHtBadnessPhenotype();
         BeanUtils.copyProperties(entity,baseHtBadnessPhenotype);
-        baseHtBadnessPhenotypeMapper.insert(baseHtBadnessPhenotype);
+        baseHtBadnessPhenotypeMapper.insertSelective(baseHtBadnessPhenotype);
 
         return baseBadnessPhenotypeMapper.updateByPrimaryKeySelective(entity);
     }
@@ -90,9 +81,6 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtBadnessPhenotype> list = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -113,9 +101,6 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
 
     private void codeIfRepeat(BaseBadnessPhenotype entity){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseBadnessPhenotype.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
@@ -134,9 +119,6 @@ public class BaseBadnessPhenotypeServiceImpl extends BaseService<BaseBadnessPhen
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseBadnessPhenotypeImport> baseBadnessPhenotypeImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

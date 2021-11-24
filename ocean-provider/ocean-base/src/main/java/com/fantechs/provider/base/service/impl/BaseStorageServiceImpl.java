@@ -67,9 +67,6 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseStorage baseStorage) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseStorage.class);
         Example.Criteria criteria = example.createCriteria();
@@ -138,9 +135,6 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         List<BaseHtStorage> list = new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] storageIds = ids.split(",");
         for (String storageId : storageIds) {
@@ -182,9 +176,6 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseStorage storage) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseStorage.class);
         Example.Criteria criteria = example.createCriteria();
@@ -213,9 +204,6 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     public List<BaseStorage> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))){
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
 
@@ -226,9 +214,6 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseStorageImport> baseStorageImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

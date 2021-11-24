@@ -45,9 +45,6 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
     @Override
     public List<BaseBatchRulesDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseBatchRulesMapper.findList(map);
     }
@@ -68,7 +65,7 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
         //添加履历
         BaseHtBatchRules baseHtBatchRules = new BaseHtBatchRules();
         BeanUtil.copyProperties(record,baseHtBatchRules);
-        baseHtBatchRulesMapper.insert(baseHtBatchRules);
+        baseHtBatchRulesMapper.insertSelective(baseHtBatchRules);
         return num;
     }
 
@@ -83,7 +80,7 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
         //添加履历
         BaseHtBatchRules baseHtBatchRules = new BaseHtBatchRules();
         BeanUtil.copyProperties(entity,baseHtBatchRules);
-        baseHtBatchRulesMapper.insert(baseHtBatchRules);
+        baseHtBatchRulesMapper.insertSelective(baseHtBatchRules);
 
         return num;
     }
@@ -112,9 +109,6 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
      */
     private SysUser currentUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 

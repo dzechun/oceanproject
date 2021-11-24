@@ -35,9 +35,6 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
     @Override
     public int save(BaseCalendarWorkShift baseCalendarWorkShift) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //日历为空，先添加一个日历
         if (StringUtils.isEmpty(baseCalendarWorkShift.getCalendarId())){
@@ -74,9 +71,6 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
     @Override
     public int update(BaseCalendarWorkShift baseCalendarWorkShift) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         baseCalendarWorkShift.setModifiedUserId(user.getUserId());
         baseCalendarWorkShift.setModifiedTime(new Date());
@@ -87,9 +81,6 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] idsArr  = ids.split(",");
         for (String id : idsArr) {
@@ -105,9 +96,6 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
     @Override
     public int batchSave(List<BaseCalendarWorkShift> baseCalendarWorkShifts) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         int i = 0;
         //日历为空，先添加一个日历
@@ -147,9 +135,6 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
     @Override
     public int deleteByCalendarIdAndDay(Integer calendarId, Byte day) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseCalendarWorkShift.class);
         Example.Criteria criteria = example.createCriteria();
@@ -165,9 +150,6 @@ public class BaseCalendarWorkShiftServiceImpl extends BaseService<BaseCalendarWo
     @Override
     public List<BaseCalendarWorkShiftDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseCalendarWorkShiftMapper.findList(map);
     }

@@ -59,9 +59,6 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     @Override
     public List<EamJigRequisitionDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         List<EamJigRequisitionDto> list = eamJigRequisitionMapper.findList(map);
@@ -240,9 +237,6 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     @Override
     public EamJigRequisitionWorkOrderDto findWorkOrder(String workOrderCode){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         EamJigRequisitionWorkOrderDto eamJigRequisitionWorkOrderDto = new EamJigRequisitionWorkOrderDto();
         //查询工单
@@ -301,9 +295,6 @@ public class EamJigRequisitionServiceImpl extends BaseService<EamJigRequisition>
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchSave(List<EamJigRequisition> list) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断已扫描数量是否符合要求
         this.checkUsageQty(list.get(0).getWorkOrderId(),list.get(0).getJigId(),list.size());

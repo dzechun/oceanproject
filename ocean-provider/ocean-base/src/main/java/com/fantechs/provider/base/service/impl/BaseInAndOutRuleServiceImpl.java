@@ -50,9 +50,6 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
     @Override
     public List<BaseInAndOutRule> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseInAndOutRule> baseInAndOutRules = baseInAndOutRuleMapper.findList(map);
         SearchBaseInAndOutRuleDet searchBaseInAndOutRuleDet = new SearchBaseInAndOutRuleDet();
@@ -72,9 +69,6 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseInAndOutRule baseInAndOutRule) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseInAndOutRule.class);
         example.createCriteria()
@@ -106,7 +100,7 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
         //履历
         BaseHtInAndOutRule baseHtInAndOutRule = new BaseHtInAndOutRule();
         BeanUtils.copyProperties(baseInAndOutRule, baseHtInAndOutRule);
-        baseHtInAndOutRuleMapper.insert(baseHtInAndOutRule);
+        baseHtInAndOutRuleMapper.insertSelective(baseHtInAndOutRule);
 
         //明细
         List<BaseInAndOutRuleDet> baseInAndOutRuleDets = baseInAndOutRule.getBaseInAndOutRuleDets();
@@ -132,9 +126,6 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseInAndOutRule baseInAndOutRule) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseInAndOutRule.class);
         example.createCriteria()
@@ -165,7 +156,7 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
         //履历
         BaseHtInAndOutRule baseHtInAndOutRule = new BaseHtInAndOutRule();
         BeanUtils.copyProperties(baseInAndOutRule, baseHtInAndOutRule);
-        baseHtInAndOutRuleMapper.insert(baseHtInAndOutRule);
+        baseHtInAndOutRuleMapper.insertSelective(baseHtInAndOutRule);
 
         //删除原有明细
         Example example1 = new Example(BaseInAndOutRuleDet.class);
@@ -197,9 +188,6 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtInAndOutRule> list = new ArrayList<>();
         String[] idArry = ids.split(",");

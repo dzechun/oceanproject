@@ -16,4 +16,5 @@ import java.util.Map;
 public interface EsopNewsService extends IService<EsopNews> {
     List<EsopNewsDto> findList(Map<String, Object> map);
     int audit(String ids) throws UnknownHostException;
+    EsopNews selectByKey(Long key);
 }

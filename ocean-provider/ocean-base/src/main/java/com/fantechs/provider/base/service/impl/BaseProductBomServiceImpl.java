@@ -54,10 +54,6 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseProductBom baseProductBom) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
 
         Example example = new Example(BaseProductBom.class);
         Example.Criteria criteria = example.createCriteria();
@@ -119,9 +115,6 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseProductBom baseProductBom) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProductBom.class);
         Example.Criteria criteria = example.createCriteria();
@@ -167,9 +160,6 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
         List<BaseHtProductBom> list=new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] productBomIds = ids.split(",");
         for (String productBomId : productBomIds) {
@@ -222,10 +212,6 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
     public List<BaseProductBomDto> findList(Map<String,Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
-
             map.put("orgId", user.getOrganizationId());
         }
         //查询指定层级的产品BOM
@@ -249,11 +235,7 @@ public class BaseProductBomServiceImpl extends BaseService<BaseProductBom> imple
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseProductBomImport> baseProductBomImports) {
-
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

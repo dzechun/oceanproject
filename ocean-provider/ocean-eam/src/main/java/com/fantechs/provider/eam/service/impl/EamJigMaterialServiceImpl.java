@@ -54,9 +54,6 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
     public List<EamJigMaterialDto> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
 
@@ -67,9 +64,6 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigMaterialDto record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         this.ifRepeat(record);
 
@@ -98,7 +92,7 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
 
         EamHtJigMaterial eamHtJigMaterial = new EamHtJigMaterial();
         BeanUtils.copyProperties(record,eamHtJigMaterial);
-        int i = eamHtJigMaterialMapper.insert(eamHtJigMaterial);
+        int i = eamHtJigMaterialMapper.insertSelective(eamHtJigMaterial);
 
         return i;
     }
@@ -107,9 +101,6 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigMaterialDto entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         this.ifRepeat(entity);
 
@@ -140,16 +131,13 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
 
         EamHtJigMaterial eamHtJigMaterial = new EamHtJigMaterial();
         BeanUtils.copyProperties(entity,eamHtJigMaterial);
-        int i = eamHtJigMaterialMapper.insert(eamHtJigMaterial);
+        int i = eamHtJigMaterialMapper.insertSelective(eamHtJigMaterial);
 
         return i;
     }
 
     private void ifRepeat(EamJigMaterialDto eamJigMaterialDto){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamJigMaterial.class);
         Example.Criteria criteria = example.createCriteria();
@@ -169,9 +157,6 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJigMaterial> htList = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -207,9 +192,6 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
             }
         }
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
@@ -326,9 +308,6 @@ public class EamJigMaterialServiceImpl extends BaseService<EamJigMaterial> imple
     public List<EamJigMaterialListDto> findExportList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return eamJigMaterialListMapper.findExportList(map);

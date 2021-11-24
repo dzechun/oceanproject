@@ -62,9 +62,7 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseLabelCategory record) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         Example example = new Example(BaseLabelCategory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelCategoryCode",record.getLabelCategoryCode());
@@ -95,9 +93,6 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseLabelCategory entity) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseLabelCategory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -132,9 +127,6 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtLabelCategory> list = new ArrayList<>();
 

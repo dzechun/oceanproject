@@ -31,9 +31,6 @@ public class BaseStaffProcessServiceImpl extends BaseService<BaseStaffProcess> i
     @Override
     public List<BaseStaffProcess> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseStaffProcessMapper.findList(map);
     }
@@ -42,9 +39,6 @@ public class BaseStaffProcessServiceImpl extends BaseService<BaseStaffProcess> i
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseStaffProcess baseStaffProcess) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断员工和工作的关系是否存在
         Example example = new Example(BaseStaffProcess.class);
@@ -63,9 +57,6 @@ public class BaseStaffProcessServiceImpl extends BaseService<BaseStaffProcess> i
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseStaffProcess baseStaffProcess) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断员工和工作的关系是否存在
         Example example = new Example(BaseStaffProcess.class);
@@ -85,9 +76,6 @@ public class BaseStaffProcessServiceImpl extends BaseService<BaseStaffProcess> i
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
@@ -104,9 +92,6 @@ public class BaseStaffProcessServiceImpl extends BaseService<BaseStaffProcess> i
     @Transactional(rollbackFor = Exception.class)
     public int batchSave(List<BaseStaffProcess> list) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         for (BaseStaffProcess baseStaffProcess : list) {
 

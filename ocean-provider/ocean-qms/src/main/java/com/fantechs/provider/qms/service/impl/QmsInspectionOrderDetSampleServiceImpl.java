@@ -58,9 +58,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Override
     public List<QmsInspectionOrderDetSample> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId",user.getOrganizationId());
         return qmsInspectionOrderDetSampleMapper.findList(map);
     }
@@ -86,9 +83,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchAdd(List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSampleList) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //原数据删除
         Long inspectionOrderDetId = qmsInspectionOrderDetSampleList.get(0).getInspectionOrderDetId();
@@ -165,9 +159,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(QmsInspectionOrderDetSample qmsInspectionOrderDetSample) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());
         qmsInspectionOrderDetSample.setCreateTime(new Date());
@@ -183,9 +174,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(QmsInspectionOrderDetSample qmsInspectionOrderDetSample) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         qmsInspectionOrderDetSample.setModifiedUserId(user.getUserId());
         qmsInspectionOrderDetSample.setModifiedTime(new Date());

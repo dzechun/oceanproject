@@ -39,9 +39,6 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseTab baseTab) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         return baseTabMapper.insertUseGeneratedKeys(baseTab);
     }
@@ -50,9 +47,6 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseTab baseTab) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         return baseTabMapper.updateByPrimaryKeySelective(baseTab);
     }
@@ -61,9 +55,6 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(List<BaseTab> baseTabs) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         int i=0;
         if (StringUtils.isNotEmpty(baseTabs)){
@@ -82,9 +73,6 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
     @Transactional(rollbackFor = Exception.class)
     public int insertList(List<BaseTab> baseTabs) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         return baseTabMapper.insertList(baseTabs);
     }

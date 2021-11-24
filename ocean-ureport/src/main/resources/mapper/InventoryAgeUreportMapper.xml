@@ -32,6 +32,7 @@
         <id column="inventory_det_id" jdbcType="BIGINT" property="inventoryDetId" />
         <result column="serial_number" jdbcType="INTEGER" property="serialNumber"/>
         <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+        <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus"/>
     </resultMap>
 
     <select id="findList" resultMap="BaseResultMap">
@@ -128,13 +129,14 @@
                 and DATEDIFF(NOW(),wiid.create_time) &gt;= 1) = #{qty}
             </if>
         </where>
-        order by wii.create_time desc
+        order by serial_number
     </select>
 
     <select id="findDetList" resultMap="BaseResultDetMap">
         SELECT
         (@i:=@i+1) as serial_number,
         wiid.barcode,
+        wiid.barcode_status,
         wiid.inventory_det_id
         FROM wms_inner_inventory_det wiid,(SELECT @i:=0)j
         <where>
