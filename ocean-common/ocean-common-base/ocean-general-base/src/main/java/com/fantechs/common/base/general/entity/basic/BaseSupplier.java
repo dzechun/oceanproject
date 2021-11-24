@@ -56,6 +56,62 @@ public class BaseSupplier extends ValidGroup implements Serializable {
     private String supplierDesc;
 
     /**
+     * 简称
+     */
+    @Column(name = "supplier_abbreviation")
+    @ApiModelProperty("简称")
+    @Excel(name = "简称", height = 20, width = 30)
+    private String supplierAbbreviation;
+
+    /**
+     * LOGO
+     */
+    @Column(name = "supplier_logo")
+    @ApiModelProperty("LOGO")
+    @Excel(name = "LOGO", height = 20, width = 30)
+    private String supplierLogo;
+
+    /**
+     * 联系人
+     */
+    @Column(name = "liaison_man")
+    @ApiModelProperty("联系人")
+    @Excel(name = "联系人", height = 20, width = 30)
+    private String liaisonMan;
+
+    /**
+     * 联系电话
+     */
+    @Column(name = "telephone")
+    @ApiModelProperty("联系电话")
+    @Excel(name = "联系电话", height = 20, width = 30)
+    private String telephone;
+
+    /**
+     * 邮箱
+     */
+    @Column(name = "e_mail")
+    @ApiModelProperty("邮箱")
+    @Excel(name = "邮箱", height = 20, width = 30)
+    private String email;
+
+    /**
+     * 手机号
+     */
+    @Column(name = "mobile_phone")
+    @ApiModelProperty("手机号")
+    @Excel(name = "手机号", height = 20, width = 30)
+    private String mobilePhone;
+
+    /**
+     * 是否预约发货(0-否 1-是)
+     */
+    @Column(name = "if_appoint_deliver")
+    @ApiModelProperty("是否预约发货(0-否 1-是)")
+    @Excel(name = "是否预约发货(0-否 1-是)", height = 20, width = 30,replace = {"否_0","是_1"})
+    private Byte ifAppointDeliver;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")

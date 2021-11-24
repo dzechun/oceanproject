@@ -149,6 +149,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
 
     //供应商绑定地址
     public void bindAddress(Long supplier,List<BaseAddressDto> list){
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isNotEmpty(list)){
             List<BaseSupplierAddress> supplierAddresses = new ArrayList<>();
             //将新增的地址与供应商进行绑定
@@ -157,6 +158,8 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
                 baseSupplierAddress.setIfDefault(baseAddressDto.getIfDefault());
                 baseSupplierAddress.setSupplierId(supplier);
                 baseSupplierAddress.setAddressId(baseAddressDto.getAddressId());
+                baseSupplierAddress.setStatus((byte)1);
+                baseSupplierAddress.setOrganizationId(currentUser.getOrganizationId());
                 supplierAddresses.add(baseSupplierAddress);
             }
             if(StringUtils.isNotEmpty(supplierAddresses)){

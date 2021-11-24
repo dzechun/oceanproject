@@ -7,6 +7,13 @@
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="supplier_desc" jdbcType="VARCHAR" property="supplierDesc"/>
         <result column="supplier_type" jdbcType="TINYINT" property="supplierType"/>
+        <result column="supplier_abbreviation" jdbcType="VARCHAR" property="supplierAbbreviation"/>
+        <result column="supplier_logo" jdbcType="VARCHAR" property="supplierLogo"/>
+        <result column="liaison_man" jdbcType="VARCHAR" property="liaisonMan"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="e_mail" jdbcType="VARCHAR" property="email"/>
+        <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
+        <result column="if_appoint_deliver" jdbcType="TINYINT" property="ifAppointDeliver"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -34,6 +41,9 @@
         ss.supplier_logo,
         ss.liaison_man,
         ss.telephone,
+        ss.e_mail,
+        ss.mobile_phone,
+        ss.if_appoint_deliver,
         ss.supplier_type,
         ss.`status`,
         ss.remark,
