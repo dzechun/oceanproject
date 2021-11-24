@@ -35,9 +35,6 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
     @Override
     public int save(BaseShipmentEnterprise baseShipmentEnterprise) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseShipmentEnterprise.class);
         Example.Criteria criteria1 = example.createCriteria();
@@ -69,7 +66,7 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
 
         BaseHtShipmentEnterprise baseHtShipmentEnterprise = new BaseHtShipmentEnterprise();
         BeanUtils.copyProperties(baseShipmentEnterprise,baseHtShipmentEnterprise);
-        baseHtShipmentEnterpriseMapper.insert(baseHtShipmentEnterprise);
+        baseHtShipmentEnterpriseMapper.insertSelective(baseHtShipmentEnterprise);
 
         return i;
     }
@@ -77,9 +74,6 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
     @Override
     public int update(BaseShipmentEnterprise baseShipmentEnterprise) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseShipmentEnterprise.class);
         Example.Criteria criteria1 = example.createCriteria();
@@ -109,7 +103,7 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
 
         BaseHtShipmentEnterprise baseHtShipmentEnterprise = new BaseHtShipmentEnterprise();
         BeanUtils.copyProperties(baseShipmentEnterprise,baseHtShipmentEnterprise);
-        baseHtShipmentEnterpriseMapper.insert(baseHtShipmentEnterprise);
+        baseHtShipmentEnterpriseMapper.insertSelective(baseHtShipmentEnterprise);
 
         return baseShipmentEnterpriseMapper.updateByPrimaryKeySelective(baseShipmentEnterprise);
     }
@@ -117,9 +111,6 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtShipmentEnterprise> baseHtShipmentEnterprises = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -141,9 +132,6 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
     @Override
     public List<BaseShipmentEnterpriseDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseShipmentEnterpriseMapper.findList(map);
     }
@@ -152,9 +140,6 @@ public class BaseShipmentEnterpriseServiceImpl extends BaseService<BaseShipmentE
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseShipmentEnterpriseImport> baseShipmentEnterpriseImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

@@ -38,9 +38,6 @@ public class EamEquipmentCategoryServiceImpl extends BaseService<EamEquipmentCat
     @Override
     public List<EamEquipmentCategoryDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return eamEquipmentCategoryMapper.findList(map);
     }
@@ -48,9 +45,6 @@ public class EamEquipmentCategoryServiceImpl extends BaseService<EamEquipmentCat
     @Override
     public List<EamHtEquipmentCategory> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return eamHtEquipmentCategoryMapper.findHtList(map);
     }
@@ -59,9 +53,6 @@ public class EamEquipmentCategoryServiceImpl extends BaseService<EamEquipmentCat
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipmentCategory record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         this.ifRepeat(record);
 
@@ -75,7 +66,7 @@ public class EamEquipmentCategoryServiceImpl extends BaseService<EamEquipmentCat
 
         EamHtEquipmentCategory eamHtEquipmentCategory = new EamHtEquipmentCategory();
         BeanUtils.copyProperties(record, eamHtEquipmentCategory);
-        int i = eamHtEquipmentCategoryMapper.insert(eamHtEquipmentCategory);
+        int i = eamHtEquipmentCategoryMapper.insertSelective(eamHtEquipmentCategory);
 
         return i;
     }
@@ -84,9 +75,6 @@ public class EamEquipmentCategoryServiceImpl extends BaseService<EamEquipmentCat
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquipmentCategory entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         this.ifRepeat(entity);
 
@@ -95,7 +83,7 @@ public class EamEquipmentCategoryServiceImpl extends BaseService<EamEquipmentCat
 
         EamHtEquipmentCategory eamHtEquipmentCategory = new EamHtEquipmentCategory();
         BeanUtils.copyProperties(entity, eamHtEquipmentCategory);
-        eamHtEquipmentCategoryMapper.insert(eamHtEquipmentCategory);
+        eamHtEquipmentCategoryMapper.insertSelective(eamHtEquipmentCategory);
 
         return eamEquipmentCategoryMapper.updateByPrimaryKeySelective(entity);
     }
@@ -129,9 +117,6 @@ public class EamEquipmentCategoryServiceImpl extends BaseService<EamEquipmentCat
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtEquipmentCategory> list = new ArrayList<>();
         String[] idArry = ids.split(",");

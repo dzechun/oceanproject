@@ -38,9 +38,6 @@ public class BaseInspectionWayServiceImpl extends BaseService<BaseInspectionWay>
     public List<BaseInspectionWay> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return baseInspectionWayMapper.findList(map);
@@ -50,9 +47,6 @@ public class BaseInspectionWayServiceImpl extends BaseService<BaseInspectionWay>
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseInspectionWay baseInspectionWay) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseInspectionWay.class);
         Example.Criteria criteria = example.createCriteria();
@@ -73,7 +67,7 @@ public class BaseInspectionWayServiceImpl extends BaseService<BaseInspectionWay>
 
         BaseHtInspectionWay baseHtInspectionWay = new BaseHtInspectionWay();
         BeanUtils.copyProperties(baseInspectionWay, baseHtInspectionWay);
-        baseHtInspectionWayMapper.insert(baseHtInspectionWay);
+        baseHtInspectionWayMapper.insertSelective(baseHtInspectionWay);
 
         return i;
     }
@@ -82,9 +76,6 @@ public class BaseInspectionWayServiceImpl extends BaseService<BaseInspectionWay>
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseInspectionWay baseInspectionWay) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseInspectionWay.class);
         Example.Criteria criteria = example.createCriteria();
@@ -102,7 +93,7 @@ public class BaseInspectionWayServiceImpl extends BaseService<BaseInspectionWay>
 
         BaseHtInspectionWay baseHtInspectionWay = new BaseHtInspectionWay();
         BeanUtils.copyProperties(baseInspectionWay, baseHtInspectionWay);
-        baseHtInspectionWayMapper.insert(baseHtInspectionWay);
+        baseHtInspectionWayMapper.insertSelective(baseHtInspectionWay);
 
         return baseInspectionWayMapper.updateByPrimaryKeySelective(baseInspectionWay);
     }
@@ -111,9 +102,6 @@ public class BaseInspectionWayServiceImpl extends BaseService<BaseInspectionWay>
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtInspectionWay> list = new ArrayList<>();
         String[] idArry = ids.split(",");

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Author lzw
@@ -68,4 +69,11 @@ public class SearchInventoryAgeUreport extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name = "poCode",value = "批次号/PO号")
     private String  poCode;
+
+    /**
+     *  正品库存
+     */
+    @ApiModelProperty(name = "qty",value = "正品库存")
+    private BigDecimal qty;
+
 }

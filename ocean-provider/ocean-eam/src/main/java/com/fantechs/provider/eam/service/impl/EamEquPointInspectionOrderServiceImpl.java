@@ -193,7 +193,7 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
         // 新增点检单履历
         EamHtEquPointInspectionOrder eamHtEquPointInspectionOrder = new EamHtEquPointInspectionOrder();
         BeanUtil.copyProperties(eamEquPointInspectionOrder, eamHtEquPointInspectionOrder);
-        int i = eamHtEquPointInspectionOrderMapper.insert(eamHtEquPointInspectionOrder);
+        int i = eamHtEquPointInspectionOrderMapper.insertSelective(eamHtEquPointInspectionOrder);
 
         if(!eamEquPointInspectionOrder.getOrderDets().isEmpty()){
             List<EamEquPointInspectionOrderDet> inspectionOrderDets = eamEquPointInspectionOrder.getOrderDets()
@@ -229,7 +229,7 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
         // 新增点检单履历
         EamHtEquPointInspectionOrder eamHtEquPointInspectionOrder = new EamHtEquPointInspectionOrder();
         BeanUtil.copyProperties(eamEquPointInspectionOrder, eamHtEquPointInspectionOrder);
-        int i = eamHtEquPointInspectionOrderMapper.insert(eamHtEquPointInspectionOrder);
+        int i = eamHtEquPointInspectionOrderMapper.insertSelective(eamHtEquPointInspectionOrder);
 
 
         // 批量删除点检单明细
@@ -303,9 +303,6 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
 
     private SysUser getUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 }

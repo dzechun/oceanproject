@@ -48,9 +48,6 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
     @Override
     public List<EamJigRepairOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamJigRepairOrderMapper.findList(map);
@@ -91,9 +88,6 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigRepairOrder record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //报废无法新增维修单
         EamJigBarcode eamJigBarcode = eamJigBarcodeMapper.selectByPrimaryKey(record.getJigBarcodeId());
@@ -132,7 +126,7 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
 
         EamHtJigRepairOrder eamHtJigRepairOrder = new EamHtJigRepairOrder();
         BeanUtils.copyProperties(record,eamHtJigRepairOrder);
-        int i = eamHtJigRepairOrderMapper.insert(eamHtJigRepairOrder);
+        int i = eamHtJigRepairOrderMapper.insertSelective(eamHtJigRepairOrder);
 
         return i;
     }
@@ -141,9 +135,6 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigRepairOrder entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         entity.setRepairTime(new Date());
         entity.setModifiedUserId(user.getUserId());
@@ -173,7 +164,7 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
 
         EamHtJigRepairOrder eamHtJigRepairOrder = new EamHtJigRepairOrder();
         BeanUtils.copyProperties(entity,eamHtJigRepairOrder);
-        int i = eamHtJigRepairOrderMapper.insert(eamHtJigRepairOrder);
+        int i = eamHtJigRepairOrderMapper.insertSelective(eamHtJigRepairOrder);
 
         updateJigUsageStatus(entity);
 
@@ -200,9 +191,6 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJigRepairOrder> htList = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -230,9 +218,6 @@ public class EamJigRepairOrderServiceImpl extends BaseService<EamJigRepairOrder>
 
     private void codeIfRepeat(EamJigRepairOrder eamJigRepairOrder){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamJigRepairOrder.class);
         Example.Criteria criteria = example.createCriteria();

@@ -47,9 +47,6 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
     @Override
     public List<EamEquipmentJigDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return eamEquipmentJigMapper.findList(map);
     }
@@ -58,9 +55,6 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipmentJigDto record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamEquipmentJig.class);
         Example.Criteria criteria = example.createCriteria();
@@ -96,7 +90,7 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
         //履历
         EamHtEquipmentJig eamHtEquipmentJig = new EamHtEquipmentJig();
         BeanUtils.copyProperties(record, eamHtEquipmentJig);
-        int i = eamHtEquipmentJigMapper.insert(eamHtEquipmentJig);
+        int i = eamHtEquipmentJigMapper.insertSelective(eamHtEquipmentJig);
 
         return i;
     }
@@ -105,9 +99,6 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquipmentJigDto entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamEquipmentJig.class);
         Example.Criteria criteria = example.createCriteria();
@@ -146,7 +137,7 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
         //履历
         EamHtEquipmentJig eamHtEquipmentJig = new EamHtEquipmentJig();
         BeanUtils.copyProperties(entity, eamHtEquipmentJig);
-        int i = eamHtEquipmentJigMapper.insert(eamHtEquipmentJig);
+        int i = eamHtEquipmentJigMapper.insertSelective(eamHtEquipmentJig);
 
         return i;
     }
@@ -155,9 +146,6 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtEquipmentJig> list = new ArrayList<>();
         String[] idArry = ids.split(",");
@@ -193,9 +181,6 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
             }
         }
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
@@ -309,9 +294,6 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
     public List<EamEquipmentJigListDto> findExportList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return eamEquipmentJigListMapper.findExportList(map);

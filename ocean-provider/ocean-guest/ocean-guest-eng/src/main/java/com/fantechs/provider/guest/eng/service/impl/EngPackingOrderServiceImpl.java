@@ -16,12 +16,10 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.eng.*;
 import com.fantechs.common.base.general.entity.eng.history.EngHtPackingOrder;
 import com.fantechs.common.base.general.entity.eng.search.SearchEngContractQtyOrderAndPurOrder;
-import com.fantechs.common.base.general.entity.eng.search.SearchEngPackingOrderSummaryDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.guest.eng.mapper.*;
@@ -91,7 +89,7 @@ public class EngPackingOrderServiceImpl extends BaseService<EngPackingOrder> imp
         engPackingOrder.setAuditStatus((byte)1);
         engPackingOrder.setOrderStatus((byte)1);
         engPackingOrder.setOrgId(user.getOrganizationId());
-        int i = engPackingOrderMapper.insertUseGeneratedKeys(engPackingOrder);
+        int i = engPackingOrderMapper.insertSelective(engPackingOrder);
 
         EngHtPackingOrder engHtPackingOrder =new EngHtPackingOrder();
         BeanUtils.copyProperties(engPackingOrder, engHtPackingOrder);

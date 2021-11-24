@@ -54,9 +54,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseWarehouse baseWarehouse) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseWarehouse.class);
         Example.Criteria criteria = example.createCriteria();
@@ -98,9 +95,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
         List<BaseHtWarehouse> list=new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] warehouseIds = ids.split(",");
         for (String warehouseId : warehouseIds) {
@@ -140,9 +134,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseWarehouse baseWarehouse) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseWarehouse.class);
         Example.Criteria criteria = example.createCriteria();
@@ -187,9 +178,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     public List<BaseWarehouse> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         List<BaseWarehouse> baseWarehouses = baseWarehouseMapper.findList(map);
@@ -225,9 +213,6 @@ public class BaseWarehouseServiceImpl extends BaseService<BaseWarehouse> impleme
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseWarehouseImport> baseWarehouseImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

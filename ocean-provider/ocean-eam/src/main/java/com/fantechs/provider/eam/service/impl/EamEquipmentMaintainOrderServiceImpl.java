@@ -197,7 +197,7 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
         // 新增保养单履历
         EamHtEquipmentMaintainOrder eamHtEquipmentMaintainOrder = new EamHtEquipmentMaintainOrder();
         BeanUtil.copyProperties(eamEquipmentMaintainOrder, eamHtEquipmentMaintainOrder);
-        int i = eamHtEquipmentMaintainOrderMapper.insert(eamHtEquipmentMaintainOrder);
+        int i = eamHtEquipmentMaintainOrderMapper.insertSelective(eamHtEquipmentMaintainOrder);
 
         if(!eamEquipmentMaintainOrder.getOrderDets().isEmpty()){
             List<EamEquipmentMaintainOrderDet> maintainOrderDets = eamEquipmentMaintainOrder.getOrderDets()
@@ -233,7 +233,7 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
         // 新增保养单履历
         EamHtEquipmentMaintainOrder eamHtEquipmentMaintainOrder = new EamHtEquipmentMaintainOrder();
         BeanUtil.copyProperties(eamEquipmentMaintainOrder, eamHtEquipmentMaintainOrder);
-        int i = eamHtEquipmentMaintainOrderMapper.insert(eamHtEquipmentMaintainOrder);
+        int i = eamHtEquipmentMaintainOrderMapper.insertSelective(eamHtEquipmentMaintainOrder);
 
 
         // 批量删除保养单明细
@@ -307,9 +307,6 @@ public class EamEquipmentMaintainOrderServiceImpl extends BaseService<EamEquipme
 
     private SysUser getUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 }

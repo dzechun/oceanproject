@@ -42,9 +42,6 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
     @Override
     public List<EamEquipmentParamDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return eamEquipmentParamMapper.findList(map);
     }
@@ -53,9 +50,6 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipmentParam record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamEquipmentParam.class);
         Example.Criteria criteria = example.createCriteria();
@@ -91,7 +85,7 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
         //履历
         EamHtEquipmentParam eamHtEquipmentParam = new EamHtEquipmentParam();
         BeanUtils.copyProperties(record, eamHtEquipmentParam);
-        int i = eamHtEquipmentParamMapper.insert(eamHtEquipmentParam);
+        int i = eamHtEquipmentParamMapper.insertSelective(eamHtEquipmentParam);
 
         return i;
     }
@@ -100,9 +94,6 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquipmentParam entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamEquipmentParam.class);
         Example.Criteria criteria = example.createCriteria();
@@ -141,7 +132,7 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
         //履历
         EamHtEquipmentParam eamHtEquipmentParam = new EamHtEquipmentParam();
         BeanUtils.copyProperties(entity, eamHtEquipmentParam);
-        eamHtEquipmentParamMapper.insert(eamHtEquipmentParam);
+        eamHtEquipmentParamMapper.insertSelective(eamHtEquipmentParam);
 
         return i;
     }
@@ -150,9 +141,6 @@ public class EamEquipmentParamServiceImpl extends BaseService<EamEquipmentParam>
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtEquipmentParam> list = new ArrayList<>();
         String[] idArry = ids.split(",");

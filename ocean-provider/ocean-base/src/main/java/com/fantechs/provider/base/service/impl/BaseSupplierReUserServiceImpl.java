@@ -47,9 +47,6 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
     @Override
     public List<BaseHtSupplierReUser> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return baseHtSupplierReUserMapper.findHtList(map);
@@ -59,9 +56,6 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
     @Transactional(rollbackFor = Exception.class)
     public int addUser(Long supplierId, List<Long> userIds) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         int i = 0;
 
         Example example = new Example(BaseSupplierReUser.class);
@@ -95,9 +89,6 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseSupplierReUser record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseSupplierReUser.class);
         Example.Criteria criteria = example.createCriteria();
@@ -127,9 +118,6 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseSupplierReUser entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseSupplierReUser.class);
         Example.Criteria criteria = example.createCriteria();
@@ -157,9 +145,6 @@ public class BaseSupplierReUserServiceImpl extends BaseService<BaseSupplierReUse
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtSupplierReUser> htList = new ArrayList<>();
         String[] split = ids.split(",");

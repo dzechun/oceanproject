@@ -42,9 +42,6 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
     @Override
     public List<BaseInventoryStatus> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseInventoryStatusMapper.findList(map);
     }
@@ -54,9 +51,6 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseInventoryStatus baseInventoryStatus) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //相同的货主与仓库只能有一条默认的库存状态
         ifRepeat(baseInventoryStatus);
@@ -73,7 +67,7 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
 
         BaseHtInventoryStatus baseHtInventoryStatus = new BaseHtInventoryStatus();
         BeanUtils.copyProperties(baseInventoryStatus, baseHtInventoryStatus);
-        baseHtInventoryStatusMapper.insert(baseHtInventoryStatus);
+        baseHtInventoryStatusMapper.insertSelective(baseHtInventoryStatus);
 
         return i;
     }
@@ -82,9 +76,6 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseInventoryStatus baseInventoryStatus) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //相同的货主与仓库只能有一条默认的库存状态
         ifRepeat(baseInventoryStatus);
@@ -96,7 +87,7 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
         BaseHtInventoryStatus baseHtInventoryStatus = new BaseHtInventoryStatus();
         BeanUtils.copyProperties(baseInventoryStatus, baseHtInventoryStatus);
 
-        baseHtInventoryStatusMapper.insert(baseHtInventoryStatus);
+        baseHtInventoryStatusMapper.insertSelective(baseHtInventoryStatus);
 
         return baseInventoryStatusMapper.updateByPrimaryKeySelective(baseInventoryStatus);
     }
@@ -125,9 +116,6 @@ public class BaseInventoryStatusServiceImpl extends BaseService<BaseInventorySta
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtInventoryStatus> list = new ArrayList<>();
         String[] idArry = ids.split(",");

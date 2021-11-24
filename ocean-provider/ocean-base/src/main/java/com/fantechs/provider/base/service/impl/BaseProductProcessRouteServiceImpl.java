@@ -67,9 +67,6 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseProductProcessRoute baseProductProcessRoute) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Integer productType = baseProductProcessRoute.getProductType();
         Long proLineId = baseProductProcessRoute.getProLineId();
@@ -124,9 +121,6 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseProductProcessRoute baseProductProcessRoute) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Integer productType = baseProductProcessRoute.getProductType();
         Long proLineId = baseProductProcessRoute.getProLineId();
@@ -183,9 +177,7 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
         int i = 0;
         List<BaseHtProductProcessRoute> list = new ArrayList<>();
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         String[] idsArr = ids.split(",");
         for (String productProcessRouteId : idsArr) {
             BaseProductProcessRoute baseProductProcessRoute = baseProductProcessRouteMapper.selectByPrimaryKey(productProcessRouteId);
@@ -211,9 +203,6 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
     public Map<String, Object> importExcel(List<BaseProductProcessRouteImport> baseProductProcessRouteImports) {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

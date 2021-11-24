@@ -50,9 +50,6 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
     public List<BaseProLine> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return baseProLineMapper.findList(map);
@@ -62,9 +59,6 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseProLine baseProLine) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         int i=0;
         Example example = new Example(BaseProLine.class);
         Example.Criteria criteria = example.createCriteria();
@@ -94,9 +88,6 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseProLine baseProLine) {
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProLine.class);
         Example.Criteria criteria = example.createCriteria();
@@ -125,9 +116,7 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
         int i=0;
         List<BaseHtProLine> list=new ArrayList<>();
         SysUser currentUser =CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         String[] idsArr = ids.split(",");
         for (String proLineId : idsArr) {
             BaseProLine baseProLine = baseProLineMapper.selectByPrimaryKey(proLineId);
@@ -162,9 +151,6 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseProLineImport> baseProLineImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

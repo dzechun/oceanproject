@@ -423,9 +423,6 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
 
     public SysUser getUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 
@@ -433,9 +430,6 @@ public class EamEquipmentServiceImpl extends BaseService<EamEquipment> implement
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<EamEquipmentImport> eamEquipmentImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

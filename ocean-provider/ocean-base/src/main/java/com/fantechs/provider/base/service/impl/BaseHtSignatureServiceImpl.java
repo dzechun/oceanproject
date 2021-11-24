@@ -30,9 +30,6 @@ public class BaseHtSignatureServiceImpl extends BaseService<BaseHtSignature> imp
     @Override
     public List<BaseHtSignature> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseHtSignatureMapper.findHtList(map);
     }

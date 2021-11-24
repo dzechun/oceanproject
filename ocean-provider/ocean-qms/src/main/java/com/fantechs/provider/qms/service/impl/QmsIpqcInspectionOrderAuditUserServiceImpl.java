@@ -42,9 +42,6 @@ public class QmsIpqcInspectionOrderAuditUserServiceImpl extends BaseService<QmsI
     @Override
     public List<QmsIpqcInspectionOrderAuditUser> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId",user.getOrganizationId());
         return qmsIpqcInspectionOrderAuditUserMapper.findList(map);
     }
@@ -54,9 +51,6 @@ public class QmsIpqcInspectionOrderAuditUserServiceImpl extends BaseService<QmsI
     @Transactional(rollbackFor = Exception.class)
     public int save(QmsIpqcInspectionOrderAuditUser record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(QmsIpqcInspectionOrderAuditUser.class);
         Example.Criteria criteria = example.createCriteria();

@@ -79,7 +79,7 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
         // 新增点检项目履历
         EamHtEquPointInspectionProject eamHtEquPointInspectionProject = new EamHtEquPointInspectionProject();
         BeanUtil.copyProperties(eamEquPointInspectionProject, eamHtEquPointInspectionProject);
-        int i = eamHtEquPointInspectionProjectMapper.insert(eamHtEquPointInspectionProject);
+        int i = eamHtEquPointInspectionProjectMapper.insertSelective(eamHtEquPointInspectionProject);
 
         //保养项目事项
         List<EamEquPointInspectionProjectItem> items = eamEquPointInspectionProject.getItems();
@@ -114,7 +114,7 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
         // 新增点检项目履历
         EamHtEquPointInspectionProject eamHtEquPointInspectionProject = new EamHtEquPointInspectionProject();
         BeanUtil.copyProperties(eamEquPointInspectionProject, eamHtEquPointInspectionProject);
-        int i = eamHtEquPointInspectionProjectMapper.insert(eamHtEquPointInspectionProject);
+        int i = eamHtEquPointInspectionProjectMapper.insertSelective(eamHtEquPointInspectionProject);
 
         // 批量删除点检项目事项
         ArrayList<Long> idList = new ArrayList<>();
@@ -211,9 +211,6 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
 
     private SysUser getUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 }

@@ -43,9 +43,6 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseProcessCategory baseProcessCategory) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProcessCategory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -74,9 +71,6 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseProcessCategory baseProcessCategory) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProcessCategory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -105,9 +99,6 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
         ArrayList<BaseHtProcessCategory> list = new ArrayList<>();
 
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] processCategoryIds = ids.split(",");
         for (String processCategoryId : processCategoryIds) {
@@ -140,9 +131,6 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
     @Override
     public List<BaseProcessCategoryDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseProcessCategoryMapper.findList(map);
     }
@@ -151,9 +139,7 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseProcessCategoryImport> baseProcessCategoryImportList) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

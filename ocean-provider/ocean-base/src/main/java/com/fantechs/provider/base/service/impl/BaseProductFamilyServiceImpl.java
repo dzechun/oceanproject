@@ -36,9 +36,6 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseProductFamily baseProductFamily) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProductFamily.class);
         Example.Criteria criteria1 = example.createCriteria();
@@ -69,7 +66,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
 
         BaseHtProductFamily baseHtProductFamily = new BaseHtProductFamily();
         BeanUtils.copyProperties(baseProductFamily,baseHtProductFamily);
-        baseHtProductFamilyMapper.insert(baseHtProductFamily);
+        baseHtProductFamilyMapper.insertSelective(baseHtProductFamily);
 
         return i;
     }
@@ -78,9 +75,6 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseProductFamily baseProductFamily) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProductFamily.class);
         Example.Criteria criteria1 = example.createCriteria();
@@ -110,7 +104,7 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
 
         BaseHtProductFamily baseHtProductFamily = new BaseHtProductFamily();
         BeanUtils.copyProperties(baseProductFamily,baseHtProductFamily);
-        baseHtProductFamilyMapper.insert(baseHtProductFamily);
+        baseHtProductFamilyMapper.insertSelective(baseHtProductFamily);
 
         return baseProductFamilyMapper.updateByPrimaryKeySelective(baseProductFamily);
     }
@@ -119,9 +113,6 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtProductFamily> baseHtProductFamilies = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -145,9 +136,6 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
     @Override
     public List<BaseProductFamilyDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseProductFamilyMapper.findList(map);
     }
@@ -156,9 +144,6 @@ public class BaseProductFamilyServiceImpl extends BaseService<BaseProductFamily>
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseProductFamilyImport> baseProductFamilyImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

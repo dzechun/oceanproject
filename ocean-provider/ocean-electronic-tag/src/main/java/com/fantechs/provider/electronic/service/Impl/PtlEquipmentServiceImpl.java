@@ -30,9 +30,6 @@ public class PtlEquipmentServiceImpl extends BaseService<PtlEquipment> implement
     @Override
     public int save(PtlEquipment ptlEquipment) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(PtlEquipment.class);
         Example.Criteria criteria = example.createCriteria();
@@ -62,9 +59,6 @@ public class PtlEquipmentServiceImpl extends BaseService<PtlEquipment> implement
     @Override
     public int update(PtlEquipment ptlEquipment) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(PtlEquipment.class);
         Example.Criteria criteria = example.createCriteria();
@@ -85,25 +79,19 @@ public class PtlEquipmentServiceImpl extends BaseService<PtlEquipment> implement
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        String[] idsArr  = ids.split(",");
-        for(String  id : idsArr){
-            PtlEquipment ptlEquipment = ptlEquipmentMapper.selectByPrimaryKey(id);
-            if (StringUtils.isEmpty(ptlEquipment)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-            }
-        }
+//        String[] idsArr  = ids.split(",");
+//        for(String  id : idsArr){
+//            PtlEquipment ptlEquipment = ptlEquipmentMapper.selectByPrimaryKey(id);
+//            if (StringUtils.isEmpty(ptlEquipment)){
+//                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+//            }
+//        }
         return ptlEquipmentMapper.deleteByIds(ids);
     }
 
     @Override
     public List<PtlEquipmentDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return ptlEquipmentMapper.findList(map);
     }

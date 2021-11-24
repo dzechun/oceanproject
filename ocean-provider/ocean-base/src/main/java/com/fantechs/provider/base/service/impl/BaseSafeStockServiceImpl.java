@@ -46,9 +46,6 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     @Override
     public List<BaseSafeStockDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseSafeStockMapper.findList(map);
     }
@@ -56,9 +53,6 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     @Override
     public List<BaseSafeStockDto> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseHtSafeStockMapper.findHtList(map);
     }
@@ -149,9 +143,6 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
      */
     private SysUser currentUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 
@@ -172,9 +163,6 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseSafeStockImport> baseSafeStockImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

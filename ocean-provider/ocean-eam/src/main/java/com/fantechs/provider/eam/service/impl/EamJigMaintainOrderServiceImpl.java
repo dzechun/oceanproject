@@ -60,9 +60,6 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
     @Override
     public List<EamJigMaintainOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamJigMaintainOrderMapper.findList(map);
@@ -151,9 +148,6 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigMaintainOrder record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamJigPointInspectionOrder.class);
         Example.Criteria criteria = example.createCriteria();
@@ -219,7 +213,7 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
 
         EamHtJigMaintainOrder eamHtJigMaintainOrder = new EamHtJigMaintainOrder();
         BeanUtils.copyProperties(record,eamHtJigMaintainOrder);
-        int i = eamHtJigMaintainOrderMapper.insert(eamHtJigMaintainOrder);
+        int i = eamHtJigMaintainOrderMapper.insertSelective(eamHtJigMaintainOrder);
 
         return i;
     }
@@ -228,9 +222,6 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigMaintainOrder entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //this.codeIfRepeat(entity);
 
@@ -261,7 +252,7 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
 
         EamHtJigMaintainOrder eamHtJigMaintainOrder = new EamHtJigMaintainOrder();
         BeanUtils.copyProperties(entity,eamHtJigMaintainOrder);
-        int i = eamHtJigMaintainOrderMapper.insert(eamHtJigMaintainOrder);
+        int i = eamHtJigMaintainOrderMapper.insertSelective(eamHtJigMaintainOrder);
 
         return i;
     }
@@ -271,9 +262,6 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJigMaintainOrder> htList = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -301,9 +289,6 @@ public class EamJigMaintainOrderServiceImpl extends BaseService<EamJigMaintainOr
 
     private void codeIfRepeat(EamJigMaintainOrder eamJigMaintainOrder){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamJigMaintainOrder.class);
         Example.Criteria criteria = example.createCriteria();

@@ -40,9 +40,6 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
         @Override
         public List<BaseBarcodeRuleSetDetDto> findList(Map<String, Object> map) {
                 SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-                if (StringUtils.isEmpty(user)) {
-                        throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-                }
                 map.put("orgId", user.getOrganizationId());
                 return baseBarcodeRuleSetDetMapper.findList(map);
         }
@@ -51,9 +48,7 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
         @Transactional(rollbackFor = Exception.class)
         public int bindBarcodeRule(Long barcodeRuleSetId, List<Long> barcodeRuleIds) {
                 SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-                if(StringUtils.isEmpty(currentUser)){
-                        throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-                }
+
                 if(barcodeRuleIds.size()<1){
                         throw new BizErrorException("绑定条码规则为空");
                 }
@@ -96,9 +91,6 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
         @Transactional(rollbackFor = Exception.class)
         public int save(BaseBarcodeRuleSetDet baseBarcodeRuleSetDet) {
                 SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-                if(StringUtils.isEmpty(currentUser)){
-                        throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-                }
 
                 Example example = new Example(BaseBarcodeRuleSetDet.class);
                 Example.Criteria criteria = example.createCriteria();
@@ -124,9 +116,6 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
         @Transactional(rollbackFor = Exception.class)
         public int update(BaseBarcodeRuleSetDet baseBarcodeRuleSetDet) {
                 SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-                if(StringUtils.isEmpty(currentUser)){
-                        throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-                }
 
                 Example example = new Example(BaseBarcodeRuleSetDet.class);
                 Example.Criteria criteria = example.createCriteria();
@@ -148,9 +137,6 @@ public class BaseBarcodeRuleSetDetServiceImpl extends BaseService<BaseBarcodeRul
         @Transactional(rollbackFor = Exception.class)
         public int batchDelete(String ids) {
                 SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-                if(StringUtils.isEmpty(currentUser)){
-                        throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-                }
 
                 String[] barcodeRuleSetDetIds = ids.split(",");
                 for (String barcodeRuleSetDetId : barcodeRuleSetDetIds) {

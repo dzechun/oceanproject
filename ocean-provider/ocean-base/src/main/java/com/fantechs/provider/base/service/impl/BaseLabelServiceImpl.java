@@ -56,9 +56,6 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
     @Override
     public List<BaseLabelDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseLabelMapper.findList(map);
     }
@@ -67,9 +64,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
     @Transactional(rollbackFor = RuntimeException.class)
     public int add(BaseLabel baseLabel, MultipartFile file) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         if(StringUtils.isEmpty(file)){
             throw new BizErrorException("未检测到上传的标签文件");
         }
@@ -163,9 +158,6 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseLabel baseLabel, MultipartFile file) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         if(StringUtils.isNotEmpty(file) && (StringUtils.isEmpty(file.getOriginalFilename()) || file.getOriginalFilename().equals(""))){
             throw new BizErrorException("请规范标签文件名称");
@@ -216,9 +208,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         List<BaseHtLabel> list = new ArrayList<>();
         String[] idArry = ids.split(",");
         for (String id : idArry) {
