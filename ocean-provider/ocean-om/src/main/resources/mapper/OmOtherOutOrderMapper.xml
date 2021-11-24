@@ -16,7 +16,6 @@
     <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
     <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
     <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
-    <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress"/>
     <result column="address" jdbcType="VARCHAR" property="address"/>
     <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
     <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
