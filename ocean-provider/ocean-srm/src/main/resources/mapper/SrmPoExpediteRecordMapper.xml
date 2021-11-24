@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.srm.mapper.SrmPoExpediteRecordMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.srm.SrmPoExpediteRecord">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="po_expedite_record_id" jdbcType="BIGINT" property="poExpediteRecordId" />
+    <result column="po_expedite_id" jdbcType="BIGINT" property="poExpediteId" />
+    <result column="feedback_content" jdbcType="VARCHAR" property="feedbackContent" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmPoExpediteRecordDto">
+    <result column="access_url" jdbcType="VARCHAR" property="accessUrl" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    sper.po_expedite_record_id,
+    sper.po_expedite_id,
+    sper.feedback_content,
+    sper.status,
+    sper.remark,
+    sper.org_id,
+    sper.create_user_id,
+    sper.create_time,
+    sper.modified_user_id,
+    sper.modified_time
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map" >
+    select <include refid="Base_Column_List"></include>,
+        bf.access_url,
+        csu.user_name
+    from srm_po_expedite_record sper
+    left join base_file bf on bf.relevance_id = sper.po_expedite_record_id and bf.relevance_table_name = 'srm_po_expedite_record'
+    left join sys_user csu on csu.user_id = sper.create_user_id
+    <where>
+      <if test="poExpediteId != null and poExpediteId != ''">
+        and sper.po_expedite_id like CONCAT('%', #{poExpediteId}, '%')
+      </if>
+    </where>
+  </select>
+</mapper>

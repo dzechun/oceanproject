@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.srm.mapper.SrmHtPoExpediteRecordMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.srm.history.SrmHtPoExpediteRecord">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_po_expedite_record_id" jdbcType="BIGINT" property="htPoExpediteRecordId" />
+    <result column="po_expedite_record_id" jdbcType="BIGINT" property="poExpediteRecordId" />
+    <result column="po_expedite_id" jdbcType="BIGINT" property="poExpediteId" />
+    <result column="feedback_content" jdbcType="VARCHAR" property="feedbackContent" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <collection property="fileList" ofType="com.fantechs.common.base.general.dto.srm.SrmPoExpediteRecordReFileDto"
+                column="{poExpediteRecordId=po_expedite_record_id}" select="com.fantechs.provider.srm.mapper.SrmHtPoExpediteRecordReFileMapper.findList">
+
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    shper.ht_po_expedite_record_id,
+    shper.po_expedite_record_id,
+    shper.po_expedite_id,
+    shper.feedback_content,
+    shper.status,
+    shper.remark,
+    shper.org_id,
+    shper.create_user_id,
+    shper.create_time,
+    shper.modified_user_id,
+    shper.modified_time,
+    shper.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map" >
+    select <include refid="Base_Column_List"></include>
+    from srm_ht_po_expedite_record shper
+    <where>
+      <if test="poExpediteId != null">
+        and shper.po_expedite_id = #{poExpediteId}
+      </if>
+    </where>
+  </select>
+
+</mapper>

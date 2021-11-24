@@ -231,4 +231,25 @@ public class SysUser extends ValidGroup implements Serializable {
     @Transient
     private Long roleName;
 
+    /**
+     * 供应商名称
+     */
+    @ApiModelProperty(name="supplierName" ,value="供应商名称")
+    @Transient
+    private String supplierName;
+
+    /**
+     * 供应商编码
+     */
+    @ApiModelProperty(name="supplierCode" ,value="供应商编码")
+    @Transient
+    private String supplierCode;
+
+    /**
+     * 供应商ID
+     */
+    @ApiModelProperty(name="supplierId" ,value="供应商ID")
+    @Transient
+    private Long supplierId;
+
 }

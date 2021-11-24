@@ -34,12 +34,15 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
     @Override
     public List<OmPurchaseOrderDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(map.get("orgId"))) {
-            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
             if (StringUtils.isEmpty(user)) {
                 throw new BizErrorException(ErrorCodeEnum.UAC10011039);
             }
             map.put("orgId", user.getOrganizationId());
+        }
+        if (StringUtils.isNotEmpty(map.get("ifSupplierFind"))) {
+            map.put("supplierId",user.getSupplierId());
         }
         return omPurchaseOrderMapper.findList(map);
     }
@@ -119,5 +122,35 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
     @Override
     public String findPurchaseMaterial(String purchaseOrderCode) {
         return omPurchaseOrderMapper.findPurchaseMaterial(purchaseOrderCode);
+    }
+
+    @Override
+    public int update(OmPurchaseOrder entity) {
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        entity.setCreateUserId(user.getUserId());
+        entity.setCreateTime(new Date());
+        int i = omPurchaseOrderMapper.updateByPrimaryKeySelective(entity);
+
+        //删除该采购订单下的所有详情表
+        Example detExample = new Example(OmPurchaseOrderDet.class);
+        Example.Criteria detCriteria = detExample.createCriteria();
+        detCriteria.andEqualTo("purchaseOrderId", entity.getPurchaseOrderId());
+        omPurchaseOrderDetMapper.deleteByExample(detExample);
+
+        for (OmPurchaseOrderDet omPurchaseOrderDet : entity.getOmPurchaseOrderDetList()) {
+            omPurchaseOrderDet.setPurchaseOrderId(entity.getPurchaseOrderId());
+            omPurchaseOrderDet.setStatus((byte) 1);
+            omPurchaseOrderDet.setOrgId(user.getOrganizationId());
+            omPurchaseOrderDet.setCreateUserId(user.getUserId());
+            omPurchaseOrderDet.setCreateTime(new Date());
+            omPurchaseOrderDet.setIsDelete((byte) 1);
+        }
+        if (StringUtils.isNotEmpty(entity.getOmPurchaseOrderDetList())) {
+            omPurchaseOrderDetMapper.insertList(entity.getOmPurchaseOrderDetList());
+        }
+
+        return i;
     }
 }

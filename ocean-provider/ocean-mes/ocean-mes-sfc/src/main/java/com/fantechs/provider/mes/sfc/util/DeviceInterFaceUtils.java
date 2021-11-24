@@ -135,7 +135,7 @@ public class DeviceInterFaceUtils {
      * 用户登录
      * */
     public ResponseEntity checkLogin(String UserCode, String Password, Long orgId){
-        return securityFeignApi.login(UserCode,Password,orgId,null);
+        return securityFeignApi.login(UserCode,Password,orgId,null,null);
     }
 
     /*

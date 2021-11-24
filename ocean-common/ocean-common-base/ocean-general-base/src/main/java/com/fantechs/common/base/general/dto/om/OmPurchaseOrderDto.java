@@ -16,6 +16,18 @@ public class OmPurchaseOrderDto extends OmPurchaseOrder implements Serializable 
     @ApiModelProperty(name="supplierName",value = "供应商名称")
     private String supplierName;
 
+    @ApiModelProperty(name="eMail",value = "供应商邮箱")
+    private String eMail;
+
+    @ApiModelProperty(name="supplierName",value = "供应商手机号")
+    private String mobilePhone;
+
+    @ApiModelProperty(name="telephone",value = "供应商联系电话")
+    private String telephone;
+
+    @ApiModelProperty(name="completeDetail",value = "供应商联系电话")
+    private String completeDetail;
+
     @ApiModelProperty(name="deptCode",value = "采购部门编码")
     private String deptCode;
 

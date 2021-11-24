@@ -24,7 +24,7 @@
 
         <dependency>
             <groupId>com.fantechs.common.config</groupId>
-            <artifactId>ocean-base-config</artifactId>
+            <artifactId>ocean-imes-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -87,7 +87,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>D:/IMES/lib/security</outputDirectory>
+                            <outputDirectory>D:/IMES/lib3/security</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

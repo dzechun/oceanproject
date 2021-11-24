@@ -6,7 +6,10 @@
         <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="supplier_desc" jdbcType="VARCHAR" property="supplierDesc"/>
+        <result column="e_mail" jdbcType="VARCHAR" property="eMail"/>
+        <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
         <result column="supplier_type" jdbcType="TINYINT" property="supplierType"/>
+        <result column="if_appoint_deliver" jdbcType="TINYINT" property="ifAppointDeliver"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="org_id" jdbcType="BIGINT" property="organizationId"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -34,7 +37,10 @@
         ss.supplier_logo,
         ss.liaison_man,
         ss.telephone,
+        ss.e_mail,
+        ss.mobile_phone,
         ss.supplier_type,
+        ss.if_appoint_deliver,
         ss.`status`,
         ss.remark,
         ss.org_id,
@@ -85,6 +91,9 @@
             </if>
             <if test="status!=null">
                 and ss.status=#{status}
+            </if>
+            <if test="ifAppointDeliver!=null">
+                and ss.if_appoint_deliver=#{ifAppointDeliver}
             </if>
             <if test="addressDetail!=null and addressDetail!=''">
                 and sa.address_detail like CONCAT('%', #{addressDetail}, '%')

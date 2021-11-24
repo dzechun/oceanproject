@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.srm.mapper.SrmHtPoProductionInfoMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.srm.history.SrmHtPoProductionInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_po_production_info_id" jdbcType="BIGINT" property="htPoProductionInfoId" />
+    <result column="po_production_info_id" jdbcType="BIGINT" property="poProductionInfoId" />
+    <result column="purchase_order_id" jdbcType="BIGINT" property="purchaseOrderId" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="work_order_qty" jdbcType="DECIMAL" property="workOrderQty" />
+    <result column="output_qty" jdbcType="DECIMAL" property="outputQty" />
+    <result column="work_order_status" jdbcType="TINYINT" property="workOrderStatus" />
+    <result column="actual_start_time" jdbcType="TIMESTAMP" property="actualStartTime" />
+    <result column="actual_end_time" jdbcType="TIMESTAMP" property="actualEndTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode" />
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    shppi.po_production_info_id,
+    shppi.purchase_order_id,
+    shppi.work_order_code,
+    shppi.supplier_id,
+    shppi.material_id,
+    shppi.work_order_qty,
+    shppi.output_qty,
+    shppi.work_order_status,
+    shppi.actual_start_time,
+    shppi.actual_end_time,
+    shppi.status,
+    shppi.remark,
+    shppi.org_id,
+    shppi.create_user_id,
+    shppi.create_time,
+    shppi.modified_user_id,
+    shppi.modified_time
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map" >
+    select <include refid="Base_Column_List"></include>,
+    csu.user_name as create_user_name,
+    msu.user_name as modified_user_name,
+    opo.purchase_order_code,
+    bs.supplier_name,
+    bm.material_code,
+    bm.material_name,
+    bm.material_version,
+    bm.material_desc
+    from srm_ht_po_production_info shppi
+    left join om_purchase_order opo on opo.purchase_order_id = shppi.purchase_order_id
+    left join base_material bm on bm.material_id = shppi.material_id
+    left join base_supplier bs on bs.supplier_id = opo.supplier_id
+    left join base_supplier_re_user bsru on bsru.supplier_id = opo.supplier_id
+    left join sys_user csu on csu.user_id = shppi.create_user_id
+    left join sys_user msu on msu.user_id = shppi.modified_user_id
+    <where>
+      <if test="userId != null">
+        and bsru.user_id = #{userId}
+      </if>
+      <if test="supplierId != null">
+        and shppi.supplier_id = #{supplierId}
+      </if>
+      <if test="purchaseOrderCode != null and purchaseOrderCode != ''">
+        and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
+      </if>
+      <if test="workOrderCode != null and workOrderCode != ''">
+        and shppi.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+      </if>
+      <if test="supplierName != null and supplierName != ''">
+        and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
+      </if>
+      <if test="materialCode != null and materialCode != ''">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialVersion != null and materialVersion != ''">
+        and bm.material_version like CONCAT('%', #{materialVersion}, '%')
+      </if>
+      <if test="materialDesc != null and materialDesc != ''">
+        and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+      <if test="proName != null and proName != ''">
+        and shppi.pro_name like CONCAT('%', #{proName}, '%')
+      </if>
+      <if test="workOrderQty != null ">
+        and shppi.work_order_qty = #{workOrderQty}
+      </if>
+      <if test="outputQty != null">
+        and shppi.output_qty = #{outputQty}
+      </if>
+
+      <if test="workOrderStatus != null">
+        and shppi.work_order_status = #{workOrderStatus}
+      </if>
+      <if test="orgId != null">
+        and shppi.org_id = #{orgId}
+      </if>
+      <if test="createUserId != null">
+        and shppi.create_user_id = #{createUserId}
+      </if>
+      <if test="modifiedUserId != null">
+        and shppi.modified_user_id = #{modifiedUserId}
+      </if>
+      <if test="status != null">
+        and shppi.status = #{status}
+      </if>
+      <if test="remark != null and remark != ''">
+        and shppi.remark like CONCAT('%', #{remark}, '%')
+      </if>
+      <if test="isDelete != null">
+        and shppi.is_delete = #{isDelete}
+      </if>
+      <if test="actualStartTimeStart != null and actualStartTimeStart != '' and actualStartTimeEnd != null and actualStartTimeEnd != ''">
+        and date_format(shppi.actual_start_time, '%Y-%m-%d') between #{actualStartTimeStart} and #{actualStartTimeEnd}
+      </if>
+      <if test="actualEndTimeStart != null and actualEndTimeStart != '' and actualEndTimeEnd != null and actualEndTimeEnd != ''">
+        and date_format(shppi.actual_end_time, '%Y-%m-%d') between #{actualEndTimeStart} and #{actualEndTimeEnd}
+      </if>
+      <if test="modifiedTimeStart != null and modifiedTimeStart != '' and modifiedTimeEnd != null and modifiedTimeEnd != ''">
+        and date_format(shppi.modified_time, '%Y-%m-%d') between #{modifiedTimeStart} and #{modifiedTimeEnd}
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(shppi.create_time, '%Y-%m-%d') between #{startTime} and #{endTime}
+      </if>
+    </where>
+    group by shppi.po_production_info_id
+    order by shppi.create_time
+  </select>
+
+
+
+</mapper>

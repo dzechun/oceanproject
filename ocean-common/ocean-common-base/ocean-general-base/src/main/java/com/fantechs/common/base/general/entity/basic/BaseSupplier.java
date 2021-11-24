@@ -56,6 +56,22 @@ public class BaseSupplier extends ValidGroup implements Serializable {
     private String supplierDesc;
 
     /**
+     * 邮箱
+     */
+    @Column(name = "e_mail")
+    @ApiModelProperty("邮箱")
+    @Excel(name = "邮箱", height = 20, width = 30)
+    private String eMail;
+
+    /**
+     * 手机号
+     */
+    @Column(name = "mobile_phone")
+    @ApiModelProperty("手机号")
+    @Excel(name = "手机号", height = 20, width = 30)
+    private String mobilePhone;
+
+    /**
      * 组织id
      */
     @ApiModelProperty(name="organizationId",value = "组织id")
@@ -90,6 +106,14 @@ public class BaseSupplier extends ValidGroup implements Serializable {
     @ApiModelProperty("身份标识（1、供应商 2、客户）")
     @Excel(name = "身份标识", height = 20, width = 30,replace = {"供应商_1","客户_2"})
     private Byte supplierType;
+
+    /**
+     * 是否预约发货（0、否 1、是）
+     */
+    @Column(name = "if_appoint_deliver")
+    @ApiModelProperty("是否预约发货（0、否 1、是）")
+    @Excel(name = "是否预约发货", height = 20, width = 30,replace = {"否_0","是_2"})
+    private Byte ifAppointDeliver;
 
     /**
      * 创建人ID

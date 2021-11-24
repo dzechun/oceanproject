@@ -1,7 +1,8 @@
-package com.fantechs.common.base.general.entity.basic;
+package com.fantechs.common.base.general.entity.srm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.srm.SrmPoExpediteRecordDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,63 +11,65 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
-
-;
-;
+import java.util.List;
 
 /**
- * 供应商用户关系表
- * base_supplier_re_user
- * @author admin
- * @date 2021-08-27 09:40:31
+ * 订单跟催记录
+ * srm_po_expedite_record
+ * @author jbb
+ * @date 2021-11-18 11:41:05
  */
 @Data
-@Table(name = "base_supplier_re_user")
-public class BaseSupplierReUser extends ValidGroup implements Serializable {
+@Table(name = "srm_po_expedite_record")
+public class SrmPoExpediteRecord extends ValidGroup implements Serializable {
     /**
-     * 供应商用户ID
+     * 订单跟催记录ID
      */
-    @ApiModelProperty(name="supplierReUserId",value = "供应商用户ID")
+    @ApiModelProperty(name="poExpediteRecordId",value = "订单跟催记录ID")
+    @Excel(name = "订单跟催记录ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "supplier_re_user_id")
-    @NotNull(groups = update.class,message = "供应商用户ID不能为空")
-    private Long supplierReUserId;
+    @Column(name = "po_expedite_record_id")
+    private Long poExpediteRecordId;
 
     /**
-     * 供应商ID
+     * 订单跟催ID
      */
-    @ApiModelProperty(name="supplierId",value = "供应商ID")
-    @Excel(name = "供应商ID", height = 20, width = 30,orderNum="")
-    @Column(name = "supplier_id")
-    private Long supplierId;
+    @ApiModelProperty(name="poExpediteId",value = "订单跟催ID")
+    @Excel(name = "订单跟催ID", height = 20, width = 30,orderNum="")
+    @Column(name = "po_expedite_id")
+    private Long poExpediteId;
 
     /**
-     * 用户ID
+     * 反馈内容
      */
-    @ApiModelProperty(name="userId",value = "用户ID")
-    @Excel(name = "用户ID", height = 20, width = 30,orderNum="")
-    @Column(name = "user_id")
-    private Long userId;
+    @ApiModelProperty(name="feedbackContent",value = "反馈内容")
+    @Excel(name = "反馈内容", height = 20, width = 30,orderNum="")
+    @Column(name = "feedback_content")
+    private String feedbackContent;
 
     /**
-     * 状态（0、无效 1、有效）
+     * 状态(0无效，1有效)
      */
-    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="")
     private Byte status;
 
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="")
     private String remark;
 
     /**
      * 组织id
      */
-    @ApiModelProperty(name="organizationId",value = "组织id")
+    @ApiModelProperty(name="orgId",value = "组织id")
     @Excel(name = "组织id", height = 20, width = 30,orderNum="")
-    @Column(name = "organization_id")
-    private Long organizationId;
+    @Column(name = "org_id")
+    private Long orgId;
 
     /**
      * 创建人ID
@@ -116,13 +119,12 @@ public class BaseSupplierReUser extends ValidGroup implements Serializable {
 
     private String option3;
 
+    /**
+     * 明细图片集合
+     */
     @Transient
-    @ApiModelProperty(name = "supplierCode",value = "供应商编码")
-    private String supplierCode;
-
-    @Transient
-    @ApiModelProperty(name = "supplierName",value = "供应商名称")
-    private String supplierName;
+    @ApiModelProperty(name="fileList",value = "明细图片集合")
+    private List<SrmPoExpediteRecordDto> fileList;
 
     private static final long serialVersionUID = 1L;
 }

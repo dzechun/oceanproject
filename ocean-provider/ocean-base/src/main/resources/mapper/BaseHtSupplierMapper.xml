@@ -10,12 +10,15 @@
     <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode" />
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
     <result column="supplier_desc" jdbcType="VARCHAR" property="supplierDesc" />
+    <result column="e_mail" jdbcType="VARCHAR" property="eMail"/>
+    <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
     <result column="address_id" jdbcType="BIGINT" property="addressId" />
     <result column="supplier_abbreviation" jdbcType="VARCHAR" property="supplierAbbreviation" />
     <result column="supplier_logo" jdbcType="VARCHAR" property="supplierLogo" />
     <result column="liaison_man" jdbcType="VARCHAR" property="liaisonMan" />
     <result column="telephone" jdbcType="VARCHAR" property="telephone" />
     <result column="supplier_type" jdbcType="TINYINT" property="supplierType" />
+    <result column="if_appoint_deliver" jdbcType="TINYINT" property="ifAppointDeliver"/>
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="organization_id" jdbcType="BIGINT" property="organizationId" />
@@ -35,12 +38,15 @@
     ss.supplier_code,
     ss.supplier_name,
     ss.supplier_desc,
+    ss.telephone,
+    ss.e_mail,
     ss.address_id,
     ss.supplier_abbreviation,
     ss.supplier_logo,
     ss.liaison_man,
     ss.telephone,
     ss.supplier_type,
+    ss.if_appoint_deliver,
     ss.`status`,
     ss.remark,
     ss.organization_id,
