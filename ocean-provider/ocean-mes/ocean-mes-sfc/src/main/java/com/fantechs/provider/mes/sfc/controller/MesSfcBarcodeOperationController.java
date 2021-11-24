@@ -1,26 +1,21 @@
 package com.fantechs.provider.mes.sfc.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.sfc.*;
-import com.fantechs.common.base.general.entity.mes.sfc.*;
+import com.fantechs.common.base.general.dto.mes.sfc.CloseCartonDto;
+import com.fantechs.common.base.general.dto.mes.sfc.PdaCartonRecordDto;
+import com.fantechs.common.base.general.dto.mes.sfc.PdaCartonWorkDto;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductCarton;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.mes.sfc.service.*;
-import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
+import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeOperationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,7 +34,7 @@ public class MesSfcBarcodeOperationController {
     MesSfcBarcodeOperationService mesSfcBarcodeOperationService;
 
     @ApiOperation("PDA包箱作业-查询上次作业数据")
-        @PostMapping("/findLastCarton")
+    @PostMapping("/findLastCarton")
     public ResponseEntity<PdaCartonRecordDto> findLastCarton(@ApiParam(value = "工序ID", required = true) @RequestParam @NotNull(message = "processId不能为空") Long processId,
                                                              @ApiParam(value = "工位ID", required = true) @RequestParam @NotNull(message = "stationId不能为空") Long stationId,
                                                              @ApiParam(value = "包箱类型(1：工单包箱，2：料号包箱)", required = true) @RequestParam @NotNull(message = "packType不能为空") String packType) {
