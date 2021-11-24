@@ -611,37 +611,39 @@ public class ImportDataServiceImpl implements ImportDataService {
 
             //同步到数据库
             for (SysUser user : listUser) {
-                user.setOrganizationId(orgId);
-                user.setStatus((byte)1);
-                user.setRoleId(roleId);
-                if(StringUtils.isEmpty(user.getUserName())){
-                    user.setUserName(user.getUserCode());
-                }
-                if(StringUtils.isEmpty(user.getNickName())){
-                    user.setNickName(user.getUserName());
-                }
-                ResponseEntity<SysUser> responseEntityUser=securityFeignApi.saveByApi(user);
-                if(StringUtils.isNotEmpty(responseEntityUser.getData())){
-                    //用户ID
-                    Long userId=responseEntityUser.getData().getUserId();
-                    if(StringUtils.isNotEmpty(userId)) {
-                        //找供应商ID
-                        if (StringUtils.isNotEmpty(user.getUserName())) {
-                            Long supplierId = null;
-                            SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
-                            searchBaseSupplier.setSupplierName(user.getUserName());
-                            searchBaseSupplier.setOrganizationId(orgId);
-                            ResponseEntity<List<BaseSupplier>> responseEntitySupplier = baseFeignApi.findSupplierList(searchBaseSupplier);
-                            if (StringUtils.isNotEmpty(responseEntitySupplier.getData())) {
-                                supplierId = responseEntitySupplier.getData().get(0).getSupplierId();
-                            }
-                            //增加用户绑定供应商
-                            if(StringUtils.isNotEmpty(supplierId)) {
-                                BaseSupplierReUser baseSupplierReUser = new BaseSupplierReUser();
-                                baseSupplierReUser.setSupplierId(supplierId);
-                                baseSupplierReUser.setUserId(userId);
-                                baseSupplierReUser.setOrganizationId(orgId);
-                                baseFeignApi.saveByApi(baseSupplierReUser);
+                if ("admin".equals(user.getUserCode()) == false) {
+                    user.setOrganizationId(orgId);
+                    user.setStatus((byte) 1);
+                    user.setRoleId(roleId);
+                    if (StringUtils.isEmpty(user.getUserName())) {
+                        user.setUserName(user.getUserCode());
+                    }
+                    if (StringUtils.isEmpty(user.getNickName())) {
+                        user.setNickName(user.getUserName());
+                    }
+                    ResponseEntity<SysUser> responseEntityUser = securityFeignApi.saveByApi(user);
+                    if (StringUtils.isNotEmpty(responseEntityUser.getData())) {
+                        //用户ID
+                        Long userId = responseEntityUser.getData().getUserId();
+                        if (StringUtils.isNotEmpty(userId)) {
+                            //找供应商ID
+                            if (StringUtils.isNotEmpty(user.getUserName())) {
+                                Long supplierId = null;
+                                SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
+                                searchBaseSupplier.setSupplierName(user.getUserName());
+                                searchBaseSupplier.setOrganizationId(orgId);
+                                ResponseEntity<List<BaseSupplier>> responseEntitySupplier = baseFeignApi.findSupplierList(searchBaseSupplier);
+                                if (StringUtils.isNotEmpty(responseEntitySupplier.getData())) {
+                                    supplierId = responseEntitySupplier.getData().get(0).getSupplierId();
+                                }
+                                //增加用户绑定供应商
+                                if (StringUtils.isNotEmpty(supplierId)) {
+                                    BaseSupplierReUser baseSupplierReUser = new BaseSupplierReUser();
+                                    baseSupplierReUser.setSupplierId(supplierId);
+                                    baseSupplierReUser.setUserId(userId);
+                                    baseSupplierReUser.setOrganizationId(orgId);
+                                    baseFeignApi.saveByApi(baseSupplierReUser);
+                                }
                             }
                         }
                     }

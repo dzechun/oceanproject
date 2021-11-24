@@ -1078,7 +1078,8 @@ public class BarcodeUtils {
 
                 ResponseEntity<List<EamEquipmentBarcode>> responseEntityEquiBarCode = barcodeUtils.deviceInterFaceUtils.findEamEquipmentBarCodeList(searchEamEquipmentBarcode);
                 if(StringUtils.isEmpty(responseEntityEquiBarCode.getData())){
-                    throw new Exception("设备条码信息不存在-->"+equipmentBarCode);
+                    //throw new Exception("设备条码信息不存在-->"+equipmentBarCode);
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"设备条码信息不存在-->"+equipmentBarCode);
                 }
 
                 EamEquipmentBarcode eamEquipmentBarcode=responseEntityEquiBarCode.getData().get(0);
