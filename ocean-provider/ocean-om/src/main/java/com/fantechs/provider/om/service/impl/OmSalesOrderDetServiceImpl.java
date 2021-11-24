@@ -160,6 +160,14 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
 
     @Override
     public List<OmSalesOrderDetDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+        searchSysSpecItemFiveRing.setSpecCode("wanbaoSelectPO");
+        List<SysSpecItem> wanbaoSelectPOs = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+        if (!wanbaoSelectPOs.isEmpty() && wanbaoSelectPOs.size() > 0
+            && user.getOrganizationId().toString().equals(wanbaoSelectPOs.get(0).getParaValue())){
+            map.put("po", 1);
+        }
         return omSalesOrderDetMapper.findList(map);
     }
 

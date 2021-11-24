@@ -181,7 +181,7 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
     public int update(OmSalesCodeReSpc omSalesCodeReSpc){
         if (omSalesCodeReSpc.getSamePackageCodeStatus().equals((byte) 1)
                 && omSalesCodeReSpc.getSamePackageCodeQty().compareTo(omSalesCodeReSpc.getMatchedQty()) == 0){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012002, "PO号匹配数量已满足，不可重新激活");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(), "PO号匹配数量已满足，不可重新激活");
         }
 
         Example example = new Example(OmSalesCodeReSpc.class);

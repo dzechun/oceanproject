@@ -76,25 +76,38 @@
     LEFT JOIN ocean_v2.sys_user sus ON oscrs.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON oscrs.org_id = bo.organization_id
     <where>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(oscrs.create_time, '%Y-%m-%d') <![CDATA[ >= ]]> #{startTime}
+        and date_format(oscrs.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
+      </if>
       <if test="samePackageCodeStatus != null">
         and oscrs.same_package_code_status = #{samePackageCodeStatus}
       </if>
-
       <if test="orgId != null">
         and oscrs.org_id = #{orgId}
       </if>
-
+      <if test="priority != null">
+        and oscrs.priority = #{priority}
+      </if>
       <if test="salesCode != null and salesCode != ''">
         and oscrs.sales_code like CONCAT('%', #{salesCode}, '%')
       </if>
-
       <if test="materialCode != null and materialCode != ''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
-
+      <if test="materialName != null and materialName != ''">
+        and bm.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
+      <if test="productModelCode != null and productModelCode != ''">
+        and bpm.product_model_code like CONCAT('%', #{productModelCode}, '%')
+      </if>
+      <if test="productModelName != null and productModelName != ''">
+        and bpm.product_model_name like CONCAT('%', #{productModelName}, '%')
+      </if>
       <if test="samePackageCode != null and samePackageCode != ''">
         and oscrs.same_package_code like CONCAT('%', #{samePackageCode}, '%')
       </if>
     </where>
+    ORDER BY oscrs.create_time DESC
   </select>
 </mapper>

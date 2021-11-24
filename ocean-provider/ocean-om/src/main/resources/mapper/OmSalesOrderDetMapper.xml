@@ -55,6 +55,7 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -76,6 +77,9 @@
         suc.user_name as create_user_name,
         bo.organization_name,
         sumod.user_name as modified_user_name
+        <if test="po == 1">
+            ,oscrs.same_package_code
+        </if>
         from om_sales_order_det sod
         left join om_sales_order oso on sod.sales_order_id=oso.sales_order_id
         left join base_material bm on sod.material_id = bm.material_id
@@ -83,6 +87,9 @@
         left join ocean_v2.sys_user suc on sod.create_user_id = suc.user_id
         left join base_organization bo on sod.org_id = bo.organization_id
         left join ocean_v2.sys_user sumod on sod.modified_user_id = sumod.user_id
+        <if test="po == 1">
+            LEFT JOIN om_sales_code_re_spc oscrs ON sod.sales_code = oscrs.sales_code
+        </if>
         <where>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(oso.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
