@@ -30,9 +30,6 @@ public class PtlClientManageServiceImpl extends BaseService<PtlClientManage> imp
     @Override
     public int save(PtlClientManage ptlClientManage) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         ptlClientManage.setOrgId(user.getOrganizationId());
         ptlClientManage.setCreateUserId(user.getUserId());
         ptlClientManage.setCreateTime(new Date());
@@ -48,9 +45,6 @@ public class PtlClientManageServiceImpl extends BaseService<PtlClientManage> imp
     public int update(PtlClientManage ptlClientManage) {
         if (ptlClientManage.getLoginTag()==0){
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(user)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
         }
         return ptlClientManageMapper.updateByPrimaryKeySelective(ptlClientManage);
     }
@@ -58,26 +52,20 @@ public class PtlClientManageServiceImpl extends BaseService<PtlClientManage> imp
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        String[] idsArr  = ids.split(",");
-        for(String  id : idsArr){
-            PtlClientManage ptlClientManage = ptlClientManageMapper.selectByPrimaryKey(id);
-            if (StringUtils.isEmpty(ptlClientManage)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-            }
-
-        }
+//        String[] idsArr  = ids.split(",");
+//        for(String  id : idsArr){
+//            PtlClientManage ptlClientManage = ptlClientManageMapper.selectByPrimaryKey(id);
+//            if (StringUtils.isEmpty(ptlClientManage)){
+//                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+//            }
+//
+//        }
         return ptlClientManageMapper.deleteByIds(ids);
     }
 
     @Override
     public List<PtlClientManageDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return ptlClientManageMapper.findList(map);
     }

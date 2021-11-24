@@ -43,9 +43,6 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
     public int save(PtlElectronicTagStorage ptlElectronicTagStorage) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         if (StringUtils.isEmpty(ptlElectronicTagStorage.getStorageId(),
                 ptlElectronicTagStorage.getElectronicTagId(),
@@ -85,9 +82,6 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
     @Transactional(rollbackFor = Exception.class)
     public int update(PtlElectronicTagStorage ptlElectronicTagStorage) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(PtlElectronicTagStorage.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("storageId", ptlElectronicTagStorage.getStorageId())
@@ -118,9 +112,6 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 //        String[] idArr = ids.split(",");
 //        for (String id : idArr) {
 //            SmtElectronicTagStorage smtElectronicTagStorage = smtElectronicTagStorageMapper.selectByPrimaryKey(id);
@@ -134,9 +125,6 @@ public class PtlElectronicTagStorageServiceImpl extends BaseService<PtlElectroni
     @Override
     public List<PtlElectronicTagStorageDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return ptlElectronicTagStorageMapper.findList(map);
     }

@@ -37,6 +37,11 @@ public class MonthInOutModel implements Serializable {
     @Excel(name = "国家",height = 20, width = 30,orderNum="3")
     private String countryName;
 
+    /**
+     * 客户id
+     */
+    @ApiModelProperty(name = "supplierId",value = "客户")
+    private String supplierId;
 
     /**
      * 客户
@@ -66,6 +71,12 @@ public class MonthInOutModel implements Serializable {
     @ApiModelProperty(name = "productModelCode",value = "型号")
     @Excel(name = "型号",height = 20, width = 30,orderNum="7")
     private String productModelCode;
+
+    /**
+     * 产品id
+     */
+    @ApiModelProperty(name = "materialId",value = "产品id")
+    private String materialId;
 
     /**
      * 产品编码

@@ -73,9 +73,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     public List<PtlJobOrderDto> sendElectronicTagStorage(String ids, Long warehouseAreaId, Integer type) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<String> jobOrderIds = Arrays.asList(ids.split(","));
         if (warehouseAreaId == 0) {
             SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
@@ -306,7 +303,12 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         List<RabbitMQDTO> rabbitMQDTOList = new LinkedList<>();
         List<Long> clientIdList = new LinkedList<>();
         List<String> cancelRelatedOrderList = new LinkedList<>();
+        List<String> ignoreList = new LinkedList<>();
         for (PtlJobOrderDTO ptlJobOrderDTO : ptlJobOrderDTOList) {
+            if (!ptlJobOrderDTO.getCustomerNo().startsWith("101")) {
+                ignoreList.add(ptlJobOrderDTO.getCustomerNo());
+                continue;
+            }
             if (cancelRelatedOrderList.contains(ptlJobOrderDTO.getCustomerNo())) {
                 continue;
             }
@@ -465,11 +467,20 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
         ResponseEntityDTO responseEntityDTO = new ResponseEntityDTO();
         responseEntityDTO.setCode(ptlJobOrderDTOList.get(0).getCustomerNo());
-        if (cancelRelatedOrderList.isEmpty()) {
-            responseEntityDTO.setMessage("保存成功");
+        String message = "";
+        if (cancelRelatedOrderList.isEmpty() && ignoreList.isEmpty()) {
+            message = "保存成功";
         } else {
-            responseEntityDTO.setMessage("拣货单：" + cancelRelatedOrderList.toString() + "已取消，但存在未退拣任务，请先进行退拣后再下发该单据。其他单据已正常接收完成！");
+            if (!cancelRelatedOrderList.isEmpty()) {
+                message += "拣货单：" + cancelRelatedOrderList.toString() + "已取消，但存在未退拣任务，请先进行退拣后再下发该单据。其他单据已正常接收完成！\r\n";
+            }
+            if (!ignoreList.isEmpty()) {
+                message += "拣货单：" + ignoreList.toString() + "已忽略接收。\r\n";
+            }
+            message += "其他单据已正常接收完成！";
         }
+
+        responseEntityDTO.setMessage(message);
         responseEntityDTO.setSuccess("s");
 
         return responseEntityDTO;
@@ -481,9 +492,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     public PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId, Integer type) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         SearchPtlJobOrderDet searchPtlJobOrderDet1 = new SearchPtlJobOrderDet();
         searchPtlJobOrderDet1.setJobOrderId(jobOrderId);
@@ -669,9 +677,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     public List<PtlJobOrderDetPrintDTO> printPtlJobOrderLabel(String ids, Long workUserId, Integer type) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         SysUser sysUser = securityFeignApi.selectUserById(workUserId).getData();
         SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
         searchBaseWorker.setUserId(currentUser.getUserId());
@@ -879,9 +884,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     public int hangUpPtlJobOrderDet(String ids) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<String> jobOrderDetIds = Arrays.asList(ids.split(","));
 
         SearchPtlJobOrderDet searchPtlJobOrderDet1 = new SearchPtlJobOrderDet();
@@ -1162,9 +1164,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     public int ptlJobOrderLightOff(Long jobOrderId) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         PtlJobOrder ptlJobOrder = electronicTagFeignApi.ptlJobOrderDetail(jobOrderId).getData();
         if (ptlJobOrder.getOrderStatus() != 5) {
@@ -1358,9 +1357,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @LcnTransaction
     public SysUser getPrinter() throws Exception {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
         searchBaseWorker.setUserId(currentUser.getUserId());
         List<BaseWorkerDto> baseWorkerDtos = baseFeignApi.findList(searchBaseWorker).getData();

@@ -15,5 +15,9 @@ public interface MonthInOutService {
 
     List<MonthInDto> findInList(Map<String,Object> map);
 
+    List<String> findInListBarCode(Map<String ,Object> map);
+
     List<MonthOutDto> findOutList(Map<String,Object> map);
+
+    List<String> findOutListBarCode(Map<String ,Object> map);
 }

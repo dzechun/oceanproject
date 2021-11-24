@@ -330,6 +330,8 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
                     CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
                     callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
                     callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
+                    callAgvAgvTaskBarcode.setCreateTime(new Date());
+                    callAgvAgvTaskBarcode.setCreateUserId(user.getUserId());
                     callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
                 }
                 callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);

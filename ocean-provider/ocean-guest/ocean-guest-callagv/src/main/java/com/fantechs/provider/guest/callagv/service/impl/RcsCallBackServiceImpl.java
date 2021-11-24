@@ -14,7 +14,6 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
-import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskBarcodeMapper;
 import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskMapper;
 import com.fantechs.provider.guest.callagv.service.CallAgvVehicleReBarcodeService;
 import com.fantechs.provider.guest.callagv.service.RcsCallBackService;
@@ -44,9 +43,6 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
 
     @Resource
     private CallAgvAgvTaskMapper callAgvAgvTaskMapper;
-
-    @Resource
-    private CallAgvAgvTaskBarcodeMapper callAgvAgvTaskBarcodeMapper;
 
     @Override
     public String agvCallback(AgvCallBackDTO agvCallBackDTO) throws Exception {
@@ -88,7 +84,7 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
 
                 if (genAgvSchedulingTaskDTOList.size() > 1) {
                     String taskCode = callAgvVehicleReBarcodeService.genAgvSchedulingTask(genAgvSchedulingTaskDTOList.get(1).getTaskTyp(), genAgvSchedulingTaskDTOList.get(1).getPositionCodeList(), genAgvSchedulingTaskDTOList.get(1).getPodCode());
-                    log.info("==========启动agv执行下一个等待的电梯作业任务==============\r\n");
+                    log.info("==========启动agv执行下一个等待的电梯作业任务 : " + taskCode + "==============\r\n");
 
                     SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
                     searchCallAgvAgvTask.setTaskCode(genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask().getTaskCode());
@@ -96,8 +92,10 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                     if (!callAgvAgvTaskDtoList.isEmpty()) {
                         CallAgvAgvTask callAgvAgvTask = genAgvSchedulingTaskDTOList.get(1).getCallAgvAgvTask();
                         callAgvAgvTask.setAgvTaskId(callAgvAgvTaskDtoList.get(0).getAgvTaskId());
+                        callAgvAgvTask.setRemark(callAgvAgvTask.getTaskCode());
                         callAgvAgvTask.setTaskCode(taskCode);
                         callAgvAgvTask.setTaskStatus((byte) 2);
+                        callAgvAgvTask.setCreateTime(new Date());
                         callAgvAgvTask.setModifiedTime(new Date());
                         callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
                     }
