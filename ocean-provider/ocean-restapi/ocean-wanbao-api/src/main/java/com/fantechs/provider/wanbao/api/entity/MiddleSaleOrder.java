@@ -25,6 +25,10 @@ public class MiddleSaleOrder implements Serializable {
     @Column(name = "supplier_code")
     private String supplierCode;
 
+    @ApiModelProperty(name="supplierName",value = "客户名称")
+    @Column(name = "supplier_name")
+    private String supplierName;
+
     @ApiModelProperty(name="supplierId",value = "客户id")
     @Column(name = "supplier_id")
     private String supplierId;
@@ -92,4 +96,20 @@ public class MiddleSaleOrder implements Serializable {
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @Column(name = "modified_time")
     private String modifiedTime;
+
+    @ApiModelProperty(name="remark" ,value="修改时间")
+    @Column(name = "remark")
+    private String remark;
+
+    @ApiModelProperty(name="salesDept",value = "销售部门")
+    @Column(name = "sales_dept")
+    private String salesDept;
+
+    @ApiModelProperty(name="salesUserName",value = "销售人员")
+    @Column(name = "sales_user_name")
+    private String salesUserName;
+
+    @ApiModelProperty(name="orderDate",value = "订单日期")
+    @Column(name = "order_date")
+    private String orderDate;
 }

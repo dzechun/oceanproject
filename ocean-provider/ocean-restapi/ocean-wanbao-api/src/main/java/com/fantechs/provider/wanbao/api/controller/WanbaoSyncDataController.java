@@ -5,13 +5,16 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.wanbao.api.service.SyncDataService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
 
 @RestController
@@ -37,6 +40,14 @@ public class WanbaoSyncDataController {
     public ResponseEntity syncOrderData(){
         log.info("万宝-工单信息同步");
         syncDataService.syncOrderData();
+        return ControllerUtil.returnSuccess();
+    }
+
+    @ApiOperation(value = "万宝-根据订单编码同步工单信息",notes = "万宝-根据订单编码同步工单信息")
+    @PostMapping("/syncOrderByOrderCode")
+    public ResponseEntity syncOrderByOrderCode(@ApiParam(value = "工单号", required = true) @RequestParam @NotNull(message = "工单号不能为空") String workOrderCode){
+        log.info("万宝-根据订单编码同步工单信息");
+        syncDataService.syncOrderByOrderCode(workOrderCode);
         return ControllerUtil.returnSuccess();
     }
 

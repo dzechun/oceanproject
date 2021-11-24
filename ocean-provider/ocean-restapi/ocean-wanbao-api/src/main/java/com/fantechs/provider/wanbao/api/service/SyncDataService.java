@@ -15,6 +15,11 @@ public interface SyncDataService {
     void syncOrderData();
 
     /**
+     * 万宝-根据工单号查询工单信息
+     */
+    void syncOrderByOrderCode(String workOrderCode);
+
+    /**
      * 万宝-销售订单信息同步
      * @return
      */

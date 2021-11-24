@@ -126,8 +126,8 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
     /**
      * 工单类型(0、量产 1、试产 2、返工 3、维修)
      */
-    @ApiModelProperty(name="workOrderType",value = "工单类型(0、量产 1、试产 2、返工 3、维修)")
-    @Excel(name = "工单类型", height = 20, width = 30,replace = {"量产_0","试产_1","返工_2","维修_3"})
+    @ApiModelProperty(name="workOrderType",value = "工单类型(0、量产 1、试产 2、返工 3、维修 4、标准 5、非标)")
+    @Excel(name = "工单类型", height = 20, width = 30,replace = {"量产_0","试产_1","返工_2","维修_3","标准_4","非标_5"})
     @Column(name = "work_order_type")
     private Byte workOrderType;
 
@@ -274,6 +274,10 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="batchCode",value = "入库数量")
     @Column(name = "batch_code")
     private String batchCode;
+
+    @ApiModelProperty(name="salesCode",value = "销售编码")
+    @Column(name = "sales_code")
+    private String salesCode;
 
 
 }

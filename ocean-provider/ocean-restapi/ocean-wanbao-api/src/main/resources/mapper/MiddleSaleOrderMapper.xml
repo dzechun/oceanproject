@@ -5,6 +5,7 @@
         <id column="sale_order_id" jdbcType="VARCHAR" property="saleOrderId"/>
         <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
         <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName"/>
         <result column="supplier_id" jdbcType="VARCHAR" property="supplierId"/>
         <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
@@ -21,6 +22,10 @@
         <result column="make_order_date" jdbcType="VARCHAR" property="makeOrderDate" />
         <result column="create_time" jdbcType="VARCHAR" property="createTime" />
         <result column="modified_time" jdbcType="VARCHAR" property="modifiedTime" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="sales_user_name" jdbcType="VARCHAR" property="salesUserName" />
+        <result column="sales_dept" jdbcType="VARCHAR" property="salesDept" />
+        <result column="order_date" jdbcType="VARCHAR" property="orderDate" />
     </resultMap>
 
     <select id="setPolicy" >
@@ -61,6 +66,52 @@
                 and mh.order_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>
         </where>
+    </select>
+
+    <select id="findSaleOrderFormIMS" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+            ao.operatorname AS make_order_user_name,
+            oe2.empname AS salesUserName,
+            soh.creation_date AS create_time,
+            soh.delivery_time AS order_date,
+            soh.last_update_date AS modified_time,
+            soh.order_num AS sales_order_code,
+            ot.order_type_name AS order_type,
+            cc.CUSTOMER_CODE AS supplier_code,
+            cc.customer_name AS supplier_name,
+            oo.orgname AS salesDept,
+            soh.remark AS remark,
+            pm.material_code AS material_code,
+            pm.material_name AS material_name,
+            sol.order_quantity AS order_qty,
+            sol.order_quantity AS sales_code_qty
+        FROM
+            crm_so_order_header soh,
+            crm_so_order_line sol,
+            crm_ctm_customer cc,
+            crm_pub_materials pm,
+            om_employee oe2,
+            ac_operator ao,
+            om_organization oo,
+            crm_so_order_type ot
+        WHERE
+            soh.order_id = sol.order_id
+          AND soh.customer_id = cc.customer_id
+          AND pm.material_id = sol.item_id
+          AND ao.operatorid = soh.created_by
+          AND oe2.empid (+) = soh.sales_representative
+          AND oo.orgid (+) = soh.dept_id
+          AND ot.order_type_id = soh.order_type_id
+          AND soh.inv_ex_order_no IS NULL
+          AND soh.status = '审批通过'
+          AND soh.creation_date >= TO_DATE('2021-08-01' , 'YYYY-MM-DD' )
+        <if test="date != null and date != ''">
+            and soh.creation_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
+        </if>
+        ORDER BY
+            ao.operatorname,
+            soh.creation_date,
+            sol.order_line_id;
     </select>
 
     <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleSaleOrder">

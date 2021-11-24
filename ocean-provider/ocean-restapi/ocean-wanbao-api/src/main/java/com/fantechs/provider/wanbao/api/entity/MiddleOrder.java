@@ -71,4 +71,8 @@ public class MiddleOrder implements Serializable {
     @ApiModelProperty(name="modifiedTime" ,value="修改时间")
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    @ApiModelProperty(name="salesCode",value = "销售编码")
+    @Column(name = "sales_code")
+    private String salesCode;
 }
