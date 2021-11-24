@@ -1,4 +1,4 @@
-package com.fantechs.entity;
+package com.fantechs.common.base.general.entity.ureport;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;

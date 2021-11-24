@@ -3,7 +3,7 @@ package com.fantechs.service.impl;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.entity.BaseSupplierInfo;
+import com.fantechs.common.base.general.entity.ureport.BaseSupplierInfo;
 import com.fantechs.mapper.SupplierUreportMapper;
 import com.fantechs.service.SupplierUreportService;
 import org.springframework.stereotype.Service;

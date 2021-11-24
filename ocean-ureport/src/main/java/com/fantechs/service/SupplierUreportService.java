@@ -1,6 +1,6 @@
 package com.fantechs.service;
 
-import com.fantechs.entity.BaseSupplierInfo;
+import com.fantechs.common.base.general.entity.ureport.BaseSupplierInfo;
 
 import java.util.List;
 import java.util.Map;

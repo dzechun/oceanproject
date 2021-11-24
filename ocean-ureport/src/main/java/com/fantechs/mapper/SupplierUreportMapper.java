@@ -1,7 +1,7 @@
 package com.fantechs.mapper;
 
 import com.fantechs.common.base.mybatis.MyMapper;
-import com.fantechs.entity.BaseSupplierInfo;
+import com.fantechs.common.base.general.entity.ureport.BaseSupplierInfo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
