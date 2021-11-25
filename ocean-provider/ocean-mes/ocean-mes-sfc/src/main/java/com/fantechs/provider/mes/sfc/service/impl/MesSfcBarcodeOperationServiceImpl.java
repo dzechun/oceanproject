@@ -331,7 +331,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                          * 绑定关系
                          */
                         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-                        searchSysSpecItem.setSpecCode("wanbaoAutoClosePallet");
+                        searchSysSpecItem.setSpecCode("wanbaoPackingPO");
                         List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
                         if (!specItems.isEmpty() && "1".equals(specItems.get(0).getParaValue())){
                             SearchOmSalesCodeReSpc searchOmSalesCodeReSpc = new SearchOmSalesCodeReSpc();
@@ -341,7 +341,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                             List<OmSalesCodeReSpcDto> currentDtos = new ArrayList<>();
                             for (OmSalesCodeReSpcDto omSalesCodeReSpcDto : codeReSpcDtos){
                                 if(StringUtils.isNotEmpty(omSalesCodeReSpcDto.getSalesCode())) {
-                                    if (dto.getBarAnnexCode().contains(omSalesCodeReSpcDto.getSalesCode())) {
+                                    if (dto.getBarAnnexCode().contains(omSalesCodeReSpcDto.getSalesCode()) && barcodeDto.getMaterialId().equals(omSalesCodeReSpcDto.getMaterialId())) {
                                         currentDtos.add(omSalesCodeReSpcDto);
                                         continue;
                                     }
@@ -353,6 +353,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                                 OmSalesCodeReSpc omSalesCodeReSpc = currentDtos.get(0);
                                 // 绑定关系
                                 mesSfcBarcodeProcess.setSamePackageCode(omSalesCodeReSpc.getSamePackageCode());
+                                mesSfcBarcodeProcess.setSalesCodeReSpcId(omSalesCodeReSpc.getSalesCodeReSpcId());
                                 mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
 
                                 // 增加以匹配数
