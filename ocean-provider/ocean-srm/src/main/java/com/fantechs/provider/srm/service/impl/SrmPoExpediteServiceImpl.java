@@ -79,7 +79,7 @@ public class SrmPoExpediteServiceImpl extends BaseService<SrmPoExpedite> impleme
         int i = srmPoExpediteMapper.insertUseGeneratedKeys(record);
 
         //保存明细跟图片
-        saveImage(record);
+        saveImage(record,user);
 
         SrmHtPoExpedite srmHtPoExpedite = new SrmHtPoExpedite();
         BeanUtils.copyProperties(record, srmHtPoExpedite);
@@ -100,7 +100,7 @@ public class SrmPoExpediteServiceImpl extends BaseService<SrmPoExpedite> impleme
         int i = srmPoExpediteMapper.updateByPrimaryKeySelective(entity);
 
         //保存明细跟图片
-        saveImage(entity);
+        saveImage(entity,user);
 
         SrmHtPoExpedite srmHtPoExpedite = new SrmHtPoExpedite();
         BeanUtils.copyProperties(entity, srmHtPoExpedite);
@@ -111,23 +111,36 @@ public class SrmPoExpediteServiceImpl extends BaseService<SrmPoExpedite> impleme
         return i;
     }
 
-    private void saveImage(SrmPoExpedite record){
+    private void saveImage(SrmPoExpedite record,SysUser user){
         if (StringUtils.isNotEmpty(record.getList())) {
             List<BaseFile> fileList = new ArrayList<>();
             for (SrmPoExpediteRecordDto srmPoExpediteRecordDto : record.getList()) {
                 if (StringUtils.isNotEmpty(srmPoExpediteRecordDto.getPoExpediteRecordId())) {
                     continue;
                 }
+                srmPoExpediteRecordDto.setCreateUserId(user.getUserId());
+                srmPoExpediteRecordDto.setCreateTime(new Date());
+                srmPoExpediteRecordDto.setModifiedTime(new Date());
+                srmPoExpediteRecordDto.setModifiedUserId(user.getUserId());
                 srmPoExpediteRecordDto.setPoExpediteId(record.getPoExpediteId());
                 srmPoExpediteRecordMapper.insertUseGeneratedKeys(srmPoExpediteRecordDto);
 
-                BaseFile baseFile = new BaseFile();
-                baseFile.setAccessUrl(srmPoExpediteRecordDto.getAccessUrl());
-                baseFile.setRelevanceId(srmPoExpediteRecordDto.getPoExpediteRecordId());
-                baseFile.setRelevanceTableName("srm_po_expedite_record");
-                fileList.add(baseFile);
+                if (StringUtils.isNotEmpty(srmPoExpediteRecordDto.getFileList())) {
+                    for (SrmPoExpediteRecordDto poExpediteRecordDto : srmPoExpediteRecordDto.getFileList()) {
+                        BaseFile baseFile = new BaseFile();
+                        baseFile.setAccessUrl(poExpediteRecordDto.getAccessUrl());
+                        baseFile.setRelevanceId(srmPoExpediteRecordDto.getPoExpediteRecordId());
+                        baseFile.setRelevanceTableName("srm_po_expedite_record");
+                        fileList.add(baseFile);
+                    }
+                }
+
+
             }
-            baseFeignApi.batchAddFile(fileList);
+            if (StringUtils.isNotEmpty(fileList)) {
+                baseFeignApi.batchAddFile(fileList);
+            }
+
         }
     }
 

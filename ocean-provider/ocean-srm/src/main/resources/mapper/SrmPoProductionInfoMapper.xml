@@ -149,7 +149,7 @@
       </if>
     </where>
     group by sppi.po_production_info_id
-    order by sppi.create_time
+    order by sppi.create_time desc
   </select>
 
 
