@@ -107,7 +107,7 @@ hystrix.command.default.isolation.thread.timeoutInMilliseconds: 700000
 zuul:
   host:
     connect-timeout-millis: 6000000
-    socket-timeout-millis: 6000000
+    socket-timeout-millis: 6000000000
     max-per-route-connections: 20
     max-total-connections: 200
 

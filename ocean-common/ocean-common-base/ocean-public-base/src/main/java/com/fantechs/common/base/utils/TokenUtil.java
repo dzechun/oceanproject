@@ -9,6 +9,7 @@ import cz.mallat.uasparser.UserAgentInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -67,7 +68,8 @@ public class TokenUtil {
                 sb.append("PC-");
             } else
                 sb.append("MOBILE-");
-			sb.append(user.getUserCode() + "-");
+			//sb.append(user.getUserCode() + "-");
+            sb.append(URLEncoder.encode(user.getUserCode(),"UTF-8")+"-");
             sb.append(MD5.getMd5(user.getUserId()+"",32) + "-");//加密用户ID
             if(StringUtils.isNotEmpty(refreshTokenIp)){
                 sb.append(MD5.getMd5(refreshTokenIp,16) + "-");

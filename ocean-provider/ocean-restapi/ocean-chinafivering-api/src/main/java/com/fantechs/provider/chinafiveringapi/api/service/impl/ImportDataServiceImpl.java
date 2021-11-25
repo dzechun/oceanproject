@@ -588,7 +588,7 @@ public class ImportDataServiceImpl implements ImportDataService {
                 throw new BizErrorException(baseExecuteResultDto.getFailMsg());
 
             String strResult = baseExecuteResultDto.getExecuteResult().toString();
-            String s0 = strResult.replaceAll("供应商名称", "userName");
+            String s0 = strResult.replaceAll("供应商名称", "nickName");
             String s1 = s0.replaceAll("账号", "userCode");
             String s2 = s1.replaceAll("密码", "password");
 
@@ -611,13 +611,14 @@ public class ImportDataServiceImpl implements ImportDataService {
 
             //同步到数据库
             for (SysUser user : listUser) {
-                if ("admin".equals(user.getUserCode()) == false) {
+                if (StringUtils.isNotEmpty(user.getUserCode()) && "admin".equals(user.getUserCode()) == false) {
                     user.setOrganizationId(orgId);
                     user.setStatus((byte) 1);
                     user.setRoleId(roleId);
-                    if (StringUtils.isEmpty(user.getUserName())) {
-                        user.setUserName(user.getUserCode());
-                    }
+//                    if (StringUtils.isEmpty(user.getUserName())) {
+//                        user.setUserName(user.getUserCode());
+//                    }
+                    user.setUserName(user.getUserCode());
                     if (StringUtils.isEmpty(user.getNickName())) {
                         user.setNickName(user.getUserName());
                     }
