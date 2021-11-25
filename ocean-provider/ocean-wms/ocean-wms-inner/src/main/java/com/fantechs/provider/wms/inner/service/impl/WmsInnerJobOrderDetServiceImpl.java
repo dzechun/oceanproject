@@ -2,13 +2,13 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
@@ -38,6 +38,8 @@ public class WmsInnerJobOrderDetServiceImpl extends BaseService<WmsInnerJobOrder
 
     @Override
     public List<WmsInnerJobOrderDetDto> findList(SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        searchWmsInnerJobOrderDet.setOrgId(sysUser.getOrganizationId());
         return wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet);
     }
 

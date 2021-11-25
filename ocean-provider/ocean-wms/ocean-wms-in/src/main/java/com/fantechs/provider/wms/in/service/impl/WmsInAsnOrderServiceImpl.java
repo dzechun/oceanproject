@@ -2,40 +2,34 @@ package com.fantechs.provider.wms.in.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
 import com.fantechs.common.base.general.dto.wms.in.*;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
+import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInHtAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInHtAsnOrderDet;
+import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
+import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
-import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInHtAsnOrderDetMapper;
@@ -44,12 +38,8 @@ import com.fantechs.provider.wms.in.service.WmsInAsnOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
-import com.fantechs.common.base.support.BaseService;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -863,6 +853,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .palletCode(wmsInAsnOrderDet.getPalletCode())
                 .orderStatus((byte)1)
                         .option1("1")
+                        .option1(StringUtils.isNotEmpty(wmsInAsnOrderDet.getSourceOrderId())?wmsInAsnOrderDet.getSourceOrderId().toString():null)
                 .build());
         wmsInnerJobOrder.setWmsInPutawayOrderDets(list);
         ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);

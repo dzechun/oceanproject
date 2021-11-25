@@ -9,8 +9,8 @@
     </resultMap>
 <!--    月入报表-->
     <select id="findInList" resultMap="base_column_list_in">
-        SELECT oso.sales_user_name 'salesUserName',bs.region_name 'regionName',bs.country_name 'countryName',bs.supplier_id 'supplierId',bs.supplier_name 'supplierName',
-        bmt.brand_name 'brandName',bmt.product_category 'productCategory',bpm.product_model_code 'productModelCode',bm.material_id 'materialId',bm.material_code 'materialCode',
+        SELECT oso.sales_user_name 'salesUserName',bs.region_name 'regionName',bs.country_name 'countryName',oso.supplier_id 'supplierId',bs.supplier_name 'supplierName',
+        bmt.brand_name 'brandName',bmt.product_category 'productCategory',bpm.product_model_code 'productModelCode',mpwo.material_id 'materialId',bm.material_code 'materialCode',
         bm.material_desc 'materialDesc',count(*) 'qty',mspcd.create_time 'inDate'
         FROM mes_sfc_product_carton_det mspcd
         LEFT JOIN mes_sfc_work_order_barcode mswob ON mspcd.work_order_barcode_id = mswob.work_order_barcode_id
@@ -45,7 +45,7 @@
                 and bpm.product_model_code like CONCAT('%',#{productModelCode},'%')
             </if>
         </where>
-        GROUP BY oso.sales_user_name,bs.supplier_id,bm.material_id
+        GROUP BY oso.sales_user_name,oso.supplier_id,mpwo.material_id
     </select>
 <!--    月入条码明细-->
     <select id="findInListBarCode" resultType="java.lang.String">
@@ -55,7 +55,6 @@
                  LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
                  LEFT JOIN om_sales_order oso ON mpwo.sales_order_id = oso.sales_order_id
         <where>
-            oso.sales_user_name=#{salesUserName} and oso.supplier_id=#{supplierId} and mpwo.material_id =#{materialId}
             <choose>
                 <when test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                     and DATE_FORMAT(mspcd.create_time,'%y%m') between DATE_FORMAT(#{startTime},'%y%m') and DATE_FORMAT(#{endTime},'%y%m')
@@ -67,13 +66,22 @@
             <if test="orgId!=null and orgId!=''">
                 AND mspcd.org_id=#{orgId}
             </if>
+            <if test="salesUserName!=null and salesUserName!=''">
+                and oso.sales_user_name=#{salesUserName}
+            </if>
+        <if test="supplierId!=null and supplierId!=''">
+            and oso.supplier_id=#{supplierId}
+        </if>
+        <if test="materialId!=null and materialId!=''">
+            and mpwo.material_id =#{materialId}
+        </if>
         </where>
         GROUP BY mswob.work_order_barcode_id
     </select>
 <!--月出报表-->
     <select id="findOutList" resultMap="base_column_list_out">
-        SELECT oso.sales_user_name 'salesUserName',bs.region_name 'regionName',bs.country_name 'countryName',bs.supplier_id 'supplierId',bs.supplier_name 'supplierName',
-                bmt.brand_name 'brandName',bmt.product_category 'productCategory',bpm.product_model_code 'productModelCode',bm.material_id 'materialId',bm.material_code 'materialCode',
+        SELECT oso.sales_user_name 'salesUserName',bs.region_name 'regionName',bs.country_name 'countryName',oso.supplier_id 'supplierId',bs.supplier_name 'supplierName',
+                bmt.brand_name 'brandName',bmt.product_category 'productCategory',bpm.product_model_code 'productModelCode',wijod.material_id 'materialId',bm.material_code 'materialCode',
                 bm.material_desc 'materialDesc',sum(wijod.actual_qty) 'qty',wijod.work_end_time 'outDate'
         FROM wms_inner_job_order_det wijod
                  LEFT JOIN wms_inner_job_order wijo ON wijod.job_order_id = wijo.job_order_id
@@ -110,7 +118,7 @@
                 and bpm.product_model_code like CONCAT('%',#{productModelCode},'%')
             </if>
         </where>
-        GROUP BY oso.sales_user_name,bs.supplier_id,bm.material_id
+        GROUP BY oso.sales_user_name,oso.supplier_id,wijod.material_id
     </select>
 <!--    月出条码明细-->
     <select id="findOutListBarCode" resultType="java.lang.String">
@@ -122,7 +130,6 @@
         LEFT JOIN wms_inner_inventory_det wiid ON wiid.delivery_order_code = wodo.delivery_order_code
         LEFT JOIN om_sales_order oso ON wodod.source_order_id = oso.sales_order_id AND wodo.order_type_id=1
         <where>
-            oso.sales_user_name=#{salesUserName} and oso.supplier_id=#{supplierId} and wijod.material_id =#{materialId}
             <choose>
                 <when test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                     and DATE_FORMAT(wijod.work_end_time,'%y%m') between DATE_FORMAT(#{startTime},'%y%m') and DATE_FORMAT(#{endTime},'%y%m')
@@ -132,7 +139,16 @@
                 </otherwise>
             </choose>
             <if test="orgId!=null and orgId!=''">
-                AND mspcd.org_id=#{orgId}
+                AND wijod.org_id=#{orgId}
+            </if>
+            <if test="salesUserName!=null and salesUserName!=''">
+                and oso.sales_user_name=#{salesUserName}
+            </if>
+            <if test="supplierId!=null and supplierId!=''">
+                and oso.supplier_id=#{supplierId}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and wijod.material_id =#{materialId}
             </if>
         </where>
         GROUP BY wiid.barcode
