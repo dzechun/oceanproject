@@ -28,4 +28,28 @@ public class SearchInventoryAgeDetUreport extends BaseQuery implements Serializa
     @ApiModelProperty(name = "rangeEnd",value = "库龄范围结束值")
     private Integer rangeEnd;
 
+    /**
+     *  批次号/PO号
+     */
+    @ApiModelProperty(name = "samePackageCode",value = "批次号/PO号")
+    private String  samePackageCode;
+
+    /**
+     *  销售编码
+     */
+    @ApiModelProperty(name = "salesCode",value = "销售编码")
+    private String  salesCode;
+
+    /**
+     *  批次号/PO号为空（0-否 1-是）
+     */
+    @ApiModelProperty(name = "samePackageCodeIsNull",value = "批次号/PO号为空（0-否 1-是）")
+    private Integer  samePackageCodeIsNull;
+
+    /**
+     *  销售编码为空（0-否 1-是）
+     */
+    @ApiModelProperty(name = "salesCodeIsNull",value = "销售编码为空（0-否 1-是）")
+    private Integer  salesCodeIsNull;
+
 }

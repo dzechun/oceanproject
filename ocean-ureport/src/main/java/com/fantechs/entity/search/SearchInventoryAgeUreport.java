@@ -31,8 +31,8 @@ public class SearchInventoryAgeUreport extends BaseQuery implements Serializable
     /**
      *  销售编码
      */
-    @ApiModelProperty(name = "salesOrderCode",value = "销售编码")
-    private String  salesOrderCode;
+    @ApiModelProperty(name = "salesCode",value = "销售编码")
+    private String  salesCode;
 
     /**
      *  业务员
@@ -67,8 +67,8 @@ public class SearchInventoryAgeUreport extends BaseQuery implements Serializable
     /**
      *  批次号/PO号
      */
-    @ApiModelProperty(name = "poCode",value = "批次号/PO号")
-    private String  poCode;
+    @ApiModelProperty(name = "samePackageCode",value = "批次号/PO号")
+    private String  samePackageCode;
 
     /**
      *  正品库存

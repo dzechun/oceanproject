@@ -16,7 +16,7 @@
         <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
         <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
         <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
-        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
         <result column="sales_user_name" jdbcType="VARCHAR" property="salesUserName"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="country_name" jdbcType="VARCHAR" property="countryName"/>
@@ -24,7 +24,7 @@
         <result column="brand_name" jdbcType="VARCHAR" property="brandName"/>
         <result column="product_category" jdbcType="VARCHAR" property="productCategory"/>
         <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
-        <result column="po_code" jdbcType="VARCHAR" property="poCode"/>
+        <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     </resultMap>
 
@@ -38,54 +38,46 @@
     <select id="findList" resultMap="BaseResultMap">
         SELECT
                 (@i:=@i+1) as serial_number,
-                bo.organization_name,
-                bw.warehouse_name,
-                bwa.warehouse_area_code,
-                wii.storage_id,
-                bs.storage_code,
-                wii.material_id,
-                bm.material_code,
-                bm.material_name,
-                bm.material_desc,
-                wii.packing_unit_name,
-                wii.inventory_id,
-                wii.inventory_status_id,
-                bis.inventory_status_name,
-                so.sales_order_code,
-                so.sales_user_name,
+                wiid.option4 as same_package_code,
+                wiid.option3 as sales_code,
+                oso.sales_user_name,
                 bsp.supplier_name,
                 bsp.country_name,
                 bsp.region_name,
+                bs.storage_code,
+                bw.warehouse_name,
                 bmt.brand_name,
                 bmt.product_category,
                 bpm.product_model_name,
-                wii.po_code,
+                wiid.material_id,
+                wiid.inventory_status_id,
+                wiid.storage_id,
+                bm.material_code,
+                bm.material_desc,
         <foreach collection="ranges" index="index" item="item">
+                (select count(1) from wms_inner_inventory_det wiid2
+                where wiid2.storage_id = wiid.storage_id
+                and wiid2.material_id = wiid.material_id
+                and wiid2.inventory_status_id = wiid.inventory_status_id
+                and IFNULL(wiid2.option3 is null,wiid2.option3 = wiid.option3)
+                and IFNULL(wiid2.option4 is null, wiid2.option4 = wiid.option4)
+                and DATEDIFF(NOW(),wiid2.create_time) &gt;= #{item.rangeStart}
             <if test="item.rangeEnd!=null and item.rangeEnd!=''">
-                (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id =
-                wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-                and DATEDIFF(NOW(),wiid.create_time) &gt;= #{item.rangeStart} and DATEDIFF(NOW(),wiid.create_time) &lt;=
-                #{item.rangeEnd}) as #{item.detCount},
+                  and DATEDIFF(NOW(),wiid2.create_time) &lt;= #{item.rangeEnd}
             </if>
-            <if test="item.rangeEnd==null or item.rangeEnd==''">
-                (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id =
-                wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-                and DATEDIFF(NOW(),wiid.create_time) &gt;= #{item.rangeStart}) as #{item.detCount},
-            </if>
+                ) as #{item.detCount},
         </foreach>
-        (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-        and DATEDIFF(NOW(),wiid.create_time) &gt;= 1) as qty
-               FROM wms_inner_inventory wii
-                 LEFT JOIN om_sales_order so ON wii.sales_order_code = so.sales_order_code
-                 LEFT JOIN base_supplier bsp ON so.supplier_id = bsp.supplier_id
-                 LEFT JOIN base_warehouse bw ON wii.warehouse_id = bw.warehouse_id
-                 LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
-                 LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
-                 LEFT JOIN base_material bm ON wii.material_id = bm.material_id
+                count(1) as qty
+               FROM wms_inner_inventory_det wiid
+                 LEFT JOIN om_sales_order_det osod ON wiid.option3 = osod.sales_code
+                 LEFT JOIN om_sales_order oso ON oso.sales_order_id = osod.sales_order_id
+                 LEFT JOIN base_supplier bsp ON oso.supplier_id = bsp.supplier_id
+                 LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
+                 LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id
+                 LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
                  LEFT JOIN base_material_tab bmt ON bm.material_id = bmt.material_id
                  LEFT JOIN base_product_model bpm ON bmt.product_model_id = bpm.product_model_id
-                 LEFT JOIN base_inventory_status bis ON wii.inventory_status_id = bis.inventory_status_id
-                 LEFT JOIN fantech_imes_v2.base_organization bo ON wii.org_id = bo.organization_id,(SELECT @i:=0)j
+                 LEFT JOIN base_organization bo ON wiid.org_id = bo.organization_id,(SELECT @i:=0)j
         <where>
             bs.storage_type = 1
             <if test="warehouseId!=null and warehouseId!=''">
@@ -94,42 +86,38 @@
             <if test="storageId!=null and storageId!=''">
                 and bs.storage_id =#{storageId}
             </if>
-            <if test="warehouseAreaId!=null and warehouseAreaId!=''">
-                and bwa.warehouse_area_id =#{warehouseAreaId}
-            </if>
             <if test="materialId!=null and materialId!=''">
                 and bm.material_id  = #{materialId}
             </if>
             <if test="orgId!=null and orgId!=''">
                 and bo.organization_id =#{orgId}
             </if>
-            <if test="salesOrderCode!=null and salesOrderCode!=''">
-                and so.sales_order_code =#{salesOrderCode}
+            <if test="salesCode!=null and salesCode!=''">
+                and wiid.option3 like CONCAT('%',#{salesCode}, '%')
             </if>
             <if test="materialCode!=null and materialCode!=''">
-                and bm.material_code =#{materialCode}
+                and bm.material_code like CONCAT('%',#{materialCode}, '%')
             </if>
             <if test="salesUserName!=null and salesUserName!=''">
-                and so.sales_user_name =#{salesUserName}
+                and oso.sales_user_name like CONCAT('%',#{salesUserName}, '%')
             </if>
             <if test="productModelName!=null and productModelName!=''">
-                and bpm.product_model_name =#{productModelName}
+                and bpm.product_model_name like CONCAT('%',#{productModelName}, '%')
             </if>
             <if test="supplierName!=null and supplierName!=''">
-                and bsp.supplier_name =#{supplierName}
-            </if>
-            <if test="poCode!=null and poCode!=''">
-                and wii.po_code =#{poCode}
+                and bsp.supplier_name like CONCAT('%',#{supplierName}, '%')
             </if>
             <if test="storageCode!=null and storageCode!=''">
-                and bs.storage_code =#{storageCode}
+                and bs.storage_code like CONCAT('%',#{storageCode}, '%')
             </if>
-            <if test="qty!=null">
-                and (select count(1) from wms_inner_inventory_det wiid where wiid.inventory_status_id = wii.inventory_status_id and wiid.storage_id = wii.storage_id and wiid.material_id = wii.material_id
-                and DATEDIFF(NOW(),wiid.create_time) &gt;= 1) = #{qty}
+            <if test="samePackageCode!=null and samePackageCode!=''">
+                and wiid.option4 like CONCAT('%',#{samePackageCode}, '%')
             </if>
         </where>
-        order by serial_number
+        GROUP BY wiid.option4,wiid.option3,wiid.storage_id,wiid.material_id,wiid.inventory_status_id
+        <if test="qty!=null">
+            having count(1) =#{qty}
+        </if>
     </select>
 
     <select id="findDetList" resultMap="BaseResultDetMap">
@@ -140,6 +128,18 @@
         wiid.inventory_det_id
         FROM wms_inner_inventory_det wiid,(SELECT @i:=0)j
         <where>
+            <if test="salesCodeIsNull==1">
+                and wiid.option3 is null
+            </if>
+            <if test="samePackageCodeIsNull==1">
+                and wiid.option4 is null
+            </if>
+            <if test="salesCode!=null and salesCode!=''">
+                and wiid.option3 like CONCAT('%',#{salesCode}, '%')
+            </if>
+            <if test="samePackageCode!=null and samePackageCode!=''">
+                and wiid.option4 like CONCAT('%',#{samePackageCode}, '%')
+            </if>
             <if test="inventoryStatusId!=null and inventoryStatusId!=''">
                 and wiid.inventory_status_id =#{inventoryStatusId}
             </if>
