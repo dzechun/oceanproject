@@ -7,7 +7,6 @@ import lombok.Data;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @Author lzw
@@ -113,9 +112,9 @@ public class InventoryAge implements Serializable {
     /**
      *  销售编码
      */
-    @ApiModelProperty(name = "salesOrderCode",value = "销售编码")
-    @Excel(name = "产品分类", height = 20, width = 30,orderNum="9")
-    private String  salesOrderCode;
+    @ApiModelProperty(name = "salesCode",value = "销售编码")
+    @Excel(name = "销售编码", height = 20, width = 30,orderNum="9")
+    private String  salesCode;
 
     /**
      *  业务员
@@ -169,9 +168,9 @@ public class InventoryAge implements Serializable {
     /**
      *  批次号/PO号
      */
-    @ApiModelProperty(name = "poCode",value = "批次号/PO号")
+    @ApiModelProperty(name = "samePackageCode",value = "批次号/PO号")
     @Excel(name = "批次号/PO号", height = 20, width = 30,orderNum="12")
-    private String  poCode;
+    private String  samePackageCode;
 
     /**
      *  产品描述

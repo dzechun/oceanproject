@@ -8,6 +8,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class WorkOrderUreportDto implements Serializable {
@@ -23,6 +24,9 @@ public class WorkOrderUreportDto implements Serializable {
     @ApiModelProperty(name="workOrderCode",value = "计划名字")
     @Excel(name = "", height = 20, width = 30)
     private String workOrderCode;
+
+    @ApiModelProperty(name="workOrderId",value = "工单ID")
+    private String workOrderId;
 
     @ApiModelProperty(name = "materialCode",value = "万宝型号")
     @Excel(name = "万宝型号", height = 20, width = 30)
@@ -61,4 +65,7 @@ public class WorkOrderUreportDto implements Serializable {
     @ApiModelProperty(name="work_order_status" ,value="计划状态")
     @Excel(name = "计划状态", height = 20, width = 30, replace = {"下载或手动创建_1","条码打印完成_2","生产中_3","异常挂起_4","取消_5","完工_6","删除_7"})
     private Byte workOrderStatus;
+
+    @ApiModelProperty(name="barcodeList" ,value="条码集合")
+    private List<WorkOrderBarcodeDto> barcodeList;
 }
