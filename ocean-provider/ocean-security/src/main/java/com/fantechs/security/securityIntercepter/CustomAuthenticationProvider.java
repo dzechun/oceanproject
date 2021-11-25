@@ -3,7 +3,10 @@ package com.fantechs.security.securityIntercepter;
 import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysOrganizationUser;
 import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.security.filter.CustomWebAuthenticationDetails;
 import com.fantechs.security.mapper.SysOrganizationUserMapper;
 import com.fantechs.security.mapper.SysSpecItemMapper;
@@ -33,6 +36,8 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
     private UserDetailsServiceImpl userDetailsService;
     @Resource
     private SysOrganizationUserMapper sysOrganizationUserMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
     @Resource
     private SysSpecItemMapper sysSpecItemMapper;
     @Resource
@@ -81,7 +86,10 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
             searchOrganizationUser.setUserId(userDto.getUserId());
             searchOrganizationUser.setOrganizationId(new Long(organizationid));
             SysOrganizationUser sysOrganizationUsers = sysOrganizationUserMapper.selectOne(searchOrganizationUser);
-            if(StringUtils.isNotEmpty(sysOrganizationUsers)){
+            SearchBaseOrganization searchBaseOrganization = new SearchBaseOrganization();
+            searchBaseOrganization.setOrgId(new Long(organizationid));
+            List<BaseOrganizationDto> orgList = baseFeignApi.findOrganizationList(searchBaseOrganization).getData();
+            if(StringUtils.isNotEmpty(sysOrganizationUsers,orgList) && orgList.get(0).getStatus() != 0){
                 userDto.setOrganizationId(new Long(organizationid));
             }else{
                 throw new BadCredentialsException("组织错误");
