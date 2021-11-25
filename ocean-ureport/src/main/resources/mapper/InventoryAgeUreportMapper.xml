@@ -59,13 +59,13 @@
                 where wiid2.storage_id = wiid.storage_id
                 and wiid2.material_id = wiid.material_id
                 and wiid2.inventory_status_id = wiid.inventory_status_id
-                and IFNULL(wiid2.option3 is null,wiid2.option3 = wiid.option3)
-                and IFNULL(wiid2.option4 is null, wiid2.option4 = wiid.option4)
+                and IF(wiid.option3 is null,wiid2.option3 is null,wiid2.option3 = wiid.option3)
+                and IF(wiid.option4 is null,wiid2.option4 is null,wiid2.option4 = wiid.option4)
                 and DATEDIFF(NOW(),wiid2.create_time) &gt;= #{item.rangeStart}
             <if test="item.rangeEnd!=null and item.rangeEnd!=''">
                   and DATEDIFF(NOW(),wiid2.create_time) &lt;= #{item.rangeEnd}
             </if>
-                ) as #{item.detCount},
+             ) as #{item.detCount},
         </foreach>
                 count(1) as qty
                FROM wms_inner_inventory_det wiid
