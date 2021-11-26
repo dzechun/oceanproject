@@ -15,5 +15,7 @@ import java.util.Map;
 public interface SrmInAsnOrderService extends IService<SrmInAsnOrder> {
     List<SrmInAsnOrderDto> findList(Map<String, Object> map);
 
- //   Map<String, Object> importExcel(List<SrmInAsnOrder> list);
+    int save(SrmInAsnOrderDto srmInAsnOrderDto);
+
+    int update(SrmInAsnOrderDto srmInAsnOrderDto);
 }

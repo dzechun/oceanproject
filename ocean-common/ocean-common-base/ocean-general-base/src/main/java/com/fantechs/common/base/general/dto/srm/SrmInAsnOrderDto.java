@@ -2,12 +2,14 @@ package com.fantechs.common.base.general.dto.srm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
+import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDetBarcode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class SrmInAsnOrderDto extends SrmInAsnOrder implements Serializable {
@@ -105,5 +107,9 @@ public class SrmInAsnOrderDto extends SrmInAsnOrder implements Serializable {
     @ApiModelProperty(name="putawayQty",value = "上架数量")
     @Excel(name = "上架数量", height = 20, width = 30,orderNum="24")
     private BigDecimal putawayQty;
+
+    private List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos;
+
+    private List<SrmInAsnOrderDetBarcode> srmInAsnOrderDetBarcodes;
 
 }
