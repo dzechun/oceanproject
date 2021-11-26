@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.AsnOrderFildUreportMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.ureport.SrmAsnOrder">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="asn_order_code" jdbcType="VARCHAR" property="asnOrderCode"/>
+        <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode"/>
+        <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
+        <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
+        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
+        <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+        <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode"/>
+        <result column="carton_code" jdbcType="VARCHAR" property="cartonCode"/>
+        <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
+        <result column="qty" jdbcType="DECIMAL" property="qty"/>
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
+        <result column="shipper_name" jdbcType="VARCHAR" property="shipperName"/>
+        <result column="deliver_date" jdbcType="TIMESTAMP" property="deliverDate"/>
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+    </resultMap>
+
+    <select id="findList" resultMap="BaseResultMap">
+        select
+            wiao.asn_code as asn_order_code,
+            opo.purchase_order_code,
+            opo.plan_delivery_date,
+            bw.warehouse_name,
+            bm.material_code,
+            bm.material_name,
+            bm.material_version,
+            bm.material_desc,
+            opod.unit_name,
+            opod.order_qty,
+            opod.actual_qty,
+            wiaodb.barcode,
+            wiaodb.color_box_code,
+            wiaodb.carton_code,
+            wiaodb.pallet_code,
+            wiaodb.qty,
+            wiaodb.batch_code,
+            wiaodb.production_date,
+            wiao.shipper_name,
+            wiao.deliver_date,
+            wiao.order_status
+        from wms_in_asn_order wiao
+        left join wms_in_asn_order_det_barcode wiaodb on wiaodb.asn_order_id = wiao.asn_order_id
+        left join base_order_type bot on bot.order_type_id = wiao.order_type_id
+        left join om_purchase_order opo on opo.purchase_order_id = wiao.source_order_id
+        left join om_purchase_order_det opod on opod.purchase_order_id = opo.purchase_order_id
+        left join base_warehouse bw on bw.warehouse_id = opod.warehouse_id
+        left join base_material bm on bm.material_id = opod.material_id
+        <where>
+            and bot.business_type = 1
+            <if test="asnOrderCode!=null and asnOrderCode!=''">
+                and  wiao.asn_code like CONCAT('%', #{asnOrderCode}, '%')
+            </if>
+            <if test="purchaseOrderCode!=null and purchaseOrderCode!=''">
+                and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
+            </if>
+            <if test="warehouseName!=null and warehouseName!=''">
+                and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and bm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName!=null and materialName!=''">
+                and bm.material_name like CONCAT('%', #{materialName}, '%')
+            </if>
+            <if test="materialVersion!=null and materialVersion!=''">
+                and bm.material_version like CONCAT('%', #{materialVersion}, '%')
+            </if>
+            <if test="materialDesc!=null and materialDesc!=''">
+                and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="unitName!=null and unitName!=''">
+                and opod.unit_name like CONCAT('%', #{unitName}, '%')
+            </if>
+            <if test="barcode!=null and barcode!=''">
+                and wiaodb.barcode like CONCAT('%', #{barcode}, '%')
+            </if>
+            <if test="colorBoxCode!=null and colorBoxCode!=''">
+                and wiaodb.color_box_code like CONCAT('%', #{colorBoxCode}, '%')
+            </if>
+            <if test="cartonCode!=null and cartonCode!=''">
+                and wiaodb.carton_code like CONCAT('%', #{cartonCode}, '%')
+            </if>
+            <if test="palletCode!=null and palletCode!=''">
+                and wiaodb.pallet_code like CONCAT('%', #{palletCode}, '%')
+            </if>
+            <if test="batchCode!=null and batchCode!=''">
+                and wiaodb.batch_code like CONCAT('%', #{batchCode}, '%')
+            </if>
+            <if test="shipperName!=null and shipperName!=''">
+                and wiao.shipper_name like CONCAT('%', #{shipperName}, '%')
+            </if>
+            <if test="orderStatus!=null">
+                and wiao.order_status =  #{orderStatus}
+            </if>
+
+            <if test="planDeliveryDateStart!= null and planDeliveryDateStart!= '' and planDeliveryDateEnd!= null and planDeliveryDateEnd!= ''">
+                and date_format(opo.plan_delivery_date, '%Y-%m-%d') BETWEEN #{planDeliveryDateStart} AND #{planDeliveryDateEnd}
+            </if>
+            <if test="productionDateStart!= null and productionDateStart!= '' and productionDateEnd!= null and productionDateEnd!= ''">
+                and date_format(wiaodb.production_date, '%Y-%m-%d') BETWEEN #{productionDateStart} AND #{productionDateEnd}
+            </if>
+            <if test="deliverDateStart!= null and deliverDateStart!= '' and deliverDateEnd!= null and deliverDateEnd!= ''">
+                and date_format(wiao.deliver_date, '%Y-%m-%d') BETWEEN #{deliverDateStart} AND #{deliverDateEnd}
+            </if>
+
+            <if test="orgId!=null">
+                and wiao.org_id=#{orgId}
+            </if>
+            <if test="supplierId!=null">
+                and wiao.supplier_id=#{supplierId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

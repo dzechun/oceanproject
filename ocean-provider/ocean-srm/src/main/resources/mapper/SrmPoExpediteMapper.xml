@@ -125,7 +125,7 @@
         and date_format(spe.create_time, '%Y-%m-%d') between #{startTime} and #{endTime}
       </if>
     </where>
-    order by spe.create_time
+    order by spe.create_time desc
   </select>
 
 </mapper>

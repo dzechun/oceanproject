@@ -6,9 +6,11 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
 import cz.mallat.uasparser.UserAgentInfo;
+import org.apache.tomcat.util.buf.Utf8Encoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -67,7 +69,7 @@ public class TokenUtil {
                 sb.append("PC-");
             } else
                 sb.append("MOBILE-");
-			sb.append(user.getUserCode() + "-");
+			sb.append(URLEncoder.encode(user.getUserCode(),"UTF-8") + "-");
             sb.append(MD5.getMd5(user.getUserId()+"",32) + "-");//加密用户ID
             if(StringUtils.isNotEmpty(refreshTokenIp)){
                 sb.append(MD5.getMd5(refreshTokenIp,16) + "-");

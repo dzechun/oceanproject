@@ -65,6 +65,9 @@
       <if test="organizationId!=null">
         and bo.organization_id=#{organizationId}
       </if>
+      <if test="orgId!=null">
+        and bo.organization_id=#{orgId}
+      </if>
     </where>
     order by create_time desc
   </select>

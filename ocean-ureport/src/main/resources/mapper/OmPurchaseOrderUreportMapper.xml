@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.OmPurchaseOrderUreportMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.ureport.OmPurchaseOrderUreport">
+        <id column="purchase_order_id" jdbcType="BIGINT" property="purchaseOrderId" />
+        <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode"/>
+        <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+        <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName"/>
+        <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+
+    </resultMap>
+
+    <select id="findList" resultMap="BaseResultMap">
+        select
+            opo.purchase_order_id,
+            opo.purchase_order_code,
+            bs.supplier_code,
+            bs.supplier_name,
+            opo.order_status,
+            opo.order_date,
+            bd.dept_name,
+            su.user_name as make_order_user_name,
+            opo.make_order_date,
+            opo.remark
+        from om_purchase_order opo
+        left join base_supplier bs on bs.supplier_id = opo.supplier_id
+        left join base_dept bd on bd.dept_id = opo.purchase_dept_id
+        left join sys_user su on su.user_id = opo.make_order_user_id
+        <where>
+            <if test="purchaseOrderCode!=null and purchaseOrderCode!=''">
+                and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
+            </if>
+
+            <if test="supplierCode!=null and supplierCode!=''">
+                and bs.supplier_code like CONCAT('%', #{supplierCode}, '%')
+            </if>
+            <if test="supplierName!=null and supplierName!=''">
+                and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+            <if test="orderStatus!=null">
+                and opo.order_status =  #{orderStatus}
+            </if>
+            <if test="deptName!=null and deptName!=''">
+                and bd.dept_name like CONCAT('%', #{deptName}, '%')
+            </if>
+            <if test="makeOrderUserName!=null and makeOrderUserName!=''">
+                and su.user_name like CONCAT('%', #{makeOrderUserName}, '%')
+            </if>
+            <if test="remark!=null and remark!=''">
+                and opo.remark like CONCAT('%', #{remark}, '%')
+            </if>
+            <if test="orderDateStart!= null and orderDateStart!= '' and orderDateEnd!= null and orderDateEnd!= ''">
+                and date_format(opo.order_date, '%Y-%m-%d') BETWEEN #{orderDateStart} AND #{orderDateEnd}
+            </if>
+            <if test="makeOrderDateStart!= null and makeOrderDateStart!= '' and makeOrderDateEnd!= null and makeOrderDateEnd!= ''">
+                and date_format(opo.make_order_date, '%Y-%m-%d') BETWEEN #{makeOrderDateStart} AND #{makeOrderDateEnd}
+            </if>
+
+            <if test="orgId!=null">
+                and opo.org_id=#{orgId}
+            </if>
+            <if test="supplierId!=null">
+                and opo.supplier_id=#{supplierId}
+            </if>
+        </where>
+        order by opo.create_time desc
+    </select>
+
+</mapper>

@@ -20,10 +20,6 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <collection property="fileList" ofType="com.fantechs.common.base.general.dto.srm.SrmPoExpediteRecordReFileDto"
-                column="{poExpediteRecordId=po_expedite_record_id}" select="com.fantechs.provider.srm.mapper.SrmHtPoExpediteRecordReFileMapper.findList">
-
-    </collection>
   </resultMap>
 
   <sql id="Base_Column_List">
