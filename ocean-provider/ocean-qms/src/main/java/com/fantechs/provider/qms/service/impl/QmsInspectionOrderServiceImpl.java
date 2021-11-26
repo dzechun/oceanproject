@@ -87,12 +87,31 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Override
     public List<QmsInspectionOrder> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-
         map.put("orgId",user.getOrganizationId());
-
         List<QmsInspectionOrder> qmsInspectionOrders = qmsInspectionOrderMapper.findList(map);
-
         return qmsInspectionOrders;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public int recheck(Long inspectionOrderId){
+        Example example = new Example(QmsInspectionOrderDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("inspectionOrderId",inspectionOrderId);
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.selectByExample(example);
+
+        List<Long> detIds = new LinkedList<>();
+        for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
+            detIds.add(qmsInspectionOrderDet.getInspectionOrderDetId());
+        }
+
+        Example example1 = new Example(QmsInspectionOrderDetSample.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andIn("inspectionOrderDetId",detIds);
+        qmsInspectionOrderDetSampleMapper.deleteByExample(example1);
+
+        return batchQualified(inspectionOrderId);
     }
 
     @Override
