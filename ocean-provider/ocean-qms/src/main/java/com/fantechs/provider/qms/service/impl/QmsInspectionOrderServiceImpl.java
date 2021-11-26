@@ -4,8 +4,9 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
+import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
@@ -16,7 +17,6 @@ import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionStandard;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionWay;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
@@ -149,7 +149,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 inspectionOrderDetSampleList.add(inspectionOrderDetSample);
             }
         }
-        qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
+        if(StringUtils.isNotEmpty(inspectionOrderDetSampleList)) {
+            qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
+        }
 
         qmsInspectionOrder.setInspectionStatus((byte)3);
         qmsInspectionOrder.setInspectionResult((byte)1);
@@ -198,7 +200,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }
             }
         }
-        qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
+        if(StringUtils.isNotEmpty(inspectionOrderDetSampleList)) {
+            qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
+        }
 
         List<QmsInspectionOrderDetSample> barcodes = qmsInspectionOrderDetSampleService.findBarcodes(inspectionOrderId);
         List<QmsInspectionOrderDetSample> unQualifiedBarcodes = barcodes.stream().filter(item -> item.getBarcodeStatus()!=null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
@@ -667,114 +671,136 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         List<WmsInAsnOrderDto> wmsInAsnOrderList = inFeignApi.findList(searchWmsInAsnOrder).getData();
 
         if (StringUtils.isNotEmpty(wmsInAsnOrderList)) {
-            WmsInAsnOrderDto wmsInAsnOrderDto = wmsInAsnOrderList.get(0);
-            //分组：PO号为空的同一组，PO号不为空且相同的同一组
-            SearchWmsInnerInventoryDet searchInnerInventoryDet = new SearchWmsInnerInventoryDet();
-            searchInnerInventoryDet.setPageSize(999);
-            searchInnerInventoryDet.setAsnCode(wmsInAsnOrderDto.getAsnCode());
-            List<WmsInnerInventoryDetDto> innerInventoryDetDtos = innerFeignApi.findList(searchInnerInventoryDet).getData();
+            for (WmsInAsnOrderDto wmsInAsnOrderDto : wmsInAsnOrderList) {
+                SearchWmsInnerInventoryDet searchInnerInventoryDet = new SearchWmsInnerInventoryDet();
+                searchInnerInventoryDet.setPageSize(999);
+                searchInnerInventoryDet.setAsnCode(wmsInAsnOrderDto.getAsnCode());
+                List<WmsInnerInventoryDetDto> innerInventoryDetDtos = innerFeignApi.findList(searchInnerInventoryDet).getData();
 
-            Map<String, List<WmsInnerInventoryDetDto>> collect = new HashMap<>();
-            SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
-            for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : innerInventoryDetDtos) {
-                searchMesSfcBarcodeProcess.setBarcode(wmsInnerInventoryDetDto.getBarcode());
-                List<MesSfcBarcodeProcess> sfcBarcodeProcesses = sfcFeignApi.findBarcode(searchMesSfcBarcodeProcess).getData();
-                wmsInnerInventoryDetDto.setSamePackageCode(sfcBarcodeProcesses.get(0).getSamePackageCode());
-                if(StringUtils.isEmpty(wmsInnerInventoryDetDto.getSamePackageCode())){
-                    List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
-                    if(collect.containsKey("null")){
-                        inventoryDetDtos = collect.get("null");
-                    }
-                    inventoryDetDtos.add(wmsInnerInventoryDetDto);
-                    collect.put("null",inventoryDetDtos);
-                }else {
-                    List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
-                    if (collect.containsKey(wmsInnerInventoryDetDto.getSamePackageCode())) {
-                        inventoryDetDtos = collect.get(wmsInnerInventoryDetDto.getSamePackageCode());
-                    }
-                    inventoryDetDtos.add(wmsInnerInventoryDetDto);
-                    collect.put(wmsInnerInventoryDetDto.getSamePackageCode(), inventoryDetDtos);
-                }
-            }
-
-            if (StringUtils.isNotEmpty(wmsInAsnOrderDto.getWmsInAsnOrderDetList())) {
-                for (WmsInAsnOrderDet wmsInAsnOrderDet : wmsInAsnOrderDto.getWmsInAsnOrderDetList()) {
-                    SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
-                    searchBaseInventoryStatus.setInventoryStatusId(wmsInAsnOrderDet.getInventoryStatusId());
-                    List<BaseInventoryStatus> inventoryStatuses = baseFeignApi.findList(searchBaseInventoryStatus).getData();
-                    if (StringUtils.isNotEmpty(inventoryStatuses) && "待检".equals(inventoryStatuses.get(0).getInventoryStatusName())) {
-                        Set<String> codes = collect.keySet();
-                        for (String code : codes) {
-                            List<WmsInnerInventoryDetDto> inventoryDetDtos = collect.get(code);
-                            List<WmsInnerInventoryDetDto> detDtos = inventoryDetDtos.stream().filter(li -> li.getMaterialId().equals(wmsInAsnOrderDet.getMaterialId())).collect(Collectors.toList());
-
-                            QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
-                            qmsInspectionOrder.setMaterialId(wmsInAsnOrderDet.getMaterialId());
-                            qmsInspectionOrder.setOrderQty(new BigDecimal(detDtos.size()));
-                            qmsInspectionOrder.setInspectionStatus((byte) 1);
-
-                            SearchBaseInspectionWay searchBaseInspectionWay = new SearchBaseInspectionWay();
-                            searchBaseInspectionWay.setInspectionWayDesc("正常");
-                            searchBaseInspectionWay.setQueryMark(1);
-                            List<BaseInspectionWay> inspectionWays = baseFeignApi.findList(searchBaseInspectionWay).getData();
-                            if (StringUtils.isEmpty(inspectionWays)) {
-                                throw new BizErrorException("未维护正常的检验方式");
-                            }
-                            qmsInspectionOrder.setInspectionWayId(inspectionWays.get(0).getInspectionWayId());
-
-                            SearchOmSalesOrderDto searchOmSalesOrderDto = new SearchOmSalesOrderDto();
-                            searchOmSalesOrderDto.setWorkOrderId(wmsInAsnOrderDet.getSourceOrderId());
-                            List<OmSalesOrderDto> salesOrderDtoList = oMFeignApi.findList(searchOmSalesOrderDto).getData();
-                            if (StringUtils.isNotEmpty(salesOrderDtoList)) {
-                                qmsInspectionOrder.setCustomerId(salesOrderDtoList.get(0).getSupplierId());
-                            }
-
-                            SearchBaseInspectionStandard searchBaseInspectionStandard = new SearchBaseInspectionStandard();
-                            searchBaseInspectionStandard.setMaterialId(wmsInAsnOrderDet.getMaterialId());
-                            searchBaseInspectionStandard.setSupplierId(qmsInspectionOrder.getCustomerId());
-                            List<BaseInspectionStandard> inspectionStandardList = baseFeignApi.findList(searchBaseInspectionStandard).getData();
-                            if (StringUtils.isEmpty(inspectionStandardList)) {
-                                throw new BizErrorException("未查到检验标准");
-                            }
-                            qmsInspectionOrder.setInspectionStandardId(inspectionStandardList.get(0).getInspectionStandardId());
-
-                            //明细
-                            List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.showOrderDet(qmsInspectionOrder.getInspectionStandardId(), qmsInspectionOrder.getOrderQty());
-                            qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
-                            this.save(qmsInspectionOrder);
-
-                            //对应的库存明细写入质检单号
-                            if (StringUtils.isNotEmpty(detDtos)) {
-                                for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : detDtos) {
-                                    wmsInnerInventoryDetDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
-                                    innerFeignApi.update(wmsInnerInventoryDetDto);
+                //分组：1、PO号不为空：PO号相同的同一组；
+                // 2、PO号为空但销售订单号不为空：销售订单号相同的同一组；
+                // 3、PO号和销售订单号为空：两者都为空的同一组
+                Map<String, List<WmsInnerInventoryDetDto>> collect = new HashMap<>();
+                for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : innerInventoryDetDtos) {
+                    if (StringUtils.isEmpty(wmsInnerInventoryDetDto.getOption4())) {
+                        boolean tag = false;
+                        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getOption3())) {
+                            SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
+                            searchOmSalesOrderDetDto.setSalesCode(wmsInnerInventoryDetDto.getOption3());
+                            List<OmSalesOrderDetDto> salesOrderDetDtos = oMFeignApi.findList(searchOmSalesOrderDetDto).getData();
+                            if (StringUtils.isNotEmpty(salesOrderDetDtos)) {
+                                wmsInnerInventoryDetDto.setSalesOrderCode(salesOrderDetDtos.get(0).getSalesOrderCode());
+                                List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
+                                if (collect.containsKey(wmsInnerInventoryDetDto.getSalesOrderCode())) {
+                                    inventoryDetDtos = collect.get(wmsInnerInventoryDetDto.getSalesOrderCode());
                                 }
+                                inventoryDetDtos.add(wmsInnerInventoryDetDto);
+                                collect.put(wmsInnerInventoryDetDto.getSalesOrderCode(), inventoryDetDtos);
+                            }else {
+                                tag = true;
                             }
+                        }else {
+                            tag = true;
+                        }
 
-                            //对应的库存写入质检单号
-                            SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
-                            //searchWmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
-                            searchWmsInnerInventory.setStorageId(detDtos.get(0).getStorageId());
-                            searchWmsInnerInventory.setInventoryStatusId(detDtos.get(0).getInventoryStatusId());
-                            searchWmsInnerInventory.setMaterialId(detDtos.get(0).getMaterialId());
-                            searchWmsInnerInventory.setQcLock((byte) 0);
-                            List<WmsInnerInventoryDto> list = innerFeignApi.findList(searchWmsInnerInventory).getData();
-                            if (StringUtils.isEmpty(list)) {
-                                throw new BizErrorException("未查询到对应库存");
+                        if(tag) {
+                            List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
+                            if (collect.containsKey("null")) {
+                                inventoryDetDtos = collect.get("null");
                             }
-                            WmsInnerInventoryDto wmsInnerInventory = list.get(0);
+                            inventoryDetDtos.add(wmsInnerInventoryDetDto);
+                            collect.put("null", inventoryDetDtos);
+                        }
+                    } else {
+                        List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
+                        if (collect.containsKey(wmsInnerInventoryDetDto.getOption4())) {
+                            inventoryDetDtos = collect.get(wmsInnerInventoryDetDto.getOption4());
+                        }
+                        inventoryDetDtos.add(wmsInnerInventoryDetDto);
+                        collect.put(wmsInnerInventoryDetDto.getOption4(), inventoryDetDtos);
+                    }
+                }
 
-                            //拆库存
-                            WmsInnerInventoryDto newInnerInventory = new WmsInnerInventoryDto();
-                            BeanUtils.copyProperties(wmsInnerInventory, newInnerInventory);
-                            newInnerInventory.setInventoryId(null);
-                            newInnerInventory.setPackingQty(new BigDecimal(detDtos.size()));
-                            newInnerInventory.setQcLock((byte) 1);
-                            newInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
-                            innerFeignApi.add(newInnerInventory);
+                //生成检验单
+                if (StringUtils.isNotEmpty(wmsInAsnOrderDto.getWmsInAsnOrderDetList())) {
+                    for (WmsInAsnOrderDet wmsInAsnOrderDet : wmsInAsnOrderDto.getWmsInAsnOrderDetList()) {
+                        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+                        searchBaseInventoryStatus.setInventoryStatusId(wmsInAsnOrderDet.getInventoryStatusId());
+                        List<BaseInventoryStatus> inventoryStatuses = baseFeignApi.findList(searchBaseInventoryStatus).getData();
+                        if (StringUtils.isNotEmpty(inventoryStatuses) && "待检".equals(inventoryStatuses.get(0).getInventoryStatusName())) {
+                            Set<String> codes = collect.keySet();
+                            for (String code : codes) {
+                                List<WmsInnerInventoryDetDto> inventoryDetDtos = collect.get(code);
+                                List<WmsInnerInventoryDetDto> detDtos = inventoryDetDtos.stream().filter(li -> li.getMaterialId().equals(wmsInAsnOrderDet.getMaterialId())).collect(Collectors.toList());
 
-                            wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(new BigDecimal(detDtos.size())));
-                            innerFeignApi.update(wmsInnerInventory);
+                                QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
+                                qmsInspectionOrder.setMaterialId(wmsInAsnOrderDet.getMaterialId());
+                                qmsInspectionOrder.setOrderQty(new BigDecimal(detDtos.size()));
+                                qmsInspectionOrder.setInspectionStatus((byte) 1);
+
+                                SearchBaseInspectionWay searchBaseInspectionWay = new SearchBaseInspectionWay();
+                                searchBaseInspectionWay.setInspectionWayDesc("正常");
+                                searchBaseInspectionWay.setQueryMark(1);
+                                List<BaseInspectionWay> inspectionWays = baseFeignApi.findList(searchBaseInspectionWay).getData();
+                                if (StringUtils.isEmpty(inspectionWays)) {
+                                    throw new BizErrorException("未维护正常的检验方式");
+                                }
+                                qmsInspectionOrder.setInspectionWayId(inspectionWays.get(0).getInspectionWayId());
+
+                                SearchOmSalesOrderDto searchOmSalesOrderDto = new SearchOmSalesOrderDto();
+                                searchOmSalesOrderDto.setWorkOrderId(wmsInAsnOrderDet.getSourceOrderId());
+                                List<OmSalesOrderDto> salesOrderDtoList = oMFeignApi.findList(searchOmSalesOrderDto).getData();
+                                if (StringUtils.isNotEmpty(salesOrderDtoList)) {
+                                    qmsInspectionOrder.setCustomerId(salesOrderDtoList.get(0).getSupplierId());
+                                }
+
+                                SearchBaseInspectionStandard searchBaseInspectionStandard = new SearchBaseInspectionStandard();
+                                searchBaseInspectionStandard.setMaterialId(wmsInAsnOrderDet.getMaterialId());
+                                searchBaseInspectionStandard.setSupplierId(qmsInspectionOrder.getCustomerId());
+                                List<BaseInspectionStandard> inspectionStandardList = baseFeignApi.findList(searchBaseInspectionStandard).getData();
+                                if (StringUtils.isEmpty(inspectionStandardList)) {
+                                    throw new BizErrorException("未查到检验标准");
+                                }
+                                qmsInspectionOrder.setInspectionStandardId(inspectionStandardList.get(0).getInspectionStandardId());
+
+                                //明细
+                                List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.showOrderDet(qmsInspectionOrder.getInspectionStandardId(), qmsInspectionOrder.getOrderQty());
+                                qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
+                                this.save(qmsInspectionOrder);
+
+                                //对应的库存明细写入质检单号
+                                if (StringUtils.isNotEmpty(detDtos)) {
+                                    for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : detDtos) {
+                                        wmsInnerInventoryDetDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+                                        innerFeignApi.update(wmsInnerInventoryDetDto);
+                                    }
+                                }
+
+                                //对应的库存写入质检单号
+                                SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
+                                //searchWmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
+                                searchWmsInnerInventory.setStorageId(detDtos.get(0).getStorageId());
+                                searchWmsInnerInventory.setInventoryStatusId(detDtos.get(0).getInventoryStatusId());
+                                searchWmsInnerInventory.setMaterialId(detDtos.get(0).getMaterialId());
+                                searchWmsInnerInventory.setQcLock((byte) 0);
+                                List<WmsInnerInventoryDto> list = innerFeignApi.findList(searchWmsInnerInventory).getData();
+                                if (StringUtils.isEmpty(list)) {
+                                    throw new BizErrorException("未查询到对应库存");
+                                }
+                                WmsInnerInventoryDto wmsInnerInventory = list.get(0);
+
+                                //拆库存
+                                WmsInnerInventoryDto newInnerInventory = new WmsInnerInventoryDto();
+                                BeanUtils.copyProperties(wmsInnerInventory, newInnerInventory);
+                                newInnerInventory.setInventoryId(null);
+                                newInnerInventory.setPackingQty(new BigDecimal(detDtos.size()));
+                                newInnerInventory.setQcLock((byte) 1);
+                                newInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+                                innerFeignApi.add(newInnerInventory);
+
+                                wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(new BigDecimal(detDtos.size())));
+                                innerFeignApi.update(wmsInnerInventory);
+                            }
                         }
                     }
                 }
