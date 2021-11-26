@@ -5,11 +5,13 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseLabelMaterialDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
 import com.fantechs.common.base.general.dto.wms.in.*;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelMaterial;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
@@ -26,6 +28,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
@@ -35,10 +38,7 @@ import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInHtAsnOrderDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInHtAsnOrderMapper;
 import com.fantechs.provider.wms.in.service.WmsInAsnOrderService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
@@ -71,10 +71,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     private SFCFeignApi sfcFeignApi;
     @Resource
     private OMFeignApi omFeignApi;
-    @Autowired
-    DataSourceTransactionManager dataSourceTransactionManager;
-    @Autowired
-    TransactionDefinition transactionDefinition;
+    @Resource
+    private BaseFeignApi baseFeignApi;
     @Resource
     private WmsInHtAsnOrderMapper wmsInHtAsnOrderMapper;
     @Resource
@@ -699,23 +697,52 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
     @LcnTransaction
     public int palletAutoAsnOrder(PalletAutoAsnDto palletAutoAsnDto) {
         SysUser sysUser = currentUser();
-        //手动开启事务！
-        //TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
-        //try {
-            //查询redis是否存储今日入库单号
-            Boolean hasKey = redisUtil.hasKey("pallet_id");
-            Map<String,String> asnMap = new HashMap<>();
-            if(hasKey){
-                asnMap = (Map<String, String>)redisUtil.get("pallet_id");
+
+        //1-国内 2-海外 3-三星
+        Integer materialType = 1;
+        //查询物料关联标签 区分国内海外或三星
+        SearchBaseLabelMaterial searchBaseLabelMaterial = new SearchBaseLabelMaterial();
+        searchBaseLabelMaterial.setMaterialId(palletAutoAsnDto.getMaterialId().toString());
+        ResponseEntity<List<BaseLabelMaterialDto>> listResponseEntity = baseFeignApi.findLabelMaterialList(searchBaseLabelMaterial);
+        if(listResponseEntity.getCode()!=0){
+            throw new BizErrorException(listResponseEntity.getCode(),listResponseEntity.getMessage());
+        }
+        if(!listResponseEntity.getData().isEmpty()){
+            BaseLabelMaterialDto baseLabelMaterialDto = listResponseEntity.getData().get(0);
+            switch (baseLabelMaterialDto.getLabelCode()){
+                case "CN01":
+                    materialType=1;
+                    break;
+                case "CN02":
+                    materialType=2;
+                    break;
+                case "SEC":
+                    materialType=3;
+                    break;
+                default:
+                    materialType=1;
+                    break;
             }
+        }
+        //查询redis是否存储今日入库单号
+        Boolean hasKey = redisUtil.hasKey("pallet_id");
+        Map<Integer, Map<String, String>> palletMap = new HashMap<>();
+        Map<String,String> asnMap = new HashMap<>();
+        //true
+        boolean isExist = false;
+        if(hasKey) {
+            palletMap = (Map<Integer, Map<String, String>>) redisUtil.get("pallet_id");
+            if(palletMap.containsKey(materialType)){
+                asnMap = palletMap.get(materialType);
+                isExist=true;
+            }
+        }
             //获取当前组织生成的
-            //true
-            boolean isExist = false;
-            if(asnMap.containsKey(sysUser.getOrganizationId().toString())){
+            if(isExist && asnMap.containsKey(sysUser.getOrganizationId().toString())){
                 Long asnOrderId = Long.parseLong(asnMap.get(sysUser.getOrganizationId().toString()));
                 WmsInAsnOrder wmsInAsnOrder = wmsInAsnOrderMapper.selectByPrimaryKey(asnOrderId);
-                if(StringUtils.isNotEmpty(wmsInAsnOrder)){
-                    isExist=true;
+                if(StringUtils.isEmpty(wmsInAsnOrder)){
+                    isExist=false;
                 }
             }
             if(isExist){
@@ -753,9 +780,6 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 wms.setActualQty(palletAutoAsnDto.getActualQty());
                 //新增库存明细
                 res = this.addInventoryDet(palletAutoAsnDto,wmsInAsnOrder.getAsnCode(),wms);
-
-                //手动提交事务
-                //dataSourceTransactionManager.commit(transactionStatus);
 
                 //新增上架作业单
                 res = this.createJobOrder(wmsInAsnOrder,wms);
@@ -804,19 +828,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 res = this.addInventoryDet(palletAutoAsnDto,wmsInAsnOrder.getAsnCode(),wmsInAsnOrderDet);
                 //设置新redis 时效为24小时
                 asnMap.put(sysUser.getOrganizationId().toString(), wmsInAsnOrder.getAsnOrderId().toString());
-                redisUtil.set("pallet_id",asnMap);
+                palletMap.put(materialType,asnMap);
+                redisUtil.set("pallet_id",palletMap);
                 redisUtil.expire("pallet_id",getRemainSecondsOneDay(new Date()));
-                //手动提交事务
-                //dataSourceTransactionManager.commit(transactionStatus);
                 //新增上级作业单
                 res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
                 return 1;
             }
-        //}catch (Exception e){
-            //手动回滚事务
-            //dataSourceTransactionManager.rollback(transactionStatus);
-           // throw new BizErrorException(ErrorCodeEnum.OPT20012002,e.getMessage());
-        //}
     }
 
     /**
