@@ -918,6 +918,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("stockLock", 0)
                         .andEqualTo("qcLock", 0)
                         .andEqualTo("lockStatus", 0)
+                        .andGreaterThan("packingQty", 0)
                         .andEqualTo("orgId",sysUser.getOrganizationId());
                 WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 example.clear();
