@@ -95,12 +95,14 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                             if (searchSapProductBomApi.getMaterialCode().equals(code)) {
                                 bomData = parentBomData;
                             } else {
-                                bomData = saveBaseProductBom(data.get(code), "0", orgId);
+                                Long materialId = data.get(code);
+                                if(StringUtils.isEmpty(materialId)) throw new BizErrorException("未查询到物料信息，物料编码为："+code);
+                                bomData = saveBaseProductBom(materialId, "0", orgId);
 
                                 BaseProductBomDet subBomDet = new BaseProductBomDet();
                                 if (StringUtils.isNotEmpty(parentBomData))
                                     subBomDet.setProductBomId(parentBomData.getProductBomId());
-                                subBomDet.setMaterialId(data.get(code));
+                                subBomDet.setMaterialId(materialId);
                                 subBomDet.setIfHaveLowerLevel((byte) 1);
                                 subBomDet.setIsDelete((byte) 1);
                                 subBomDet.setStatus((byte) 1);
@@ -113,9 +115,12 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                             for (DTMESBOM bom : res.getBOM()) {
                                 if (baseUtils.removeZero(bom.getMATNR()).equals(code) && StringUtils.isNotEmpty(bom.getIDNRK())) {
                                     String detCode = baseUtils.removeZero(bom.getIDNRK());
+                                    Long materialId = data.get(detCode);
+                                    if(StringUtils.isEmpty(materialId)) throw new BizErrorException("未查询到物料信息，物料编码为："+code);
+                                    bomData = saveBaseProductBom(materialId, "0", orgId);
                                     BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
                                     baseProductBomDet.setProductBomId(bomData.getProductBomId());
-                                    baseProductBomDet.setMaterialId(data.get(detCode));
+                                    baseProductBomDet.setMaterialId(materialId);
                                     baseProductBomDet.setUsageQty(new BigDecimal(bom.getMENGE().trim()));
                                     baseProductBomDet.setBaseQty(new BigDecimal(bom.getBMENG().trim()));
                                     baseProductBomDet.setRemark(bom.getMAKTXZ());
