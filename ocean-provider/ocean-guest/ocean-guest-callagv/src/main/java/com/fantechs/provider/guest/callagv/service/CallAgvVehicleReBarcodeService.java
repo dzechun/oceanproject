@@ -1,11 +1,9 @@
 package com.fantechs.provider.guest.callagv.service;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleBarcodeDTO;
-import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleReBarcodeDto;
-import com.fantechs.common.base.general.dto.callagv.RequestBarcodeUnboundDTO;
-import com.fantechs.common.base.general.dto.callagv.RequestCallAgvStockDTO;
+import com.fantechs.common.base.general.dto.callagv.*;
 import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleReBarcode;
+import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvStorageMaterial;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -27,4 +25,8 @@ public interface CallAgvVehicleReBarcodeService extends IService<CallAgvVehicleR
     int vehicleDisplacement(Long vehicleId, Long storageTaskPointId, Integer type) throws Exception;
 
     int materialTransfer(RequestCallAgvStockDTO requestCallAgvStockDTO);
+
+    List<CallAgvWarehouseAreaMaterialDto> agvWarehouseAreaMaterialSummary(SearchCallAgvStorageMaterial SearchCallAgvStorageMaterial);
+
+    List<CallAgvStorageMaterialDto> agvStorageMaterialDetail(SearchCallAgvStorageMaterial SearchCallAgvStorageMaterial);
 }
