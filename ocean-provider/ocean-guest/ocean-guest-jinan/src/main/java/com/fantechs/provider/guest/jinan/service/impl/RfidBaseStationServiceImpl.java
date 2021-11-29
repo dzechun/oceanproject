@@ -73,7 +73,7 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
                         .andEqualTo("orgId", user.getOrganizationId());
                 RfidBaseStationReAsset rfidBaseStationReAsset1 = rfidBaseStationReAssetMapper.selectOneByExample(example);
                 if(StringUtils.isNotEmpty(rfidBaseStationReAsset1)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"资产名称为"+rfidBaseStationReAsset1.getAssetName()+"的资产已绑定其他基站");
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"RFID序列号为"+rfidBaseStationReAsset1.getAssetBarcode()+"的资产已绑定其他基站");
                 }
 
                 rfidBaseStationReAsset.setBaseStationId(record.getBaseStationId());
@@ -121,7 +121,7 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
                         .andEqualTo("orgId", user.getOrganizationId());
                 RfidBaseStationReAsset rfidBaseStationReAsset1 = rfidBaseStationReAssetMapper.selectOneByExample(example);
                 if(StringUtils.isNotEmpty(rfidBaseStationReAsset1)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"资产名称为"+rfidBaseStationReAsset1.getAssetName()+"的资产已绑定其他基站");
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"RFID序列号为"+rfidBaseStationReAsset1.getAssetBarcode()+"的资产已绑定其他基站");
                 }
 
                 rfidBaseStationReAsset.setBaseStationId(entity.getBaseStationId());
