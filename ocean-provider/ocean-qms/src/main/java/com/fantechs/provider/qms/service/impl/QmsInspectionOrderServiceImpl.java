@@ -651,6 +651,54 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         return qmsInspectionOrderMapper.deleteByIds(ids);
     }
 
+    public Map<String, List<WmsInnerInventoryDetDto>> groupInventoryDet(List<WmsInnerInventoryDetDto> innerInventoryDetDtos){
+        //分组：1、PO号不为空：PO号相同的同一组；
+        // 2、PO号为空但销售订单号不为空：销售订单号相同的同一组；
+        // 3、PO号和销售订单号为空：两者都为空的同一组
+        Map<String, List<WmsInnerInventoryDetDto>> collect = new HashMap<>();
+        for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : innerInventoryDetDtos) {
+            if (StringUtils.isEmpty(wmsInnerInventoryDetDto.getOption4())) {
+                boolean tag = false;
+                if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getOption3())) {
+                    SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
+                    searchOmSalesOrderDetDto.setSalesCode(wmsInnerInventoryDetDto.getOption3());
+                    List<OmSalesOrderDetDto> salesOrderDetDtos = oMFeignApi.findList(searchOmSalesOrderDetDto).getData();
+                    if (StringUtils.isNotEmpty(salesOrderDetDtos)) {
+                        wmsInnerInventoryDetDto.setSalesOrderCode(salesOrderDetDtos.get(0).getSalesOrderCode());
+                        List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
+                        if (collect.containsKey(wmsInnerInventoryDetDto.getSalesOrderCode())) {
+                            inventoryDetDtos = collect.get(wmsInnerInventoryDetDto.getSalesOrderCode());
+                        }
+                        inventoryDetDtos.add(wmsInnerInventoryDetDto);
+                        collect.put(wmsInnerInventoryDetDto.getSalesOrderCode(), inventoryDetDtos);
+                    }else {
+                        tag = true;
+                    }
+                }else {
+                    tag = true;
+                }
+
+                if(tag) {
+                    List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
+                    if (collect.containsKey("null")) {
+                        inventoryDetDtos = collect.get("null");
+                    }
+                    inventoryDetDtos.add(wmsInnerInventoryDetDto);
+                    collect.put("null", inventoryDetDtos);
+                }
+            } else {
+                List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
+                if (collect.containsKey(wmsInnerInventoryDetDto.getOption4())) {
+                    inventoryDetDtos = collect.get(wmsInnerInventoryDetDto.getOption4());
+                }
+                inventoryDetDtos.add(wmsInnerInventoryDetDto);
+                collect.put(wmsInnerInventoryDetDto.getOption4(), inventoryDetDtos);
+            }
+        }
+
+        return collect;
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
@@ -677,49 +725,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 searchInnerInventoryDet.setAsnCode(wmsInAsnOrderDto.getAsnCode());
                 List<WmsInnerInventoryDetDto> innerInventoryDetDtos = innerFeignApi.findList(searchInnerInventoryDet).getData();
 
-                //分组：1、PO号不为空：PO号相同的同一组；
-                // 2、PO号为空但销售订单号不为空：销售订单号相同的同一组；
-                // 3、PO号和销售订单号为空：两者都为空的同一组
-                Map<String, List<WmsInnerInventoryDetDto>> collect = new HashMap<>();
-                for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : innerInventoryDetDtos) {
-                    if (StringUtils.isEmpty(wmsInnerInventoryDetDto.getOption4())) {
-                        boolean tag = false;
-                        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getOption3())) {
-                            SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
-                            searchOmSalesOrderDetDto.setSalesCode(wmsInnerInventoryDetDto.getOption3());
-                            List<OmSalesOrderDetDto> salesOrderDetDtos = oMFeignApi.findList(searchOmSalesOrderDetDto).getData();
-                            if (StringUtils.isNotEmpty(salesOrderDetDtos)) {
-                                wmsInnerInventoryDetDto.setSalesOrderCode(salesOrderDetDtos.get(0).getSalesOrderCode());
-                                List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
-                                if (collect.containsKey(wmsInnerInventoryDetDto.getSalesOrderCode())) {
-                                    inventoryDetDtos = collect.get(wmsInnerInventoryDetDto.getSalesOrderCode());
-                                }
-                                inventoryDetDtos.add(wmsInnerInventoryDetDto);
-                                collect.put(wmsInnerInventoryDetDto.getSalesOrderCode(), inventoryDetDtos);
-                            }else {
-                                tag = true;
-                            }
-                        }else {
-                            tag = true;
-                        }
-
-                        if(tag) {
-                            List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
-                            if (collect.containsKey("null")) {
-                                inventoryDetDtos = collect.get("null");
-                            }
-                            inventoryDetDtos.add(wmsInnerInventoryDetDto);
-                            collect.put("null", inventoryDetDtos);
-                        }
-                    } else {
-                        List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
-                        if (collect.containsKey(wmsInnerInventoryDetDto.getOption4())) {
-                            inventoryDetDtos = collect.get(wmsInnerInventoryDetDto.getOption4());
-                        }
-                        inventoryDetDtos.add(wmsInnerInventoryDetDto);
-                        collect.put(wmsInnerInventoryDetDto.getOption4(), inventoryDetDtos);
-                    }
-                }
+                //库存明细按PO和销售订单号分组
+                Map<String, List<WmsInnerInventoryDetDto>> collect = groupInventoryDet(innerInventoryDetDtos);
 
                 //生成检验单
                 if (StringUtils.isNotEmpty(wmsInAsnOrderDto.getWmsInAsnOrderDetList())) {
