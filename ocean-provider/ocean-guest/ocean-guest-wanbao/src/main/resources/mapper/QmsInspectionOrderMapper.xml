@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="inspection_order_id" jdbcType="BIGINT" property="inspectionOrderId" />
+    <result column="inspection_order_code" jdbcType="VARCHAR" property="inspectionOrderCode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+    <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
+    <result column="inspection_standard_id" jdbcType="BIGINT" property="inspectionStandardId" />
+    <result column="inspection_way_id" jdbcType="BIGINT" property="inspectionWayId" />
+    <result column="inspection_status" jdbcType="TINYINT" property="inspectionStatus" />
+    <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
+    <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
+    <result column="audit_dept_id" jdbcType="BIGINT" property="auditDeptId" />
+    <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId" />
+    <result column="audit_remark" jdbcType="VARCHAR" property="auditRemark" />
+    <result column="if_third_inspection" jdbcType="TINYINT" property="ifThirdInspection" />
+    <result column="access_url" jdbcType="VARCHAR" property="accessUrl" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+    <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName"/>
+    <result column="inspection_way_code" jdbcType="VARCHAR" property="inspectionWayCode"/>
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+    <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
+    <collection property="qmsInspectionOrderDets" ofType="com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDet"
+                column="{inspectionOrderId=inspection_order_id}" select="com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetMapper.findDetList">
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qio.inspection_order_id,
+    qio.inspection_order_code,
+    qio.material_id,
+    qio.customer_id,
+    qio.order_qty,
+    qio.inspection_standard_id,
+    qio.inspection_way_id,
+    qio.inspection_status,
+    qio.inspection_result,
+    qio.audit_status,
+    qio.audit_dept_id,
+    qio.audit_user_id,
+    qio.audit_remark,
+    qio.if_third_inspection,
+    qio.access_url,
+    qio.`status`,
+    qio.remark,
+    qio.org_id,
+    qio.create_user_id,
+    qio.create_time,
+    qio.modified_user_id,
+    qio.modified_time,
+    qio.is_delete,
+    qio.option1,
+    qio.option2,
+    qio.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    bm.material_code,bm.material_desc,bm.material_version,
+    bs.supplier_name as customer_name,
+    bis.inspection_standard_name,
+    biw.inspection_way_code,
+    bd.dept_name,su.user_name as audit_user_name,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.qms_inspection_order qio
+    left join fantech_imes_v2.base_material bm on qio.material_id=bm.material_id
+    left join fantech_imes_v2.base_supplier bs on qio.customer_id=bs.supplier_id
+    left join fantech_imes_v2.base_inspection_standard bis on qio.inspection_standard_id=bis.inspection_standard_id
+    left join fantech_imes_v2.base_inspection_way biw on qio.inspection_way_id=biw.inspection_way_id
+    left join fantech_imes_v2.base_dept bd on qio.audit_dept_id=bd.dept_id
+    left join ocean_v2.sys_user su on qio.audit_user_id=su.user_id
+    left join ocean_v2.sys_user u on qio.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on qio.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON qio.org_id = bo.organization_id
+    <where>
+      <if test="inspectionOrderId != null">
+        and qio.inspection_order_id = #{inspectionOrderId}
+      </if>
+      <if test="inspectionOrderCode != null and inspectionOrderCode!=''">
+        and qio.inspection_order_code like CONCAT('%', #{inspectionOrderCode}, '%')
+      </if>
+      <if test="materialCode != null and materialCode!=''">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="inspectionStatus != null">
+        and qio.inspection_status = #{inspectionStatus}
+      </if>
+      <if test="inspectionStatusList != null and inspectionStatusList.size() > 0">
+        and qio.inspection_status
+        <foreach collection="inspectionStatusList" open="in (" close=")" item="item" separator="," index="index">
+          #{item}
+        </foreach>
+      </if>
+      <if test="inspectionResult != null">
+        and qio.inspection_result = #{inspectionResult}
+      </if>
+      <if test="status!=null">
+        and qio.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qio.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and qio.org_id=#{orgId}
+      </if>
+    </where>
+    order by qio.create_time desc
+  </select>
+</mapper>
