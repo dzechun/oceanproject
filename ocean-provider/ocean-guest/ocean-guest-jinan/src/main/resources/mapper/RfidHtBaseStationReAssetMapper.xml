@@ -40,7 +40,6 @@
     rbsra.create_time,
     rbsra.modified_user_id,
     rbsra.modified_time,
-    rbsra.is_delete,
     rbsra.option1,
     rbsra.option2,
     rbsra.option3

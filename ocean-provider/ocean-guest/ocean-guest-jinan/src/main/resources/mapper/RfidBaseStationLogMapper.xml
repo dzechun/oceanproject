@@ -45,7 +45,6 @@
     rbsl.create_time,
     rbsl.modified_user_id,
     rbsl.modified_time,
-    rbsl.is_delete,
     rbsl.option1,
     rbsl.option2,
     rbsl.option3

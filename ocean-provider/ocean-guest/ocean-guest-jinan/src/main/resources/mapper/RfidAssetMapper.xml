@@ -39,7 +39,6 @@
     ra.create_time,
     ra.modified_user_id,
     ra.modified_time,
-    ra.is_delete,
     ra.option1,
     ra.option2,
     ra.option3

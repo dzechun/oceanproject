@@ -49,7 +49,6 @@
     rbs.create_time,
     rbs.modified_user_id,
     rbs.modified_time,
-    rbs.is_delete,
     rbs.option1,
     rbs.option2,
     rbs.option3
