@@ -92,9 +92,9 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     private String modifiedUserName;
 
     /**
-     * 同包装编码
+     * 销售订单号
      */
-    @ApiModelProperty(name="samePackageCode",value = "同包装编码")
+    @ApiModelProperty(name="salesOrderCode",value = "销售订单号")
     @Transient
-    private String samePackageCode;
+    private String salesOrderCode;
 }
