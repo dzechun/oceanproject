@@ -1,6 +1,6 @@
 package com.fantechs.common.base.general.dto.srm;
 
-import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
+import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDetBarcode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,7 +8,14 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
-public class SrmInAsnOrderDetBarcodeDto extends SrmInAsnOrderDet implements Serializable {
+public class SrmInAsnOrderDetBarcodeDto extends SrmInAsnOrderDetBarcode implements Serializable {
+
+
+    /**
+     * 采购订单编码
+     */
+    @ApiModelProperty(name="purchaseOrderCode",value = "采购订单编码")
+    private String purchaseOrderCode;
 
     /**
      * 物料编码

@@ -36,12 +36,15 @@
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto">
-        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+        <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="order_date" jdbcType="VARCHAR" property="orderDate"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
+        <result column="total_delivery_qty" jdbcType="VARCHAR" property="totalDeliveryQty"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
-        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
-        <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modifiedUser_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -79,17 +82,19 @@
 
     <select id="findList" resultMap="BaseResultMapDto">
         select
-        <include refid="BaseColumnList"/>
-        ,mpwo.work_order_code,bm.material_code,bm.material_name,bw.warehouse_name,bws.storage_code,bis.inventory_status_name,su.user_name
-        AS create_user_name,
+        <include refid="BaseColumnList"/>,
+        opo.purchase_order_code,opo.order_date,bm.material_code,bm.material_name,bw.warehouse_name,
+        bm.material_version,bm.material_desc,bmt.main_unit,
+        ( SELECT SUM( wiaods.delivery_qty ) FROM wms_in_asn_order_det wiaods WHERE wiaods.asn_order_id = wiaod.asn_order_id
+        group by asn_order_id) AS total_delivery_qty,
+        su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name
         FROM wms_in_asn_order_det wiaod
-        LEFT JOIN mes_pm_work_order mpwo ON wiaod.source_order_id = mpwo.work_order_id
+        LEFT JOIN om_purchase_order opo ON wiaod.source_order_id = opo.purchase_order_id
         LEFT JOIN base_material bm ON wiaod.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON wiaod.material_id = bm.material_id
         LEFT JOIN base_warehouse bw ON wiaod.warehouse_id = bw.warehouse_id
-        LEFT JOIN base_storage bws ON wiaod.storage_id = bws.storage_id
-        LEFT JOIN base_inventory_status bis ON wiaod.inventory_status_id = bis.inventory_status_id
         LEFT JOIN sys_user su ON wiaod.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wiaod.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wiaod.org_id = bo.organization_id
@@ -102,12 +107,6 @@
             </if>
             <if test="materialCode !=null and materialCode !=''">
                 and bm.material_code like CONCAT('%',#{materialCode},'%')
-            </if>
-            <if test="asnOrderDetId !=null and asnOrderDetId!=''">
-                and wiaod.asn_order_det_id = #{asnOrderDetId}
-            </if>
-            <if test="inventoryStatusId !=null and inventoryStatusId!=''">
-                and wiaod.inventory_status_id = #{inventoryStatusId}
             </if>
 
         </where>

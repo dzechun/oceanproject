@@ -19,9 +19,9 @@ public class SrmDeliveryAppointDto extends SrmDeliveryAppoint implements Seriali
     private String supplierName;
 
     /**
-     * 仓库名称
+     * 送货仓库名称
      */
-    @ApiModelProperty(name = "organizationName",value = "仓库名称")
+    @ApiModelProperty(name = "organizationName",value = "送货仓库名称")
     @Excel(name = "仓库名称", height = 20, width = 30,orderNum="5")
     private String warehouseName;
 

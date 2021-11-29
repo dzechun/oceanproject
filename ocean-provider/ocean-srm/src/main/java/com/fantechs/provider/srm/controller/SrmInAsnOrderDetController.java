@@ -1,37 +1,48 @@
 package com.fantechs.provider.srm.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
+import com.fantechs.common.base.general.dto.srm.imports.SrmInAsnOrderDetImport;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
+import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmInAsnOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.srm.service.SrmInAsnOrderDetService;
+import com.fantechs.provider.srm.service.SrmInHtAsnOrderDetService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * Created by leifengzhi on 2021/11/25.
  */
 @RestController
-@Api(tags = "srmInAsnOrderDet控制器")
+@Api(tags = "预收货通知单详情")
 @RequestMapping("/srmInAsnOrderDet")
 @Validated
+@Slf4j
 public class SrmInAsnOrderDetController {
 
     @Resource
     private SrmInAsnOrderDetService srmInAsnOrderDetService;
+    @Resource
+    private SrmInHtAsnOrderDetService srmInHtAsnOrderDetService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -73,25 +84,28 @@ public class SrmInAsnOrderDetController {
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
-/*    @ApiOperation("历史列表")
+   @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SrmInAsnOrderDet>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrderDet searchSrmInAsnOrderDet) {
+    public ResponseEntity<List<SrmInHtAsnOrderDet>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrderDet searchSrmInAsnOrderDet) {
         Page<Object> page = PageHelper.startPage(searchSrmInAsnOrderDet.getStartPage(),searchSrmInAsnOrderDet.getPageSize());
-        List<SrmInAsnOrderDet> list = srmInAsnOrderDetService.findHtList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrderDet));
+        List<SrmInHtAsnOrderDet> list = srmInHtAsnOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrderDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
-    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchSrmInAsnOrderDet searchSrmInAsnOrderDet){
-    List<SrmInAsnOrderDetDto> list = srmInAsnOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrderDet));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SrmInAsnOrderDet信息", SrmInAsnOrderDetDto.class, "SrmInAsnOrderDet.xls", response);
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入",notes = "从excel导入")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file,
+                                      @ApiParam(value = "装箱汇总ID",required = true)@RequestParam  @NotNull(message="装箱汇总ID不能为空") Long asnOrderId){
+        try {
+            // 导入操作
+            List<SrmInAsnOrderDetImport> srmInAsnOrderDetImports = EasyPoiUtils.importExcel(file, 0, 1, SrmInAsnOrderDetImport.class);
+            Map<String, Object> resultMap = srmInAsnOrderDetService.importExcel(srmInAsnOrderDetImports,asnOrderId);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
-        throw new BizErrorException(e);
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
-    }*/
+    }
 
 }

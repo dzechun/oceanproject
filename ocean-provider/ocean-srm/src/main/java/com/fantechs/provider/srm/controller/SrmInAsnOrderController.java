@@ -29,7 +29,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/11/25.
  */
 @RestController
-@Api(tags = "wmsInAsnOrder控制器")
+@Api(tags = "预收货通知单")
 @RequestMapping("/wmsInAsnOrder")
 @Validated
 @Slf4j

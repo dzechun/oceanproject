@@ -40,20 +40,38 @@ public class SearchSrmInAsnOrder extends BaseQuery implements Serializable {
     private String warehouseName;
 
     /**
-     * 单据状态(1-待收货 2-收货中 3-收货完成)
+     * 单据状态(1-保存 2-提交 3-审核通过 4-审核未通过 5-已预约 6-发货)
      */
-    @ApiModelProperty(name="orderStatusList",value = "单据状态(1-待收货 2-收货中 3-收货完成)")
+    @ApiModelProperty(name="orderStatusList",value = "单据状态(1-保存 2-提交 3-审核通过 4-审核未通过 5-已预约 6-发货)")
     private List<String> orderStatusList;
 
+    /**
+     * id
+     */
     private Long asnOrderId;
 
     private Long orgId;
 
+    /**
+     * 单据类型id
+     */
     private Long orderTypeId;
 
-    @ApiModelProperty(name="orderStatus",value = "单据状态")
+    /**
+     * 单据状态
+     */
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-保存 2-提交 3-审核通过 4-审核未通过 5-已预约 6-发货)")
     private Byte orderStatus;
 
-    @ApiModelProperty(name="orderTypeName",value = "单据类型")
+    /**
+     * 单据类型名称
+     */
+    @ApiModelProperty(name="orderTypeName",value = "单据类型名称")
     private String orderTypeName;
+
+    /**
+     * 单据类型编码
+     */
+    @ApiModelProperty(name="orderTypeCode",value = "单据类型编码")
+    private String orderTypeCode;
 }

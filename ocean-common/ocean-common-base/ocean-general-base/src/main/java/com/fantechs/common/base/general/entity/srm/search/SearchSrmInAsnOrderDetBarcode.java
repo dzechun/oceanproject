@@ -13,7 +13,8 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchSrmInAsnOrderDet extends BaseQuery implements Serializable {
+public class SearchSrmInAsnOrderDetBarcode extends BaseQuery implements Serializable {
+
     /**
      * ANS单ID
      */

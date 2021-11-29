@@ -3,9 +3,11 @@ package com.fantechs.provider.srm.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrderTypeDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderType;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
@@ -58,6 +60,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         if (StringUtils.isNotEmpty(list.getData())){
             map.put("supplierIdList", list.getData());
         }
+        map.put("orderTypeCode", "YSSTZD");
         return srmInAsnOrderMapper.findList(map);
     }
 
@@ -69,16 +72,26 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
         Example example = new Example(SrmInAsnOrder.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("asnCode",srmInAsnOrderDto.getAsnCode());
+        criteria.andEqualTo("asnCode",srmInAsnOrderDto.getAsnCode())
+                .andEqualTo("orderTypeCode","YSSTZD");
         List<SrmInAsnOrder> srmInAsnOrders = srmInAsnOrderMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(srmInAsnOrders)) throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"ASN单号已存在，请勿重复添加");
-
+        //默认收货通知单
+        if(StringUtils.isEmpty(srmInAsnOrderDto.getOrderTypeId())) {
+            SearchBaseOrderType searchBaseOrderType = new SearchBaseOrderType();
+            searchBaseOrderType.setOrderTypeCode("YSSTZD");
+            List<BaseOrderTypeDto> baseOrderTypeDtos = baseFeignApi.findList(searchBaseOrderType).getData();
+            if (StringUtils.isEmpty(baseOrderTypeDtos)) throw new BizErrorException("未配置对应的单据类型");
+            srmInAsnOrderDto.setOrderTypeId(baseOrderTypeDtos.get(0).getOrderTypeId());
+        }
         srmInAsnOrderDto.setCreateUserId(user.getUserId());
         srmInAsnOrderDto.setCreateTime(new Date());
         srmInAsnOrderDto.setModifiedUserId(user.getUserId());
         srmInAsnOrderDto.setModifiedTime(new Date());
         srmInAsnOrderDto.setStatus(StringUtils.isEmpty(srmInAsnOrderDto.getStatus())?1: srmInAsnOrderDto.getStatus());
         srmInAsnOrderDto.setOrgId(user.getOrganizationId());
+
+
         int i = srmInAsnOrderMapper.insertUseGeneratedKeys(srmInAsnOrderDto);
 
         //保存详情表
