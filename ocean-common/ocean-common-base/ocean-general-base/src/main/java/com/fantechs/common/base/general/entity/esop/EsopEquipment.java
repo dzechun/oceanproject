@@ -261,13 +261,13 @@ public class EsopEquipment extends ValidGroup implements Serializable {
     @Column(name = "online_status")
     private Byte onlineStatus;
 
-    @ApiModelProperty(name="xAxis",value = "X坐标")
+    @ApiModelProperty(name="xaxis",value = "X坐标")
     @Column(name = "x_axis")
-    private BigDecimal xAxis;
+    private BigDecimal xaxis;
 
-    @ApiModelProperty(name="yAxis",value = "Y坐标")
+    @ApiModelProperty(name="yaxis",value = "Y坐标")
     @Column(name = "y_axis")
-    private BigDecimal yAxis;
+    private BigDecimal yaxis;
 
 
     /**

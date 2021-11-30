@@ -167,7 +167,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
 
         EsopHtWorkInstruction esopHtWorkInstruction = new EsopHtWorkInstruction();
         BeanUtils.copyProperties(esopWorkInstructionDto, esopHtWorkInstruction);
-        int i = esopHtWorkInstructionMapper.insertUseGeneratedKeys(esopHtWorkInstruction);
+        int i = esopHtWorkInstructionMapper.insertSelective(esopHtWorkInstruction);
 
         saveBom(esopWorkInstructionDto,esopWorkInstructionDto.getWorkInstructionId(),user);
 
@@ -198,7 +198,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         //保存履历表
         EsopHtWorkInstruction EsopHtWorkInstruction = new EsopHtWorkInstruction();
         BeanUtils.copyProperties(EsopWorkInstruction, EsopHtWorkInstruction);
-        int i = esopHtWorkInstructionMapper.insertUseGeneratedKeys(EsopHtWorkInstruction);
+        int i = esopHtWorkInstructionMapper.insertSelective(EsopHtWorkInstruction);
         example.clear();
 
             Example bomExample = new Example(EsopWiBom.class);
@@ -315,10 +315,10 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
                 file.setModifiedTime(new Date());
                 file.setStatus(StringUtils.isEmpty(file.getStatus()) ? 1 : file.getStatus());
                 file.setOrgId(user.getOrganizationId());
-                esopWiFileMapper.insertUseGeneratedKeys(file);
+                esopWiFileMapper.insertSelective(file);
                 EsopHtWiFile EsopHtWiFile = new EsopHtWiFile();
                 BeanUtils.copyProperties(file, EsopHtWiFile);
-                esopHtWiFileMapper.insertUseGeneratedKeys(EsopHtWiFile);
+                esopHtWiFileMapper.insertSelective(EsopHtWiFile);
             }
         }
     }

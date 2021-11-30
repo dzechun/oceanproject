@@ -12,20 +12,25 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierRe
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDetBarcode;
+import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetBarcodeMapper;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetMapper;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderMapper;
+import com.fantechs.provider.srm.mapper.SrmInHtAsnOrderMapper;
 import com.fantechs.provider.srm.service.SrmInAsnOrderService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +45,8 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
     @Resource
     private SrmInAsnOrderMapper srmInAsnOrderMapper;
+    @Resource
+    private SrmInHtAsnOrderMapper srmInHtAsnOrderMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
@@ -60,9 +67,10 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         if (StringUtils.isNotEmpty(list.getData())){
             map.put("supplierIdList", list.getData());
         }
-        map.put("orderTypeCode", "YSSTZD");
+        map.put("orderTypeCode", "YSHTZD");
         return srmInAsnOrderMapper.findList(map);
     }
+
 
 
     @Override
@@ -70,20 +78,21 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     public int save(SrmInAsnOrderDto srmInAsnOrderDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
+        srmInAsnOrderDto.setAsnCode(CodeUtils.getId("ASN-"));
         Example example = new Example(SrmInAsnOrder.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("asnCode",srmInAsnOrderDto.getAsnCode())
-                .andEqualTo("orderTypeCode","YSSTZD");
+        criteria.andEqualTo("asnCode",srmInAsnOrderDto.getAsnCode());
         List<SrmInAsnOrder> srmInAsnOrders = srmInAsnOrderMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(srmInAsnOrders)) throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"ASN单号已存在，请勿重复添加");
         //默认收货通知单
         if(StringUtils.isEmpty(srmInAsnOrderDto.getOrderTypeId())) {
             SearchBaseOrderType searchBaseOrderType = new SearchBaseOrderType();
-            searchBaseOrderType.setOrderTypeCode("YSSTZD");
+            searchBaseOrderType.setOrderTypeCode("YSHTZD");
             List<BaseOrderTypeDto> baseOrderTypeDtos = baseFeignApi.findList(searchBaseOrderType).getData();
             if (StringUtils.isEmpty(baseOrderTypeDtos)) throw new BizErrorException("未配置对应的单据类型");
             srmInAsnOrderDto.setOrderTypeId(baseOrderTypeDtos.get(0).getOrderTypeId());
         }
+
         srmInAsnOrderDto.setCreateUserId(user.getUserId());
         srmInAsnOrderDto.setCreateTime(new Date());
         srmInAsnOrderDto.setModifiedUserId(user.getUserId());
@@ -98,6 +107,8 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         List<SrmInAsnOrderDetDto> list = new ArrayList<>();
         for(SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()){
             srmInAsnOrderDetDto.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
+            if(StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
+                srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
             srmInAsnOrderDetDto.setCreateUserId(user.getUserId());
             srmInAsnOrderDetDto.setCreateTime(new Date());
             srmInAsnOrderDetDto.setModifiedUserId(user.getUserId());
@@ -123,10 +134,9 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         if(StringUtils.isNotEmpty(barcodeList)) srmInAsnOrderDetBarcodeMapper.insertList(barcodeList);
 
         //保存履历表
-       /* SrmHtInAsnOrder srmInAsnOrder = new SrmHtInAsnOrder();
-        BeanUtils.copyProperties(srmInAsnOrderDto, srmHtCarport);
-        int i = srmHtCarportMapper.insertSelective(srmHtCarport);*/
-
+        SrmInHtAsnOrder srmInHtAsnOrder = new SrmInHtAsnOrder();
+        BeanUtils.copyProperties(srmInAsnOrderDto, srmInHtAsnOrder);
+        srmInHtAsnOrderMapper.insertSelective(srmInHtAsnOrder);
         return i;
     }
 

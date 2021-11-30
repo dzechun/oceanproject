@@ -155,10 +155,10 @@ public class SrmInAsnOrderDet extends ValidGroup implements Serializable {
     private String palletCode;
 
     /**
-     * 收货日期
+     * 收货日期/交货日期
      */
-    @ApiModelProperty(name="receivingDate",value = "收货日期")
-    @Excel(name = "收货日期", height = 20, width = 30) 
+    @ApiModelProperty(name="receivingDate",value = "收货日期/交货日期")
+    @Excel(name = "交货日期", height = 20, width = 30)
     @Column(name = "receiving_date")
     private Date receivingDate;
 
