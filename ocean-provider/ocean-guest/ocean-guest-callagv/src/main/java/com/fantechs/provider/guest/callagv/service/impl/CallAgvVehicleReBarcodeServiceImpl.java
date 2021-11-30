@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.callagv.*;
 import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvAgvTask;
+import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvStorageMaterial;
 import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -521,6 +522,25 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         temVehicleFeignApi.update(temVehicle);
 
         return 1;
+    }
+
+    @Override
+    public List<CallAgvWarehouseAreaMaterialDto> agvWarehouseAreaMaterialSummary(SearchCallAgvStorageMaterial SearchCallAgvStorageMaterial) {
+        SearchCallAgvStorageMaterial.setSummary(1);
+        List<CallAgvStorageMaterialDto> callAgvStorageMaterialDtoList = callAgvVehicleReBarcodeMapper.callAgvStorageMaterialList(SearchCallAgvStorageMaterial);
+        List<CallAgvWarehouseAreaMaterialDto> callAgvWarehouseAreaMaterialDtoList = new ArrayList<>();
+        for (CallAgvStorageMaterialDto callAgvStorageMaterialDto : callAgvStorageMaterialDtoList) {
+            CallAgvWarehouseAreaMaterialDto callAgvWarehouseAreaMaterialDto = new CallAgvWarehouseAreaMaterialDto();
+            BeanUtils.autoFillEqFields(callAgvStorageMaterialDto, callAgvWarehouseAreaMaterialDto);
+            callAgvWarehouseAreaMaterialDtoList.add(callAgvWarehouseAreaMaterialDto);
+        }
+
+        return callAgvWarehouseAreaMaterialDtoList;
+    }
+
+    @Override
+    public List<CallAgvStorageMaterialDto> agvStorageMaterialDetail(SearchCallAgvStorageMaterial SearchCallAgvStorageMaterial) {
+        return callAgvVehicleReBarcodeMapper.callAgvStorageMaterialList(SearchCallAgvStorageMaterial);
     }
 
     /**
