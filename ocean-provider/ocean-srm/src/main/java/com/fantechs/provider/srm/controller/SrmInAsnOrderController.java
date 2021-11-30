@@ -3,12 +3,14 @@ package com.fantechs.provider.srm.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
+import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrder;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmInAsnOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.srm.service.SrmInAsnOrderService;
+import com.fantechs.provider.srm.service.SrmInHtAsnOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -37,6 +39,8 @@ public class SrmInAsnOrderController {
 
     @Resource
     private SrmInAsnOrderService srmInAsnOrderService;
+    @Resource
+    private SrmInHtAsnOrderService srmInHtAsnOrderService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -78,13 +82,13 @@ public class SrmInAsnOrderController {
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
-/*    @ApiOperation("历史列表")
+    @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SrmInAsnOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrder searchSrmInAsnOrder) {
+    public ResponseEntity<List<SrmInHtAsnOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrder searchSrmInAsnOrder) {
         Page<Object> page = PageHelper.startPage(searchSrmInAsnOrder.getStartPage(),searchSrmInAsnOrder.getPageSize());
-        List<SrmInAsnOrder> list = srmInAsnOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrder));
+        List<SrmInHtAsnOrder> list = srmInHtAsnOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }*/
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")

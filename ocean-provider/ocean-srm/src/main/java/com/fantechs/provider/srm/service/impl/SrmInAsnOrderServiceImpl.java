@@ -14,6 +14,7 @@ import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDetBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -70,6 +72,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     public int save(SrmInAsnOrderDto srmInAsnOrderDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
+        srmInAsnOrderDto.setAsnCode(CodeUtils.getId("ASN-"));
         Example example = new Example(SrmInAsnOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("asnCode",srmInAsnOrderDto.getAsnCode())
@@ -84,6 +87,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             if (StringUtils.isEmpty(baseOrderTypeDtos)) throw new BizErrorException("未配置对应的单据类型");
             srmInAsnOrderDto.setOrderTypeId(baseOrderTypeDtos.get(0).getOrderTypeId());
         }
+
         srmInAsnOrderDto.setCreateUserId(user.getUserId());
         srmInAsnOrderDto.setCreateTime(new Date());
         srmInAsnOrderDto.setModifiedUserId(user.getUserId());
@@ -98,6 +102,8 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         List<SrmInAsnOrderDetDto> list = new ArrayList<>();
         for(SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()){
             srmInAsnOrderDetDto.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
+            if(StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
+                srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
             srmInAsnOrderDetDto.setCreateUserId(user.getUserId());
             srmInAsnOrderDetDto.setCreateTime(new Date());
             srmInAsnOrderDetDto.setModifiedUserId(user.getUserId());
