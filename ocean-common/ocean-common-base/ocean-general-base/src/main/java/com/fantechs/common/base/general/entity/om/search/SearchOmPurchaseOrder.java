@@ -34,4 +34,6 @@ public class SearchOmPurchaseOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="ifSupplierFind",value = "是否组织查询（0、否 1、是）")
     private Byte ifSupplierFind;
 
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

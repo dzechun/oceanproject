@@ -1,6 +1,8 @@
 package com.fantechs.provider.srm.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmPoExpediteDto;
 import com.fantechs.common.base.general.dto.srm.SrmPoExpediteRecordDto;
 import com.fantechs.common.base.general.entity.basic.BaseFile;
@@ -17,7 +19,6 @@ import com.fantechs.provider.srm.mapper.SrmHtPoExpediteRecordMapper;
 import com.fantechs.provider.srm.mapper.SrmPoExpediteMapper;
 import com.fantechs.provider.srm.mapper.SrmPoExpediteRecordMapper;
 import com.fantechs.provider.srm.service.SrmPoExpediteService;
-import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -69,6 +70,14 @@ public class SrmPoExpediteServiceImpl extends BaseService<SrmPoExpedite> impleme
     public int save(SrmPoExpedite record) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        //判断采购订单是否重复添加
+        Example example = new Example(SrmPoExpedite.class);
+        example.createCriteria().andEqualTo("purchaseOrderId",record.getPurchaseOrderId());
+        List<SrmPoExpedite> srmPoExpedites = srmPoExpediteMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(srmPoExpedites)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"当前采购订单已有催更记录");
+        }
 
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
@@ -127,11 +136,13 @@ public class SrmPoExpediteServiceImpl extends BaseService<SrmPoExpedite> impleme
 
                 if (StringUtils.isNotEmpty(srmPoExpediteRecordDto.getFileList())) {
                     for (SrmPoExpediteRecordDto poExpediteRecordDto : srmPoExpediteRecordDto.getFileList()) {
-                        BaseFile baseFile = new BaseFile();
-                        baseFile.setAccessUrl(poExpediteRecordDto.getAccessUrl());
-                        baseFile.setRelevanceId(srmPoExpediteRecordDto.getPoExpediteRecordId());
-                        baseFile.setRelevanceTableName("srm_po_expedite_record");
-                        fileList.add(baseFile);
+                        if (StringUtils.isNotEmpty(poExpediteRecordDto.getAccessUrl())) {
+                            BaseFile baseFile = new BaseFile();
+                            baseFile.setAccessUrl(poExpediteRecordDto.getAccessUrl());
+                            baseFile.setRelevanceId(srmPoExpediteRecordDto.getPoExpediteRecordId());
+                            baseFile.setRelevanceTableName("srm_po_expedite_record");
+                            fileList.add(baseFile);
+                        }
                     }
                 }
 

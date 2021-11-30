@@ -67,6 +67,7 @@ public class SrmPoProductionInfoServiceImpl extends BaseService<SrmPoProductionI
         LinkedList<SrmPoProductionInfo> srmPoProductionInfoList = new LinkedList<>();
         LinkedList<SrmHtPoProductionInfo> srmHtPoProductionInfoList = new LinkedList<>();
         SearchOmPurchaseOrder searchOmPurchaseOrder = new SearchOmPurchaseOrder();
+        searchOmPurchaseOrder.setCodeQueryMark(1);
         SearchOmPurchaseOrderDet searchOmPurchaseOrderDet = new SearchOmPurchaseOrderDet();
 
         for (int i = 0; i < list.size(); i++) {
@@ -80,7 +81,6 @@ public class SrmPoProductionInfoServiceImpl extends BaseService<SrmPoProductionI
             }
 
             srmPoProductionInfoDto.setSupplierId(omPurchaseOrder.get(0).getSupplierId());
-
             searchOmPurchaseOrderDet.setPurchaseOrderId(omPurchaseOrder.get(0).getPurchaseOrderId());
             List<OmPurchaseOrderDetDto> omPurchaseOrderDetDtoList = omFeignApi.findList(searchOmPurchaseOrderDet).getData();
             for (OmPurchaseOrderDetDto omPurchaseOrderDetDto : omPurchaseOrderDetDtoList) {
@@ -94,16 +94,30 @@ public class SrmPoProductionInfoServiceImpl extends BaseService<SrmPoProductionI
                 fail.add(i + 4);
                 continue;
             }
+            srmPoProductionInfoDto.setCreateTime(new Date());
+            srmPoProductionInfoDto.setModifiedTime(new Date());
+            srmPoProductionInfoDto.setModifiedUserId(user.getUserId());
+            srmPoProductionInfoDto.setCreateUserId(user.getUserId());
+            srmPoProductionInfoDto.setOrgId(user.getOrganizationId());
+            srmPoProductionInfoDto.setStatus((byte) 1);
 
+            srmPoProductionInfoDto.setPurchaseOrderId(omPurchaseOrder.get(0).getPurchaseOrderId());
             SrmHtPoProductionInfo srmHtPoProductionInfo = new SrmHtPoProductionInfo();
             BeanUtils.copyProperties(srmPoProductionInfoDto, srmHtPoProductionInfo);
             srmHtPoProductionInfoList.add(srmHtPoProductionInfo);
 
             srmPoProductionInfoList.add(srmPoProductionInfoDto);
+            success++;
         }
 
-        srmPoProductionInfoMapper.insertList(srmPoProductionInfoList);
-        srmHtPoProductionInfoMapper.insertList(srmHtPoProductionInfoList);
+        if (StringUtils.isNotEmpty(srmPoProductionInfoList)) {
+            srmPoProductionInfoMapper.insertList(srmPoProductionInfoList);
+        }
+
+        if (StringUtils.isNotEmpty(srmHtPoProductionInfoList)) {
+            srmHtPoProductionInfoMapper.insertList(srmHtPoProductionInfoList);
+        }
+
 
         resultMap.put("操作成功总数",success);
         resultMap.put("操作失败行数",fail);

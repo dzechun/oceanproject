@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.srm.mapper.SrmPlanDeliveryOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.srm.SrmPlanDeliveryOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="plan_delivery_order_det_id" jdbcType="BIGINT" property="planDeliveryOrderDetId" />
+    <result column="plan_delivery_order_id" jdbcType="BIGINT" property="planDeliveryOrderId" />
+    <result column="purchase_order_det_id" jdbcType="BIGINT" property="purchaseOrderDetId" />
+    <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate" />
+    <result column="plan_delivery_qty" jdbcType="DECIMAL" property="planDeliveryQty" />
+    <result column="if_create_asn" jdbcType="TINYINT" property="ifCreateAsn" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmPlanDeliveryOrderDetDto">
+    <result column="plan_delivery_order_code" jdbcType="VARCHAR" property="planDeliveryOrderCode" />
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+    <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
+    <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
+    <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty" />
+    <result column="total_plan_delivery_qty" jdbcType="DECIMAL" property="totalPlanDeliveryQty" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    spdod.plan_delivery_order_det_id,
+    spdod.plan_delivery_order_id,
+    spdod.purchase_order_det_id,
+    spdod.plan_delivery_date,
+    spdod.plan_delivery_qty,
+    spdod.if_create_asn,
+    spdod.status,
+    spdod.remark,
+    spdod.org_id,
+    spdod.create_user_id,
+    spdod.create_time,
+    spdod.modified_user_id,
+    spdod.modified_time
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map" >
+    select
+      <include refid="Base_Column_List"></include>,
+      spdo.plan_delivery_order_code,
+      bs.supplier_name,
+      opo.purchase_order_code,
+      bw.warehouse_name,
+      bm.material_code,
+      bm.material_name,
+      bm.material_version,
+      bm.material_desc,
+      opod.unit_name,
+      opod.order_qty,
+      opod.total_receiving_qty,
+      opod.total_plan_delivery_qty
+    from srm_plan_delivery_order_det spdod
+    left join srm_plan_delivery_order spdo on spdo.plan_delivery_order_id = spdod.plan_delivery_order_id
+    left join om_purchase_order_det opod on opod.purchase_order_det_id = spdod.purchase_order_det_id
+    left join om_purchase_order opo on opo.purchase_order_id = opod.purchase_order_id
+    left join base_warehouse bw on bw.warehouse_id =  opod.warehouse_id
+    left join base_material bm on bm.material_id = opod.material_id
+    left join base_supplier bs on bs.supplier_id = opo.supplier_id
+    <where>
+      <if test="planDeliveryOrderId != null">
+        and spdod.plan_delivery_order_id = #{planDeliveryOrderId}
+      </if>
+
+      <if test="purchaseOrderCode != null and purchaseOrderCode != ''">
+        and opod.purchase_order_code = #{purchaseOrderCode}
+      </if>
+      <if test="warehouseName != null and warehouseName != ''">
+        and bw.warehouse_name = #{warehouseName}
+      </if>
+      <if test="materialCode != null and materialCode != ''">
+        and bm.material_code = #{materialCode}
+      </if>
+      <if test="materialName != null and materialName != ''">
+        and bm.material_name = #{materialName}
+      </if>
+      <if test="supplierName != null and supplierName != ''">
+        and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
+      </if>
+      <if test="orderStatus != null ">
+        and spdo.order_status = #{orderStatus}
+      </if>
+      <if test="planDeliveryOrderCode != null and planDeliveryOrderCode != ''">
+        and spdo.plan_delivery_order_code like CONCAT('%', #{planDeliveryOrderCode}, '%')
+      </if>
+
+      <if test="planDeliveryDateStart != null and planDeliveryDateStart != '' and planDeliveryDateEnd != null and planDeliveryDateEnd != ''">
+        and date_format(spdod.plan_delivery_date, '%Y-%m-%d') between #{planDeliveryDateStart} and #{planDeliveryDateEnd}
+      </if>
+      <if test="ifCreateAsn != null">
+        and spdod.if_create_asn = #{ifCreateAsn}
+      </if>
+    </where>
+    order by spdod.create_time desc
+  </select>
+
+</mapper>

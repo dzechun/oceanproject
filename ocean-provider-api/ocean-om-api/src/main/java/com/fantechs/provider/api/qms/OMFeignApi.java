@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -61,6 +62,10 @@ public interface OMFeignApi {
     @ApiOperation("采购订单明细列表")
     @PostMapping("/omPurchaseOrderDet/findList")
     ResponseEntity<List<OmPurchaseOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmPurchaseOrderDet searchOmPurchaseOrderDet);
+
+    @ApiOperation("修改")
+    @PostMapping("/omPurchaseOrderDet/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmPurchaseOrderDet.update.class) OmPurchaseOrderDet omPurchaseOrderDet);
 
     @ApiOperation("修改单据状态")
     @PostMapping("/omTransferOrder/updateStatus")

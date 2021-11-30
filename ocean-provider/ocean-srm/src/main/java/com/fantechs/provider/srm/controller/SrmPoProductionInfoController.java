@@ -111,7 +111,7 @@ public class SrmPoProductionInfoController {
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<SrmPoProductionInfoDto> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, SrmPoProductionInfoDto.class);
+            List<SrmPoProductionInfoDto> baseAddressImports = EasyPoiUtils.importExcel(file, 2, 1, SrmPoProductionInfoDto.class);
             Map<String, Object> resultMap = srmPoProductionInfoService.importExcel(baseAddressImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {

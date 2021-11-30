@@ -1,9 +1,11 @@
 package com.fantechs.common.base.general.dto.om;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 @Data
@@ -60,4 +62,10 @@ public class OmPurchaseOrderDetDto extends OmPurchaseOrderDet implements Seriali
      */
     @ApiModelProperty(name = "organizationName",value = "组织")
     private String organizationName;
+
+    /**
+     * 采购订单编码
+     */
+    @ApiModelProperty(name="purchaseOrderCode",value = "采购订单编码")
+    private String purchaseOrderCode;
 }

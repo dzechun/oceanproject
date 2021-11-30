@@ -94,7 +94,7 @@ public class SrmHtPoProductionInfo extends ValidGroup implements Serializable {
     @ApiModelProperty(name="workOrderStatus",value = "工单状态(1-待生产、2-生产中、3-完工)")
     @Excel(name = "工单状态(1-待生产、2-生产中、3-完工)", height = 20, width = 30,orderNum="")
     @Column(name = "work_order_status")
-    private Byte workOrderStatus;
+    private Integer workOrderStatus;
 
     /**
      * 实际开始时间

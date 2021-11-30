@@ -19,6 +19,7 @@
     <result column="material_total_price" jdbcType="DECIMAL" property="materialTotalPrice" />
     <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty" />
     <result column="total_sales_return_qty" jdbcType="DECIMAL" property="totalSalesReturnQty" />
+    <result column="total_plan_delivery_qty" jdbcType="DECIMAL" property="totalPlanDeliveryQty" />
     <result column="iqc_temporary_qty" jdbcType="DECIMAL" property="iqcTemporaryQty" />
     <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress" />
     <result column="material_status" jdbcType="TINYINT" property="materialStatus" />
@@ -38,7 +39,7 @@
   <sql id="Base_Column_List">
     opod.purchase_order_det_id, opod.purchase_order_id, opod.project_code, opod.material_id, opod.unit_name,opod.order_qty,
     opod.actual_qty, opod.warehouse_id, opod.factory_id, opod.delivery_date, opod.unit_price, opod.material_total_price,
-    opod.total_receiving_qty, opod.total_sales_return_qty, opod.iqc_temporary_qty, opod.status, opod.delivery_address, opod.material_status,
+    opod.total_receiving_qty,opod.total_plan_delivery_qty, opod.total_sales_return_qty, opod.iqc_temporary_qty, opod.status, opod.delivery_address, opod.material_status,
     opod.remark,opod.org_id, opod.create_user_id, opod.create_time, opod.modified_user_id, opod.modified_time,opod.is_delete, opod.option1, opod.option2, opod.option3
   </sql>
 
@@ -46,6 +47,7 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode"/>
   </resultMap>
 
 
@@ -54,11 +56,12 @@
     <include refid="Base_Column_List"/>,
     bm.material_code as materialCode, bm.material_name as materialName, bm.material_desc as materialDesc, bm.material_version as materialVersion,
     bw.warehouse_code as warehouseCode, bw.warehouse_name as warehouseName, bm.material_source as materialSource, bmc.material_category_name as materialCategoryName
-    , bpm.product_model_name as productModelName,
+    , bpm.product_model_name as productModelName,opo.purchase_order_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from om_purchase_order_det opod
+    left join om_purchase_order opo on opo.purchase_order_id = opod.purchase_order_id
     left join sys_user suc on opod.create_user_id = suc.user_id
     left join sys_user sumod on opod.modified_user_id = sumod.user_id
     left join base_material bm on opod.material_id = bm.material_id
@@ -79,6 +82,23 @@
       </if>
       <if test="purchaseOrderId != null">
         and opod.purchase_order_id = #{purchaseOrderId}
+      </if>
+      <if test="purchaseOrderDetId != null">
+        and opod.purchase_order_det_id = #{purchaseOrderDetId}
+      </if>
+
+      <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark == 1">
+        and opo.purchase_order_code = #{purchaseOrderCode}
+      </if>
+      <if test="materialCode != null and materialCode != '' and codeQueryMark == 1">
+        and bm.material_code = #{materialCode}
+      </if>
+
+      <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark != 1">
+        and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
+      </if>
+      <if test="materialCode != null and materialCode != '' and codeQueryMark != 1">
+        and bm.material_code like CONCAT('%', #{materialCode}, '%')
       </if>
     </where>
     order by opod.modified_time desc
