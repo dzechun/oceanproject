@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.esop.mapper.EsopHtWiReleaseDetMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.esop.history.EsopHtWiReleaseDet">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="ht_wi_release_det_id" jdbcType="BIGINT" property="htWiReleaseDetId" />
-    <result column="wi_release_det_id" jdbcType="BIGINT" property="wiReleaseDetId" />
-    <result column="wi_release_id" jdbcType="BIGINT" property="wiReleaseId" />
-    <result column="work_instruction_id" jdbcType="BIGINT" property="workInstructionId" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.esop.history.EsopHtWiReleaseDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="ht_wi_release_det_id" jdbcType="BIGINT" property="htWiReleaseDetId"/>
+        <result column="wi_release_det_id" jdbcType="BIGINT" property="wiReleaseDetId"/>
+        <result column="wi_release_id" jdbcType="BIGINT" property="wiReleaseId"/>
+        <result column="work_instruction_id" jdbcType="BIGINT" property="workInstructionId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -43,7 +43,8 @@
     </sql>
 
     <select id="findHtList" resultMap="BaseResultMapDto">
-        SELECT<include refid="BaseColumnList"/>
+        SELECT
+        <include refid="BaseColumnList"/>
         FROM esop_ht_wi_release_det ehwrd
         LEFT JOIN sys_user su ON ehwrd.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON ehwrd.modified_user_id = sus.user_id

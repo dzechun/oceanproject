@@ -38,7 +38,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
     @Override
     public List<EsopEquipmentDto> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))){
-            SysUser user = getUser();
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
             map.put("orgId", user.getOrganizationId());
         }
         return esopEquipmentMapper.findList(map);
@@ -46,7 +46,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
 
     @Override
     public List<EsopHtEquipment> findHtList(Map<String, Object> map) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId", user.getOrganizationId());
         return esopHtEquipmentMapper.findHtList(map);
     }
@@ -56,20 +56,6 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
         return esopEquipmentMapper.batchUpdate(list);
     }
 
-/*
-    @Override
-    public EsopEquipment detailByIp(String ip) {
-        Example example = new Example(EsopEquipment.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentIp",ip);
-        EsopEquipment EsopEquipment = esopEquipmentMapper.selectOneByExample(example);
-        if (StringUtils.isEmpty(EsopEquipment)){
-            throw new BizErrorException("未查询到ip对应的设备信息");
-        }
-        return EsopEquipment;
-    }
-*/
-
     @Override
     public EsopEquipment detailByMacAddress(String macAddress) {
         Example example = new Example(EsopEquipment.class);
@@ -77,7 +63,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
         criteria.andEqualTo("equipmentMacAddress",macAddress);
         EsopEquipment EsopEquipment = esopEquipmentMapper.selectOneByExample(example);
         if (StringUtils.isEmpty(EsopEquipment)){
-            throw new BizErrorException("未查询到mac地址对应的设备信息");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到mac地址对应的设备信息");
         }
         return EsopEquipment;
     }
@@ -85,7 +71,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EsopEquipment record) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         record.setOrgId(user.getOrganizationId());
         check(record);
 
@@ -96,7 +82,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
             numCriteria.andEqualTo("proLineId", record.getProLineId());
             numCriteria.andEqualTo("orgId", record.getOrgId());
             if (StringUtils.isNotEmpty(esopEquipmentMapper.selectOneByExample(numExample))) {
-                throw new BizErrorException("同一产线的设备编码不能重复");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"同一产线的设备编码不能重复");
             }
         }
 
@@ -105,7 +91,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
         record.setModifiedUserId(user.getUserId());
         record.setModifiedTime(new Date());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
-        esopEquipmentMapper.insertUseGeneratedKeys(record);
+        esopEquipmentMapper.insertSelective(record);
 
         EsopHtEquipment EsopHtEquipment = new EsopHtEquipment();
         BeanUtils.copyProperties(record, EsopHtEquipment);
@@ -117,7 +103,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EsopEquipment entity) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         check(entity);
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
@@ -134,7 +120,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        getUser();
+        CurrentUserInfoUtils.getCurrentUserInfo();
         String[] idArry = ids.split(",");
         for (String id : idArry) {
             EsopEquipment EsopEquipment = esopEquipmentMapper.selectByPrimaryKey(id);
@@ -150,7 +136,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
     }
 
     public void check(EsopEquipment entity){
-        getUser();
+        CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(EsopEquipment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("equipmentCode", entity.getEquipmentCode());
@@ -170,7 +156,7 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
                 macCriteria.andNotEqualTo("equipmentId",entity.getEquipmentId());
             }
             if (StringUtils.isNotEmpty(esopEquipmentMapper.selectOneByExample(macExample))) {
-                throw new BizErrorException("设备mac地址不能重复");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"设备mac地址不能重复");
             }
         }
     }
@@ -178,139 +164,9 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
 
     @Override
     public List<EsopEquipmentDto> findNoGroup(Map<String, Object> map) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId", user.getOrganizationId());
         return esopEquipmentMapper.findNoGroup(map);
     }
 
-
-
-    public SysUser getUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return user;
-    }
-
-/*
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> importExcel(List<EsopEquipmentImport> esopEquipmentImports) {
-        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-
-        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
-        int success = 0;  //记录操作成功数
-        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
-        LinkedList<EsopEquipment> list = new LinkedList<>();
-        *//*LinkedList<EsopEquipmentImport> equipmentImports = new LinkedList<>();*//*
-        for (int i = 0; i < esopEquipmentImports.size(); i++) {
-            EsopEquipmentImport esopEquipmentImport = esopEquipmentImports.get(i);
-
-            String ip = esopEquipmentImport.getEquipmentIp();
-            String macAddress = esopEquipmentImport.getEquipmentMacAddress();
-            String seqNum = esopEquipmentImport.getEquipmentSeqNum();
-            String code = esopEquipmentImport.getEquipmentCode();
-            String name = esopEquipmentImport.getEquipmentName();
-            if (StringUtils.isEmpty(
-                    ip,macAddress,seqNum,code,name
-            )) {
-                fail.add(i + 4);
-                continue;
-            }
-
-            //判断编码是否重复
-            Example example = new Example(EsopEquipment.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
-            criteria.andEqualTo("equipmentCode", code);
-            List<EsopEquipment> strList = esopEquipmentMapper.selectByExample(example);
-            if (StringUtils.isNotEmpty(strList)) {
-                fail.add(i + 4);
-                continue;
-            }
-            example.clear();
-            criteria = example.createCriteria();
-            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
-            criteria.andEqualTo("equipmentMacAddress", macAddress);
-            List<EsopEquipment> strList1 = esopEquipmentMapper.selectByExample(example);
-            if (StringUtils.isNotEmpty(strList1)) {
-                fail.add(i + 4);
-                continue;
-            }
-
-            //判断产线是否存在
-            SearchBaseProLine searchBaseProLine = new SearchBaseProLine();
-            searchBaseProLine.setOrgId(currentUser.getOrganizationId());
-            searchBaseProLine.setProName(esopEquipmentImport.getProLineName());
-            List<BaseProLine> proLineData = easeFeignApi.findList(searchBaseProLine).getData();
-            if (StringUtils.isEmpty(proLineData)) {
-                fail.add(i + 4);
-                continue;
-            }
-
-            //判断车间是否存在
-            SearchBaseWorkShop searchBaseWorkShop = new SearchBaseWorkShop();
-            searchBaseWorkShop.setOrgId(currentUser.getOrganizationId());
-            searchBaseWorkShop.setWorkShopName(esopEquipmentImport.getWorkShopName());
-            searchBaseWorkShop.setWorkShopId(proLineData.get(0).getWorkShopId());
-            List<BaseWorkShopDto> workShopData = easeFeignApi.findWorkShopList(searchBaseWorkShop).getData();
-            if (StringUtils.isEmpty(workShopData) ) {
-                fail.add(i + 4);
-                continue;
-            }
-
-
-
-            //判断工序是否存在
-            SearchBaseProcess searchBaseProcess = new SearchBaseProcess();
-            searchBaseProcess.setOrgId(currentUser.getOrganizationId());
-            searchBaseProcess.setProcessName(esopEquipmentImport.getProcessName());
-            List<BaseProcess>  processData = easeFeignApi.findProcessList(searchBaseProcess).getData();
-            if (StringUtils.isEmpty(processData)) {
-                fail.add(i + 4);
-                continue;
-            }
-
-            //判断集合中是否存在重复数据
-            boolean tag = false;
-            if (StringUtils.isNotEmpty(esopEquipmentImports)){
-                for (EsopEquipmentImport esopImport : esopEquipmentImports) {
-                    if (esopImport.getEquipmentCode().equals(code)){
-                        tag = true;
-                    }
-                }
-            }
-            if (tag){
-                fail.add(i + 4);
-                continue;
-            }
-            EsopEquipment esopEquipment = new EsopEquipment();
-            BeanUtils.copyProperties(esopEquipmentImport, esopEquipment);
-            esopEquipment.setFactoryId(workShopData.get(0).getFactoryId());
-            esopEquipment.setWorkShopId(workShopData.get(0).getWorkShopId());
-            esopEquipment.setProLineId(proLineData.get(0).getProLineId());
-            esopEquipment.setProcessId(processData.get(0).getProcessId());
-            esopEquipment.setCreateTime(new Date());
-            esopEquipment.setCreateUserId(currentUser.getUserId());
-            esopEquipment.setModifiedTime(new Date());
-            esopEquipment.setModifiedUserId(currentUser.getUserId());
-            esopEquipment.setOrgId(currentUser.getOrganizationId());
-            esopEquipment.setStatus((byte)1);
-            list.add(esopEquipment);
-        }
-
-            success = esopEquipmentMapper.insertList(list);
-
-            *//*for (BaseProcess baseProcess : list) {
-                BaseHtProcess baseHtProcess = new BaseHtProcess();
-                BeanUtils.copyProperties(baseProcess, baseHtProcess);
-                htList.add(baseHtProcess);
-            }
-
-            baseHtProcessMapper.insertList(htList);*//*
-        resultMap.put("操作成功总数", success);
-        resultMap.put("操作失败行数", fail);
-        return resultMap;
-    }*/
 }
