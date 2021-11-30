@@ -67,9 +67,10 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         if (StringUtils.isNotEmpty(list.getData())){
             map.put("supplierIdList", list.getData());
         }
-        map.put("orderTypeCode", "YSSTZD");
+        map.put("orderTypeCode", "YSHTZD");
         return srmInAsnOrderMapper.findList(map);
     }
+
 
 
     @Override
@@ -80,14 +81,13 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         srmInAsnOrderDto.setAsnCode(CodeUtils.getId("ASN-"));
         Example example = new Example(SrmInAsnOrder.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("asnCode",srmInAsnOrderDto.getAsnCode())
-                .andEqualTo("orderTypeCode","YSSTZD");
+        criteria.andEqualTo("asnCode",srmInAsnOrderDto.getAsnCode());
         List<SrmInAsnOrder> srmInAsnOrders = srmInAsnOrderMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(srmInAsnOrders)) throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"ASN单号已存在，请勿重复添加");
         //默认收货通知单
         if(StringUtils.isEmpty(srmInAsnOrderDto.getOrderTypeId())) {
             SearchBaseOrderType searchBaseOrderType = new SearchBaseOrderType();
-            searchBaseOrderType.setOrderTypeCode("YSSTZD");
+            searchBaseOrderType.setOrderTypeCode("YSHTZD");
             List<BaseOrderTypeDto> baseOrderTypeDtos = baseFeignApi.findList(searchBaseOrderType).getData();
             if (StringUtils.isEmpty(baseOrderTypeDtos)) throw new BizErrorException("未配置对应的单据类型");
             srmInAsnOrderDto.setOrderTypeId(baseOrderTypeDtos.get(0).getOrderTypeId());
