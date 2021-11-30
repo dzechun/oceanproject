@@ -15,6 +15,11 @@
     <name>ocean-guest-wanbao</name>
     <description>Demo project for Spring Boot</description>
 
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.fantechs.common.config</groupId>
@@ -67,10 +72,6 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
 
     <build>
         <finalName>${project.artifactId}</finalName>
