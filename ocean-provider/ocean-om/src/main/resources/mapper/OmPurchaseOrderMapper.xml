@@ -95,8 +95,11 @@
       <if test="orgId != null">
         and opo.org_id = #{orgId}
       </if>
-      <if test="purchaseOrderCode != null and purchaseOrderCode != ''">
+      <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark != 1">
         and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
+      </if>
+      <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark ==1">
+        and opo.purchase_order_code = #{purchaseOrderCode}
       </if>
       <if test="orderStatus != null">
         and opo.order_status = #{orderStatus}

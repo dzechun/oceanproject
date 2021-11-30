@@ -41,7 +41,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
             }
             map.put("orgId", user.getOrganizationId());
         }
-        if (StringUtils.isNotEmpty(map.get("ifSupplierFind"))) {
+        if (StringUtils.isNotEmpty(map.get("ifSupplierFind")) && Byte.valueOf(map.get("ifSupplierFind").toString()) == 1) {
             map.put("supplierId",user.getSupplierId());
         }
         return omPurchaseOrderMapper.findList(map);

@@ -4,11 +4,13 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.general.dto.srm.SrmPoExpediteRecordDto;
 import com.fantechs.common.base.general.entity.srm.SrmPoExpediteRecord;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.srm.mapper.SrmPoExpediteRecordMapper;
 import com.fantechs.provider.srm.service.SrmPoExpediteRecordService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,11 +35,13 @@ public class SrmPoExpediteRecordServiceImpl extends BaseService<SrmPoExpediteRec
             List<SrmPoExpediteRecordDto> srmPoExpediteRecordDtos = collect.get(aLong);
             SrmPoExpediteRecordDto srmPoExpediteRecordDto = srmPoExpediteRecordDtos.get(0);
             SrmPoExpediteRecordDto srmPoExpediteRecord = new SrmPoExpediteRecordDto();
-
             BeanUtil.copyProperties(srmPoExpediteRecordDto,srmPoExpediteRecord);
-            srmPoExpediteRecord.setFileList(srmPoExpediteRecordDtos);
+            if (StringUtils.isNotEmpty(srmPoExpediteRecordDto.getAccessUrl())) {
+                srmPoExpediteRecord.setFileList(srmPoExpediteRecordDtos);
+            }
             list.add(srmPoExpediteRecord);
         }
+        list.sort(Comparator.comparing(SrmPoExpediteRecordDto::getCreateTime).reversed());
 
         return list;
     }
