@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.jinan.service;
 
+import com.fantechs.common.base.general.entity.jinan.RfidBaseStationData;
 import com.fantechs.common.base.general.entity.jinan.RfidBaseStationLog;
 import com.fantechs.common.base.support.IService;
 
@@ -13,4 +14,6 @@ import java.util.Map;
 
 public interface RfidBaseStationLogService extends IService<RfidBaseStationLog> {
     List<RfidBaseStationLog> findList(Map<String, Object> map);
+
+    int checkData(RfidBaseStationData rfidBaseStationData);
 }

@@ -20,7 +20,7 @@ import java.util.Date;
  * RFID资产管理基站日志表
  * rfid_base_station_log
  * @author admin
- * @date 2021-11-29 16:39:17
+ * @date 2021-11-30 13:37:17
  */
 @Data
 @Table(name = "rfid_base_station_log")
@@ -34,26 +34,61 @@ public class RfidBaseStationLog extends ValidGroup implements Serializable {
     private Long baseStationLogId;
 
     /**
-     * 区域ID
+     * 区域名称
      */
-    @ApiModelProperty(name="areaId",value = "区域ID")
-    @Column(name = "area_id")
-    private Long areaId;
+    @ApiModelProperty(name="areaName",value = "区域名称")
+    @Excel(name = "区域名称", height = 20, width = 30,orderNum="1")
+    @Column(name = "area_name")
+    private String areaName;
 
     /**
-     * 基站ID
+     * 基站名称
      */
-    @ApiModelProperty(name="baseStationId",value = "基站ID")
-    @Column(name = "base_station_id")
-    private Long baseStationId;
+    @ApiModelProperty(name="baseStationName",value = "基站名称")
+    @Excel(name = "基站名称", height = 20, width = 30,orderNum="2")
+    @Column(name = "base_station_name")
+    private String baseStationName;
 
     /**
-     * 是否正常(0-否 1-是)
+     * 读取时间
      */
-    @ApiModelProperty(name="ifNormal",value = "是否正常(0-否 1-是)")
-    @Excel(name = "是否正常(0-否 1-是)", height = 20, width = 30,orderNum="3")
-    @Column(name = "if_normal")
-    private Byte ifNormal;
+    @ApiModelProperty(name="readTime",value = "读取时间")
+    @Excel(name = "读取时间", height = 20, width = 30,orderNum="3",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "read_time")
+    private Date readTime;
+
+    /**
+     * 读取结果(0-失败 1-成功)
+     */
+    @ApiModelProperty(name="readResult",value = "读取结果(0-失败 1-成功)")
+    @Excel(name = "读取结果(0-失败 1-成功)", height = 20, width = 30,orderNum="4")
+    @Column(name = "read_result")
+    private Byte readResult;
+
+    /**
+     * RFID条码
+     */
+    @ApiModelProperty(name="assetBarcode",value = "RFID条码")
+    @Excel(name = "RFID条码", height = 20, width = 30,orderNum="5")
+    @Column(name = "asset_barcode")
+    private String assetBarcode;
+
+    /**
+     * 资产名称
+     */
+    @ApiModelProperty(name="assetName",value = "资产名称")
+    @Excel(name = "资产名称", height = 20, width = 30,orderNum="6")
+    @Column(name = "asset_name")
+    private String assetName;
+
+    /**
+     * 反馈内容
+     */
+    @ApiModelProperty(name="feedbackContent",value = "反馈内容")
+    @Excel(name = "反馈内容", height = 20, width = 30,orderNum="7")
+    @Column(name = "feedback_content")
+    private String feedbackContent;
 
     /**
      * 状态(0无效，1有效)
@@ -79,7 +114,7 @@ public class RfidBaseStationLog extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -95,7 +130,7 @@ public class RfidBaseStationLog extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="10",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -107,26 +142,9 @@ public class RfidBaseStationLog extends ValidGroup implements Serializable {
     private String option3;
 
     /**
-     * 正常信息
-     */
-    @ApiModelProperty(name="normalInfo",value = "正常信息")
-    @Excel(name = "正常信息", height = 20, width = 30,orderNum="4")
-    @Column(name = "normal_info")
-    private String normalInfo;
-
-    /**
-     * 不正常信息
-     */
-    @ApiModelProperty(name="abnormalInfo",value = "不正常信息")
-    @Excel(name = "不正常信息", height = 20, width = 30,orderNum="5")
-    @Column(name = "abnormal_info")
-    private String abnormalInfo;
-
-    /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="6")
     private String remark;
 
     /**
@@ -134,7 +152,7 @@ public class RfidBaseStationLog extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="8")
     private String createUserName;
 
     /**
@@ -142,7 +160,7 @@ public class RfidBaseStationLog extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="10")
     private String modifiedUserName;
 
     /**
@@ -151,36 +169,6 @@ public class RfidBaseStationLog extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
-
-    /**
-     * 区域编码
-     */
-    @Transient
-    @ApiModelProperty(name = "areaCode",value = "区域编码")
-    private String areaCode;
-
-    /**
-     * 区域名称
-     */
-    @Transient
-    @ApiModelProperty(name = "areaName",value = "区域名称")
-    @Excel(name = "区域名称", height = 20, width = 30,orderNum="1")
-    private String areaName;
-
-    /**
-     * 基站编码
-     */
-    @Transient
-    @ApiModelProperty(name = "baseStationCode",value = "基站编码")
-    private String baseStationCode;
-
-    /**
-     * 基站名称
-     */
-    @Transient
-    @ApiModelProperty(name = "baseStationName",value = "基站名称")
-    @Excel(name = "基站名称", height = 20, width = 30,orderNum="2")
-    private String baseStationName;
 
     private static final long serialVersionUID = 1L;
 }

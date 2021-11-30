@@ -1,6 +1,7 @@
 package com.fantechs.provider.guest.jinan.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.entity.jinan.RfidBaseStationData;
 import com.fantechs.common.base.general.entity.jinan.RfidBaseStationLog;
 import com.fantechs.common.base.general.entity.jinan.search.SearchRfidBaseStationLog;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -34,6 +35,12 @@ public class RfidBaseStationLogController {
 
     @Resource
     private RfidBaseStationLogService rfidBaseStationLogService;
+
+    @ApiOperation(value = "校验数据",notes = "校验数据")
+    @PostMapping("/checkData")
+    public ResponseEntity checkData(@ApiParam(value = "必传：",required = true)@RequestBody @Validated RfidBaseStationData rfidBaseStationData) {
+        return ControllerUtil.returnCRUD(rfidBaseStationLogService.checkData(rfidBaseStationData));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

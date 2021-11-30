@@ -4,10 +4,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.jinan.Import.RfidBaseStationImport;
-import com.fantechs.common.base.general.entity.jinan.RfidArea;
-import com.fantechs.common.base.general.entity.jinan.RfidAsset;
-import com.fantechs.common.base.general.entity.jinan.RfidBaseStation;
-import com.fantechs.common.base.general.entity.jinan.RfidBaseStationReAsset;
+import com.fantechs.common.base.general.entity.jinan.*;
 import com.fantechs.common.base.general.entity.jinan.history.RfidHtBaseStation;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -41,6 +38,7 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
     @Resource
     private RfidAssetMapper rfidAssetMapper;
 
+
     @Override
     public List<RfidBaseStation> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -63,7 +61,7 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
         record.setOrgId(user.getOrganizationId());
         rfidBaseStationMapper.insertUseGeneratedKeys(record);
 
-        List<RfidBaseStationReAsset> list = record.getList();
+        /*List<RfidBaseStationReAsset> list = record.getList();
         if(StringUtils.isNotEmpty(list)){
             for (RfidBaseStationReAsset rfidBaseStationReAsset : list){
                 //RFID是否重复
@@ -85,7 +83,7 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
                 rfidBaseStationReAsset.setOrgId(user.getOrganizationId());
             }
             rfidBaseStationReAssetMapper.insertList(list);
-        }
+        }*/
 
         RfidHtBaseStation rfidHtBaseStation = new RfidHtBaseStation();
         BeanUtils.copyProperties(record, rfidHtBaseStation);
@@ -106,7 +104,7 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
         rfidBaseStationMapper.updateByPrimaryKeySelective(entity);
 
         //删除原RFID信息
-        Example example1 = new Example(RfidBaseStationReAsset.class);
+        /*Example example1 = new Example(RfidBaseStationReAsset.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("baseStationId", entity.getBaseStationId());
         rfidBaseStationReAssetMapper.deleteByExample(example1);
@@ -133,7 +131,7 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
                 rfidBaseStationReAsset.setOrgId(user.getOrganizationId());
             }
             rfidBaseStationReAssetMapper.insertList(list);
-        }
+        }*/
 
 
         RfidHtBaseStation rfidHtBaseStation = new RfidHtBaseStation();

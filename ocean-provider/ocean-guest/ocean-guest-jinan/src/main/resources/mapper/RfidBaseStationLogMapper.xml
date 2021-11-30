@@ -6,9 +6,13 @@
       WARNING - @mbg.generated
     -->
     <id column="base_station_log_id" jdbcType="BIGINT" property="baseStationLogId" />
-    <result column="area_id" jdbcType="BIGINT" property="areaId" />
-    <result column="base_station_id" jdbcType="BIGINT" property="baseStationId" />
-    <result column="if_normal" jdbcType="TINYINT" property="ifNormal" />
+    <result column="area_name" jdbcType="VARCHAR" property="areaName" />
+    <result column="base_station_name" jdbcType="VARCHAR" property="baseStationName" />
+    <result column="read_time" jdbcType="TIMESTAMP" property="readTime" />
+    <result column="read_result" jdbcType="TINYINT" property="readResult" />
+    <result column="asset_barcode" jdbcType="VARCHAR" property="assetBarcode" />
+    <result column="asset_name" jdbcType="VARCHAR" property="assetName" />
+    <result column="feedback_content" jdbcType="VARCHAR" property="feedbackContent" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -18,26 +22,22 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <result column="normal_info" jdbcType="LONGVARCHAR" property="normalInfo" />
-    <result column="abnormal_info" jdbcType="LONGVARCHAR" property="abnormalInfo" />
     <result column="remark" jdbcType="LONGVARCHAR" property="remark" />
 
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="area_code" jdbcType="VARCHAR" property="areaCode"/>
-    <result column="area_name" jdbcType="VARCHAR" property="areaName"/>
-    <result column="base_station_code" jdbcType="VARCHAR" property="baseStationCode"/>
-    <result column="base_station_name" jdbcType="VARCHAR" property="baseStationName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
     rbsl.base_station_log_id,
-    rbsl.area_id,
-    rbsl.base_station_id,
-    rbsl.if_normal,
-    rbsl.normal_info,
-    rbsl.abnormal_info,
+    rbsl.area_name,
+    rbsl.base_station_name,
+    rbsl.read_time,
+    rbsl.read_result,
+    rbsl.asset_barcode,
+    rbsl.asset_name,
+    rbsl.feedback_content,
     rbsl.`status`,
     rbsl.remark,
     rbsl.org_id,
@@ -52,38 +52,28 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    ra.area_code,ra.area_name,
-    rbs.base_station_code,rbs.base_station_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from fantech_imes_v2.rfid_base_station_log rbsl
-    left join fantech_imes_v2.rfid_area ra ON rbsl.area_id = ra.area_id
-    left join fantech_imes_v2.rfid_base_station rbs ON rbsl.base_station_id = rbs.base_station_id
     left join ocean_v2.sys_user u on rbsl.create_user_id=u.user_id
     left join ocean_v2.sys_user s on rbsl.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON rbsl.org_id = bo.organization_id
     <where>
       <if test="areaName!=null and areaName!=''">
-        and ra.area_name  like CONCAT('%', #{areaName}, '%')
-      </if>
-      <if test="areaCode!=null and areaCode!=''">
-        and ra.area_code  like CONCAT('%', #{areaCode}, '%')
-      </if>
-      <if test="baseStationCode!=null and baseStationCode!=''">
-        and rbs.base_station_code  like CONCAT('%', #{baseStationCode}, '%')
+        and rbsl.area_name  like CONCAT('%', #{areaName}, '%')
       </if>
       <if test="baseStationName!=null and baseStationName!=''">
-        and rbs.base_station_name  like CONCAT('%', #{baseStationName}, '%')
+        and rbsl.base_station_name  like CONCAT('%', #{baseStationName}, '%')
       </if>
-      <if test="normalInfo!=null and normalInfo!=''">
-        and rbsl.normal_info  like CONCAT('%', #{normalInfo}, '%')
+      <if test="assetBarcode!=null and assetBarcode!=''">
+        and rbsl.asset_barcode  like CONCAT('%', #{assetBarcode}, '%')
       </if>
-      <if test="abnormalInfo!=null and abnormalInfo!=''">
-        and rbsl.abnormal_info  like CONCAT('%', #{abnormalInfo}, '%')
+      <if test="assetName!=null and assetName!=''">
+        and rbsl.asset_name  like CONCAT('%', #{assetName}, '%')
       </if>
-      <if test="ifNormal!=null">
-        and rbsl.if_normal = #{ifNormal}
+      <if test="readResult!=null">
+        and rbsl.read_result = #{readResult}
       </if>
       <if test="status!=null">
         and rbsl.status = #{status}

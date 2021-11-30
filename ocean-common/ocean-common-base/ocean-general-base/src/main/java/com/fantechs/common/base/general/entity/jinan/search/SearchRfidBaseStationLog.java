@@ -15,40 +15,26 @@ public class SearchRfidBaseStationLog extends BaseQuery implements Serializable 
     private String areaName;
 
     /**
-     * 区域编码
-     */
-    @ApiModelProperty(name="areaCode",value = "区域编码")
-    private String areaCode;
-
-    /**
-     * 基站编码
-     */
-    @ApiModelProperty(name="baseStationCode",value = "基站编码")
-    private String baseStationCode;
-
-    /**
      * 基站名称
      */
     @ApiModelProperty(name="baseStationName",value = "基站名称")
     private String baseStationName;
 
     /**
-     * 正常信息
+     * 读取结果(0-失败 1-成功)
      */
-    @ApiModelProperty(name="normalInfo",value = "正常信息")
-    private String normalInfo;
+    @ApiModelProperty(name="readResult",value = "读取结果(0-失败 1-成功)")
+    private Byte readResult;
 
     /**
-     * 不正常信息
+     * RFID
      */
-    @ApiModelProperty(name="abnormalInfo",value = "不正常信息")
-    private String abnormalInfo;
+    @ApiModelProperty(name="assetBarcode",value = "RFID")
+    private String assetBarcode;
 
     /**
-     * 是否正常(0-否 1-是)
+     * 资产名称
      */
-    @ApiModelProperty(name="ifNormal",value = "是否正常(0-否 1-是)")
-    private Integer ifNormal;
-
-
+    @ApiModelProperty(name="assetName",value = "资产名称")
+    private String assetName;
 }
