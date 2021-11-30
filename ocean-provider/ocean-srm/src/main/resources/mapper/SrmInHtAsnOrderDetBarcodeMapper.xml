@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.srm.mapper.SrmInHtAsnOrderDetBarcodeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDetBarcode">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_asn_order_det_barcode_id" jdbcType="BIGINT" property="htAsnOrderDetBarcodeId" />
+    <result column="asn_order_det_barcode_id" jdbcType="BIGINT" property="asnOrderDetBarcodeId" />
+    <result column="asn_order_id" jdbcType="BIGINT" property="asnOrderId" />
+    <result column="asn_order_det_id" jdbcType="BIGINT" property="asnOrderDetId" />
+    <result column="qty" jdbcType="DECIMAL" property="qty" />
+    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode" />
+    <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+
+  <sql id="BaseColumnList">
+        wiaodb.ht_asn_order_det_barcode_id,
+        wiaodb.asn_order_det_barcode_id,
+        wiaodb.asn_order_id,
+        wiaodb.asn_order_det_id,
+        wiaodb.qty,
+        wiaodb.production_date,
+        wiaodb.barcode,
+        wiaodb.color_box_code,
+        wiaodb.carton_code,
+        wiaodb.pallet_code,
+        wiaodb.batch_code,
+        wiaodb.status,
+        wiaodb.remark,
+        wiaodb.org_id,
+        wiaodb.create_user_id,
+        wiaodb.create_time,
+        wiaodb.modified_user_id,
+        wiaodb.modified_time,
+        wiaodb.is_delete,
+        wiaodb.option1,
+        wiaodb.option2,
+        wiaodb.option3
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap">
+    select
+    <include refid="BaseColumnList"/>,
+    opo.purchase_order_code,bm.material_code,bm.material_name,bw.warehouse_name,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name AS organization_Name
+    FROM wms_in_asn_order_det_barcode wiaodb
+    LEFT JOIN om_purchase_order opo ON wiaod.source_order_id = opo.purchase_order_id
+    LEFT JOIN base_material bm ON wiaodb.material_id = bm.material_id
+    LEFT JOIN sys_user su ON wiaodb.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wiaodb.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wiaodb.org_id = bo.organization_id
+    <where>
+      <if test="asnOrderId !=null and asnOrderId !=''">
+        and wiaodb.asn_order_id=#{asnOrderId}
+      </if>
+      <if test="asnOrderDetId !=null and asnOrderDetId!=''">
+        and wiaodb.asn_order_det_id = #{asnOrderDetId}
+      </if>
+      <if test="materialCode !=null and materialCode !=''">
+        and bm.material_code like CONCAT('%',#{materialCode},'%')
+      </if>
+    </where>
+  </select>
+
+</mapper>

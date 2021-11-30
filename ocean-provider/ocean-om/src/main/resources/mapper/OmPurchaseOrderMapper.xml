@@ -51,7 +51,6 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
 
-    <result column="e_mail" jdbcType="VARCHAR" property="eMail"/>
     <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
     <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
     <result column="complete_detail" jdbcType="VARCHAR" property="completeDetail"/>
@@ -61,7 +60,7 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select
     <include refid="Base_Column_List"/>,
-    bs.supplier_code as supplierCode, bs.supplier_name as supplierName,bs.e_mail,bs.mobile_phone,bs.telephone,ba.complete_detail,
+    bs.supplier_code as supplierCode, bs.supplier_name as supplierName,bs.e_mail as eMail,bs.mobile_phone,bs.telephone,ba.complete_detail,
     bc.currency_name as currencyName,
     bd.dept_code as deptCode, bd.dept_name as deptName,sum(opod.material_total_price) as totalPrice,
     supu.nick_name as purchaseUserName, supu.nick_name as makeOrderUserName, supu.nick_name as auditUserName,
@@ -117,7 +116,7 @@
       </if>
     </where>
     group by opo.purchase_order_id
-    order by opo.purchase_order_code desc
+    order by opo.create_time desc
   </select>
   <select id="findPurchaseMaterial" resultType="java.lang.String">
     SELECT material_id FROM om_purchase_order opm
