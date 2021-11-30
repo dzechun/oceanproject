@@ -11,6 +11,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "spring.datasource")
 public class DBProperties {
     private HikariDataSource primary;
-    private HikariDataSource secondary;
-    private HikariDataSource thirdary;
 }
