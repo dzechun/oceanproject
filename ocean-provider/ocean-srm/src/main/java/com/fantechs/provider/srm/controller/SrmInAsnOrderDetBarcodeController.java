@@ -34,7 +34,7 @@ import java.util.Map;
  */
 @RestController
 @Api(tags = "预收货通知单条码")
-@RequestMapping("/wmsInAsnOrderDetBarcode")
+@RequestMapping("/srmInAsnOrderDetBarcode")
 @Validated
 @Slf4j
 public class SrmInAsnOrderDetBarcodeController {

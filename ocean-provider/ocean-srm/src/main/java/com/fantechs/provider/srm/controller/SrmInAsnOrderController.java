@@ -30,7 +30,7 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "预收货通知单")
-@RequestMapping("/wmsInAsnOrder")
+@RequestMapping("/srmInAsnOrder")
 @Validated
 @Slf4j
 public class SrmInAsnOrderController {
@@ -40,8 +40,8 @@ public class SrmInAsnOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SrmInAsnOrder wmsInAsnOrder) {
-        return ControllerUtil.returnCRUD(srmInAsnOrderService.save(wmsInAsnOrder));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SrmInAsnOrderDto srmInAsnOrderDto) {
+        return ControllerUtil.returnCRUD(srmInAsnOrderService.save(srmInAsnOrderDto));
     }
 
     @ApiOperation("删除")
@@ -52,15 +52,15 @@ public class SrmInAsnOrderController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SrmInAsnOrder.update.class) SrmInAsnOrder wmsInAsnOrder) {
-        return ControllerUtil.returnCRUD(srmInAsnOrderService.update(wmsInAsnOrder));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SrmInAsnOrder.update.class) SrmInAsnOrderDto srmInAsnOrderDto) {
+        return ControllerUtil.returnCRUD(srmInAsnOrderService.update(srmInAsnOrderDto));
     }
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<SrmInAsnOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
-        SrmInAsnOrder  wmsInAsnOrder = srmInAsnOrderService.selectByKey(id);
-        return  ControllerUtil.returnDataSuccess(wmsInAsnOrder,StringUtils.isEmpty(wmsInAsnOrder)?0:1);
+        SrmInAsnOrder  srmInAsnOrder = srmInAsnOrderService.selectByKey(id);
+        return  ControllerUtil.returnDataSuccess(srmInAsnOrder,StringUtils.isEmpty(srmInAsnOrder)?0:1);
     }
 
     @ApiOperation("列表")
