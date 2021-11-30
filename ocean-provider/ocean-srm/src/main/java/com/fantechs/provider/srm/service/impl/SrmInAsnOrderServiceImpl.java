@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierRe
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDetBarcode;
+import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -21,7 +22,9 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetBarcodeMapper;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetMapper;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderMapper;
+import com.fantechs.provider.srm.mapper.SrmInHtAsnOrderMapper;
 import com.fantechs.provider.srm.service.SrmInAsnOrderService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -42,6 +45,8 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
     @Resource
     private SrmInAsnOrderMapper srmInAsnOrderMapper;
+    @Resource
+    private SrmInHtAsnOrderMapper srmInHtAsnOrderMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
@@ -129,10 +134,9 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         if(StringUtils.isNotEmpty(barcodeList)) srmInAsnOrderDetBarcodeMapper.insertList(barcodeList);
 
         //保存履历表
-       /* SrmHtInAsnOrder srmInAsnOrder = new SrmHtInAsnOrder();
-        BeanUtils.copyProperties(srmInAsnOrderDto, srmHtCarport);
-        int i = srmHtCarportMapper.insertSelective(srmHtCarport);*/
-
+        SrmInHtAsnOrder srmInHtAsnOrder = new SrmInHtAsnOrder();
+        BeanUtils.copyProperties(srmInAsnOrderDto, srmInHtAsnOrder);
+        srmInHtAsnOrderMapper.insertSelective(srmInHtAsnOrder);
         return i;
     }
 
