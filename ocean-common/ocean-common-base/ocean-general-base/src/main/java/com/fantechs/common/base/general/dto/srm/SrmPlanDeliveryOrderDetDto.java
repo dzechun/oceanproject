@@ -35,6 +35,13 @@ public class SrmPlanDeliveryOrderDetDto extends SrmPlanDeliveryOrderDet implemen
     private String supplierName;
 
     /**
+     * 采购订单ID
+     */
+    @Transient
+    @ApiModelProperty(name="purchaseOrderId",value = "采购订单ID")
+    private Long purchaseOrderId;
+
+    /**
      * 采购订单号
      */
     @Transient
@@ -43,12 +50,27 @@ public class SrmPlanDeliveryOrderDetDto extends SrmPlanDeliveryOrderDet implemen
     private String purchaseOrderCode;
 
     /**
+     * 收货仓库ID
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseId",value = "收货仓库ID")
+    private Long warehouseId;
+
+    /**
      * 收货仓库
      */
     @Transient
     @Excel(name = "收货仓库", height = 20, width = 30,orderNum="5")
     @ApiModelProperty(name="warehouseName",value = "收货仓库")
     private String warehouseName;
+
+    /**
+     * 物料ID
+     */
+
+    @Transient
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    private Long materialId;
 
     /**
      * 物料编码

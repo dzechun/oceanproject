@@ -31,4 +31,7 @@ public class SearchOmPurchaseOrderDet extends BaseQuery implements Serializable 
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
     private Integer codeQueryMark;
 
+    @ApiModelProperty(name="supplierId",value = "供应商ID")
+    private Long supplierId;
+
 }

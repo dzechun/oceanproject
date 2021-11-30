@@ -27,8 +27,11 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmPlanDeliveryOrderDetDto">
     <result column="plan_delivery_order_code" jdbcType="VARCHAR" property="planDeliveryOrderCode" />
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+    <result column="purchase_order_id" jdbcType="BIGINT" property="purchaseOrderId" />
     <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion" />
@@ -61,7 +64,10 @@
       spdo.plan_delivery_order_code,
       bs.supplier_name,
       opo.purchase_order_code,
+      opo.purchase_order_id,
+      bw.warehouse_id,
       bw.warehouse_name,
+      bm.material_id,
       bm.material_code,
       bm.material_name,
       bm.material_version,
@@ -83,7 +89,7 @@
       </if>
 
       <if test="purchaseOrderCode != null and purchaseOrderCode != ''">
-        and opod.purchase_order_code = #{purchaseOrderCode}
+        and opo.purchase_order_code = #{purchaseOrderCode}
       </if>
       <if test="warehouseName != null and warehouseName != ''">
         and bw.warehouse_name = #{warehouseName}

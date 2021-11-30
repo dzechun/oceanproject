@@ -135,9 +135,6 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
                     continue;
                 }
 
-                omPurchaseOrderDetDto.setTotalPlanDeliveryQty(omPurchaseOrderDetDto.getTotalPlanDeliveryQty().add(srmPlanDeliveryOrderImport.getPlanDeliveryQty()));
-                omFeignApi.update(omPurchaseOrderDetDto);
-
                 SrmPlanDeliveryOrderDet srmPlanDeliveryOrderDet = new SrmPlanDeliveryOrderDet();
                 srmPlanDeliveryOrderDet.setPlanDeliveryOrderId(srmPlanDeliveryOrder.getPlanDeliveryOrderId());
                 srmPlanDeliveryOrderDet.setPurchaseOrderDetId(omPurchaseOrderDetDto.getPurchaseOrderDetId());
@@ -154,6 +151,11 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
                 detList.add(srmPlanDeliveryOrderDet);
                 success++;
             }
+            if (StringUtils.isEmpty(detList)) {
+                srmPlanDeliveryOrderMapper.deleteByIds(srmPlanDeliveryOrder.getPlanDeliveryOrderId().toString());
+                fail.add(s);
+            }
+
         }
 
         if (StringUtils.isNotEmpty(detList)) {
@@ -177,6 +179,7 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
         record.setOrgId(user.getOrganizationId());
         record.setPlanDeliveryOrderCode(CodeUtils.getId("SHJH"));
+        record.setOrderStatus((byte) 1);
         int i = srmPlanDeliveryOrderMapper.insertUseGeneratedKeys(record);
 
         SrmHtPlanDeliveryOrder srmHtPlanDeliveryOrder = new SrmHtPlanDeliveryOrder();
@@ -194,7 +197,7 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
-        int i = srmPlanDeliveryOrderMapper.insertUseGeneratedKeys(entity);
+        int i = srmPlanDeliveryOrderMapper.updateByPrimaryKeySelective(entity);
 
         SrmHtPlanDeliveryOrder srmHtPlanDeliveryOrder = new SrmHtPlanDeliveryOrder();
         BeanUtils.copyProperties(entity, srmHtPlanDeliveryOrder);
@@ -202,12 +205,16 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
 
         Example example = new Example(SrmPlanDeliveryOrderDet.class);
         example.createCriteria().andEqualTo("planDeliveryOrderId",entity.getPlanDeliveryOrderId());
-        srmPlanDeliveryOrderDetMapper.deleteByExample(example);
 
-        ht(entity,srmHtPlanDeliveryOrder);
 
         //提交的时候反写采购订单的累计计划送货数量
         if (StringUtils.isNotEmpty(entity.getOrderStatus()) && entity.getOrderStatus() == 2) {
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("planDeliveryOrderId",entity.getPlanDeliveryOrderId());
+            List<SrmPlanDeliveryOrderDetDto> list = srmPlanDeliveryOrderDetMapper.findList(map);
+            entity.setList(list);
+
             Map<Long, List<SrmPlanDeliveryOrderDetDto>> collect = entity.getList().stream().collect(Collectors.groupingBy(SrmPlanDeliveryOrderDetDto::getPurchaseOrderDetId));
             SearchOmPurchaseOrderDet searchOmPurchaseOrderDet = new SearchOmPurchaseOrderDet();
             for (Long aLong : collect.keySet()) {
@@ -217,6 +224,11 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
                 for (SrmPlanDeliveryOrderDetDto srmPlanDeliveryOrderDetDto : srmPlanDeliveryOrderDetDtos) {
                     bigDecimal = bigDecimal.add(srmPlanDeliveryOrderDetDto.getPlanDeliveryQty());
                 }
+
+                if (srmPlanDeliveryOrderDetDtos.get(0).getOrderQty().compareTo(bigDecimal) == -1) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"累计数量大于采购数量");
+                }
+
                 searchOmPurchaseOrderDet.setPurchaseOrderDetId(aLong);
                 List<OmPurchaseOrderDetDto> omPurchaseOrderDetDtoList = omFeignApi.findList(searchOmPurchaseOrderDet).getData();
 
@@ -235,10 +247,14 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
                     bigDecimal = bigDecimal.add(srmPlanDeliveryOrderDetDto.getPlanDeliveryQty());
                 }
                 if (srmPlanDeliveryOrderDetDtos.get(0).getOrderQty().compareTo(bigDecimal) == -1) {
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012002,"累计数量大于采购数量");
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"累计数量大于采购数量");
                 }
             }
         }
+
+        srmPlanDeliveryOrderDetMapper.deleteByExample(example);
+
+        ht(entity,srmHtPlanDeliveryOrder);
 
         return i;
     }
@@ -274,7 +290,9 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
             }
 
         }
-        srmHtPlanDeliveryOrderDetMapper.insertList(htDetList);
+        if (StringUtils.isNotEmpty(htDetList))  {
+            srmHtPlanDeliveryOrderDetMapper.insertList(htDetList);
+        }
         return srmPlanDeliveryOrderMapper.deleteByIds(ids);
     }
 
@@ -284,6 +302,7 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
             List<SrmHtPlanDeliveryOrderDet> htDetList = new ArrayList<>();
             for (SrmPlanDeliveryOrderDetDto srmPlanDeliveryOrderDetDto : record.getList()) {
                 srmPlanDeliveryOrderDetDto.setPlanDeliveryOrderId(record.getPlanDeliveryOrderId());
+                srmPlanDeliveryOrderDetDto.setIfCreateAsn((byte) 0);
 
                 SrmHtPlanDeliveryOrderDet srmHtPlanDeliveryOrderDet = new SrmHtPlanDeliveryOrderDet();
                 BeanUtils.copyProperties(srmPlanDeliveryOrderDetDto, srmHtPlanDeliveryOrderDet);

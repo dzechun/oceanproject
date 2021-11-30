@@ -27,7 +27,7 @@ public class SearchSrmPlanDeliveryOrderDet extends BaseQuery implements Serializ
     /**
      * 采购订单号
      */
-    @ApiModelProperty(name="purchaseOrderDetId",value = "采购订单明细ID")
+    @ApiModelProperty(name="purchaseOrderDetId",value = "采购订单号")
     private String purchaseOrderCode;
 
     /**
