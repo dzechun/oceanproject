@@ -155,6 +155,11 @@ public interface BaseFeignApi {
     @PostMapping("/baseProcess/detail")
     ResponseEntity<BaseProcess> processDetail(@ApiParam(value = "工序ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
 
+    @ApiOperation("获取工序类别的详情")
+    @PostMapping("/baseProcessCategory/detail")
+    ResponseEntity<BaseProcessCategory> processCategoryDetail(@ApiParam(value = "工序类别ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);
+
+
     @ApiOperation("获取工序的详情")
     @PostMapping("/baseWorkshopSection/detail")
     ResponseEntity<BaseWorkshopSection> sectionDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);

@@ -12,17 +12,22 @@ import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRelevance;
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
+import com.fantechs.common.base.general.dto.restapi.RestapiSNDataTransferApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseFile;
+import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFile;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStation;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
-import com.fantechs.common.base.general.entity.mes.sfc.*;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrder;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPhenotype;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPhenotypeRepair;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderSemiProduct;
 import com.fantechs.common.base.general.entity.mes.sfc.history.MesSfcHtRepairOrder;
-import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -37,6 +42,7 @@ import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.*;
 import com.fantechs.provider.mes.sfc.service.MesSfcRepairOrderService;
+import com.fantechs.provider.mes.sfc.service.MesSfcScanBarcodeService;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import com.fantechs.provider.mes.sfc.util.DeviceInterFaceUtils;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
@@ -81,6 +87,8 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     private BarcodeUtils barcodeUtils;
     @Resource
     private DeviceInterFaceUtils deviceInterFaceUtils;
+    @Resource
+    private MesSfcScanBarcodeService mesSfcScanBarcodeService;
 
     @Override
     public List<MesSfcRepairOrderDto> findList(Map<String, Object> map) {
@@ -419,6 +427,35 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                 //保存维修信息
                 saveBadPhenotypeRepair(mesSfcRepairOrderBadPhenotype,user);
             }
+        }
+
+        //维修完成过站 mesSfcScanBarcodeService
+        if(entity.getOrderStatus()==(byte)2) {
+            RestapiSNDataTransferApiDto para = new RestapiSNDataTransferApiDto();
+            para.setBarCode(entity.getBarcode());//成品条码
+            para.setPartBarcode(entity.getSemiProductBarcode());//半成品条码
+
+            Long proLineId = entity.getProLineId();
+            ResponseEntity<BaseProLine> entityLine = baseFeignApi.getProLineDetail(proLineId);
+            if (StringUtils.isNotEmpty(entityLine.getData())) {
+                para.setProCode(entityLine.getData().getProCode());//产线编码
+            }
+
+            Long currentProcessId = entity.getCurrentProcessId();//维修工序ID
+            ResponseEntity<BaseProcess> entityProcess = baseFeignApi.processDetail(currentProcessId);
+            if (StringUtils.isNotEmpty(entityProcess.getData())) {
+                para.setProcessCode(entityProcess.getData().getProcessCode());//工序编码
+            }
+
+            Long workOrderId = entity.getWorkOrderId();
+            ResponseEntity<MesPmWorkOrder> entityWorkOrder = pmFeignApi.workOrderDetail(workOrderId);
+            if (StringUtils.isNotEmpty(entityWorkOrder.getData())) {
+                para.setWorkOrderCode(entityWorkOrder.getData().getWorkOrderCode());//工单号
+            }
+
+            para.setOpResult("OK");
+
+            barcodeUtils.RepairDataTransfer(para);
         }
 
         return i;
