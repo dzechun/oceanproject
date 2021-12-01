@@ -4,7 +4,7 @@ server:
 
 spring:
   profiles:
-    include: dev
+    include: leisai
   application:
     name: @pom.artifactId@
   datasource:
@@ -21,18 +21,11 @@ spring:
       password: k3wms
       driverClassName: oracle.jdbc.driver.OracleDriver
     thirdary:
-      jdbc-url: jdbc:sqlserver://pqmsdb:1433;DatabaseName=SridaFramework
+      jdbc-url: jdbc:sqlserver://172.16.60.27:1433;DatabaseName=LS2019
       type: com.alibaba.druid.pool.DruidDataSource
-      username: sa
-      password: 2020@WB
+      username: jfmes
+      password: abcd-1234
       driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-
-#    thirdary:
-#      jdbc-url: jdbc:sqlserver://192.168.200.9:1433;DatabaseName=LSDB1
-#      type: com.alibaba.druid.pool.DruidDataSource
-#      username: sa
-#      password: 00000
-#      driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
 logging:
   file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
