@@ -92,7 +92,7 @@
     wiao.is_delete
   </sql>
     <select id="findList" resultMap="BaseResultDto">
-        select<include refid="BaseColumn"/>,opo.purchase_order_code,bf.accessUrl AS file_url
+        select<include refid="BaseColumn"/>,opo.purchase_order_code,bf.accessUrl AS file_url,
         bw.warehouse_name,material_owner_name,bs.supplier_name,boy.order_type_name,su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name
