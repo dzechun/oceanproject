@@ -62,7 +62,7 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
 
 
             String outputRate = "0";
-            model.setScheduledQty(passNum+ zzNum);
+            model.setOutputQty(passNum+zzNum);
             if(StringUtils.isNotEmpty(model.getScheduledQty()) && StringUtils.isNotEmpty(model.getOutputQty()) && model.getScheduledQty()>0 ) {
                 outputRate = numberFormat.format((float) model.getOutputQty() / (float)model.getScheduledQty() * 100);
             }
