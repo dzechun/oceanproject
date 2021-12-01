@@ -39,10 +39,7 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
             NumberFormat numberFormat = NumberFormat.getInstance();
             numberFormat.setMaximumFractionDigits(2);
 
-            String outputRate = "0";
-            if(StringUtils.isNotEmpty(model.getScheduledQty()) && StringUtils.isNotEmpty(model.getOutputQty()) && model.getScheduledQty()>0 ) {
-                outputRate = numberFormat.format((float) model.getOutputQty() / (float)model.getScheduledQty() * 100);
-            }
+
 
             searchProLineBoard.setProLineId(model.getProLineId());
             //查询对应产线全部设备
@@ -61,12 +58,19 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
             searchProLineBoard.setSectionName("LQC测试");
             Long lqcNum = proLineBoardMapper.findBarCodeRecordList(searchProLineBoard);
             searchProLineBoard.setBarcodeStatus((byte)1);
-            Long passNum = proLineBoardMapper.findBarCodeRecordList(searchProLineBoard);
+            Long passNum = proLineBoardMapper.findBarCodeRecordList(searchProLineBoard); //通过数量
+
+
+            String outputRate = "0";
+            model.setScheduledQty(passNum+ zzNum);
+            if(StringUtils.isNotEmpty(model.getScheduledQty()) && StringUtils.isNotEmpty(model.getOutputQty()) && model.getScheduledQty()>0 ) {
+                outputRate = numberFormat.format((float) model.getOutputQty() / (float)model.getScheduledQty() * 100);
+            }
 
             String passRate = "0";
             if(StringUtils.isNotEmpty(passNum) && StringUtils.isNotEmpty(lqcNum) && StringUtils.isNotEmpty(zzNum)
             && (lqcNum + zzNum)!=0 ) {
-                passRate = numberFormat.format((float) passNum / (float) (lqcNum + zzNum) * 100);
+                passRate = numberFormat.format((float) (passNum+ zzNum)/ (float) (lqcNum + zzNum) * 100);
             }
             String operationRatio = numberFormat.format((float) equipMentUseingNum / (float)equipMentNum * 100);
 

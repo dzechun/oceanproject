@@ -29,6 +29,7 @@
         , bpl.pro_name AS 'proName'
         from mes_pm_daily_plan mpdp
         LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
+        LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
         LEFT JOIN base_pro_line bpl ON mpwo.pro_line_id = bpl.pro_line_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
