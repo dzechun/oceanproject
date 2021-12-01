@@ -60,6 +60,12 @@ public class SrmInAsnOrderController {
         return ControllerUtil.returnCRUD(srmInAsnOrderService.update(srmInAsnOrderDto));
     }
 
+    @ApiOperation("批量更新")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true)@RequestBody  List<SrmInAsnOrderDto> srmInAsnOrderDtos) {
+        return ControllerUtil.returnCRUD(srmInAsnOrderService.batchUpdate(srmInAsnOrderDtos));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<SrmInAsnOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {

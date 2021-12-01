@@ -43,8 +43,8 @@ public class BaseFileController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseFile baseFile) {
-        return ControllerUtil.returnCRUD(baseFileService.save(baseFile));
+    public ResponseEntity<BaseFile> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseFile baseFile) {
+        return  ControllerUtil.returnDataSuccess(baseFileService.add(baseFile),StringUtils.isEmpty(baseFile)?0:1);
     }
 
     @ApiOperation("删除")

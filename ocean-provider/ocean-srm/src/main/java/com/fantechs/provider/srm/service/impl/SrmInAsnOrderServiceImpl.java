@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderTypeDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
+import com.fantechs.common.base.general.entity.basic.BaseFile;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderType;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
@@ -92,6 +93,15 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             srmInAsnOrderDto.setOrderTypeId(baseOrderTypeDtos.get(0).getOrderTypeId());
         }
 
+        //保存附件
+        if(StringUtils.isNotEmpty(srmInAsnOrderDto.getFileUrl())) {
+            BaseFile baseFile = new BaseFile();
+            baseFile.setRelevanceTableName("wms_in_asn_order");
+            baseFile.setAccessUrl(srmInAsnOrderDto.getFileUrl());
+            BaseFile date = baseFeignApi.add(baseFile).getData();
+            if (StringUtils.isEmpty(date)) throw new BizErrorException("文件保存失败");
+            srmInAsnOrderDto.setFileId(date.getFileId());
+        }
         srmInAsnOrderDto.setCreateUserId(user.getUserId());
         srmInAsnOrderDto.setCreateTime(new Date());
         srmInAsnOrderDto.setModifiedUserId(user.getUserId());
@@ -150,7 +160,15 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 .andNotEqualTo("asnOrderId",srmInAsnOrderDto.getAsnOrderId());;
         List<SrmInAsnOrder> srmInAsnOrders = srmInAsnOrderMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(srmInAsnOrders)) throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"ASN单号已存在，请勿重复添加");
-
+        if(StringUtils.isNotEmpty(srmInAsnOrderDto.getFileUrl())){
+            //保存附件
+            BaseFile baseFile = new BaseFile();
+            baseFile.setRelevanceTableName("wms_in_asn_order");
+            baseFile.setAccessUrl(srmInAsnOrderDto.getFileUrl());
+            BaseFile date = baseFeignApi.add(baseFile).getData();
+            if (StringUtils.isEmpty(date)) throw new BizErrorException("文件保存失败");
+            srmInAsnOrderDto.setFileId(date.getFileId());
+        }
         srmInAsnOrderDto.setModifiedTime(new Date());
         srmInAsnOrderDto.setModifiedUserId(user.getUserId());
         int i = srmInAsnOrderMapper.updateByPrimaryKeySelective(srmInAsnOrderDto);
@@ -195,6 +213,13 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         return i;
     }
 
+    @Override
+    public int batchUpdate(List<SrmInAsnOrderDto> srmInAsnOrderDtos) {
+        for(SrmInAsnOrderDto srmInAsnOrderDto : srmInAsnOrderDtos){
+            this.update(srmInAsnOrderDto);
+        }
+        return 1;
+    }
 
 
 }

@@ -14,4 +14,5 @@ import java.util.Map;
 public interface BaseFileService extends IService<BaseFile> {
     List<BaseFile> findList(Map<String, Object> map);
     int batchAddFile(List<BaseFile> list);
+    BaseFile add (BaseFile baseFile);
 }

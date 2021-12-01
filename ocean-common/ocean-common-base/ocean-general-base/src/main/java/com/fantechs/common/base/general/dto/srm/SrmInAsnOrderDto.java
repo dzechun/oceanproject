@@ -65,6 +65,13 @@ public class SrmInAsnOrderDto extends SrmInAsnOrder implements Serializable {
 
     private List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos;
 
- //   private List<SrmInAsnOrderDetBarcode> srmInAsnOrderDetBarcodes;
+    /**
+     * 文件ID
+     */
+    @ApiModelProperty(name="fileUrl",value = "文件ID")
+    private String fileUrl;
+
+
+    //   private List<SrmInAsnOrderDetBarcode> srmInAsnOrderDetBarcodes;
 
 }

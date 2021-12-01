@@ -1,12 +1,9 @@
 package com.fantechs.provider.base.service.impl;
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseFile;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseFileMapper;
 import com.fantechs.provider.base.service.BaseFileService;
 import org.springframework.stereotype.Service;
@@ -44,6 +41,18 @@ public class BaseFileServiceImpl extends BaseService<BaseFile> implements BaseFi
         baseFileMapper.deleteByExample(example);
 
         return baseFileMapper.insertList(list);
+    }
+
+    @Override
+    public BaseFile add(BaseFile baseFile) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        baseFile.setCreateUserId(user.getUserId());
+        baseFile.setCreateTime(new Date());
+        baseFile.setModifiedUserId(user.getUserId());
+        baseFile.setModifiedTime(new Date());
+        baseFile.setOrgId(user.getOrganizationId());
+        baseFileMapper.insertUseGeneratedKeys(baseFile);
+        return baseFile;
     }
 
 

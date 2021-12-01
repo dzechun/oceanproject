@@ -18,4 +18,7 @@ public interface SrmInAsnOrderService extends IService<SrmInAsnOrder> {
     int save(SrmInAsnOrderDto srmInAsnOrderDto);
 
     int update(SrmInAsnOrderDto srmInAsnOrderDto);
+
+    int batchUpdate(List<SrmInAsnOrderDto> srmInAsnOrderDtos);
+
 }
