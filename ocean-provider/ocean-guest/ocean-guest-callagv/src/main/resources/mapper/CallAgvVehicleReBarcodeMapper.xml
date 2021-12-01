@@ -30,6 +30,10 @@
 
   </resultMap>
 
+  <resultMap id="CallAgvStorageMaterialDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.callagv.CallAgvStorageMaterialDto">
+
+  </resultMap>
+
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="Base_Column_List"></include>,
     tv.vehicle_code as vehicleCode, tv.vehicle_name as vehicleName,
@@ -77,5 +81,55 @@
     <if test="groupByVehicle == 1">
       group by cavrb.vehicle_id
     </if>
+  </select>
+
+  <select id="callAgvStorageMaterialList" resultMap="CallAgvStorageMaterialDto" parameterType="com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvStorageMaterial">
+    select bw.warehouse_name as warehouseName, bwa.warehouse_area_name as warehouseAreaName,
+    bs.storage_code as storageCode, bs.storage_type as storageType,
+    tv.vehicle_code as vehicleCode, cab.barcode, cab.product_model as productModel, cab.batch, cab.batch_code as batchCode,
+    <if test="summary == 1">
+      sum(cab.qty) as
+    </if>
+    qty
+    from call_agv_vehicle_re_barcode cavrb
+    left join call_agv_barcode cab on cavrb.barcode_id = cab.barcode_id
+    left join tem_vehicle tv on cavrb.vehicle_id = tv.vehicle_id
+    inner join base_storage_task_point bstp on tv.storage_task_point_id = bstp.storage_task_point_id
+    left join base_storage bs on bstp.storage_id = bs.storage_id
+    left join base_warehouse bw on bs.warehouse_id = bw.warehouse_id
+    left join base_warehouse_area bwa on bs.warehouse_area_id = bwa.warehouse_area_id
+    <where>
+      <if test="warehouseName != null and warehouseName != ''">
+        and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
+      <if test="warehouseAreaName != null and warehouseAreaName != ''">
+        and bwa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+      </if>
+      <if test="storageCode != null and storageCode != ''">
+        and bs.storage_code like CONCAT('%', #{storageCode}, '%')
+      </if>
+      <if test="storageType != null">
+        and bs.storage_type = #{storageType}
+      </if>
+      <if test="vehicleCode != null and vehicleCode != ''">
+        and tv.vehicle_code like CONCAT('%', #{vehicleCode}, '%')
+      </if>
+      <if test="productModel != null and productModel != ''">
+        and cab.product_model like CONCAT('%', #{productModel}, '%')
+      </if>
+      <if test="barcode != null and barcode != ''">
+        and cab.barcode like CONCAT('%', #{barcode}, '%')
+      </if>
+      <if test="batch != null and batch != ''">
+        and cab.batch like CONCAT('%', #{batch}, '%')
+      </if>
+      <if test="batchCode != null and batchCode != ''">
+        and cab.batch_code like CONCAT('%', #{batchCode}, '%')
+      </if>
+    </where>
+    <if test="summary == 1">
+      group by bwa.warehouse_area_name, cab.product_model
+    </if>
+    order by bw.warehouse_name, bs.storage_code, tv.vehicle_code
   </select>
 </mapper>

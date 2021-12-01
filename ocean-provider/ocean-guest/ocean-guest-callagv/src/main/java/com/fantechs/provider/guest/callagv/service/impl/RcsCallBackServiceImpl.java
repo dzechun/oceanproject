@@ -1,6 +1,7 @@
 package com.fantechs.provider.guest.callagv.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.agv.dto.AgvCallBackDTO;
 import com.fantechs.common.base.general.dto.callagv.CallAgvAgvTaskDto;
 import com.fantechs.common.base.general.dto.callagv.GenAgvSchedulingTaskDTO;
@@ -20,6 +21,7 @@ import com.fantechs.provider.guest.callagv.service.RcsCallBackService;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -45,6 +47,8 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
     private CallAgvAgvTaskMapper callAgvAgvTaskMapper;
 
     @Override
+    @Transactional
+    @LcnTransaction
     public String agvCallback(AgvCallBackDTO agvCallBackDTO) throws Exception {
 
         if (StringUtils.isEmpty(

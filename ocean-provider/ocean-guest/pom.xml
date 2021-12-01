@@ -21,6 +21,7 @@
         <module>ocean-guest-leisai</module>
         <module>ocean-guest-callagv</module> <!-- 木林森AGV备料配送-->
         <module>ocean-guest-wanbao</module>
+        <module>ocean-guest-jinan</module>
     </modules>
 
 </project>
