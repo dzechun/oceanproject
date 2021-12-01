@@ -688,7 +688,7 @@ public class BarcodeUtils {
         //条码在当前工序有几条过站记录 记录工序过站次数开始 2021-10-18
         Map<String, Object> mapExist = new HashMap<>();
         mapExist.put("barcode", dto.getBarCode());
-        mapExist.put("stationId", dto.getNowStationId());
+        //mapExist.put("stationId", dto.getNowStationId());
         mapExist.put("processId", dto.getNowProcessId());
         List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(mapExist);
         mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcessRecordDtoList.size()+1);
