@@ -2,7 +2,6 @@ package com.fantechs.common.base.general.dto.srm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
-import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDetBarcode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -66,6 +65,6 @@ public class SrmInAsnOrderDto extends SrmInAsnOrder implements Serializable {
 
     private List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos;
 
-    private List<SrmInAsnOrderDetBarcode> srmInAsnOrderDetBarcodes;
+ //   private List<SrmInAsnOrderDetBarcode> srmInAsnOrderDetBarcodes;
 
 }

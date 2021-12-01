@@ -11,7 +11,6 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderType;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
-import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDetBarcode;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -119,8 +118,8 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         }
         if(StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
 
-        //保存条码表
-        List<SrmInAsnOrderDetBarcode> barcodeList = new ArrayList<>();
+        //保存条码表---条码未自动生成，此处只展示，暂不做保存
+       /* List<SrmInAsnOrderDetBarcode> barcodeList = new ArrayList<>();
         for(SrmInAsnOrderDetBarcode srmInAsnOrderDetBarcode : srmInAsnOrderDto.getSrmInAsnOrderDetBarcodes()){
             srmInAsnOrderDetBarcode.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
             srmInAsnOrderDetBarcode.setCreateUserId(user.getUserId());
@@ -131,7 +130,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             srmInAsnOrderDetBarcode.setOrgId(user.getOrganizationId());
             barcodeList.add(srmInAsnOrderDetBarcode);
         }
-        if(StringUtils.isNotEmpty(barcodeList)) srmInAsnOrderDetBarcodeMapper.insertList(barcodeList);
+        if(StringUtils.isNotEmpty(barcodeList)) srmInAsnOrderDetBarcodeMapper.insertList(barcodeList);*/
 
         //保存履历表
         SrmInHtAsnOrder srmInHtAsnOrder = new SrmInHtAsnOrder();
@@ -175,7 +174,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         }
         if(StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
 
-        Example example2 = new Example(SrmInAsnOrderDetBarcode.class);
+       /* Example example2 = new Example(SrmInAsnOrderDetBarcode.class);
         Example.Criteria criteria2 = example2.createCriteria();
         criteria2.andEqualTo("asnOrderId",srmInAsnOrderDto.getAsnOrderId());
         srmInAsnOrderDetBarcodeMapper.deleteByExample(example2);
@@ -191,7 +190,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             srmInAsnOrderDetBarcode.setOrgId(user.getOrganizationId());
             barcodeList.add(srmInAsnOrderDetBarcode);
         }
-        if(StringUtils.isNotEmpty(barcodeList)) srmInAsnOrderDetBarcodeMapper.insertList(barcodeList);
+        if(StringUtils.isNotEmpty(barcodeList)) srmInAsnOrderDetBarcodeMapper.insertList(barcodeList);*/
 
         return i;
     }
