@@ -4,14 +4,13 @@ server:
 
 spring:
   profiles:
-    include: dev
+    include: wuhuan
   application:
     name: @pom.artifactId@
 
   rabbitmq:
-    #host: 192.168.61.55
-    host: 192.168.204.164
-    #host: 192.168.5.85
+    host: 10.5.2.91
+    #host: 192.168.204.164
     port: 5672
     username: admin
     #password: admin

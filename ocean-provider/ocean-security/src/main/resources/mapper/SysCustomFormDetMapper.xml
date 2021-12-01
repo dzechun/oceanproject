@@ -37,6 +37,8 @@
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
         <result column="select_name" jdbcType="VARCHAR" property="selectName"/>
         <result column="select_value" jdbcType="VARCHAR" property="selectValue"/>
+        <result column="min_value" jdbcType="DECIMAL" property="minValue"/>
+        <result column="max_value" jdbcType="DECIMAL" property="maxValue"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId" />
     </resultMap>
 
@@ -84,7 +86,9 @@
     cfd.event_trigger_mode,
     cfd.event_trigger_name,
 cfd.select_name,
-cfd.select_value
+cfd.select_value,
+    cfd.min_value,
+    cfd.max_value
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select

@@ -231,10 +231,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if (!workerDtos.isEmpty()) {
                 wmsInnerJobOrder.setWorkerId(workerDtos.get(0).getWorkerId());
             }
-            if (wmsInnerJobOrder.getOrderTypeId() == 4 && wmsInnerJobOrder.getOrderStatus()==3) {
-                wmsInnerJobOrder.setOrderStatus((byte) 6);
-            }
-            wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
             wmsInnerJobOrder.setModifiedTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
@@ -384,14 +380,18 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //更新表头状态
                 //完工入库单需要激活状态 其他则不需要
                 Byte status = 3;
-                if (wmsInnerJobOrder.getOrderTypeId() != null && wmsInnerJobOrder.getOrderTypeId() == 4) {
-                    status = 6;
-                }
+//                if (wmsInnerJobOrder.getOrderTypeId() != null && wmsInnerJobOrder.getOrderTypeId() == 4) {
+//                    status = 6;
+//                }
+                SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+                searchBaseWorker.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+                searchBaseWorker.setUserId(sysUser.getUserId());
+                List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
                 wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                         .jobOrderId(wmsInPutawayOrderDet.getJobOrderId())
                         //待激活
                         .orderStatus(status)
-                        .workerId(sysUser.getUserId())
+                        .workerId(!workerDtos.isEmpty()?workerDtos.get(0).getWorkerId():null)
                         .build());
             } else {
                 wmsInPutawayOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
@@ -918,6 +918,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("stockLock", 0)
                         .andEqualTo("qcLock", 0)
                         .andEqualTo("lockStatus", 0)
+                        .andGreaterThan("packingQty", 0)
                         .andEqualTo("orgId",sysUser.getOrganizationId());
                 WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
                 example.clear();
@@ -1763,6 +1764,23 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             int res = wmsInnerJobOrderReMsppMapper.insertSelective(wmsInnerJobOrderReMspp);
             if (res <= 0) {
                 throw new BizErrorException("上架单关联栈板失败");
+            }
+
+            //是否直接分配
+            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
+            searchSysSpecItemFiveRing.setSpecCode("Automatic");
+            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
+            if (itemListFiveRing.size() < 1) {
+                throw new BizErrorException("配置项 Automatic 获取失败");
+            }
+            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
+            if ("1".equals(sysSpecItem.getParaValue())) {
+                //自动分配
+                try {
+                    this.autoDistribution(record.getJobOrderId().toString());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
         //拣货 领料拣货

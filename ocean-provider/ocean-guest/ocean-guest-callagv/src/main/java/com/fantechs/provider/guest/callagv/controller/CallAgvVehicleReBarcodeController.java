@@ -1,11 +1,9 @@
 package com.fantechs.provider.guest.callagv.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleBarcodeDTO;
-import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleReBarcodeDto;
-import com.fantechs.common.base.general.dto.callagv.RequestBarcodeUnboundDTO;
-import com.fantechs.common.base.general.dto.callagv.RequestCallAgvStockDTO;
+import com.fantechs.common.base.general.dto.callagv.*;
 import com.fantechs.common.base.general.entity.callagv.CallAgvVehicleReBarcode;
+import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvStorageMaterial;
 import com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvVehicleReBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -134,5 +132,51 @@ public class CallAgvVehicleReBarcodeController {
     public ResponseEntity materialTransfer(@ApiParam(value = "请求对象", required = true) @RequestBody RequestCallAgvStockDTO requestCallAgvStockDTO) throws Exception {
 
         return ControllerUtil.returnCRUD(callAgvVehicleReBarcodeService.materialTransfer(requestCallAgvStockDTO));
+    }
+
+    @ApiOperation("AGV库存汇总")
+    @PostMapping("/agvWarehouseAreaMaterialSummary")
+    public ResponseEntity<List<CallAgvWarehouseAreaMaterialDto>> agvWarehouseAreaMaterialSummary(@ApiParam(value = "查询对象") @RequestBody SearchCallAgvStorageMaterial SearchCallAgvStorageMaterial) {
+        Page<Object> page = PageHelper.startPage(SearchCallAgvStorageMaterial.getStartPage(), SearchCallAgvStorageMaterial.getPageSize());
+        List<CallAgvWarehouseAreaMaterialDto> list = callAgvVehicleReBarcodeService.agvWarehouseAreaMaterialSummary(SearchCallAgvStorageMaterial);
+        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
+    }
+
+    @PostMapping(value = "/exportAgvWarehouseAreaMaterialSummary")
+    @ApiOperation(value = "导出AGV库存汇总excel", notes = "导出AGV库存汇总excel", produces = "application/octet-stream")
+    public void exportAgvWarehouseAreaMaterialSummaryExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchCallAgvStorageMaterial SearchCallAgvStorageMaterial) {
+        List<CallAgvWarehouseAreaMaterialDto> list = callAgvVehicleReBarcodeService.agvWarehouseAreaMaterialSummary(SearchCallAgvStorageMaterial);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出AGV库存汇总信息", "AGV库存汇总信息", CallAgvWarehouseAreaMaterialDto.class, "AGV库存汇总信息.xls", response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            throw new BizErrorException(e);
+        }
+    }
+
+    @ApiOperation("AGV库存明细")
+    @PostMapping("/agvStorageMaterialDetail")
+    public ResponseEntity<List<CallAgvStorageMaterialDto>> agvStorageMaterialDetail(@ApiParam(value = "查询对象") @RequestBody SearchCallAgvStorageMaterial SearchCallAgvStorageMaterial) {
+        Page<Object> page = PageHelper.startPage(SearchCallAgvStorageMaterial.getStartPage(), SearchCallAgvStorageMaterial.getPageSize());
+        List<CallAgvStorageMaterialDto> list = callAgvVehicleReBarcodeService.agvStorageMaterialDetail(SearchCallAgvStorageMaterial);
+        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
+    }
+
+    @PostMapping(value = "/exportAgvStorageMaterialDetail")
+    @ApiOperation(value = "导出AGV库存明细excel", notes = "导出AGV库存明细excel", produces = "application/octet-stream")
+    public void exportAgvStorageMaterialDetailExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchCallAgvStorageMaterial SearchCallAgvStorageMaterial) {
+        List<CallAgvStorageMaterialDto> list = callAgvVehicleReBarcodeService.agvStorageMaterialDetail(SearchCallAgvStorageMaterial);
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "导出AGV库存明细信息", "AGV库存明细信息", CallAgvStorageMaterialDto.class, "AGV库存明细.xls", response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            throw new BizErrorException(e);
+        }
     }
 }
