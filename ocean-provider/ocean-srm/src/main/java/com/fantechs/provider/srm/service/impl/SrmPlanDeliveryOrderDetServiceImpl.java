@@ -34,6 +34,10 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
 
     @Override
     public List<SrmPlanDeliveryOrderDetDto> findList(Map<String, Object> map) {
+        if (StringUtils.isEmpty(map.get("planDeliveryOrderId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            map.put("supplierId",user.getSupplierId());
+        }
         return srmPlanDeliveryOrderDetMapper.findList(map);
     }
 
@@ -64,6 +68,7 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
                 srmInAsnOrderDetDto.setReceivingDate(srmPlanDeliveryOrderDetDto.getPlanDeliveryDate());
                 srmInAsnOrderDetDtos.add(srmInAsnOrderDetDto);
             }
+//            srmInAsnOrderDto.setSrmInAsnOrderDetBarcodes(new ArrayList<>());
             srmInAsnOrderDto.setSrmInAsnOrderDetDtos(srmInAsnOrderDetDtos);
             srmInAsnOrderService.save(srmInAsnOrderDto);
             srmPlanDeliveryOrderDetMapper.insertList(list);
