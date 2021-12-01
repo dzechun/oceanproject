@@ -68,6 +68,12 @@ public class SrmInAsnOrderDetDto extends SrmInAsnOrderDet implements Serializabl
     private BigDecimal totalDeliveryQty;
 
     /**
+     * 采购数量
+     */
+    @ApiModelProperty(name="orderQty",value = "采购数量")
+    private BigDecimal orderQty;
+
+    /**
      * 组织
      */
     @Transient
