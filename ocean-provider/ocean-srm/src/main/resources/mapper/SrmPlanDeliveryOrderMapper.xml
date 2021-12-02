@@ -54,7 +54,7 @@
     left join sys_user msu on msu.user_id = spdo.modified_user_id
     <where>
       <if test="supplierId != null">
-        and spdo.supplier_id = #{supplierId}
+        and spdo.supplier_id = #{supplierId} and spdo.order_status = 2
       </if>
       <if test="planDeliveryOrderCode != null and planDeliveryOrderCode != ''">
         and spdo.plan_delivery_order_code like CONCAT('%', #{planDeliveryOrderCode}, '%')
