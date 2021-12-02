@@ -85,7 +85,7 @@
         <include refid="BaseColumnList"/>,
         opo.purchase_order_code,opod.delivery_date AS order_date,bm.material_code,bm.material_name,bw.warehouse_name,
         bm.material_version,bm.material_desc,bmt.main_unit,
-        ( SELECT SUM( wiaods.delivery_qty ) FROM wms_in_asn_order_det wiaods WHERE wiaods.asn_order_id = wiaod.asn_order_id ) AS total_delivery_qty,
+        ( SELECT SUM( wiaods.delivery_qty ) FROM wms_in_asn_order_det wiaods WHERE wiaods.asn_order_id = wiaod.asn_order_id  ) AS total_delivery_qty,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name
@@ -100,7 +100,7 @@
         LEFT JOIN base_organization bo ON wiaod.org_id = bo.organization_id
         <where>
             <if test="asnOrderId !=null and asnOrderId !=''">
-                and  =#{asnOrderId}
+                and wiaod.asn_order_id=#{asnOrderId}
             </if>
             <if test="asnOrderDetId !=null and asnOrderDetId!=''">
                 and wiaod.asn_order_det_id = #{asnOrderDetId}
@@ -108,9 +108,8 @@
             <if test="materialCode !=null and materialCode !=''">
                 and bm.material_code like CONCAT('%',#{materialCode},'%')
             </if>
-
+            group by asn_order_det_id
         </where>
-        group by asn_order_det_id
     </select>
 
 </mapper>
