@@ -10,12 +10,14 @@ import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
 import com.fantechs.common.base.general.entity.basic.BaseProductMaterialReP;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
+import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessReM;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -33,9 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -122,6 +122,36 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
             mesPmWorkOrderDto.setModifiedUserId(currentUser.getUserId());
             mesPmWorkOrderDto.setModifiedTime(new Date());
+
+            //根据工艺路线重新设定投产工序和产出工序
+            if(StringUtils.isNotEmpty(mesPmWorkOrderDto.getRouteId()) && !mesPmWorkOrderDto.getRouteId().equals(workOrder.getRouteId())){
+                ResponseEntity<List<BaseRouteProcess>> responseEntity = baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012008);
+                }
+                List<BaseRouteProcess> routeProcessList = responseEntity.getData();
+                //产出工序
+                Optional<BaseRouteProcess> lastRouteProcessOptional = routeProcessList.stream()
+                        .filter(item -> item.getIsMustPass().equals(1))
+                        .sorted(Comparator.comparing(BaseRouteProcess::getOrderNum).reversed())
+                        .findFirst();
+                if(lastRouteProcessOptional.isPresent()) {
+                    BaseRouteProcess lastRouteProcess = lastRouteProcessOptional.get();
+                    mesPmWorkOrderDto.setOutputProcessId(lastRouteProcess.getProcessId());
+                }
+
+                //投产工序
+                Optional<BaseRouteProcess> firstRouteProcessOptional = routeProcessList.stream()
+                        .filter(item -> item.getIsMustPass().equals(1))
+                        .sorted(Comparator.comparing(BaseRouteProcess::getOrderNum))
+                        .findFirst();
+                if(firstRouteProcessOptional.isPresent()) {
+                    BaseRouteProcess firstRouteProcess = firstRouteProcessOptional.get();
+                    mesPmWorkOrderDto.setPutIntoProcessId(firstRouteProcess.getProcessId());
+                }
+
+            }
+
             i = mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrderDto);
 
             //新增工单历史信息
