@@ -47,7 +47,7 @@ public class RfidBaseStationController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated RfidBaseStation rfidBaseStation) {
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated(value= RfidBaseStation.add.class) RfidBaseStation rfidBaseStation) {
         return ControllerUtil.returnCRUD(rfidBaseStationService.save(rfidBaseStation));
     }
 

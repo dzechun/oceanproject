@@ -47,7 +47,7 @@ public class RfidAssetController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated RfidAsset rfidAsset) {
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated(value= RfidAsset.add.class) RfidAsset rfidAsset) {
         return ControllerUtil.returnCRUD(rfidAssetService.save(rfidAsset));
     }
 
