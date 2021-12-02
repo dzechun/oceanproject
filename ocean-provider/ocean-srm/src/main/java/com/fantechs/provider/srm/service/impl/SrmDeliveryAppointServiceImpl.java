@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -74,7 +75,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int save(SrmDeliveryAppointDto srmDeliveryAppointDto) {
+    public int save(SrmDeliveryAppointDto srmDeliveryAppointDto){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         SearchSrmCarportTimeQuantum searchSrmCarportTimeQuantum = new SearchSrmCarportTimeQuantum();
@@ -82,6 +83,21 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         searchSrmCarportTimeQuantum.setEndTime(DateUtils.getDateTimeString(srmDeliveryAppointDto.getAppointEndTime()));
         searchSrmCarportTimeQuantum.setWarehouseId(srmDeliveryAppointDto.getDeliveryWarehouseId());
         List<SrmCarportTimeQuantumDto> srmCarportTimeQuantumDtos = srmCarportTimeQuantumMapper.findList(ControllerUtil.dynamicConditionByEntity(searchSrmCarportTimeQuantum));
+
+        if(StringUtils.isEmpty(srmDeliveryAppointDto.getAppointDate()) || StringUtils.isEmpty(srmDeliveryAppointDto.getAppointDate())
+        || StringUtils.isEmpty(srmDeliveryAppointDto.getAppointDate()) )
+            throw new BizErrorException("预约时间不能为空");
+        //拼接时间
+        try {
+            String date = DateUtils.getDateString(srmDeliveryAppointDto.getAppointDate(),"yyyy-MM-dd");
+            String start =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointStartTime(),"HH-mm");
+            String end =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointEndTime(),"HH-mm");
+            srmDeliveryAppointDto.setAppointStartTime(DateUtils.getStrToDateTime(date+" "+start));
+            srmDeliveryAppointDto.setAppointEndTime(DateUtils.getStrToDateTime(date+" "+start));
+        } catch (ParseException e) {
+            throw new BizErrorException("时间格式转换错误");
+        }
+
 
         Example example = new Example(SrmDeliveryAppoint.class);
         Example.Criteria criteria = example.createCriteria();
