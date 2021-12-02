@@ -92,6 +92,9 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
             else{
                 record.setBarcode(map.get("barcode").toString());
             }
+            record.setCodeQueryMark(1);
+            record.setPageSize(StringUtils.isNotEmpty(map.get("pageSize")) ?Integer.valueOf(map.get("pageSize").toString()):10);
+            record.setStartPage(StringUtils.isNotEmpty(map.get("startPage")) ?Integer.valueOf(map.get("startPage").toString()):1);
 
             //record.setBarcode(map.get("barcode").toString());
             ResponseEntity<List<MesSfcBarcodeProcessRecordDto>> data = sfcFeignApi.findList(record);
