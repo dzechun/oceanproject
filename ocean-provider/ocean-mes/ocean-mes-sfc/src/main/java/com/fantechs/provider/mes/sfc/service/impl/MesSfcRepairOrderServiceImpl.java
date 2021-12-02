@@ -181,6 +181,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         if(SNCodeType == 1) {
             SearchMesSfcKeyPartRelevance searchMesSfcKeyPartRelevance = new SearchMesSfcKeyPartRelevance();
             searchMesSfcKeyPartRelevance.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+            searchMesSfcKeyPartRelevance.setBarcodeCode(SNCode);
             List<MesSfcKeyPartRelevanceDto> keyPartRelevanceList = mesSfcKeyPartRelevanceMapper.findList(ControllerUtil.dynamicConditionByEntity(searchMesSfcKeyPartRelevance));
             if (StringUtils.isNotEmpty(keyPartRelevanceList)) {
                 for (MesSfcKeyPartRelevanceDto mesSfcKeyPartRelevanceDto : keyPartRelevanceList) {
@@ -348,10 +349,23 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                 mesSfcRepairOrderBadPhenotype.setModifiedTime(new Date());
                 mesSfcRepairOrderBadPhenotype.setStatus(StringUtils.isEmpty(mesSfcRepairOrderBadPhenotype.getStatus())?1: mesSfcRepairOrderBadPhenotype.getStatus());
                 mesSfcRepairOrderBadPhenotype.setOrgId(user.getOrganizationId());
-                mesSfcRepairOrderBadPhenotypeMapper.insertUseGeneratedKeys(mesSfcRepairOrderBadPhenotype);
-                //保存维修信息
-                saveBadPhenotypeRepair(mesSfcRepairOrderBadPhenotype,user);
             }
+            mesSfcRepairOrderBadPhenotypeMapper.insertList(mesSfcRepairOrderBadPhenotypeList);
+        }
+
+        //不良现象维修
+        List<MesSfcRepairOrderBadPhenotypeRepair> mesSfcRepairOrderBadPhenotypeRepairList = record.getMesSfcRepairOrderBadPhenotypeRepairList();
+        if(StringUtils.isNotEmpty(mesSfcRepairOrderBadPhenotypeRepairList)) {
+            for (MesSfcRepairOrderBadPhenotypeRepair mesSfcRepairOrderBadPhenotypeRepair : mesSfcRepairOrderBadPhenotypeRepairList) {
+                mesSfcRepairOrderBadPhenotypeRepair.setRepairOrderId(record.getRepairOrderId());
+                mesSfcRepairOrderBadPhenotypeRepair.setCreateUserId(user.getUserId());
+                mesSfcRepairOrderBadPhenotypeRepair.setCreateTime(new Date());
+                mesSfcRepairOrderBadPhenotypeRepair.setModifiedUserId(user.getUserId());
+                mesSfcRepairOrderBadPhenotypeRepair.setModifiedTime(new Date());
+                mesSfcRepairOrderBadPhenotypeRepair.setStatus(StringUtils.isEmpty(mesSfcRepairOrderBadPhenotypeRepair.getStatus()) ? 1 : mesSfcRepairOrderBadPhenotypeRepair.getStatus());
+                mesSfcRepairOrderBadPhenotypeRepair.setOrgId(user.getOrganizationId());
+            }
+            mesSfcRepairOrderBadPhenotypeRepairMapper.insertList(mesSfcRepairOrderBadPhenotypeRepairList);
         }
 
         //半成品
@@ -403,14 +417,13 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         Example example1 = new Example(MesSfcRepairOrderBadPhenotype.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("repairOrderId", entity.getRepairOrderId());
-        List<MesSfcRepairOrderBadPhenotype> mesSfcRepairOrderBadPhenotypes = mesSfcRepairOrderBadPhenotypeMapper.selectByExample(example1);
-        for (MesSfcRepairOrderBadPhenotype mesSfcRepairOrderBadPhenotype : mesSfcRepairOrderBadPhenotypes){
-            Example example2 = new Example(MesSfcRepairOrderBadPhenotypeRepair.class);
-            Example.Criteria criteria2 = example2.createCriteria();
-            criteria2.andEqualTo("repairOrderBadPhenotypeId",mesSfcRepairOrderBadPhenotype.getRepairOrderBadPhenotypeId());
-            mesSfcRepairOrderBadPhenotypeRepairMapper.deleteByExample(example2);
-        }
         mesSfcRepairOrderBadPhenotypeMapper.deleteByExample(example1);
+
+        //删除原不良现象维修
+        Example example2 = new Example(MesSfcRepairOrderBadPhenotypeRepair.class);
+        Example.Criteria criteria2 = example2.createCriteria();
+        criteria2.andEqualTo("repairOrderId",entity.getRepairOrderId());
+        mesSfcRepairOrderBadPhenotypeRepairMapper.deleteByExample(example2);
 
         //不良现象
         List<MesSfcRepairOrderBadPhenotype> mesSfcRepairOrderBadPhenotypeList = entity.getMesSfcRepairOrderBadPhenotypeList();
@@ -423,10 +436,23 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
                 mesSfcRepairOrderBadPhenotype.setModifiedTime(new Date());
                 mesSfcRepairOrderBadPhenotype.setStatus(StringUtils.isEmpty(mesSfcRepairOrderBadPhenotype.getStatus())?1: mesSfcRepairOrderBadPhenotype.getStatus());
                 mesSfcRepairOrderBadPhenotype.setOrgId(user.getOrganizationId());
-                mesSfcRepairOrderBadPhenotypeMapper.insertUseGeneratedKeys(mesSfcRepairOrderBadPhenotype);
-                //保存维修信息
-                saveBadPhenotypeRepair(mesSfcRepairOrderBadPhenotype,user);
             }
+            mesSfcRepairOrderBadPhenotypeMapper.insertList(mesSfcRepairOrderBadPhenotypeList);
+        }
+
+        //不良现象维修
+        List<MesSfcRepairOrderBadPhenotypeRepair> mesSfcRepairOrderBadPhenotypeRepairList = entity.getMesSfcRepairOrderBadPhenotypeRepairList();
+        if(StringUtils.isNotEmpty(mesSfcRepairOrderBadPhenotypeRepairList)) {
+            for (MesSfcRepairOrderBadPhenotypeRepair mesSfcRepairOrderBadPhenotypeRepair : mesSfcRepairOrderBadPhenotypeRepairList) {
+                mesSfcRepairOrderBadPhenotypeRepair.setRepairOrderId(entity.getRepairOrderId());
+                mesSfcRepairOrderBadPhenotypeRepair.setCreateUserId(user.getUserId());
+                mesSfcRepairOrderBadPhenotypeRepair.setCreateTime(new Date());
+                mesSfcRepairOrderBadPhenotypeRepair.setModifiedUserId(user.getUserId());
+                mesSfcRepairOrderBadPhenotypeRepair.setModifiedTime(new Date());
+                mesSfcRepairOrderBadPhenotypeRepair.setStatus(StringUtils.isEmpty(mesSfcRepairOrderBadPhenotypeRepair.getStatus()) ? 1 : mesSfcRepairOrderBadPhenotypeRepair.getStatus());
+                mesSfcRepairOrderBadPhenotypeRepair.setOrgId(user.getOrganizationId());
+            }
+            mesSfcRepairOrderBadPhenotypeRepairMapper.insertList(mesSfcRepairOrderBadPhenotypeRepairList);
         }
 
         //维修完成过站 mesSfcScanBarcodeService
@@ -478,26 +504,6 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     }
 
 
-    public int saveBadPhenotypeRepair(MesSfcRepairOrderBadPhenotype mesSfcRepairOrderBadPhenotype, SysUser user){
-        int i = 0;
-
-        List<MesSfcRepairOrderBadPhenotypeRepair> mesSfcRepairOrderBadPhenotypeRepairList = mesSfcRepairOrderBadPhenotype.getMesSfcRepairOrderBadPhenotypeRepairList();
-        if(StringUtils.isNotEmpty(mesSfcRepairOrderBadPhenotypeRepairList)) {
-            for (MesSfcRepairOrderBadPhenotypeRepair mesSfcRepairOrderBadPhenotypeRepair : mesSfcRepairOrderBadPhenotypeRepairList) {
-                mesSfcRepairOrderBadPhenotypeRepair.setRepairOrderBadPhenotypeId(mesSfcRepairOrderBadPhenotype.getRepairOrderBadPhenotypeId());
-                mesSfcRepairOrderBadPhenotypeRepair.setCreateUserId(user.getUserId());
-                mesSfcRepairOrderBadPhenotypeRepair.setCreateTime(new Date());
-                mesSfcRepairOrderBadPhenotypeRepair.setModifiedUserId(user.getUserId());
-                mesSfcRepairOrderBadPhenotypeRepair.setModifiedTime(new Date());
-                mesSfcRepairOrderBadPhenotypeRepair.setStatus(StringUtils.isEmpty(mesSfcRepairOrderBadPhenotypeRepair.getStatus()) ? 1 : mesSfcRepairOrderBadPhenotypeRepair.getStatus());
-                mesSfcRepairOrderBadPhenotypeRepair.setOrgId(user.getOrganizationId());
-            }
-            i = mesSfcRepairOrderBadPhenotypeRepairMapper.insertList(mesSfcRepairOrderBadPhenotypeRepairList);
-        }
-
-        return i;
-    }
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -520,14 +526,13 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
             Example example1 = new Example(MesSfcRepairOrderBadPhenotype.class);
             Example.Criteria criteria1 = example1.createCriteria();
             criteria1.andEqualTo("repairOrderId", id);
-            List<MesSfcRepairOrderBadPhenotype> mesSfcRepairOrderBadPhenotypes = mesSfcRepairOrderBadPhenotypeMapper.selectByExample(example1);
-            for (MesSfcRepairOrderBadPhenotype mesSfcRepairOrderBadPhenotype : mesSfcRepairOrderBadPhenotypes){
-                Example example2 = new Example(MesSfcRepairOrderBadPhenotypeRepair.class);
-                Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("repairOrderBadPhenotypeId",mesSfcRepairOrderBadPhenotype.getRepairOrderBadPhenotypeId());
-                mesSfcRepairOrderBadPhenotypeRepairMapper.deleteByExample(example2);
-            }
             mesSfcRepairOrderBadPhenotypeMapper.deleteByExample(example1);
+
+            //删除不良现象维修
+            Example example2 = new Example(MesSfcRepairOrderBadPhenotypeRepair.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("repairOrderId",id);
+            mesSfcRepairOrderBadPhenotypeRepairMapper.deleteByExample(example2);
 
             //删除半成品
             Example example3 = new Example(MesSfcRepairOrderSemiProduct.class);
