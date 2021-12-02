@@ -1,14 +1,20 @@
 package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 库存明细
@@ -83,8 +89,8 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
     /**
      * 作业状态(1-已收货、2-在库、3-已拣货、4-已出库 5-已取消)
      */
-    @ApiModelProperty(name = "jobStatus",value = "作业状态(1-已收货、2-在库、3-已拣货、4-已出库 5-已取消)")
-    @Excel(name = "作业状态(1-已收货、2-在库、3-已拣货、4-已出库 5-已取消)",height = 20,width = 30,orderNum = "9")
+    @ApiModelProperty(name = "jobStatus",value = "作业状态(1-待收货,2-已收货、3-在库、4-已拣货、5-已出库 6-已取消)")
+    @Excel(name = "作业状态(1-待收货,2-已收货、3-在库、4-已拣货、5-已出库 6-已取消)",height = 20,width = 30,orderNum = "9")
     @Column(name = "job_status")
     private Byte jobStatus;
 

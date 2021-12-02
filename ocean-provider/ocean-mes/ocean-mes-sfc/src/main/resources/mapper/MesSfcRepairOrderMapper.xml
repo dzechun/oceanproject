@@ -31,6 +31,9 @@
     <collection property="mesSfcRepairOrderBadPhenotypeList" ofType="com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPhenotype"
                 column="{repairOrderId=repair_order_id}" select="com.fantechs.provider.mes.sfc.mapper.MesSfcRepairOrderBadPhenotypeMapper.findList">
     </collection>
+    <collection property="mesSfcRepairOrderBadPhenotypeRepairList" ofType="com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPhenotypeRepair"
+                column="{repairOrderId=repair_order_id}" select="com.fantechs.provider.mes.sfc.mapper.MesSfcRepairOrderBadPhenotypeRepairMapper.findList">
+    </collection>
     <collection property="mesSfcRepairOrderSemiProductList" ofType="com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderSemiProduct"
                 column="{repairOrderId=repair_order_id}" select="com.fantechs.provider.mes.sfc.mapper.MesSfcRepairOrderSemiProductMapper.findList">
     </collection>
