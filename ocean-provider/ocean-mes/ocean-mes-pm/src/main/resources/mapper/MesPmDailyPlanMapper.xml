@@ -6,6 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="daily_plan_id" jdbcType="BIGINT" property="dailyPlanId" />
+
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="seq_num" jdbcType="VARCHAR" property="seqNum" />
     <result column="schedule_qty" jdbcType="DECIMAL" property="scheduledQty" />
@@ -53,7 +54,7 @@
           resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
     mpwo.material_id,mpwo.work_order_qty AS work_order_qty,mpwo.production_qty as production_qty,mpwo.work_order_status,
-    mpwo.pro_line_id,bpl.pro_name AS proName,mpwo.scheduled_qty as scheduled_qty,
+    mpwo.pro_line_id,bpl.pro_name AS proName,mpwo.scheduled_qty as workOrderScheduledQty,mpwo.output_qty as workOrderFinishedQty,
     date_format(mpdp.plan_time, '%Y-%m-%d') AS planDate,mpwo.work_order_code as work_order_code,
     bpl.pro_name as pro_name,bm.material_name as material_name,bm.material_code as material_code,bm.material_desc as material_desc
     from mes_pm_daily_plan mpdp

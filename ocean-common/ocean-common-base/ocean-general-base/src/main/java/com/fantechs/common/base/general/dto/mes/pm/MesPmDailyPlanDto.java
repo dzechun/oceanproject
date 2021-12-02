@@ -75,4 +75,15 @@ public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
     @Column(name = "work_order_code")
     private String workOrderCode;
 
+    /**
+     * 工单排产数量
+     */
+    @ApiModelProperty(name="scheduledQty",value = "排产数量")
+    private BigDecimal workOrderScheduledQty;
+
+    /**
+     * 工单完成数量
+     */
+    @ApiModelProperty(name="finishedQty",value = "完成数量")
+    private BigDecimal workOrderFinishedQty;
 }

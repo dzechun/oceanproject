@@ -33,6 +33,7 @@
     <result column="aql_value" jdbcType="DECIMAL" property="aqlValue"/>
     <result column="ac_value" jdbcType="INTEGER" property="acValue"/>
     <result column="re_value" jdbcType="INTEGER" property="reValue"/>
+    <result column="original_sample_qty" jdbcType="DECIMAL" property="originalSampleQty"/>
     <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty"/>
     <result column="sample_process_type" jdbcType="TINYINT" property="sampleProcessType"/>
     <result column="sample_process_id" jdbcType="BIGINT" property="sampleProcessId" />
@@ -51,6 +52,7 @@
     qiod.inspection_standard_name,
     qiod.inspection_tag,
     qiod.sample_qty,
+    qiod.original_sample_qty,
     qiod.specification_upper_limit,
     qiod.specification_floor,
     qiod.unit_name,

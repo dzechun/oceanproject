@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -32,6 +33,7 @@ public class RfidAsset extends ValidGroup implements Serializable {
     @ApiModelProperty(name="assetId",value = "资产ID")
     @Id
     @Column(name = "asset_id")
+    @NotNull(groups = update.class,message = "资产ID不能为空")
     private Long assetId;
 
     /**
@@ -40,7 +42,7 @@ public class RfidAsset extends ValidGroup implements Serializable {
     @ApiModelProperty(name="assetCode",value = "资产编码")
     @Excel(name = "资产编码", height = 20, width = 30,orderNum="1")
     @Column(name = "asset_code")
-    @NotBlank(message = "资产编码不能为空")
+    @NotBlank(groups = {add.class,update.class},message = "资产编码不能为空")
     private String assetCode;
 
     /**
@@ -49,7 +51,7 @@ public class RfidAsset extends ValidGroup implements Serializable {
     @ApiModelProperty(name="assetName",value = "资产名称")
     @Excel(name = "资产名称", height = 20, width = 30,orderNum="2")
     @Column(name = "asset_name")
-    @NotBlank(message = "资产名称不能为空")
+    @NotBlank(groups = {add.class,update.class},message = "资产名称不能为空")
     private String assetName;
 
     /**
