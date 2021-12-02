@@ -87,6 +87,9 @@
       <if test="planDeliveryOrderId != null">
         and spdod.plan_delivery_order_id = #{planDeliveryOrderId}
       </if>
+      <if test="supplierId != null">
+        and spdo.supplier_id = #{supplierId}
+      </if>
 
       <if test="purchaseOrderCode != null and purchaseOrderCode != ''">
         and opo.purchase_order_code = #{purchaseOrderCode}
