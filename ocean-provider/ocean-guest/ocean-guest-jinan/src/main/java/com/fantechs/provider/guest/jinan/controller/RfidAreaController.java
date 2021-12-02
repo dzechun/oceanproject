@@ -47,7 +47,7 @@ public class RfidAreaController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated RfidArea rfidArea) {
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated(value=RfidArea.add.class) RfidArea rfidArea) {
         return ControllerUtil.returnCRUD(rfidAreaService.save(rfidArea));
     }
 

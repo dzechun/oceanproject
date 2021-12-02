@@ -140,11 +140,6 @@ public class MesSfcRepairOrderBadPhenotype extends ValidGroup implements Seriali
     @Excel(name = "不良现象描述", height = 20, width = 30,orderNum="11")
     private String badnessPhenotypeDesc;
 
-    /**
-     * 维修单不良现象维修列表
-     */
-    @ApiModelProperty(name="mesSfcRepairOrderBadPhenotypeRepairList",value = "维修单不良现象维修列表")
-    private List<MesSfcRepairOrderBadPhenotypeRepair> mesSfcRepairOrderBadPhenotypeRepairList = new ArrayList<>();
 
     private String option1;
 

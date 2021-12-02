@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -38,6 +39,13 @@ public class QmsInspectionOrderController {
     private QmsInspectionOrderService qmsInspectionOrderService;
     @Resource
     private QmsHtInspectionOrderService qmsHtInspectionOrderService;
+
+    @ApiOperation("修改样本数")
+    @PostMapping("/updateSampleQty")
+    public ResponseEntity updateSampleQty(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long inspectionOrderId,
+                                          @ApiParam(value = "样本数",required = true)@RequestParam  @NotNull(message="样本数不能为空") BigDecimal sampleQty) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.updateSampleQty(inspectionOrderId,sampleQty));
+    }
 
     @ApiOperation("复检")
     @PostMapping("/recheck")

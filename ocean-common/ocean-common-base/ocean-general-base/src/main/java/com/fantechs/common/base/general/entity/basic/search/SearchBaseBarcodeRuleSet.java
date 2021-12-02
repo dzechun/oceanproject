@@ -34,4 +34,10 @@ public class SearchBaseBarcodeRuleSet extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
     private Integer codeQueryMark;
+
+    /**
+     * 组织id
+     */
+    @ApiModelProperty(name="organizationId",value = "组织id")
+    private Long organizationId;
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.ProductDailyPlanMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.entity.ProductDailyPlanModel">
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+        <result column="material_name" jdbcType="VARCHAR" property="materialName" />
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion" />
+        <result column="work_order_qty" jdbcType="VARCHAR" property="workOrderQty" />
+        <result column="scheduled_qty" jdbcType="VARCHAR" property="scheduledQty" />
+        <result column="finished_qty" jdbcType="VARCHAR" property="finishedQty" />
+        <result column="work_order_status" jdbcType="VARCHAR" property="workOrderStatus" />
+        <result column="product_condition" jdbcType="VARCHAR" property="productCondition" />
+        <result column="if_order_inserting" jdbcType="VARCHAR" property="ifOrderInserting" />
+        <result column="plan_date" jdbcType="VARCHAR" property="planDate" />
+    </resultMap>
+    <select id="findList" resultMap="BaseResultMap" parameterType="map">
+        select mpwo.work_order_code,
+        bm.material_code,
+        bm.material_name,
+        bm.material_desc,
+        '' as product_model_name,
+        bm.material_version,
+        mpwo.work_order_qty,
+        mpdp.schedule_qty as scheduled_qty,
+        mpdp.finished_qty,
+        mpwo.work_order_status,
+        '' as product_condition,
+        mpdp.if_order_inserting,
+        date_format(mpdp.plan_time, '%Y-%m-%d') AS plan_date
+        from mes_pm_daily_plan mpdp
+        LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
+        LEFT JOIN base_pro_line bpl ON  mpwo.pro_line_id =bpl.pro_line_id
+        LEFT JOIN base_material bm ON  mpwo.material_id = bm.material_id
+        <where>
+            <if test="planDateBegin!=null and planDateBegin!='' and planDateEnd!=null and planDateEnd!=''">
+                and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{planDateBegin} AND #{planDateEnd}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and mpwo.org_id=#{orgId}
+            </if>
+        </where>
+    </select>
+</mapper>

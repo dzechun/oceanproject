@@ -167,6 +167,15 @@
       <if test="purQty != null and purQty!=''">
         and ecqo.pur_qty = #{purQty}
       </if>
+      <if test="designQty != null and designQty!=''">
+        and epro.design_qty = #{designQty}
+      </if>
+      <if test="surplusQty != null and surplusQty!=''">
+        and epro.surplus_qty = #{surplusQty}
+      </if>
+      <if test="purchaseReqQty != null and purchaseReqQty!=''">
+        and epro.purchase_req_qty = #{purchaseReqQty}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ecqo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

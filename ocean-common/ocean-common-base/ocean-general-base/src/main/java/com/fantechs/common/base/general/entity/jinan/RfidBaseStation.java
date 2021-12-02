@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +35,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
     @ApiModelProperty(name="baseStationId",value = "基站ID")
     @Id
     @Column(name = "base_station_id")
+    @NotNull(groups = update.class,message = "基站ID不能为空")
     private Long baseStationId;
 
     /**
@@ -42,7 +44,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
     @ApiModelProperty(name="baseStationCode",value = "基站编码")
     @Excel(name = "基站编码", height = 20, width = 30,orderNum="1")
     @Column(name = "base_station_code")
-    @NotBlank(message = "基站编码不能为空")
+    @NotBlank(groups = {add.class,update.class},message = "基站编码不能为空")
     private String baseStationCode;
 
     /**
@@ -51,7 +53,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
     @ApiModelProperty(name="baseStationName",value = "基站名称")
     @Excel(name = "基站名称", height = 20, width = 30,orderNum="2")
     @Column(name = "base_station_name")
-    @NotBlank(message = "基站名称不能为空")
+    @NotBlank(groups = {add.class,update.class},message = "基站名称不能为空")
     private String baseStationName;
 
     /**
@@ -89,7 +91,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="baseStationMac",value = "基站MAC")
     @Column(name = "base_station_mac")
-    @NotBlank(message = "基站MAC不能为空")
+    @NotBlank(groups = {add.class,update.class},message = "基站MAC不能为空")
     private String baseStationMac;
 
     /**

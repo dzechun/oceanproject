@@ -1,9 +1,6 @@
 package com.fantechs.provider.qms.service.impl;
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.qms.QmsIpqcInspectionOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionStandard;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionStandardDet;
 import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
@@ -14,7 +11,6 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
-import com.fantechs.provider.qms.mapper.QmsInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsInspectionOrderDetService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -58,6 +54,9 @@ public class QmsInspectionOrderDetServiceImpl extends BaseService<QmsInspectionO
             for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets){
                 QmsInspectionOrderDet qmsInspectionOrderDet = new QmsInspectionOrderDet();
                 BeanUtils.copyProperties(baseInspectionStandardDet, qmsInspectionOrderDet);
+                qmsInspectionOrderDet.setBigInspectionItemDesc(baseInspectionStandardDet.getInspectionItemDescBig());
+                qmsInspectionOrderDet.setSmallInspectionItemDesc(baseInspectionStandardDet.getInspectionItemDescSmall());
+                qmsInspectionOrderDet.setInspectionStandardName(baseInspectionStandardDet.getInspectionItemStandard());
 
                 //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
                 if(baseInspectionStandardDet.getSampleProcessType()!=null&&baseInspectionStandardDet.getSampleProcessType()==(byte)4){

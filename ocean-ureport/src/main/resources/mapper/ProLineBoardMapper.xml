@@ -37,6 +37,9 @@
             <if test="orgId!=null">
                 and mpdp.org_id=#{orgId}
             </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and mpwo.pro_line_id = #{proLineId}
+            </if>
         </where>
     </select>
 

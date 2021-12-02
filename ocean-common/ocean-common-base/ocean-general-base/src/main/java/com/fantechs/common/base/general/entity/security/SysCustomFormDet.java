@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 ;
@@ -304,6 +305,16 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     @Excel(name = "下拉自定义值", height = 20, width = 30)
     @Column(name = "select_value")
     private String selectValue;
+
+    @ApiModelProperty(name="minValue",value = "最小值")
+    @Excel(name = "最小值", height = 20, width = 30)
+    @Column(name = "min_value")
+    private BigDecimal minValue;
+
+    @ApiModelProperty(name="maxValue",value = "最大值")
+    @Excel(name = "最大值", height = 20, width = 30)
+    @Column(name = "max_value")
+    private BigDecimal maxValue;
 
     private static final long serialVersionUID = 1L;
 }

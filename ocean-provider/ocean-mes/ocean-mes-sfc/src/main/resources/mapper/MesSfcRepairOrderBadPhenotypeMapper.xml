@@ -23,9 +23,6 @@
 
     <result column="badness_phenotype_code" jdbcType="VARCHAR" property="badnessPhenotypeCode"/>
     <result column="badness_phenotype_desc" jdbcType="VARCHAR" property="badnessPhenotypeDesc"/>
-    <collection property="mesSfcRepairOrderBadPhenotypeRepairList" ofType="com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrderBadPhenotypeRepair"
-                column="{repairOrderBadPhenotypeId=repair_order_bad_phenotype_id}" select="com.fantechs.provider.mes.sfc.mapper.MesSfcRepairOrderBadPhenotypeRepairMapper.findList">
-    </collection>
   </resultMap>
 
   <sql id="BaseColumnList">

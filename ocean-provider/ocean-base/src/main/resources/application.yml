@@ -4,7 +4,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: wuhuan
   application:
     name: @pom.artifactId@
   servlet:

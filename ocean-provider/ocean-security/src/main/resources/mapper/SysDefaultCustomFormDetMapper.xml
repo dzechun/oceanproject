@@ -14,6 +14,8 @@
     <result column="item_width" jdbcType="VARCHAR" property="itemWidth" />
     <result column="select_name" jdbcType="VARCHAR" property="selectName" />
     <result column="select_value" jdbcType="VARCHAR" property="selectValue" />
+    <result column="min_value" jdbcType="DECIMAL" property="minValue"/>
+    <result column="max_value" jdbcType="DECIMAL" property="maxValue"/>
     <result column="disabled" jdbcType="TINYINT" property="disabled" />
     <result column="item_list_type" jdbcType="TINYINT" property="itemListType" />
     <result column="item_search_type" jdbcType="TINYINT" property="itemSearchType" />
@@ -87,7 +89,9 @@
     dcfd.event_trigger_mode,
     dcfd.event_trigger_name,
     dcfd.select_name,
-    dcfd.select_value
+    dcfd.select_value,
+    dcfd.min_value,
+    dcfd.max_value
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">

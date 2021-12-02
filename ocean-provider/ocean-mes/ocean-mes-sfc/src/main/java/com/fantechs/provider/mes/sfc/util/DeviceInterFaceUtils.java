@@ -277,7 +277,7 @@ public class DeviceInterFaceUtils {
         return productBomDto;
     }
 
-    public void  addLog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) throws Exception {
+    public void  addLog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) {
         SysApiLog sysApiLog = new SysApiLog();
         sysApiLog.setThirdpartySysName("雷赛设备过站接口");
         sysApiLog.setCallResult(result);

@@ -103,6 +103,9 @@
       <if test="partBarcode != null and partBarcode != ''">
         and mskpr.part_barcode = #{partBarcode}
       </if>
+      <if test="barcodeCode != null and barcodeCode != ''">
+        and mskpr.barcode_code = #{barcodeCode}
+      </if>
       <if test="workOrderIds != null">
         <foreach collection="workOrderIds" index="index" item="item" open="and mskpr.work_order_id in (" close=")" separator=",">
           #{item}
