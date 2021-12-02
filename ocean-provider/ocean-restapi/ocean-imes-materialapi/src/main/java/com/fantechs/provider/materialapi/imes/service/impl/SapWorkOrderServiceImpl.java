@@ -2,12 +2,14 @@ package com.fantechs.provider.materialapi.imes.service.impl;
 
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
 import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
@@ -53,6 +55,9 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();
         if(StringUtils.isEmpty(orgIdList)) return "未查询到对应的组织信息";
         Long orgId = orgIdList.get(0).getOrganizationId();
+        SearchBaseBarcodeRuleSet searchBaseBarcodeRuleSet = new SearchBaseBarcodeRuleSet();
+        searchBaseBarcodeRuleSet.setOrgId((long)1000);
+        List<BaseBarcodeRuleSetDto> baseBarcodeRuleSetDtos = baseFeignApi.findBarcodeRuleSetList(searchBaseBarcodeRuleSet).getData();
 
         for(RestapiWorkOrderApiDto restapiWorkOrderApiDto : restapiWorkOrderApiDtos) {
             String check = check(restapiWorkOrderApiDto);
@@ -93,6 +98,8 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 }else{
                     return "未配置产品工艺路线";
                 }
+                if(StringUtils.isNotEmpty(baseBarcodeRuleSetDtos))
+                    mesPmWorkOrder.setBarcodeRuleSetId(baseBarcodeRuleSetDtos.get(0).getBarcodeRuleSetId());
                 mesPmWorkOrder.setOrgId(orgId);
                 mesPmWorkOrder.setIsDelete((byte)1);
                 mesPmWorkOrder.setWorkOrderType((byte)0);
