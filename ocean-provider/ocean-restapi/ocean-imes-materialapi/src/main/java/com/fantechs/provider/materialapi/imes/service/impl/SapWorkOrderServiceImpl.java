@@ -56,7 +56,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
         if(StringUtils.isEmpty(orgIdList)) return "未查询到对应的组织信息";
         Long orgId = orgIdList.get(0).getOrganizationId();
         SearchBaseBarcodeRuleSet searchBaseBarcodeRuleSet = new SearchBaseBarcodeRuleSet();
-        searchBaseBarcodeRuleSet.setOrgId((long)1000);
+        searchBaseBarcodeRuleSet.setOrganizationId((long)1000);
         List<BaseBarcodeRuleSetDto> baseBarcodeRuleSetDtos = baseFeignApi.findBarcodeRuleSetList(searchBaseBarcodeRuleSet).getData();
 
         for(RestapiWorkOrderApiDto restapiWorkOrderApiDto : restapiWorkOrderApiDtos) {
