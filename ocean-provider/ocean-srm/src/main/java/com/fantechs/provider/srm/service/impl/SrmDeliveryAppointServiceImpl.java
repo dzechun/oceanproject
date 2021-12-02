@@ -90,10 +90,11 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         //拼接时间
         try {
             String date = DateUtils.getDateString(srmDeliveryAppointDto.getAppointDate(),"yyyy-MM-dd");
-            String start =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointStartTime(),"HH-mm");
-            String end =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointEndTime(),"HH-mm");
-            srmDeliveryAppointDto.setAppointStartTime(DateUtils.getStrToDateTime(date+" "+start));
-            srmDeliveryAppointDto.setAppointEndTime(DateUtils.getStrToDateTime(date+" "+start));
+            String start =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointStartTime(),"HH:mm");
+            String end =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointEndTime(),"HH:mm");
+
+            srmDeliveryAppointDto.setAppointStartTime(DateUtils.getStrToDate("yyyy-MM-dd HH:mm",date+" "+start));
+            srmDeliveryAppointDto.setAppointEndTime(DateUtils.getStrToDate("yyyy-MM-dd HH:mm",date+" "+end));
         } catch (ParseException e) {
             throw new BizErrorException("时间格式转换错误");
         }
