@@ -54,6 +54,9 @@ public class QmsInspectionOrderDetServiceImpl extends BaseService<QmsInspectionO
             for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets){
                 QmsInspectionOrderDet qmsInspectionOrderDet = new QmsInspectionOrderDet();
                 BeanUtils.copyProperties(baseInspectionStandardDet, qmsInspectionOrderDet);
+                qmsInspectionOrderDet.setBigInspectionItemDesc(baseInspectionStandardDet.getInspectionItemDescBig());
+                qmsInspectionOrderDet.setSmallInspectionItemDesc(baseInspectionStandardDet.getInspectionItemDescSmall());
+                qmsInspectionOrderDet.setInspectionStandardName(baseInspectionStandardDet.getInspectionItemStandard());
 
                 //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
                 if(baseInspectionStandardDet.getSampleProcessType()!=null&&baseInspectionStandardDet.getSampleProcessType()==(byte)4){
@@ -61,6 +64,7 @@ public class QmsInspectionOrderDetServiceImpl extends BaseService<QmsInspectionO
                     if(StringUtils.isNotEmpty(baseSampleProcess.getSampleQty())) {
                         //总数量<样本数时,样本数=总数量
                         qmsInspectionOrderDet.setSampleQty(qty.compareTo(baseSampleProcess.getSampleQty())==-1 ? qty : baseSampleProcess.getSampleQty());
+                        qmsInspectionOrderDet.setOriginalSampleQty(qty.compareTo(baseSampleProcess.getSampleQty())==-1 ? qty : baseSampleProcess.getSampleQty());
                     }
                     qmsInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
                     qmsInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
@@ -69,6 +73,7 @@ public class QmsInspectionOrderDetServiceImpl extends BaseService<QmsInspectionO
                     if(StringUtils.isNotEmpty(baseInspectionStandardDet.getSampleQty())) {
                         //总数量<样本数时,样本数=总数量
                         qmsInspectionOrderDet.setSampleQty(qty.compareTo(baseInspectionStandardDet.getSampleQty()) == -1 ? qty : baseInspectionStandardDet.getSampleQty());
+                        qmsInspectionOrderDet.setOriginalSampleQty(qty.compareTo(baseInspectionStandardDet.getSampleQty()) == -1 ? qty : baseInspectionStandardDet.getSampleQty());
                     }
                     qmsInspectionOrderDet.setAcValue(baseInspectionStandardDet.getAcValue());
                     qmsInspectionOrderDet.setReValue(baseInspectionStandardDet.getReValue());

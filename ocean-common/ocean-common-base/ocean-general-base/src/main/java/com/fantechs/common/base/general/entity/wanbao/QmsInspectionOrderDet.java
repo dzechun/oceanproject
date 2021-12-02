@@ -206,6 +206,13 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
     private Integer reValue;
 
     /**
+     * 原样本数
+     */
+    @Column(name = "original_sample_qty")
+    @ApiModelProperty(name = "originalSampleQty",value = "原样本数")
+    private BigDecimal originalSampleQty;
+
+    /**
      * 样本数
      */
     @Column(name = "sample_qty")
