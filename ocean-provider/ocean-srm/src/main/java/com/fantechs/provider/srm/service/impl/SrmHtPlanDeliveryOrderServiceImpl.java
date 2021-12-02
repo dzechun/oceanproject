@@ -4,6 +4,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtPlanDeliveryOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.srm.mapper.SrmHtPlanDeliveryOrderMapper;
 import com.fantechs.provider.srm.service.SrmHtPlanDeliveryOrderService;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,15 @@ public class SrmHtPlanDeliveryOrderServiceImpl extends BaseService<SrmHtPlanDeli
 
     @Override
     public List<SrmHtPlanDeliveryOrder> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(map.get("orgId"))) {
+            map.put("orgId",user.getOrganizationId());
+        }
+
+
+        if (StringUtils.isNotEmpty(user.getSupplierId())) {
+            map.put("supplierId", user.getSupplierId());
+        }
         return srmHtPlanDeliveryOrderMapper.findList(map);
     }
 
