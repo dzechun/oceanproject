@@ -115,6 +115,11 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         //保存详情表
         List<SrmInAsnOrderDetDto> list = new ArrayList<>();
         for(SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()){
+
+            if(srmInAsnOrderDetDto.getOrderQty().compareTo( srmInAsnOrderDetDto.getTotalDeliveryQty().add(srmInAsnOrderDetDto.getDeliveryQty()))== -1)
+                throw new BizErrorException("文件保存失败");
+
+
             srmInAsnOrderDetDto.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
             if(StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
                 srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
