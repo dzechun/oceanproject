@@ -562,7 +562,7 @@ public class BarcodeUtils {
         MesSfcBarcodeProcess mesSfcBarcodeProcess = barcodeUtils.mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .workOrderBarcodeId(mesSfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
                 .build());
-
+        // 判断是否有必过工序未过站 开始
         ResponseEntity<List<BaseRouteProcess>> responseEntity = barcodeUtils.baseFeignApi.findConfigureRout(routeId);
         if (responseEntity.getCode() != 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012008);
@@ -594,6 +594,8 @@ public class BarcodeUtils {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012011.getCode(), "必过工序未过站-->"+baseProcess.getProcessName());
             }
         }
+
+        // 判断是否有必过工序未过站 结束
 
         if (mesSfcBarcodeProcess != null) {
             Long existID=processId;
