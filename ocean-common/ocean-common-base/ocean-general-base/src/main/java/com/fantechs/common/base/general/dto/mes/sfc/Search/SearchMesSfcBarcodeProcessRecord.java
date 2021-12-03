@@ -4,7 +4,6 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
@@ -33,6 +32,9 @@ public class SearchMesSfcBarcodeProcessRecord extends BaseQuery implements Seria
 
     @ApiModelProperty(name="processId",value = "工序ID")
     private Long processId;
+
+    @ApiModelProperty(name = "isCustomerBarcode",value = "客户条码精确查找")
+    private String isCustomerBarcode;
 
     /**
      * 查询标识

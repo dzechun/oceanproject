@@ -128,9 +128,11 @@ public class BarcodeUtils {
         // 1、判断条码是否正确（是否存在）
         MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = checkBarcodeStatus(record.getBarCode(), record.getWorkOrderId());
 
+        MesPmWorkOrder mesPmWorkOrder = barcodeUtils.pmFeignApi.workOrderDetail(mesSfcWorkOrderBarcodeDto.getWorkOrderId()).getData();
+
         // 2、判断条码流程是否正确（流程表）
         if (record.getProcessId() != null) {
-            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), record.getProLineId());
+            checkBarcodeProcess(mesSfcWorkOrderBarcodeDto, record.getProcessId(), mesPmWorkOrder.getRouteId());
         }
 
         // 3、系统检查条码工单状态是否正确（工单表）
@@ -504,10 +506,15 @@ public class BarcodeUtils {
      */
     public static void printBarCode(PrintCarCodeDto dto) {
         LabelRuteDto labelRuteDto = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findRule(dto.getLabelTypeCode(), dto.getWorkOrderId());
+        if(StringUtils.isEmpty(labelRuteDto)) {
+            throw new BizErrorException("未找到物料标签信息或工单未设置条码规则集合");
+        }
+
         PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(ControllerUtil.dynamicCondition("labelCode",labelRuteDto.getLabelCode(),"id",dto.getWorkOrderId()));
         if(StringUtils.isEmpty(printModel)) {
             printModel = new PrintModel();
         }
+
         printModel.setQrCode(dto.getBarcode());
         PrintDto printDto = new PrintDto();
         printDto.setLabelName(labelRuteDto.getLabelName());
@@ -563,35 +570,64 @@ public class BarcodeUtils {
                 .workOrderBarcodeId(mesSfcWorkOrderBarcodeDto.getWorkOrderBarcodeId())
                 .build());
         // 判断是否有必过工序未过站 开始
-        ResponseEntity<List<BaseRouteProcess>> responseEntity = barcodeUtils.baseFeignApi.findConfigureRout(routeId);
-        if (responseEntity.getCode() != 0) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012008);
-        }
-        List<BaseRouteProcess> routeProcessList = responseEntity.getData();
-        Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
-                .filter(i -> processId.equals(i.getProcessId()))
-                .findFirst();
-        if (!routeProcessOptional.isPresent()) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getProcessId());
-        }
 
-        BaseRouteProcess routeProcess = routeProcessOptional.get();
+        //获取配置项 雷赛包装工序不判断条码状态  PackingIfCheckBarcodeStatus
+        String paraValue = getSysSpecItemValue("PackingIfCheckBarcodeStatus");
+        boolean isPackingProcess=false;
+        if ("1".equals(paraValue)) {
+            //判断当前工序是否是包装工序
+            BaseProcess bProcss=null;
+            ResponseEntity<BaseProcess> reEntityBP = barcodeUtils.baseFeignApi.processDetail(processId);
+            if(StringUtils.isNotEmpty(reEntityBP)){
+                bProcss=reEntityBP.getData();
+            }
+            if(StringUtils.isNotEmpty(bProcss)) {
+                long processCategoryId = bProcss.getProcessCategoryId();
+                ResponseEntity<BaseProcessCategory> processCategoryEntity = barcodeUtils.baseFeignApi.processCategoryDetail(processCategoryId);
+                if (processCategoryEntity.getCode() != 0) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "工序类别信息不存在");
+                }
+                BaseProcessCategory baseProcessCategory = processCategoryEntity.getData();
+                if ("PACKING".equals(baseProcessCategory.getProcessCategoryCode()) == true) {
+                    isPackingProcess=true;
+                }
+            }
+        }
+        if(isPackingProcess==false) {
+            ResponseEntity<List<BaseRouteProcess>> responseEntity = barcodeUtils.baseFeignApi.findConfigureRout(routeId);
+            if (responseEntity.getCode() != 0) {
+                throw new BizErrorException(ErrorCodeEnum.PDA40012008);
+            }
+            List<BaseRouteProcess> routeProcessList = responseEntity.getData();
+            Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
+                    .filter(i -> processId.equals(i.getProcessId()))
+                    .findFirst();
+            if (!routeProcessOptional.isPresent()) {
+                ResponseEntity<BaseProcess> nowProcess=barcodeUtils.baseFeignApi.processDetail(processId);
+                if(StringUtils.isEmpty(nowProcess)){
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012012, processId);
+                }
+                throw new BizErrorException(ErrorCodeEnum.PDA40012011.getCode(), "工单工艺路线中不存在此工序-->"+" 工序编码:"+nowProcess.getData().getProcessCode()+" 工序名称:"+nowProcess.getData().getProcessName());
+            }
 
-        int num = routeProcess.getOrderNum();
-        Optional<BaseRouteProcess> routeProcessOptionalLast = routeProcessList.stream()
-                .filter(i -> i.getOrderNum() < num && i.getIsPass() == 1 && i.getIsMustPass()==1)
-                .sorted(Comparator.comparing(BaseRouteProcess::getOrderNum).reversed())
-                .findFirst();
-        if (routeProcessOptionalLast.isPresent()) {
-            BaseRouteProcess routeProcessLast = routeProcessOptionalLast.get();
-            Long lastProcessId=routeProcessLast.getProcessId();
-            Map<String, Object> mapExist = new HashMap<>();
-            mapExist.put("barcode", mesSfcBarcodeProcess.getBarcode());
-            mapExist.put("processId", lastProcessId);
-            List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(mapExist);
-            if(mesSfcBarcodeProcessRecordDtoList.size()<=0) {
-                BaseProcess baseProcess = barcodeUtils.baseFeignApi.processDetail(lastProcessId).getData();
-                throw new BizErrorException(ErrorCodeEnum.PDA40012011.getCode(), "必过工序未过站-->"+baseProcess.getProcessName());
+            BaseRouteProcess routeProcess = routeProcessOptional.get();
+
+            int num = routeProcess.getOrderNum();
+            Optional<BaseRouteProcess> routeProcessOptionalLast = routeProcessList.stream()
+                    .filter(i -> i.getOrderNum() < num && i.getIsPass() == 1 && i.getIsMustPass() == 1)
+                    .sorted(Comparator.comparing(BaseRouteProcess::getOrderNum).reversed())
+                    .findFirst();
+            if (routeProcessOptionalLast.isPresent()) {
+                BaseRouteProcess routeProcessLast = routeProcessOptionalLast.get();
+                Long lastProcessId = routeProcessLast.getProcessId();
+                Map<String, Object> mapExist = new HashMap<>();
+                mapExist.put("barcode", mesSfcBarcodeProcess.getBarcode());
+                mapExist.put("processId", lastProcessId);
+                List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(mapExist);
+                if (mesSfcBarcodeProcessRecordDtoList.size() <= 0) {
+                    BaseProcess baseProcess = barcodeUtils.baseFeignApi.processDetail(lastProcessId).getData();
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012011.getCode(), "必过工序未过站-->" + baseProcess.getProcessName());
+                }
             }
         }
 
@@ -805,7 +841,11 @@ public class BarcodeUtils {
                         .filter(i -> dto.getNowProcessId().equals(i.getProcessId()))
                         .findFirst();
                 if (!routeProcessOptional.isPresent()) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getNextProcessId());
+                    ResponseEntity<BaseProcess> nowProcess=barcodeUtils.baseFeignApi.processDetail(dto.getNowProcessId());
+                    if(StringUtils.isEmpty(nowProcess)){
+                        throw new BizErrorException(ErrorCodeEnum.PDA40012012, dto.getNowProcessId());
+                    }
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012011.getCode(), "工单工艺路线中不存在此工序-->"+" 工序编码:"+nowProcess.getData().getProcessCode()+" 工序名称:"+nowProcess.getData().getProcessName());
                 }
 
                 BaseRouteProcess routeProcess = routeProcessOptional.get();
@@ -1677,10 +1717,24 @@ public class BarcodeUtils {
 
             //只传成品SN
             if(StringUtils.isNotEmpty(barcodeCode) && StringUtils.isEmpty(partBarcode)){
-                List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getWorkOrderBarcode(barcodeCode, orgId);
-                if(workOrderBarcodeDtoList.size()>0){
-                    updateProcessDto.setWorkOrderBarcodeId(workOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId());
+                if(StringUtils.isEmpty(updateProcessDto.getWorkOrderBarcodeId())) {
+                    List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getWorkOrderBarcode(barcodeCode, orgId);
+                    if(workOrderBarcodeDtoList.size()>0){
+                        updateProcessDto.setWorkOrderBarcodeId(workOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId());
+                    }
+                    if(StringUtils.isEmpty(updateProcessDto.getWorkOrderBarcodeId())) {
+                        baseExecuteResultDto = createWorkOrderBarcode(barcodeCode, "onlySn", mesPmWorkOrderDto, orgId);
+                        if (baseExecuteResultDto.getIsSuccess() == false)
+                            throw new Exception(baseExecuteResultDto.getFailMsg());
+                        else {
+                            if (StringUtils.isNotEmpty(barcodeCode)) {
+                                //设置工单条码ID
+                                updateProcessDto.setWorkOrderBarcodeId((Long) baseExecuteResultDto.getExecuteResult());
+                            }
+                        }
+                    }
                 }
+
             }
 
             //不良现象处理
@@ -3119,7 +3173,7 @@ public class BarcodeUtils {
                     baseExecuteResultDto.setExecuteResult(workOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId());
                 }
             }
-            else if(StringUtils.isNotEmpty(barcode) && StringUtils.isNotEmpty(partBarcode)){
+            else if(StringUtils.isNotEmpty(barcode) && StringUtils.isNotEmpty(partBarcode) && partBarcode.equals("onlySn")==false){
                 List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getWorkOrderBarcode(barcode, orgId);
                 if (workOrderBarcodeDtoList.size() <= 0) {
                     //生成产品条码
@@ -3159,6 +3213,69 @@ public class BarcodeUtils {
                         }
                     }
 
+
+                } else {
+                    baseExecuteResultDto.setExecuteResult(workOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId());
+                }
+            }
+            else if(partBarcode.equals("onlySn")){
+                List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtoList = barcodeUtils.deviceInterFaceUtils.getWorkOrderBarcode(barcode, orgId);
+                if (workOrderBarcodeDtoList.size() <= 0) {
+                    //生成产品条码
+                    MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = new MesSfcWorkOrderBarcode();
+                    mesSfcWorkOrderBarcode.setBarcode(barcode);
+                    mesSfcWorkOrderBarcode.setLabelCategoryId(barcodeUtils.mesSfcWorkOrderBarcodeMapper.finByTypeId("产品条码"));
+                    mesSfcWorkOrderBarcode.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+                    mesSfcWorkOrderBarcode.setWorkOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
+                    mesSfcWorkOrderBarcode.setBarcodeStatus((byte) 1);//条码状态(0-待投产 1-投产中 2-已完成 3-待打印)
+                    mesSfcWorkOrderBarcode.setOrgId(orgId);
+                    mesSfcWorkOrderBarcode.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
+                    mesSfcWorkOrderBarcode.setWorkOrderQty(mesPmWorkOrderDto.getWorkOrderQty());
+
+                    mesSfcWorkOrderBarcode.setCreateTime(new Date());
+                    mesSfcWorkOrderBarcode.setCreateUserId(1L);
+                    mesSfcWorkOrderBarcode.setModifiedTime(new Date());
+                    mesSfcWorkOrderBarcode.setModifiedUserId(1L);
+                    mesSfcWorkOrderBarcode.setCreateBarcodeTime(new Date());
+                    barcodeUtils.mesSfcWorkOrderBarcodeMapper.insertUseGeneratedKeys(mesSfcWorkOrderBarcode);
+
+                    //生成条码过站记录
+                    MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
+                    mesSfcBarcodeProcess.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
+                    mesSfcBarcodeProcess.setWorkOrderCode(mesSfcWorkOrderBarcode.getWorkOrderCode());
+                    mesSfcBarcodeProcess.setWorkOrderBarcodeId(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
+                    mesSfcBarcodeProcess.setBarcodeType((byte) 2);
+                    mesSfcBarcodeProcess.setBarcode(mesSfcWorkOrderBarcode.getBarcode());
+
+                    mesSfcBarcodeProcess.setProLineId(mesPmWorkOrderDto.getProLineId());
+
+                    mesSfcBarcodeProcess.setMaterialId(mesPmWorkOrderDto.getMaterialId());
+                    mesSfcBarcodeProcess.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
+                    mesSfcBarcodeProcess.setMaterialName(mesPmWorkOrderDto.getMaterialName());
+                    mesSfcBarcodeProcess.setMaterialVer(mesPmWorkOrderDto.getMaterialVersion());
+                    mesSfcBarcodeProcess.setRouteId(mesPmWorkOrderDto.getRouteId());
+                    mesSfcBarcodeProcess.setRouteCode(mesPmWorkOrderDto.getRouteCode());
+                    mesSfcBarcodeProcess.setRouteName(mesPmWorkOrderDto.getRouteName());
+                    mesSfcBarcodeProcess.setOrgId(orgId);
+
+                    //查询工艺路线
+                    ResponseEntity<List<BaseRouteProcess>> res = barcodeUtils.baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
+                    if (res.getCode() != 0) {
+                        throw new BizErrorException("工艺路线查询失败");
+                    }
+                    mesSfcBarcodeProcess.setProcessId(res.getData().get(0).getProcessId());
+                    mesSfcBarcodeProcess.setProcessCode(res.getData().get(0).getProcessCode());
+                    mesSfcBarcodeProcess.setProcessName(res.getData().get(0).getProcessName());
+                    mesSfcBarcodeProcess.setNextProcessId(res.getData().get(0).getProcessId());
+                    mesSfcBarcodeProcess.setNextProcessCode(res.getData().get(0).getProcessCode());
+                    mesSfcBarcodeProcess.setNextProcessName(res.getData().get(0).getProcessName());
+                    mesSfcBarcodeProcess.setSectionId(res.getData().get(0).getSectionId());
+                    mesSfcBarcodeProcess.setSectionName(res.getData().get(0).getSectionName());
+                    if (barcodeUtils.mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess) < 1) {
+                        throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(), "条码过站失败-->" + barcode);
+                    }
+
+                    baseExecuteResultDto.setExecuteResult(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
 
                 } else {
                     baseExecuteResultDto.setExecuteResult(workOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId());

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerInitStockBarcodeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInitStockBarcode">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="init_stock_barcode_id" jdbcType="BIGINT" property="initStockBarcodeId" />
+    <result column="init_stock_det_id" jdbcType="BIGINT" property="initStockDetId" />
+    <result column="init_stock_id" jdbcType="BIGINT" property="initStockId"/>
+    <result column="in_plant_barcode" jdbcType="VARCHAR" property="inPlantBarcode" />
+    <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode" />
+    <result column="client_barcode1" jdbcType="VARCHAR" property="clientBarcode1" />
+    <result column="client_barcode2" jdbcType="VARCHAR" property="clientBarcode2" />
+    <result column="client_barcode3" jdbcType="VARCHAR" property="clientBarcode3" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+  </resultMap>
+  <select id="findList" resultMap="BaseResultMap">
+    select wiisb.init_stock_barcode_id,wiisb.init_stock_id,wiisb.init_stock_det_id,wiisb.in_plant_barcode,wiisb.sales_barcode,wiisb.client_barcode1,wiisb.client_barcode2,wiisb.client_barcode3,bm.material_code
+    FROM wms_inner_init_stock_barcode wiisb
+    left join wms_inner_init_stock_det wiisd on wiisb.init_stock_det_id = wiisd.init_stock_det_id
+    left join base_material bm on bm.material_id = wiisd.material_id
+    <where>
+      <if test="initStockDetId!=null and initStockDetId!=''">
+        and wiisb.init_stock_det_id=#{initStockDetId}
+      </if>
+     <if test="initStockId!=null and initStockId!=''">
+       and wiisb.init_stock_id=#{initStockId}
+     </if>
+    <if test="materialCode!=null and materialCode!=''">
+      and bm.material_code =#{materialCode}
+    </if>
+    </where>
+  </select>
+</mapper>

@@ -36,12 +36,12 @@ public class MesSfcRepairOrderBadPhenotypeRepair extends ValidGroup implements S
     private Long repairOrderBadPhenotypeRepairId;
 
     /**
-     * 维修单不良现象表ID
+     * 维修单ID
      */
-    @ApiModelProperty(name="repairOrderBadPhenotypeId",value = "维修单不良现象表ID")
-    @Excel(name = "维修单不良现象表ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "repair_order_bad_phenotype_id")
-    private Long repairOrderBadPhenotypeId;
+    @ApiModelProperty(name="repairOrderId",value = "维修单ID")
+    @Excel(name = "维修单ID", height = 20, width = 30,orderNum="")
+    @Column(name = "repair_order_id")
+    private Long repairOrderId;
 
     /**
      * 不良原因ID

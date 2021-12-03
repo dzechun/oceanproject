@@ -6,7 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="repair_order_bad_phenotype_repair_id" jdbcType="BIGINT" property="repairOrderBadPhenotypeRepairId" />
-    <result column="repair_order_bad_phenotype_id" jdbcType="BIGINT" property="repairOrderBadPhenotypeId" />
+    <result column="repair_order_id" jdbcType="BIGINT" property="repairOrderId" />
     <result column="badness_cause_id" jdbcType="BIGINT" property="badnessCauseId" />
     <result column="badness_duty_id" jdbcType="BIGINT" property="badnessDutyId" />
     <result column="location_num" jdbcType="VARCHAR" property="locationNum" />
@@ -35,7 +35,7 @@
 
   <sql id="BaseColumnList">
     msrobpr.repair_order_bad_phenotype_repair_id,
-    msrobpr.repair_order_bad_phenotype_id,
+    msrobpr.repair_order_id,
     msrobpr.badness_cause_id,
     msrobpr.badness_duty_id,
     msrobpr.location_num,
@@ -70,8 +70,8 @@
     left join ocean_v2.sys_user s on msrobpr.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON msrobpr.org_id = bo.organization_id
     <where>
-      <if test="repairOrderBadPhenotypeId != null">
-        and msrobpr.repair_order_bad_phenotype_id = #{repairOrderBadPhenotypeId}
+      <if test="repairOrderId != null">
+        and msrobpr.repair_order_id = #{repairOrderId}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(msrobpr.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

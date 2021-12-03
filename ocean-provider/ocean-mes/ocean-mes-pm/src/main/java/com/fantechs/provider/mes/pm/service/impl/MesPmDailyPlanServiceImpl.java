@@ -144,9 +144,12 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
                     mesPmDailyPlan.setIfOrderInserting((byte)1);
                 else
                     mesPmDailyPlan.setIfOrderInserting((byte)0);
+
                 mesPmDailyPlan.setStatus((byte)1);
                 mesPmDailyPlan.setCreateUserId(user.getUserId());
                 mesPmDailyPlan.setModifiedUserId(user.getUserId());
+                mesPmDailyPlan.setCreateTime(new Date());
+                mesPmDailyPlan.setModifiedTime(new Date());
                 addList.add(mesPmDailyPlan);
 
                 }

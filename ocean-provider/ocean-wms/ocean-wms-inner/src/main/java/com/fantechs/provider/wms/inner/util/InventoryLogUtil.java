@@ -1,12 +1,10 @@
 package com.fantechs.provider.wms.inner.util;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.ctc.wstx.util.DataUtil;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
-import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryLogService;
 import org.springframework.stereotype.Component;
@@ -14,8 +12,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,6 +83,34 @@ public class InventoryLogUtil {
         wmsInnerInventoryLog.setInitialQty(initQty);
         wmsInnerInventoryLog.setChangeQty(chaQty);
         wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerJobOrder.getMaterialOwnerId());
+        inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
+    }
+
+    /**
+     * 万宝初始化盘点日志
+     * @param wmsInnerInventory
+     * @param wmsInnerInitStock
+     * @param wmsInnerInitStockDet
+     * @param warehouseId
+     * @param inventoryStatusId
+     * @param initQty
+     * @param chaQty
+     * @param jobStatus
+     * @param addOrSubtract
+     */
+    public static void initStockLog(WmsInnerInventory wmsInnerInventory, WmsInnerInitStock wmsInnerInitStock,WmsInnerInitStockDet wmsInnerInitStockDet,Long warehouseId,Long inventoryStatusId, BigDecimal initQty, BigDecimal chaQty, Byte jobStatus, Byte addOrSubtract){
+        WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
+        BeanUtil.copyProperties(wmsInnerInventory,wmsInnerInventoryLog);
+        wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerInitStock.getInitStockOrderCode());
+        //收货
+        wmsInnerInventoryLog.setWarehouseId(warehouseId);
+        wmsInnerInventoryLog.setJobOrderType(jobStatus);
+        wmsInnerInventoryLog.setAddOrSubtract(addOrSubtract);
+        wmsInnerInventoryLog.setStorageId(wmsInnerInitStock.getStorageId());
+        wmsInnerInventoryLog.setMaterialId(wmsInnerInitStockDet.getMaterialId());
+        wmsInnerInventoryLog.setInventoryStatusId(inventoryStatusId);
+        wmsInnerInventoryLog.setInitialQty(initQty);
+        wmsInnerInventoryLog.setChangeQty(chaQty);
         inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
     }
 
