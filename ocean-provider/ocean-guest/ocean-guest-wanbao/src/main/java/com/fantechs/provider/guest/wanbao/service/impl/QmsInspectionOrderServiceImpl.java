@@ -382,6 +382,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         int i = 0;
         //手动添加变更质检锁
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos= new LinkedList<>();
+        List<WmsInnerInventoryDto> wmsInnerInventoryDtos= new LinkedList<>();
         if(StringUtils.isNotEmpty(qmsInspectionOrder.getInventoryIds())){
             String[] ids = qmsInspectionOrder.getInventoryIds().split(",");
             for(String id : ids){
@@ -390,6 +391,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 ResponseEntity<List<WmsInnerInventoryDto>> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory);
                 if(StringUtils.isEmpty(innerInventoryDtoList.getData())) throw new BizErrorException("未查询到对应库存信息");
                 WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.getData().get(0);
+                wmsInnerInventoryDtos.add(wmsInnerInventoryDto);
 
                 //对应的库存明细写入质检单号
                 SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
@@ -400,6 +402,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 searchWmsInnerInventoryDet.setIfInspectionOrderCodeNull(1);
                 List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
                 wmsInnerInventoryDetDtos.addAll(inventoryDetDtos);
+            }
+            if(StringUtils.isEmpty(wmsInnerInventoryDetDtos)){
+                throw new BizErrorException("未查询到对应库存明细");
             }
 
             //库存明细按PO和销售订单号分组
@@ -438,29 +443,23 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     List<WmsInnerInventoryDetDto> detDtoList = map.get(s);
 
                     //对应的库存写入质检单号
-                    SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
-                    //searchWmsInnerInventory.setRelevanceOrderCode(wmsInAsnOrderDto.getAsnCode());
-                    searchWmsInnerInventory.setStorageId(detDtoList.get(0).getStorageId());
-                    searchWmsInnerInventory.setInventoryStatusId(detDtoList.get(0).getInventoryStatusId());
-                    searchWmsInnerInventory.setMaterialId(detDtoList.get(0).getMaterialId());
-                    searchWmsInnerInventory.setQcLock((byte) 0);
-                    List<WmsInnerInventoryDto> list = innerFeignApi.findList(searchWmsInnerInventory).getData();
-                    if (StringUtils.isEmpty(list)) {
-                        throw new BizErrorException("未查询到对应库存");
+                    for (WmsInnerInventoryDto wmsInnerInventory : wmsInnerInventoryDtos){
+                        if(detDtoList.get(0).getStorageId().equals(wmsInnerInventory.getStorageId())
+                        &&detDtoList.get(0).getInventoryStatusId().equals(wmsInnerInventory.getInventoryStatusId())
+                        &&detDtoList.get(0).getMaterialId().equals(wmsInnerInventory.getMaterialId())){
+                            //拆库存
+                            WmsInnerInventoryDto newInnerInventory = new WmsInnerInventoryDto();
+                            BeanUtils.copyProperties(wmsInnerInventory, newInnerInventory);
+                            newInnerInventory.setInventoryId(null);
+                            newInnerInventory.setPackingQty(new BigDecimal(detDtoList.size()));
+                            newInnerInventory.setQcLock((byte) 1);
+                            newInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+                            innerFeignApi.add(newInnerInventory);
+
+                            wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(new BigDecimal(detDtoList.size())));
+                            innerFeignApi.update(wmsInnerInventory);
+                        }
                     }
-                    WmsInnerInventoryDto wmsInnerInventory = list.get(0);
-
-                    //拆库存
-                    WmsInnerInventoryDto newInnerInventory = new WmsInnerInventoryDto();
-                    BeanUtils.copyProperties(wmsInnerInventory, newInnerInventory);
-                    newInnerInventory.setInventoryId(null);
-                    newInnerInventory.setPackingQty(new BigDecimal(detDtoList.size()));
-                    newInnerInventory.setQcLock((byte) 1);
-                    newInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
-                    innerFeignApi.add(newInnerInventory);
-
-                    wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(new BigDecimal(detDtoList.size())));
-                    innerFeignApi.update(wmsInnerInventory);
                 }
             }
 
@@ -730,7 +729,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     public Map<String, List<WmsInnerInventoryDetDto>> groupInventoryDet(List<WmsInnerInventoryDetDto> innerInventoryDetDtos){
         //分组：1、PO号不为空：PO号相同的同一组；
         // 2、PO号为空但销售订单号不为空：销售订单号相同的同一组；
-        // 3、PO号和销售订单号为空：两者都为空的同一组
+        // 3、PO号和销售订单号为空：两者都为空的同一组；（option4为PO号，option3为销售编码）
         Map<String, List<WmsInnerInventoryDetDto>> collect = new HashMap<>();
         for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : innerInventoryDetDtos) {
             if (StringUtils.isEmpty(wmsInnerInventoryDetDto.getOption4())) {
@@ -800,6 +799,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 searchInnerInventoryDet.setPageSize(999);
                 searchInnerInventoryDet.setAsnCode(wmsInAsnOrderDto.getAsnCode());
                 List<WmsInnerInventoryDetDto> innerInventoryDetDtos = innerFeignApi.findList(searchInnerInventoryDet).getData();
+                if (StringUtils.isEmpty(innerInventoryDetDtos)) {
+                    throw new BizErrorException("未查到对应的库存明细");
+                }
 
                 //库存明细按PO和销售订单号分组
                 Map<String, List<WmsInnerInventoryDetDto>> collect = groupInventoryDet(innerInventoryDetDtos);
