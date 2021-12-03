@@ -4,13 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eam.*;
+import com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamEquPointInspectionOrderDetDto;
+import com.fantechs.common.base.general.dto.eam.EamEquPointInspectionOrderDto;
+import com.fantechs.common.base.general.dto.eam.EamEquPointInspectionProjectDto;
 import com.fantechs.common.base.general.entity.eam.*;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquPointInspectionOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquPointInspectionOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquPointInspectionProject;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaintainOrder;
-import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentMaintainProject;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -193,7 +194,7 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
         // 新增点检单履历
         EamHtEquPointInspectionOrder eamHtEquPointInspectionOrder = new EamHtEquPointInspectionOrder();
         BeanUtil.copyProperties(eamEquPointInspectionOrder, eamHtEquPointInspectionOrder);
-        int i = eamHtEquPointInspectionOrderMapper.insert(eamHtEquPointInspectionOrder);
+        int i = eamHtEquPointInspectionOrderMapper.insertSelective(eamHtEquPointInspectionOrder);
 
         if(!eamEquPointInspectionOrder.getOrderDets().isEmpty()){
             List<EamEquPointInspectionOrderDet> inspectionOrderDets = eamEquPointInspectionOrder.getOrderDets()
@@ -229,7 +230,7 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
         // 新增点检单履历
         EamHtEquPointInspectionOrder eamHtEquPointInspectionOrder = new EamHtEquPointInspectionOrder();
         BeanUtil.copyProperties(eamEquPointInspectionOrder, eamHtEquPointInspectionOrder);
-        int i = eamHtEquPointInspectionOrderMapper.insert(eamHtEquPointInspectionOrder);
+        int i = eamHtEquPointInspectionOrderMapper.insertSelective(eamHtEquPointInspectionOrder);
 
 
         // 批量删除点检单明细
@@ -303,9 +304,6 @@ public class EamEquPointInspectionOrderServiceImpl extends BaseService<EamEquPoi
 
     private SysUser getUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 }

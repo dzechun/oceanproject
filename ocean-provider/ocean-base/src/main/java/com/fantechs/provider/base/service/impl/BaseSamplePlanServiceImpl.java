@@ -5,12 +5,9 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseSamplePlanAqlDto;
 import com.fantechs.common.base.general.dto.basic.BaseSamplePlanDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseProcessCategoryImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSamplePlanImport;
-import com.fantechs.common.base.general.entity.basic.BaseProcessCategory;
 import com.fantechs.common.base.general.entity.basic.BaseSamplePlan;
 import com.fantechs.common.base.general.entity.basic.BaseSampleStandard;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtProcessCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtSamplePlan;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -50,9 +47,6 @@ public class BaseSamplePlanServiceImpl extends BaseService<BaseSamplePlan> imple
     @Override
     public List<BaseSamplePlanDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseSamplePlanMapper.findList(map);
     }
@@ -60,11 +54,8 @@ public class BaseSamplePlanServiceImpl extends BaseService<BaseSamplePlan> imple
     @Override
     public int save(BaseSamplePlan record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
-        this.codeIfRepeat(record);
+        this.codeIfRepeat(record,user);
 
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());
@@ -76,7 +67,7 @@ public class BaseSamplePlanServiceImpl extends BaseService<BaseSamplePlan> imple
 
         BaseHtSamplePlan baseHtSamplePlan = new BaseHtSamplePlan();
         BeanUtils.copyProperties(record, baseHtSamplePlan);
-        baseHtSamplePlanMapper.insert(baseHtSamplePlan);
+        baseHtSamplePlanMapper.insertSelective(baseHtSamplePlan);
 
         return i;
     }
@@ -84,18 +75,15 @@ public class BaseSamplePlanServiceImpl extends BaseService<BaseSamplePlan> imple
     @Override
     public int update(BaseSamplePlan entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
-        this.codeIfRepeat(entity);
+        this.codeIfRepeat(entity,user);
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
         entity.setOrgId(user.getOrganizationId());
         BaseHtSamplePlan baseHtSamplePlan = new BaseHtSamplePlan();
         BeanUtils.copyProperties(entity, baseHtSamplePlan);
-        baseHtSamplePlanMapper.insert(baseHtSamplePlan);
+        baseHtSamplePlanMapper.insertSelective(baseHtSamplePlan);
 
         return baseSamplePlanMapper.updateByPrimaryKeySelective(entity);
     }
@@ -103,9 +91,6 @@ public class BaseSamplePlanServiceImpl extends BaseService<BaseSamplePlan> imple
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtSamplePlan> list = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -135,11 +120,7 @@ public class BaseSamplePlanServiceImpl extends BaseService<BaseSamplePlan> imple
         return baseSamplePlanMapper.deleteByIds(ids);
     }
 
-    private void codeIfRepeat(BaseSamplePlan entity){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+    private void codeIfRepeat(BaseSamplePlan entity,SysUser user){
         Example example = new Example(BaseSamplePlan.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复
@@ -158,9 +139,6 @@ public class BaseSamplePlanServiceImpl extends BaseService<BaseSamplePlan> imple
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseSamplePlanImport> baseSamplePlanImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

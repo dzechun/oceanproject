@@ -16,7 +16,6 @@ import com.fantechs.common.base.general.entity.eam.search.SearchEamJigPointInspe
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -60,9 +59,6 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
     @Override
     public List<EamJigPointInspectionOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamJigPointInspectionOrderMapper.findList(map);
@@ -150,9 +146,6 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigPointInspectionOrder record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamJigMaintainOrder.class);
         Example.Criteria criteria = example.createCriteria();
@@ -218,7 +211,7 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
 
         EamHtJigPointInspectionOrder eamHtJigPointInspectionOrder = new EamHtJigPointInspectionOrder();
         BeanUtils.copyProperties(record,eamHtJigPointInspectionOrder);
-        int i = eamHtJigPointInspectionOrderMapper.insert(eamHtJigPointInspectionOrder);
+        int i = eamHtJigPointInspectionOrderMapper.insertSelective(eamHtJigPointInspectionOrder);
 
         return i;
     }
@@ -227,9 +220,6 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigPointInspectionOrder entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //this.codeIfRepeat(entity);
 
@@ -260,7 +250,7 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
 
         EamHtJigPointInspectionOrder eamHtJigPointInspectionOrder = new EamHtJigPointInspectionOrder();
         BeanUtils.copyProperties(entity,eamHtJigPointInspectionOrder);
-        int i = eamHtJigPointInspectionOrderMapper.insert(eamHtJigPointInspectionOrder);
+        int i = eamHtJigPointInspectionOrderMapper.insertSelective(eamHtJigPointInspectionOrder);
 
         return i;
     }
@@ -269,9 +259,6 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJigPointInspectionOrder> htList = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -299,9 +286,6 @@ public class EamJigPointInspectionOrderServiceImpl extends BaseService<EamJigPoi
 
     private void codeIfRepeat(EamJigPointInspectionOrder eamJigPointInspectionOrder){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamJigPointInspectionOrder.class);
         Example.Criteria criteria = example.createCriteria();

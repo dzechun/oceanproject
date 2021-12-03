@@ -46,7 +46,7 @@ public class EamEquipmentStandingBookServiceImpl extends BaseService<EamEquipmen
     @Override
     public List<EamEquipmentStandingBookDto> findList(SearchEamEquipmentStandingBook searchEamEquipmentStandingBook) {
         if(StringUtils.isEmpty(searchEamEquipmentStandingBook.getOrgId())){
-            SysUser sysUser = currentUser();
+            SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
             searchEamEquipmentStandingBook.setOrgId(sysUser.getOrganizationId());
         }
         return eamEquipmentStandingBookMapper.findList(searchEamEquipmentStandingBook);
@@ -55,7 +55,7 @@ public class EamEquipmentStandingBookServiceImpl extends BaseService<EamEquipmen
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipmentStandingBookDto eamEquipmentStandingBookDto) {
-        SysUser user = currentUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(eamEquipmentStandingBookDto.getEquipmentBarcodeId())) throw new BizErrorException("设备条码不能为空");
         Example example = new Example(EamEquipmentStandingBook.class);
         Example.Criteria criteria = example.createCriteria();
@@ -88,7 +88,7 @@ public class EamEquipmentStandingBookServiceImpl extends BaseService<EamEquipmen
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquipmentStandingBookDto eamEquipmentStandingBookDto) {
-        SysUser user = currentUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(eamEquipmentStandingBookDto.getEquipmentBarcodeId()))
             throw new BizErrorException("设备条码不能为空");
         eamEquipmentStandingBookMapper.updateByPrimaryKeySelective(eamEquipmentStandingBookDto);
@@ -117,7 +117,7 @@ public class EamEquipmentStandingBookServiceImpl extends BaseService<EamEquipmen
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        SysUser user = currentUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
             Example fileExample = new Example(EamEquipmentStandingBookAttachment.class);
@@ -148,15 +148,4 @@ public class EamEquipmentStandingBookServiceImpl extends BaseService<EamEquipmen
         }
     }
 
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return user;
-    }
 }

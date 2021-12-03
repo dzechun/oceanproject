@@ -1,14 +1,13 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseProcessCategoryDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProcessCategoryImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseTeamImport;
 import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseProcessCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProcessCategory;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -43,9 +42,6 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseProcessCategory baseProcessCategory) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProcessCategory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -74,9 +70,6 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseProcessCategory baseProcessCategory) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProcessCategory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -105,9 +98,6 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
         ArrayList<BaseHtProcessCategory> list = new ArrayList<>();
 
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] processCategoryIds = ids.split(",");
         for (String processCategoryId : processCategoryIds) {
@@ -140,9 +130,6 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
     @Override
     public List<BaseProcessCategoryDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseProcessCategoryMapper.findList(map);
     }
@@ -151,9 +138,6 @@ public class BaseProcessCategoryServiceImpl extends BaseService<BaseProcessCateg
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseProcessCategoryImport> baseProcessCategoryImportList) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

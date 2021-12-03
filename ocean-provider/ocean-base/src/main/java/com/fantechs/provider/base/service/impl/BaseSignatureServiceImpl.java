@@ -47,9 +47,6 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseSignature baseSignature) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseSignature.class);
         Example.Criteria criteria = example.createCriteria();
@@ -88,9 +85,6 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
         List<BaseHtSignature> list=new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] signatureIds = ids.split(",");
         for (String signatureId : signatureIds) {
@@ -114,9 +108,6 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseSignature baseSignature) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseSignature.class);
         Example.Criteria criteria = example.createCriteria();
@@ -151,9 +142,6 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
     @Override
     public List<BaseSignature> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseSignatureMapper.findList(map);
     }
@@ -162,9 +150,6 @@ public class BaseSignatureServiceImpl extends BaseService<BaseSignature> impleme
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseSignatureImport> baseSignatureImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

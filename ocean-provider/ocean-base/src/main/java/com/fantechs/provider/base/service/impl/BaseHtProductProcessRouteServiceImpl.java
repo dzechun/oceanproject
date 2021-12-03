@@ -29,9 +29,6 @@ public class BaseHtProductProcessRouteServiceImpl extends BaseService<BaseHtProd
     @Override
     public List<BaseHtProductProcessRoute> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseHtProductProcessRoute> list = baseHtProductProcessRouteMapper.findList(map);
         for (BaseHtProductProcessRoute baseHtProductProcessRoute : list) {

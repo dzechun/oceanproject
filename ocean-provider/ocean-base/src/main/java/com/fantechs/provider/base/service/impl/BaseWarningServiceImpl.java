@@ -46,9 +46,6 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
     @Override
     public List<BaseWarningDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseWarningDto> baseWarningDtos = baseWarningMapper.findList(map);
 
@@ -66,9 +63,6 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseWarning baseWarning) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseWarning.class);
         Example.Criteria criteria = example.createCriteria();
@@ -111,9 +105,6 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseWarning baseWarning) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseWarning.class);
         Example.Criteria criteria = example.createCriteria();
@@ -161,9 +152,6 @@ public class BaseWarningServiceImpl extends BaseService<BaseWarning> implements 
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         ArrayList<BaseHtWarning> baseHtWarnings = new ArrayList<>();
         String[] idsArr  = ids.split(",");

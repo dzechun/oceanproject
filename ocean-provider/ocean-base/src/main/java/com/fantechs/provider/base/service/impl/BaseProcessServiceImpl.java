@@ -48,9 +48,6 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseProcess baseProcess) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProcess.class);
         Example.Criteria criteria = example.createCriteria();
@@ -91,9 +88,6 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
         List<BaseHtProcess> list = new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] processIds = ids.split(",");
         for (String processId : processIds) {
@@ -136,9 +130,6 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseProcess baseProcess) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseProcess.class);
         Example.Criteria criteria = example.createCriteria();
@@ -176,9 +167,6 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
     public List<BaseProcess> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         List<BaseProcess> baseProcesses = baseProcessMapper.findList(map);
@@ -201,9 +189,6 @@ public class BaseProcessServiceImpl extends BaseService<BaseProcess> implements 
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseProcessImport> baseProcessImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

@@ -3,34 +3,19 @@ package com.fantechs.provider.qms.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
-import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionWay;
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
-import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsInspectionOrderDetSampleService;
-import com.fantechs.provider.qms.service.QmsInspectionOrderDetService;
-import com.fantechs.provider.qms.service.QmsInspectionOrderService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -58,9 +43,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Override
     public List<QmsInspectionOrderDetSample> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId",user.getOrganizationId());
         return qmsInspectionOrderDetSampleMapper.findList(map);
     }
@@ -86,9 +68,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchAdd(List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSampleList) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //原数据删除
         Long inspectionOrderDetId = qmsInspectionOrderDetSampleList.get(0).getInspectionOrderDetId();
@@ -165,9 +144,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(QmsInspectionOrderDetSample qmsInspectionOrderDetSample) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());
         qmsInspectionOrderDetSample.setCreateTime(new Date());
@@ -183,9 +159,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(QmsInspectionOrderDetSample qmsInspectionOrderDetSample) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         qmsInspectionOrderDetSample.setModifiedUserId(user.getUserId());
         qmsInspectionOrderDetSample.setModifiedTime(new Date());

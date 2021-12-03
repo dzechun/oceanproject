@@ -79,9 +79,6 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseSupplier record) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseSupplier.class);
         example.createCriteria().andEqualTo("supplierCode",record.getSupplierCode())
                                 .andEqualTo("supplierType",record.getSupplierType())
@@ -114,9 +111,6 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseSupplier entity) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseSupplier.class);
         example.createCriteria().andEqualTo("supplierCode",entity.getSupplierCode())
                                 .andEqualTo("supplierType",entity.getSupplierType())
@@ -172,9 +166,6 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         int i = 0;
         String[] idsArr = ids.split(",");
         for (String item:idsArr) {
@@ -206,9 +197,6 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseSupplierImport> baseSupplierImports, Byte supplierType) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

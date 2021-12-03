@@ -46,9 +46,6 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
     public List<EamEquipmentMaterialDto> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return eamEquipmentMaterialMapper.findList(map);
@@ -58,9 +55,6 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipmentMaterial record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamEquipmentMaterial.class);
         Example.Criteria criteria = example.createCriteria();
@@ -96,7 +90,7 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
         //履历
         EamHtEquipmentMaterial eamHtEquipmentMaterial = new EamHtEquipmentMaterial();
         BeanUtils.copyProperties(record, eamHtEquipmentMaterial);
-        int i = eamHtEquipmentMaterialMapper.insert(eamHtEquipmentMaterial);
+        int i = eamHtEquipmentMaterialMapper.insertSelective(eamHtEquipmentMaterial);
 
         return i;
     }
@@ -105,9 +99,6 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquipmentMaterial entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamEquipmentMaterial.class);
         Example.Criteria criteria = example.createCriteria();
@@ -146,7 +137,7 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
         //履历
         EamHtEquipmentMaterial eamHtEquipmentMaterial = new EamHtEquipmentMaterial();
         BeanUtils.copyProperties(entity, eamHtEquipmentMaterial);
-        int i = eamHtEquipmentMaterialMapper.insert(eamHtEquipmentMaterial);
+        int i = eamHtEquipmentMaterialMapper.insertSelective(eamHtEquipmentMaterial);
 
         return i;
     }
@@ -155,9 +146,6 @@ public class EamEquipmentMaterialServiceImpl extends BaseService<EamEquipmentMat
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtEquipmentMaterial> list = new ArrayList<>();
         String[] idArry = ids.split(",");

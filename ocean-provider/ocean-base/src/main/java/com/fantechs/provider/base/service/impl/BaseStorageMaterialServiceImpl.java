@@ -43,9 +43,6 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseStorageMaterial baseStorageMaterial) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         ifRepeat(baseStorageMaterial);
 
@@ -73,9 +70,6 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
         List<BaseHtStorageMaterial> list = new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] storageMaterialIds = ids.split(",");
         for (String storageMaterialId : storageMaterialIds) {
@@ -99,9 +93,6 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseStorageMaterial baseStorageMaterial) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         ifRepeat(baseStorageMaterial);
 
@@ -135,9 +126,6 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
     @Override
     public List<BaseStorageMaterial> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseStorageMaterialMapper.findList(map);
     }
@@ -146,9 +134,6 @@ public class BaseStorageMaterialServiceImpl extends BaseService<BaseStorageMater
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseStorageMaterialImport> baseStorageMaterialImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

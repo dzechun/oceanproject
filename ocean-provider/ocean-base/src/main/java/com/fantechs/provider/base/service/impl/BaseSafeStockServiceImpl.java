@@ -1,6 +1,5 @@
 package com.fantechs.provider.base.service.impl;
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseSafeStockDto;
@@ -46,9 +45,6 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     @Override
     public List<BaseSafeStockDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseSafeStockMapper.findList(map);
     }
@@ -56,9 +52,6 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     @Override
     public List<BaseSafeStockDto> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseHtSafeStockMapper.findHtList(map);
     }
@@ -102,7 +95,7 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseSafeStock record) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(record.getWarehouseId())){
             throw new BizErrorException("仓库不能为空");
         }
@@ -119,7 +112,7 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseSafeStock entity) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         entity.setModifiedUserId(sysUser.getUserId());
         entity.setModifiedTime(new Date());
         entity.setOrganizationId(sysUser.getOrganizationId());
@@ -131,7 +124,7 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         String[] idArray = ids.split(",");
         for (String id : idArray) {
             BaseSafeStock baseSafeStock = baseSafeStockMapper.selectByPrimaryKey(id);
@@ -143,17 +136,6 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
         return baseSafeStockMapper.deleteByIds(ids);
     }
 
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return user;
-    }
 
     /**
      * 历史记录
@@ -172,9 +154,6 @@ public class BaseSafeStockServiceImpl extends BaseService<BaseSafeStock> impleme
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseSafeStockImport> baseSafeStockImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

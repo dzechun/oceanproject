@@ -42,9 +42,6 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
     public List<BaseWorkshopSection> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return workshopSectionMapper.findList(map);
@@ -54,9 +51,6 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseWorkshopSection baseWorkshopSection) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseWorkshopSection.class);
         example.createCriteria().andEqualTo("sectionCode", baseWorkshopSection.getSectionCode())
                                 .andEqualTo("organizationId", currentUser.getOrganizationId());
@@ -83,9 +77,6 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseWorkshopSection baseWorkshopSection) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseWorkshopSection.class);
         example.createCriteria().andEqualTo("sectionCode", baseWorkshopSection.getSectionCode())
                                 .andEqualTo("organizationId", currentUser.getOrganizationId());
@@ -110,9 +101,6 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         String[] idsArr = ids.split(",");
         List<BaseHtWorkshopSection> list = new LinkedList<>();
         for (String item:idsArr) {
@@ -144,9 +132,6 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseWorkshopSectionImport> baseWorkshopSectionImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
@@ -226,9 +211,6 @@ public class BaseWorkshopSectionServiceImpl extends BaseService<BaseWorkshopSect
         criteria.andEqualTo("sectionCode", baseWorkshopSection.getSectionCode());
         if(StringUtils.isEmpty(baseWorkshopSection.getOrganizationId())){
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(currentUser)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
         }else{
             criteria.andEqualTo("organizationId", baseWorkshopSection.getOrganizationId());

@@ -4,7 +4,6 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigStandingBookDto;
-import com.fantechs.common.base.general.entity.eam.EamJigAttachment;
 import com.fantechs.common.base.general.entity.eam.EamJigStandingBook;
 import com.fantechs.common.base.general.entity.eam.EamJigStandingBookAttachment;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigStandingBook;
@@ -45,9 +44,6 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
     @Override
     public List<EamJigStandingBookDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId",user.getOrganizationId());
         return eamJigStandingBookMapper.findList(map);
     }
@@ -56,11 +52,8 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigStandingBook record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
-        this.codeIfRepeat(record);
+        this.codeIfRepeat(record,user);
 
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());
@@ -87,7 +80,7 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
 
         EamHtJigStandingBook eamHtJigStandingBook = new EamHtJigStandingBook();
         BeanUtils.copyProperties(record,eamHtJigStandingBook);
-        int i = eamHtJigStandingBookMapper.insert(eamHtJigStandingBook);
+        int i = eamHtJigStandingBookMapper.insertSelective(eamHtJigStandingBook);
 
         return i;
     }
@@ -96,18 +89,15 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigStandingBook entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
-        this.codeIfRepeat(entity);
+        this.codeIfRepeat(entity,user);
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
         entity.setOrgId(user.getOrganizationId());
         EamHtJigStandingBook eamHtJigStandingBook = new EamHtJigStandingBook();
         BeanUtils.copyProperties(entity,eamHtJigStandingBook);
-        eamHtJigStandingBookMapper.insert(eamHtJigStandingBook);
+        eamHtJigStandingBookMapper.insertSelective(eamHtJigStandingBook);
 
         //删除原附件
         Example example1 = new Example(EamJigStandingBookAttachment.class);
@@ -137,9 +127,6 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJigStandingBook> list = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -164,11 +151,8 @@ public class EamJigStandingBookServiceImpl extends BaseService<EamJigStandingBoo
         return eamJigStandingBookMapper.deleteByIds(ids);
     }
 
-    private void codeIfRepeat(EamJigStandingBook entity){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+    private void codeIfRepeat(EamJigStandingBook entity,SysUser user){
+
         Example example = new Example(EamJigStandingBook.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复

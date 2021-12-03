@@ -43,9 +43,6 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
     @Override
     public List<EamJigMaintainProjectDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamJigMaintainProjectMapper.findList(map);
@@ -55,11 +52,8 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigMaintainProject record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
-        this.codeIfRepeat(record);
+        this.codeIfRepeat(record,user);
 
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
@@ -86,7 +80,7 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
 
         EamHtJigMaintainProject eamHtJigMaintainProject = new EamHtJigMaintainProject();
         BeanUtils.copyProperties(record,eamHtJigMaintainProject);
-        int i = eamHtJigMaintainProjectMapper.insert(eamHtJigMaintainProject);
+        int i = eamHtJigMaintainProjectMapper.insertSelective(eamHtJigMaintainProject);
 
         return i;
     }
@@ -95,11 +89,8 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigMaintainProject entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
-        this.codeIfRepeat(entity);
+        this.codeIfRepeat(entity,user);
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
@@ -145,7 +136,7 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
 
         EamHtJigMaintainProject eamHtJigMaintainProject = new EamHtJigMaintainProject();
         BeanUtils.copyProperties(entity,eamHtJigMaintainProject);
-        int i = eamHtJigMaintainProjectMapper.insert(eamHtJigMaintainProject);
+        int i = eamHtJigMaintainProjectMapper.insertSelective(eamHtJigMaintainProject);
 
         return i;
     }
@@ -154,9 +145,6 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJigMaintainProject> htList = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -182,16 +170,13 @@ public class EamJigMaintainProjectServiceImpl extends BaseService<EamJigMaintain
         return eamJigMaintainProjectMapper.deleteByIds(ids);
     }
 
-    private void codeIfRepeat(EamJigMaintainProject eamJigMaintainProject){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+    private void codeIfRepeat(EamJigMaintainProject eamJigMaintainProject,SysUser user){
 
         //判断编码是否重复
         Example example = new Example(EamJigMaintainProject.class);
         Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("jigMaintainProjectCode",eamJigMaintainProject.getJigMaintainProjectCode());
+        criteria1.andEqualTo("jigMaintainProjectCode",eamJigMaintainProject.getJigMaintainProjectCode())
+                .andEqualTo("orgId",user.getOrganizationId());
         if (StringUtils.isNotEmpty(eamJigMaintainProject.getJigMaintainProjectId())){
             criteria1.andNotEqualTo("jigMaintainProjectId",eamJigMaintainProject.getJigMaintainProjectId());
         }

@@ -53,9 +53,6 @@ public class EamSparePartServiceImpl extends BaseService<EamSparePart> implement
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamSparePart record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamSparePart.class);
         Example.Criteria criteria = example.createCriteria();
@@ -76,7 +73,7 @@ public class EamSparePartServiceImpl extends BaseService<EamSparePart> implement
         //履历
         EamHtSparePart eamHtSparePart = new EamHtSparePart();
         BeanUtils.copyProperties(record, eamHtSparePart);
-        int i = eamHtSparePartMapper.insert(eamHtSparePart);
+        int i = eamHtSparePartMapper.insertSelective(eamHtSparePart);
         return i;
     }
 
@@ -84,9 +81,6 @@ public class EamSparePartServiceImpl extends BaseService<EamSparePart> implement
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamSparePart entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamSparePart.class);
         Example.Criteria criteria = example.createCriteria();
@@ -104,7 +98,7 @@ public class EamSparePartServiceImpl extends BaseService<EamSparePart> implement
         //履历
         EamHtSparePart eamHtSparePart = new EamHtSparePart();
         BeanUtils.copyProperties(entity, eamHtSparePart);
-        int i = eamHtSparePartMapper.insert(eamHtSparePart);
+        int i = eamHtSparePartMapper.insertSelective(eamHtSparePart);
         return i;
     }
 
@@ -112,9 +106,6 @@ public class EamSparePartServiceImpl extends BaseService<EamSparePart> implement
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<EamHtSparePart> list = new ArrayList<>();
         String[] idArry = ids.split(",");
         for (String id : idArry) {

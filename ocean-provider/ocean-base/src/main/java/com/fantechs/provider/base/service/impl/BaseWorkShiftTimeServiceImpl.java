@@ -30,9 +30,6 @@ public class BaseWorkShiftTimeServiceImpl extends BaseService<BaseWorkShiftTime>
     @Override
     public List<BaseWorkShiftTime> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseWorkShiftTimeMapper.findList(map);
     }
@@ -40,9 +37,6 @@ public class BaseWorkShiftTimeServiceImpl extends BaseService<BaseWorkShiftTime>
     @Override
     public int save(BaseWorkShiftTime baseWorkShiftTime) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseWorkShiftTime.class);
         Example.Criteria criteria = example.createCriteria();
@@ -74,9 +68,6 @@ public class BaseWorkShiftTimeServiceImpl extends BaseService<BaseWorkShiftTime>
     @Override
     public int update(BaseWorkShiftTime baseWorkShiftTime) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseWorkShiftTime.class);
         Example.Criteria criteria = example.createCriteria();

@@ -43,9 +43,6 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
     @Override
     public List<EamJigPointInspectionProjectDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamJigPointInspectionProjectMapper.findList(map);
@@ -55,11 +52,8 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigPointInspectionProject record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
-        this.codeIfRepeat(record);
+        this.codeIfRepeat(record,user);
 
         record.setCreateUserId(user.getUserId());
         record.setCreateTime(new Date());
@@ -86,7 +80,7 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
 
         EamHtJigPointInspectionProject eamHtJigPointInspectionProject = new EamHtJigPointInspectionProject();
         BeanUtils.copyProperties(record,eamHtJigPointInspectionProject);
-        int i = eamHtJigPointInspectionProjectMapper.insert(eamHtJigPointInspectionProject);
+        int i = eamHtJigPointInspectionProjectMapper.insertSelective(eamHtJigPointInspectionProject);
 
         return i;
     }
@@ -95,11 +89,8 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigPointInspectionProject entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
-        this.codeIfRepeat(entity);
+        this.codeIfRepeat(entity,user);
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
@@ -145,7 +136,7 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
 
         EamHtJigPointInspectionProject eamHtJigPointInspectionProject = new EamHtJigPointInspectionProject();
         BeanUtils.copyProperties(entity,eamHtJigPointInspectionProject);
-        int i = eamHtJigPointInspectionProjectMapper.insert(eamHtJigPointInspectionProject);
+        int i = eamHtJigPointInspectionProjectMapper.insertSelective(eamHtJigPointInspectionProject);
 
         return i;
     }
@@ -154,9 +145,6 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJigPointInspectionProject> htList = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -182,16 +170,13 @@ public class EamJigPointInspectionProjectServiceImpl extends BaseService<EamJigP
         return eamJigPointInspectionProjectMapper.deleteByIds(ids);
     }
 
-    private void codeIfRepeat(EamJigPointInspectionProject eamJigPointInspectionProject){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+    private void codeIfRepeat(EamJigPointInspectionProject eamJigPointInspectionProject,SysUser user){
 
         //判断编码是否重复
         Example example = new Example(EamJigPointInspectionProject.class);
         Example.Criteria criteria1 = example.createCriteria();
-        criteria1.andEqualTo("jigPointInspectionProjectCode",eamJigPointInspectionProject.getJigPointInspectionProjectCode());
+        criteria1.andEqualTo("jigPointInspectionProjectCode",eamJigPointInspectionProject.getJigPointInspectionProjectCode())
+                .andEqualTo("orgId",user.getOrganizationId());
         if (StringUtils.isNotEmpty(eamJigPointInspectionProject.getJigPointInspectionProjectId())){
             criteria1.andNotEqualTo("jigPointInspectionProjectId",eamJigPointInspectionProject.getJigPointInspectionProjectId());
         }

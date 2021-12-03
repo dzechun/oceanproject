@@ -36,9 +36,6 @@ public class BaseKeyMaterialServiceImpl extends BaseService<BaseKeyMaterial> imp
     @Override
     public List<BaseKeyMaterialDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseKeyMaterialMapper.findList(map);
     }
@@ -46,9 +43,6 @@ public class BaseKeyMaterialServiceImpl extends BaseService<BaseKeyMaterial> imp
     @Override
     public int save(BaseKeyMaterial baseKeyMaterial) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         //零件料号不能使用产品料号
         if (baseKeyMaterial.getPartMaterialId().equals(baseKeyMaterial.getMaterialId())){
             throw new BizErrorException("零件料号不能使用产品料号");
@@ -82,9 +76,6 @@ public class BaseKeyMaterialServiceImpl extends BaseService<BaseKeyMaterial> imp
     @Override
     public int update(BaseKeyMaterial baseKeyMaterial) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         //零件料号不能使用产品料号
         if (baseKeyMaterial.getPartMaterialId().equals(baseKeyMaterial.getMaterialId())){
             throw new BizErrorException("零件料号不能使用产品料号");
@@ -114,9 +105,6 @@ public class BaseKeyMaterialServiceImpl extends BaseService<BaseKeyMaterial> imp
     @Override
     public int batchDelete(String ids) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] smtKeyMaterialIds = ids.split(",");
         ArrayList<BaseHtKeyMaterial> baseHtKeyMaterials = new ArrayList<>();

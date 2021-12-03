@@ -29,9 +29,6 @@ public class BaseHtWarehouseServiceImpl extends BaseService<BaseHtWarehouse> imp
     @Override
     public List<BaseHtWarehouse> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseHtWarehouseMapper.findHtList(map);
     }
