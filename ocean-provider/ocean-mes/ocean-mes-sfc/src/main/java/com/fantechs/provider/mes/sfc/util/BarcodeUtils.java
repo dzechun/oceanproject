@@ -506,10 +506,15 @@ public class BarcodeUtils {
      */
     public static void printBarCode(PrintCarCodeDto dto) {
         LabelRuteDto labelRuteDto = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findRule(dto.getLabelTypeCode(), dto.getWorkOrderId());
+        if(StringUtils.isEmpty(labelRuteDto)) {
+            throw new BizErrorException("未找到物料标签信息或工单未设置条码规则集合");
+        }
+
         PrintModel printModel = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findPrintModel(ControllerUtil.dynamicCondition("labelCode",labelRuteDto.getLabelCode(),"id",dto.getWorkOrderId()));
         if(StringUtils.isEmpty(printModel)) {
             printModel = new PrintModel();
         }
+
         printModel.setQrCode(dto.getBarcode());
         PrintDto printDto = new PrintDto();
         printDto.setLabelName(labelRuteDto.getLabelName());
