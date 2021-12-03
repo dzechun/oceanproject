@@ -125,6 +125,7 @@ public class SrmPoProductionInfoServiceImpl extends BaseService<SrmPoProductionI
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(SrmPoProductionInfo record) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -151,6 +152,7 @@ public class SrmPoProductionInfoServiceImpl extends BaseService<SrmPoProductionI
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(SrmPoProductionInfo entity) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -172,6 +174,7 @@ public class SrmPoProductionInfoServiceImpl extends BaseService<SrmPoProductionI
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
 
         List<SrmHtPoProductionInfo> htList = new ArrayList<>();

@@ -21,6 +21,7 @@ import com.fantechs.provider.srm.mapper.SrmPoExpediteRecordMapper;
 import com.fantechs.provider.srm.service.SrmPoExpediteService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -67,6 +68,7 @@ public class SrmPoExpediteServiceImpl extends BaseService<SrmPoExpedite> impleme
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(SrmPoExpedite record) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -100,6 +102,7 @@ public class SrmPoExpediteServiceImpl extends BaseService<SrmPoExpedite> impleme
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(SrmPoExpedite entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -156,6 +159,7 @@ public class SrmPoExpediteServiceImpl extends BaseService<SrmPoExpedite> impleme
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         String[] idArry = ids.split(",");
 

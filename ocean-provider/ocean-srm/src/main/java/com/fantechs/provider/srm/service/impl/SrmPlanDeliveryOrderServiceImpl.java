@@ -163,6 +163,7 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(SrmPlanDeliveryOrder record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -186,6 +187,7 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(SrmPlanDeliveryOrder entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -254,6 +256,7 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         String[] idArry = ids.split(",");
 
