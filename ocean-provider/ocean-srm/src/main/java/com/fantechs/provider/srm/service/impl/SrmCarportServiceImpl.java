@@ -107,7 +107,8 @@ public class SrmCarportServiceImpl extends BaseService<SrmCarport> implements Sr
                 .andNotEqualTo("carportId",srmCarportDto.getCarportId());
         List<SrmCarport> srmCarports = srmCarportMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(srmCarports)) throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"仓库已存在，请勿重复添加");
-
+        if(srmCarportDto.getCarportCount()<0 )
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"车位数量不能小于0");
         srmCarportDto.setModifiedTime(new Date());
         srmCarportDto.setModifiedUserId(user.getUserId());
         srmCarportMapper.updateByPrimaryKeySelective(srmCarportDto);
