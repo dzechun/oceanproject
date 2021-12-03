@@ -12,9 +12,11 @@ import com.fantechs.provider.srm.mapper.SrmPlanDeliveryOrderDetMapper;
 import com.fantechs.provider.srm.service.SrmInAsnOrderService;
 import com.fantechs.provider.srm.service.SrmPlanDeliveryOrderDetService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +44,7 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int asn(List<SrmPlanDeliveryOrderDetDto> list) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isNotEmpty(list)) {
@@ -61,11 +64,13 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
                 srmPlanDeliveryOrderDetDto.setModifiedTime(new Date());
 
                 SrmInAsnOrderDetDto srmInAsnOrderDetDto = new SrmInAsnOrderDetDto();
-                srmInAsnOrderDetDto.setSourceOrderId(srmPlanDeliveryOrderDetDto.getPurchaseOrderId());
+                srmInAsnOrderDetDto.setSourceOrderId(srmPlanDeliveryOrderDetDto.getPurchaseOrderDetId());
                 srmInAsnOrderDetDto.setWarehouseId(srmPlanDeliveryOrderDetDto.getWarehouseId());
                 srmInAsnOrderDetDto.setMaterialId(srmPlanDeliveryOrderDetDto.getMaterialId());
                 srmInAsnOrderDetDto.setDeliveryQty(srmPlanDeliveryOrderDetDto.getPlanDeliveryQty());
                 srmInAsnOrderDetDto.setReceivingDate(srmPlanDeliveryOrderDetDto.getPlanDeliveryDate());
+                srmInAsnOrderDetDto.setOrderQty(srmPlanDeliveryOrderDetDto.getOrderQty());
+                srmInAsnOrderDetDto.setTotalDeliveryQty(srmPlanDeliveryOrderDetDto.getTotalPlanDeliveryQty());
                 srmInAsnOrderDetDtos.add(srmInAsnOrderDetDto);
             }
 //            srmInAsnOrderDto.setSrmInAsnOrderDetBarcodes(new ArrayList<>());

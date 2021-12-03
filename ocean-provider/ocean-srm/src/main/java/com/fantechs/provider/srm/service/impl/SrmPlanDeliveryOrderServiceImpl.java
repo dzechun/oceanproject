@@ -264,6 +264,9 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
             if(StringUtils.isEmpty(srmPlanDeliveryOrder)){
                 continue;
             }
+            if (srmPlanDeliveryOrder.getOrderStatus() == 2) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"已提交的数据不能删除");
+            }
 
             SrmHtPlanDeliveryOrder srmHtPlanDeliveryOrder = new SrmHtPlanDeliveryOrder();
             BeanUtils.copyProperties(srmPlanDeliveryOrder, srmHtPlanDeliveryOrder);
