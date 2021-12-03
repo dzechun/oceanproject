@@ -101,6 +101,13 @@ public class SysMenuInfo  extends ValidGroup implements Serializable {
     private Byte menuType;
 
     /**
+     * 是否授权(0-否 1-是)
+     */
+    @Column(name = "is_authorise")
+    @ApiModelProperty(name = "isAuthorise",value = "是否授权(0-否 1-是)")
+    private Byte isAuthorise;
+
+    /**
      * 是否隐藏（0、否 1、是）
      */
     @Column(name = "is_hide")
