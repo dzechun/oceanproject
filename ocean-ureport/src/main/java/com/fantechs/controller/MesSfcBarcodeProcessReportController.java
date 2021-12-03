@@ -1,11 +1,5 @@
 package com.fantechs.controller;
 
-import cn.afterturn.easypoi.entity.vo.NormalExcelConstants;
-import cn.afterturn.easypoi.excel.ExcelExportUtil;
-import cn.afterturn.easypoi.excel.entity.ExportParams;
-import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
-import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSONArray;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
 import com.fantechs.common.base.general.entity.ureport.*;
@@ -18,13 +12,9 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.service.MesSfcBarcodeProcessReportService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mchange.v1.util.ListUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.poi.ss.formula.functions.T;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,9 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.Serializable;
-import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @Api(tags = "工序过站记录")
@@ -50,9 +41,13 @@ public class MesSfcBarcodeProcessReportController {
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<MesSfcBarcodeProcessReport>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcBarcodeProcessReport searchMesSfcBarcodeProcessReport) {
-        Page<Object> page = PageHelper.startPage(searchMesSfcBarcodeProcessReport.getStartPage(),searchMesSfcBarcodeProcessReport.getPageSize());
+//        Page<Object> page = PageHelper.startPage(searchMesSfcBarcodeProcessReport.getStartPage(),searchMesSfcBarcodeProcessReport.getPageSize());
         List<MesSfcBarcodeProcessReport> list = mesSfcBarcodeProcessReportService.findList(ControllerUtil.dynamicConditionByEntity(searchMesSfcBarcodeProcessReport));
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        int total = 0;
+        if (StringUtils.isNotEmpty(list)) {
+            total = list.get(0).getTotal();
+        }
+        return ControllerUtil.returnDataSuccess(list,total);
     }
 
     @ApiOperation("条码过站记录列表")

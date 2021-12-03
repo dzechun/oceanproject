@@ -2,11 +2,12 @@ package com.fantechs.provider.base.service.impl;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSet;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBarcodeRuleSet;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -38,10 +39,8 @@ public class BaseBarcodeRuleSetServiceImpl extends BaseService<BaseBarcodeRuleSe
 
         @Override
         public List<BaseBarcodeRuleSetDto> findList(Map<String, Object> map) {
-            if(StringUtils.isEmpty(map.get("organizationId"))) {
-                SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-                map.put("organizationId", user.getOrganizationId());
-            }
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            map.put("orgId", user.getOrganizationId());
             return baseBarcodeRuleSetMapper.findList(map);
         }
 

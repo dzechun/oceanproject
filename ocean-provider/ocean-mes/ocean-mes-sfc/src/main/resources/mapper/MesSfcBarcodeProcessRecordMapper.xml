@@ -74,13 +74,20 @@
     select msbpr.*,su.user_name as 'operatorUserName' from mes_sfc_barcode_process_record msbpr
     LEFT JOIN ocean_v2.sys_user su ON msbpr.operator_user_id = su.user_id
     <where>
+
+      <if test="barcode != null and barcode != '' and codeQueryMark == 1">
+        and msbpr.barcode = #{barcode}
+      </if>
+      <if test="customerBarcode != null and customerBarcode != ''  and codeQueryMark == 1">
+        and msbpr.customer_barcode = #{customerBarcode}
+      </if>
       <if test="workOrderBarcodeId != null">
         and msbpr.work_order_barcode_id = #{workOrderBarcodeId}
       </if>
-      <if test="barcode != null and barcode != ''">
-        and msbpr.barcode = #{barcode}
+      <if test="barcode != null and barcode != '' and codeQueryMark != 1">
+        and msbpr.barcode like CONCAT('%', #{barcode}, '%')
       </if>
-      <if test="customerBarcode != null and customerBarcode != ''">
+      <if test="customerBarcode != null and customerBarcode != '' and codeQueryMark != 1">
         and msbpr.customer_barcode like CONCAT('%', #{customerBarcode}, '%')
       </if>
       <if test="isCustomerBarcode!=null and isCustomerBarcode!=''">
