@@ -27,10 +27,6 @@ public class WmsInnerInitStockDto extends WmsInnerInitStock implements Serializa
     @Excel(name = "库位编码", height = 20, width = 30,orderNum="4")
     private String storageCode;
 
-    @ApiModelProperty(name = "totalPlanQty",value = "计划数量")
-    @Excel(name = "计划数量", height = 20, width = 30,orderNum="6")
-    private BigDecimal totalPlanQty;
-
     @ApiModelProperty(name = "totalStockQty",value = "实际盘点数量")
     @Excel(name = "实际盘点数量", height = 20, width = 30,orderNum="7")
     private BigDecimal totalStockQty;

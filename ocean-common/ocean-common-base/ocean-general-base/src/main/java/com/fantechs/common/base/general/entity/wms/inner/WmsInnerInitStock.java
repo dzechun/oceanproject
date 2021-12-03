@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -64,6 +65,15 @@ public class WmsInnerInitStock extends ValidGroup implements Serializable {
     @Excel(name = "单据状态(1-待盘点 2-已盘点)", height = 20, width = 30,orderNum="9")
     @Column(name = "order_status")
     private Byte orderStatus;
+
+
+    /**
+     * 计划数量
+     */
+    @ApiModelProperty(name = "totalPlanQty",value = "计划数量")
+    @Excel(name = "计划数量", height = 20, width = 30,orderNum="6")
+    @Column(name = "total_plan_qty")
+    private BigDecimal totalPlanQty;
 
     /**
      * 备注

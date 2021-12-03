@@ -74,13 +74,15 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         Example.Criteria criteria =example.createCriteria();
 
         InitStockCheckBarCode initStockCheckBarCode = new InitStockCheckBarCode();
+        boolean isInPlantBarCode = true;
         if(barCode.length()<12){
-            throw new BizErrorException("条码错误");
+            isInPlantBarCode = false;
+           // throw new BizErrorException("条码错误");
         }
         //判断是否是厂内码3911
         String code = barCode.substring(0,4);
         initStockCheckBarCode.setBarCode(barCode);
-        if(code.equals("3911")){
+        if(isInPlantBarCode && code.equals("3911")){
             //厂内码 并返回1 物料
             initStockCheckBarCode.setType((byte)1);
             initStockCheckBarCode.setInPlantBarcode(barCode);
@@ -92,7 +94,7 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             criteria.andEqualTo("salesBarcode",barCode);
         }else {
             code = barCode.substring(0,2);
-            if(code.equals("99")){
+            if(isInPlantBarCode && code.equals("99")){
                 //梅州厂内码
                 initStockCheckBarCode.setType((byte)1);
                 initStockCheckBarCode.setInPlantBarcode(barCode);
@@ -102,7 +104,7 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                 sb.replace(0,1,"3");
                 sb.replace(4,5,"0");
                 barCode = sb.toString();
-            }else if(code.equals("89")){
+            }else if(isInPlantBarCode && code.equals("89")){
                 //民权厂内码
                 initStockCheckBarCode.setType((byte)1);
                 initStockCheckBarCode.setInPlantBarcode(barCode);
@@ -303,31 +305,37 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             initStockImport.setMaterialId(rs.getData().get(0).getMaterialId());
         }
 
-        HashMap<String,List<InitStockImport>> map = initStockImports.stream().collect(Collectors.groupingBy(InitStockImport::getStorageCode,HashMap::new, Collectors.toList()));
+        //按盘点类型分组
+        HashMap<String,List<InitStockImport>> map = initStockImports.stream().collect(Collectors.groupingBy(InitStockImport::getInitStockType,HashMap::new, Collectors.toList()));
         Set<String> set = map.keySet();
         for (String s : set) {
-            //表头
-            WmsInnerInitStock wmsInnerInitStock = new WmsInnerInitStock();
-            wmsInnerInitStock.setInitStockOrderCode(CodeUtils.getId("IS"));
-            wmsInnerInitStock.setStorageId(map.get(s).get(0).getStorageId());
-            wmsInnerInitStock.setInitStockType(Byte.parseByte(map.get(s).get(0).getInitStockType()));
-            wmsInnerInitStock.setOrderStatus((byte)1);
-            wmsInnerInitStock.setCreateTime(new Date());
-            wmsInnerInitStock.setCreateUserId(sysUser.getUserId());
-            wmsInnerInitStock.setModifiedTime(new Date());
-            wmsInnerInitStock.setModifiedUserId(sysUser.getUserId());
-            wmsInnerInitStock.setOrgId(sysUser.getOrganizationId());
-            wmsInnerInitStockMapper.insertUseGeneratedKeys(wmsInnerInitStock);
-            for (InitStockImport initStockImport : map.get(s)) {
-                WmsInnerInitStockDet wmsInnerInitStockDet = new WmsInnerInitStockDet();
-                wmsInnerInitStockDet.setInitStockId(wmsInnerInitStock.getInitStockId());
-                wmsInnerInitStockDet.setMaterialId(initStockImport.getMaterialId());
-                wmsInnerInitStockDet.setPlanQty(initStockImport.getPlanQty());
-                wmsInnerInitStockDet.setCreateTime(new Date());
-                wmsInnerInitStockDet.setCreateUserId(sysUser.getUserId());
-                wmsInnerInitStockDet.setModifiedUserId(sysUser.getUserId());
-                wmsInnerInitStockDet.setModifiedTime(new Date());
-                success = wmsInnerInitStockDetMapper.insertSelective(wmsInnerInitStockDet);
+            //按库位分组
+            HashMap<String,List<InitStockImport>> strMap = map.get(s).stream().collect(Collectors.groupingBy(InitStockImport::getStorageCode,HashMap::new,Collectors.toList()));
+            Set<String> st = strMap.keySet();
+            for (String s1 : st) {
+                //表头
+                WmsInnerInitStock wmsInnerInitStock = new WmsInnerInitStock();
+                wmsInnerInitStock.setInitStockOrderCode(CodeUtils.getId("IS"));
+                wmsInnerInitStock.setStorageId(strMap.get(s1).get(0).getStorageId());
+                wmsInnerInitStock.setInitStockType(Byte.parseByte(map.get(s).get(0).getInitStockType()));
+                wmsInnerInitStock.setOrderStatus((byte)1);
+                wmsInnerInitStock.setCreateTime(new Date());
+                wmsInnerInitStock.setCreateUserId(sysUser.getUserId());
+                wmsInnerInitStock.setModifiedTime(new Date());
+                wmsInnerInitStock.setModifiedUserId(sysUser.getUserId());
+                wmsInnerInitStock.setOrgId(sysUser.getOrganizationId());
+                wmsInnerInitStockMapper.insertUseGeneratedKeys(wmsInnerInitStock);
+                for (InitStockImport initStockImport : strMap.get(s1)) {
+                    WmsInnerInitStockDet wmsInnerInitStockDet = new WmsInnerInitStockDet();
+                    wmsInnerInitStockDet.setInitStockId(wmsInnerInitStock.getInitStockId());
+                    wmsInnerInitStockDet.setMaterialId(initStockImport.getMaterialId());
+                    wmsInnerInitStockDet.setPlanQty(initStockImport.getPlanQty());
+                    wmsInnerInitStockDet.setCreateTime(new Date());
+                    wmsInnerInitStockDet.setCreateUserId(sysUser.getUserId());
+                    wmsInnerInitStockDet.setModifiedUserId(sysUser.getUserId());
+                    wmsInnerInitStockDet.setModifiedTime(new Date());
+                    success += wmsInnerInitStockDetMapper.insertSelective(wmsInnerInitStockDet);
+                }
             }
         }
         resultMap.put("操作成功总数",success);
