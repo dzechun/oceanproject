@@ -1,6 +1,7 @@
 package com.fantechs.provider.srm.service.impl;
 
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.imports.SrmInAsnOrderDetImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
@@ -42,13 +43,14 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
         return srmInAsnOrderDetMapper.findList(map);
     }
 
+
     @Override
-    public Map<String, Object> importExcel(List<SrmInAsnOrderDetImport> srmInAsnOrderDetImports, Long asnOrderId) {
+    public List<SrmInAsnOrderDetDto> importExcels(List<SrmInAsnOrderDetImport> srmInAsnOrderDetImports) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
-        LinkedList<SrmInAsnOrderDet> list = new LinkedList<>();
+        LinkedList<SrmInAsnOrderDetDto> list = new LinkedList<>();
         LinkedList<SrmInHtAsnOrderDet> htList = new LinkedList<>();
         for (int i = 0; i < srmInAsnOrderDetImports.size(); i++) {
             SrmInAsnOrderDetImport srmInAsnOrderDetImport = srmInAsnOrderDetImports.get(i);
@@ -60,9 +62,9 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
             if (StringUtils.isEmpty(
                     purchaseOrderCode,materialCode,warehouseName
             )){
-                //  throw new BizErrorException("添加失败，采购单号、物料号、SN码和生产日期不能为空,"+"错误行数为:"+(i+2));
-                fail.add(i+2);
-                continue;
+                  throw new BizErrorException("添加失败，采购单号、物料号、仓库名称不能为空,"+"错误行数为:"+(i+2));
+               /* fail.add(i+2);
+                continue;*/
             }
 
             //判断集合中是否已经存在同样的数据
@@ -79,42 +81,41 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                 continue;
             }*/
 
-            SrmInAsnOrderDet srmInAsnOrderDet = new SrmInAsnOrderDet();
-            BeanUtils.copyProperties(srmInAsnOrderDetImport, srmInAsnOrderDet);
+            SrmInAsnOrderDetDto srmInAsnOrderDetDto = new SrmInAsnOrderDetDto();
+            BeanUtils.copyProperties(srmInAsnOrderDetImport, srmInAsnOrderDetDto);
 
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(srmInAsnOrderDetImport.getMaterialCode());
             searchBaseMaterial.setOrgId(user.getOrganizationId());
             List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
             if (StringUtils.isEmpty(baseMaterials)){
-                //   if(StringUtils.isEmpty(baseMaterials)) throw new BizErrorException("未查询到对应的物料信息");
-                fail.add(i+2);
-                continue;
+                   if(StringUtils.isEmpty(baseMaterials)) throw new BizErrorException("未查询到物料编码为"+srmInAsnOrderDetImport.getMaterialCode()+"的信息");
+                /*fail.add(i+2);
+                continue;*/
             }
             SearchBaseWarehouse searchBaseWarehouse = new SearchBaseWarehouse();
             searchBaseWarehouse.setWarehouseName(srmInAsnOrderDetImport.getWarehouseName());
             searchBaseWarehouse.setOrgId(user.getOrganizationId());
             List<BaseWarehouse> baseWarehouses = baseFeignApi.findList(searchBaseWarehouse).getData();
             if (StringUtils.isEmpty(baseWarehouses)){
-                //   if(StringUtils.isEmpty(baseMaterials)) throw new BizErrorException("未查询到对应的仓库信息");
-                fail.add(i+2);
-                continue;
+                    throw new BizErrorException("未查询到仓库编码为"+srmInAsnOrderDetImport.getWarehouseName()+"的信息");
+                //fail.add(i+2);
+                //continue;
             }
             if(StringUtils.isEmpty(srmInAsnOrderDetImport.getDeliveryQty()))
-                srmInAsnOrderDet.setDeliveryQty(BigDecimal.ZERO);
-            srmInAsnOrderDet.setAsnOrderId(asnOrderId);
-            srmInAsnOrderDet.setMaterialId(baseMaterials.get(0).getMaterialId());
-            srmInAsnOrderDet.setWarehouseId(baseWarehouses.get(0).getWarehouseId());
-            srmInAsnOrderDet.setCreateTime(new Date());
-            srmInAsnOrderDet.setCreateUserId(user.getUserId());
-            srmInAsnOrderDet.setModifiedTime(new Date());
-            srmInAsnOrderDet.setModifiedUserId(user.getUserId());
-            srmInAsnOrderDet.setStatus((byte)1);
-            srmInAsnOrderDet.setOrgId(user.getOrganizationId());
-            list.add(srmInAsnOrderDet);
+                srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
+            srmInAsnOrderDetDto.setMaterialId(baseMaterials.get(0).getMaterialId());
+            srmInAsnOrderDetDto.setWarehouseId(baseWarehouses.get(0).getWarehouseId());
+            srmInAsnOrderDetDto.setCreateTime(new Date());
+            srmInAsnOrderDetDto.setCreateUserId(user.getUserId());
+            srmInAsnOrderDetDto.setModifiedTime(new Date());
+            srmInAsnOrderDetDto.setModifiedUserId(user.getUserId());
+            srmInAsnOrderDetDto.setStatus((byte)1);
+            srmInAsnOrderDetDto.setOrgId(user.getOrganizationId());
+            list.add(srmInAsnOrderDetDto);
         }
 
-        if (StringUtils.isNotEmpty(list)){
+      /*  if (StringUtils.isNotEmpty(list)){
             success = srmInAsnOrderDetMapper.insertList(list);
         }
 
@@ -128,7 +129,8 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
         }
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
-        return resutlMap;
+        return resutlMap;*/
+        return list;
     }
 
 }

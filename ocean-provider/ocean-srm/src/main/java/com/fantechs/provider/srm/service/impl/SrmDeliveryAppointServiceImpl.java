@@ -99,7 +99,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
             throw new BizErrorException("时间格式转换错误");
         }
 
-
+        //预约数量校验
         Example example = new Example(SrmDeliveryAppoint.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("appointStartTime",srmDeliveryAppointDto.getAppointStartTime());
@@ -107,6 +107,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         int num = srmDeliveryAppointMapper.selectCountByExample(example);
         if(num > srmCarportTimeQuantumDtos.get(0).getCarportCount())
             throw new BizErrorException("该时间段预约已满");
+
 
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("isOrderCensor");

@@ -16,5 +16,7 @@ import java.util.Map;
 public interface SrmInAsnOrderDetService extends IService<SrmInAsnOrderDet> {
     List<SrmInAsnOrderDetDto> findList(Map<String, Object> map);
 
-    Map<String, Object> importExcel(List<SrmInAsnOrderDetImport> srmInAsnOrderDetImports, Long asnOrderId);
+  //  Map<String, Object> importExcel(List<SrmInAsnOrderDetImport> srmInAsnOrderDetImports, Long asnOrderId);
+
+    List<SrmInAsnOrderDetDto> importExcels(List<SrmInAsnOrderDetImport> srmInAsnOrderDetImports);
 }

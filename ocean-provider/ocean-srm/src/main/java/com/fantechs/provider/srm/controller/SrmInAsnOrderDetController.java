@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -93,14 +92,14 @@ public class SrmInAsnOrderDetController {
     }
 
     @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入",notes = "从excel导入")
+    @ApiOperation(value = "从excel导入(不保存,返回给页面)",notes = "从excel导入,返回给页面")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file,
                                       @ApiParam(value = "装箱汇总ID",required = true)@RequestParam  @NotNull(message="装箱汇总ID不能为空") Long asnOrderId){
         try {
             // 导入操作
             List<SrmInAsnOrderDetImport> srmInAsnOrderDetImports = EasyPoiUtils.importExcel(file, 0, 1, SrmInAsnOrderDetImport.class);
-            Map<String, Object> resultMap = srmInAsnOrderDetService.importExcel(srmInAsnOrderDetImports,asnOrderId);
-            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+            List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos = srmInAsnOrderDetService.importExcels(srmInAsnOrderDetImports);
+            return ControllerUtil.returnDataSuccess(srmInAsnOrderDetDtos,(int)srmInAsnOrderDetDtos.size());
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
