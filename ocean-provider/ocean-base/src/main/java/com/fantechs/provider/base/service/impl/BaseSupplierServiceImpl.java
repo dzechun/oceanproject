@@ -56,7 +56,7 @@ public class BaseSupplierServiceImpl  extends BaseService<BaseSupplier> implemen
         if(StringUtils.isEmpty(map.get("organizationId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
             map.put("orgId", user.getOrganizationId());
-            map.put("userId", user.getUserId());
+
             /*Map<String, Object> mapReUser=new HashMap<>();
             mapReUser.put("userId",user.getUserId());
             mapReUser.put("orgId",user.getOrganizationId());
