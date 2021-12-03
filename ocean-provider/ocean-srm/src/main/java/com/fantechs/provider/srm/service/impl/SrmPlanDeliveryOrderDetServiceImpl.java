@@ -52,13 +52,12 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
             SrmInAsnOrderDto srmInAsnOrderDto = new SrmInAsnOrderDto();
             List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos = new ArrayList<>();
 
-            Example example = new Example(SrmPlanDeliveryOrderDet.class);
-            example.createCriteria().andEqualTo("planDeliveryOrderId",list.get(0).getPlanDeliveryOrderId());
-            srmPlanDeliveryOrderDetMapper.deleteByExample(example);
+            List<Long> idList = new ArrayList<>();
             for (SrmPlanDeliveryOrderDetDto srmPlanDeliveryOrderDetDto : list) {
                 if (srmPlanDeliveryOrderDetDto.getIfCreateAsn() == 1) {
                     continue;
                 }
+                idList.add(srmPlanDeliveryOrderDetDto.getPlanDeliveryOrderDetId());
                 srmPlanDeliveryOrderDetDto.setIfCreateAsn((byte) 1);
                 srmPlanDeliveryOrderDetDto.setModifiedUserId(user.getUserId());
                 srmPlanDeliveryOrderDetDto.setModifiedTime(new Date());
@@ -73,7 +72,13 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
                 srmInAsnOrderDetDto.setTotalDeliveryQty(srmPlanDeliveryOrderDetDto.getTotalPlanDeliveryQty());
                 srmInAsnOrderDetDtos.add(srmInAsnOrderDetDto);
             }
-//            srmInAsnOrderDto.setSrmInAsnOrderDetBarcodes(new ArrayList<>());
+            if (StringUtils.isNotEmpty(idList)) {
+                Example example = new Example(SrmPlanDeliveryOrderDet.class);
+                example.createCriteria().andEqualTo("planDeliveryOrderId",list.get(0).getPlanDeliveryOrderId())
+                        .andIn("planDeliveryOrderDetId",idList);
+                srmPlanDeliveryOrderDetMapper.deleteByExample(example);
+            }
+
             srmInAsnOrderDto.setSrmInAsnOrderDetDtos(srmInAsnOrderDetDtos);
             srmInAsnOrderService.save(srmInAsnOrderDto);
             srmPlanDeliveryOrderDetMapper.insertList(list);
