@@ -13,6 +13,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.mapper.MesSfcBarcodeProcessReportMapper;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.service.MesSfcBarcodeProcessReportService;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 
@@ -66,7 +67,25 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
             throw new BizErrorException("查询失败，未找到条码");
         }
 
-        return mesSfcBarcodeProcessReportMapper.findList(map);
+        List<MesSfcBarcodeProcessReport> list = mesSfcBarcodeProcessReportMapper.findList(map);
+        if (StringUtils.isNotEmpty(list)) {
+            MesSfcBarcodeProcessReport mesSfcBarcodeProcessReport = list.get(0);
+            Page<Object> page = PageHelper.startPage(Integer.valueOf(map.get("startPage").toString()),Integer.valueOf(map.get("pageSize").toString()));
+            MesSfcBarcodeProcessReport recordList = findRecordList(map);
+            recordList.setBarcode(mesSfcBarcodeProcessReport.getBarcode());
+            recordList.setWorkOrderCode(mesSfcBarcodeProcessReport.getWorkOrderCode());
+            recordList.setWorkOrderStatus(mesSfcBarcodeProcessReport.getWorkOrderStatus());
+            recordList.setProductModelName(mesSfcBarcodeProcessReport.getProductModelName());
+            recordList.setProLineName(mesSfcBarcodeProcessReport.getProLineName());
+            recordList.setRouteName(mesSfcBarcodeProcessReport.getRouteName());
+            recordList.setMaterialCode(mesSfcBarcodeProcessReport.getMaterialCode());
+            recordList.setMaterialName(mesSfcBarcodeProcessReport.getMaterialName());
+//            BeanUtil.copyProperties(mesSfcBarcodeProcessReport,recordList);
+            recordList.setTotal((int) page.getTotal());
+            list.set(0,recordList);
+        }
+
+        return list;
     }
 
     @Override
@@ -92,6 +111,9 @@ public class MesSfcBarcodeProcessReportServiceImpl extends BaseService<MesSfcBar
             else{
                 record.setBarcode(map.get("barcode").toString());
             }
+            record.setCodeQueryMark(1);
+            record.setPageSize(StringUtils.isNotEmpty(map.get("pageSize")) ?Integer.valueOf(map.get("pageSize").toString()):10);
+            record.setStartPage(StringUtils.isNotEmpty(map.get("startPage")) ?Integer.valueOf(map.get("startPage").toString()):1);
 
             //record.setBarcode(map.get("barcode").toString());
             ResponseEntity<List<MesSfcBarcodeProcessRecordDto>> data = sfcFeignApi.findList(record);

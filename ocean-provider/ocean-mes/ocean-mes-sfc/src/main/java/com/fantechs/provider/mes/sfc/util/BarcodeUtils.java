@@ -603,7 +603,11 @@ public class BarcodeUtils {
                     .filter(i -> processId.equals(i.getProcessId()))
                     .findFirst();
             if (!routeProcessOptional.isPresent()) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getProcessId());
+                ResponseEntity<BaseProcess> nowProcess=barcodeUtils.baseFeignApi.processDetail(processId);
+                if(StringUtils.isEmpty(nowProcess)){
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012012, processId);
+                }
+                throw new BizErrorException(ErrorCodeEnum.PDA40012011.getCode(), "工单工艺路线中不存在此工序-->"+" 工序编码:"+nowProcess.getData().getProcessCode()+" 工序名称:"+nowProcess.getData().getProcessName());
             }
 
             BaseRouteProcess routeProcess = routeProcessOptional.get();
@@ -837,7 +841,11 @@ public class BarcodeUtils {
                         .filter(i -> dto.getNowProcessId().equals(i.getProcessId()))
                         .findFirst();
                 if (!routeProcessOptional.isPresent()) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getNextProcessId());
+                    ResponseEntity<BaseProcess> nowProcess=barcodeUtils.baseFeignApi.processDetail(dto.getNowProcessId());
+                    if(StringUtils.isEmpty(nowProcess)){
+                        throw new BizErrorException(ErrorCodeEnum.PDA40012012, dto.getNowProcessId());
+                    }
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012011.getCode(), "工单工艺路线中不存在此工序-->"+" 工序编码:"+nowProcess.getData().getProcessCode()+" 工序名称:"+nowProcess.getData().getProcessName());
                 }
 
                 BaseRouteProcess routeProcess = routeProcessOptional.get();
