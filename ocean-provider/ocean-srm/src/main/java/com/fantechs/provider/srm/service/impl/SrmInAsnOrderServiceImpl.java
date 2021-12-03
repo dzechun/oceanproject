@@ -113,30 +113,32 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         int i = srmInAsnOrderMapper.insertUseGeneratedKeys(srmInAsnOrderDto);
 
         //保存详情表
-        List<SrmInAsnOrderDetDto> list = new ArrayList<>();
-        for(SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()){
+        if(StringUtils.isNotEmpty(srmInAsnOrderDto.getSrmInAsnOrderDetDtos())) {
+            List<SrmInAsnOrderDetDto> list = new ArrayList<>();
+            for (SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
 
-            if(StringUtils.isEmpty(srmInAsnOrderDetDto.getOrderQty())) srmInAsnOrderDetDto.setOrderQty(BigDecimal.ZERO);
-            if(StringUtils.isEmpty(srmInAsnOrderDetDto.getTotalDeliveryQty())) srmInAsnOrderDetDto.setTotalDeliveryQty(BigDecimal.ZERO);
-            if(StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty())) srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
+                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getOrderQty()))
+                    srmInAsnOrderDetDto.setOrderQty(BigDecimal.ZERO);
+                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getTotalDeliveryQty()))
+                    srmInAsnOrderDetDto.setTotalDeliveryQty(BigDecimal.ZERO);
+                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
+                    srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
+                if (srmInAsnOrderDetDto.getOrderQty().compareTo(srmInAsnOrderDetDto.getTotalDeliveryQty().add(srmInAsnOrderDetDto.getDeliveryQty())) == -1)
+                    throw new BizErrorException("交货总量大于订单数量");
 
-            if(srmInAsnOrderDetDto.getOrderQty().compareTo( srmInAsnOrderDetDto.getTotalDeliveryQty().add(srmInAsnOrderDetDto.getDeliveryQty()))== -1)
-                throw new BizErrorException("交货总量大于订单数量");
-
-
-            srmInAsnOrderDetDto.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
-            if(StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
-                srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
-            srmInAsnOrderDetDto.setCreateUserId(user.getUserId());
-            srmInAsnOrderDetDto.setCreateTime(new Date());
-            srmInAsnOrderDetDto.setModifiedUserId(user.getUserId());
-            srmInAsnOrderDetDto.setModifiedTime(new Date());
-            srmInAsnOrderDetDto.setStatus(StringUtils.isEmpty(srmInAsnOrderDetDto.getStatus())?1: srmInAsnOrderDetDto.getStatus());
-            srmInAsnOrderDetDto.setOrgId(user.getOrganizationId());
-            list.add(srmInAsnOrderDetDto);
+                srmInAsnOrderDetDto.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
+                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
+                    srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
+                srmInAsnOrderDetDto.setCreateUserId(user.getUserId());
+                srmInAsnOrderDetDto.setCreateTime(new Date());
+                srmInAsnOrderDetDto.setModifiedUserId(user.getUserId());
+                srmInAsnOrderDetDto.setModifiedTime(new Date());
+                srmInAsnOrderDetDto.setStatus(StringUtils.isEmpty(srmInAsnOrderDetDto.getStatus()) ? 1 : srmInAsnOrderDetDto.getStatus());
+                srmInAsnOrderDetDto.setOrgId(user.getOrganizationId());
+                list.add(srmInAsnOrderDetDto);
+            }
+            if (StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
         }
-        if(StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
-
         //保存条码表---条码未自动生成，此处只展示，暂不做保存
        /* List<SrmInAsnOrderDetBarcode> barcodeList = new ArrayList<>();
         for(SrmInAsnOrderDetBarcode srmInAsnOrderDetBarcode : srmInAsnOrderDto.getSrmInAsnOrderDetBarcodes()){
@@ -188,19 +190,22 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         criteria1.andEqualTo("asnOrderId",srmInAsnOrderDto.getAsnOrderId());
         srmInAsnOrderDetMapper.deleteByExample(example1);
         //保存详情表
-        List<SrmInAsnOrderDetDto> list = new ArrayList<>();
-        for(SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()){
-            srmInAsnOrderDetDto.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
-            srmInAsnOrderDetDto.setCreateUserId(user.getUserId());
-            srmInAsnOrderDetDto.setCreateTime(new Date());
-            srmInAsnOrderDetDto.setModifiedUserId(user.getUserId());
-            srmInAsnOrderDetDto.setModifiedTime(new Date());
-            srmInAsnOrderDetDto.setStatus(StringUtils.isEmpty(srmInAsnOrderDetDto.getStatus())?1: srmInAsnOrderDetDto.getStatus());
-            srmInAsnOrderDetDto.setOrgId(user.getOrganizationId());
-            list.add(srmInAsnOrderDetDto);
+        if(StringUtils.isNotEmpty(srmInAsnOrderDto.getSrmInAsnOrderDetDtos())) {
+            List<SrmInAsnOrderDetDto> list = new ArrayList<>();
+            for (SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
+                if (srmInAsnOrderDetDto.getOrderQty().compareTo(srmInAsnOrderDetDto.getTotalDeliveryQty().add(srmInAsnOrderDetDto.getDeliveryQty())) == -1)
+                    throw new BizErrorException("交货总量大于订单数量");
+                srmInAsnOrderDetDto.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
+                srmInAsnOrderDetDto.setCreateUserId(user.getUserId());
+                srmInAsnOrderDetDto.setCreateTime(new Date());
+                srmInAsnOrderDetDto.setModifiedUserId(user.getUserId());
+                srmInAsnOrderDetDto.setModifiedTime(new Date());
+                srmInAsnOrderDetDto.setStatus(StringUtils.isEmpty(srmInAsnOrderDetDto.getStatus()) ? 1 : srmInAsnOrderDetDto.getStatus());
+                srmInAsnOrderDetDto.setOrgId(user.getOrganizationId());
+                list.add(srmInAsnOrderDetDto);
+            }
+            if (StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
         }
-        if(StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
-
        /* Example example2 = new Example(SrmInAsnOrderDetBarcode.class);
         Example.Criteria criteria2 = example2.createCriteria();
         criteria2.andEqualTo("asnOrderId",srmInAsnOrderDto.getAsnOrderId());
