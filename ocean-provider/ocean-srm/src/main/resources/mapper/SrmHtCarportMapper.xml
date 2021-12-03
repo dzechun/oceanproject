@@ -23,21 +23,21 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-        sc.ht_carport_id,
-        sc.carport_id,
-        sc.warehouse_id,
-        sc.carport_count,
-        sc.status,
-        sc.remark,
-        sc.org_id,
-        sc.create_user_id,
-        sc.create_time,
-        sc.modified_user_id,
-        sc.modified_time,
-        sc.is_delete,
-        sc.option1,
-        sc.option2,
-        sc.option3
+        shc.ht_carport_id,
+        shc.carport_id,
+        shc.warehouse_id,
+        shc.carport_count,
+        shc.status,
+        shc.remark,
+        shc.org_id,
+        shc.create_user_id,
+        shc.create_time,
+        shc.modified_user_id,
+        shc.modified_time,
+        shc.is_delete,
+        shc.option1,
+        shc.option2,
+        shc.option3
     </sql>
 
 
@@ -45,23 +45,23 @@
     select <include refid="Base_Column_List"></include>,
     bw.warehouse_name AS warehouse_name,
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
-    from srm_carport sc
-    LEFT JOIN base_warehouse bw ON sc.warehouse_id = bw.warehouse_id
-    LEFT JOIN sys_user su ON sc.create_user_id = su.user_id
-    LEFT JOIN sys_user sus ON sc.modified_user_id = sus.user_id
-    LEFT JOIN base_organization bo ON sc.org_id = bo.organization_id
+    from srm_ht_carport shc
+    LEFT JOIN base_warehouse bw ON shc.warehouse_id = bw.warehouse_id
+    LEFT JOIN sys_user su ON shc.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON shc.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON shc.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">
-        and sc.org_id = #{orgId}
+        and shc.org_id = #{orgId}
       </if>
       <if test="warehouseId!=null and warehouseId!=''">
-        and sc.warehouse_id = #{warehouseId}
+        and shc.warehouse_id = #{warehouseId}
       </if>
       <if test="warehouseName!=null and warehouseName!=''">
         and bw.warehouse_name = #{warehouseName}
       </if>
 
     </where>
-    order by sc.create_time desc
+    order by shc.create_time desc
   </select>
 </mapper>

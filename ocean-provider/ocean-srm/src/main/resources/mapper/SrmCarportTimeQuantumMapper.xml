@@ -29,6 +29,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="carport_count" jdbcType="INTEGER" property="carportCount" />
+    <result column="consignee_name" jdbcType="INTEGER" property="consigneeName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -68,7 +69,12 @@
         <if test="carportId!=null and carportId!=''">
             and sctq.carport_id = #{carportId}
         </if>
-
+        <if test="carportId!=null and carportId!=''">
+            and sctq.carport_id = #{carportId}
+        </if>
+        <if test="warehouseId!=null and warehouseId!=''">
+            and sc.warehouse_id = #{warehouseId}
+        </if>
 
     </where>
     order by sctq.create_time desc

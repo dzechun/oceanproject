@@ -26,23 +26,23 @@
 
 
   <sql id="Base_Column_List">
-        sctq.ht_carport_time_bucket_id,
-        sctq.carport_time_bucket_id,
-        sctq.start_time,
-        sctq.end_time,
-        sctq.carport_id,
-        sctq.consignee_id,
-        sctq.status,
-        sctq.remark,
-        sctq.org_id,
-        sctq.create_user_id,
-        sctq.create_time,
-        sctq.modified_user_id,
-        sctq.modified_time,
-        sctq.is_delete,
-        sctq.option1,
-        sctq.option2,
-        sctq.option3
+        shctq.ht_carport_time_bucket_id,
+        shctq.carport_time_bucket_id,
+        shctq.start_time,
+        shctq.end_time,
+        shctq.carport_id,
+        shctq.consignee_id,
+        shctq.status,
+        shctq.remark,
+        shctq.org_id,
+        shctq.create_user_id,
+        shctq.create_time,
+        shctq.modified_user_id,
+        shctq.modified_time,
+        shctq.is_delete,
+        shctq.option1,
+        shctq.option2,
+        shctq.option3
   </sql>
 
 
@@ -50,22 +50,20 @@
     select <include refid="Base_Column_List"></include>,
     bc.consignee_name AS consignee_name,sc.carport_count AS carport_count,
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
-    from srm_carport_time_quantum sctq
-    LEFT JOIN base_consignee bc ON sctq.consignee_id = bc.consignee_id
-    LEFT JOIN srm_carport sc ON sctq.carport_id = sc.carport_id
-    LEFT JOIN sys_user su ON sctq.create_user_id = su.user_id
-    LEFT JOIN sys_user sus ON sctq.modified_user_id = sus.user_id
-    LEFT JOIN base_organization bo ON sctq.org_id = bo.organization_id
+    from srm_ht_carport_time_quantum shctq
+    LEFT JOIN base_consignee bc ON shctq.consignee_id = bc.consignee_id
+    LEFT JOIN srm_carport sc ON shctq.carport_id = sc.carport_id
+    LEFT JOIN sys_user su ON shctq.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON shctq.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON shctq.org_id = bo.organization_id
     <where>
       <if test="orgId!=null and orgId!=''">
-        and sctq.org_id = #{orgId}
+        and shctq.org_id = #{orgId}
       </if>
       <if test="carportId!=null and carportId!=''">
-        and sctq.carport_id = #{carportId}
+        and shctq.carport_id = #{carportId}
       </if>
-
-
     </where>
-    order by sctq.create_time desc
+    order by shctq.create_time desc
   </select>
 </mapper>

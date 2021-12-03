@@ -42,7 +42,7 @@ public class SrmDeliveryAppointController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated SrmDeliveryAppointDto srmDeliveryAppointDto) {
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SrmDeliveryAppointDto srmDeliveryAppointDto) {
         return ControllerUtil.returnCRUD(srmDeliveryAppointService.save(srmDeliveryAppointDto));
     }
 

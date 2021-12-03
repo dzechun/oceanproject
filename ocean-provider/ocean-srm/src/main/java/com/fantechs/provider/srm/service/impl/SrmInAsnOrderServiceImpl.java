@@ -116,8 +116,12 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         List<SrmInAsnOrderDetDto> list = new ArrayList<>();
         for(SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()){
 
+            if(StringUtils.isEmpty(srmInAsnOrderDetDto.getOrderQty())) srmInAsnOrderDetDto.setOrderQty(BigDecimal.ZERO);
+            if(StringUtils.isEmpty(srmInAsnOrderDetDto.getTotalDeliveryQty())) srmInAsnOrderDetDto.setTotalDeliveryQty(BigDecimal.ZERO);
+            if(StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty())) srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
+
             if(srmInAsnOrderDetDto.getOrderQty().compareTo( srmInAsnOrderDetDto.getTotalDeliveryQty().add(srmInAsnOrderDetDto.getDeliveryQty()))== -1)
-                throw new BizErrorException("文件保存失败");
+                throw new BizErrorException("交货总量大于订单数量");
 
 
             srmInAsnOrderDetDto.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
