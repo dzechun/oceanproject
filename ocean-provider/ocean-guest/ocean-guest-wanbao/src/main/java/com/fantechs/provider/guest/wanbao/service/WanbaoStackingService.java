@@ -14,5 +14,5 @@ import java.util.Map;
 public interface WanbaoStackingService extends IService<WanbaoStacking> {
     List<WanbaoStackingDto> findList(Map<String, Object> map);
 
-    Map<String, Object> importExcel(List<WanbaoStacking> list);
+    Map<String, Object> importExcel(List<WanbaoStackingDto> list);
 }
