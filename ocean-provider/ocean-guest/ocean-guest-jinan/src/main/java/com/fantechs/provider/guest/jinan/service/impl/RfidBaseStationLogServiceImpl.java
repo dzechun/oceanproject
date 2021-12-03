@@ -51,7 +51,7 @@ public class RfidBaseStationLogServiceImpl extends BaseService<RfidBaseStationLo
         map.put("baseStationCode",rfidBaseStationData.getBaseStationCode());
         List<RfidBaseStation> rfidBaseStationList = rfidBaseStationMapper.findList(map);
         if(StringUtils.isEmpty(rfidBaseStationList)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到该基站信息");
         }
         RfidBaseStation rfidBaseStation = rfidBaseStationList.get(0);
 

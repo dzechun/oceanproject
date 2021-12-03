@@ -68,6 +68,9 @@
       <if test="assetBarcode!=null and assetBarcode!=''">
         and ra.asset_barcode  like CONCAT('%', #{assetBarcode}, '%')
       </if>
+      <if test="remark!=null and remark!=''">
+        and ra.remark  like CONCAT('%', #{remark}, '%')
+      </if>
       <if test="status!=null">
         and ra.status = #{status}
       </if>

@@ -13,4 +13,6 @@ import java.util.Map;
 
 public interface RfidBaseStationReAssetService extends IService<RfidBaseStationReAsset> {
     List<RfidBaseStationReAsset> findList(Map<String, Object> map);
+
+    int batchAdd(List<RfidBaseStationReAsset> list);
 }

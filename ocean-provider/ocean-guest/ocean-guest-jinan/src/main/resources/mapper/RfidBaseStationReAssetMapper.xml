@@ -58,6 +58,9 @@
       <if test="baseStationId!=null">
         and rbsra.base_station_id = #{baseStationId}
       </if>
+      <if test="assetId!=null">
+        and rbsra.asset_id = #{assetId}
+      </if>
       <if test="status!=null">
         and rbsra.status = #{status}
       </if>

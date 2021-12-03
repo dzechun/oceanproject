@@ -85,6 +85,15 @@
       <if test="baseStationMac!=null and baseStationMac!=''">
         and rbs.base_station_mac  like CONCAT('%', #{baseStationMac}, '%')
       </if>
+      <if test="areaCode!=null and areaCode!=''">
+        and ra.area_code  like CONCAT('%', #{areaCode}, '%')
+      </if>
+      <if test="areaName!=null and areaName!=''">
+        and ra.area_name  like CONCAT('%', #{areaName}, '%')
+      </if>
+      <if test="remark!=null and remark!=''">
+        and rbs.remark  like CONCAT('%', #{remark}, '%')
+      </if>
       <if test="status!=null">
         and rbs.status = #{status}
       </if>

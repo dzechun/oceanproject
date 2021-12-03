@@ -31,4 +31,10 @@ public class SearchRfidAsset extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="assetBarcode",value = "资产条码")
     private String assetBarcode;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
 }
