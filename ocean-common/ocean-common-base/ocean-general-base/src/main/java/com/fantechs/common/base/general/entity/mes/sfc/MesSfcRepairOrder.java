@@ -179,6 +179,12 @@ public class MesSfcRepairOrder extends ValidGroup implements Serializable {
     private List<MesSfcRepairOrderBadPhenotype>  mesSfcRepairOrderBadPhenotypeList = new ArrayList<>();
 
     /**
+     * 维修单不良现象维修列表
+     */
+    @ApiModelProperty(name="mesSfcRepairOrderBadPhenotypeRepairList",value = "维修单不良现象维修列表")
+    private List<MesSfcRepairOrderBadPhenotypeRepair> mesSfcRepairOrderBadPhenotypeRepairList = new ArrayList<>();
+
+    /**
      * 维修单半成品列表
      */
     @ApiModelProperty(name="mesSfcRepairOrderSemiProductList",value = "维修单半成品列表")

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerInitStockMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInitStock">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="init_stock_id" jdbcType="BIGINT" property="initStockId" />
+    <result column="init_stock_order_code" jdbcType="VARCHAR" property="initStockOrderCode" />
+    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
+    <result column="init_stock_type" jdbcType="TINYINT" property="initStockType" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInitStockDto">
+    <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+  </resultMap>
+  <sql id="base_column_list">
+    wiis.init_stock_id,
+wiis.init_stock_order_code,
+    wiis.storage_id,
+wiis.init_stock_type,
+wiis.order_status,
+wiis.remark,
+wiis.org_id,
+wiis.create_user_id,
+wiis.create_time,
+wiis.modified_user_id,
+wiis.modified_time,
+wiis.is_delete
+  </sql>
+  <select id="findList" resultMap="BaseResultDtoMap">
+    SELECT <include refid="base_column_list"/>,bs.storage_code,bw.warehouse_code,bw.warehouse_name,
+           IFNULL((SELECT sum(wiisd.plan_qty) FROM wms_inner_init_stock_det wiisd WHERE wiisd.init_stock_id=wiis.init_stock_id),0) as totalPlanQty,
+           IFNULL((SELECT sum(wiisd.stock_qty) FROM wms_inner_init_stock_det wiisd WHERE wiisd.init_stock_id=wiis.init_stock_id),0) as totalStockQty,
+           IFNULL((SELECT sum(wiisd.variance_qty) FROM wms_inner_init_stock_det wiisd WHERE wiisd.init_stock_id=wiis.init_stock_id),0) as totalVarianceQty,
+           su.user_name as 'createUserName',sus.user_name as 'modifiedUserName',bo.organization_name as 'organizationName'
+    FROM wms_inner_init_stock wiis
+           LEFT JOIN base_storage bs ON wiis.storage_id=bs.storage_id
+           LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id
+           LEFT JOIN ocean_v2.sys_user su ON wiis.create_user_id = su.user_id
+           LEFT JOIN ocean_v2.sys_user sus ON wiis.modified_user_id = sus.user_id
+           LEFT JOIN base_organization bo ON wiis.org_id = bo.organization_id
+<where>
+  <if test="orgId!=null and orgId!=''">
+    and wiis.org_id = #{orgId}
+  </if>
+    <if test="warehouseId!=null and warehouseId!=''">
+      and bw.warehouse_id=#{warehouseId}
+    </if>
+    <if test="storageId!=null and storageId!=''">
+      and bs.storage_id = #{storageId}
+    </if>
+  <if test="storageCode!=null and storageCode!=''">
+    and bs.storage_code like CONCAT('%',#{storageCode},'%')
+  </if>
+  <if test="warehouseName!=null and warehouseName!=''">
+    and bw.warehouse_name like CONCAT('%',#{warehouseId},'%')
+  </if>
+<if test="initStockType!=null and initStockType!=''">
+  and wiis.init_stock_type=#{initStockType}
+</if>
+<if test="initStockOrderCode!=null and initStockOrderCode!=''">
+  and wiis.init_stock_order_code like CONCAT('%',#{initStockOrderCode},'%')
+</if>
+<if test="orderStatus!=null and orderStatus!=''">
+  and wiis.order_status=#{orderStatus}
+</if>
+  <if test="orderStatusList !=null and orderStatusList.size()!=0">
+    and wiis.order_status in
+    <foreach item="orderStatus" collection="orderStatusList" open="(" separator="," close=")">
+      #{orderStatus}
+    </foreach>
+  </if>
+</where>
+order by wiis.create_time desc
+  </select>
+</mapper>

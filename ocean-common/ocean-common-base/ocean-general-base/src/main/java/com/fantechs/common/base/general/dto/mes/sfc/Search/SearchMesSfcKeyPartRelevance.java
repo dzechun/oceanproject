@@ -36,4 +36,7 @@ public class SearchMesSfcKeyPartRelevance extends BaseQuery implements Serializa
     @ApiModelProperty(name="partBarcode",value = "部件条码")
     private String partBarcode;
 
+    @ApiModelProperty(name="barcodeCode",value = "产品条码")
+    private String barcodeCode;
+
 }
