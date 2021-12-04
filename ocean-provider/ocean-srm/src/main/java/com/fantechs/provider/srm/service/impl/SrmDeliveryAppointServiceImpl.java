@@ -163,7 +163,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
             Example example = new Example(SrmAppointDeliveryReAsn.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("deliveryAppointId",srmDeliveryAppointDto.getDeliveryAppointId());
-            srmCarportTimeQuantumMapper.deleteByExample(example);
+            srmAppointDeliveryReAsnMapper.deleteByExample(example);
 
             List<SrmAppointDeliveryReAsnDto> list = new ArrayList<>();
             for (SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto : srmDeliveryAppointDto.getList()) {
