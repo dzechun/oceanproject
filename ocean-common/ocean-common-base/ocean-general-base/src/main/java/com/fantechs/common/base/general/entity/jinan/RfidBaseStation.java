@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.jinan;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -42,7 +43,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      * 基站编码
      */
     @ApiModelProperty(name="baseStationCode",value = "基站编码")
-    @Excel(name = "基站编码", height = 20, width = 30,orderNum="1")
+    @Excel(name = "基站编码", height = 20, width = 30,orderNum="1",needMerge = true)
     @Column(name = "base_station_code")
     @NotBlank(groups = {add.class,update.class},message = "基站编码不能为空")
     private String baseStationCode;
@@ -51,7 +52,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      * 基站名称
      */
     @ApiModelProperty(name="baseStationName",value = "基站名称")
-    @Excel(name = "基站名称", height = 20, width = 30,orderNum="2")
+    @Excel(name = "基站名称", height = 20, width = 30,orderNum="2",needMerge = true)
     @Column(name = "base_station_name")
     @NotBlank(groups = {add.class,update.class},message = "基站名称不能为空")
     private String baseStationName;
@@ -60,7 +61,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      * 基站描述
      */
     @ApiModelProperty(name="baseStationDesc",value = "基站描述")
-    @Excel(name = "基站描述", height = 20, width = 30,orderNum="3")
+    @Excel(name = "基站描述", height = 20, width = 30,orderNum="3",needMerge = true)
     @Column(name = "base_station_desc")
     private String baseStationDesc;
 
@@ -68,7 +69,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      * 基站型号
      */
     @ApiModelProperty(name="baseStationModel",value = "基站型号")
-    @Excel(name = "基站型号", height = 20, width = 30,orderNum="4")
+    @Excel(name = "基站型号", height = 20, width = 30,orderNum="4",needMerge = true)
     @Column(name = "base_station_model")
     private String baseStationModel;
 
@@ -84,6 +85,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="baseStationIp",value = "基站IP")
     @Column(name = "base_station_ip")
+    @Excel(name = "基站IP", height = 20, width = 30,orderNum="6",needMerge = true)
     private String baseStationIp;
 
     /**
@@ -91,6 +93,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="baseStationMac",value = "基站MAC")
     @Column(name = "base_station_mac")
+    @Excel(name = "基站MAC", height = 20, width = 30,orderNum="7",needMerge = true)
     @NotBlank(groups = {add.class,update.class},message = "基站MAC不能为空")
     private String baseStationMac;
 
@@ -98,14 +101,14 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="7")
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="8",needMerge = true)
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="6")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="9",needMerge = true)
     private String remark;
 
     /**
@@ -126,7 +129,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss",needMerge = true)
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -142,7 +145,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="13",exportFormat ="yyyy-MM-dd HH:mm:ss",needMerge = true)
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -158,7 +161,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="10",needMerge = true)
     private String createUserName;
 
     /**
@@ -166,7 +169,7 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="10")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="12",needMerge = true)
     private String modifiedUserName;
 
     /**
@@ -188,13 +191,14 @@ public class RfidBaseStation extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "areaName",value = "区域名称")
-    @Excel(name = "区域名称", height = 20, width = 30,orderNum="5")
+    @Excel(name = "区域名称", height = 20, width = 30,orderNum="5",needMerge = true)
     private String areaName;
 
     /**
      * RFID信息
      */
     @ApiModelProperty(name="list",value = "RFID信息")
+    @ExcelCollection(name="RFID信息",orderNum="14")
     private List<RfidBaseStationReAsset> list = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
