@@ -12,6 +12,8 @@ import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderType;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
+import com.fantechs.common.base.general.entity.srm.SrmAppointDeliveryReAsn;
+import com.fantechs.common.base.general.entity.srm.SrmDeliveryAppoint;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrder;
@@ -21,10 +23,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetBarcodeMapper;
-import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetMapper;
-import com.fantechs.provider.srm.mapper.SrmInAsnOrderMapper;
-import com.fantechs.provider.srm.mapper.SrmInHtAsnOrderMapper;
+import com.fantechs.provider.srm.mapper.*;
 import com.fantechs.provider.srm.service.SrmInAsnOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -54,8 +53,9 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     @Resource
     private SrmInAsnOrderDetMapper srmInAsnOrderDetMapper;
     @Resource
-    private SrmInAsnOrderDetBarcodeMapper srmInAsnOrderDetBarcodeMapper;
-
+    private SrmDeliveryAppointMapper srmDeliveryAppointMapper;
+    @Resource
+    private SrmAppointDeliveryReAsnMapper srmAppointDeliveryReAsnMapper;
 
     @Override
     public List<SrmInAsnOrderDto> findList(Map<String, Object> map) {
@@ -266,7 +266,26 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 dto.setOrderStatus((byte)6);
                 dto.setModifiedUserId(user.getUserId());
                 dto.setModifiedTime(new Date());
-                srmInAsnOrderMapper.updateByPrimaryKeySelective(dto);
+                int i = srmInAsnOrderMapper.updateByPrimaryKeySelective(dto);
+
+                //返写送货预约状态
+                if(i==1){
+                    Example example2 = new Example(SrmAppointDeliveryReAsn.class);
+                    Example.Criteria criteria2 = example2.createCriteria();
+                    criteria2.andEqualTo("asnCode",dto.getAsnCode());
+                    List<SrmAppointDeliveryReAsn> srmAppointDeliveryReAsns = srmAppointDeliveryReAsnMapper.selectByExample(example2);
+                    if(StringUtils.isEmpty(srmAppointDeliveryReAsns)) throw new BizErrorException("未查询到送货预约对应的ASN单号");
+
+                    Example example = new Example(SrmDeliveryAppoint.class);
+                    Example.Criteria criteria = example.createCriteria();
+                    criteria.andEqualTo("asnOrderId",srmAppointDeliveryReAsns.get(0).getAsnOrderId());
+                    List<SrmDeliveryAppoint> srmDeliveryAppoints = srmDeliveryAppointMapper.selectByExample(example);
+                    if(StringUtils.isEmpty(srmAppointDeliveryReAsns)) throw new BizErrorException("未查询到id为"+srmAppointDeliveryReAsns.get(0).getAsnOrderId()+"送货预约单号");
+                    srmDeliveryAppoints.get(0).setAppointStatus((byte)6);
+                    srmDeliveryAppointMapper.updateByPrimaryKeySelective(srmDeliveryAppoints.get(0));
+                }
+
+
             }
         }
         return 1;

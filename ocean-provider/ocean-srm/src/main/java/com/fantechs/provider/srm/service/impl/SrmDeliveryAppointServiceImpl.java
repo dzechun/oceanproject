@@ -11,6 +11,7 @@ import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.srm.SrmAppointDeliveryReAsn;
 import com.fantechs.common.base.general.entity.srm.SrmDeliveryAppoint;
+import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtDeliveryAppoint;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmCarportTimeQuantum;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -21,10 +22,7 @@ import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
-import com.fantechs.provider.srm.mapper.SrmAppointDeliveryReAsnMapper;
-import com.fantechs.provider.srm.mapper.SrmCarportTimeQuantumMapper;
-import com.fantechs.provider.srm.mapper.SrmDeliveryAppointMapper;
-import com.fantechs.provider.srm.mapper.SrmHtDeliveryAppointMapper;
+import com.fantechs.provider.srm.mapper.*;
 import com.fantechs.provider.srm.service.SrmDeliveryAppointService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -57,6 +55,8 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
     private SecurityFeignApi securityFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private SrmInAsnOrderMapper srmInAsnOrderMapper;
 
     @Override
     public List<SrmDeliveryAppointDto> findList(Map<String, Object> map) {
@@ -125,6 +125,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         srmDeliveryAppointDto.setModifiedTime(new Date());
         srmDeliveryAppointDto.setStatus(StringUtils.isEmpty(srmDeliveryAppointDto.getStatus())?1: srmDeliveryAppointDto.getStatus());
         srmDeliveryAppointDto.setOrgId(user.getOrganizationId());
+        srmDeliveryAppointDto.setAppointStatus((byte)1);
         srmDeliveryAppointMapper.insertUseGeneratedKeys(srmDeliveryAppointDto);
         if(StringUtils.isNotEmpty(srmDeliveryAppointDto.getList())) {
             List<SrmAppointDeliveryReAsnDto> list = new ArrayList<>();
@@ -153,17 +154,17 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
     public int update(SrmDeliveryAppointDto srmDeliveryAppointDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-
         srmDeliveryAppointDto.setModifiedTime(new Date());
         srmDeliveryAppointDto.setModifiedUserId(user.getUserId());
         srmDeliveryAppointMapper.updateByPrimaryKeySelective(srmDeliveryAppointDto);
 
         //删除子表重新添加
-        Example example = new Example(SrmAppointDeliveryReAsn.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("deliveryAppointId",srmDeliveryAppointDto.getDeliveryAppointId());
-        srmCarportTimeQuantumMapper.deleteByExample(example);
         if(StringUtils.isNotEmpty(srmDeliveryAppointDto.getList())) {
+            Example example = new Example(SrmAppointDeliveryReAsn.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("deliveryAppointId",srmDeliveryAppointDto.getDeliveryAppointId());
+            srmCarportTimeQuantumMapper.deleteByExample(example);
+
             List<SrmAppointDeliveryReAsnDto> list = new ArrayList<>();
             for (SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto : srmDeliveryAppointDto.getList()) {
                 srmAppointDeliveryReAsnDto.setCreateUserId(user.getUserId());
@@ -175,12 +176,30 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
                 srmAppointDeliveryReAsnDto.setDeliveryAppointId(srmDeliveryAppointDto.getDeliveryAppointId());
                 list.add(srmAppointDeliveryReAsnDto);
             }
-            if (StringUtils.isNotEmpty(list)) srmAppointDeliveryReAsnMapper.insertList(list);
+            if (StringUtils.isNotEmpty(list)) {
+                srmAppointDeliveryReAsnMapper.insertList(list);
+            }
+
+            //反写预收货通知单
+            if("3".equals(srmDeliveryAppointDto.getAppointStatus())){
+                for(SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto : list) {
+                    Example example1 = new Example(SrmInAsnOrder.class);
+                    Example.Criteria criteria1 = example1.createCriteria();
+                    criteria1.andEqualTo("asnCode", srmAppointDeliveryReAsnDto.getAsnCode());
+                    List<SrmInAsnOrder> srmInAsnOrders = srmInAsnOrderMapper.selectByExample(example);
+                    if(StringUtils.isEmpty(srmInAsnOrders))  throw new BizErrorException("未查询到对应的asn单号");
+                    SrmInAsnOrder order = srmInAsnOrders.get(0);
+                    order.setOrderStatus((byte)5);
+                    srmInAsnOrderMapper.updateByPrimaryKeySelective(order);
+                }
+            }
         }
         //保存履历表
         SrmHtDeliveryAppoint srmHtDeliveryAppoint = new SrmHtDeliveryAppoint();
         BeanUtils.copyProperties(srmDeliveryAppointDto, srmHtDeliveryAppoint);
         int i = srmHtDeliveryAppointMapper.insertSelective(srmHtDeliveryAppoint);
+
+
 
         return i;
     }
