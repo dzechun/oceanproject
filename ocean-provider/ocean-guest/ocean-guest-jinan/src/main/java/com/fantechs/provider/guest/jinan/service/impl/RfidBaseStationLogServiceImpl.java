@@ -54,6 +54,9 @@ public class RfidBaseStationLogServiceImpl extends BaseService<RfidBaseStationLo
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到该基站信息");
         }
         RfidBaseStation rfidBaseStation = rfidBaseStationList.get(0);
+        if(rfidBaseStation.getStatus() == (byte)0){
+            throw new BizErrorException("该基站为无效状态，无法反馈日志");
+        }
 
         List<RfidBaseStationAssetData> submitAssetList = rfidBaseStationData.getList();//提交的数据
         List<RfidBaseStationReAsset> reAssetList = rfidBaseStation.getList();//绑定的数据

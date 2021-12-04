@@ -5,11 +5,13 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.jinan.Import.RfidAreaImport;
 import com.fantechs.common.base.general.entity.jinan.RfidArea;
+import com.fantechs.common.base.general.entity.jinan.RfidBaseStation;
 import com.fantechs.common.base.general.entity.jinan.history.RfidHtArea;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.guest.jinan.mapper.RfidAreaMapper;
+import com.fantechs.provider.guest.jinan.mapper.RfidBaseStationMapper;
 import com.fantechs.provider.guest.jinan.mapper.RfidHtAreaMapper;
 import com.fantechs.provider.guest.jinan.service.RfidAreaService;
 import org.springframework.beans.BeanUtils;
@@ -31,6 +33,8 @@ public class RfidAreaServiceImpl extends BaseService<RfidArea> implements RfidAr
     private RfidAreaMapper rfidAreaMapper;
     @Resource
     private RfidHtAreaMapper rfidHtAreaMapper;
+    @Resource
+    private RfidBaseStationMapper rfidBaseStationMapper;
 
     @Override
     public List<RfidArea> findList(Map<String, Object> map) {
@@ -81,6 +85,15 @@ public class RfidAreaServiceImpl extends BaseService<RfidArea> implements RfidAr
         RfidArea rfidArea = rfidAreaMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(rfidArea)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        if(entity.getStatus() == (byte)0){
+            Example example1 = new Example(RfidBaseStation.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("areaId", entity.getAreaId());
+            if(StringUtils.isNotEmpty(rfidBaseStationMapper.selectByExample(example1))){
+                throw new BizErrorException("该区域已被基站绑定，状态不能置为无效");
+            }
         }
 
         entity.setModifiedUserId(user.getUserId());
