@@ -72,11 +72,18 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
-     * 客户ID
+     * 供应商ID
      */
-    @ApiModelProperty(name="supplierId",value = "客户ID")
+    @ApiModelProperty(name="supplierId",value = "供应商ID")
     @Column(name = "supplier_id")
     private Long supplierId;
+
+    /**
+     * 客户ID
+     */
+    @ApiModelProperty(name="customerId",value = "客户ID")
+    @Column(name = "customer_id")
+    private Long customerId;
 
     /**
      * 检验类型(1-来料检验 2-驻厂检验 3-出货检验 4-IPQC检验)
@@ -192,12 +199,20 @@ public class BaseInspectionStandard extends ValidGroup implements Serializable {
     private String materialName;
 
     /**
+     * 供应商
+     */
+    @ApiModelProperty(name="supplierName" ,value="供应商")
+    @Transient
+    //@Excel(name = "供应商", height = 20, width = 30,orderNum="5",needMerge = true)
+    private String supplierName;
+
+    /**
      * 客户
      */
-    @ApiModelProperty(name="supplierName" ,value="客户")
+    @ApiModelProperty(name="customerName" ,value="客户")
     @Transient
     @Excel(name = "客户", height = 20, width = 30,orderNum="5",needMerge = true)
-    private String supplierName;
+    private String customerName;
 
     /**
      * 检验方式
