@@ -42,10 +42,16 @@ public class SearchBaseInspectionStandard extends BaseQuery implements Serializa
     private Byte inspectionType;
 
     /**
+     * 供应商id
+     */
+    @ApiModelProperty(name="supplierId" ,value="供应商id")
+    private Long supplierId;
+
+    /**
      * 客户id
      */
-    @ApiModelProperty(name="supplierId" ,value="客户id")
-    private Long supplierId;
+    @ApiModelProperty(name="customerId" ,value="客户id")
+    private Long customerId;
 
     /**
      * 物料id
