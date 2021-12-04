@@ -12,6 +12,7 @@
     <result column="category" jdbcType="BIT" property="category" />
     <result column="order_num" jdbcType="BIT" property="orderNum" />
     <result column="is_hide" jdbcType="INTEGER" property="isHide" />
+    <result column="spec_grade" jdbcType="BIT" property="specGrade" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -23,7 +24,9 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    ssi.spec_id,ssi.menu_id, ssi.spec_code, ssi.spec_name, ssi.para, ssi.para_value,ssi.param_type, ssi.create_user_id, ssi.create_time, ssi.modified_user_id,
+    ssi.spec_id,ssi.menu_id, ssi.spec_code, ssi.spec_name, ssi.para, ssi.para_value,
+    ssi.param_type,ssi.category,ssi.order_num,ssi.is_hide,ssi.spec_grade,
+    ssi.create_user_id, ssi.create_time, ssi.modified_user_id,
     ssi.modified_time, ssi.is_delete, ssi.option1, ssi.option2, ssi.option3
   </sql>
 

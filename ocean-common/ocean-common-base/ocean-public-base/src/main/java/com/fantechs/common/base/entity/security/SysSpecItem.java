@@ -100,6 +100,13 @@ public class SysSpecItem extends ValidGroup implements Serializable {
     private Byte isHide;
 
     /**
+     * 配置项数据权限等级(1-无查看权限 2-仅查看 3-可编辑)
+     */
+    @Column(name = "spec_grade")
+    @ApiModelProperty(name="specGrade" ,value="配置项数据权限等级(1-无查看权限 2-仅查看 3-可编辑)")
+    private Byte specGrade;
+
+    /**
      * 创建账号
      */
     @Column(name = "create_user_id")
