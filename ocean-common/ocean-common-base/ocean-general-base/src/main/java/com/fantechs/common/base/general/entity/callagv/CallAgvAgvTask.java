@@ -1,15 +1,18 @@
 package com.fantechs.common.base.general.entity.callagv;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
-import lombok.Data;
 
 /**
  * 任务管理
@@ -66,10 +69,10 @@ public class CallAgvAgvTask extends ValidGroup implements Serializable {
     private Byte taskStatus;
 
     /**
-     * 操作类型(1-入库 2-叫料 3-空货架返回)
+     * 操作类型(1-入库 2-叫料 3-空货架返回 4-货架转移)
      */
-    @ApiModelProperty(name="operateType",value = "操作类型(1-入库 2-叫料 3-空货架返回)")
-    @Excel(name = "操作类型(1-入库 2-叫料 3-空货架返回)", height = 20, width = 30,orderNum="1")
+    @ApiModelProperty(name="operateType",value = "操作类型(1-入库 2-叫料 3-空货架返回 4-货架转移)")
+    @Excel(name = "操作类型(1-入库 2-叫料 3-空货架返回 4-货架转移)", height = 20, width = 30,orderNum="1")
     @Column(name = "operate_type")
     private Byte operateType;
 

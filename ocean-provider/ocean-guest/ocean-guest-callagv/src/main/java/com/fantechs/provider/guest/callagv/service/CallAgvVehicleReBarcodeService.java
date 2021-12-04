@@ -16,6 +16,8 @@ public interface CallAgvVehicleReBarcodeService extends IService<CallAgvVehicleR
 
     String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Long storageTaskPointId, Integer type) throws Exception;
 
+    String callAgvDistributionRest(CallAgvDistributionRestDto callAgvDistributionRestDto) throws Exception;
+
     String genAgvSchedulingTask(String taskTyp, List<String> positionCodeList, String podCode) throws Exception;
 
     int vehicleBarcodeUnbound(RequestBarcodeUnboundDTO requestBarcodeUnboundDTO);
