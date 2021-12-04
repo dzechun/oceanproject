@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.mapper;
 
+import com.fantechs.common.base.general.dto.srm.SrmHtAppointDeliveryReAsnDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtAppointDeliveryReAsn;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -9,5 +10,5 @@ import java.util.Map;
 
 @Mapper
 public interface SrmHtAppointDeliveryReAsnMapper extends MyMapper<SrmHtAppointDeliveryReAsn> {
-    List<SrmHtAppointDeliveryReAsn> findList(Map<String, Object> map);
+    List<SrmHtAppointDeliveryReAsnDto> findList(Map<String, Object> map);
 }

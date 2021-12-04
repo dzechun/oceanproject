@@ -2,8 +2,8 @@ package com.fantechs.provider.srm.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
+import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDto;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
-import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrder;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmInAsnOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -90,9 +90,9 @@ public class SrmInAsnOrderController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SrmInHtAsnOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrder searchSrmInAsnOrder) {
+    public ResponseEntity<List<SrmInHtAsnOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrder searchSrmInAsnOrder) {
         Page<Object> page = PageHelper.startPage(searchSrmInAsnOrder.getStartPage(),searchSrmInAsnOrder.getPageSize());
-        List<SrmInHtAsnOrder> list = srmInHtAsnOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrder));
+        List<SrmInHtAsnOrderDto> list = srmInHtAsnOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -109,5 +109,10 @@ public class SrmInAsnOrderController {
         }
     }
 
+    @ApiOperation("发货")
+    @PostMapping("/send")
+    public ResponseEntity send(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=SrmInAsnOrder.update.class) List<SrmInAsnOrderDto> srmInAsnOrderDtos) {
+        return ControllerUtil.returnCRUD(srmInAsnOrderService.send(srmInAsnOrderDtos));
+    }
 
 }

@@ -2,9 +2,9 @@ package com.fantechs.provider.srm.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
+import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.imports.SrmInAsnOrderDetImport;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
-import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmInAsnOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -85,21 +85,20 @@ public class SrmInAsnOrderDetController {
 
    @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SrmInHtAsnOrderDet>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrderDet searchSrmInAsnOrderDet) {
+    public ResponseEntity<List<SrmInHtAsnOrderDetDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrderDet searchSrmInAsnOrderDet) {
         Page<Object> page = PageHelper.startPage(searchSrmInAsnOrderDet.getStartPage(),searchSrmInAsnOrderDet.getPageSize());
-        List<SrmInHtAsnOrderDet> list = srmInHtAsnOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrderDet));
+        List<SrmInHtAsnOrderDetDto> list = srmInHtAsnOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrderDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @PostMapping(value = "/import")
     @ApiOperation(value = "从excel导入(不保存,返回给页面)",notes = "从excel导入,返回给页面")
-    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file,
-                                      @ApiParam(value = "装箱汇总ID",required = true)@RequestParam  @NotNull(message="装箱汇总ID不能为空") Long asnOrderId){
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
             List<SrmInAsnOrderDetImport> srmInAsnOrderDetImports = EasyPoiUtils.importExcel(file, 0, 1, SrmInAsnOrderDetImport.class);
             List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos = srmInAsnOrderDetService.importExcels(srmInAsnOrderDetImports);
-            return ControllerUtil.returnDataSuccess(srmInAsnOrderDetDtos,(int)srmInAsnOrderDetDtos.size());
+            return ControllerUtil.returnDataSuccess(srmInAsnOrderDetDtos,srmInAsnOrderDetDtos.size());
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());

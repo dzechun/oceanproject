@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service;
 
+import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDetBarcodeDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDetBarcode;
 import com.fantechs.common.base.support.IService;
 
@@ -12,5 +13,5 @@ import java.util.Map;
  */
 
 public interface SrmInHtAsnOrderDetBarcodeService extends IService<SrmInHtAsnOrderDetBarcode> {
-    List<SrmInHtAsnOrderDetBarcode> findList(Map<String, Object> map);
+    List<SrmInHtAsnOrderDetBarcodeDto> findList(Map<String, Object> map);
 }

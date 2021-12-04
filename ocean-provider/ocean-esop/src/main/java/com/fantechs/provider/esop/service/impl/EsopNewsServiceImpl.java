@@ -69,9 +69,8 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
     }
 
     @Override
-    public EsopNews selectByKey(Object key) {
+    public EsopNews selectByKey(Long key) {
         EsopNews EsopNews = esopNewsMapper.selectByPrimaryKey(key);
-
         Example example = new Example(EsopNewsAttachment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("newsId",EsopNews.getNewsId());
@@ -146,7 +145,7 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
 
         EsopHtNews EsopHtNews = new EsopHtNews();
         BeanUtils.copyProperties(record, EsopHtNews);
-        int i = esopHtNewsMapper.insert(EsopHtNews);
+        int i = esopHtNewsMapper.insertSelective(EsopHtNews);
 
         return i;
     }
@@ -186,7 +185,7 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
 
         EsopHtNews EsopHtNews = new EsopHtNews();
         BeanUtils.copyProperties(entity, EsopHtNews);
-        esopHtNewsMapper.insert(EsopHtNews);
+        esopHtNewsMapper.insertSelective(EsopHtNews);
 
         return i;
     }

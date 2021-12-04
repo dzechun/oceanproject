@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service.impl;
 
+import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDetBarcodeDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDetBarcode;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.srm.mapper.SrmInHtAsnOrderDetBarcodeMapper;
@@ -21,7 +22,7 @@ public class SrmInHtAsnOrderDetBarcodeServiceImpl extends BaseService<SrmInHtAsn
     private SrmInHtAsnOrderDetBarcodeMapper srmInHtAsnOrderDetBarcodeMapper;
 
     @Override
-    public List<SrmInHtAsnOrderDetBarcode> findList(Map<String, Object> map) {
+    public List<SrmInHtAsnOrderDetBarcodeDto> findList(Map<String, Object> map) {
         return srmInHtAsnOrderDetBarcodeMapper.findList(map);
     }
 

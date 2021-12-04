@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service;
 
+import com.fantechs.common.base.general.dto.srm.SrmHtCarportTimeQuantumDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtCarportTimeQuantum;
 import com.fantechs.common.base.support.IService;
 
@@ -12,5 +13,5 @@ import java.util.Map;
  */
 
 public interface SrmHtCarportTimeQuantumService extends IService<SrmHtCarportTimeQuantum> {
-    List<SrmHtCarportTimeQuantum> findList(Map<String, Object> map);
+    List<SrmHtCarportTimeQuantumDto> findList(Map<String, Object> map);
 }

@@ -1,8 +1,8 @@
 package com.fantechs.provider.srm.controller;
 
 import com.fantechs.common.base.general.dto.srm.SrmAppointDeliveryReAsnDto;
+import com.fantechs.common.base.general.dto.srm.SrmHtAppointDeliveryReAsnDto;
 import com.fantechs.common.base.general.entity.srm.SrmAppointDeliveryReAsn;
-import com.fantechs.common.base.general.entity.srm.history.SrmHtAppointDeliveryReAsn;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmAppointDeliveryReAsn;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -79,9 +79,9 @@ public class SrmAppointDeliveryReAsnController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SrmHtAppointDeliveryReAsn>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmAppointDeliveryReAsn searchSrmAppointDeliveryReAsn) {
+    public ResponseEntity<List<SrmHtAppointDeliveryReAsnDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmAppointDeliveryReAsn searchSrmAppointDeliveryReAsn) {
         Page<Object> page = PageHelper.startPage(searchSrmAppointDeliveryReAsn.getStartPage(),searchSrmAppointDeliveryReAsn.getPageSize());
-        List<SrmHtAppointDeliveryReAsn> list = srmHtAppointDeliveryReAsnService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmAppointDeliveryReAsn));
+        List<SrmHtAppointDeliveryReAsnDto> list = srmHtAppointDeliveryReAsnService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmAppointDeliveryReAsn));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

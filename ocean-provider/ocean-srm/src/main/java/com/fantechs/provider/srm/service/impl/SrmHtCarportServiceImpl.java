@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service.impl;
 
+import com.fantechs.common.base.general.dto.srm.SrmHtCarportDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtCarport;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.srm.mapper.SrmHtCarportMapper;
@@ -21,7 +22,7 @@ public class SrmHtCarportServiceImpl extends BaseService<SrmHtCarport> implement
     private SrmHtCarportMapper srmHtCarportMapper;
 
     @Override
-    public List<SrmHtCarport> findList(Map<String, Object> map) {
+    public List<SrmHtCarportDto> findList(Map<String, Object> map) {
         return srmHtCarportMapper.findList(map);
     }
 

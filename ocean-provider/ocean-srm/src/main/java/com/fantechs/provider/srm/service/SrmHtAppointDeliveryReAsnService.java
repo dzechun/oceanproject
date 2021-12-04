@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service;
 
+import com.fantechs.common.base.general.dto.srm.SrmHtAppointDeliveryReAsnDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtAppointDeliveryReAsn;
 import com.fantechs.common.base.support.IService;
 
@@ -12,5 +13,5 @@ import java.util.Map;
  */
 
 public interface SrmHtAppointDeliveryReAsnService extends IService<SrmHtAppointDeliveryReAsn> {
-    List<SrmHtAppointDeliveryReAsn> findList(Map<String, Object> map);
+    List<SrmHtAppointDeliveryReAsnDto> findList(Map<String, Object> map);
 }

@@ -7,8 +7,10 @@ import com.fantechs.common.base.general.dto.basic.BaseOrderTypeDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseFile;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderType;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
@@ -118,7 +120,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             for (SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
 
                 if (StringUtils.isEmpty(srmInAsnOrderDetDto.getOrderQty()))
-                    srmInAsnOrderDetDto.setOrderQty(BigDecimal.ZERO);
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"采购订单数量不能为空");
                 if (StringUtils.isEmpty(srmInAsnOrderDetDto.getTotalDeliveryQty()))
                     srmInAsnOrderDetDto.setTotalDeliveryQty(BigDecimal.ZERO);
                 if (StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
@@ -195,6 +197,12 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         if(StringUtils.isNotEmpty(srmInAsnOrderDto.getSrmInAsnOrderDetDtos())) {
             List<SrmInAsnOrderDetDto> list = new ArrayList<>();
             for (SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
+                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getOrderQty()))
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"采购订单数量不能为空");
+                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getTotalDeliveryQty()))
+                    srmInAsnOrderDetDto.setTotalDeliveryQty(BigDecimal.ZERO);
+                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
+                    srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
                 if(srmInAsnOrderDetDto.getDeliveryQty().compareTo(BigDecimal.ZERO)<0)
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"发货数量不能小于0");
                 if (srmInAsnOrderDetDto.getOrderQty().compareTo(srmInAsnOrderDetDto.getTotalDeliveryQty().add(srmInAsnOrderDetDto.getDeliveryQty())) == -1)
@@ -235,6 +243,31 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     public int batchUpdate(List<SrmInAsnOrderDto> srmInAsnOrderDtos) {
         for(SrmInAsnOrderDto srmInAsnOrderDto : srmInAsnOrderDtos){
             this.update(srmInAsnOrderDto);
+        }
+        return 1;
+    }
+
+    @Override
+    public int send(List<SrmInAsnOrderDto> srmInAsnOrderDtos) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isNotEmpty(srmInAsnOrderDtos)) {
+            for (SrmInAsnOrderDto dto : srmInAsnOrderDtos) {
+                SearchBaseSupplier  searchBaseSupplier = new SearchBaseSupplier();
+                searchBaseSupplier.setSupplierId(dto.getSupplierId());
+                List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierList(searchBaseSupplier).getData();
+                if(StringUtils.isEmpty(baseSuppliers) || "0".equals(baseSuppliers.get(0).getIfAppointDeliver())){
+                    if(!"3".equals(baseSuppliers.get(0).getIfAppointDeliver()))
+                        throw new BizErrorException("只有状态为审核通过的订单才能发货");
+                    dto.setOrderStatus((byte)6);
+                }else{
+                    if(!"5".equals(baseSuppliers.get(0).getIfAppointDeliver()))
+                        throw new BizErrorException("只有已预约状态的订单才能发货");
+                }
+                dto.setOrderStatus((byte)6);
+                dto.setModifiedUserId(user.getUserId());
+                dto.setModifiedTime(new Date());
+                srmInAsnOrderMapper.updateByPrimaryKeySelective(dto);
+            }
         }
         return 1;
     }

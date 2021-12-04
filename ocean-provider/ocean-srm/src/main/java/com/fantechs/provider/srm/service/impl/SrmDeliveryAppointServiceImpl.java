@@ -125,20 +125,20 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         srmDeliveryAppointDto.setStatus(StringUtils.isEmpty(srmDeliveryAppointDto.getStatus())?1: srmDeliveryAppointDto.getStatus());
         srmDeliveryAppointDto.setOrgId(user.getOrganizationId());
         srmDeliveryAppointMapper.insertUseGeneratedKeys(srmDeliveryAppointDto);
-
-        List<SrmAppointDeliveryReAsnDto> list = new ArrayList<>();
-        for(SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto:srmDeliveryAppointDto.getList()){
-            srmAppointDeliveryReAsnDto.setCreateUserId(user.getUserId());
-            srmAppointDeliveryReAsnDto.setCreateTime(new Date());
-            srmAppointDeliveryReAsnDto.setModifiedUserId(user.getUserId());
-            srmAppointDeliveryReAsnDto.setModifiedTime(new Date());
-            srmAppointDeliveryReAsnDto.setStatus(StringUtils.isEmpty(srmDeliveryAppointDto.getStatus())?1: srmDeliveryAppointDto.getStatus());
-            srmAppointDeliveryReAsnDto.setOrgId(user.getOrganizationId());
-            srmAppointDeliveryReAsnDto.setDeliveryAppointId(srmDeliveryAppointDto.getDeliveryAppointId());
-            list.add(srmAppointDeliveryReAsnDto);
+        if(StringUtils.isNotEmpty(srmDeliveryAppointDto.getList())) {
+            List<SrmAppointDeliveryReAsnDto> list = new ArrayList<>();
+            for (SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto : srmDeliveryAppointDto.getList()) {
+                srmAppointDeliveryReAsnDto.setCreateUserId(user.getUserId());
+                srmAppointDeliveryReAsnDto.setCreateTime(new Date());
+                srmAppointDeliveryReAsnDto.setModifiedUserId(user.getUserId());
+                srmAppointDeliveryReAsnDto.setModifiedTime(new Date());
+                srmAppointDeliveryReAsnDto.setStatus(StringUtils.isEmpty(srmDeliveryAppointDto.getStatus()) ? 1 : srmDeliveryAppointDto.getStatus());
+                srmAppointDeliveryReAsnDto.setOrgId(user.getOrganizationId());
+                srmAppointDeliveryReAsnDto.setDeliveryAppointId(srmDeliveryAppointDto.getDeliveryAppointId());
+                list.add(srmAppointDeliveryReAsnDto);
+            }
+            if (StringUtils.isNotEmpty(list)) srmAppointDeliveryReAsnMapper.insertList(list);
         }
-        if(StringUtils.isNotEmpty(list)) srmAppointDeliveryReAsnMapper.insertList(list);
-
 
         //保存履历表
         SrmHtDeliveryAppoint srmHtDeliveryAppoint = new SrmHtDeliveryAppoint();
@@ -162,20 +162,20 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("deliveryAppointId",srmDeliveryAppointDto.getDeliveryAppointId());
         srmCarportTimeQuantumMapper.deleteByExample(example);
-
-        List<SrmAppointDeliveryReAsnDto> list = new ArrayList<>();
-        for(SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto:srmDeliveryAppointDto.getList()){
-            srmAppointDeliveryReAsnDto.setCreateUserId(user.getUserId());
-            srmAppointDeliveryReAsnDto.setCreateTime(new Date());
-            srmAppointDeliveryReAsnDto.setModifiedUserId(user.getUserId());
-            srmAppointDeliveryReAsnDto.setModifiedTime(new Date());
-            srmAppointDeliveryReAsnDto.setStatus(StringUtils.isEmpty(srmDeliveryAppointDto.getStatus())?1: srmDeliveryAppointDto.getStatus());
-            srmAppointDeliveryReAsnDto.setOrgId(user.getOrganizationId());
-            srmAppointDeliveryReAsnDto.setDeliveryAppointId(srmDeliveryAppointDto.getDeliveryAppointId());
-            list.add(srmAppointDeliveryReAsnDto);
+        if(StringUtils.isNotEmpty(srmDeliveryAppointDto.getList())) {
+            List<SrmAppointDeliveryReAsnDto> list = new ArrayList<>();
+            for (SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto : srmDeliveryAppointDto.getList()) {
+                srmAppointDeliveryReAsnDto.setCreateUserId(user.getUserId());
+                srmAppointDeliveryReAsnDto.setCreateTime(new Date());
+                srmAppointDeliveryReAsnDto.setModifiedUserId(user.getUserId());
+                srmAppointDeliveryReAsnDto.setModifiedTime(new Date());
+                srmAppointDeliveryReAsnDto.setStatus(StringUtils.isEmpty(srmDeliveryAppointDto.getStatus()) ? 1 : srmDeliveryAppointDto.getStatus());
+                srmAppointDeliveryReAsnDto.setOrgId(user.getOrganizationId());
+                srmAppointDeliveryReAsnDto.setDeliveryAppointId(srmDeliveryAppointDto.getDeliveryAppointId());
+                list.add(srmAppointDeliveryReAsnDto);
+            }
+            if (StringUtils.isNotEmpty(list)) srmAppointDeliveryReAsnMapper.insertList(list);
         }
-        if(StringUtils.isNotEmpty(list)) srmAppointDeliveryReAsnMapper.insertList(list);
-
         //保存履历表
         SrmHtDeliveryAppoint srmHtDeliveryAppoint = new SrmHtDeliveryAppoint();
         BeanUtils.copyProperties(srmDeliveryAppointDto, srmHtDeliveryAppoint);

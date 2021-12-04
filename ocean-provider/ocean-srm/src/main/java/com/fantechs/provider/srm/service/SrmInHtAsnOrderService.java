@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service;
 
+import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrder;
 import com.fantechs.common.base.support.IService;
 
@@ -12,6 +13,6 @@ import java.util.Map;
  */
 
 public interface SrmInHtAsnOrderService extends IService<SrmInHtAsnOrder> {
-    List<SrmInHtAsnOrder> findList(Map<String, Object> map);
+    List<SrmInHtAsnOrderDto> findList(Map<String, Object> map);
 
 }
