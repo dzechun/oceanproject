@@ -35,7 +35,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <collection property="list" ofType="com.fantechs.common.base.general.dto.srm.SrmAppointDeliveryReAsnDto"
-            column="{deliveryAppointId=delivery_appoint_id}" select="com.fantechs.provider.srm.mapper.SrmHtAppointDeliveryReAsnMapper.findList">
+            column="{deliveryAppointId=delivery_appoint_id}" select="com.fantechs.provider.srm.mapper.SrmAppointDeliveryReAsnMapper.findList">
     </collection>
   </resultMap>
 

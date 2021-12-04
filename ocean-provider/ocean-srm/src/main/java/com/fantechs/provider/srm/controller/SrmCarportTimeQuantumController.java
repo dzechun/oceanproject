@@ -1,8 +1,8 @@
 package com.fantechs.provider.srm.controller;
 
 import com.fantechs.common.base.general.dto.srm.SrmCarportTimeQuantumDto;
+import com.fantechs.common.base.general.dto.srm.SrmHtCarportTimeQuantumDto;
 import com.fantechs.common.base.general.entity.srm.SrmCarportTimeQuantum;
-import com.fantechs.common.base.general.entity.srm.history.SrmHtCarportTimeQuantum;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmCarportTimeQuantum;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -79,9 +79,9 @@ public class SrmCarportTimeQuantumController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SrmHtCarportTimeQuantum>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmCarportTimeQuantum searchSrmCarportTimeQuantum) {
+    public ResponseEntity<List<SrmHtCarportTimeQuantumDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmCarportTimeQuantum searchSrmCarportTimeQuantum) {
         Page<Object> page = PageHelper.startPage(searchSrmCarportTimeQuantum.getStartPage(),searchSrmCarportTimeQuantum.getPageSize());
-        List<SrmHtCarportTimeQuantum> list = srmHtCarportTimeQuantumService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmCarportTimeQuantum));
+        List<SrmHtCarportTimeQuantumDto> list = srmHtCarportTimeQuantumService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmCarportTimeQuantum));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

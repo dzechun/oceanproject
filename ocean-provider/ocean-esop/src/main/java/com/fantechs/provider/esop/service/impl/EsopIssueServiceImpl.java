@@ -142,7 +142,7 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
 
         EsopHtIssue EsopHtIssue = new EsopHtIssue();
         BeanUtils.copyProperties(record, EsopHtIssue);
-        int i = esopHtIssueMapper.insert(EsopHtIssue);
+        int i = esopHtIssueMapper.insertSelective(EsopHtIssue);
 
         return i;
     }
@@ -181,7 +181,7 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
 
         EsopHtIssue EsopHtIssue = new EsopHtIssue();
         BeanUtils.copyProperties(entity, EsopHtIssue);
-        esopHtIssueMapper.insert(EsopHtIssue);
+        esopHtIssueMapper.insertSelective(EsopHtIssue);
 
         return i;
     }

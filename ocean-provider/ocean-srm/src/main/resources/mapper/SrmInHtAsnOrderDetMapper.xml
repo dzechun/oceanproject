@@ -36,67 +36,82 @@
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
 
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDetDto">
+        <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="order_date" jdbcType="VARCHAR" property="orderDate"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
+        <result column="total_delivery_qty" jdbcType="VARCHAR" property="totalDeliveryQty"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modifiedUser_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    </resultMap>
 
-  <sql id="BaseColumnList">
-        wiaod.ht_asn_order_det_id,
-        wiaod.asn_order_det_id,
-        wiaod.asn_order_id,
-        wiaod.source_order_id,
-        wiaod.order_det_id,
-        wiaod.inventory_status_id,
-        wiaod.line_number,
-        wiaod.material_id,
-        wiaod.warehouse_id,
-        wiaod.storage_id,
-        wiaod.packing_unit_name,
-        wiaod.packing_qty,
-        wiaod.actual_qty,
-        wiaod.putaway_qty,
-        wiaod.quality_testing_qty,
-        wiaod.pallet_code,
-        wiaod.receiving_date,
-        wiaod.production_date,
-        wiaod.expired_date,
-        wiaod.batch_code,
-        wiaod.status,
-        wiaod.remark,
-        wiaod.org_id,
-        wiaod.create_user_id,
-        wiaod.create_time,
-        wiaod.modified_user_id,
-        wiaod.modified_time,
-        wiaod.is_delete
+    <sql id="BaseColumnList">
+        wihaod.ht_asn_order_det_id,
+        wihaod.asn_order_det_id,
+        wihaod.asn_order_id,
+        wihaod.source_order_id,
+        wihaod.order_det_id,
+        wihaod.inventory_status_id,
+        wihaod.line_number,
+        wihaod.material_id,
+        wihaod.warehouse_id,
+        wihaod.storage_id,
+        wihaod.packing_unit_name,
+        wihaod.packing_qty,
+        wihaod.actual_qty,
+        wihaod.putaway_qty,
+        wihaod.quality_testing_qty,
+        wihaod.pallet_code,
+        wihaod.receiving_date,
+        wihaod.production_date,
+        wihaod.expired_date,
+        wihaod.batch_code,
+        wihaod.status,
+        wihaod.remark,
+        wihaod.org_id,
+        wihaod.create_user_id,
+        wihaod.create_time,
+        wihaod.modified_user_id,
+        wihaod.modified_time,
+        wihaod.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultMap">
-    select
-    <include refid="BaseColumnList"/>,
-    opo.purchase_order_code,opo.order_date,bm.material_code,bm.material_name,bw.warehouse_name,
-    bm.material_version,bm.material_desc,bt.main_unit,
-    (select SUM(wiaod.delivery_qty) FROM wms_in_asn_order_det wiaod where wiaod.asn_order_id=wiao.asn_order_id) as total_delivery_qty,
-    su.user_name AS create_user_name,
-    sus.user_name AS modified_user_name,
-    bo.organization_name AS organization_Name
-    FROM wms_in_asn_order_det wiaod
-    LEFT JOIN om_purchase_order opo ON wiaod.source_order_id = opo.purchase_order_id
-    LEFT JOIN base_material bm ON wiaod.material_id = bm.material_id
-    LEFT JOIN base_tab bt ON wiaod.material_id = bw.material_id
-    LEFT JOIN base_tab bt ON wiaod.warehouse_id = bw.warehouse_id
-    LEFT JOIN sys_user su ON wiaod.create_user_id = su.user_id
-    LEFT JOIN sys_user sus ON wiaod.modified_user_id = sus.user_id
-    LEFT JOIN base_organization bo ON wiaod.org_id = bo.organization_id
-    <where>
-      <if test="asnOrderId !=null and asnOrderId !=''">
-        and wiaod.asn_order_id=#{asnOrderId}
-      </if>
-      <if test="asnOrderDetId !=null and asnOrderDetId!=''">
-        and wiaod.asn_order_det_id = #{asnOrderDetId}
-      </if>
-      <if test="materialCode !=null and materialCode !=''">
-        and bm.material_code like CONCAT('%',#{materialCode},'%')
-      </if>
-
-    </where>
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto">
+        select
+        <include refid="BaseColumnList"/>,
+        opo.purchase_order_code,opod.delivery_date AS order_date,bm.material_code,bm.material_name,bw.warehouse_name,
+        bm.material_version,bm.material_desc,bmt.main_unit,
+        ( SELECT SUM( wihaods.delivery_qty ) FROM wms_in_asn_order_det wihaods WHERE wihaods.asn_order_id = wihaod.asn_order_id ) AS total_delivery_qty,
+        su.user_name AS create_user_name,
+        sus.user_name AS modified_user_name,
+        bo.organization_name AS organization_Name
+        FROM wms_in_ht_asn_order_det wihaod
+        LEFT JOIN om_purchase_order_det opod ON wihaod.source_order_id = opod.purchase_order_det_id
+        LEFT JOIN om_purchase_order opo ON opod.purchase_order_id = opo.purchase_order_id
+        LEFT JOIN base_material bm ON wihaod.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON wihaod.material_id = bm.material_id
+        LEFT JOIN base_warehouse bw ON wihaod.warehouse_id = bw.warehouse_id
+        LEFT JOIN sys_user su ON wihaod.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON wihaod.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON wihaod.org_id = bo.organization_id
+        <where>
+            <if test="asnOrderId !=null and asnOrderId !=''">
+                and wihaod.asn_order_id=#{asnOrderId}
+            </if>
+            <if test="asnOrderDetId !=null and asnOrderDetId!=''">
+                and wihaod.asn_order_det_id = #{asnOrderDetId}
+            </if>
+            <if test="materialCode !=null and materialCode !=''">
+                and bm.material_code like CONCAT('%',#{materialCode},'%')
+            </if>
+        </where>
+        group by wihaod.asn_order_det_id
+    </select>
 
 </mapper>

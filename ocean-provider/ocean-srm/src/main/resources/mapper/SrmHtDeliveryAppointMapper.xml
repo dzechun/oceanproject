@@ -30,6 +30,15 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmHtDeliveryAppointDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+        <collection property="list" ofType="com.fantechs.common.base.general.dto.srm.SrmHtAppointDeliveryReAsnDto"
+                    column="{deliveryAppointId=delivery_appoint_id}" select="com.fantechs.provider.srm.mapper.SrmHtAppointDeliveryReAsnMapper.findList">
+        </collection>
+    </resultMap>
+
   <sql id="Base_Column_List">
         shda.ht_delivery_appoint_id,
         shda.delivery_appoint_id,
@@ -57,7 +66,7 @@
     </sql>
 
 
-  <select id="findList" resultMap="BaseResultMap">
+  <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
     su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
     from srm_ht_delivery_appoint shda

@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service.impl;
 
+import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDetDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.srm.mapper.SrmInHtAsnOrderDetMapper;
@@ -21,7 +22,7 @@ public class SrmInHtAsnOrderDetServiceImpl extends BaseService<SrmInHtAsnOrderDe
     private SrmInHtAsnOrderDetMapper srmInHtAsnOrderDetMapper;
 
     @Override
-    public List<SrmInHtAsnOrderDet> findList(Map<String, Object> map) {
+    public List<SrmInHtAsnOrderDetDto> findList(Map<String, Object> map) {
         return srmInHtAsnOrderDetMapper.findList(map);
     }
 

@@ -2,8 +2,8 @@ package com.fantechs.provider.srm.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmCarportDto;
+import com.fantechs.common.base.general.dto.srm.SrmHtCarportDto;
 import com.fantechs.common.base.general.entity.srm.SrmCarport;
-import com.fantechs.common.base.general.entity.srm.history.SrmHtCarport;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmCarport;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -82,9 +82,9 @@ public class SrmCarportController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SrmHtCarport>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmCarport searchSrmCarport) {
+    public ResponseEntity<List<SrmHtCarportDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmCarport searchSrmCarport) {
         Page<Object> page = PageHelper.startPage(searchSrmCarport.getStartPage(),searchSrmCarport.getPageSize());
-        List<SrmHtCarport> list = srmHtCarportService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmCarport));
+        List<SrmHtCarportDto> list = srmHtCarportService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmCarport));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

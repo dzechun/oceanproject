@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service.impl;
 
+import com.fantechs.common.base.general.dto.srm.SrmHtCarportTimeQuantumDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtCarportTimeQuantum;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.srm.mapper.SrmHtCarportTimeQuantumMapper;
@@ -21,7 +22,7 @@ public class SrmHtCarportTimeQuantumServiceImpl extends BaseService<SrmHtCarport
     private SrmHtCarportTimeQuantumMapper srmHtCarportTimeQuantumMapper;
 
     @Override
-    public List<SrmHtCarportTimeQuantum> findList(Map<String, Object> map) {
+    public List<SrmHtCarportTimeQuantumDto> findList(Map<String, Object> map) {
         return srmHtCarportTimeQuantumMapper.findList(map);
     }
 

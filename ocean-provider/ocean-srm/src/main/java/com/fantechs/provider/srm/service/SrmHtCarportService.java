@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service;
 
+import com.fantechs.common.base.general.dto.srm.SrmHtCarportDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtCarport;
 import com.fantechs.common.base.support.IService;
 
@@ -12,5 +13,5 @@ import java.util.Map;
  */
 
 public interface SrmHtCarportService extends IService<SrmHtCarport> {
-    List<SrmHtCarport> findList(Map<String, Object> map);
+    List<SrmHtCarportDto> findList(Map<String, Object> map);
 }

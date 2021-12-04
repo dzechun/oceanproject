@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service.impl;
 
+import com.fantechs.common.base.general.dto.srm.SrmHtAppointDeliveryReAsnDto;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtAppointDeliveryReAsn;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.provider.srm.mapper.SrmHtAppointDeliveryReAsnMapper;
@@ -21,7 +22,7 @@ public class SrmHtAppointDeliveryReAsnServiceImpl extends BaseService<SrmHtAppoi
     private SrmHtAppointDeliveryReAsnMapper srmHtAppointDeliveryReAsnMapper;
 
     @Override
-    public List<SrmHtAppointDeliveryReAsn> findList(Map<String, Object> map) {
+    public List<SrmHtAppointDeliveryReAsnDto> findList(Map<String, Object> map) {
         return srmHtAppointDeliveryReAsnMapper.findList(map);
     }
 

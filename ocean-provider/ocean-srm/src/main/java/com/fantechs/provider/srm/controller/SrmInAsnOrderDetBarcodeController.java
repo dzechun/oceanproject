@@ -2,9 +2,9 @@ package com.fantechs.provider.srm.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetBarcodeDto;
+import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDetBarcodeDto;
 import com.fantechs.common.base.general.dto.srm.imports.SrmInAsnOrderDetBarcodeImport;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDetBarcode;
-import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDetBarcode;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmInAsnOrderDetBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -87,9 +87,9 @@ public class SrmInAsnOrderDetBarcodeController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<SrmInHtAsnOrderDetBarcode>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrderDetBarcode searchSrmInAsnOrderDetBarcode) {
+    public ResponseEntity<List<SrmInHtAsnOrderDetBarcodeDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrderDetBarcode searchSrmInAsnOrderDetBarcode) {
         Page<Object> page = PageHelper.startPage(searchSrmInAsnOrderDetBarcode.getStartPage(),searchSrmInAsnOrderDetBarcode.getPageSize());
-        List<SrmInHtAsnOrderDetBarcode> list = srmInHtAsnOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrderDetBarcode));
+        List<SrmInHtAsnOrderDetBarcodeDto> list = srmInHtAsnOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrderDetBarcode));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
     
