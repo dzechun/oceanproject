@@ -104,8 +104,9 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("appointStartTime",srmDeliveryAppointDto.getAppointStartTime());
         criteria.andEqualTo("appointEndTime",srmDeliveryAppointDto.getAppointEndTime());
-        int num = srmDeliveryAppointMapper.selectCountByExample(example);
-        if(num > srmCarportTimeQuantumDtos.get(0).getCarportCount())
+        Integer num = srmDeliveryAppointMapper.selectCountByExample(example);
+        Integer size = srmCarportTimeQuantumDtos.get(0).getCarportCount();
+        if(num > size )
             throw new BizErrorException("该时间段预约已满");
 
 
