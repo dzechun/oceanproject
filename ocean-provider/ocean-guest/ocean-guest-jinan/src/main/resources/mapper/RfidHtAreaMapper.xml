@@ -65,6 +65,9 @@
       <if test="areaDesc!=null and areaDesc!=''">
         and ra.area_desc  like CONCAT('%', #{areaDesc}, '%')
       </if>
+      <if test="remark!=null and remark!=''">
+        and ra.remark  like CONCAT('%', #{remark}, '%')
+      </if>
       <if test="status!=null">
         and ra.status = #{status}
       </if>

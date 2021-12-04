@@ -17,11 +17,9 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.tem.TemVehicleDto;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
@@ -367,13 +365,13 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             }
             String warehouseAreaCode = "";
             for (PtlJobOrderDetDTO ptlJobOrderDetDTO : ptlJobOrderDTO.getDetails()) {
-                SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+                /*SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
                 searchBaseMaterial.setMaterialCode(ptlJobOrderDetDTO.getGoodsCode());
                 searchBaseMaterial.setCodeQueryMark(1);
                 List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
                 if (StringUtils.isEmpty(baseMaterials)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应物料信息：" + ptlJobOrderDetDTO.getGoodsCode());
-                }
+                }*/
                 SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
                 searchBaseStorage.setStorageCode(ptlJobOrderDetDTO.getLocationCode());
                 searchBaseStorage.setCodeQueryMark((byte) 1);
@@ -421,9 +419,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 ptlJobOrderDet.setJobOrderId(ptlJobOrder.getJobOrderId());
                 ptlJobOrderDet.setStorageId(baseStorages.get(0).getStorageId());
                 ptlJobOrderDet.setStorageCode(ptlJobOrderDetDTO.getLocationCode());
-                ptlJobOrderDet.setMaterialId(baseMaterials.get(0).getMaterialId());
+//                ptlJobOrderDet.setMaterialId(baseMaterials.get(0).getMaterialId());
                 ptlJobOrderDet.setMaterialCode(ptlJobOrderDetDTO.getGoodsCode());
-                ptlJobOrderDet.setMaterialName(baseMaterials.get(0).getMaterialName());
+                ptlJobOrderDet.setMaterialName(ptlJobOrderDetDTO.getGoodsName());
                 if (StringUtils.isNotEmpty(ptlJobOrderDetDTO.getW_qty())) {
                     if (ptlJobOrderDetDTO.getW_qty() - 0.0 > 0.000001) {
                         ptlJobOrderDet.setWholeOrScattered((byte) 1);
@@ -1353,8 +1351,6 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
     public SysUser getPrinter() throws Exception {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         SearchBaseWorker searchBaseWorker = new SearchBaseWorker();

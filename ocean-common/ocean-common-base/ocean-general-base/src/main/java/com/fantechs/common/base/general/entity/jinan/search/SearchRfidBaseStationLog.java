@@ -37,4 +37,28 @@ public class SearchRfidBaseStationLog extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name="assetName",value = "资产名称")
     private String assetName;
+
+    /**
+     * 反馈内容
+     */
+    @ApiModelProperty(name="feedbackContent",value = "反馈内容")
+    private String feedbackContent;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
+
+    /**
+     * 读取开始时间
+     */
+    @ApiModelProperty(name="readStartTime" ,value="读取开始时间(YYYY-MM-DD)")
+    private String readStartTime;
+
+    /**
+     * 读取结束时间
+     */
+    @ApiModelProperty(name="readEndTime" ,value="读取结束时间(YYYY-MM-DD)")
+    private String readEndTime;
 }

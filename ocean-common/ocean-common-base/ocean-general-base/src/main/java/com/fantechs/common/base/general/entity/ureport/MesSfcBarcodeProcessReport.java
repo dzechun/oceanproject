@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.entity.ureport;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -117,5 +116,7 @@ public class MesSfcBarcodeProcessReport extends ValidGroup implements Serializab
      */
     @ApiModelProperty(name="reworkList",value = "返修记录")
     private List<ReworkRecordUreport> reworkList;
+
+    private int total;
 
 }

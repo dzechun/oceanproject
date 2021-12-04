@@ -84,7 +84,7 @@ public class CallAgvVehicleReBarcodeController {
     }
 
     @ApiOperation("备料作业")
-    @PostMapping("callAgvStock")
+    @PostMapping("/callAgvStock")
     public ResponseEntity<List<CallAgvVehicleReBarcode>> callAgvStock(@ApiParam(value = "请求对象", required = true) @RequestBody RequestCallAgvStockDTO requestCallAgvStockDTO) throws Exception {
 
         List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = callAgvVehicleReBarcodeService.callAgvStock(requestCallAgvStockDTO);
@@ -100,6 +100,13 @@ public class CallAgvVehicleReBarcodeController {
             @ApiParam(value = "AGV配送类型(1-备料完成配送 2-叫料配送 3-空货架返回)", required = true) @RequestParam Integer type) throws Exception {
 
         return ControllerUtil.returnDataSuccess(callAgvVehicleReBarcodeService.callAgvDistribution(vehicleId, warehouseAreaId, storageTaskPointId, type), 1);
+    }
+
+    @ApiOperation("AGV配送对外接口")
+    @PostMapping("/callAgvDistributionRest")
+    public ResponseEntity callAgvDistributionRest(@ApiParam(value = "请求对象", required = true) @RequestBody CallAgvDistributionRestDto callAgvDistributionRestDto) throws Exception {
+
+        return ControllerUtil.returnDataSuccess(callAgvVehicleReBarcodeService.callAgvDistributionRest(callAgvDistributionRestDto), 1);
     }
 
     @ApiOperation("备料物料解绑")

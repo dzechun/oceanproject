@@ -17,6 +17,9 @@ public class PtlJobOrderDetDTO implements Serializable{
     @ApiModelProperty(name="goodsCode",value = "物料编码")
     private String goodsCode;
 
+    @ApiModelProperty(name="goodsName",value = "物料名称")
+    private String goodsName;
+
     @ApiModelProperty(name="w_qty",value = "整件数量")
     private Double w_qty;
 

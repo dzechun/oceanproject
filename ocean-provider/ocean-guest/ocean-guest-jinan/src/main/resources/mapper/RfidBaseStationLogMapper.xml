@@ -72,11 +72,20 @@
       <if test="assetName!=null and assetName!=''">
         and rbsl.asset_name  like CONCAT('%', #{assetName}, '%')
       </if>
+      <if test="feedbackContent!=null and feedbackContent!=''">
+        and rbsl.feedback_content  like CONCAT('%', #{feedbackContent}, '%')
+      </if>
+      <if test="remark!=null and remark!=''">
+        and rbsl.remark  like CONCAT('%', #{remark}, '%')
+      </if>
       <if test="readResult!=null">
         and rbsl.read_result = #{readResult}
       </if>
       <if test="status!=null">
         and rbsl.status = #{status}
+      </if>
+      <if test="readStartTime!= null and readStartTime!= '' and readEndTime!= null and readEndTime!= ''">
+        and date_format(rbsl.read_time, '%Y-%m-%d') BETWEEN #{readStartTime} AND #{readEndTime}
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(rbsl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

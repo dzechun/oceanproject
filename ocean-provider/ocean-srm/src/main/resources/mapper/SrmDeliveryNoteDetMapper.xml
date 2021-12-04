@@ -41,16 +41,16 @@
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,ssu.user_name AS deliveryman_name,
     sm.material_code,sm.material_name,sm.unit, bo.organization_name
-    from fantech_imes_v2.srm_delivery_note_det sdnd
-    LEFT JOIN ocean_v2.sys_user su ON qrmr.create_user_id = su.user_id
-    LEFT JOIN ocean_v2.sys_user sus ON qrmr.modified_user_id = sus.user_id
-    LEFT JOIN fantech_imes_v2.smt_material sm ON qrmr.material_id = sm.material_id
-    LEFT JOIN fantech_imes_v2.base_organization bo ON sdnd.organization_id = bo.organization_id
+    from srm_delivery_note_det sdnd
+    LEFT JOIN sys_user su ON qrmr.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON qrmr.modified_user_id = sus.user_id
+    LEFT JOIN smt_material sm ON qrmr.material_id = sm.material_id
+    LEFT JOIN base_organization bo ON sdnd.organization_id = bo.organization_id
     <if test="orderType != null and orderType != '' and orderType == 0">
-      LEFT JOIN fantech_imes_v2.送货计划单
+      LEFT JOIN 送货计划单
     </if>
     <if test="orderType != null and orderType != '' and orderType == 1">
-      LEFT JOIN fantech_imes_v2.采购订单
+      LEFT JOIN 采购订单
     </if>
     <where>
       <if test="deliveryNoteId != null and deliveryNoteId != ''">
@@ -71,7 +71,7 @@
 
   <update id="batchUpdate" parameterType="java.util.List">
     <foreach collection="list" item="item" separator=";">
-      update fantech_imes_v2.srm_delivery_note_det sdnd set
+      update srm_delivery_note_det sdnd set
       sdnd.delivery_note_id = #{item.deliveryNoteId},
       sdnd.material_id = #{item.materialId},
       sdnd.order_quantity = #{item.orderQuantity},

@@ -77,10 +77,8 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                                 parentList.add(bom);
                         }
                     }
-
                     List<String> str =new ArrayList(allMaterialCode);
                     Map<String, Long> data = baseFeignApi.findIdByCode(str).getData();
-
                     Map<String,Long> productBomIds = new HashMap<>();
                     //保存第一层bom表以及det表
                     if (StringUtils.isEmpty(data.get(searchSapProductBomApi.getMaterialCode()))) {
@@ -116,8 +114,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                                 if (baseUtils.removeZero(bom.getMATNR()).equals(code) && StringUtils.isNotEmpty(bom.getIDNRK())) {
                                     String detCode = baseUtils.removeZero(bom.getIDNRK());
                                     Long materialId = data.get(detCode);
-                                    if(StringUtils.isEmpty(materialId)) throw new BizErrorException("未查询到物料信息，物料编码为："+code);
-                                    bomData = saveBaseProductBom(materialId, "0", orgId);
+                                    if(StringUtils.isEmpty(materialId)) throw new BizErrorException("未查询到物料信息，物料编码为："+bom.getIDNRK());
                                     BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
                                     baseProductBomDet.setProductBomId(bomData.getProductBomId());
                                     baseProductBomDet.setMaterialId(materialId);

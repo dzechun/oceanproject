@@ -126,6 +126,9 @@
       <if test="batchCode != null and batchCode != ''">
         and cab.batch_code like CONCAT('%', #{batchCode}, '%')
       </if>
+      <if test="orgId != null">
+        and cavrb.org_id = #{orgId}
+      </if>
     </where>
     <if test="summary == 1">
       group by bwa.warehouse_area_name, cab.product_model

@@ -4,8 +4,13 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.jinan.Import.RfidBaseStationImport;
-import com.fantechs.common.base.general.entity.jinan.*;
+import com.fantechs.common.base.general.entity.jinan.RfidArea;
+import com.fantechs.common.base.general.entity.jinan.RfidAsset;
+import com.fantechs.common.base.general.entity.jinan.RfidBaseStation;
+import com.fantechs.common.base.general.entity.jinan.RfidBaseStationReAsset;
 import com.fantechs.common.base.general.entity.jinan.history.RfidHtBaseStation;
+import com.fantechs.common.base.general.entity.jinan.search.SearchRfidBaseStationReAsset;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -61,17 +66,16 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
         record.setOrgId(user.getOrganizationId());
         rfidBaseStationMapper.insertUseGeneratedKeys(record);
 
-        /*List<RfidBaseStationReAsset> list = record.getList();
+        List<RfidBaseStationReAsset> list = record.getList();
         if(StringUtils.isNotEmpty(list)){
             for (RfidBaseStationReAsset rfidBaseStationReAsset : list){
                 //RFID是否重复
-                Example example = new Example(RfidBaseStationReAsset.class);
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("assetId", rfidBaseStationReAsset.getAssetId())
-                        .andEqualTo("orgId", user.getOrganizationId());
-                RfidBaseStationReAsset rfidBaseStationReAsset1 = rfidBaseStationReAssetMapper.selectOneByExample(example);
-                if(StringUtils.isNotEmpty(rfidBaseStationReAsset1)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"RFID序列号为"+rfidBaseStationReAsset1.getAssetBarcode()+"的资产已绑定其他基站");
+                SearchRfidBaseStationReAsset searchRfidBaseStationReAsset = new SearchRfidBaseStationReAsset();
+                searchRfidBaseStationReAsset.setAssetId(rfidBaseStationReAsset.getAssetId());
+                searchRfidBaseStationReAsset.setOrgId(user.getOrganizationId());
+                List<RfidBaseStationReAsset> rfidBaseStationReAssetList = rfidBaseStationReAssetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchRfidBaseStationReAsset));
+                if(StringUtils.isNotEmpty(rfidBaseStationReAssetList)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"RFID序列号为"+rfidBaseStationReAssetList.get(0).getAssetBarcode()+"的资产已绑定其他基站");
                 }
 
                 rfidBaseStationReAsset.setBaseStationId(record.getBaseStationId());
@@ -83,7 +87,7 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
                 rfidBaseStationReAsset.setOrgId(user.getOrganizationId());
             }
             rfidBaseStationReAssetMapper.insertList(list);
-        }*/
+        }
 
         RfidHtBaseStation rfidHtBaseStation = new RfidHtBaseStation();
         BeanUtils.copyProperties(record, rfidHtBaseStation);
@@ -219,7 +223,9 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
             criteria1.andEqualTo("baseStationId", rfidBaseStation.getBaseStationId());
             rfidBaseStationReAssetMapper.deleteByExample(example1);
         }
-        rfidHtBaseStationMapper.insertList(list);
+        if(StringUtils.isNotEmpty(list)) {
+            rfidHtBaseStationMapper.insertList(list);
+        }
 
         return rfidBaseStationMapper.deleteByIds(ids);
     }
@@ -323,6 +329,18 @@ public class RfidBaseStationServiceImpl extends BaseService<RfidBaseStation> imp
                     continue;
                 }
                 rfidBaseStationImport.setAssetId(rfidAsset.getAssetId());
+            }
+
+            if (StringUtils.isNotEmpty(rfidBaseStationImport.getAssetId())) {
+                Example example3 = new Example(RfidBaseStationReAsset.class);
+                Example.Criteria criteria6 = example3.createCriteria();
+                criteria6.andEqualTo("assetId", rfidBaseStationImport.getAssetId())
+                        .andEqualTo("orgId", user.getOrganizationId());
+                RfidBaseStationReAsset rfidBaseStationReAsset = rfidBaseStationReAssetMapper.selectOneByExample(example3);
+                if (StringUtils.isNotEmpty(rfidBaseStationReAsset)){
+                    fail.add(i+4);
+                    continue;
+                }
             }
 
             rfidBaseStationImportList.add(rfidBaseStationImport);

@@ -52,6 +52,8 @@
         <easypoi-web.version>4.0.0</easypoi-web.version>
         <easypoi-annotation.version>4.0.0</easypoi-annotation.version>
         <txlcn-tc.version>5.0.2.RELEASE</txlcn-tc.version>
+        <truelicense-core.version>1.33</truelicense-core.version>
+        <nekohtml.version>1.9.18</nekohtml.version>
 
     </properties>
 
@@ -256,6 +258,27 @@
             <groupId>com.codingapi.txlcn</groupId>
             <artifactId>txlcn-txmsg-netty</artifactId>
             <version>${txlcn-tc.version}</version>
+        </dependency>
+
+        <!-- License -->
+        <dependency>
+            <groupId>de.schlichtherle.truelicense</groupId>
+            <artifactId>truelicense-core</artifactId>
+            <version>${truelicense-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.nekohtml</groupId>
+            <artifactId>nekohtml</artifactId>
+            <version>${nekohtml.version}</version>
+        </dependency>
+
+        <!-- Java Servlet API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
 

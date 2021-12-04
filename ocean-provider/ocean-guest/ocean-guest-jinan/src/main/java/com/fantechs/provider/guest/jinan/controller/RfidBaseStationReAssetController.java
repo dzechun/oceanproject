@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -36,6 +37,12 @@ public class RfidBaseStationReAssetController {
 
     @Resource
     private RfidBaseStationReAssetService rfidBaseStationReAssetService;
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty(message="列表不能为空")List<RfidBaseStationReAsset> list) {
+        return ControllerUtil.returnCRUD(rfidBaseStationReAssetService.batchAdd(list));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

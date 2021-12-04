@@ -1,11 +1,9 @@
 package com.fantechs.provider.guest.wanbao.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.guest.wanbao.dto.WanbaoReadHeadDto;
@@ -25,7 +23,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,13 +42,6 @@ public class WanbaoReadHeadController {
     @ApiOperation(value = "新增读头",notes = "新增读头")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WanbaoReadHead wanbaoReadHead) {
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        wanbaoReadHead.setCreateTime(new Date());
-        wanbaoReadHead.setCreateUserId(sysUser.getUserId());
-        wanbaoReadHead.setModifiedTime(new Date());
-        wanbaoReadHead.setModifiedUserId(sysUser.getUserId());
-        wanbaoReadHead.setOrgId(sysUser.getOrganizationId());
-        wanbaoReadHead.setStatus((byte) 1);
         return ControllerUtil.returnCRUD(wanbaoReadHeadService.save(wanbaoReadHead));
     }
 
@@ -64,9 +54,6 @@ public class WanbaoReadHeadController {
     @ApiOperation("修改读头")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WanbaoReadHead.update.class) WanbaoReadHead wanbaoReadHead) {
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        wanbaoReadHead.setModifiedTime(new Date());
-        wanbaoReadHead.setModifiedUserId(sysUser.getUserId());
         return ControllerUtil.returnCRUD(wanbaoReadHeadService.update(wanbaoReadHead));
     }
 
@@ -110,7 +97,7 @@ public class WanbaoReadHeadController {
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<WanbaoReadHeadDto> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, WanbaoReadHeadDto.class);
+            List<WanbaoReadHead> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, WanbaoReadHead.class);
             Map<String, Object> resultMap = wanbaoReadHeadService.importExcel(baseAddressImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {

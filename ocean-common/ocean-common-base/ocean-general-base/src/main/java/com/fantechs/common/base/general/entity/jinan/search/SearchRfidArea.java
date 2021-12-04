@@ -25,4 +25,10 @@ public class SearchRfidArea extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="areaDesc",value = "区域描述")
     private String areaDesc;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
 }

@@ -4,6 +4,8 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.jinan.RfidBaseStationReAsset;
+import com.fantechs.common.base.general.entity.jinan.search.SearchRfidBaseStationReAsset;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -33,6 +35,30 @@ public class RfidBaseStationReAssetServiceImpl extends BaseService<RfidBaseStati
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
         return rfidBaseStationReAssetMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchAdd(List<RfidBaseStationReAsset> list) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        for (RfidBaseStationReAsset rfidBaseStationReAsset : list){
+            SearchRfidBaseStationReAsset searchRfidBaseStationReAsset = new SearchRfidBaseStationReAsset();
+            searchRfidBaseStationReAsset.setAssetId(rfidBaseStationReAsset.getAssetId());
+            searchRfidBaseStationReAsset.setOrgId(user.getOrganizationId());
+            List<RfidBaseStationReAsset> rfidBaseStationReAssetList = rfidBaseStationReAssetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchRfidBaseStationReAsset));
+            if(StringUtils.isNotEmpty(rfidBaseStationReAssetList)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"RFID序列号为"+rfidBaseStationReAssetList.get(0).getAssetBarcode()+"的资产已绑定其他基站");
+            }
+
+            rfidBaseStationReAsset.setCreateUserId(user.getUserId());
+            rfidBaseStationReAsset.setCreateTime(new Date());
+            rfidBaseStationReAsset.setModifiedUserId(user.getUserId());
+            rfidBaseStationReAsset.setModifiedTime(new Date());
+            rfidBaseStationReAsset.setStatus(StringUtils.isEmpty(rfidBaseStationReAsset.getStatus())?1: rfidBaseStationReAsset.getStatus());
+            rfidBaseStationReAsset.setOrgId(user.getOrganizationId());
+        }
+
+        return rfidBaseStationReAssetMapper.insertList(list);
     }
 
     @Override

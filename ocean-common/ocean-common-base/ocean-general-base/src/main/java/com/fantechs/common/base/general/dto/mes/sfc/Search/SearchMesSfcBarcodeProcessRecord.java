@@ -35,4 +35,10 @@ public class SearchMesSfcBarcodeProcessRecord extends BaseQuery implements Seria
 
     @ApiModelProperty(name = "isCustomerBarcode",value = "客户条码精确查找")
     private String isCustomerBarcode;
+
+    /**
+     * 查询标识
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "查询标识 1 为等值查询 不<>1为模糊查询")
+    private Integer codeQueryMark;
 }

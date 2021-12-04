@@ -50,7 +50,6 @@
             LEFT JOIN wms_carrier wccc ON wccc.CODE = wed.CODE
         WHERE
             wpt.WAREHOUSE_ID = #{warehouseId}
-            AND wpt.ORIGINAL_ID IS NULL
             AND wpt.`STATUS` = 'SF'
     </select>
 

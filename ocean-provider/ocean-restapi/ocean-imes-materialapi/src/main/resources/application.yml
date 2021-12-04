@@ -4,12 +4,12 @@ server:
 
 spring:
   profiles:
-    include: leisai
+    include: dev
   application:
     name: @pom.artifactId@
 ribbon:
-  ConnectTimeout: 5000 # 连接超时时间(ms)
-  ReadTimeout: 30000 # 通信超时时间(ms)
+  ConnectTimeout: 50000 # 连接超时时间(ms)
+  ReadTimeout: 50000 # 通信超时时间(ms)
 
 logging:
   file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
