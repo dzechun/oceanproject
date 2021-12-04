@@ -37,9 +37,6 @@ public class BaseSampleStandardServiceImpl extends BaseService<BaseSampleStandar
     @Override
     public List<BaseSampleStandardDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseSampleStandardMapper.findList(map);
     }
@@ -47,9 +44,6 @@ public class BaseSampleStandardServiceImpl extends BaseService<BaseSampleStandar
     @Override
     public int save(BaseSampleStandard baseSampleStandard) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseSampleStandard.class);
         Example.Criteria criteria = example.createCriteria();
@@ -70,15 +64,12 @@ public class BaseSampleStandardServiceImpl extends BaseService<BaseSampleStandar
 
         BaseHtSampleStandard baseHtSampleStandard = new BaseHtSampleStandard();
         BeanUtils.copyProperties(baseSampleStandard,baseHtSampleStandard);
-        return baseHtSampleStandardMapper.insert(baseHtSampleStandard);
+        return baseHtSampleStandardMapper.insertSelective(baseHtSampleStandard);
     }
 
     @Override
     public int update(BaseSampleStandard baseSampleStandard) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseSampleStandard.class);
         Example.Criteria criteria = example.createCriteria();
@@ -97,15 +88,12 @@ public class BaseSampleStandardServiceImpl extends BaseService<BaseSampleStandar
 
         BaseHtSampleStandard baseHtSampleStandard = new BaseHtSampleStandard();
         BeanUtils.copyProperties(baseSampleStandard,baseHtSampleStandard);
-        return baseHtSampleStandardMapper.insert(baseHtSampleStandard);
+        return baseHtSampleStandardMapper.insertSelective(baseHtSampleStandard);
     }
 
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         ArrayList<BaseHtSampleStandard> baseHtSampleStandards = new ArrayList<>();
         String[] idsArray = ids.split(",");

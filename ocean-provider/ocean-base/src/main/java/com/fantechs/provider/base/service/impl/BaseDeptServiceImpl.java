@@ -38,9 +38,6 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
     @Override
     public List<BaseDept> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseDept> list = baseDeptMapper.findList(map);
         list = TreeTableUtil.list2TreeList(list, "deptId", "parentId", "depts");
@@ -52,9 +49,6 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseDept baseDept) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseDept.class);
         Example.Criteria criteria = example.createCriteria();
@@ -93,9 +87,6 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseDept baseDept) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
 
         Example example = new Example(BaseDept.class);
@@ -137,9 +128,6 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
         int i=0;
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<BaseHtDept> list=new ArrayList<>();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         String[] idsArr =  ids.split(",");
         for (String deptId : idsArr) {
             BaseDept baseDept = baseDeptMapper.selectByPrimaryKey(deptId);
@@ -173,9 +161,6 @@ public class BaseDeptServiceImpl extends BaseService<BaseDept> implements BaseDe
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseDeptImport> baseDeptImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

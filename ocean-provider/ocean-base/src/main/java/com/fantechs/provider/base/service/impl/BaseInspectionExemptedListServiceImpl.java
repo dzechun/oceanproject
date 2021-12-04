@@ -43,9 +43,6 @@ public class BaseInspectionExemptedListServiceImpl extends BaseService<BaseInspe
     @Override
     public List<BaseInspectionExemptedList> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseInspectionExemptedListMapper.findList(map);
     }
@@ -54,9 +51,6 @@ public class BaseInspectionExemptedListServiceImpl extends BaseService<BaseInspe
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseInspectionExemptedList baseInspectionExemptedList) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         baseInspectionExemptedList.setCreateUserId(user.getUserId());
         baseInspectionExemptedList.setCreateTime(new Date());
@@ -68,7 +62,7 @@ public class BaseInspectionExemptedListServiceImpl extends BaseService<BaseInspe
 
         BaseHtInspectionExemptedList baseHtInspectionExemptedList = new BaseHtInspectionExemptedList();
         BeanUtils.copyProperties(baseInspectionExemptedList, baseHtInspectionExemptedList);
-        baseHtInspectionExemptedListMapper.insert(baseHtInspectionExemptedList);
+        baseHtInspectionExemptedListMapper.insertSelective(baseHtInspectionExemptedList);
 
         return i;
     }
@@ -77,9 +71,6 @@ public class BaseInspectionExemptedListServiceImpl extends BaseService<BaseInspe
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseInspectionExemptedList baseInspectionExemptedList) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         baseInspectionExemptedList.setModifiedTime(new Date());
         baseInspectionExemptedList.setModifiedUserId(user.getUserId());
@@ -87,7 +78,7 @@ public class BaseInspectionExemptedListServiceImpl extends BaseService<BaseInspe
 
         BaseHtInspectionExemptedList baseHtInspectionExemptedList = new BaseHtInspectionExemptedList();
         BeanUtils.copyProperties(baseInspectionExemptedList, baseHtInspectionExemptedList);
-        baseHtInspectionExemptedListMapper.insert(baseHtInspectionExemptedList);
+        baseHtInspectionExemptedListMapper.insertSelective(baseHtInspectionExemptedList);
 
         return baseInspectionExemptedListMapper.updateByPrimaryKey(baseInspectionExemptedList);
     }
@@ -96,9 +87,6 @@ public class BaseInspectionExemptedListServiceImpl extends BaseService<BaseInspe
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtInspectionExemptedList> list = new ArrayList<>();
         String[] idArry = ids.split(",");
@@ -121,9 +109,6 @@ public class BaseInspectionExemptedListServiceImpl extends BaseService<BaseInspe
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseInspectionExemptedListImport> baseInspectionExemptedListImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

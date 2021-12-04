@@ -43,9 +43,6 @@ public class BaseProductionKeyIssuesServiceImpl extends BaseService<BaseProducti
     @Override
     public List<BaseProductionKeyIssues> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseProductionKeyIssuesMapper.findList(map);
     }
@@ -54,9 +51,6 @@ public class BaseProductionKeyIssuesServiceImpl extends BaseService<BaseProducti
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseProductionKeyIssues baseProductionKeyIssues) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断是否重复
         Example example = new Example(BaseProductionKeyIssues.class);
@@ -115,9 +109,6 @@ public class BaseProductionKeyIssuesServiceImpl extends BaseService<BaseProducti
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseProductionKeyIssues baseProductionKeyIssues) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //判断是否重复
         Example example = new Example(BaseProductionKeyIssues.class);
@@ -197,9 +188,6 @@ public class BaseProductionKeyIssuesServiceImpl extends BaseService<BaseProducti
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtProductionKeyIssues> list = new ArrayList<>();
         String[] idArry = ids.split(",");

@@ -5,11 +5,8 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessCauseDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessCauseImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessPhenotypeImport;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessCause;
-import com.fantechs.common.base.general.entity.basic.BaseBadnessPhenotype;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCause;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessPhenotype;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -39,9 +36,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     @Override
     public List<BaseBadnessCauseDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId",user.getOrganizationId());
         return baseBadnessCauseMapper.findList(map);
     }
@@ -49,9 +43,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     @Override
     public int save(BaseBadnessCause baseBadnessCause) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseBadnessCause.class);
         Example.Criteria criteria = example.createCriteria();
@@ -82,9 +73,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     @Override
     public int update(BaseBadnessCause baseBadnessCause) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseBadnessCause.class);
         Example.Criteria criteria = example.createCriteria();
@@ -110,9 +98,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     @Override
     public int batchDelete(String ids) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         LinkedList<BaseHtBadnessCause> htList = new LinkedList<>();
         String[] idArray = ids.split(",");
@@ -121,7 +106,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
             if (StringUtils.isEmpty(baseBadnessCause)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-
             BaseHtBadnessCause baseHtBadnessCause = new BaseHtBadnessCause();
             BeanUtils.copyProperties(baseBadnessCause,baseHtBadnessCause);
             htList.add(baseHtBadnessCause);
@@ -135,9 +119,6 @@ public class BaseBadnessCauseServiceImpl extends BaseService<BaseBadnessCause> i
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseBadnessCauseImport> baseBadnessCauseImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

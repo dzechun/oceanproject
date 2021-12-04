@@ -47,9 +47,6 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
     public List<BaseWarehouseAreaDto> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))){
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
 
@@ -59,9 +56,6 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseWarehouseArea baseWarehouseArea) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         int i=0;
         Example example = new Example(BaseWarehouseArea.class);
         Example.Criteria criteria = example.createCriteria();
@@ -89,9 +83,6 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseWarehouseArea baseWarehouseArea) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseWarehouseArea.class);
         Example.Criteria criteria = example.createCriteria();
@@ -121,9 +112,6 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
     public int batchDelete(String ids) {
         int i=0;
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         String[] idsArr = ids.split(",");
         List<BaseHtWarehouseArea> baseHtWarehouseAreaList =  new LinkedList<>();
         for(String id :idsArr){
@@ -156,9 +144,6 @@ public class BaseWarehouseAreaServiceImpl extends BaseService<BaseWarehouseArea>
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseWarehouseAreaImport> baseWarehouseAreaImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

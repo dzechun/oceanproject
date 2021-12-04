@@ -2,23 +2,16 @@ package com.fantechs.provider.base.util;
 
 
 import com.alibaba.fastjson.JSON;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.utils.CodeUtils;
-import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseBarcodeRuleSpecService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import java.text.DecimalFormat;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
 

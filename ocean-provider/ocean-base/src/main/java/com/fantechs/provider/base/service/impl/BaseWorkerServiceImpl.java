@@ -8,25 +8,25 @@ import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaReWDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseStaffImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseWorkerImport;
-import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtStaff;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.BaseWorker;
+import com.fantechs.common.base.general.entity.basic.BaseWorkingArea;
+import com.fantechs.common.base.general.entity.basic.BaseWorkingAreaReW;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorker;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
-import com.fantechs.provider.base.mapper.*;
+import com.fantechs.provider.base.mapper.BaseWarehouseMapper;
+import com.fantechs.provider.base.mapper.BaseWorkerMapper;
+import com.fantechs.provider.base.mapper.BaseWorkingAreaMapper;
+import com.fantechs.provider.base.mapper.BaseWorkingAreaReWMapper;
 import com.fantechs.provider.base.service.BaseHtWorkerService;
 import com.fantechs.provider.base.service.BaseWorkerService;
 import com.fantechs.provider.base.service.BaseWorkingAreaReWService;
-import javafx.beans.binding.ObjectExpression;
-import org.omg.CORBA.Current;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -201,9 +201,6 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
     @Override
     public List<BaseWorkerDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseWorkerDto> baseWorkerDtoList = baseWorkerMapper.findList(map);
         for(BaseWorkerDto baseWorkerDto : baseWorkerDtoList) {
@@ -241,9 +238,6 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
     public Map<String, Object> importExcel(List<BaseWorkerImport> baseWorkerImports) {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

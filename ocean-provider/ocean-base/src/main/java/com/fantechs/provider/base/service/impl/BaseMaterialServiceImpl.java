@@ -79,9 +79,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     public List<BaseMaterialDto> findList(Map<String, Object> map){
         if(StringUtils.isEmpty(map.get("organizationId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
 
             map.put("organizationId", user.getOrganizationId());
         }
@@ -138,9 +135,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     public List<BaseMaterialDto> findAll(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("organizationId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
 
             map.put("organizationId", user.getOrganizationId());
         }
@@ -151,9 +145,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseMaterial baseMaterial) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseMaterial.class);
         Example.Criteria criteria = example.createCriteria();
@@ -202,9 +193,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseMaterial baseMaterial) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
@@ -266,9 +254,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         int i = 0;
         List<BaseHtMaterial> list = new ArrayList<>();
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseTab> baseTabs = new ArrayList<>();
         SearchBaseTab searchBaseTab = new SearchBaseTab();
@@ -437,9 +422,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseMaterialImport> baseMaterialImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

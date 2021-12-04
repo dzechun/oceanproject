@@ -59,9 +59,6 @@ public class BaseBarcodeRuleSpecServiceImpl extends BaseService<BaseBarcodeRuleS
         @Transactional(rollbackFor = Exception.class)
         public int batchSave(List<SmtBarcodeRuleSpec> list) {
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
 
             if(StringUtils.isEmpty(list)){
                 throw new BizErrorException("条码规则没有配置");
@@ -142,9 +139,6 @@ public class BaseBarcodeRuleSpecServiceImpl extends BaseService<BaseBarcodeRuleS
         @Override
         public int batchUpdate(List<SmtBarcodeRuleSpec> list) {
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
 
             //查询条码规则
             SmtBarcodeRule smtBarcodeRule = smtBarcodeRuleMapper.selectByPrimaryKey(list.get(0).getBarcodeRuleId());
@@ -162,9 +156,6 @@ public class BaseBarcodeRuleSpecServiceImpl extends BaseService<BaseBarcodeRuleS
         @Transactional(rollbackFor = Exception.class)
         public int batchDelete(String ids) {
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
 
             Long barcodeRuleId=null;
             String barcodeRule=null;

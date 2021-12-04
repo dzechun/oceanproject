@@ -54,9 +54,6 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
     @Transactional(rollbackFor = Exception.class)
     public int save(BasePackageSpecification basePackageSpecification) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BasePackageSpecification.class);
         Example.Criteria criteria = example.createCriteria();
@@ -99,16 +96,13 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
 
         BaseHtPackageSpecification baseHtPackageSpecification = new BaseHtPackageSpecification();
         BeanUtils.copyProperties(basePackageSpecification, baseHtPackageSpecification);
-        return baseHtPackageSpecificationMapper.insert(baseHtPackageSpecification);
+        return baseHtPackageSpecificationMapper.insertSelective(baseHtPackageSpecification);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(BasePackageSpecification basePackageSpecification) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BasePackageSpecification.class);
         Example.Criteria criteria = example.createCriteria();
@@ -126,7 +120,7 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
 
         BaseHtPackageSpecification baseHtPackageSpecification = new BaseHtPackageSpecification();
         BeanUtils.copyProperties(basePackageSpecification, baseHtPackageSpecification);
-        baseHtPackageSpecificationMapper.insert(baseHtPackageSpecification);
+        baseHtPackageSpecificationMapper.insertSelective(baseHtPackageSpecification);
 
         //移除旧的绑定关系
         Example example1 = new Example(BaseMaterialPackage.class);
@@ -162,9 +156,6 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<BaseHtPackageSpecification> smtPackageSpecifications = new LinkedList<>();
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
@@ -191,9 +182,6 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
     @Override
     public List<BasePackageSpecificationDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BasePackageSpecificationDto> basePackageSpecificationDtos = basePackageSpecificationMapper.findList(map);
         SearchBaseMaterialPackage searchBaseMaterialPackage = new SearchBaseMaterialPackage();
@@ -212,9 +200,6 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
     @Override
     public List<BasePackageSpecificationDto> findByMaterialProcess(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BasePackageSpecificationDto> basePackageSpecificationDtos = basePackageSpecificationMapper.findByMaterialProcess(map);
         SearchBaseMaterialPackage searchBaseMaterialPackage = new SearchBaseMaterialPackage();
@@ -234,9 +219,6 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BasePackageSpecificationImport> basePackageSpecificationImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

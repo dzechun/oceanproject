@@ -39,9 +39,6 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
     @Override
     public List<BaseSampleTransitionRuleDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseSampleTransitionRuleMapper.findList(map);
     }
@@ -49,11 +46,8 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
     @Override
     public int save(BaseSampleTransitionRule record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
-        this.codeIfRepeat(record);
+        this.codeIfRepeat(record,user);
 
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());
@@ -71,7 +65,7 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
 
         BaseHtSampleTransitionRule baseHtSampleTransitionRule = new BaseHtSampleTransitionRule();
         BeanUtils.copyProperties(record,baseHtSampleTransitionRule);
-        baseHtSampleTransitionRuleMapper.insert(baseHtSampleTransitionRule);
+        baseHtSampleTransitionRuleMapper.insertSelective(baseHtSampleTransitionRule);
 
         return i;
     }
@@ -79,11 +73,8 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
     @Override
     public int update(BaseSampleTransitionRule entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
-        this.codeIfRepeat(entity);
+        this.codeIfRepeat(entity,user);
 
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
@@ -91,7 +82,7 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
 
         BaseHtSampleTransitionRule baseHtSampleTransitionRule = new BaseHtSampleTransitionRule();
         BeanUtils.copyProperties(entity,baseHtSampleTransitionRule);
-        baseHtSampleTransitionRuleMapper.insert(baseHtSampleTransitionRule);
+        baseHtSampleTransitionRuleMapper.insertSelective(baseHtSampleTransitionRule);
 
         Example example = new Example(BaseSampleTransitionRuleDet.class);
         example.createCriteria().andEqualTo("sampleTransitionRuleId",entity.getSampleTransitionRuleId());
@@ -107,9 +98,6 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtSampleTransitionRule> list = new ArrayList<>();
         String[] idsArr  = ids.split(",");
@@ -132,11 +120,8 @@ public class BaseSampleTransitionRuleServiceImpl extends BaseService<BaseSampleT
         return baseSampleTransitionRuleMapper.deleteByIds(ids);
     }
 
-    private void codeIfRepeat(BaseSampleTransitionRule entity){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+    private void codeIfRepeat(BaseSampleTransitionRule entity,SysUser user){
+
         Example example = new Example(BaseSampleTransitionRule.class);
         Example.Criteria criteria = example.createCriteria();
         //判断编码是否重复

@@ -51,9 +51,6 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
     @Override
     public List<BasePlatePartsDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return basePlatePartsMapper.findList(map);
     }
@@ -61,9 +58,6 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
     @Override
     public int save(BasePlateParts basePlateParts) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BasePlateParts.class);
         example.createCriteria().andEqualTo("materialId", basePlateParts.getMaterialId());
@@ -84,7 +78,7 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
 
         BaseHtPlateParts baseHtPlateParts = new BaseHtPlateParts();
         BeanUtils.copyProperties(basePlateParts, baseHtPlateParts);
-        baseHtPlatePartsMapper.insert(baseHtPlateParts);
+        baseHtPlatePartsMapper.insertSelective(baseHtPlateParts);
 
         List<BasePlatePartsDetDto> list = basePlateParts.getList();
         if (StringUtils.isNotEmpty(list)) {
@@ -106,16 +100,13 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
     @Override
     public int update(BasePlateParts basePlateParts) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         basePlateParts.setModifiedTime(new Date());
         basePlateParts.setModifiedUserId(user.getUserId());
         basePlateParts.setOrganizationId(user.getOrganizationId());
 
         BaseHtPlateParts baseHtPlateParts = new BaseHtPlateParts();
         BeanUtils.copyProperties(basePlateParts, baseHtPlateParts);
-        baseHtPlatePartsMapper.insert(baseHtPlateParts);
+        baseHtPlatePartsMapper.insertSelective(baseHtPlateParts);
 
         Example example = new Example(BasePlatePartsDet.class);
         example.createCriteria().andEqualTo("platePartsId", basePlateParts.getPlatePartsId());
@@ -131,9 +122,6 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<BaseHtPlateParts> list = new ArrayList<>();
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
@@ -161,9 +149,6 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
     public Map<String, Object> importExcel(List<BasePlatePartsImport> basePlatePartsImports) {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
@@ -247,7 +232,7 @@ public class BasePlatePartsServiceImpl extends BaseService<BasePlateParts> imple
             //新增部件组成履历
             BaseHtPlateParts baseHtPlateParts = new BaseHtPlateParts();
             BeanUtils.copyProperties(basePlateParts, baseHtPlateParts);
-            baseHtPlatePartsMapper.insert(baseHtPlateParts);
+            baseHtPlatePartsMapper.insertSelective(baseHtPlateParts);
 
             for (BasePlatePartsImport platePartsImport : basePlatePartsImports1) {
                 //新增部件组成明细

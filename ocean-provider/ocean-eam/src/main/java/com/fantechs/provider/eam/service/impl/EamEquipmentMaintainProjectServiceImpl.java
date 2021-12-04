@@ -6,11 +6,8 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainProjectDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainProjectItemDto;
-import com.fantechs.common.base.general.dto.eam.EamJigMaintainProjectItemDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentMaintainProject;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentMaintainProjectItem;
-import com.fantechs.common.base.general.entity.eam.EamJigMaintainProject;
-import com.fantechs.common.base.general.entity.eam.EamJigMaintainProjectItem;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentMaintainProject;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -49,14 +46,14 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
 
     @Override
     public List<EamEquipmentMaintainProjectDto> findList(Map<String, Object> map) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId", user.getOrganizationId());
         return eamEquipmentMaintainProjectMapper.findList(map);
     }
 
     @Override
     public List<EamEquipmentMaintainProjectDto> findHtList(Map<String, Object> map) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId", user.getOrganizationId());
         return eamHtEquipmentMaintainProjectMapper.findList(map);
     }
@@ -64,9 +61,9 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
     @Override
     @Transactional
     public int save(EamEquipmentMaintainProject eamEquipmentMaintainProject) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        codeIfRepeat(eamEquipmentMaintainProject);
+        codeIfRepeat(eamEquipmentMaintainProject,user);
 
         // 新增保养项目
         eamEquipmentMaintainProject.setCreateUserId(user.getUserId());
@@ -80,7 +77,7 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
         // 新增保养项目履历
         EamHtEquipmentMaintainProject eamHtEquipmentMaintainProject = new EamHtEquipmentMaintainProject();
         BeanUtil.copyProperties(eamEquipmentMaintainProject, eamHtEquipmentMaintainProject);
-        int i = eamHtEquipmentMaintainProjectMapper.insert(eamHtEquipmentMaintainProject);
+        int i = eamHtEquipmentMaintainProjectMapper.insertSelective(eamHtEquipmentMaintainProject);
 
         //保养项目事项
         List<EamEquipmentMaintainProjectItem> items = eamEquipmentMaintainProject.getItems();
@@ -103,9 +100,9 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
     @Override
     @Transactional
     public int update(EamEquipmentMaintainProject eamEquipmentMaintainProject) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        codeIfRepeat(eamEquipmentMaintainProject);
+        codeIfRepeat(eamEquipmentMaintainProject,user);
 
         // 修改保养项目
         eamEquipmentMaintainProject.setModifiedUserId(user.getUserId());
@@ -115,7 +112,7 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
         // 新增保养项目履历
         EamHtEquipmentMaintainProject eamHtEquipmentMaintainProject = new EamHtEquipmentMaintainProject();
         BeanUtil.copyProperties(eamEquipmentMaintainProject, eamHtEquipmentMaintainProject);
-        int i = eamHtEquipmentMaintainProjectMapper.insert(eamHtEquipmentMaintainProject);
+        int i = eamHtEquipmentMaintainProjectMapper.insertSelective(eamHtEquipmentMaintainProject);
 
         // 批量删除保养项目事项
         ArrayList<Long> idList = new ArrayList<>();
@@ -157,11 +154,12 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
         return i;
     }
 
-    private void codeIfRepeat(EamEquipmentMaintainProject eamEquipmentMaintainProject){
+    private void codeIfRepeat(EamEquipmentMaintainProject eamEquipmentMaintainProject,SysUser user){
         //判断编码是否重复
         Example example = new Example(EamEquipmentMaintainProject.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equipmentMaintainProjectCode",eamEquipmentMaintainProject.getEquipmentMaintainProjectCode());
+        criteria.andEqualTo("equipmentMaintainProjectCode",eamEquipmentMaintainProject.getEquipmentMaintainProjectCode())
+                .andEqualTo("orgId",user.getOrganizationId());
         if (StringUtils.isNotEmpty(eamEquipmentMaintainProject.getEquipmentMaintainProjectId())){
             criteria.andNotEqualTo("equipmentMaintainProjectId",eamEquipmentMaintainProject.getEquipmentMaintainProjectId());
         }
@@ -209,11 +207,4 @@ public class EamEquipmentMaintainProjectServiceImpl extends BaseService<EamEquip
         return eamEquipmentMaintainProjectMapper.deleteByIds(ids);
     }
 
-    private SysUser getUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return user;
-    }
 }

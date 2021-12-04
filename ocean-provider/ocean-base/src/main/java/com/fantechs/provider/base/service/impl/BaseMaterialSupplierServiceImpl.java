@@ -52,9 +52,6 @@ public class BaseMaterialSupplierServiceImpl extends BaseService<BaseMaterialSup
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseMaterialSupplier baseMaterialSupplier) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseMaterialSupplier.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
@@ -83,9 +80,6 @@ public class BaseMaterialSupplierServiceImpl extends BaseService<BaseMaterialSup
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseMaterialSupplier baseMaterialSupplier) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseMaterialSupplier.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
@@ -112,9 +106,6 @@ public class BaseMaterialSupplierServiceImpl extends BaseService<BaseMaterialSup
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         int i = 0;
         String[] idsArr = ids.split(",");
         for (String item : idsArr) {
@@ -130,9 +121,6 @@ public class BaseMaterialSupplierServiceImpl extends BaseService<BaseMaterialSup
     @Override
     public List<BaseMaterialSupplierDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseMaterialSupplierMapper.findList(map);
     }
@@ -141,9 +129,6 @@ public class BaseMaterialSupplierServiceImpl extends BaseService<BaseMaterialSup
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseMaterialSupplierImport> baseMaterialSupplierImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

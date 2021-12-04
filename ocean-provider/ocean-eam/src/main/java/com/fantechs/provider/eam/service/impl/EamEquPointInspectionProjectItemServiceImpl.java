@@ -65,9 +65,6 @@ public class EamEquPointInspectionProjectItemServiceImpl extends BaseService<Eam
 
     private SysUser getUser(){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 }

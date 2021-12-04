@@ -38,9 +38,6 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
     @Override
     public List<BasePartsInformationDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return basePartsInformationMapper.findList(map);
     }
@@ -49,9 +46,6 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
     @Transactional(rollbackFor = Exception.class)
     public int save(BasePartsInformation basePartsInformation) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         basePartsInformation.setCreateTime(new Date());
         basePartsInformation.setCreateUserId(user.getUserId());
@@ -64,7 +58,7 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
 
         BaseHtPartsInformation baseHtPartsInformation = new BaseHtPartsInformation();
         BeanUtils.copyProperties(basePartsInformation,baseHtPartsInformation);
-        baseHtPartsInformationMapper.insert(baseHtPartsInformation);
+        baseHtPartsInformationMapper.insertSelective(baseHtPartsInformation);
 
         return i;
     }
@@ -73,16 +67,13 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
     @Transactional(rollbackFor = Exception.class)
     public int update(BasePartsInformation basePartsInformation) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         basePartsInformation.setModifiedTime(new Date());
         basePartsInformation.setModifiedUserId(user.getUserId());
         basePartsInformation.setOrganizationId(user.getOrganizationId());
 
         BaseHtPartsInformation baseHtPartsInformation = new BaseHtPartsInformation();
         BeanUtils.copyProperties(basePartsInformation,baseHtPartsInformation);
-        baseHtPartsInformationMapper.insert(baseHtPartsInformation);
+        baseHtPartsInformationMapper.insertSelective(baseHtPartsInformation);
 
         return basePartsInformationMapper.updateByPrimaryKeySelective(basePartsInformation);
     }
@@ -91,9 +82,6 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<BaseHtPartsInformation> baseHtPartsInformations = new ArrayList<>();
         String[] idsArr  = ids.split(",");
         for (String id : idsArr) {
@@ -116,9 +104,6 @@ public class BasePartsInformationServiceImpl  extends BaseService<BasePartsInfor
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BasePartsInformationImport> basePartsInformationImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

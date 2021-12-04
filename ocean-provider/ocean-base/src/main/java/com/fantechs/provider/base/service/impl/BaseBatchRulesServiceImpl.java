@@ -45,16 +45,13 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
     @Override
     public List<BaseBatchRulesDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseBatchRulesMapper.findList(map);
     }
 
     @Override
     public int save(BaseBatchRules record) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(record.getBatchRulesName())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"批次名称不能为空");
         }
@@ -68,13 +65,13 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
         //添加履历
         BaseHtBatchRules baseHtBatchRules = new BaseHtBatchRules();
         BeanUtil.copyProperties(record,baseHtBatchRules);
-        baseHtBatchRulesMapper.insert(baseHtBatchRules);
+        baseHtBatchRulesMapper.insertSelective(baseHtBatchRules);
         return num;
     }
 
     @Override
     public int update(BaseBatchRules entity) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
         entity.setOrgId(sysUser.getOrganizationId());
@@ -83,14 +80,14 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
         //添加履历
         BaseHtBatchRules baseHtBatchRules = new BaseHtBatchRules();
         BeanUtil.copyProperties(entity,baseHtBatchRules);
-        baseHtBatchRulesMapper.insert(baseHtBatchRules);
+        baseHtBatchRulesMapper.insertSelective(baseHtBatchRules);
 
         return num;
     }
 
     @Override
     public int batchDelete(String ids) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         String[] arrId = ids.split(",");
         List<BaseHtBatchRules> list = new ArrayList<>();
         for (String s : arrId) {
@@ -106,17 +103,6 @@ public class BaseBatchRulesServiceImpl extends BaseService<BaseBatchRules> imple
         return super.batchDelete(ids);
     }
 
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return user;
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

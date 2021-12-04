@@ -45,9 +45,6 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
     @Override
     public List<BaseLabelMaterialDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseLabelMaterialMapper.findList(map);
     }
@@ -56,9 +53,6 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseLabelMaterial record) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         if(StringUtils.isNotEmpty(record.getIsProcess()) && record.getIsProcess()==(byte)1 && StringUtils.isEmpty(record.getProcessId())){
             throw new BizErrorException("请绑定工序");
         }
@@ -84,9 +78,6 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseLabelMaterial entity) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseLabelMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId",entity.getMaterialId());
@@ -111,9 +102,6 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<BaseHtLabelMaterial> list = new ArrayList<>();
         String[] idArry = ids.split(",");
         for (String id : idArry) {
@@ -135,9 +123,6 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseLabelMaterialImport> baseLabelMaterialImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

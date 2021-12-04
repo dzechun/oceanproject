@@ -46,9 +46,6 @@ public class EamReturnOrderServiceImpl extends BaseService<EamReturnOrder> imple
     @Override
     public List<EamReturnOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return eamReturnOrderMapper.findList(map);
     }
@@ -57,9 +54,6 @@ public class EamReturnOrderServiceImpl extends BaseService<EamReturnOrder> imple
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamReturnOrder record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         record.setDeptId(user.getDeptId());
         record.setReturnUserId(user.getUserId());
@@ -100,7 +94,7 @@ public class EamReturnOrderServiceImpl extends BaseService<EamReturnOrder> imple
 
         EamHtReturnOrder eamHtReturnOrder = new EamHtReturnOrder();
         BeanUtils.copyProperties(record, eamHtReturnOrder);
-        int i = eamHtReturnOrderMapper.insert(eamHtReturnOrder);
+        int i = eamHtReturnOrderMapper.insertSelective(eamHtReturnOrder);
 
         return i;
     }

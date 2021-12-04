@@ -72,9 +72,6 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
     @Override
     public List<BaseBarCodeDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseBarCodeMapper.findList(map);
     }
@@ -180,9 +177,6 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
     @Transactional(rollbackFor = RuntimeException.class)
     public int print(Long workOrderId) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseBarCode.class);
         example.createCriteria().andEqualTo("workOrderId",workOrderId).andEqualTo("status",(byte)1);
         List<BaseBarCode> baseBarCodes = baseBarCodeMapper.selectByExample(example);
@@ -260,9 +254,6 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
     @Transactional(rollbackFor = RuntimeException.class)
     public int saveCode(BaseBarCodeWorkDto record) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //查询产生数量是否大于工单目标数量
         Example example = new Example(BaseBarCode.class);
@@ -311,9 +302,6 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
     @Transactional(rollbackFor = RuntimeException.class)
     public int updateByContent(List<BaseBarCodeDet> baseBarCodeDets) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         int num = 0;
         for (BaseBarCodeDet baseBarCodeDet : baseBarCodeDets) {
             baseBarCodeDet.setModifiedUserId(currentUserInfo.getUserId());
@@ -343,9 +331,6 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
     @Transactional(rollbackFor = RuntimeException.class)
     public int reprint(List<String> barCodeId) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         try {
             for (String s : barCodeId) {
                 BaseBarCode baseBarCode = baseBarCodeMapper.selectByPrimaryKey(Long.parseLong(s));

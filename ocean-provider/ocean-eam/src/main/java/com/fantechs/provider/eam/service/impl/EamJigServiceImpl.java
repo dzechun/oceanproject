@@ -65,9 +65,6 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     @Override
     public List<EamJigDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamJigMapper.findList(map);
@@ -78,9 +75,6 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJig record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //编码是否重复
         this.check(record,user);
@@ -144,7 +138,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
         //履历
         EamHtJig eamHtJig = new EamHtJig();
         BeanUtils.copyProperties(record, eamHtJig);
-        int i = eamHtJigMapper.insert(eamHtJig);
+        int i = eamHtJigMapper.insertSelective(eamHtJig);
 
         return i;
     }
@@ -205,9 +199,6 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJig entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //编码是否重复
         this.check(entity,user);
@@ -303,7 +294,7 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
 
         EamHtJig eamHtJig = new EamHtJig();
         BeanUtils.copyProperties(entity, eamHtJig);
-        eamHtJigMapper.insert(eamHtJig);
+        eamHtJigMapper.insertSelective(eamHtJig);
 
         return i;
     }
@@ -339,9 +330,6 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJig> list = new ArrayList<>();
         String[] idArry = ids.split(",");
@@ -383,9 +371,6 @@ public class EamJigServiceImpl extends BaseService<EamJig> implements EamJigServ
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<EamJigImport> eamJigImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

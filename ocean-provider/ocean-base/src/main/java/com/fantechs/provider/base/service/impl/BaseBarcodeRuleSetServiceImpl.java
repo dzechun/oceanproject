@@ -40,9 +40,6 @@ public class BaseBarcodeRuleSetServiceImpl extends BaseService<BaseBarcodeRuleSe
         @Override
         public List<BaseBarcodeRuleSetDto> findList(Map<String, Object> map) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
             return baseBarcodeRuleSetMapper.findList(map);
         }
@@ -51,9 +48,6 @@ public class BaseBarcodeRuleSetServiceImpl extends BaseService<BaseBarcodeRuleSe
         @Transactional(rollbackFor = Exception.class)
         public int save(BaseBarcodeRuleSet baseBarcodeRuleSet) {
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
 
             Example example = new Example(BaseBarcodeRuleSet.class);
             Example.Criteria criteria = example.createCriteria();
@@ -82,9 +76,6 @@ public class BaseBarcodeRuleSetServiceImpl extends BaseService<BaseBarcodeRuleSe
         @Transactional(rollbackFor = Exception.class)
         public int update(BaseBarcodeRuleSet baseBarcodeRuleSet) {
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
 
             Example example = new Example(BaseBarcodeRuleSet.class);
             Example.Criteria criteria = example.createCriteria();
@@ -114,9 +105,6 @@ public class BaseBarcodeRuleSetServiceImpl extends BaseService<BaseBarcodeRuleSe
             List<BaseHtBarcodeRuleSet> list=new ArrayList<>();
 
             SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-            if(StringUtils.isEmpty(currentUser)){
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
 
             String[] idArr = ids.split(",");
             for (String id : idArr) {

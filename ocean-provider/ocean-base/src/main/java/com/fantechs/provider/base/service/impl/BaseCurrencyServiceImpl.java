@@ -32,9 +32,6 @@ public class BaseCurrencyServiceImpl extends BaseService<BaseCurrency> implement
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseCurrency baseCurrency) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Example example = new Example(BaseCurrency.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
@@ -56,9 +53,6 @@ public class BaseCurrencyServiceImpl extends BaseService<BaseCurrency> implement
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseCurrency baseCurrency) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseCurrency.class);
         Example.Criteria criteria = example.createCriteria();
@@ -82,9 +76,6 @@ public class BaseCurrencyServiceImpl extends BaseService<BaseCurrency> implement
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
@@ -99,9 +90,6 @@ public class BaseCurrencyServiceImpl extends BaseService<BaseCurrency> implement
     @Override
     public List<BaseCurrencyDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseCurrencyMapper.findList(map);
     }
@@ -110,9 +98,6 @@ public class BaseCurrencyServiceImpl extends BaseService<BaseCurrency> implement
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseCurrencyImport> baseCurrencyImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

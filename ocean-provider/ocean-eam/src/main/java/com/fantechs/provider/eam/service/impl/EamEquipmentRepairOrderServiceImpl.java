@@ -49,9 +49,6 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
     @Override
     public List<EamEquipmentRepairOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamEquipmentRepairOrderMapper.findList(map);
@@ -92,9 +89,6 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipmentRepairOrderDto record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         record.setEquipmentRepairOrderCode(CodeUtils.getId("SBWX-"));
         record.setRequestForRepairTime(new Date());
@@ -129,7 +123,7 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
 
         EamHtEquipmentRepairOrder eamHtEquipmentRepairOrder = new EamHtEquipmentRepairOrder();
         BeanUtils.copyProperties(record,eamHtEquipmentRepairOrder);
-        int i = eamHtEquipmentRepairOrderMapper.insert(eamHtEquipmentRepairOrder);
+        int i = eamHtEquipmentRepairOrderMapper.insertSelective(eamHtEquipmentRepairOrder);
 
         return i;
     }
@@ -138,9 +132,6 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquipmentRepairOrderDto entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         entity.setRepairTime(new Date());
         entity.setModifiedUserId(user.getUserId());
@@ -170,7 +161,7 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
 
         EamHtEquipmentRepairOrder eamHtEquipmentRepairOrder = new EamHtEquipmentRepairOrder();
         BeanUtils.copyProperties(entity,eamHtEquipmentRepairOrder);
-        int i = eamHtEquipmentRepairOrderMapper.insert(eamHtEquipmentRepairOrder);
+        int i = eamHtEquipmentRepairOrderMapper.insertSelective(eamHtEquipmentRepairOrder);
 
         updateEquipmentStatus(entity);
 
@@ -197,9 +188,6 @@ public class EamEquipmentRepairOrderServiceImpl extends BaseService<EamEquipment
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtEquipmentRepairOrder> htList = new ArrayList<>();
         String[] idsArr  = ids.split(",");

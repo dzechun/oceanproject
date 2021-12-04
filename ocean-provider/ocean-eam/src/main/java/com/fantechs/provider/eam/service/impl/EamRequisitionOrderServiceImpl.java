@@ -45,9 +45,6 @@ public class EamRequisitionOrderServiceImpl extends BaseService<EamRequisitionOr
     @Override
     public List<EamRequisitionOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return eamRequisitionOrderMapper.findList(map);
     }
@@ -56,9 +53,6 @@ public class EamRequisitionOrderServiceImpl extends BaseService<EamRequisitionOr
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamRequisitionOrder record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         record.setDeptId(user.getDeptId());
         record.setRequisitionUserId(user.getUserId());
@@ -99,7 +93,7 @@ public class EamRequisitionOrderServiceImpl extends BaseService<EamRequisitionOr
 
         EamHtRequisitionOrder eamHtRequisitionOrder = new EamHtRequisitionOrder();
         BeanUtils.copyProperties(record, eamHtRequisitionOrder);
-        int i = eamHtRequisitionOrderMapper.insert(eamHtRequisitionOrder);
+        int i = eamHtRequisitionOrderMapper.insertSelective(eamHtRequisitionOrder);
 
         return i;
     }

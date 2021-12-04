@@ -3,15 +3,9 @@ package com.fantechs.provider.base.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessCauseImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionItemImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
-import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCause;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionExemptedList;
+import com.fantechs.common.base.general.entity.basic.BaseInspectionItem;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionItem;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionItem;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
@@ -44,9 +38,6 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
     @Override
     public List<BaseInspectionItem> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseInspectionItem> baseInspectionItemList = baseInspectionItemMapper.findList(map);
         SearchBaseInspectionItem searchBaseInspectionItem = new SearchBaseInspectionItem();
@@ -65,9 +56,6 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
     @Override
     public List<BaseInspectionItem> findDetList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseInspectionItemMapper.findDetList(map);
     }
@@ -76,9 +64,6 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseInspectionItem baseInspectionItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //检验项目小类
         List<BaseInspectionItem> baseInspectionItems = baseInspectionItem.getBaseInspectionItemDets();
@@ -132,7 +117,7 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
 
         BaseHtInspectionItem baseHtInspectionItem = new BaseHtInspectionItem();
         BeanUtils.copyProperties(baseInspectionItem, baseHtInspectionItem);
-        baseHtInspectionItemMapper.insert(baseHtInspectionItem);
+        baseHtInspectionItemMapper.insertSelective(baseHtInspectionItem);
 
         return i;
     }
@@ -141,9 +126,6 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseInspectionItem baseInspectionItem) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //检验项目小类
         List<BaseInspectionItem> baseInspectionItems = baseInspectionItem.getBaseInspectionItemDets();
@@ -206,7 +188,7 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
 
         BaseHtInspectionItem baseHtInspectionItem = new BaseHtInspectionItem();
         BeanUtils.copyProperties(baseInspectionItem, baseHtInspectionItem);
-        baseHtInspectionItemMapper.insert(baseHtInspectionItem);
+        baseHtInspectionItemMapper.insertSelective(baseHtInspectionItem);
 
         return i;
     }
@@ -215,9 +197,6 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtInspectionItem> list = new ArrayList<>();
         String[] idArry = ids.split(",");
@@ -246,9 +225,6 @@ public class BaseInspectionItemServiceImpl extends BaseService<BaseInspectionIte
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseInspectionItemImport> baseInspectionItemImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(currentUser)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数

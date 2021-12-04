@@ -47,9 +47,6 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
     public List<BaseFactoryDto> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return baseFactoryMapper.findList(map);
@@ -59,9 +56,6 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseFactory baseFactory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseFactory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -83,7 +77,7 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
 
         BaseHtFactory baseHtFactory = new BaseHtFactory();
         BeanUtils.copyProperties(baseFactory, baseHtFactory);
-        baseHtFactoryMapper.insert(baseHtFactory);
+        baseHtFactoryMapper.insertSelective(baseHtFactory);
 
         return i;
     }
@@ -92,9 +86,6 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete (String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<BaseHtFactory> baseHtFactories = new LinkedList<>();
         String[] idsArr  = ids.split(",");
         for(String  id : idsArr){
@@ -137,9 +128,6 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseFactory baseFactory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseFactory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -158,7 +146,7 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
         BaseHtFactory baseHtFactory = new BaseHtFactory();
         BeanUtils.copyProperties(baseFactory, baseHtFactory);
 
-        baseHtFactoryMapper.insert(baseHtFactory);
+        baseHtFactoryMapper.insertSelective(baseHtFactory);
 
         return baseFactoryMapper.updateByPrimaryKeySelective(baseFactory);
     }
@@ -167,9 +155,6 @@ public class BaseFactoryServiceImpl extends BaseService<BaseFactory> implements 
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseFactoryImport> baseFactoryImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

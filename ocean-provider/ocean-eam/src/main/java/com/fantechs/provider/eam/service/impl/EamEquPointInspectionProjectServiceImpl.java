@@ -8,8 +8,6 @@ import com.fantechs.common.base.general.dto.eam.EamEquPointInspectionProjectDto;
 import com.fantechs.common.base.general.dto.eam.EamEquPointInspectionProjectItemDto;
 import com.fantechs.common.base.general.entity.eam.EamEquPointInspectionProject;
 import com.fantechs.common.base.general.entity.eam.EamEquPointInspectionProjectItem;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaintainProject;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaintainProjectItem;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquPointInspectionProject;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -48,14 +46,14 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
 
     @Override
     public List<EamEquPointInspectionProjectDto> findList(Map<String, Object> map) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId", user.getOrganizationId());
         return eamEquPointInspectionProjectMapper.findList(map);
     }
 
     @Override
     public List<EamEquPointInspectionProjectDto> findHtList(Map<String, Object> map) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId", user.getOrganizationId());
         return eamHtEquPointInspectionProjectMapper.findList(map);
     }
@@ -63,9 +61,9 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquPointInspectionProject eamEquPointInspectionProject) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        codeIfRepeat(eamEquPointInspectionProject);
+        codeIfRepeat(eamEquPointInspectionProject,user);
 
         // 新增点检项目
         eamEquPointInspectionProject.setCreateUserId(user.getUserId());
@@ -79,7 +77,7 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
         // 新增点检项目履历
         EamHtEquPointInspectionProject eamHtEquPointInspectionProject = new EamHtEquPointInspectionProject();
         BeanUtil.copyProperties(eamEquPointInspectionProject, eamHtEquPointInspectionProject);
-        int i = eamHtEquPointInspectionProjectMapper.insert(eamHtEquPointInspectionProject);
+        int i = eamHtEquPointInspectionProjectMapper.insertSelective(eamHtEquPointInspectionProject);
 
         //保养项目事项
         List<EamEquPointInspectionProjectItem> items = eamEquPointInspectionProject.getItems();
@@ -102,9 +100,9 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquPointInspectionProject eamEquPointInspectionProject) {
-        SysUser user = getUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        codeIfRepeat(eamEquPointInspectionProject);
+        codeIfRepeat(eamEquPointInspectionProject,user);
 
         // 修改点检项目
         eamEquPointInspectionProject.setModifiedUserId(user.getUserId());
@@ -114,7 +112,7 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
         // 新增点检项目履历
         EamHtEquPointInspectionProject eamHtEquPointInspectionProject = new EamHtEquPointInspectionProject();
         BeanUtil.copyProperties(eamEquPointInspectionProject, eamHtEquPointInspectionProject);
-        int i = eamHtEquPointInspectionProjectMapper.insert(eamHtEquPointInspectionProject);
+        int i = eamHtEquPointInspectionProjectMapper.insertSelective(eamHtEquPointInspectionProject);
 
         // 批量删除点检项目事项
         ArrayList<Long> idList = new ArrayList<>();
@@ -156,11 +154,12 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
         return i;
     }
 
-    private void codeIfRepeat(EamEquPointInspectionProject eamEquPointInspectionProject){
+    private void codeIfRepeat(EamEquPointInspectionProject eamEquPointInspectionProject,SysUser user){
         //判断编码是否重复
         Example example = new Example(EamEquPointInspectionProject.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("equPointInspectionProjectCode",eamEquPointInspectionProject.getEquPointInspectionProjectCode());
+        criteria.andEqualTo("equPointInspectionProjectCode",eamEquPointInspectionProject.getEquPointInspectionProjectCode())
+                .andEqualTo("orgId",user.getOrganizationId());
         if (StringUtils.isNotEmpty(eamEquPointInspectionProject.getEquPointInspectionProjectId())){
             criteria.andNotEqualTo("equPointInspectionProjectId",eamEquPointInspectionProject.getEquPointInspectionProjectId());
         }
@@ -209,11 +208,4 @@ public class EamEquPointInspectionProjectServiceImpl extends BaseService<EamEquP
         return eamEquPointInspectionProjectMapper.deleteByIds(ids);
     }
 
-    private SysUser getUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return user;
-    }
 }

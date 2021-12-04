@@ -44,9 +44,6 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
     public List<BaseStation> findList(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("orgId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-            if (StringUtils.isEmpty(user)) {
-                throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-            }
             map.put("orgId", user.getOrganizationId());
         }
         return baseStationMapper.findList(map);
@@ -56,9 +53,6 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
     @Transactional(rollbackFor = Exception.class)
     public int save(BaseStation baseStation) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseStation.class);
         Example.Criteria criteria = example.createCriteria();
@@ -90,9 +84,6 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
         List<BaseHtStation> list=new ArrayList<>();
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         String[] stationIds = ids.split(",");
         for (String stationId : stationIds) {
@@ -116,9 +107,6 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
     @Transactional(rollbackFor = Exception.class)
     public int update(BaseStation baseStation) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseStation.class);
         Example.Criteria criteria = example.createCriteria();
@@ -146,9 +134,6 @@ public class BaseStationServiceImpl extends BaseService<BaseStation> implements 
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseStationImport> baseStationImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

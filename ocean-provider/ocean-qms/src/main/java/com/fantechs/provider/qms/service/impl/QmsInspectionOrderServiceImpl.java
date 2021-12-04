@@ -2,7 +2,6 @@ package com.fantechs.provider.qms.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.dto.security.SysRoleDto;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
@@ -88,9 +87,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Override
     public List<QmsInspectionOrder> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         map.put("orgId",user.getOrganizationId());
 
@@ -305,9 +301,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Transactional(rollbackFor = Exception.class)
     public int audit(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
@@ -318,9 +311,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Transactional(rollbackFor = Exception.class)
     public int thirdInspection(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
 
@@ -332,7 +322,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     }
 
     @Override
-    public QmsInspectionOrder selectByKey(Object key) {
+    public QmsInspectionOrder selectByKey(Long key) {
         Map<String,Object> map = new HashMap<>();
         map.put("inspectionOrderId",key);
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.findList(map).get(0);
@@ -350,9 +340,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @LcnTransaction
     public int save(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         qmsInspectionOrder.setInspectionOrderCode(CodeUtils.getId("CPJY-"));
         qmsInspectionOrder.setCreateUserId(user.getUserId());
@@ -367,7 +354,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         //履历
         QmsHtInspectionOrder qmsHtInspectionOrder = new QmsHtInspectionOrder();
         BeanUtils.copyProperties(qmsInspectionOrder, qmsHtInspectionOrder);
-        qmsHtInspectionOrderMapper.insert(qmsHtInspectionOrder);
+        qmsHtInspectionOrderMapper.insertSelective(qmsHtInspectionOrder);
 
         //明细
         List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrder.getQmsInspectionOrderDets();
@@ -424,9 +411,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @LcnTransaction
     public int update(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
@@ -436,7 +420,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         //履历
         QmsHtInspectionOrder qmsHtInspectionOrder = new QmsHtInspectionOrder();
         BeanUtils.copyProperties(qmsInspectionOrder, qmsHtInspectionOrder);
-        qmsHtInspectionOrderMapper.insert(qmsHtInspectionOrder);
+        qmsHtInspectionOrderMapper.insertSelective(qmsHtInspectionOrder);
 
         //原来有的明细只更新
         ArrayList<Long> idList = new ArrayList<>();
@@ -609,9 +593,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<QmsHtInspectionOrder> list = new ArrayList<>();
         String[] idArry = ids.split(",");

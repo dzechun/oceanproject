@@ -39,9 +39,6 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
     @Override
     public List<BaseMaterialCategoryDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return baseMaterialCategoryMapper.findList(map);
     }
@@ -50,9 +47,6 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseMaterialCategory baseMaterialCategory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         ifCodeRepeat(baseMaterialCategory,user);
 
@@ -67,7 +61,7 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
 
         BaseHtMaterialCategory baseHtMaterialCategory = new BaseHtMaterialCategory();
         BeanUtils.copyProperties(baseMaterialCategory, baseHtMaterialCategory);
-        int i = baseHtMaterialCategoryMapper.insert(baseHtMaterialCategory);
+        int i = baseHtMaterialCategoryMapper.insertSelective(baseHtMaterialCategory);
 
         return i;
     }
@@ -76,9 +70,6 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseMaterialCategory baseMaterialCategory) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         ifCodeRepeat(baseMaterialCategory,user);
 
@@ -87,7 +78,7 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
 
         BaseHtMaterialCategory baseHtMaterialCategory = new BaseHtMaterialCategory();
         BeanUtils.copyProperties(baseMaterialCategory, baseHtMaterialCategory);
-        baseHtMaterialCategoryMapper.insert(baseHtMaterialCategory);
+        baseHtMaterialCategoryMapper.insertSelective(baseHtMaterialCategory);
 
         return baseMaterialCategoryMapper.updateByPrimaryKeySelective(baseMaterialCategory);
     }
@@ -111,9 +102,6 @@ public class BaseMaterialCategoryServiceImpl extends BaseService<BaseMaterialCat
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         List<BaseHtMaterialCategory> srmHtDeliveryNotes= new ArrayList<>();
         String[] idsArr  = ids.split(",");
         for (String id : idsArr) {

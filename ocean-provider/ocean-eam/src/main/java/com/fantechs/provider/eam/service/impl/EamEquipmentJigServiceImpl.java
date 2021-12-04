@@ -7,10 +7,7 @@ import com.fantechs.common.base.general.dto.eam.EamEquipmentJigDto;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentJigListDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentJig;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentJigList;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterial;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterialList;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentJig;
-import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentMaterial;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -46,9 +43,6 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
     @Override
     public List<EamEquipmentJigDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         return eamEquipmentJigMapper.findList(map);
     }
@@ -57,9 +51,6 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamEquipmentJigDto record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamEquipmentJig.class);
         Example.Criteria criteria = example.createCriteria();
@@ -95,7 +86,7 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
         //履历
         EamHtEquipmentJig eamHtEquipmentJig = new EamHtEquipmentJig();
         BeanUtils.copyProperties(record, eamHtEquipmentJig);
-        int i = eamHtEquipmentJigMapper.insert(eamHtEquipmentJig);
+        int i = eamHtEquipmentJigMapper.insertSelective(eamHtEquipmentJig);
 
         return i;
     }
@@ -104,9 +95,6 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamEquipmentJigDto entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(EamEquipmentJig.class);
         Example.Criteria criteria = example.createCriteria();
@@ -145,7 +133,7 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
         //履历
         EamHtEquipmentJig eamHtEquipmentJig = new EamHtEquipmentJig();
         BeanUtils.copyProperties(entity, eamHtEquipmentJig);
-        int i = eamHtEquipmentJigMapper.insert(eamHtEquipmentJig);
+        int i = eamHtEquipmentJigMapper.insertSelective(eamHtEquipmentJig);
 
         return i;
     }
@@ -154,9 +142,6 @@ public class EamEquipmentJigServiceImpl extends BaseService<EamEquipmentJig> imp
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtEquipmentJig> list = new ArrayList<>();
         String[] idArry = ids.split(",");

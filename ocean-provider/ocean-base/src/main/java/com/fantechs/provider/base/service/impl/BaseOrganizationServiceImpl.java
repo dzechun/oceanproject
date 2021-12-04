@@ -38,9 +38,6 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
     @Override
     public int save(BaseOrganization baseOrganization) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseOrganization.class);
         Example.Criteria criteria = example.createCriteria();
@@ -59,7 +56,7 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
 
         BaseHtOrganization baseHtOrganization = new BaseHtOrganization();
         BeanUtils.copyProperties(baseOrganization,baseHtOrganization);
-        baseHtOrganizationMapper.insert(baseHtOrganization);
+        baseHtOrganizationMapper.insertSelective(baseHtOrganization);
 
         return i;
     }
@@ -67,9 +64,6 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
     @Override
     public int update(BaseOrganization baseOrganization) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(BaseOrganization.class);
         Example.Criteria criteria = example.createCriteria();
@@ -85,7 +79,7 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
 
         BaseHtOrganization baseHtOrganization = new BaseHtOrganization();
         BeanUtils.copyProperties(baseOrganization,baseHtOrganization);
-        baseHtOrganizationMapper.insert(baseHtOrganization);
+        baseHtOrganizationMapper.insertSelective(baseHtOrganization);
 
         return baseOrganizationMapper.updateByPrimaryKeySelective(baseOrganization);
     }
@@ -93,9 +87,6 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
     @Override
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtOrganization> baseHtOrganizations = new LinkedList<>();
         String[] idsArr = ids.split(",");
@@ -129,9 +120,6 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
     public int addUser(Long organizationId, List<Long> userIds) {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         baseOrganizationMapper.deleteUserByOrganization(organizationId);
 
@@ -153,9 +141,6 @@ public class BaseOrganizationServiceImpl extends BaseService<BaseOrganization> i
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseOrganizationDto> baseOrganizationDtos) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数

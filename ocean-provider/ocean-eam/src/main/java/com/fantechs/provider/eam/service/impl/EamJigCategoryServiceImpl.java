@@ -40,9 +40,6 @@ public class EamJigCategoryServiceImpl extends BaseService<EamJigCategory> imple
     @Override
     public List<EamJigCategoryDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
 
         return eamJigCategoryMapper.findList(map);
@@ -52,9 +49,6 @@ public class EamJigCategoryServiceImpl extends BaseService<EamJigCategory> imple
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EamJigCategory record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         ifRepeat(record);
 
@@ -68,7 +62,7 @@ public class EamJigCategoryServiceImpl extends BaseService<EamJigCategory> imple
 
         EamHtJigCategory eamHtJigCategory = new EamHtJigCategory();
         BeanUtils.copyProperties(record, eamHtJigCategory);
-        int i = eamHtJigCategoryMapper.insert(eamHtJigCategory);
+        int i = eamHtJigCategoryMapper.insertSelective(eamHtJigCategory);
 
         return i;
     }
@@ -77,9 +71,6 @@ public class EamJigCategoryServiceImpl extends BaseService<EamJigCategory> imple
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EamJigCategory entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         ifRepeat(entity);
 
@@ -88,7 +79,7 @@ public class EamJigCategoryServiceImpl extends BaseService<EamJigCategory> imple
 
         EamHtJigCategory eamHtJigCategory = new EamHtJigCategory();
         BeanUtils.copyProperties(entity, eamHtJigCategory);
-        eamHtJigCategoryMapper.insert(eamHtJigCategory);
+        eamHtJigCategoryMapper.insertSelective(eamHtJigCategory);
 
         return eamJigCategoryMapper.updateByPrimaryKeySelective(entity);
     }
@@ -122,9 +113,6 @@ public class EamJigCategoryServiceImpl extends BaseService<EamJigCategory> imple
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<EamHtJigCategory> list = new ArrayList<>();
         String[] idArry = ids.split(",");

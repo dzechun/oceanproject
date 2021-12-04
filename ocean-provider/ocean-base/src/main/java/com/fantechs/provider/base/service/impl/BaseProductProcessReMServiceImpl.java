@@ -56,9 +56,6 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
     @Override
     public List<BaseProductProcessReM> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseProductProcessReM> baseProductProcessReMS = baseProductProcessReMMapper.findList(map);
         SearchBaseProductMaterialReP searchBaseProductMaterialReP = new SearchBaseProductMaterialReP();
@@ -76,9 +73,6 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
     @Override
     public List<BaseHtProductProcessReM> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         map.put("orgId", user.getOrganizationId());
         List<BaseHtProductProcessReM> baseHtProductProcessReMS = baseHtProductProcessReMMapper.findHtList(map);
         SearchBaseProductMaterialReP searchBaseProductMaterialReP = new SearchBaseProductMaterialReP();
@@ -97,9 +91,6 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchSave(List<BaseProductProcessReM> list) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         if (StringUtils.isNotEmpty(list)){
             Example example = new Example(BaseProductProcessReM.class);
@@ -135,9 +126,6 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(BaseProductProcessReM baseProductProcessReM) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //物料工序关系表
         /*Example example = new Example(BaseProductProcessReM.class);
@@ -160,7 +148,7 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
         //履历
         BaseHtProductProcessReM baseHtProductProcessReM = new BaseHtProductProcessReM();
         BeanUtils.copyProperties(baseProductProcessReM, baseHtProductProcessReM);
-        baseHtProductProcessReMMapper.insert(baseHtProductProcessReM);
+        baseHtProductProcessReMMapper.insertSelective(baseHtProductProcessReM);
 
         //工序物料清单表
         List<BaseProductMaterialReP> baseProductMaterialRePS = baseProductProcessReM.getList();
@@ -182,7 +170,7 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                 BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
                 htList.add(baseHtProductMaterialReP);
             }
-            baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
+            baseHtProductMaterialRePMapper.insertSelective(baseHtProductMaterialReP);
         }
 
         return i;
@@ -192,9 +180,6 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(BaseProductProcessReM baseProductProcessReM) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         //物料工序关系表
        /* Example example = new Example(BaseProductProcessReM.class);
@@ -214,7 +199,7 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
 
         BaseHtProductProcessReM baseHtProductProcessReM = new BaseHtProductProcessReM();
         BeanUtils.copyProperties(baseProductProcessReM, baseHtProductProcessReM);
-        baseHtProductProcessReMMapper.insert(baseHtProductProcessReM);
+        baseHtProductProcessReMMapper.insertSelective(baseHtProductProcessReM);
 
         //工序物料清单表
         Example example1 = new Example(BaseProductMaterialReP.class);
@@ -236,7 +221,7 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                 BeanUtils.copyProperties(baseProductMaterialReP,baseHtProductMaterialReP);
                 htList.add(baseHtProductMaterialReP);
             }
-            baseHtProductMaterialRePMapper.insert(baseHtProductMaterialReP);
+            baseHtProductMaterialRePMapper.insertSelective(baseHtProductMaterialReP);
         }
 
         return i;
@@ -246,9 +231,6 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         List<BaseHtProductProcessReM> list = new ArrayList<>();
         String[] idArry = ids.split(",");
@@ -276,9 +258,6 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BaseProductProcessReMImport> baseProductProcessReMImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
