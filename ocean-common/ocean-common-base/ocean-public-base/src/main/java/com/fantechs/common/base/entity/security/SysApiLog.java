@@ -4,11 +4,14 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
 
 /**
  * 接口日志
@@ -110,7 +113,7 @@ public class SysApiLog extends ValidGroup implements Serializable {
      * 调用时间
      */
     @ApiModelProperty(name="requestTime",value = "调用时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "request_time")
     private Date requestTime;
 
@@ -118,7 +121,7 @@ public class SysApiLog extends ValidGroup implements Serializable {
      * 响应时间
      */
     @ApiModelProperty(name="responseTime",value = "响应时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "response_time")
     private Date responseTime;
 

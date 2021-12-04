@@ -32,6 +32,7 @@ import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -277,17 +278,40 @@ public class DeviceInterFaceUtils {
         return productBomDto;
     }
 
-    public void  addLog(Byte result,Byte type,Long orgId,String responseData,String requestParameter) {
+    public void  addLog(Byte result, Byte type, Long orgId, String responseData, String requestParameter, BigDecimal consumeTime, String requestTimeS, String responseTimeS) {
         SysApiLog sysApiLog = new SysApiLog();
         sysApiLog.setThirdpartySysName("雷赛设备过站接口");
         sysApiLog.setCallResult(result);
         sysApiLog.setCallType(type);
         sysApiLog.setApiModule("ocean-materialapi");
         sysApiLog.setOrgId(orgId);
+
         sysApiLog.setRequestTime(new Date());
         sysApiLog.setResponseTime(new Date());
+
+//        try {
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+//            sysApiLog.setRequestTime(sdf.parse(requestTimeS));
+//            sysApiLog.setResponseTime(sdf.parse(responseTimeS));
+//
+//            if (StringUtils.isNotEmpty(requestTimeS))
+//                sysApiLog.setRequestTime(sdf.parse(requestTimeS));
+//            else
+//                sysApiLog.setRequestTime(new Date());
+//
+//            if (StringUtils.isNotEmpty(responseTimeS))
+//                sysApiLog.setResponseTime(sdf.parse(responseTimeS));
+//            else
+//                sysApiLog.setResponseTime(new Date());
+//        }
+//        catch (Exception ex){
+//
+//        }
+
+        sysApiLog.setConsumeTime(consumeTime);
         sysApiLog.setResponseData(responseData);
         sysApiLog.setRequestParameter(requestParameter);
+
         securityFeignApi.add(sysApiLog);
     }
 

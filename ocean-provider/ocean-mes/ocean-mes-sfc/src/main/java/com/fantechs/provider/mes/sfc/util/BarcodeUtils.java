@@ -1,5 +1,7 @@
 package com.fantechs.provider.mes.sfc.util;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -611,6 +613,10 @@ public class BarcodeUtils {
             }
 
             BaseRouteProcess routeProcess = routeProcessOptional.get();
+            //判断传参工序是否为非必过工序
+            if (routeProcess.getIsMustPass() == 0) {
+                    return;
+                }
 
             int num = routeProcess.getOrderNum();
             Optional<BaseRouteProcess> routeProcessOptionalLast = routeProcessList.stream()
@@ -1104,7 +1110,13 @@ public class BarcodeUtils {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         byte result=1;//调用结果(0-失败 1-成功)
         Long orgId = null;
+        long start=0;
+        long end=0;
+        String requestTimeS="";
+        String responseTimeS="";
         try {
+            start = System.currentTimeMillis();//获取毫秒数
+            requestTimeS=DateUtil.format(new Date(), DatePattern.NORM_DATETIME_MS_PATTERN);
 
             String pass = "Pass";
             String fail = "Fail";
@@ -1218,7 +1230,12 @@ public class BarcodeUtils {
         }
 
         //记录请求参数及结果
-        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkLogUserInfoApiDto.toString());
+        end = System.currentTimeMillis();//获取毫秒数
+        BigDecimal consumeTime=new BigDecimal((end-start)/1000);//耗时 秒
+        responseTimeS=DateUtil.format(new Date(), DatePattern.NORM_DATETIME_MS_PATTERN);//响应时间
+
+        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(),
+                restapiChkLogUserInfoApiDto.toString(),consumeTime,requestTimeS,responseTimeS);
 
         return baseExecuteResultDto;
     }
@@ -1235,7 +1252,20 @@ public class BarcodeUtils {
         UpdateProcessDto updateProcessDto=new UpdateProcessDto();
         byte result=1;//调用结果(0-失败 1-成功)
         Long orgId=0L;
+        long start=0;
+        long end=0;
+        String requestTimeS="";
+        String responseTimeS="";
         try {
+                start = System.currentTimeMillis();//获取毫秒数
+                requestTimeS=DateUtil.format(new Date(), DatePattern.NORM_DATETIME_MS_PATTERN);
+
+                ResponseEntity<List<BaseOrganizationDto>> baseOrganizationDtoList = barcodeUtils.deviceInterFaceUtils.getOrId();
+                if (StringUtils.isEmpty(baseOrganizationDtoList.getData())) {
+                    throw new Exception("请求失败,未查询到对应组织");
+                }
+                //获取组织ID
+                orgId = baseOrganizationDtoList.getData().get(0).getOrganizationId();
 
                 //参数基础信息判断
                 baseExecuteResultDto=checkParameter(restapiChkSNRoutingApiDto.getWorkOrderCode(),restapiChkSNRoutingApiDto.getProCode(),restapiChkSNRoutingApiDto.getProcessCode(),
@@ -1247,7 +1277,7 @@ public class BarcodeUtils {
 
                 //接收返回结果集
                 updateProcessDto=(UpdateProcessDto)baseExecuteResultDto.getExecuteResult();
-                orgId=updateProcessDto.getOrgId();
+                //orgId=updateProcessDto.getOrgId();
 
                 //获取半成品物料ID
                 Long partMaterialId=updateProcessDto.getPartMaterialId();
@@ -1325,8 +1355,13 @@ public class BarcodeUtils {
             baseExecuteResultDto.setFailMsg(ex.getMessage());
         }
 
+        end = System.currentTimeMillis();//获取毫秒数
+        BigDecimal consumeTime=new BigDecimal((end-start)/1000);//耗时 秒
+        responseTimeS=DateUtil.format(new Date(), DatePattern.NORM_DATETIME_MS_PATTERN);//响应时间
+
         //记录请求参数及结果
-        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiChkSNRoutingApiDto.toString());
+        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(),
+                restapiChkSNRoutingApiDto.toString(),consumeTime,requestTimeS,responseTimeS);
         return baseExecuteResultDto;
     }
 
@@ -1481,7 +1516,7 @@ public class BarcodeUtils {
         }
 
         //记录请求参数及结果
-        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiSNDataTransferApiDto.toString());
+        //barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiSNDataTransferApiDto.toString());
         return baseExecuteResultDto;
     }
 
@@ -1500,7 +1535,13 @@ public class BarcodeUtils {
         UpdateProcessDto updateProcessDto=new UpdateProcessDto();
         byte result=1;//调用结果(0-失败 1-成功)
         Long orgId=0L;
+        long start=0;
+        long end=0L;
+        String requestTimeS="";
+        String responseTimeS="";
         try {
+            start = System.currentTimeMillis();//获取毫秒数
+            requestTimeS=DateUtil.format(new Date(), DatePattern.NORM_DATETIME_MS_PATTERN);
 
             //参数基础信息判
             ResponseEntity<List<BaseOrganizationDto>> baseOrganizationDtoList=barcodeUtils.deviceInterFaceUtils.getOrId();
@@ -1756,6 +1797,9 @@ public class BarcodeUtils {
             //设置作业结果
             updateProcessDto.setOpResult(restapiSNDataTransferApiDto.getOpResult());
 
+            //设置耗时
+            updateProcessDto.setPassTime(restapiSNDataTransferApiDto.getPassTime());
+
             //设置过站条码及客户条码
             String barCode=restapiSNDataTransferApiDto.getBarCode();//成品条码
             //设置过站条码
@@ -1809,7 +1853,12 @@ public class BarcodeUtils {
         }
 
         //记录请求参数及结果
-        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiSNDataTransferApiDto.toString());
+        end = System.currentTimeMillis();//获取毫秒数
+        BigDecimal consumeTime=new BigDecimal((end-start)/1000);//耗时 秒
+        responseTimeS=DateUtil.format(new Date(), DatePattern.NORM_DATETIME_MS_PATTERN);//响应时间
+
+        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(),
+                restapiSNDataTransferApiDto.toString(),consumeTime,requestTimeS,responseTimeS);
         return baseExecuteResultDto;
     }
 
@@ -2005,7 +2054,9 @@ public class BarcodeUtils {
         }
 
         //记录请求参数及结果
-        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(), restapiSNDataTransferApiDto.toString());
+        BigDecimal consum=new BigDecimal(0);
+        barcodeUtils.deviceInterFaceUtils.addLog(result, (byte) 2, orgId, baseExecuteResultDto.getIsSuccess()?baseExecuteResultDto.getSuccessMsg():baseExecuteResultDto.getFailMsg(),
+                restapiSNDataTransferApiDto.toString(),consum,"","");
         return baseExecuteResultDto;
     }
 
@@ -2929,7 +2980,7 @@ public class BarcodeUtils {
     public static String getSysSpecItemValue(String specCode){
         String paraValue="";
         ResponseEntity<List<SysSpecItem>> sysSpecItemList= barcodeUtils.deviceInterFaceUtils.getSysSpecItem(specCode);
-        if(StringUtils.isNotEmpty(sysSpecItemList)) {
+        if(StringUtils.isNotEmpty(sysSpecItemList.getData())) {
             SysSpecItem sysSpecItem = sysSpecItemList.getData().get(0);
             paraValue = sysSpecItem.getParaValue();
         }
