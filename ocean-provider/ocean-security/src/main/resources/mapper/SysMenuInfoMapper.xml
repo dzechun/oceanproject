@@ -25,9 +25,10 @@
     </resultMap>
     <sql id="Base_Column_List">
     sm.menu_id, sm.menu_code, sm.menu_name, sm.order_num, sm.parent_id, sm.menu_desc, sm.menu_level, sm.is_menu,
-    sm.url, sm.premenu_id, sm.menu_type,sm.is_authorise sm.is_hide, sm.is_delete, sm.icon, sm.is_oppen, sm.create_user_id, sm.create_time,
+    sm.url, sm.premenu_id, sm.menu_type,sm.is_authorise,sm.is_hide, sm.is_delete, sm.icon, sm.is_oppen, sm.create_user_id, sm.create_time,
     sm.modified_user_id, sm.modified_time
   </sql>
+
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.dto.security.SysMenuInfoDto">
 
@@ -57,7 +58,7 @@
             <if test="ifSubquery == 1">
                 and sm.parent_id != 0
             </if>
-            <if test="isAuthorise == 1">
+            <if test="isAuthorise != null">
                 and sm.is_authorise = #{isAuthorise}
             </if>
             <if test="menuType != null">
