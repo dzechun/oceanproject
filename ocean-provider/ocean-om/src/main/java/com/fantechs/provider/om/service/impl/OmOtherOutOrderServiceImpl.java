@@ -66,15 +66,15 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     @LcnTransaction
     public int packageAutoOutOrder(OmOtherOutOrder omOtherOutOrder) {
         if(omOtherOutOrder.getOrderStatus()>2){
-            throw new BizErrorException("单据已下发完成");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"单据已下发完成");
         }
         SysUser sysUser = currentUser();
         if(omOtherOutOrder.getOrderStatus()>=3){
-            throw new BizErrorException("单据已完成");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"单据已完成");
         }
 
         if(omOtherOutOrder.getOmOtherOutOrderDets().size()<1){
-            throw new BizErrorException("请输入下发数量");
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请输入下发数量");
         }
         List<OmOtherOutOrderDto> list = omOtherOutOrderMapper.findList(ControllerUtil.dynamicCondition("otherOutOrderId",omOtherOutOrder.getOtherOutOrderId()));
         int num = 0;
@@ -88,7 +88,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             map.put("storageType",3);
             Long storageId = omTransferOrderMapper.findStorage(map);
             if(StringUtils.isEmpty(storageId)){
-                throw new BizErrorException("未获取到该仓库的发货库位");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未获取到该仓库的发货库位");
             }
 
             //获取物料单位名称
@@ -225,7 +225,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     public int update(OmOtherOutOrder entity) {
         SysUser sysUser = currentUser();
         if(entity.getOrderStatus()>1){
-            throw new BizErrorException("单据下发中无法更改");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"单据下发中无法更改");
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
@@ -257,7 +257,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                 throw new BizErrorException(ErrorCodeEnum.OPT20012000,id);
             }
             if(omOtherOutOrder.getOrderStatus()>1){
-                throw new BizErrorException("单据已下发，无法删除");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"单据已下发，无法删除");
             }
             Example example = new Example(OmOtherOutOrderDet.class);
             example.createCriteria().andEqualTo("otherOutOrderId",omOtherOutOrder.getOtherOutOrderId());

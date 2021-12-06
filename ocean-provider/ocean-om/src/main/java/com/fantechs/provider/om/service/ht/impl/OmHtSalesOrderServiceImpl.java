@@ -29,7 +29,7 @@ public class OmHtSalesOrderServiceImpl extends BaseService<OmHtSalesOrder> imple
 
     @Override
     public int save(OmHtSalesOrder omHtSalesOrder) {
-        return omHtSalesOrderMapper.insertUseGeneratedKeys(omHtSalesOrder);
+        return omHtSalesOrderMapper.insertSelective(omHtSalesOrder);
     }
 
     @Override

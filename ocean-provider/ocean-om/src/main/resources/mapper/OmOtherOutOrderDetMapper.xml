@@ -1,77 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.om.mapper.OmOtherOutOrderDetMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="other_out_order_det_id" jdbcType="BIGINT" property="otherOutOrderDetId" />
-    <result column="other_out_order_id" jdbcType="BIGINT" property="otherOutOrderId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
-    <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
-    <result column="issue_qty" jdbcType="DECIMAL" property="issueQty" />
-    <result column="dispatch_qty" jdbcType="DECIMAL" property="dispatchQty" />
-    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
-    <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate" />
-    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-  </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmOtherOutOrderDetDto">
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
-    <result column="volume" jdbcType="DECIMAL" property="volume"/>
-    <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
-    <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-  </resultMap>
-  <sql id="Base_Column_List">
-    ouod.other_out_order_det_id,
-    ouod.other_out_order_id,
-ouod.warehouse_id,
-ouod.material_id,
-ouod.unit_name,
-ouod.order_qty,
-ouod.issue_qty,
-ouod.dispatch_qty,
-ouod.production_date,
-ouod.expired_date,
-ouod.batch_code,
-ouod.status,
-ouod.is_delete,
-ouod.remark,
-ouod.org_id,
-ouod.create_user_id,
-ouod.create_time,
-ouod.modified_user_id,
-ouod.modified_time
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="other_out_order_det_id" jdbcType="BIGINT" property="otherOutOrderDetId"/>
+        <result column="other_out_order_id" jdbcType="BIGINT" property="otherOutOrderId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
+        <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
+        <result column="issue_qty" jdbcType="DECIMAL" property="issueQty"/>
+        <result column="dispatch_qty" jdbcType="DECIMAL" property="dispatchQty"/>
+        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
+        <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.om.OmOtherOutOrderDetDto">
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
+        <result column="volume" jdbcType="DECIMAL" property="volume"/>
+        <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
+        <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        ouod.other_out_order_det_id,
+        ouod.other_out_order_id,
+        ouod.warehouse_id,
+        ouod.material_id,
+        ouod.unit_name,
+        ouod.order_qty,
+        ouod.issue_qty,
+        ouod.dispatch_qty,
+        ouod.production_date,
+        ouod.expired_date,
+        ouod.batch_code,
+        ouod.status,
+        ouod.is_delete,
+        ouod.remark,
+        ouod.org_id,
+        ouod.create_user_id,
+        ouod.create_time,
+        ouod.modified_user_id,
+        ouod.modified_time
   </sql>
-  <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>,bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
-    su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
-    FROM om_other_out_order_det ouod
-    LEFT JOIN base_warehouse bw ON  bw.warehouse_id = ouod.warehouse_id
-    LEFT JOIN base_material bm ON ouod.material_id = bm.material_id
-    left join base_material_tab bmb ON bm.material_id = bmb.material_id
-    left join sys_user su on ouod.create_user_id = su.user_id
-    left join sys_user sus on ouod.modified_user_id = sus.user_id
-    left join base_organization bo on ouod.org_id = bo.organization_id
-    <where>
-      <if test="otherOutOrderId !=null and otherOutOrderId!=''">
-        and ouod.other_out_order_id = #{otherOutOrderId}
-      </if>
-    </where>
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="Base_Column_List"/>
+        ,bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
+        su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
+        FROM om_other_out_order_det ouod
+        LEFT JOIN base_warehouse bw ON bw.warehouse_id = ouod.warehouse_id
+        LEFT JOIN base_material bm ON ouod.material_id = bm.material_id
+        left join base_material_tab bmb ON bm.material_id = bmb.material_id
+        left join sys_user su on ouod.create_user_id = su.user_id
+        left join sys_user sus on ouod.modified_user_id = sus.user_id
+        left join base_organization bo on ouod.org_id = bo.organization_id
+        <where>
+            <if test="otherOutOrderId !=null and otherOutOrderId!=''">
+                and ouod.other_out_order_id = #{otherOutOrderId}
+            </if>
+        </where>
+    </select>
 </mapper>

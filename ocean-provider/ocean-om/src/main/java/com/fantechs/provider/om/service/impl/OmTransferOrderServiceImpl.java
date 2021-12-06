@@ -114,13 +114,13 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
             if(omTransferOrder.getOrderStatus()>1){
-                throw new BizErrorException(omTransferOrder.getOrderStatus()==2?"订单已下发，无法修改":"订单已完成");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),omTransferOrder.getOrderStatus()==2?"订单已下发，无法修改":"订单已完成");
             }
             Example example = new Example(OmTransferOrderDet.class);
             example.createCriteria().andEqualTo("transferOrderId",omTransferOrder.getTransferOrderId());
             List<OmTransferOrderDet> list = omTransferOrderDetMapper.selectByExample(example);
             if(list.size()<1){
-                throw new BizErrorException("下发失败");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"下发失败");
             }
             //获取仓库联系人
             BaseWarehouse baseWarehouse = baseFeignApi.getWarehouseDetail(omTransferOrder.getOutWarehouseId()).getData();
@@ -131,7 +131,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             map.put("storageType",3);
             Long storageId = omTransferOrderMapper.findStorage(map);
             if(StringUtils.isEmpty(storageId)){
-                throw new BizErrorException("未获取到该仓库的发货库位");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到该仓库的发货库位");
             }
             //出库单表头
             WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
@@ -168,12 +168,12 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
                 i++;
             }
             if(wmsOutDeliveryOrderDetDtos.size()<1){
-                throw new BizErrorException("暂无可下发的调拨货品");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"暂无可下发的调拨货品");
             }
             wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetDtos);
             ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryOrder);
             if(responseEntity.getCode()!=0){
-                throw new BizErrorException("生成出库单失败");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"生成出库单失败");
             }
             omTransferOrder.setOrderStatus((byte)2);
             omTransferOrderMapper.updateByPrimaryKeySelective(omTransferOrder);
@@ -212,7 +212,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     public int update(OmTransferOrder entity) {
         SysUser sysUser = currentUser();
         if(entity.getOrderStatus()>1){
-            throw new BizErrorException(entity.getOrderStatus()==2?"订单已下发，无法修改":"订单已完成");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),entity.getOrderStatus()==2?"订单已下发，无法修改":"订单已完成");
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());

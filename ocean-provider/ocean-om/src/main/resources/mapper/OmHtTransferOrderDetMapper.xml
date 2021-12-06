@@ -6,25 +6,26 @@
           WARNING - @mbg.generated
         -->
         <id column="ht_transfer_order_det_id" jdbcType="BIGINT" property="htTransferOrderDetId"/>
-        <result column="ht_transfer_order_id" jdbcType="BIGINT" property="htTransferOrderId" />
-        <result column="transfer_order_det_id" jdbcType="BIGINT" property="transferOrderDetId" />
-        <result column="transfer_order_id" jdbcType="BIGINT" property="transferOrderId" />
-        <result column="material_id" jdbcType="BIGINT" property="materialId" />
-        <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
-        <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
-        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
-        <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate" />
-        <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
-        <result column="status" jdbcType="TINYINT" property="status" />
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
-        <result column="org_id" jdbcType="BIGINT" property="orgId" />
-        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="ht_transfer_order_id" jdbcType="BIGINT" property="htTransferOrderId"/>
+        <result column="transfer_order_det_id" jdbcType="BIGINT" property="transferOrderDetId"/>
+        <result column="transfer_order_id" jdbcType="BIGINT" property="transferOrderId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
+        <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
+        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
+        <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
     </resultMap>
-    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmHtTransferOrderDetDto">
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.om.OmHtTransferOrderDetDto">
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
@@ -37,26 +38,28 @@
     </resultMap>
     <sql id="Base_Column_List">
         otod.ht_transfer_order_det_id,
-otod.ht_transfer_order_id,
+        otod.ht_transfer_order_id,
         otod.transfer_order_det_id,
-    otod.transfer_order_id,
-otod.material_id,
-otod.unit_name,
-otod.order_qty,
-otod.production_date,
-otod.expired_date,
-otod.batch_code,
-otod.status,
-otod.is_delete,
-otod.remark,
-otod.org_id,
-otod.create_user_id,
-otod.create_time,
-otod.modified_user_id,
-otod.modified_time
+        otod.transfer_order_id,
+        otod.material_id,
+        otod.unit_name,
+        otod.order_qty,
+        otod.production_date,
+        otod.expired_date,
+        otod.batch_code,
+        otod.status,
+        otod.is_delete,
+        otod.remark,
+        otod.org_id,
+        otod.create_user_id,
+        otod.create_time,
+        otod.modified_user_id,
+        otod.modified_time
     </sql>
     <select id="findHtList" resultMap="BaseResultMapDto">
-        SELECT <include refid="Base_Column_List"/>,bm.material_code,bm.material_name,bmb.main_unit,IFNULL(bmb.volume,0) as volume,IFNULL(bmb.net_weight,0) as net_weight,IFNULL(bmb.gross_weight,0) as gross_weight,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_ht_transfer_order_det otod
+        SELECT<include refid="Base_Column_List"/>,bm.material_code,bm.material_name,bmb.main_unit,IFNULL(bmb.volume,0)
+        as volume,IFNULL(bmb.net_weight,0) as net_weight,IFNULL(bmb.gross_weight,0) as gross_weight,su.user_name as
+        create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_ht_transfer_order_det otod
         LEFT JOIN base_material bm ON otod.material_id = bm.material_id
         left join base_material_tab bmb ON bm.material_id = bmb.material_id
         left join sys_user su on otod.create_user_id = su.user_id

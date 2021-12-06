@@ -29,6 +29,12 @@ public class OmPurchaseOrderDetDto extends OmPurchaseOrderDet implements Seriali
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
     private String warehouseName;
 
+    @ApiModelProperty(name="supplierCode",value = "供应商编码")
+    private String supplierCode;
+
+    @ApiModelProperty(name="supplierName",value = "供应商名称")
+    private String supplierName;
+
     /**
      *  产品型号名称
      */

@@ -1,124 +1,152 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.om.mapper.OmPurchaseOrderMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmPurchaseOrder">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="purchase_order_id" jdbcType="BIGINT" property="purchaseOrderId" />
-    <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode" />
-    <result column="order_type" jdbcType="VARCHAR" property="orderType" />
-    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
-    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
-    <result column="purchase_dept_id" jdbcType="BIGINT" property="purchaseDeptId" />
-    <result column="purchase_user_id" jdbcType="BIGINT" property="purchaseUserId" />
-    <result column="make_order_user_id" jdbcType="BIGINT" property="makeOrderUserId" />
-    <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
-    <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId" />
-    <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate" />
-    <result column="item_category_name" jdbcType="VARCHAR" property="itemCategoryName" />
-    <result column="order_unit_name" jdbcType="VARCHAR" property="orderUnitName" />
-    <result column="inventory_site" jdbcType="VARCHAR" property="inventorySite" />
-    <result column="free_item" jdbcType="VARCHAR" property="freeItem" />
-    <result column="sales_return_item" jdbcType="VARCHAR" property="salesReturnItem" />
-    <result column="currency_id" jdbcType="BIGINT" property="currencyId" />
-    <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate" />
-    <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmPurchaseOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="purchase_order_id" jdbcType="BIGINT" property="purchaseOrderId"/>
+        <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode"/>
+        <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
+        <result column="purchase_dept_id" jdbcType="BIGINT" property="purchaseDeptId"/>
+        <result column="purchase_user_id" jdbcType="BIGINT" property="purchaseUserId"/>
+        <result column="make_order_user_id" jdbcType="BIGINT" property="makeOrderUserId"/>
+        <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate"/>
+        <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId"/>
+        <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate"/>
+        <result column="item_category_name" jdbcType="VARCHAR" property="itemCategoryName"/>
+        <result column="order_unit_name" jdbcType="VARCHAR" property="orderUnitName"/>
+        <result column="inventory_site" jdbcType="VARCHAR" property="inventorySite"/>
+        <result column="free_item" jdbcType="VARCHAR" property="freeItem"/>
+        <result column="sales_return_item" jdbcType="VARCHAR" property="salesReturnItem"/>
+        <result column="currency_id" jdbcType="BIGINT" property="currencyId"/>
+        <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate"/>
+        <result column="audit_status" jdbcType="TINYINT" property="auditStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
-    opo.purchase_order_id, opo.purchase_order_code, opo.order_type, opo.order_status, opo.supplier_id,opo.order_date,
-    opo.purchase_dept_id, opo.purchase_user_id, opo.make_order_user_id, opo.make_order_date,opo.audit_user_id, opo.audit_date,
-    opo.item_category_name,opo.order_unit_name,opo.inventory_site,opo.free_item,opo.sales_return_item, opo.currency_id, opo.plan_delivery_date,
-    opo.audit_status, opo.status, opo.remark, opo.org_id, opo.create_user_id,opo.create_time, opo.modified_user_id, opo.modified_time,
-    opo.is_delete, opo.option1, opo.option2,opo.option3
+    <sql id="Base_Column_List">
+        opo.purchase_order_id,
+        opo.purchase_order_code,
+        opo.order_type,
+        opo.order_status,
+        opo.supplier_id,
+        opo.order_date,
+        opo.purchase_dept_id,
+        opo.purchase_user_id,
+        opo.make_order_user_id,
+        opo.make_order_date,
+        opo.audit_user_id,
+        opo.audit_date,
+        opo.item_category_name,
+        opo.order_unit_name,
+        opo.inventory_site,
+        opo.free_item,
+        opo.sales_return_item,
+        opo.currency_id,
+        opo.plan_delivery_date,
+        opo.audit_status,
+        opo.status,
+        opo.remark,
+        opo.org_id,
+        opo.create_user_id,
+        opo.create_time,
+        opo.modified_user_id,
+        opo.modified_time,
+        opo.is_delete,
+        opo.option1,
+        opo.option2,
+        opo.option3
   </sql>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto">
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
 
-    <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
-    <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
-    <result column="complete_detail" jdbcType="VARCHAR" property="completeDetail"/>
-  </resultMap>
+        <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="complete_detail" jdbcType="VARCHAR" property="completeDetail"/>
+    </resultMap>
 
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-    select
-    <include refid="Base_Column_List"/>,
-    bs.supplier_code as supplierCode, bs.supplier_name as supplierName,bs.e_mail as eMail,bs.mobile_phone,bs.telephone,ba.complete_detail,
-    bc.currency_name as currencyName,
-    bd.dept_code as deptCode, bd.dept_name as deptName,sum(opod.material_total_price) as totalPrice,
-    supu.nick_name as purchaseUserName, supu.nick_name as makeOrderUserName, supu.nick_name as auditUserName,
-    u.user_name as create_user_name,
-    s.user_name as modified_user_name,
-    bo.organization_name
-    from om_purchase_order opo
-    left join sys_user suc on opo.create_user_id = suc.user_id
-    left join sys_user sumod on opo.modified_user_id = sumod.user_id
-    left join base_supplier bs on opo.supplier_id = bs.supplier_id
-    left join base_dept bd on opo.purchase_dept_id = bd.dept_id
-    left join base_currency bc on opo.currency_id = bc.currency_id
-    LEFT JOIN om_purchase_order_det opod ON opo.purchase_order_id = opod.purchase_order_id
-    left join sys_user supu on opo.purchase_user_id = supu.user_id
-    left join sys_user sumou on opo.make_order_user_id = sumou.user_id
-    left join sys_user suau on opo.audit_user_id = suau.user_id
-    left join sys_user u on opo.create_user_id=u.user_id
-    left join sys_user s on opo.modified_user_id=s.user_id
-    left join base_organization bo on opo.org_id = bo.organization_id
-    left join base_supplier_re_user bsru on bsru.supplier_id = bs.supplier_id
-    left join base_address ba on ba.address_id = bs.address_id
-    <where>
-      <if test="userId != null">
-        and bsru.user_id = #{userId}
-      </if>
-      <if test="supplierId != null">
-        and opo.supplier_id = #{supplierId}
-      </if>
-      <if test="status != null">
-        and opo.status = #{status}
-      </if>
-      <if test="orgId != null">
-        and opo.org_id = #{orgId}
-      </if>
-      <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark != 1">
-        and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
-      </if>
-      <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark ==1">
-        and opo.purchase_order_code = #{purchaseOrderCode}
-      </if>
-      <if test="orderStatus != null">
-        and opo.order_status = #{orderStatus}
-      </if>
-      <if test="supplierCode != null and supplierCode != ''">
-        and bs.supplier_code like CONCAT('%', #{supplierCode}, '%')
-      </if>
-      <if test="supplierName != null and supplierName != ''">
-        and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
-      </if>
-      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-        and date_format(opo.create_time, '%Y-%m-%d') <![CDATA[ >= ]]> #{startTime}
-        and date_format(opo.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
-      </if>
-    </where>
-    group by opo.purchase_order_id
-    order by opo.create_time desc
-  </select>
-  <select id="findPurchaseMaterial" resultType="java.lang.String">
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+        select
+        <include refid="Base_Column_List"/>,
+        bs.supplier_code as supplierCode, bs.supplier_name as supplierName,bs.e_mail as
+        eMail,bs.mobile_phone,bs.telephone,ba.complete_detail,
+        bc.currency_name as currencyName,
+        bd.dept_code as deptCode, bd.dept_name as deptName,sum(opod.material_total_price) as totalPrice,
+        supu.nick_name as purchaseUserName, supu.nick_name as makeOrderUserName, supu.nick_name as auditUserName,
+        u.user_name as create_user_name,
+        s.user_name as modified_user_name,
+        bo.organization_name
+        from om_purchase_order opo
+        left join sys_user suc on opo.create_user_id = suc.user_id
+        left join sys_user sumod on opo.modified_user_id = sumod.user_id
+        left join base_supplier bs on opo.supplier_id = bs.supplier_id
+        left join base_dept bd on opo.purchase_dept_id = bd.dept_id
+        left join base_currency bc on opo.currency_id = bc.currency_id
+        LEFT JOIN om_purchase_order_det opod ON opo.purchase_order_id = opod.purchase_order_id
+        left join sys_user supu on opo.purchase_user_id = supu.user_id
+        left join sys_user sumou on opo.make_order_user_id = sumou.user_id
+        left join sys_user suau on opo.audit_user_id = suau.user_id
+        left join sys_user u on opo.create_user_id=u.user_id
+        left join sys_user s on opo.modified_user_id=s.user_id
+        left join base_organization bo on opo.org_id = bo.organization_id
+        left join base_supplier_re_user bsru on bsru.supplier_id = bs.supplier_id
+        left join base_address ba on ba.address_id = bs.address_id
+        <where>
+            <if test="userId != null">
+                and bsru.user_id = #{userId}
+            </if>
+            <if test="supplierId != null">
+                and opo.supplier_id = #{supplierId}
+            </if>
+            <if test="status != null">
+                and opo.status = #{status}
+            </if>
+            <if test="orgId != null">
+                and opo.org_id = #{orgId}
+            </if>
+            <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark != 1">
+                and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
+            </if>
+            <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark ==1">
+                and opo.purchase_order_code = #{purchaseOrderCode}
+            </if>
+            <if test="orderStatus != null">
+                and opo.order_status = #{orderStatus}
+            </if>
+            <if test="supplierCode != null and supplierCode != ''">
+                and bs.supplier_code like CONCAT('%', #{supplierCode}, '%')
+            </if>
+            <if test="supplierName != null and supplierName != ''">
+                and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(opo.create_time, '%Y-%m-%d') <![CDATA[ >= ]]> #{startTime}
+                and date_format(opo.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
+            </if>
+        </where>
+        group by opo.purchase_order_id
+        order by opo.create_time desc
+    </select>
+    <select id="findPurchaseMaterial" resultType="java.lang.String">
     SELECT material_id FROM om_purchase_order opm
     LEFT JOIN om_purchase_order_det opod ON opm.purchase_order_id=opod.purchase_order_id
     WHERE opm.purchase_order_code=#{purchaseOrderCode} LIMIT 1

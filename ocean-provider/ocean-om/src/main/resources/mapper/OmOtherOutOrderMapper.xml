@@ -1,129 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.om.mapper.OmOtherOutOrderMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmOtherOutOrder">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="other_out_order_id" jdbcType="BIGINT" property="otherOutOrderId" />
-    <result column="other_out_order_code" jdbcType="VARCHAR" property="otherOutOrderCode" />
-    <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
-    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
-    <result column="customer_id" jdbcType="BIGINT" property="customerId" />
-    <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
-    <result column="total_dispatch_qty" jdbcType="DECIMAL" property="totalDispatchQty" />
-    <result column="consignee_id" jdbcType="BIGINT" property="consigneeId" />
-    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
-    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
-    <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
-    <result column="address" jdbcType="VARCHAR" property="address"/>
-    <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
-    <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
-    <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
-    <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
-    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
-    <result column="req_arrive_date" jdbcType="TIMESTAMP" property="reqArriveDate"/>
-    <result column="plan_arrive_date" jdbcType="TIMESTAMP" property="planArriveDate"/>
-    <result column="actual_despatch_date" jdbcType="TIMESTAMP" property="actualDespatchDate"/>
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto">
-    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
-    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
-    <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-  </resultMap>
-  <sql id="Base_Column_List">
-    ouo.other_out_order_id,
-ouo.other_out_order_code,
-ouo.customer_order_code,
-ouo.material_owner_id,
-ouo.customer_id,
-ouo.consignee_id,
-ouo.order_status,
-ouo.status,
-ouo.order_date,
-ouo.req_arrive_date,
-ouo.plan_arrive_date,
-ouo.actual_despatch_date,
-ouo.remark,
-ouo.org_id,
-ouo.create_user_id,
-ouo.create_time,
-ouo.modified_user_id,
-ouo.modified_time,
-ouo.is_delete,
-ouo.option1,
-ouo.option2,
-ouo.option3
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmOtherOutOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="other_out_order_id" jdbcType="BIGINT" property="otherOutOrderId"/>
+        <result column="other_out_order_code" jdbcType="VARCHAR" property="otherOutOrderCode"/>
+        <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode"/>
+        <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+        <result column="customer_id" jdbcType="BIGINT" property="customerId"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="total_dispatch_qty" jdbcType="DECIMAL" property="totalDispatchQty"/>
+        <result column="consignee_id" jdbcType="BIGINT" property="consigneeId"/>
+        <result column="link_man_name" jdbcType="VARCHAR" property="linkManName"/>
+        <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
+        <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="total_qty" jdbcType="DECIMAL" property="totalQty"/>
+        <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
+        <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
+        <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
+        <result column="req_arrive_date" jdbcType="TIMESTAMP" property="reqArriveDate"/>
+        <result column="plan_arrive_date" jdbcType="TIMESTAMP" property="planArriveDate"/>
+        <result column="actual_despatch_date" jdbcType="TIMESTAMP" property="actualDespatchDate"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto">
+        <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        ouo.other_out_order_id,
+        ouo.other_out_order_code,
+        ouo.customer_order_code,
+        ouo.material_owner_id,
+        ouo.customer_id,
+        ouo.consignee_id,
+        ouo.order_status,
+        ouo.status,
+        ouo.order_date,
+        ouo.req_arrive_date,
+        ouo.plan_arrive_date,
+        ouo.actual_despatch_date,
+        ouo.remark,
+        ouo.org_id,
+        ouo.create_user_id,
+        ouo.create_time,
+        ouo.modified_user_id,
+        ouo.modified_time,
+        ouo.is_delete,
+        ouo.option1,
+        ouo.option2,
+        ouo.option3
   </sql>
-  <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,bc.consignee_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
-    bs.supplier_name,bc.link_man_name,bc.link_man_phone,bc.fax_number,bc.e_mail_address,bc.address,
-    (SELECT SUM(ouod.order_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_qty,
-    (SELECT SUM(ouod.issue_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_issue_qty,
-    (SELECT SUM(ouod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id = ouo.other_out_order_id) as total_dispatch_qty,
-    (SELECT IFNULL(SUM(bmb.volume*ouod.order_qty),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_volume,
-    (SELECT IFNULL(SUM(bmb.net_weight*ouod.order_qty),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_net_weight,
-    (SELECT IFNULL(SUM(bmb.gross_weight*ouod.order_qty),0) FROM om_other_out_order_det ouod left join base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as total_gross_weight
-    FROM om_other_out_order ouo
-    LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = ouo.material_owner_id
-    LEFT JOIN base_supplier bs ON  ouo.customer_id = bs.supplier_id
-        LEFT JOIN base_consignee bc ON  ouo.consignee_id = bc.consignee_id
-    left join sys_user su on ouo.create_user_id = su.user_id
-    left join sys_user sus on ouo.modified_user_id = sus.user_id
-    left join base_organization bo on ouo.org_id = bo.organization_id
-<where>
-  <if test="otherOutOrderCode!=null and otherOutOrderCode!=''">
-    and ouo.other_out_order_code like CONCAT('%',#{otherOutOrderCode},'%')
-  </if>
-<if test="customerOrderCode!=null and customerOrderCode!=''">
-  and ouo.customer_order_code like CONCAT('%',#{customerOrderCode},'%')
-</if>
-  <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-    and date_format(ouo.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-  </if>
-<if test="orgId!=null and orgId!=''">
-  and ouo.org_id = #{orgId}
-</if>
-<if test="orderStatus!=null and orderStatus!=''">
-  and ouo.order_status = #{orderStatus}
-</if>
-<if test="otherOutOrderId!=null and otherOutOrderId!=''">
-  and ouo.other_out_order_id = #{otherOutOrderId}
-</if>
-    <if test="reqArriveDateT!=null and reqArriveDateT!='' and reqArriveDateF!=null and reqArriveDateF!=''">
-      and date_format(ouo.req_arrive_date,'%Y-%m-%d') BETWEEN #{reqArriveDateT} AND #{reqArriveDateF}
-    </if>
-  <if test="planArriveDateT!=null and planArriveDateT!='' and planArriveDateF!=null and planArriveDateF!=''">
-    and date_format(ouo.plan_arrive_date,'%Y-%m-%d') BETWEEN #{planArriveDateT} AND #{planArriveDateF}
-  </if>
-  <if test="actualDespatchDateT!=null and actualDespatchDateT!='' and actualDespatchDateF!=null and actualDespatchDateF!=''">
-    and date_format(ouo.actual_despatch_date,'%Y-%m-%d') BETWEEN #{actualDespatchDateT} AND #{actualDespatchDateF}
-  </if>
-    <if test="otherOutOrderId!=null and otherOutOrderId!=''">
-      and ouo.other_out_order_id=#{otherOutOrderId}
-    </if>
-  <if test="supplierName!=null and supplierName!=''">
-    and bs.supplier_name like CONCAT('%',#{supplierName},'%')
-  </if>
-</where>
-order by ouo.create_time desc
-  </select>
-  <select id="findMaterial" resultMap="BaseResultMap">
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="Base_Column_List"/>,bmo.material_owner_name,bc.consignee_name,su.user_name as
+        create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+        bs.supplier_name,bc.link_man_name,bc.link_man_phone,bc.fax_number,bc.e_mail_address,bc.address,
+        (SELECT SUM(ouod.order_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id =
+        ouo.other_out_order_id) as total_qty,
+        (SELECT SUM(ouod.issue_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id =
+        ouo.other_out_order_id) as total_issue_qty,
+        (SELECT SUM(ouod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id =
+        ouo.other_out_order_id) as total_dispatch_qty,
+        (SELECT IFNULL(SUM(bmb.volume*ouod.order_qty),0) FROM om_other_out_order_det ouod left join base_material_tab
+        bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as
+        total_volume,
+        (SELECT IFNULL(SUM(bmb.net_weight*ouod.order_qty),0) FROM om_other_out_order_det ouod left join
+        base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id =
+        ouo.other_out_order_id) as total_net_weight,
+        (SELECT IFNULL(SUM(bmb.gross_weight*ouod.order_qty),0) FROM om_other_out_order_det ouod left join
+        base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id =
+        ouo.other_out_order_id) as total_gross_weight
+        FROM om_other_out_order ouo
+        LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = ouo.material_owner_id
+        LEFT JOIN base_supplier bs ON ouo.customer_id = bs.supplier_id
+        LEFT JOIN base_consignee bc ON ouo.consignee_id = bc.consignee_id
+        left join sys_user su on ouo.create_user_id = su.user_id
+        left join sys_user sus on ouo.modified_user_id = sus.user_id
+        left join base_organization bo on ouo.org_id = bo.organization_id
+        <where>
+            <if test="otherOutOrderCode!=null and otherOutOrderCode!=''">
+                and ouo.other_out_order_code like CONCAT('%',#{otherOutOrderCode},'%')
+            </if>
+            <if test="customerOrderCode!=null and customerOrderCode!=''">
+                and ouo.customer_order_code like CONCAT('%',#{customerOrderCode},'%')
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(ouo.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and ouo.org_id = #{orgId}
+            </if>
+            <if test="orderStatus!=null and orderStatus!=''">
+                and ouo.order_status = #{orderStatus}
+            </if>
+            <if test="otherOutOrderId!=null and otherOutOrderId!=''">
+                and ouo.other_out_order_id = #{otherOutOrderId}
+            </if>
+            <if test="reqArriveDateT!=null and reqArriveDateT!='' and reqArriveDateF!=null and reqArriveDateF!=''">
+                and date_format(ouo.req_arrive_date,'%Y-%m-%d') BETWEEN #{reqArriveDateT} AND #{reqArriveDateF}
+            </if>
+            <if test="planArriveDateT!=null and planArriveDateT!='' and planArriveDateF!=null and planArriveDateF!=''">
+                and date_format(ouo.plan_arrive_date,'%Y-%m-%d') BETWEEN #{planArriveDateT} AND #{planArriveDateF}
+            </if>
+            <if test="actualDespatchDateT!=null and actualDespatchDateT!='' and actualDespatchDateF!=null and actualDespatchDateF!=''">
+                and date_format(ouo.actual_despatch_date,'%Y-%m-%d') BETWEEN #{actualDespatchDateT} AND
+                #{actualDespatchDateF}
+            </if>
+            <if test="otherOutOrderId!=null and otherOutOrderId!=''">
+                and ouo.other_out_order_id=#{otherOutOrderId}
+            </if>
+            <if test="supplierName!=null and supplierName!=''">
+                and bs.supplier_name like CONCAT('%',#{supplierName},'%')
+            </if>
+        </where>
+        order by ouo.create_time desc
+    </select>
+    <select id="findMaterial" resultMap="BaseResultMap">
     select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as total_net_weight,IFNULL(bmb.gross_weight,0) as total_gross_weight
     From base_material bm
            left join base_material_tab bmb ON bm.material_id = bmb.material_id

@@ -85,7 +85,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
         }
         List<OmPurchaseOrder> omPurchaseOrders = omPurchaseOrderMapper.selectByExample(example);
         if (!omPurchaseOrders.isEmpty()) {
-            throw new BizErrorException("采购单号重复");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"采购单号重复");
         }
         omPurchaseOrder.setOrderStatus((byte) 1);
         omPurchaseOrder.setStatus((byte) 1);

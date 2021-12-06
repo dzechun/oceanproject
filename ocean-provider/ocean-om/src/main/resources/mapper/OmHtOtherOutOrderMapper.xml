@@ -17,7 +17,7 @@
         <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
         <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
         <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
-        <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress"/>
+        <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress"/>
         <result column="address" jdbcType="VARCHAR" property="address"/>
         <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
         <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
@@ -49,29 +49,29 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
     <sql id="Base_Column_List">
-ouo.ht_other_out_order_id,
+        ouo.ht_other_out_order_id,
         ouo.other_out_order_id,
-ouo.other_out_order_code,
-ouo.customer_order_code,
-ouo.material_owner_id,
-ouo.customer_id,
-ouo.consignee_id,
-ouo.order_status,
-ouo.status,
-ouo.order_date,
-ouo.req_arrive_date,
-ouo.plan_arrive_date,
-ouo.actual_despatch_date,
-ouo.remark,
-ouo.org_id,
-ouo.create_user_id,
-ouo.create_time,
-ouo.modified_user_id,
-ouo.modified_time,
-ouo.is_delete,
-ouo.option1,
-ouo.option2,
-ouo.option3
+        ouo.other_out_order_code,
+        ouo.customer_order_code,
+        ouo.material_owner_id,
+        ouo.customer_id,
+        ouo.consignee_id,
+        ouo.order_status,
+        ouo.status,
+        ouo.order_date,
+        ouo.req_arrive_date,
+        ouo.plan_arrive_date,
+        ouo.actual_despatch_date,
+        ouo.remark,
+        ouo.org_id,
+        ouo.create_user_id,
+        ouo.create_time,
+        ouo.modified_user_id,
+        ouo.modified_time,
+        ouo.is_delete,
+        ouo.option1,
+        ouo.option2,
+        ouo.option3
     </sql>
     <select id="findHtList" resultMap="BaseResultMapDto">
         SELECT <include refid="Base_Column_List"/>,bmo.material_owner_name,bc.consignee_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,

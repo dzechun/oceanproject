@@ -72,10 +72,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     public int packageAutoOutOrder(OmOtherInOrder omOtherInOrder) {
         SysUser sysUser = currentUser();
         if(omOtherInOrder.getOrderStatus()>=3){
-            throw new BizErrorException("订单已下发完成");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"订单已下发完成");
         }
         if(omOtherInOrder.getOmOtherInOrderDets().size()<1){
-            throw new BizErrorException("请输入下发数量");
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请输入下发数量");
         }
         int num = 0;
         List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
@@ -88,7 +88,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             }
             BigDecimal total = omOtherInOrderDet.getIssueQty().add(omOtherInOrderDet.getQty());
             if(total.compareTo(omOtherInOrderDet.getOrderQty())==1){
-                throw new BizErrorException("下发数量不能大于工单数量");
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"下发数量不能大于工单数量");
             }
 
             //获取物料单位名称
@@ -101,7 +101,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             map.put("storageType",2);
             Long storageId = omTransferOrderMapper.findStorage(map);
             if(StringUtils.isEmpty(storageId)){
-                throw new BizErrorException("未获取到该仓库的发货库位");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到该仓库的发货库位");
             }
             WmsInAsnOrderDet wmsInAsnOrderDet = WmsInAsnOrderDet.builder()
                     .sourceOrderId(omOtherInOrderDet.getOtherInOrderId())
@@ -129,7 +129,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 .build();
         ResponseEntity responseEntity = inFeignApi.add(wmsInAsnOrder);
         if(responseEntity.getCode()!=0){
-            throw new BizErrorException(responseEntity.getMessage());
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),responseEntity.getMessage());
         }
         num+=this.updateStatus(omOtherInOrder);
         this.addHt(omOtherInOrder, omOtherInOrder.getOmOtherInOrderDets());
@@ -170,11 +170,11 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     public int writeQty(OmOtherInOrderDet omOtherInOrderDet){
         OmOtherInOrder omOtherInOrder = omOtherInOrderMapper.selectByPrimaryKey(omOtherInOrderDet.getOtherInOrderId());
         if(StringUtils.isEmpty(omOtherInOrder)){
-            throw new BizErrorException("查询订单失败");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"查询订单失败");
         }
         OmOtherInOrderDet omOtherInOrderDet1 = omOtherInOrderDetMapper.selectByPrimaryKey(omOtherInOrderDet.getOtherInOrderDetId());
         if(StringUtils.isEmpty(omOtherInOrderDet1)){
-            throw new BizErrorException("未获取到订单信息");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到订单信息");
         }
         if(StringUtils.isEmpty(omOtherInOrderDet1.getReceivingQty())){
             omOtherInOrderDet1.setReceivingQty(BigDecimal.ZERO);
@@ -221,7 +221,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     public int update(OmOtherInOrder entity) {
         SysUser sysUser = currentUser();
         if(entity.getOrderStatus()>1){
-            throw new BizErrorException("单据已被操作，无法修改");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"单据已被操作，无法修改");
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());

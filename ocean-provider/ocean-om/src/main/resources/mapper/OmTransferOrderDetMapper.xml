@@ -1,67 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.om.mapper.OmTransferOrderDetMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmTransferOrderDet">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="transfer_order_det_id" jdbcType="BIGINT" property="transferOrderDetId" />
-    <result column="transfer_order_id" jdbcType="BIGINT" property="transferOrderId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
-    <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
-    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
-    <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate" />
-    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-  </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto">
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
-    <result column="volume" jdbcType="DECIMAL" property="volume"/>
-    <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
-    <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-  </resultMap>
-  <sql id="Base_Column_List">
-    otod.transfer_order_det_id,
-    otod.transfer_order_id,
-otod.material_id,
-otod.unit_name,
-otod.order_qty,
-otod.production_date,
-otod.expired_date,
-otod.batch_code,
-otod.status,
-otod.is_delete,
-otod.remark,
-otod.org_id,
-otod.create_user_id,
-otod.create_time,
-otod.modified_user_id,
-otod.modified_time
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmTransferOrderDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="transfer_order_det_id" jdbcType="BIGINT" property="transferOrderDetId"/>
+        <result column="transfer_order_id" jdbcType="BIGINT" property="transferOrderId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
+        <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
+        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
+        <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
+        <result column="volume" jdbcType="DECIMAL" property="volume"/>
+        <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
+        <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        otod.transfer_order_det_id,
+        otod.transfer_order_id,
+        otod.material_id,
+        otod.unit_name,
+        otod.order_qty,
+        otod.production_date,
+        otod.expired_date,
+        otod.batch_code,
+        otod.status,
+        otod.is_delete,
+        otod.remark,
+        otod.org_id,
+        otod.create_user_id,
+        otod.create_time,
+        otod.modified_user_id,
+        otod.modified_time
   </sql>
-  <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>,bm.material_code,bm.material_name,bmb.main_unit,IFNULL(bmb.volume,0) as volume,IFNULL(bmb.net_weight,0) as net_weight,IFNULL(bmb.gross_weight,0) as gross_weight,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_transfer_order_det otod
-    LEFT JOIN base_material bm ON otod.material_id = bm.material_id
-    left join base_material_tab bmb ON bm.material_id = bmb.material_id
-    left join sys_user su on otod.create_user_id = su.user_id
-    left join sys_user sus on otod.modified_user_id = sus.user_id
-    left join base_organization bo on otod.org_id = bo.organization_id
-<where>
-  <if test="transferOrderId!=null and transferOrderId!=''">
-    and otod.transfer_order_id = #{transferOrderId}
-  </if>
-</where>
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="Base_Column_List"/>,bm.material_code,bm.material_name,bmb.main_unit,IFNULL(bmb.volume,0)
+        as volume,IFNULL(bmb.net_weight,0) as net_weight,IFNULL(bmb.gross_weight,0) as gross_weight,su.user_name as
+        create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_transfer_order_det otod
+        LEFT JOIN base_material bm ON otod.material_id = bm.material_id
+        left join base_material_tab bmb ON bm.material_id = bmb.material_id
+        left join sys_user su on otod.create_user_id = su.user_id
+        left join sys_user sus on otod.modified_user_id = sus.user_id
+        left join base_organization bo on otod.org_id = bo.organization_id
+        <where>
+            <if test="transferOrderId!=null and transferOrderId!=''">
+                and otod.transfer_order_id = #{transferOrderId}
+            </if>
+        </where>
+    </select>
 </mapper>

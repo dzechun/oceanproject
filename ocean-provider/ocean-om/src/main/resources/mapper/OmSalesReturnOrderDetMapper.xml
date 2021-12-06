@@ -1,84 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.om.mapper.OmSalesReturnOrderDetMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="sales_return_order_det_id" jdbcType="BIGINT" property="salesReturnOrderDetId" />
-    <result column="sales_return_order_id" jdbcType="BIGINT" property="salesReturnOrderId" />
-    <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
-    <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
-    <result column="issue_qty" jdbcType="DECIMAL" property="issueQty" />
-    <result column="receiving_qty" jdbcType="DECIMAL" property="receivingQty" />
-    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
-    <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate" />
-    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-  </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDetDto">
-    <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
-    <result column="volume" jdbcType="DECIMAL" property="volume"/>
-    <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
-    <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-  </resultMap>
-  <sql id="Base_Column_List">
-osrod.sales_return_order_det_id,
-osrod.sales_return_order_id,
-osrod.sales_order_id,
-osrod.warehouse_id,
-osrod.material_id,
-osrod.unit_name,
-osrod.order_qty,
-osrod.issue_qty,
-osrod.receiving_qty,
-osrod.production_date,
-osrod.expired_date,
-osrod.batch_code,
-osrod.status,
-osrod.is_delete,
-osrod.remark,
-osrod.org_id,
-osrod.create_user_id,
-osrod.create_time,
-osrod.modified_user_id,
-osrod.modified_time
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="sales_return_order_det_id" jdbcType="BIGINT" property="salesReturnOrderDetId"/>
+        <result column="sales_return_order_id" jdbcType="BIGINT" property="salesReturnOrderId"/>
+        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
+        <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
+        <result column="issue_qty" jdbcType="DECIMAL" property="issueQty"/>
+        <result column="receiving_qty" jdbcType="DECIMAL" property="receivingQty"/>
+        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
+        <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDetDto">
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
+        <result column="volume" jdbcType="DECIMAL" property="volume"/>
+        <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
+        <result column="gross_weight" jdbcType="DECIMAL" property="grossWeight"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        osrod.sales_return_order_det_id,
+        osrod.sales_return_order_id,
+        osrod.sales_order_id,
+        osrod.warehouse_id,
+        osrod.material_id,
+        osrod.unit_name,
+        osrod.order_qty,
+        osrod.issue_qty,
+        osrod.receiving_qty,
+        osrod.production_date,
+        osrod.expired_date,
+        osrod.batch_code,
+        osrod.status,
+        osrod.is_delete,
+        osrod.remark,
+        osrod.org_id,
+        osrod.create_user_id,
+        osrod.create_time,
+        osrod.modified_user_id,
+        osrod.modified_time
   </sql>
-  <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>,oso.sales_order_code,bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
-           su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
-    FROM om_sales_return_order_det osrod
-           LEFT JOIN om_sales_order oso ON oso.sales_order_id = osrod.sales_order_id
-           LEFT JOIN base_warehouse bw ON bw.warehouse_id = osrod.warehouse_id
-           LEFT JOIN base_material bm ON osrod.material_id = bm.material_id
-           left join base_material_tab bmb ON bm.material_id = bmb.material_id
-           left join sys_user su on osrod.create_user_id = su.user_id
-           left join sys_user sus on osrod.modified_user_id = sus.user_id
-           left join base_organization bo on osrod.org_id = bo.organization_id
-<where>
-  <if test="salesReturnOrderId !=null and salesReturnOrderId!=''">
-    and osrod.sales_return_order_id = #{salesReturnOrderId}
-  </if>
-</where>
-  </select>
-  <select id="findUnitName" resultType="java.lang.String">
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="Base_Column_List"/>,
+        oso.sales_order_code,bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
+        su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
+        FROM om_sales_return_order_det osrod
+        LEFT JOIN om_sales_order oso ON oso.sales_order_id = osrod.sales_order_id
+        LEFT JOIN base_warehouse bw ON bw.warehouse_id = osrod.warehouse_id
+        LEFT JOIN base_material bm ON osrod.material_id = bm.material_id
+        left join base_material_tab bmb ON bm.material_id = bmb.material_id
+        left join sys_user su on osrod.create_user_id = su.user_id
+        left join sys_user sus on osrod.modified_user_id = sus.user_id
+        left join base_organization bo on osrod.org_id = bo.organization_id
+        <where>
+            <if test="salesReturnOrderId !=null and salesReturnOrderId!=''">
+                and osrod.sales_return_order_id = #{salesReturnOrderId}
+            </if>
+        </where>
+    </select>
+    <select id="findUnitName" resultType="java.lang.String">
     select main_unit From base_material_tab where material_id=#{materialId}
   </select>
 </mapper>
