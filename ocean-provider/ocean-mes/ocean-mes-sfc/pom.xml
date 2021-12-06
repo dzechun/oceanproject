@@ -120,7 +120,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>D:/IMES/lib/sfc</outputDirectory>
+                            <outputDirectory>${basedir}/lib/sfc</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

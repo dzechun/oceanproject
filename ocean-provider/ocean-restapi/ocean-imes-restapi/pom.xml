@@ -91,7 +91,7 @@
                             <!--<goal>copy-dependencies</goal>-->
                         <!--</goals>-->
                         <!--<configuration>-->
-                            <!--<outputDirectory>D:/IMES/lib/apply/libs</outputDirectory>-->
+                            <!--<outputDirectory>${basedir}/lib/apply/libs</outputDirectory>-->
                         <!--</configuration>-->
                     <!--</execution>-->
                 <!--</executions>-->

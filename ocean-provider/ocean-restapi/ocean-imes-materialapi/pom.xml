@@ -130,7 +130,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>D:/IMES/lib/materialapi</outputDirectory>
+            <outputDirectory>${basedir}/lib/materialapi</outputDirectory>
             </configuration>
             </execution>
             </executions>
