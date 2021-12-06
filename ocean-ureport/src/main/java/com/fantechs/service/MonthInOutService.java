@@ -2,6 +2,7 @@ package com.fantechs.service;
 
 import com.fantechs.dto.MonthInDto;
 import com.fantechs.dto.MonthOutDto;
+import com.fantechs.dto.ShipmentDetDto;
 import com.fantechs.entity.MonthInOutModel;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface MonthInOutService {
     List<MonthOutDto> findOutList(Map<String,Object> map);
 
     List<String> findOutListBarCode(Map<String ,Object> map);
+
+    List<ShipmentDetDto> findShipmentDet(Map<String ,Object> map);
 }

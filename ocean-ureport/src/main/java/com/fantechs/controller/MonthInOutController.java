@@ -6,6 +6,8 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.dto.MonthInDto;
 import com.fantechs.dto.MonthOutDto;
+import com.fantechs.dto.ShipmentDetDto;
+import com.fantechs.entity.search.SearchShipmentDet;
 import com.fantechs.entity.search.SearchMonthInOut;
 import com.fantechs.entity.search.SearchMonthInOutBarCode;
 import com.fantechs.service.MonthInOutService;
@@ -83,6 +85,27 @@ public class MonthInOutController {
             } catch (Exception e) {
                 throw new BizErrorException(e);
             }
+        }
+    }
+
+    @PostMapping("/findShipmentDet")
+    @ApiModelProperty("发货明细报表")
+    public ResponseEntity<List<ShipmentDetDto>> findShipmentDet(@RequestBody(required = false) SearchShipmentDet dto){
+        Page<Object> page = PageHelper.startPage(dto.getStartPage(), dto.getPageSize());
+        List<ShipmentDetDto> list = monthInOutService.findShipmentDet(ControllerUtil.dynamicConditionByEntity(dto));
+        return ControllerUtil.returnDataSuccess(list, (int)page.getTotal());
+    }
+
+    @PostMapping("/exportShipmentDet")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void export(HttpServletResponse response, @ApiParam(value = "查询对象") @RequestBody(required = false) SearchShipmentDet dto){
+        Page<Object> page = PageHelper.startPage(dto.getStartPage(), dto.getPageSize());
+        List<ShipmentDetDto> list = monthInOutService.findShipmentDet(ControllerUtil.dynamicConditionByEntity(dto));
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "发货明细报表", "发货明细报表", MonthInDto.class, "发货明细报表.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
         }
     }
 }

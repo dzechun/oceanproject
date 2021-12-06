@@ -4,6 +4,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.dto.MonthInDto;
 import com.fantechs.dto.MonthOutDto;
+import com.fantechs.dto.ShipmentDetDto;
 import com.fantechs.mapper.MonthInOutMapper;
 import com.fantechs.service.MonthInOutService;
 import org.springframework.stereotype.Service;
@@ -48,5 +49,12 @@ public class MonthInOutServiceImpl implements MonthInOutService {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
         return monthInOutMapper.findOutListBarCode(map);
+    }
+
+    @Override
+    public List<ShipmentDetDto> findShipmentDet(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
+        return monthInOutMapper.findShipmentDet(map);
     }
 }

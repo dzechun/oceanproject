@@ -7,6 +7,23 @@
     <resultMap id="base_column_list_out" type="com.fantechs.dto.MonthOutDto">
 
     </resultMap>
+
+    <resultMap id="shipmentDet_column_list" type="com.fantechs.dto.ShipmentDetDto">
+        <result column="delivery_order_code" jdbcType="VARCHAR" property="deliveryOrderCode" />
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="sales_man_name" jdbcType="VARCHAR" property="salesManName" />
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
+        <result column="actual_despatch_time" jdbcType="TIMESTAMP" property="actualDespatchTime" />
+        <result column="container_number" jdbcType="VARCHAR" property="containerNumber" />
+        <result column="clearance_locale" jdbcType="VARCHAR" property="clearanceLocale" />
+        <result column="origin_harbor" jdbcType="VARCHAR" property="originHarbor" />
+        <result column="shipment_enterprise_name" jdbcType="VARCHAR" property="shipmentEnterpriseName" />
+        <result column="transport_category_id" jdbcType="VARCHAR" property="transportCategoryId" />
+        <result column="shipment_type" jdbcType="VARCHAR" property="shipmentType" />
+        <result column="loading_type" jdbcType="VARCHAR" property="loadingType" />
+        <result column="qty" jdbcType="DECIMAL" property="qty" />
+    </resultMap>
 <!--    月入报表-->
     <select id="findInList" resultMap="base_column_list_in">
         SELECT oso.sales_user_name 'salesUserName',bs.region_name 'regionName',bs.country_name 'countryName',oso.supplier_id 'supplierId',bs.supplier_name 'supplierName',
@@ -152,5 +169,71 @@
             </if>
         </where>
         GROUP BY wiid.barcode
+    </select>
+
+<!--  发货明细报表  -->
+    <select id="findShipmentDet" resultMap="shipmentDet_column_list">
+        SELECT
+            wodo2.delivery_order_code,
+            bm.material_code,
+            wiid.option1 AS customer_name,
+            wiid.option2 AS sales_man_name,
+            wiid.option3 AS sales_code,
+            wodo.actual_despatch_time,
+            wodo.container_number,
+            wodo.clearance_locale,
+            wodo.origin_harbor,
+            bse.shipment_enterprise_name,
+            bse.transport_category_id,
+            '销售发货' AS shipment_type,
+            '普通装柜' AS loading_type,
+            COUNT(wiid.material_qty) AS qty
+        FROM
+            wms_out_despatch_order_re_jo wodorj
+                LEFT JOIN wms_inner_job_order wijo ON wodorj.job_order_id = wijo.job_order_id
+                LEFT JOIN wms_out_despatch_order wodo ON wodo.despatch_order_id = wodorj.despatch_order_id
+                LEFT JOIN base_shipment_enterprise bse ON wodo.shipment_enterprise_id = bse.shipment_enterprise_id
+                LEFT JOIN wms_out_delivery_order wodo2 ON wijo.source_order_id = wodo2.delivery_order_id
+                LEFT JOIN wms_inner_inventory_det wiid ON wodo2.delivery_order_code = wiid.delivery_order_code
+                LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
+        <where>
+            wodorj.org_id = #{orgId}
+            <if test="deliveryOrderCode != null and deliveryOrderCode != ''">
+                AND wodo2.delivery_order_code LIKE CONCAT('%', #{deliveryOrderCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                AND bm.material_code LIKE CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="customerName != null and customerName != ''">
+                AND wiid.option1 LIKE CONCAT('%', #{customerName}, '%')
+            </if>
+            <if test="salesManName != null and salesManName != ''">
+                AND wiid.option2 LIKE CONCAT('%', #{salesManName}, '%')
+            </if>
+            <if test="salesOrderCode != null and salesOrderCode != ''">
+                AND wiid.option3 LIKE CONCAT('%', #{salesOrderCode}, '%')
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(wodo.actual_despatch_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="clearanceLocale != null and clearanceLocale != ''">
+                AND wodo.clearance_locale LIKE CONCAT('%', #{clearanceLocale}, '%')
+            </if>
+            <if test="containerNumber != null and containerNumber != ''">
+                AND wodo.container_number LIKE CONCAT('%', #{containerNumber}, '%')
+            </if>
+            <if test="originHarbor != null and originHarbor != ''">
+                AND wodo.origin_harbor LIKE CONCAT('%', #{originHarbor}, '%')
+            </if>
+            <if test="shipmentEnterpriseName != null and shipmentEnterpriseName != ''">
+                AND bse.shipment_enterprise_name LIKE CONCAT('%', #{shipmentEnterpriseName}, '%')
+            </if>
+            <if test="transportCategoryId != null and transportCategoryId != ''">
+                AND bse.transport_category_id = #{transportCategoryId}
+            </if>
+        </where>
+        GROUP BY
+            wiid.option3,
+            wodo2.delivery_order_code
     </select>
 </mapper>
