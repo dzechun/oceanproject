@@ -576,7 +576,11 @@ public interface BaseFeignApi {
     @PostMapping("/baseProductProcessReM/findList")
     ResponseEntity<List<BaseProductProcessReM>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseProductProcessReM searchBaseProductProcessReM);
 
-    @ApiOperation("列表")
+    @ApiOperation("单据类型列表")
     @PostMapping("/baseOrderType/findList")
     ResponseEntity<List<BaseOrderTypeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseOrderType searchBaseOrderType);
+
+    @ApiOperation("免检清单列表")
+    @PostMapping("/baseInspectionExemptedList/findList")
+    ResponseEntity<List<BaseInspectionExemptedList>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionExemptedList searchBaseInspectionExemptedList);
 }

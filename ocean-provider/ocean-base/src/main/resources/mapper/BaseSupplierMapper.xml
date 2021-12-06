@@ -118,10 +118,15 @@
         left join sys_user s on ss.modified_user_id=s.user_id
         LEFT JOIN base_organization bo ON ss.org_id = bo.organization_id
         <where>
-            <if test="materialCode!=null and materialCode!=''">
+            <if test="materialCode!=null and materialCode!='' and objType!=1">
                 and ss.supplier_id in
                 (select bms.supplier_id from base_material_supplier bms
                 left JOIN base_material bm on bm.material_id = bms.material_id where bm.material_code = #{materialCode})
+                and ss.supplier_id not in
+                (select if(biel.obj_type = 1,biel.supplier_id,biel.customer_id) from base_inspection_exempted_list biel
+                left JOIN base_material bm on bm.material_id = biel.material_id where bm.material_code = #{materialCode})
+            </if>
+            <if test="materialCode!=null and materialCode!='' and objType==1">
                 and ss.supplier_id not in
                 (select if(biel.obj_type = 1,biel.supplier_id,biel.customer_id) from base_inspection_exempted_list biel
                 left JOIN base_material bm on bm.material_id = biel.material_id where bm.material_code = #{materialCode})
