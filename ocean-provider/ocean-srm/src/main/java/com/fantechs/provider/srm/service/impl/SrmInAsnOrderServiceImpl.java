@@ -204,6 +204,11 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         srmInAsnOrderDto.setModifiedUserId(user.getUserId());
         int i = srmInAsnOrderMapper.updateByPrimaryKeySelective(srmInAsnOrderDto);
 
+        //保存履历表
+        SrmInHtAsnOrder srmInHtAsnOrder = new SrmInHtAsnOrder();
+        BeanUtils.copyProperties(srmInAsnOrderDto, srmInHtAsnOrder);
+        srmInHtAsnOrderMapper.insertSelective(srmInHtAsnOrder);
+
         //删除子表重新添加
         Example example1 = new Example(SrmInAsnOrderDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
@@ -212,6 +217,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         //保存详情表
         if(StringUtils.isNotEmpty(srmInAsnOrderDto.getSrmInAsnOrderDetDtos())) {
             List<SrmInAsnOrderDetDto> list = new ArrayList<>();
+            List<SrmInHtAsnOrderDetDto> htList = new ArrayList<>();
             for (SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
                 if (StringUtils.isEmpty(srmInAsnOrderDetDto.getOrderQty()))
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"采购订单数量不能为空");
@@ -231,8 +237,13 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 srmInAsnOrderDetDto.setStatus(StringUtils.isEmpty(srmInAsnOrderDetDto.getStatus()) ? 1 : srmInAsnOrderDetDto.getStatus());
                 srmInAsnOrderDetDto.setOrgId(user.getOrganizationId());
                 list.add(srmInAsnOrderDetDto);
+
+                SrmInHtAsnOrderDetDto srmInHtAsnOrderDetDto = new SrmInHtAsnOrderDetDto();
+                BeanUtils.copyProperties(srmInAsnOrderDetDto, srmInHtAsnOrderDetDto);
+                htList.add(srmInHtAsnOrderDetDto);
             }
             if (StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
+            if (StringUtils.isNotEmpty(htList)) srmInHtAsnOrderDetMapper.insertList(htList);
         }
        /* Example example2 = new Example(SrmInAsnOrderDetBarcode.class);
         Example.Criteria criteria2 = example2.createCriteria();
@@ -283,6 +294,11 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 dto.setModifiedUserId(user.getUserId());
                 dto.setModifiedTime(new Date());
                 int i = srmInAsnOrderMapper.updateByPrimaryKeySelective(dto);
+
+                //保存履历表
+                SrmInHtAsnOrder srmInHtAsnOrder = new SrmInHtAsnOrder();
+                BeanUtils.copyProperties(dto, srmInHtAsnOrder);
+                srmInHtAsnOrderMapper.insertSelective(srmInHtAsnOrder);
 
                 //返写送货预约状态
                 if(i==1){

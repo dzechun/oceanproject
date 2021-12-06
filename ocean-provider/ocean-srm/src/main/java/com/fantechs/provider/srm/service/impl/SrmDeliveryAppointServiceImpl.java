@@ -117,7 +117,6 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
             throw new BizErrorException("该时间段预约已满");
 
         //保存供应商
-        //保存供应商
         SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
         searchBaseSupplierReUser.setUserId(user.getUserId());
         List<BaseSupplierReUser> baseSupplierReUsers = baseFeignApi.findList(searchBaseSupplierReUser).getData();
@@ -181,6 +180,11 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         srmDeliveryAppointDto.setModifiedUserId(user.getUserId());
         srmDeliveryAppointMapper.updateByPrimaryKeySelective(srmDeliveryAppointDto);
 
+        //保存履历表
+        SrmHtDeliveryAppoint srmHtDeliveryAppoint = new SrmHtDeliveryAppoint();
+        BeanUtils.copyProperties(srmDeliveryAppointDto, srmHtDeliveryAppoint);
+        int i = srmHtDeliveryAppointMapper.insertUseGeneratedKeys(srmHtDeliveryAppoint);
+
         //删除子表重新添加
         if(StringUtils.isNotEmpty(srmDeliveryAppointDto.getList())) {
             Example example = new Example(SrmAppointDeliveryReAsn.class);
@@ -189,6 +193,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
             srmAppointDeliveryReAsnMapper.deleteByExample(example);
 
             List<SrmAppointDeliveryReAsnDto> list = new ArrayList<>();
+            List<SrmHtAppointDeliveryReAsnDto> htList = new ArrayList<>();
             for (SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto : srmDeliveryAppointDto.getList()) {
                 srmAppointDeliveryReAsnDto.setCreateUserId(user.getUserId());
                 srmAppointDeliveryReAsnDto.setCreateTime(new Date());
@@ -198,11 +203,13 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
                 srmAppointDeliveryReAsnDto.setOrgId(user.getOrganizationId());
                 srmAppointDeliveryReAsnDto.setDeliveryAppointId(srmDeliveryAppointDto.getDeliveryAppointId());
                 list.add(srmAppointDeliveryReAsnDto);
-            }
-            if (StringUtils.isNotEmpty(list)) {
-                srmAppointDeliveryReAsnMapper.insertList(list);
-            }
 
+                SrmHtAppointDeliveryReAsnDto srmHtAppointDeliveryReAsnDto = new SrmHtAppointDeliveryReAsnDto();
+                BeanUtils.copyProperties(srmAppointDeliveryReAsnDto, srmHtAppointDeliveryReAsnDto);
+                htList.add(srmHtAppointDeliveryReAsnDto);
+            }
+            if (StringUtils.isNotEmpty(list))  srmAppointDeliveryReAsnMapper.insertList(list);
+            if (StringUtils.isNotEmpty(htList)) srmHtAppointDeliveryReAsnMapper.insertList(htList);
             //反写预收货通知单
             if("3".equals(srmDeliveryAppointDto.getAppointStatus())){
                 for(SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto : list) {
@@ -217,10 +224,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
                 }
             }
         }
-        //保存履历表
-        SrmHtDeliveryAppoint srmHtDeliveryAppoint = new SrmHtDeliveryAppoint();
-        BeanUtils.copyProperties(srmDeliveryAppointDto, srmHtDeliveryAppoint);
-        int i = srmHtDeliveryAppointMapper.insertSelective(srmHtDeliveryAppoint);
+
 
 
 

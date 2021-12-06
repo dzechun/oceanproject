@@ -43,6 +43,7 @@
         <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
+        <result column="order_qty" jdbcType="VARCHAR" property="orderQty"/>
         <result column="total_delivery_qty" jdbcType="VARCHAR" property="totalDeliveryQty"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
@@ -83,8 +84,8 @@
     <select id="findList" resultMap="BaseResultMapDto">
         select
         <include refid="BaseColumnList"/>,
-        opo.purchase_order_code,opod.delivery_date AS order_date,bm.material_code,bm.material_name,bw.warehouse_name,
-        bm.material_version,bm.material_desc,bmt.main_unit,
+        opo.purchase_order_code,opod.delivery_date AS order_date,bm.material_code,opod.order_qty AS order_qty,
+        bm.material_name,bw.warehouse_name,bm.material_version,bm.material_desc,bmt.main_unit,
         ( SELECT SUM( wiaods.delivery_qty ) FROM wms_in_asn_order_det wiaods WHERE wiaods.asn_order_id = wiaod.asn_order_id ) AS total_delivery_qty,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
