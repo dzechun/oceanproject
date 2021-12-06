@@ -60,7 +60,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>D:/IMES/lib/agv</outputDirectory>
+                            <outputDirectory>${basedir}/lib/agv</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

@@ -63,7 +63,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>D:/IMES/lib/eureka</outputDirectory>
+            <outputDirectory>${basedir}/lib/eureka</outputDirectory>
             </configuration>
             </execution>
             </executions>
