@@ -50,4 +50,7 @@ public class SearchMesSfcBarcodeProcess extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name = "materialId", value = "产品物料ID")
     private Long materialId;
+
+    @ApiModelProperty(name = "isCustomerBarcode",value = "客户条码精确查找")
+    private String isCustomerBarcode;
 }

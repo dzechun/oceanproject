@@ -4,8 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcessRecord;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.wms.inner.InitStockCheckBarCode;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInitStockDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.InitStockImport;
@@ -116,9 +116,9 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             }else {
                 initStockCheckBarCode.setType((byte)3);
                 //客户条码匹配PQMS条码查询厂内码及对应物料
-                SearchMesSfcBarcodeProcessRecord searchMesSfcBarcodeProcessRecord = new SearchMesSfcBarcodeProcessRecord();
-                searchMesSfcBarcodeProcessRecord.setIsCustomerBarcode(barCode);
-                ResponseEntity<List<MesSfcBarcodeProcessRecordDto>> responseEntity = sfcFeignApi.findList(searchMesSfcBarcodeProcessRecord);
+                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
+                searchMesSfcBarcodeProcess.setIsCustomerBarcode(barCode);
+                ResponseEntity<List<MesSfcBarcodeProcessDto>> responseEntity = sfcFeignApi.findList(searchMesSfcBarcodeProcess);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                 }
@@ -376,6 +376,9 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         record.setOrderStatus((byte)1);
         int num = wmsInnerInitStockMapper.insertUseGeneratedKeys(record);
         for (WmsInnerInitStockDet wmsInnerInitStockDet : record.getWmsInnerInitStockDets()) {
+            if(record.getInitStockType()==1){
+                wmsInnerInitStockDet.setPlanQty(record.getTotalPlanQty());
+            }
             wmsInnerInitStockDet.setCreateTime(new Date());
             wmsInnerInitStockDet.setCreateUserId(sysUser.getUserId());
             wmsInnerInitStockDet.setModifiedTime(new Date());
@@ -403,6 +406,9 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         example.createCriteria().andEqualTo("initStockId",entity.getInitStockId());
         wmsInnerInitStockDetMapper.deleteByExample(example);
         for (WmsInnerInitStockDet wmsInnerInitStockDet : entity.getWmsInnerInitStockDets()) {
+            if(entity.getInitStockType()==1){
+                wmsInnerInitStockDet.setPlanQty(entity.getTotalPlanQty());
+            }
             wmsInnerInitStockDet.setCreateTime(new Date());
             wmsInnerInitStockDet.setCreateUserId(sysUser.getUserId());
             wmsInnerInitStockDet.setModifiedTime(new Date());

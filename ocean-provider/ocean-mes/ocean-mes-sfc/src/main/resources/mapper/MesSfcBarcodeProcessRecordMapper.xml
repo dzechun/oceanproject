@@ -90,9 +90,6 @@
       <if test="customerBarcode != null and customerBarcode != '' and codeQueryMark != 1">
         and msbpr.customer_barcode like CONCAT('%', #{customerBarcode}, '%')
       </if>
-      <if test="isCustomerBarcode!=null and isCustomerBarcode!=''">
-        and msbpr.customer_barcode =#{isCustomerBarcode}
-      </if>
       <if test="workOrderId != null">
         and msbpr.work_order_id = #{workOrderId}
       </if>
