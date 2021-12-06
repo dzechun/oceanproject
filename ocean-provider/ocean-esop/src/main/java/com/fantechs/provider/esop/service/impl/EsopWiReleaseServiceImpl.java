@@ -139,7 +139,7 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
         //保存履历表
         EsopHtWiRelease EsopHtWiRelease = new EsopHtWiRelease();
         BeanUtils.autoFillEqFields(EsopWiRelease,EsopHtWiRelease);
-        int i = esopHtWiReleaseMapper.insertUseGeneratedKeys(EsopHtWiRelease);
+        int i = esopHtWiReleaseMapper.insertSelective(EsopHtWiRelease);
 
         saveDet(EsopWiReleaseDto,user,EsopWiRelease.getWiReleaseId());
         return i;
