@@ -7,6 +7,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmAppointDeliveryReAsnDto;
 import com.fantechs.common.base.general.dto.srm.SrmCarportTimeQuantumDto;
 import com.fantechs.common.base.general.dto.srm.SrmDeliveryAppointDto;
+import com.fantechs.common.base.general.dto.srm.SrmHtAppointDeliveryReAsnDto;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
@@ -51,6 +52,8 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
     private SrmHtDeliveryAppointMapper srmHtDeliveryAppointMapper;
     @Resource
     private SrmAppointDeliveryReAsnMapper srmAppointDeliveryReAsnMapper;
+    @Resource
+    private SrmHtAppointDeliveryReAsnMapper srmHtAppointDeliveryReAsnMapper;
     @Resource
     private SrmCarportTimeQuantumMapper srmCarportTimeQuantumMapper;
     @Resource
@@ -139,8 +142,15 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         srmDeliveryAppointDto.setOrgId(user.getOrganizationId());
         srmDeliveryAppointDto.setAppointStatus((byte)1);
         srmDeliveryAppointMapper.insertUseGeneratedKeys(srmDeliveryAppointDto);
+
+        //保存履历表
+        SrmHtDeliveryAppoint srmHtDeliveryAppoint = new SrmHtDeliveryAppoint();
+        BeanUtils.copyProperties(srmDeliveryAppointDto, srmHtDeliveryAppoint);
+        int i = srmHtDeliveryAppointMapper.insertUseGeneratedKeys(srmHtDeliveryAppoint);
+
         if(StringUtils.isNotEmpty(srmDeliveryAppointDto.getList())) {
             List<SrmAppointDeliveryReAsnDto> list = new ArrayList<>();
+            List<SrmHtAppointDeliveryReAsnDto> htList = new ArrayList<>();
             for (SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto : srmDeliveryAppointDto.getList()) {
                 srmAppointDeliveryReAsnDto.setCreateUserId(user.getUserId());
                 srmAppointDeliveryReAsnDto.setCreateTime(new Date());
@@ -150,14 +160,15 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
                 srmAppointDeliveryReAsnDto.setOrgId(user.getOrganizationId());
                 srmAppointDeliveryReAsnDto.setDeliveryAppointId(srmDeliveryAppointDto.getDeliveryAppointId());
                 list.add(srmAppointDeliveryReAsnDto);
+
+                SrmHtAppointDeliveryReAsnDto srmHtAppointDeliveryReAsnDto = new SrmHtAppointDeliveryReAsnDto();
+                BeanUtils.copyProperties(srmAppointDeliveryReAsnDto, srmHtAppointDeliveryReAsnDto);
+                htList.add(srmHtAppointDeliveryReAsnDto);
             }
             if (StringUtils.isNotEmpty(list)) srmAppointDeliveryReAsnMapper.insertList(list);
+            if (StringUtils.isNotEmpty(htList)) srmHtAppointDeliveryReAsnMapper.insertList(htList);
         }
 
-        //保存履历表
-        SrmHtDeliveryAppoint srmHtDeliveryAppoint = new SrmHtDeliveryAppoint();
-        BeanUtils.copyProperties(srmDeliveryAppointDto, srmHtDeliveryAppoint);
-        int i = srmHtDeliveryAppointMapper.insertSelective(srmHtDeliveryAppoint);
 
         return i;
     }

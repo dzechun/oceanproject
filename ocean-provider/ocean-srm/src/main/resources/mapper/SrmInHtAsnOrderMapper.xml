@@ -114,6 +114,9 @@
       <if test="asnCode!=null and asnCode!=''">
         and wihao.asn_code like CONCAT('%',#{asnCode},'%')
       </if>
+      <if test="shipperName!=null and shipperName!=''">
+        and wihao.shipper_name like CONCAT('%',#{shipperName},'%')
+      </if>
       <if test="materialOwnerName!=null and materialOwnerName!=''">
         and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
       </if>
@@ -155,6 +158,5 @@
     </where>
     order by wihao.create_time desc
   </select>
-
 
 </mapper>

@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderTypeDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
+import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseFile;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
@@ -52,6 +53,8 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     private BaseFeignApi baseFeignApi;
     @Resource
     private SrmInAsnOrderDetMapper srmInAsnOrderDetMapper;
+    @Resource
+    private SrmInHtAsnOrderDetMapper srmInHtAsnOrderDetMapper;
     @Resource
     private SrmDeliveryAppointMapper srmDeliveryAppointMapper;
     @Resource
@@ -120,11 +123,17 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
         int i = srmInAsnOrderMapper.insertUseGeneratedKeys(srmInAsnOrderDto);
 
+
+        //保存履历表
+        SrmInHtAsnOrder srmInHtAsnOrder = new SrmInHtAsnOrder();
+        BeanUtils.copyProperties(srmInAsnOrderDto, srmInHtAsnOrder);
+        srmInHtAsnOrderMapper.insertUseGeneratedKeys(srmInHtAsnOrder);
+
         //保存详情表
         if(StringUtils.isNotEmpty(srmInAsnOrderDto.getSrmInAsnOrderDetDtos())) {
             List<SrmInAsnOrderDetDto> list = new ArrayList<>();
+            List<SrmInHtAsnOrderDetDto> htList = new ArrayList<>();
             for (SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
-
                 if (StringUtils.isEmpty(srmInAsnOrderDetDto.getOrderQty()))
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"采购订单数量不能为空");
                 if (StringUtils.isEmpty(srmInAsnOrderDetDto.getTotalDeliveryQty()))
@@ -146,8 +155,13 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 srmInAsnOrderDetDto.setStatus(StringUtils.isEmpty(srmInAsnOrderDetDto.getStatus()) ? 1 : srmInAsnOrderDetDto.getStatus());
                 srmInAsnOrderDetDto.setOrgId(user.getOrganizationId());
                 list.add(srmInAsnOrderDetDto);
+
+                SrmInHtAsnOrderDetDto srmInHtAsnOrderDetDto = new SrmInHtAsnOrderDetDto();
+                BeanUtils.copyProperties(srmInAsnOrderDetDto, srmInHtAsnOrderDetDto);
+                htList.add(srmInHtAsnOrderDetDto);
             }
             if (StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
+            if (StringUtils.isNotEmpty(htList)) srmInHtAsnOrderDetMapper.insertList(htList);
         }
         //保存条码表---条码未自动生成，此处只展示，暂不做保存
        /* List<SrmInAsnOrderDetBarcode> barcodeList = new ArrayList<>();
@@ -163,10 +177,6 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         }
         if(StringUtils.isNotEmpty(barcodeList)) srmInAsnOrderDetBarcodeMapper.insertList(barcodeList);*/
 
-        //保存履历表
-        SrmInHtAsnOrder srmInHtAsnOrder = new SrmInHtAsnOrder();
-        BeanUtils.copyProperties(srmInAsnOrderDto, srmInHtAsnOrder);
-        srmInHtAsnOrderMapper.insertSelective(srmInHtAsnOrder);
         return i;
     }
 

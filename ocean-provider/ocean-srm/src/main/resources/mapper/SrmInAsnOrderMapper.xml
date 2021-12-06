@@ -42,7 +42,8 @@
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
     </resultMap>
 
-    <resultMap id="BaseResultDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto">
+    <resultMap id="BaseResultDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto">
         <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="order_type_name" jdbcType="VARCHAR" property="orderTypeName"/>
