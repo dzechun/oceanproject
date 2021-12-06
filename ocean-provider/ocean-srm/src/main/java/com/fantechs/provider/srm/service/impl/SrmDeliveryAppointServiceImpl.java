@@ -178,12 +178,27 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
 
         srmDeliveryAppointDto.setModifiedTime(new Date());
         srmDeliveryAppointDto.setModifiedUserId(user.getUserId());
+
+        //判断取消预约审核
+        if("4".equals(srmDeliveryAppointDto.getAppointStatus())) {
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("isCensor");
+            List<SysSpecItem> specItemLists = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (StringUtils.isNotEmpty(specItemLists) && "1".equals(specItemLists.get(0).getParaValue())) {
+                srmDeliveryAppointDto.setAppointStatus((byte) 4);
+            } else {
+                srmDeliveryAppointDto.setAppointStatus((byte) 5);
+            }
+        }
         srmDeliveryAppointMapper.updateByPrimaryKeySelective(srmDeliveryAppointDto);
 
         //保存履历表
         SrmHtDeliveryAppoint srmHtDeliveryAppoint = new SrmHtDeliveryAppoint();
         BeanUtils.copyProperties(srmDeliveryAppointDto, srmHtDeliveryAppoint);
         int i = srmHtDeliveryAppointMapper.insertUseGeneratedKeys(srmHtDeliveryAppoint);
+
+
+
 
         //删除子表重新添加
         if(StringUtils.isNotEmpty(srmDeliveryAppointDto.getList())) {
