@@ -55,8 +55,6 @@
     LEFT JOIN sys_user su ON sadra.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON sadra.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON sadra.org_id = bo.organization_id
-
-
     <where>
         <if test="deliveryAppointId!=null and deliveryAppointId!=''">
             and sadra.delivery_appoint_id = #{deliveryAppointId}

@@ -66,7 +66,7 @@
             and sc.warehouse_id = #{warehouseId}
         </if>
         <if test="warehouseName!=null and warehouseName!=''">
-            and bw.warehouse_name = #{warehouseName}
+            and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
         </if>
 
     </where>
