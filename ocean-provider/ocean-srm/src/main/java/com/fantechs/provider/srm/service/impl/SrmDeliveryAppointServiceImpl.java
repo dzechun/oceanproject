@@ -7,7 +7,9 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmAppointDeliveryReAsnDto;
 import com.fantechs.common.base.general.dto.srm.SrmCarportTimeQuantumDto;
 import com.fantechs.common.base.general.dto.srm.SrmDeliveryAppointDto;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.srm.SrmAppointDeliveryReAsn;
 import com.fantechs.common.base.general.entity.srm.SrmDeliveryAppoint;
@@ -67,8 +69,10 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
         searchBaseSupplierReUser.setUserId(sysUser.getUserId());
         ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
+        List<Long> suppliers = new ArrayList<>();
         if (StringUtils.isNotEmpty(list.getData())){
-            map.put("supplierIdList", list.getData());
+            suppliers.add(list.getData().get(0).getSupplierId());
+            map.put("supplierIdList", suppliers);
         }
         return srmDeliveryAppointMapper.findList(map);
     }
@@ -108,6 +112,14 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         Integer size = srmCarportTimeQuantumDtos.get(0).getCarportCount();
         if(num > size )
             throw new BizErrorException("该时间段预约已满");
+
+        //保存供应商
+        //保存供应商
+        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
+        searchBaseSupplierReUser.setUserId(user.getUserId());
+        List<BaseSupplierReUser> baseSupplierReUsers = baseFeignApi.findList(searchBaseSupplierReUser).getData();
+        if(StringUtils.isNotEmpty(baseSupplierReUsers))
+            srmDeliveryAppointDto.setSupplierId(baseSupplierReUsers.get(0).getSupplierId());
 
 
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();

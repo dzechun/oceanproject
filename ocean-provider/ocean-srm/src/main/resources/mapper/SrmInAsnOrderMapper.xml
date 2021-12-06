@@ -111,6 +111,9 @@
             <if test="asnCode!=null and asnCode!=''">
                 and wiao.asn_code like CONCAT('%',#{asnCode},'%')
             </if>
+            <if test="shipperName!=null and shipperName!=''">
+                and wiao.shipper_name like CONCAT('%',#{shipperName},'%')
+            </if>
             <if test="materialOwnerName!=null and materialOwnerName!=''">
                 and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
             </if>

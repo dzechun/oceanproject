@@ -44,8 +44,8 @@ public class SrmCarportServiceImpl extends BaseService<SrmCarport> implements Sr
 
     @Override
     public List<SrmCarportDto> findList(Map<String, Object> map) {
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(map.get("orgId"))){
+            SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
             map.put("orgId",sysUser.getOrganizationId());
         }
         return srmCarportMapper.findList(map);

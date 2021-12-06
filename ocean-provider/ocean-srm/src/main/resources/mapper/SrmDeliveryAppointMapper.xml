@@ -1,45 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.srm.mapper.SrmDeliveryAppointMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.srm.SrmDeliveryAppoint">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="delivery_appoint_id" jdbcType="BIGINT" property="deliveryAppointId" />
-    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="car_license_code" jdbcType="VARCHAR" property="carLicenseCode" />
-    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
-    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone" />
-    <result column="delivery_warehouse_id" jdbcType="BIGINT" property="deliveryWarehouseId" />
-    <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress" />
-    <result column="appoint_date" jdbcType="DATE" property="appointDate" />
-    <result column="appoint_start_time" jdbcType="TIME" property="appointStartTime" />
-    <result column="appoint_end_time" jdbcType="TIME" property="appointEndTime" />
-    <result column="appoint_status" jdbcType="TINYINT" property="appointStatus" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.srm.SrmDeliveryAppoint">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="delivery_appoint_id" jdbcType="BIGINT" property="deliveryAppointId"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="car_license_code" jdbcType="VARCHAR" property="carLicenseCode"/>
+        <result column="link_man_name" jdbcType="VARCHAR" property="linkManName"/>
+        <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
+        <result column="delivery_warehouse_id" jdbcType="BIGINT" property="deliveryWarehouseId"/>
+        <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress"/>
+        <result column="appoint_date" jdbcType="DATE" property="appointDate"/>
+        <result column="appoint_start_time" jdbcType="TIME" property="appointStartTime"/>
+        <result column="appoint_end_time" jdbcType="TIME" property="appointEndTime"/>
+        <result column="appoint_status" jdbcType="TINYINT" property="appointStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmDeliveryAppointDto">
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-    <collection property="list" ofType="com.fantechs.common.base.general.dto.srm.SrmAppointDeliveryReAsnDto"
-            column="{deliveryAppointId=delivery_appoint_id}" select="com.fantechs.provider.srm.mapper.SrmAppointDeliveryReAsnMapper.findList">
-    </collection>
-  </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.srm.SrmDeliveryAppointDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <collection property="list" ofType="com.fantechs.common.base.general.dto.srm.SrmAppointDeliveryReAsnDto"
+                    column="{deliveryAppointId=delivery_appoint_id}"
+                    select="com.fantechs.provider.srm.mapper.SrmAppointDeliveryReAsnMapper.findList">
+        </collection>
+    </resultMap>
 
-  <sql id="Base_Column_List">
+    <sql id="Base_Column_List">
         sda.delivery_appoint_id,
         sda.supplier_id,
         sda.car_license_code,
@@ -65,33 +69,47 @@
     </sql>
 
 
-  <select id="findList" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"></include>,
-    bw.warehouse_name AS warehouseName,bs.supplier_name AS supplierName,
-    su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
-    from srm_delivery_appoint sda
-    LEFT JOIN base_warehouse bw ON sda.delivery_warehouse_id = bw.warehouse_id
-    LEFT JOIN base_supplier bs ON sda.supplier_id = bs.supplier_id
-    LEFT JOIN sys_user su ON sda.create_user_id = su.user_id
-    LEFT JOIN sys_user sus ON sda.modified_user_id = sus.user_id
-    LEFT JOIN base_organization bo ON sda.org_id = bo.organization_id
-    <where>
-      <if test="orgId!=null and orgId!=''">
-        and sda.org_id = #{orgId}
-      </if>
-        <if test="carLicenseCode!=null and carLicenseCode!=''">
-            and sda.car_license_code = #{carLicenseCode}
-        </if>
-      <choose>
-            <when test="supplierIdList!=null and supplierIdList.size > 0">
-                and sda.supplier_id in
-                <foreach collection="supplierIdList" item="item" separator="," open="(" close=")">
-                    #{item.supplierId,jdbcType=BIGINT}
-                </foreach>
-            </when>
-      </choose>
-    </where>
-    order by sda.create_time desc
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto">
+        select <include refid="Base_Column_List"></include>,
+        bw.warehouse_name AS warehouse_name,bs.supplier_name AS supplier_name,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+        from srm_delivery_appoint sda
+        LEFT JOIN base_warehouse bw ON sda.delivery_warehouse_id = bw.warehouse_id
+        LEFT JOIN base_supplier bs ON sda.supplier_id = bs.supplier_id
+        LEFT JOIN sys_user su ON sda.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON sda.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON sda.org_id = bo.organization_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                and sda.org_id = #{orgId}
+            </if>
+            <if test="carLicenseCode!=null and carLicenseCode!=''">
+                and sda.car_license_code like CONCAT('%', #{carLicenseCode}, '%')
+            </if>
+            <if test="warehouseName!=null and warehouseName!=''">
+                and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+            </if>
+            <if test="supplierName!=null and supplierName!=''">
+                and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+            <if test="linkManName!=null and linkManName!=''">
+                and sda.link_man_name like CONCAT('%', #{linkManName}, '%')
+            </if>
+            <if test="appointStatus!=null and appointStatus!=''">
+                and sda.appoint_status = #{appointStatus}
+            </if>
+
+
+            <choose>
+                <when test="supplierIdList!=null and supplierIdList.size > 0">
+                    and sda.supplier_id in
+                    <foreach collection="supplierIdList" item="item" separator="," open="(" close=")">
+                        #{item.supplierId,jdbcType=BIGINT}
+                    </foreach>
+                </when>
+            </choose>
+        </where>
+        order by sda.create_time desc
+    </select>
 
 </mapper>
