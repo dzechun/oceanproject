@@ -48,4 +48,22 @@ public class SearchBaseInspectionExemptedList extends BaseQuery implements Seria
     @ApiModelProperty(name="materialName" ,value="物料名称")
     private String materialName;
 
+    /**
+     * 类型(1-供应商 2-客户)
+     */
+    @ApiModelProperty(name="objType",value = "类型(1-供应商 2-客户)")
+    private Byte objType;
+
+    /**
+     * 物料id
+     */
+    @ApiModelProperty(name="materialId",value = "物料id")
+    private Long materialId;
+
+    /**
+     * 供应商id
+     */
+    @ApiModelProperty(name="supplierId",value = "供应商id")
+    private Long supplierId;
+
 }

@@ -79,6 +79,15 @@
       <if test="customerName!=null and customerName!=''">
         and bc.supplier_name LIKE CONCAT('%',#{customerName},'%')
       </if>
+      <if test="materialId!=null">
+        and biel.material_id = #{materialId}
+      </if>
+      <if test="supplierId!=null">
+        and biel.supplier_id = #{supplierId}
+      </if>
+      <if test="objType!=null">
+        and biel.obj_type = #{objType}
+      </if>
       <if test="status!=null">
         and biel.status = #{status}
       </if>

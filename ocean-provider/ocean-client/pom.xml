@@ -91,7 +91,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>D:/IMES/lib/client</outputDirectory>
+                            <outputDirectory>${basedir}/lib/client</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

@@ -99,7 +99,7 @@ public class BaseSupplierController {
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
-    @ApiOperation("非免检客户列表")
+    @ApiOperation("非免检客户（供应商）列表")
     @PostMapping("/findInspectionSupplierList")
     public ResponseEntity<List<BaseSupplier>> findInspectionSupplierList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionExemptedList searchBaseInspectionExemptedList) {
         Page<Object> page = PageHelper.startPage(searchBaseInspectionExemptedList.getStartPage(), searchBaseInspectionExemptedList.getPageSize());

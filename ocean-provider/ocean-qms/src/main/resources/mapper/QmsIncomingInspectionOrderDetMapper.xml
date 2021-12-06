@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsIncomingInspectionOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="incoming_inspection_order_det_id" jdbcType="BIGINT" property="incomingInspectionOrderDetId" />
+    <result column="incoming_inspection_order_id" jdbcType="BIGINT" property="incomingInspectionOrderId" />
+    <result column="if_must_inspection" jdbcType="TINYINT" property="ifMustInspection" />
+    <result column="big_inspection_item_desc" jdbcType="VARCHAR" property="bigInspectionItemDesc" />
+    <result column="small_inspection_item_desc" jdbcType="VARCHAR" property="smallInspectionItemDesc" />
+    <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName" />
+    <result column="inspection_tag" jdbcType="TINYINT" property="inspectionTag" />
+    <result column="sample_qty" jdbcType="DECIMAL" property="sampleQty" />
+    <result column="specification_upper_limit" jdbcType="DECIMAL" property="specificationUpperLimit" />
+    <result column="specification_floor" jdbcType="DECIMAL" property="specificationFloor" />
+    <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
+    <result column="aql_value" jdbcType="INTEGER" property="aqlValue" />
+    <result column="ac_value" jdbcType="INTEGER" property="acValue" />
+    <result column="re_value" jdbcType="INTEGER" property="reValue" />
+    <result column="inspection_standard_det_id" jdbcType="BIGINT" property="inspectionStandardDetId" />
+    <result column="badness_qty" jdbcType="DECIMAL" property="badnessQty" />
+    <result column="badness_category_id" jdbcType="BIGINT" property="badnessCategoryId" />
+    <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDetDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="badness_category_desc" jdbcType="VARCHAR" property="badnessCategoryDesc"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qiiod.incoming_inspection_order_det_id,
+    qiiod.incoming_inspection_order_id,
+    qiiod.if_must_inspection,
+    qiiod.big_inspection_item_desc,
+    qiiod.small_inspection_item_desc,
+    qiiod.inspection_standard_name,
+    qiiod.inspection_tag,
+    qiiod.sample_qty,
+    qiiod.specification_upper_limit,
+    qiiod.specification_floor,
+    qiiod.unit_name,
+    qiiod.aql_value,
+    qiiod.ac_value,
+    qiiod.re_value,
+    qiiod.inspection_standard_det_id,
+    qiiod.badness_qty,
+    qiiod.badness_category_id,
+    qiiod.inspection_result,
+    qiiod.`status`,
+    qiiod.remark,
+    qiiod.org_id,
+    qiiod.create_user_id,
+    qiiod.create_time,
+    qiiod.modified_user_id,
+    qiiod.modified_time,
+    qiiod.is_delete,
+    qiiod.option1,
+    qiiod.option2,
+    qiiod.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,
+    bbc.badness_category_desc,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from qms_incoming_inspection_order_det qiiod
+    left join base_badness_category bbc on qiiod.badness_category_id=bbc.badness_category_id
+    left join sys_user u on qiiod.create_user_id=u.user_id
+    left join sys_user s on qiiod.modified_user_id=s.user_id
+    left join base_organization bo ON qiiod.org_id = bo.organization_id
+    <where>
+      <if test="incomingInspectionOrderId != null">
+        and qiiod.incoming_inspection_order_id = #{incomingInspectionOrderId}
+      </if>
+      <if test="status!=null">
+        and qiiod.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qiiod.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and qiiod.org_id=#{orgId}
+      </if>
+    </where>
+    order by qiiod.create_time desc
+  </select>
+</mapper>

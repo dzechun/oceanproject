@@ -123,7 +123,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>D:/IMES/lib/in</outputDirectory>
+            <outputDirectory>${basedir}/lib/in</outputDirectory>
             </configuration>
             </execution>
             </executions>

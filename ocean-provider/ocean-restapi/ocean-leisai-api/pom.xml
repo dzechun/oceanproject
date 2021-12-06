@@ -124,7 +124,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>D:/IMES/lib/leisai</outputDirectory>
+                            <outputDirectory>${basedir}/lib/leisai</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

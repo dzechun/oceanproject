@@ -105,7 +105,7 @@
             <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-            <outputDirectory>D:/IMES/lib/bcm</outputDirectory>
+            <outputDirectory>${basedir}/lib/bcm</outputDirectory>
             </configuration>
             </execution>
             </executions>
