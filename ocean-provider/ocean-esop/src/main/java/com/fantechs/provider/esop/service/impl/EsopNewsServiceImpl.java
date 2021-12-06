@@ -59,7 +59,7 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
             criteria.andEqualTo("equipmentMacAddress",map.get("equipmentMacAddress"));
             List<EsopEquipment> EsopEquipments = esopEquipmentMapper.selectByExample(example);
             if(StringUtils.isEmpty(EsopEquipments)){
-                throw new BizErrorException("未查到绑定此mac地址的设备");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查到绑定此mac地址的设备");
             }
             map.put("newStatus",3);
             map.put("orgId", EsopEquipments.get(0).getOrgId());
@@ -87,18 +87,15 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int audit(String ids) throws UnknownHostException {
+    public int audit(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         int num = 0;
         String[] idArry = ids.split(",");
         for (String id : idArry) {
             EsopNews EsopNews = esopNewsMapper.selectByPrimaryKey(id);
             if(EsopNews.getNewStatus()!=(byte)1){
-                throw new BizErrorException("此新闻已审核发布");
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"此新闻已审核发布");
             }
 
             EsopNews.setNewStatus((byte)3);
@@ -115,9 +112,6 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EsopNews record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         record.setNewsCode(CodeUtils.getId("XW-"));
         record.setCreateUserId(user.getUserId());
@@ -154,9 +148,6 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EsopNews entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         entity.setNewStatus((byte)1);
         entity.setModifiedTime(new Date());
@@ -193,30 +184,14 @@ public class EsopNewsServiceImpl extends BaseService<EsopNews> implements EsopNe
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
-        List<EsopHtNews> list = new ArrayList<>();
-        String[] idArry = ids.split(",");
-        for (String id : idArry) {
-            EsopNews EsopNews = esopNewsMapper.selectByPrimaryKey(id);
-            if(StringUtils.isEmpty(EsopNews)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-            }
-            EsopHtNews EsopHtNews = new EsopHtNews();
-            BeanUtils.copyProperties(EsopNews, EsopHtNews);
-            list.add(EsopHtNews);
-
-            //删除附件
+        List<EsopNews> esopNews = esopNewsMapper.selectByIds(ids);
+        //删除附件
+        for (EsopNews esopNew : esopNews) {
             Example example1 = new Example(EsopNewsAttachment.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("newsId", EsopNews.getNewsId());
+            criteria1.andEqualTo("newsId", esopNew.getNewsId());
             esopNewsAttachmentMapper.deleteByExample(example1);
         }
-
-        esopHtNewsMapper.insertList(list);
 
         return esopNewsMapper.deleteByIds(ids);
     }

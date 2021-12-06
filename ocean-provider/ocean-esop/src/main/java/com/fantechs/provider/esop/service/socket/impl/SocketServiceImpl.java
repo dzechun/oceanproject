@@ -1,6 +1,7 @@
 package com.fantechs.provider.esop.service.socket.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
@@ -84,7 +85,7 @@ public class SocketServiceImpl implements SocketService {
     public int instructions(String ip,String code,Object url) {
         try {
             Socket socket = (Socket)hashtable.get(ip);
-            if(socket == null) throw new BizErrorException("未查询到ip对应的设备信息,请检查设备是否开启");
+            if(socket == null) throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到ip对应的设备信息,请检查设备是否开启");
             OutputStream os = socket.getOutputStream();
             PrintWriter out =new PrintWriter(os);
 
@@ -109,7 +110,7 @@ public class SocketServiceImpl implements SocketService {
 
     @Override
     public int BatchInstructions(Long proLineId,String code,Object url,String type) {
-        if(StringUtils.isEmpty(url) || StringUtils.isEmpty(code))  throw new BizErrorException("code或url不能为空");
+        if(StringUtils.isEmpty(url) || StringUtils.isEmpty(code))  throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"code或url不能为空");
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(EsopEquipment.class);
         Example.Criteria criteria = example.createCriteria();
@@ -320,7 +321,7 @@ public class SocketServiceImpl implements SocketService {
 
         List<EsopEquipment> eamEquipments = esopEquipmentMapper.selectByExample(example);
         if (StringUtils.isEmpty(eamEquipments)){
-            throw new BizErrorException("未查询到对应的设备信息");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到对应的设备信息");
         }
         example.clear();
         return eamEquipments.get(0);

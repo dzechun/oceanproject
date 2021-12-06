@@ -86,8 +86,8 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
     @Override
     public List<EsopWorkInstructionDto> findList(SearchEsopWorkInstruction searchEsopWorkInstruction) {
         if(StringUtils.isEmpty(searchEsopWorkInstruction.getOrgId())){
-            SysUser sysUser = currentUser();
-            searchEsopWorkInstruction.setOrgId(sysUser.getOrganizationId());
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            searchEsopWorkInstruction.setOrgId(user.getOrganizationId());
         }
         return esopWorkInstructionMapper.findList(searchEsopWorkInstruction);
     }
@@ -95,8 +95,8 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
     @Override
     public EsopWorkInstructionDto findByEquipmentIp(SearchEsopWorkInstruction searchEsopWorkInstruction) {
         if(StringUtils.isEmpty(searchEsopWorkInstruction.getEquipmentIp()) && StringUtils.isEmpty(searchEsopWorkInstruction.getEquipmentMacAddress()))
-            throw new BizErrorException("设备ip不能为空");
-        SysUser sysUser = currentUser();
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"设备ip不能为空");
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         Example example = new Example(EsopEquipment.class);
         Example.Criteria criteria = example.createCriteria();
@@ -104,22 +104,22 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
             criteria.andEqualTo("equipmentMacAddress", searchEsopWorkInstruction.getEquipmentMacAddress());
         if(StringUtils.isNotEmpty(searchEsopWorkInstruction.getEquipmentIp()))
             criteria.andEqualTo("equipmentIp", searchEsopWorkInstruction.getEquipmentIp());
-        criteria.andEqualTo("orgId", sysUser.getOrganizationId());
+        criteria.andEqualTo("orgId", user.getOrganizationId());
         List<EsopEquipment> EsopEquipments = esopEquipmentMapper.selectByExample(example);
-        if(EsopEquipments.size() >1) throw new BizErrorException("出现两个或两个以上的设备ip相同");
+        if(EsopEquipments.size() >1) throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "出现两个或两个以上的设备ip相同");
         example.clear();
         if(EsopEquipments.size() <1 ) return null;
         //查询到对应的wi
         SearchEsopWiRelease searchEsopWiRelease = new SearchEsopWiRelease();
     //    searchEsopWiRelease.setEquipmentMacAddress(searchEsopWorkInstruction.getEquipmentMacAddress());
-        searchEsopWiRelease.setOrgId(sysUser.getOrganizationId());
+        searchEsopWiRelease.setOrgId(user.getOrganizationId());
         searchEsopWiRelease.setReleaseStatus((byte)2);
         searchEsopWiRelease.setProLineId(EsopEquipments.get(0).getProLineId());
 
         List<EsopWiReleaseDto> list = esopWiReleaseMapper.findList(searchEsopWiRelease);
         //客户要求不再根据工序发布，根据设备序号发布
         if(StringUtils.isNotEmpty(list) ) {
-            if (list.size()>1)  throw new BizErrorException("查询到多条该设备对应产线发布的WI");
+            if (list.size()>1)  throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"查询到多条该设备对应产线发布的WI");
             for(EsopWiReleaseDetDto dto : list.get(0).getEsopWiReleaseDetDtos()){
                 if(dto.getWiReleaseDetSeqNum().equals(EsopEquipments.get(0).getEquipmentSeqNum()) ){
                     searchEsopWorkInstruction.setWorkInstructionId(dto.getWorkInstructionId());
@@ -134,7 +134,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         //searchEsopWorkInstruction.setProcessId(EsopEquipments.get(0).getProcessId());
         searchEsopWorkInstruction.setOrgId(EsopEquipments.get(0).getOrgId());
         EsopWorkInstructionDto EsopWorkInstructionDto = esopWorkInstructionMapper.findList(searchEsopWorkInstruction).get(0);
-        EsopWorkInstructionDto.setUserName(sysUser.getUserName());
+        EsopWorkInstructionDto.setUserName(user.getUserName());
         EsopWorkInstructionDto.setWorkShopName(list.get(0).getWorkShopName());
 
         return EsopWorkInstructionDto;
@@ -143,8 +143,8 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EsopWorkInstructionDto esopWorkInstructionDto) {
-        SysUser user = currentUser();
-        if(StringUtils.isEmpty(esopWorkInstructionDto.getWorkInstructionCode())) throw new BizErrorException("Wi编码不能为空");
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(esopWorkInstructionDto.getWorkInstructionCode())) throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"Wi编码不能为空");
         Example example = new Example(EsopWorkInstruction.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("workInstructionCode", esopWorkInstructionDto.getWorkInstructionCode());
@@ -183,9 +183,9 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(EsopWorkInstructionDto EsopWorkInstructionDto) {
-        SysUser user = currentUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(EsopWorkInstructionDto.getWorkInstructionId()))
-            throw new BizErrorException("id不能为空");
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"id不能为空");
         EsopWorkInstructionDto.setWiStatus((byte)1);
         esopWorkInstructionMapper.updateByPrimaryKeySelective(EsopWorkInstructionDto);
 
@@ -326,7 +326,6 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
-        SysUser user = currentUser();
 
         String[] idsArr = ids.split(",");
         for (String id : idsArr) {
@@ -753,7 +752,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("WiExcelDowload");
         ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
-        if(StringUtils.isEmpty(specItemList.getData())) throw new BizErrorException("未设置下载模板");
+        if(StringUtils.isEmpty(specItemList.getData())) throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未设置下载模板");
         String fileUrl = specItemList.getData().get(0).getParaValue();
         return fileUrl.substring(fileUrl.lastIndexOf("group"));
     }
@@ -775,25 +774,11 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
         return bos.toByteArray();
     }
 
-
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return user;
-    }
-
-
     @Override
     public int censor(EsopWorkInstructionDto EsopWorkInstructionDto) {
-        SysUser user = currentUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(EsopWorkInstructionDto.getWorkInstructionId()))
-            throw new BizErrorException("id不能为空");
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"id不能为空");
         esopWorkInstructionMapper.updateByPrimaryKeySelective(EsopWorkInstructionDto);
 
         Long workInstructionId=EsopWorkInstructionDto.getWorkInstructionId();

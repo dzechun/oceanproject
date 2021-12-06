@@ -1,72 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.esop.mapper.EsopWorkInstructionMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.esop.EsopWorkInstruction">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="work_instruction_id" jdbcType="BIGINT" property="workInstructionId" />
-    <result column="work_instruction_code" jdbcType="VARCHAR" property="workInstructionCode" />
-    <result column="work_instruction_name" jdbcType="VARCHAR" property="workInstructionName" />
-    <result column="work_instruction_ver" jdbcType="VARCHAR" property="workInstructionVer" />
-    <result column="work_instruction_seq_num" jdbcType="VARCHAR" property="workInstructionSeqNum" />
-    <result column="process_id" jdbcType="BIGINT" property="processId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
-    <result column="secrecy_grade" jdbcType="TINYINT" property="secrecyGrade" />
-    <result column="wi_status" jdbcType="TINYINT" property="wiStatus" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <result column="manufacture_procedure" jdbcType="LONGVARCHAR" property="manufactureProcedure" />
-    <result column="process_req_and_announcements" jdbcType="LONGVARCHAR" property="processReqAndAnnouncements" />
-    <result column="standard_time" jdbcType="DECIMAL" property="standardTime" />
-    <result column="write_make_user_name" jdbcType="VARCHAR" property="writeMakeUserName" />
-    <result column="write_make_time" jdbcType="TIMESTAMP" property="writeMakeTime" />
-    <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName" />
-    <result column="approve_user_name" jdbcType="VARCHAR" property="approveUserName" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.esop.EsopWorkInstruction">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="work_instruction_id" jdbcType="BIGINT" property="workInstructionId"/>
+        <result column="work_instruction_code" jdbcType="VARCHAR" property="workInstructionCode"/>
+        <result column="work_instruction_name" jdbcType="VARCHAR" property="workInstructionName"/>
+        <result column="work_instruction_ver" jdbcType="VARCHAR" property="workInstructionVer"/>
+        <result column="work_instruction_seq_num" jdbcType="VARCHAR" property="workInstructionSeqNum"/>
+        <result column="process_id" jdbcType="BIGINT" property="processId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="product_model_id" jdbcType="BIGINT" property="productModelId"/>
+        <result column="secrecy_grade" jdbcType="TINYINT" property="secrecyGrade"/>
+        <result column="wi_status" jdbcType="TINYINT" property="wiStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="manufacture_procedure" jdbcType="LONGVARCHAR" property="manufactureProcedure"/>
+        <result column="process_req_and_announcements" jdbcType="LONGVARCHAR" property="processReqAndAnnouncements"/>
+        <result column="standard_time" jdbcType="DECIMAL" property="standardTime"/>
+        <result column="write_make_user_name" jdbcType="VARCHAR" property="writeMakeUserName"/>
+        <result column="write_make_time" jdbcType="TIMESTAMP" property="writeMakeTime"/>
+        <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
+        <result column="approve_user_name" jdbcType="VARCHAR" property="approveUserName"/>
+    </resultMap>
 
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-             type="com.fantechs.common.base.general.dto.esop.EsopWorkInstructionDto">
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
-    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
-    <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
-    <result column="process_name" jdbcType="VARCHAR" property="processName"/>
-    <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="specifications" jdbcType="VARCHAR" property="specifications"/>
-    <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
-    <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
+               type="com.fantechs.common.base.general.dto.esop.EsopWorkInstructionDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+        <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
+        <result column="process_name" jdbcType="VARCHAR" property="processName"/>
+        <result column="process_code" jdbcType="VARCHAR" property="processCode"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="specifications" jdbcType="VARCHAR" property="specifications"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
 
 
-    <collection property="esopWiBoms" ofType="com.fantechs.common.base.general.entity.esop.EsopWiBom"
-            column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.esop.mapper.EsopWiBomMapper.findList">
-    </collection>
-    <collection property="esopWiFTAndInspectionTools" ofType="com.fantechs.common.base.general.entity.esop.EsopWiFTAndInspectionTool"
-            column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.esop.mapper.EsopWiFTAndInspectionToolMapper.findList">
-    </collection>
-    <collection property="esopWiQualityStandardss" ofType="com.fantechs.common.base.general.entity.esop.EsopWiQualityStandards"
-            column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.esop.mapper.EsopWiQualityStandardsMapper.findList">
-    </collection>
-    <collection property="esopWiFiles" ofType="com.fantechs.common.base.general.entity.esop.EsopWiFile"
-            column="{workInstructionId=work_instruction_id}" select="com.fantechs.provider.esop.mapper.EsopWiFileMapper.findList">
-    </collection>
-  </resultMap>
+        <collection property="esopWiBoms" ofType="com.fantechs.common.base.general.entity.esop.EsopWiBom"
+                    column="{workInstructionId=work_instruction_id}"
+                    select="com.fantechs.provider.esop.mapper.EsopWiBomMapper.findList">
+        </collection>
+        <collection property="esopWiFTAndInspectionTools"
+                    ofType="com.fantechs.common.base.general.entity.esop.EsopWiFTAndInspectionTool"
+                    column="{workInstructionId=work_instruction_id}"
+                    select="com.fantechs.provider.esop.mapper.EsopWiFTAndInspectionToolMapper.findList">
+        </collection>
+        <collection property="esopWiQualityStandardss"
+                    ofType="com.fantechs.common.base.general.entity.esop.EsopWiQualityStandards"
+                    column="{workInstructionId=work_instruction_id}"
+                    select="com.fantechs.provider.esop.mapper.EsopWiQualityStandardsMapper.findList">
+        </collection>
+        <collection property="esopWiFiles" ofType="com.fantechs.common.base.general.entity.esop.EsopWiFile"
+                    column="{workInstructionId=work_instruction_id}"
+                    select="com.fantechs.provider.esop.mapper.EsopWiFileMapper.findList">
+        </collection>
+    </resultMap>
 
-  <sql id="BaseColumnList">
+    <sql id="BaseColumnList">
         ewi.work_instruction_id,
         ewi.work_instruction_code,
         ewi.work_instruction_name,
@@ -100,8 +106,10 @@
     <select id="findList" resultMap="BaseResultMapDto">
 
         SELECT<include refid="BaseColumnList"/>,
-        bm.material_code as material_code,bm.material_name as material_name,bm.material_desc as material_desc,spm.product_model_code as product_model_code,
-        spm.product_model_name as product_model_name,spm.product_model_desc as product_model_desc,sp.process_name as process_name,sp.process_code as process_code,su.user_name AS create_user_name,
+        bm.material_code as material_code,bm.material_name as material_name,bm.material_desc as
+        material_desc,spm.product_model_code as product_model_code,
+        spm.product_model_name as product_model_name,spm.product_model_desc as product_model_desc,sp.process_name as
+        process_name,sp.process_code as process_code,su.user_name AS create_user_name,
         CONCAT(bt.length,',',bt.width,',',bt.height) as specifications,
         <if test="proLineId!=null and proLineId!=''">
             bpl.pro_name as pro_name,
@@ -113,7 +121,7 @@
         LEFT JOIN base_product_model spm ON ewi.product_model_id = spm.product_model_id
         LEFT JOIN base_process sp ON ewi.process_id = sp.process_id
         <if test="proLineId!=null and proLineId!=''">
-            LEFT JOIN esop_wi_release_det ewrd  ON ewrd.work_instruction_id = ewi.work_instruction_id
+            LEFT JOIN esop_wi_release_det ewrd ON ewrd.work_instruction_id = ewi.work_instruction_id
             LEFT JOIN esop_wi_release ewr ON ewr.wi_release_id = ewrd.wi_release_id
             LEFT JOIN base_pro_line bpl ON bpl.pro_line_id = ewr.pro_line_id
         </if>

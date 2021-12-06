@@ -1,53 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.esop.mapper.EsopWiReleaseMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.esop.EsopWiRelease">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="wi_release_id" jdbcType="BIGINT" property="wiReleaseId" />
-    <result column="wi_release_code" jdbcType="VARCHAR" property="wiReleaseCode" />
-    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
-    <result column="route_id" jdbcType="BIGINT" property="routeId" />
-    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
-    <result column="work_shop_id" jdbcType="BIGINT" property="workShopId" />
-    <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
-    <result column="release_status" jdbcType="TINYINT" property="releaseStatus" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.esop.EsopWiRelease">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="wi_release_id" jdbcType="BIGINT" property="wiReleaseId"/>
+        <result column="wi_release_code" jdbcType="VARCHAR" property="wiReleaseCode"/>
+        <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="product_model_id" jdbcType="BIGINT" property="productModelId"/>
+        <result column="route_id" jdbcType="BIGINT" property="routeId"/>
+        <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
+        <result column="work_shop_id" jdbcType="BIGINT" property="workShopId"/>
+        <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>
+        <result column="release_status" jdbcType="TINYINT" property="releaseStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.esop.EsopWiReleaseDto">
-      <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-      <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-      <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-      <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
-      <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-      <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
-      <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
-      <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
-      <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
-      <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
-      <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
-      <result column="pro_line_name" jdbcType="VARCHAR" property="proLineName"/>
-      <result column="work_order_status" jdbcType="VARCHAR" property="workOrderStatus"/>
-      <collection property="esopWiReleaseDetDtos" ofType="com.fantechs.common.base.general.dto.esop.EsopWiReleaseDetDto"
-                  column="{wiReleaseId=wi_release_id}" select="com.fantechs.provider.esop.mapper.EsopWiReleaseDetMapper.findList">
-      </collection>
-  </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.esop.EsopWiReleaseDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+        <result column="product_model_desc" jdbcType="VARCHAR" property="productModelDesc"/>
+        <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
+        <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName"/>
+        <result column="pro_line_name" jdbcType="VARCHAR" property="proLineName"/>
+        <result column="work_order_status" jdbcType="VARCHAR" property="workOrderStatus"/>
+        <collection property="esopWiReleaseDetDtos"
+                    ofType="com.fantechs.common.base.general.dto.esop.EsopWiReleaseDetDto"
+                    column="{wiReleaseId=wi_release_id}"
+                    select="com.fantechs.provider.esop.mapper.EsopWiReleaseDetMapper.findList">
+        </collection>
+    </resultMap>
 
-  <sql id="BaseColumnList">
+    <sql id="BaseColumnList">
         ewr.wi_release_id,
         ewr.wi_release_code,
         ewr.work_order_id,
@@ -70,62 +73,65 @@
         ewr.option3
     </sql>
 
-  <select id="findList" resultMap="BaseResultMapDto">
-    SELECT<include refid="BaseColumnList"/>,
-    mpwo.work_order_code as work_order_code,mpwo.work_order_status as work_order_status,bm.material_code as material_code,
-    bpm.product_model_name as product_model_name,bpm.product_model_code as product_model_code,bpm.product_model_desc as product_model_desc,
-    br.route_name as route_name,bf.factory_name as factory_name,bws.work_shop_name as work_shop_name,bpl.pro_name as pro_line_name,
-      u.user_name as create_user_name,
-      s.user_name as modified_user_name,
-      bo.organization_name
-    FROM esop_wi_release ewr
-    LEFT JOIN mes_pm_work_order mpwo ON ewr.work_order_id = mpwo.work_order_id
-    LEFT JOIN base_material bm ON ewr.material_id = bm.material_id
-    LEFT JOIN base_material_tab bmt ON ewr.material_id=bmt.material_id
-    LEFT JOIN base_product_model bpm ON ewr.product_model_id=bpm.product_model_id
-    LEFT JOIN base_route br ON ewr.route_id = br.route_id
-    LEFT JOIN base_factory bf ON ewr.factory_id = bf.factory_id
-    LEFT JOIN base_work_shop bws ON ewr.work_shop_id = bws.work_shop_id
-    <if test="equipmentMacAddress!=null and equipmentMacAddress!=''">
-        LEFT JOIN esop_equipment ee ON ewr.pro_line_id = ee.pro_line_id
-    </if>
-    LEFT JOIN base_pro_line bpl ON ewr.pro_line_id = bpl.pro_line_id
-      left join sys_user u on ewr.create_user_id=u.user_id
-      left join sys_user s on ewr.modified_user_id=s.user_id
-      left join base_organization bo ON ewr.org_id = bo.organization_id
-    <where>
-      <if test="orgId!=null and orgId!=''">
-        and ewr.org_id = #{orgId}
-      </if>
-      <if test="wiReleaseCode!=null and wiReleaseCode!=''">
-        and ewr.wi_release_code = #{wiReleaseCode}
-      </if>
-      <if test="workOrderCode!=null and workOrderCode!=''">
-         and mpwo.work_order_code = #{workOrderCode}
-      </if>
-      <if test="materialCode!=null and materialCode!=''">
-         and bm.material_code = #{materialCode}
-       </if>
-      <if test="equipmentMacAddress!=null and equipmentMacAddress!=''">
-            and ee.equipment_mac_address = #{equipmentMacAddress}
-      </if>
-      <if test="releaseStatus!=null and releaseStatus!=''">
-        and ewr.release_status = #{releaseStatus}
-      </if>
-        <if test="workOrderStatus!=null and workOrderStatus!=''">
-            and mpwo.work_order_status = #{workOrderStatus}
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="BaseColumnList"/>,
+        mpwo.work_order_code as work_order_code,mpwo.work_order_status as work_order_status,bm.material_code as
+        material_code,
+        bpm.product_model_name as product_model_name,bpm.product_model_code as product_model_code,bpm.product_model_desc
+        as product_model_desc,
+        br.route_name as route_name,bf.factory_name as factory_name,bws.work_shop_name as work_shop_name,bpl.pro_name as
+        pro_line_name,
+        u.user_name as create_user_name,
+        s.user_name as modified_user_name,
+        bo.organization_name
+        FROM esop_wi_release ewr
+        LEFT JOIN mes_pm_work_order mpwo ON ewr.work_order_id = mpwo.work_order_id
+        LEFT JOIN base_material bm ON ewr.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON ewr.material_id=bmt.material_id
+        LEFT JOIN base_product_model bpm ON ewr.product_model_id=bpm.product_model_id
+        LEFT JOIN base_route br ON ewr.route_id = br.route_id
+        LEFT JOIN base_factory bf ON ewr.factory_id = bf.factory_id
+        LEFT JOIN base_work_shop bws ON ewr.work_shop_id = bws.work_shop_id
+        <if test="equipmentMacAddress!=null and equipmentMacAddress!=''">
+            LEFT JOIN esop_equipment ee ON ewr.pro_line_id = ee.pro_line_id
         </if>
-        <if test="proLineId!=null and proLineId!=''">
-            and ewr.pro_line_id = #{proLineId}
-        </if>
-        <if test="workShopName!=null and workShopName!=''">
-            and bws.work_shop_name  like CONCAT('%', #{workShopName}, '%')
-        </if>
-        <if test="proName!=null and proName!=''">
-            and bpl.pro_name  like CONCAT('%', #{proName}, '%')
-        </if>
-    </where>
-      order by ewr.modified_time desc
-  </select>
+        LEFT JOIN base_pro_line bpl ON ewr.pro_line_id = bpl.pro_line_id
+        left join sys_user u on ewr.create_user_id=u.user_id
+        left join sys_user s on ewr.modified_user_id=s.user_id
+        left join base_organization bo ON ewr.org_id = bo.organization_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                and ewr.org_id = #{orgId}
+            </if>
+            <if test="wiReleaseCode!=null and wiReleaseCode!=''">
+                and ewr.wi_release_code = #{wiReleaseCode}
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and mpwo.work_order_code = #{workOrderCode}
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and bm.material_code = #{materialCode}
+            </if>
+            <if test="equipmentMacAddress!=null and equipmentMacAddress!=''">
+                and ee.equipment_mac_address = #{equipmentMacAddress}
+            </if>
+            <if test="releaseStatus!=null and releaseStatus!=''">
+                and ewr.release_status = #{releaseStatus}
+            </if>
+            <if test="workOrderStatus!=null and workOrderStatus!=''">
+                and mpwo.work_order_status = #{workOrderStatus}
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and ewr.pro_line_id = #{proLineId}
+            </if>
+            <if test="workShopName!=null and workShopName!=''">
+                and bws.work_shop_name like CONCAT('%', #{workShopName}, '%')
+            </if>
+            <if test="proName!=null and proName!=''">
+                and bpl.pro_name like CONCAT('%', #{proName}, '%')
+            </if>
+        </where>
+        order by ewr.modified_time desc
+    </select>
 
 </mapper>

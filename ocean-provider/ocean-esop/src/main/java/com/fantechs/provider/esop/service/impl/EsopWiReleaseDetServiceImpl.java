@@ -29,21 +29,10 @@ public class EsopWiReleaseDetServiceImpl extends BaseService<EsopWiReleaseDet> i
     @Override
     public List<EsopWiReleaseDetDto> findList(SearchEsopWiReleaseDet searchEsopWiReleaseDet) {
         if(StringUtils.isEmpty(searchEsopWiReleaseDet.getOrgId())){
-            SysUser sysUser = currentUser();
-            searchEsopWiReleaseDet.setOrgId(sysUser.getOrganizationId());
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            searchEsopWiReleaseDet.setOrgId(user.getOrganizationId());
         }
         return esopWiReleaseDetMapper.findList(searchEsopWiReleaseDet);
     }
 
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return user;
-    }
 }

@@ -120,18 +120,6 @@ public class EsopEquipmentServiceImpl extends BaseService<EsopEquipment> impleme
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        CurrentUserInfoUtils.getCurrentUserInfo();
-        String[] idArry = ids.split(",");
-        for (String id : idArry) {
-            EsopEquipment EsopEquipment = esopEquipmentMapper.selectByPrimaryKey(id);
-            if(StringUtils.isEmpty(EsopEquipment)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-            }
-
-            EsopHtEquipment EsopHtEquipment = new EsopHtEquipment();
-            BeanUtils.copyProperties(EsopEquipment, EsopHtEquipment);
-        }
-
         return esopEquipmentMapper.deleteByIds(ids);
     }
 

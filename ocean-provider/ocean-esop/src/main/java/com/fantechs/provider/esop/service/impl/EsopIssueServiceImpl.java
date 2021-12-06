@@ -113,9 +113,6 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EsopIssue record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         record.setIssueCode(CodeUtils.getId("WT-"));
         record.setCreateUserId(user.getUserId());
@@ -151,9 +148,6 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(EsopIssue entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
@@ -189,32 +183,14 @@ public class EsopIssueServiceImpl extends BaseService<EsopIssue> implements Esop
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
-        List<EsopHtIssue> list = new ArrayList<>();
         String[] idArry = ids.split(",");
         for (String id : idArry) {
-            EsopIssue EsopIssue = esopIssueMapper.selectByPrimaryKey(id);
-            if(StringUtils.isEmpty(EsopIssue)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
-            }
-
-            EsopHtIssue EsopHtIssue = new EsopHtIssue();
-            BeanUtils.copyProperties(EsopIssue, EsopHtIssue);
-            list.add(EsopHtIssue);
-
             //删除原附件
             Example example1 = new Example(EsopIssueAttachment.class);
             Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("issueId", EsopIssue.getIssueId());
+            criteria1.andEqualTo("issueId",id);
             esopIssueAttachmentMapper.deleteByExample(example1);
         }
-
-        esopHtIssueMapper.insertList(list);
-
         return esopIssueMapper.deleteByIds(ids);
     }
 

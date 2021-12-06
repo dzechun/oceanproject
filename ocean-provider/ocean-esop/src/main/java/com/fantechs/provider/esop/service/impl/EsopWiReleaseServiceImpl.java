@@ -57,8 +57,8 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
     @Override
     public List<EsopWiReleaseDto> findList(SearchEsopWiRelease searchEsopWiRelease) {
         if(StringUtils.isEmpty(searchEsopWiRelease.getOrgId())){
-            SysUser sysUser = currentUser();
-            searchEsopWiRelease.setOrgId(sysUser.getOrganizationId());
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            searchEsopWiRelease.setOrgId(user.getOrganizationId());
         }
         return esopWiReleaseMapper.findList(searchEsopWiRelease);
     }
@@ -66,15 +66,15 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
 
     @Override
     public int save(EsopWiReleaseDto EsopWiReleaseDto) {
-        SysUser sysUser = currentUser();
-        if(StringUtils.isEmpty(EsopWiReleaseDto.getWiReleaseCode())) throw new BizErrorException("添加失败，发布编码不能为空");
-        if(StringUtils.isEmpty(EsopWiReleaseDto.getProLineId())) throw new BizErrorException("添加失败，产线id不能为空");
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(EsopWiReleaseDto.getWiReleaseCode())) throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"添加失败，发布编码不能为空");
+        if(StringUtils.isEmpty(EsopWiReleaseDto.getProLineId())) throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"添加失败，产线id不能为空");
         Example example1 = new Example(EsopWiRelease.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("orgId", sysUser.getOrganizationId());
+        criteria1.andEqualTo("orgId", user.getOrganizationId());
         criteria1.andEqualTo("wiReleaseCode",EsopWiReleaseDto.getWiReleaseCode());
         EsopWiRelease wiRelease = esopWiReleaseMapper.selectOneByExample(example1);
-        if(StringUtils.isNotEmpty(wiRelease)) throw new BizErrorException("添加失败，已存在发布编码");
+        if(StringUtils.isNotEmpty(wiRelease)) throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"添加失败，已存在发布编码");
         example1.clear();
 
 
@@ -83,19 +83,19 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
         for(EsopWiReleaseDetDto dto :EsopWiReleaseDto.getEsopWiReleaseDetDtos()){
             set.add(dto.getWiReleaseDetSeqNum());
         }
-        if(set.size() != EsopWiReleaseDto.getEsopWiReleaseDetDtos().size()) throw new BizErrorException("添加失败，wi序号重复");
+        if(set.size() != EsopWiReleaseDto.getEsopWiReleaseDetDtos().size()) throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "添加失败，wi序号重复");
 
         EsopWiRelease EsopWiRelease = new EsopWiRelease();
         BeanUtils.autoFillEqFields(EsopWiReleaseDto, EsopWiRelease);
-        EsopWiRelease.setCreateUserId(sysUser.getUserId());
+        EsopWiRelease.setCreateUserId(user.getUserId());
         EsopWiRelease.setCreateTime(new Date());
-        EsopWiRelease.setModifiedUserId(sysUser.getUserId());
+        EsopWiRelease.setModifiedUserId(user.getUserId());
         EsopWiRelease.setModifiedTime(new Date());
         EsopWiRelease.setStatus((byte)1);
         EsopWiRelease.setReleaseStatus((byte)1);
-        EsopWiRelease.setOrgId(sysUser.getOrganizationId());
+        EsopWiRelease.setOrgId(user.getOrganizationId());
         int i = esopWiReleaseMapper.insertSelective(EsopWiRelease);
-        List<EsopWiReleaseDet> dets = saveDet(EsopWiReleaseDto,sysUser,EsopWiRelease.getWiReleaseId());
+        List<EsopWiReleaseDet> dets = saveDet(EsopWiReleaseDto,user,EsopWiRelease.getWiReleaseId());
 
         //添加履历表
         EsopHtWiRelease EsopHtWiRelease = new EsopHtWiRelease();
@@ -117,9 +117,9 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
 
     @Override
     public int update(EsopWiReleaseDto EsopWiReleaseDto) {
-        SysUser sysUser = currentUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(EsopWiReleaseDto.getWiReleaseId()))
-            throw new BizErrorException("id不能为空");
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"id不能为空");
         EsopWiReleaseDto.setReleaseStatus((byte)1);
         esopWiReleaseMapper.updateByPrimaryKey(EsopWiReleaseDto);
 
@@ -141,23 +141,23 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
         BeanUtils.autoFillEqFields(EsopWiRelease,EsopHtWiRelease);
         int i = esopHtWiReleaseMapper.insertUseGeneratedKeys(EsopHtWiRelease);
 
-        saveDet(EsopWiReleaseDto,sysUser,EsopWiRelease.getWiReleaseId());
+        saveDet(EsopWiReleaseDto,user,EsopWiRelease.getWiReleaseId());
         return i;
     }
 
     @SneakyThrows
     @Override
     public int censor(EsopWiRelease EsopWiRelease) {
-        SysUser sysUser = currentUser();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(EsopWiRelease.getWiReleaseId()))
-            throw new BizErrorException("发布id不能为空");
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"发布id不能为空");
         if(StringUtils.isEmpty(EsopWiRelease.getProLineId()))
-            throw new BizErrorException("产线id不能为空");
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"产线id不能为空");
 
         //关闭该产线原有的wi原有的wi
         Example example = new Example(EsopWiRelease.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orgId", sysUser.getOrganizationId())
+        criteria.andEqualTo("orgId", user.getOrganizationId())
                 .andEqualTo("proLineId", EsopWiRelease.getProLineId());
         List<EsopWiRelease> EsopWiReleases = esopWiReleaseMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(EsopWiReleases)) {
@@ -176,18 +176,18 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
     }
 
 
-    public  List<EsopWiReleaseDet> saveDet(EsopWiReleaseDto EsopWiReleaseDto ,SysUser sysUser,Long id){
+    public  List<EsopWiReleaseDet> saveDet(EsopWiReleaseDto EsopWiReleaseDto ,SysUser user,Long id){
         List<EsopWiReleaseDet> dets = new ArrayList<>();
         if(StringUtils.isNotEmpty(EsopWiReleaseDto.getEsopWiReleaseDetDtos())) {
             for (EsopWiReleaseDetDto EsopWiReleaseDetDto :  EsopWiReleaseDto.getEsopWiReleaseDetDtos()) {
                 EsopWiReleaseDet wiReleaseDet = new EsopWiReleaseDet();
                 BeanUtils.autoFillEqFields(EsopWiReleaseDetDto, wiReleaseDet);
-                wiReleaseDet.setCreateUserId(sysUser.getUserId());
+                wiReleaseDet.setCreateUserId(user.getUserId());
                 wiReleaseDet.setCreateTime(new Date());
-                wiReleaseDet.setModifiedUserId(sysUser.getUserId());
+                wiReleaseDet.setModifiedUserId(user.getUserId());
                 wiReleaseDet.setModifiedTime(new Date());
                 wiReleaseDet.setStatus(StringUtils.isEmpty(EsopWiReleaseDto.getStatus())?1: EsopWiReleaseDto.getStatus());
-                wiReleaseDet.setOrgId(sysUser.getOrganizationId());
+                wiReleaseDet.setOrgId(user.getOrganizationId());
                 wiReleaseDet.setWiReleaseId(id);
                 dets.add(wiReleaseDet);
             }
@@ -210,17 +210,5 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
         return esopWiReleaseMapper.deleteByIds(ids);
     }
 
-
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return user;
-    }
 
 }
