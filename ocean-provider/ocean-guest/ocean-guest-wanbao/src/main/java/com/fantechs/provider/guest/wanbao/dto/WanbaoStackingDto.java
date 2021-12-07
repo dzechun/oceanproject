@@ -16,7 +16,7 @@ public class WanbaoStackingDto extends WanbaoStacking implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "proName",value = "产线名称")
-    @Excel(name = "产线名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "产线名称", height = 20, width = 30,orderNum="4")
     private String proName;
 
     /**
