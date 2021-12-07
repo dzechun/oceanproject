@@ -25,7 +25,7 @@ public class OmHtSalesOrderDetServiceImpl extends BaseService<OmHtSalesOrderDet>
     @Override
     public int save(OmHtSalesOrderDet omHtSalesOrderDet) {
         omHtSalesOrderDet.setHtSalesOrderDetId(null);
-        return omHtSalesOrderDetMapper.insertUseGeneratedKeys(omHtSalesOrderDet);
+        return omHtSalesOrderDetMapper.insertSelective(omHtSalesOrderDet);
     }
 
     @Override

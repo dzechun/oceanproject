@@ -94,7 +94,7 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
         omSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
         omSalesOrderDet.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
 
-        int result = omSalesOrderDetMapper.insertUseGeneratedKeys(omSalesOrderDet);
+        int result = omSalesOrderDetMapper.insertSelective(omSalesOrderDet);
         recordHistory(omSalesOrderDet, currentUserInfo);
 
         return result;

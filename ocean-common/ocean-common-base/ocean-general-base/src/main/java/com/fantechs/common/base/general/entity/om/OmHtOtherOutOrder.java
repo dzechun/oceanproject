@@ -121,9 +121,9 @@ public class OmHtOtherOutOrder extends ValidGroup implements Serializable {
      * 邮件地址
      */
     @Transient
-    @ApiModelProperty(name="eMailAddress",value = "邮件地址")
+    @ApiModelProperty(name="emailAddress",value = "邮件地址")
     @Excel(name = "邮件地址", height = 20, width = 30,orderNum="")
-    private String eMailAddress;
+    private String emailAddress;
 
     /**
      * 地址

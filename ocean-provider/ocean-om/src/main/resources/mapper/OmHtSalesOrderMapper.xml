@@ -5,40 +5,41 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="ht_sales_order_id" jdbcType="BIGINT" property="htSalesOrderId" />
-        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId" />
-        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
-        <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
-        <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-        <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
-        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
-        <result column="source_order_line_number" jdbcType="VARCHAR" property="sourceOrderLineNumber" />
-        <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId" />
-        <result column="delivery_type" jdbcType="VARCHAR" property="deliveryType" />
-        <result column="sales_dept" jdbcType="VARCHAR" property="salesDept" />
-        <result column="sales_user_name" jdbcType="VARCHAR" property="salesUserName" />
-        <result column="data_source" jdbcType="VARCHAR" property="dataSource" />
-        <result column="order_type" jdbcType="VARCHAR" property="orderType" />
-        <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
-        <result column="status" jdbcType="TINYINT" property="status" />
-        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
-        <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName" />
-        <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
-        <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName" />
-        <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
-        <result column="org_id" jdbcType="BIGINT" property="orgId" />
-        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-        <result column="option1" jdbcType="VARCHAR" property="option1" />
-        <result column="option2" jdbcType="VARCHAR" property="option2" />
-        <result column="option3" jdbcType="VARCHAR" property="option3" />
+        <id column="ht_sales_order_id" jdbcType="BIGINT" property="htSalesOrderId"/>
+        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode"/>
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
+        <result column="source_order_line_number" jdbcType="VARCHAR" property="sourceOrderLineNumber"/>
+        <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId"/>
+        <result column="delivery_type" jdbcType="VARCHAR" property="deliveryType"/>
+        <result column="sales_dept" jdbcType="VARCHAR" property="salesDept"/>
+        <result column="sales_user_name" jdbcType="VARCHAR" property="salesUserName"/>
+        <result column="data_source" jdbcType="VARCHAR" property="dataSource"/>
+        <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
+        <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName"/>
+        <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate"/>
+        <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
+        <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto">
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto">
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="barcode_rule_set_name" jdbcType="VARCHAR" property="barcodeRuleSetName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -58,7 +59,7 @@
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         select
-        <include refid="Base_Column_List" />, bs.supplier_name, bbrs.barcode_rule_set_name,
+        <include refid="Base_Column_List"/>, bs.supplier_name, bbrs.barcode_rule_set_name,
         bo.organization_name,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name

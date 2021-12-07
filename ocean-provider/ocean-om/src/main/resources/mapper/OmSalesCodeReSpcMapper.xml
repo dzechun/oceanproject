@@ -1,43 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.om.mapper.OmSalesCodeReSpcMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="sales_code_re_spc_id" jdbcType="BIGINT" property="salesCodeReSpcId" />
-    <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
-    <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="product_model_id" jdbcType="BIGINT" property="productModelId" />
-    <result column="priority" jdbcType="INTEGER" property="priority" />
-    <result column="same_package_code_status" jdbcType="TINYINT" property="samePackageCodeStatus" />
-    <result column="same_package_code_qty" jdbcType="DECIMAL" property="samePackageCodeQty" />
-    <result column="matched_qty" jdbcType="DECIMAL" property="matchedQty" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="sales_code_re_spc_id" jdbcType="BIGINT" property="salesCodeReSpcId"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
+        <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="product_model_id" jdbcType="BIGINT" property="productModelId"/>
+        <result column="priority" jdbcType="INTEGER" property="priority"/>
+        <result column="same_package_code_status" jdbcType="TINYINT" property="samePackageCodeStatus"/>
+        <result column="same_package_code_qty" jdbcType="DECIMAL" property="samePackageCodeQty"/>
+        <result column="matched_qty" jdbcType="DECIMAL" property="matchedQty"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto">
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-    <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
-    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-  </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
+        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
+    <sql id="Base_Column_List">
     oscrs.sales_code_re_spc_id,
 	oscrs.sales_code,
 	oscrs.same_package_code,
@@ -57,44 +58,44 @@
 	oscrs.modified_time
   </sql>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-    SELECT
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+        SELECT
         <include refid="Base_Column_List"/>,
-      bm.material_code,
-      bm.material_name,
-      bpm.product_model_code,
-      bpm.product_model_name,
-      bo.organization_name,
-      su.user_name AS create_user_name,
-      sus.user_name AS modified_user_name
-    FROM
-      om_sales_code_re_spc oscrs
-      LEFT JOIN base_material bm ON oscrs.material_id = bm.material_id
-      LEFT JOIN base_product_model bpm ON oscrs.product_model_id = bpm.product_model_id
-      LEFT JOIN sys_user su ON oscrs.create_user_id = su.user_id
-      LEFT JOIN sys_user sus ON oscrs.modified_user_id = sus.user_id
-      LEFT JOIN base_organization bo ON oscrs.org_id = bo.organization_id
-      <where>
-          <if test="samePackageCodeStatus != null">
-              and oscrs.same_package_code_status = #{samePackageCodeStatus}
-          </if>
+        bm.material_code,
+        bm.material_name,
+        bpm.product_model_code,
+        bpm.product_model_name,
+        bo.organization_name,
+        su.user_name AS create_user_name,
+        sus.user_name AS modified_user_name
+        FROM
+        om_sales_code_re_spc oscrs
+        LEFT JOIN base_material bm ON oscrs.material_id = bm.material_id
+        LEFT JOIN base_product_model bpm ON oscrs.product_model_id = bpm.product_model_id
+        LEFT JOIN sys_user su ON oscrs.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON oscrs.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON oscrs.org_id = bo.organization_id
+        <where>
+            <if test="samePackageCodeStatus != null">
+                and oscrs.same_package_code_status = #{samePackageCodeStatus}
+            </if>
 
-          <if test="orgId != null">
-              and oscrs.org_id = #{orgId}
-          </if>
+            <if test="orgId != null">
+                and oscrs.org_id = #{orgId}
+            </if>
 
-          <if test="salesCode != null and salesCode != ''">
-              and oscrs.sales_code like CONCAT('%', #{salesCode}, '%')
-          </if>
+            <if test="salesCode != null and salesCode != ''">
+                and oscrs.sales_code like CONCAT('%', #{salesCode}, '%')
+            </if>
 
-          <if test="materialCode != null and materialCode != ''">
-              and bm.material_code like CONCAT('%', #{materialCode}, '%')
-          </if>
+            <if test="materialCode != null and materialCode != ''">
+                and bm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
 
-          <if test="samePackageCode != null and samePackageCode != ''">
-              and oscrs.same_package_code like CONCAT('%', #{samePackageCode}, '%')
-          </if>
-      </where>
+            <if test="samePackageCode != null and samePackageCode != ''">
+                and oscrs.same_package_code like CONCAT('%', #{samePackageCode}, '%')
+            </if>
+        </where>
         ORDER BY oscrs.create_time DESC
-  </select>
+    </select>
 </mapper>

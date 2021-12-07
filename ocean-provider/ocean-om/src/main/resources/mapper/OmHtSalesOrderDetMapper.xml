@@ -5,45 +5,45 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="ht_sales_order_det_id" jdbcType="BIGINT" property="htSalesOrderDetId" />
-        <result column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId" />
-        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId" />
-        <result column="customer_order_line_number" jdbcType="BIGINT" property="customerOrderLineNumber" />
-        <result column="project_code" jdbcType="VARCHAR" property="projectCode" />
-        <result column="inner_batch_number" jdbcType="VARCHAR" property="innerBatchNumber" />
-        <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
-        <result column="material_id" jdbcType="BIGINT" property="materialId" />
-        <result column="type" jdbcType="TINYINT" property="type" />
-        <result column="if_free_gift" jdbcType="TINYINT" property="ifFreeGift" />
-        <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
-        <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
-        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
-        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-        <result column="plan_revert_date" jdbcType="TIMESTAMP" property="planRevertDate" />
-        <result column="plan_deliver_date" jdbcType="TIMESTAMP" property="planDeliverDate" />
-        <result column="actual_deliver_date" jdbcType="TIMESTAMP" property="actualDeliverDate" />
-        <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate" />
-        <result column="actual_delivery_date" jdbcType="TIMESTAMP" property="actualDeliveryDate" />
-        <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress" />
-        <result column="total_inform_deliver_qty" jdbcType="DECIMAL" property="totalInformDeliverQty" />
-        <result column="arrange_dispatch_qty" jdbcType="DECIMAL" property="arrangeDispatchQty" />
-        <result column="total_outbound_qty" jdbcType="DECIMAL" property="totalOutboundQty" />
-        <result column="total_sales_return_apply_qty" jdbcType="DECIMAL" property="totalSalesReturnApplyQty" />
-        <result column="total_return_qty" jdbcType="DECIMAL" property="totalReturnQty" />
-        <result column="order_goods_qty" jdbcType="DECIMAL" property="orderGoodsQty" />
-        <result column="not_order_goods_qty" jdbcType="DECIMAL" property="notOrderGoodsQty" />
-        <result column="total_return_need_supply_qty" jdbcType="DECIMAL" property="totalReturnNeedSupplyQty" />
-        <result column="total_production_qty" jdbcType="DECIMAL" property="totalProductionQty" />
-        <result column="total_not_production_qty" jdbcType="DECIMAL" property="totalNotProductionQty" />
-        <result column="return_arrange_dispatch_qty" jdbcType="DECIMAL" property="returnArrangeDispatchQty" />
-        <result column="status" jdbcType="TINYINT" property="status" />
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
-        <result column="org_id" jdbcType="BIGINT" property="orgId" />
-        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <id column="ht_sales_order_det_id" jdbcType="BIGINT" property="htSalesOrderDetId"/>
+        <result column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId"/>
+        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
+        <result column="customer_order_line_number" jdbcType="BIGINT" property="customerOrderLineNumber"/>
+        <result column="project_code" jdbcType="VARCHAR" property="projectCode"/>
+        <result column="inner_batch_number" jdbcType="VARCHAR" property="innerBatchNumber"/>
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="if_free_gift" jdbcType="TINYINT" property="ifFreeGift"/>
+        <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
+        <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
+        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="plan_revert_date" jdbcType="TIMESTAMP" property="planRevertDate"/>
+        <result column="plan_deliver_date" jdbcType="TIMESTAMP" property="planDeliverDate"/>
+        <result column="actual_deliver_date" jdbcType="TIMESTAMP" property="actualDeliverDate"/>
+        <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate"/>
+        <result column="actual_delivery_date" jdbcType="TIMESTAMP" property="actualDeliveryDate"/>
+        <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress"/>
+        <result column="total_inform_deliver_qty" jdbcType="DECIMAL" property="totalInformDeliverQty"/>
+        <result column="arrange_dispatch_qty" jdbcType="DECIMAL" property="arrangeDispatchQty"/>
+        <result column="total_outbound_qty" jdbcType="DECIMAL" property="totalOutboundQty"/>
+        <result column="total_sales_return_apply_qty" jdbcType="DECIMAL" property="totalSalesReturnApplyQty"/>
+        <result column="total_return_qty" jdbcType="DECIMAL" property="totalReturnQty"/>
+        <result column="order_goods_qty" jdbcType="DECIMAL" property="orderGoodsQty"/>
+        <result column="not_order_goods_qty" jdbcType="DECIMAL" property="notOrderGoodsQty"/>
+        <result column="total_return_need_supply_qty" jdbcType="DECIMAL" property="totalReturnNeedSupplyQty"/>
+        <result column="total_production_qty" jdbcType="DECIMAL" property="totalProductionQty"/>
+        <result column="total_not_production_qty" jdbcType="DECIMAL" property="totalNotProductionQty"/>
+        <result column="return_arrange_dispatch_qty" jdbcType="DECIMAL" property="returnArrangeDispatchQty"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">

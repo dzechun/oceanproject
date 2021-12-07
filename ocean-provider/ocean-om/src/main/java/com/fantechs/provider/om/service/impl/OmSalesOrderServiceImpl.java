@@ -120,7 +120,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         omSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
         omSalesOrder.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
 
-        int result = omSalesOrderMapper.insertUseGeneratedKeys(omSalesOrder);
+        int result = omSalesOrderMapper.insertSelective(omSalesOrder);
 
         recordHistory(omSalesOrder, currentUserInfo, "新增");
 //
@@ -376,7 +376,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             //下发仓库
             ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryOrder);
             if (responseEntity.getCode() != 0) {
-                throw new BizErrorException("下发仓库失败");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"下发仓库失败");
             }
             return 1;
         }

@@ -2,50 +2,51 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.om.mapper.OmSalesOrderDetMapper">
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmSalesOrderDet">
-        <id column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId" />
-        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId" />
+        <id column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId"/>
+        <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
         <result column="line_number" jdbcType="VARCHAR" property="lineNumber"/>
-        <result column="customer_order_line_number" jdbcType="VARCHAR" property="customerOrderLineNumber" />
-        <result column="source_line_number" jdbcType="VARCHAR" property="sourceLineNumber" />
-        <result column="project_code" jdbcType="VARCHAR" property="projectCode" />
-        <result column="inner_batch_number" jdbcType="VARCHAR" property="innerBatchNumber" />
-        <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
-        <result column="material_id" jdbcType="BIGINT" property="materialId" />
-        <result column="type" jdbcType="TINYINT" property="type" />
-        <result column="if_free_gift" jdbcType="TINYINT" property="ifFreeGift" />
-        <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
-        <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
-        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
-        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-        <result column="plan_revert_date" jdbcType="TIMESTAMP" property="planRevertDate" />
-        <result column="plan_deliver_date" jdbcType="TIMESTAMP" property="planDeliverDate" />
-        <result column="actual_deliver_date" jdbcType="TIMESTAMP" property="actualDeliverDate" />
-        <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate" />
-        <result column="actual_delivery_date" jdbcType="TIMESTAMP" property="actualDeliveryDate" />
-        <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress" />
-        <result column="total_inform_deliver_qty" jdbcType="DECIMAL" property="totalInformDeliverQty" />
-        <result column="arrange_dispatch_qty" jdbcType="DECIMAL" property="arrangeDispatchQty" />
-        <result column="total_outbound_qty" jdbcType="DECIMAL" property="totalOutboundQty" />
-        <result column="total_sales_return_apply_qty" jdbcType="DECIMAL" property="totalSalesReturnApplyQty" />
-        <result column="total_return_qty" jdbcType="DECIMAL" property="totalReturnQty" />
-        <result column="order_goods_qty" jdbcType="DECIMAL" property="orderGoodsQty" />
-        <result column="not_order_goods_qty" jdbcType="DECIMAL" property="notOrderGoodsQty" />
-        <result column="total_return_need_supply_qty" jdbcType="DECIMAL" property="totalReturnNeedSupplyQty" />
-        <result column="total_production_qty" jdbcType="DECIMAL" property="totalProductionQty" />
-        <result column="total_not_production_qty" jdbcType="DECIMAL" property="totalNotProductionQty" />
-        <result column="return_arrange_dispatch_qty" jdbcType="DECIMAL" property="returnArrangeDispatchQty" />
-        <result column="status" jdbcType="TINYINT" property="status" />
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-        <result column="remark" jdbcType="VARCHAR" property="remark" />
-        <result column="org_id" jdbcType="BIGINT" property="orgId" />
-        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-        <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
+        <result column="customer_order_line_number" jdbcType="VARCHAR" property="customerOrderLineNumber"/>
+        <result column="source_line_number" jdbcType="VARCHAR" property="sourceLineNumber"/>
+        <result column="project_code" jdbcType="VARCHAR" property="projectCode"/>
+        <result column="inner_batch_number" jdbcType="VARCHAR" property="innerBatchNumber"/>
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="if_free_gift" jdbcType="TINYINT" property="ifFreeGift"/>
+        <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
+        <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
+        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="plan_revert_date" jdbcType="TIMESTAMP" property="planRevertDate"/>
+        <result column="plan_deliver_date" jdbcType="TIMESTAMP" property="planDeliverDate"/>
+        <result column="actual_deliver_date" jdbcType="TIMESTAMP" property="actualDeliverDate"/>
+        <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate"/>
+        <result column="actual_delivery_date" jdbcType="TIMESTAMP" property="actualDeliveryDate"/>
+        <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress"/>
+        <result column="total_inform_deliver_qty" jdbcType="DECIMAL" property="totalInformDeliverQty"/>
+        <result column="arrange_dispatch_qty" jdbcType="DECIMAL" property="arrangeDispatchQty"/>
+        <result column="total_outbound_qty" jdbcType="DECIMAL" property="totalOutboundQty"/>
+        <result column="total_sales_return_apply_qty" jdbcType="DECIMAL" property="totalSalesReturnApplyQty"/>
+        <result column="total_return_qty" jdbcType="DECIMAL" property="totalReturnQty"/>
+        <result column="order_goods_qty" jdbcType="DECIMAL" property="orderGoodsQty"/>
+        <result column="not_order_goods_qty" jdbcType="DECIMAL" property="notOrderGoodsQty"/>
+        <result column="total_return_need_supply_qty" jdbcType="DECIMAL" property="totalReturnNeedSupplyQty"/>
+        <result column="total_production_qty" jdbcType="DECIMAL" property="totalProductionQty"/>
+        <result column="total_not_production_qty" jdbcType="DECIMAL" property="totalNotProductionQty"/>
+        <result column="return_arrange_dispatch_qty" jdbcType="DECIMAL" property="returnArrangeDispatchQty"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
     </resultMap>
 
-    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto">
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto">
         <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
@@ -58,15 +59,47 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        sod.sales_order_det_id, sod.sales_order_id,sod.line_number, sod.customer_order_line_number, sod.source_line_number, sod.project_code,
-        sod.inner_batch_number, sod.contract_code, sod.material_id, sod.type, sod.if_free_gift, sod.unit_name,
-        sod.order_qty, sod.actual_qty, sod.warehouse_id, sod.plan_revert_date, sod.plan_deliver_date,
-        sod.actual_deliver_date, sod.plan_delivery_date, sod.actual_delivery_date, sod.delivery_address,
-        sod.total_inform_deliver_qty, sod.arrange_dispatch_qty, sod.total_outbound_qty, sod.total_sales_return_apply_qty,
-        sod.total_return_qty, sod.order_goods_qty, sod.not_order_goods_qty, sod.total_return_need_supply_qty,
-        sod.total_production_qty, sod.total_not_production_qty, sod.return_arrange_dispatch_qty,sod.sales_code,
-        sod.status, sod.is_delete, sod.remark, sod.org_id, sod.create_user_id, sod.create_time,
-        sod.modified_user_id, sod.modified_time
+        sod.sales_order_det_id,
+        sod.sales_order_id,
+        sod.line_number,
+        sod.customer_order_line_number,
+        sod.source_line_number,
+        sod.project_code,
+        sod.inner_batch_number,
+        sod.contract_code,
+        sod.material_id,
+        sod.type,
+        sod.if_free_gift,
+        sod.unit_name,
+        sod.order_qty,
+        sod.actual_qty,
+        sod.warehouse_id,
+        sod.plan_revert_date,
+        sod.plan_deliver_date,
+        sod.actual_deliver_date,
+        sod.plan_delivery_date,
+        sod.actual_delivery_date,
+        sod.delivery_address,
+        sod.total_inform_deliver_qty,
+        sod.arrange_dispatch_qty,
+        sod.total_outbound_qty,
+        sod.total_sales_return_apply_qty,
+        sod.total_return_qty,
+        sod.order_goods_qty,
+        sod.not_order_goods_qty,
+        sod.total_return_need_supply_qty,
+        sod.total_production_qty,
+        sod.total_not_production_qty,
+        sod.return_arrange_dispatch_qty,
+        sod.sales_code,
+        sod.status,
+        sod.is_delete,
+        sod.remark,
+        sod.org_id,
+        sod.create_user_id,
+        sod.create_time,
+        sod.modified_user_id,
+        sod.modified_time
     </sql>
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">

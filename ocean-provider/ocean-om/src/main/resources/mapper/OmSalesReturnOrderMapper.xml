@@ -1,97 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.om.mapper.OmSalesReturnOrderMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmSalesReturnOrder">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="sales_return_order_id" jdbcType="BIGINT" property="salesReturnOrderId" />
-    <result column="sales_return_order_code" jdbcType="VARCHAR" property="salesReturnOrderCode" />
-    <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
-    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
-    <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
-    <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty" />
-    <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
-    <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
-    <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
-    <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
-    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
-    <result column="complete_date" jdbcType="TIMESTAMP" property="completeDate"/>
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDto">
-    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-  </resultMap>
-  <sql id="Base_Column_List">
-    osro.sales_return_order_id,
-    osro.sales_return_order_code,
-    osro.related_order_code,
-osro.material_owner_id,
-osro.order_status,
-osro.status,
-osro.order_date,
-osro.complete_date,
-osro.remark,
-osro.org_id,
-osro.create_user_id,
-osro.create_time,
-osro.modified_user_id,
-osro.modified_time,
-osro.is_delete,
-osro.option1,
-osro.option2,
-osro.option3
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmSalesReturnOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="sales_return_order_id" jdbcType="BIGINT" property="salesReturnOrderId"/>
+        <result column="sales_return_order_code" jdbcType="VARCHAR" property="salesReturnOrderCode"/>
+        <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
+        <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty"/>
+        <result column="total_qty" jdbcType="DECIMAL" property="totalQty"/>
+        <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
+        <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
+        <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
+        <result column="complete_date" jdbcType="TIMESTAMP" property="completeDate"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDto">
+        <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        osro.sales_return_order_id,
+        osro.sales_return_order_code,
+        osro.related_order_code,
+        osro.material_owner_id,
+        osro.order_status,
+        osro.status,
+        osro.order_date,
+        osro.complete_date,
+        osro.remark,
+        osro.org_id,
+        osro.create_user_id,
+        osro.create_time,
+        osro.modified_user_id,
+        osro.modified_time,
+        osro.is_delete,
+        osro.option1,
+        osro.option2,
+        osro.option3
   </sql>
-  <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
-    (SELECT SUM(osrod.order_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_qty,
-    (SELECT SUM(osrod.issue_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_issue_qty,
-    (SELECT SUM(osrod.receiving_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id = osro.sales_return_order_id) as total_receiving_qty,
-    (SELECT SUM(bmt.volume * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as total_volume,
-    (SELECT SUM(bmt.net_weight * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as total_net_weight,
-    (SELECT SUM(bmt.gross_weight * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as total_gross_weight
-FROM om_sales_return_order osro
-LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = osro.material_owner_id
-left join sys_user su on osro.create_user_id = su.user_id
-left join sys_user sus on osro.modified_user_id = sus.user_id
-left join base_organization bo on osro.org_id = bo.organization_id
-    <where>
-      <if test="salesReturnOrderCode!=null and salesReturnOrderCode!=''">
-        and osro.sales_return_order_code like CONCAT('%',#{salesReturnOrderCode},'%')
-      </if>
-      <if test="orgId!=null and orgId!=''">
-        and osro.org_id = #{orgId}
-      </if>
-      <if test="materialOwnerName!=null and materialOwnerName!=''">
-        and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
-      </if>
-      <if test="orderStatus!=null and orderStatus!=''">
-        and osro.order_status = #{orderStatus}
-      </if>
-      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-        and date_format(osro.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="completeDate!=null and completeDate!=''">
-        and date_format(osro.complete_date,'%Y-%m-%d') = #{completeDate}
-      </if>
-  </where>
-order by osro.create_time desc
-  </select>
-  <select id="findMaterial" resultMap="BaseResultMap">
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as
+        create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+        (SELECT SUM(osrod.order_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id =
+        osro.sales_return_order_id) as total_qty,
+        (SELECT SUM(osrod.issue_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id =
+        osro.sales_return_order_id) as total_issue_qty,
+        (SELECT SUM(osrod.receiving_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id =
+        osro.sales_return_order_id) as total_receiving_qty,
+        (SELECT SUM(bmt.volume * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab bmt
+        on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as
+        total_volume,
+        (SELECT SUM(bmt.net_weight * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab
+        bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as
+        total_net_weight,
+        (SELECT SUM(bmt.gross_weight * osrod.order_qty) FROM om_sales_return_order_det osrod left join base_material_tab
+        bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as
+        total_gross_weight
+        FROM om_sales_return_order osro
+        LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = osro.material_owner_id
+        left join sys_user su on osro.create_user_id = su.user_id
+        left join sys_user sus on osro.modified_user_id = sus.user_id
+        left join base_organization bo on osro.org_id = bo.organization_id
+        <where>
+            <if test="salesReturnOrderCode!=null and salesReturnOrderCode!=''">
+                and osro.sales_return_order_code like CONCAT('%',#{salesReturnOrderCode},'%')
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and osro.org_id = #{orgId}
+            </if>
+            <if test="materialOwnerName!=null and materialOwnerName!=''">
+                and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
+            </if>
+            <if test="orderStatus!=null and orderStatus!=''">
+                and osro.order_status = #{orderStatus}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(osro.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="completeDate!=null and completeDate!=''">
+                and date_format(osro.complete_date,'%Y-%m-%d') = #{completeDate}
+            </if>
+        </where>
+        order by osro.create_time desc
+    </select>
+    <select id="findMaterial" resultMap="BaseResultMap">
     select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as total_net_weight,IFNULL(bmb.gross_weight,0) as total_gross_weight
     From base_material bm
     left join base_material_tab bmb ON bm.material_id = bmb.material_id

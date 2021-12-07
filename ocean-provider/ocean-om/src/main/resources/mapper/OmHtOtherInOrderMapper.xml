@@ -1,101 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmHtOtherInOrder">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="ht_other_in_order_id" jdbcType="BIGINT" property="htOtherInOrderId" />
-    <result column="other_in_order_id" jdbcType="BIGINT" property="otherInOrderId" />
-    <result column="other_in_order_code" jdbcType="VARCHAR" property="otherInOrderCode" />
-    <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
-    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
-    <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
-    <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty" />
-    <result column="total_qty" jdbcType="DECIMAL" property="totalQty" />
-    <result column="total_volume" jdbcType="DECIMAL" property="totalVolume" />
-    <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight" />
-    <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight" />
-    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
-    <result column="complete_date" jdbcType="TIMESTAMP" property="completeDate"/>
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.om.OmOtherInOrderDto">
-    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-  </resultMap>
-  <sql id="Base_Column_List">
-    oio.other_in_order_id,
-oio.other_in_order_code,
-oio.related_order_code,
-oio.material_owner_id,
-oio.total_issue_qty,
-oio.total_receiving_qty,
-oio.total_qty,
-oio.total_volume,
-oio.total_net_weight,
-oio.total_gross_weight,
-oio.order_status,
-oio.status,
-oio.order_date,
-oio.complete_date,
-oio.remark,
-oio.org_id,
-oio.create_user_id,
-oio.create_time,
-oio.modified_user_id,
-oio.modified_time,
-oio.is_delete,
-oio.option1,
-oio.option2,
-oio.option3
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmHtOtherInOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="ht_other_in_order_id" jdbcType="BIGINT" property="htOtherInOrderId"/>
+        <result column="other_in_order_id" jdbcType="BIGINT" property="otherInOrderId"/>
+        <result column="other_in_order_code" jdbcType="VARCHAR" property="otherInOrderCode"/>
+        <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
+        <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty"/>
+        <result column="total_qty" jdbcType="DECIMAL" property="totalQty"/>
+        <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
+        <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
+        <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
+        <result column="complete_date" jdbcType="TIMESTAMP" property="completeDate"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.om.OmOtherInOrderDto">
+        <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        oio.other_in_order_id,
+        oio.other_in_order_code,
+        oio.related_order_code,
+        oio.material_owner_id,
+        oio.total_issue_qty,
+        oio.total_receiving_qty,
+        oio.total_qty,
+        oio.total_volume,
+        oio.total_net_weight,
+        oio.total_gross_weight,
+        oio.order_status,
+        oio.status,
+        oio.order_date,
+        oio.complete_date,
+        oio.remark,
+        oio.org_id,
+        oio.create_user_id,
+        oio.create_time,
+        oio.modified_user_id,
+        oio.modified_time,
+        oio.is_delete,
+        oio.option1,
+        oio.option2,
+        oio.option3
   </sql>
-  <select id="findList" resultMap="BaseResultMapDto">
-    SELECT <include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
-    (SELECT SUM(oiod.order_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id = oio.other_in_order_id) as total_qty,
-    (SELECT SUM(oiod.issue_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id = oio.other_in_order_id) as total_issue_qty,
-    (SELECT SUM(oiod.receiving_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id = oio.other_in_order_id) as total_receiving_qty,
-    (SELECT IFNULL(SUM(bmb.volume*oiod.order_qty),0) FROM om_other_in_order_det oiod left join base_material_tab bmb ON oiod.material_id = bmb.material_id where oiod.other_in_order_id = oio.other_in_order_id) as total_volume,
-    (SELECT IFNULL(SUM(bmb.net_weight*oiod.order_qty),0) FROM om_other_in_order_det oiod left join base_material_tab bmb ON oiod.material_id = bmb.material_id where oiod.other_in_order_id = oio.other_in_order_id) as total_net_weight,
-    (SELECT IFNULL(SUM(bmb.gross_weight*oiod.order_qty),0) FROM om_other_in_order_det oiod left join base_material_tab bmb ON oiod.material_id = bmb.material_id where oiod.other_in_order_id = oio.other_in_order_id) as total_gross_weight
-    FROM om_ht_other_in_order oio
-    LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = oio.material_owner_id
-    left join sys_user su on oio.create_user_id = su.user_id
-    left join sys_user sus on oio.modified_user_id = sus.user_id
-    left join base_organization bo on oio.org_id = bo.organization_id
-    <where>
-      <if test="otherInOrderCode!=null and otherInOrderCode!=''">
-        and oio.other_in_order_code like CONCAT('%',#{otherInOrderCode},'%')
-      </if>
-      <if test="relatedOrderCode!=null and relatedOrderCode!=''">
-        and oio.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
-      </if>
-      <if test="orgId!=null and orgId!=''">
-        and oio.org_id = #{orgId}
-      </if>
-      <if test="materialOwnerName!=null and materialOwnerName!=''">
-        and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
-      </if>
-      <if test="orderStatus!=null and orderStatus!=''">
-        and oio.order_status = #{orderStatus}
-      </if>
-      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-        and date_format(oio.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-    </where>
-    order by oio.create_time desc
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as
+        create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+        (SELECT SUM(oiod.order_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id =
+        oio.other_in_order_id) as total_qty,
+        (SELECT SUM(oiod.issue_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id =
+        oio.other_in_order_id) as total_issue_qty,
+        (SELECT SUM(oiod.receiving_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id =
+        oio.other_in_order_id) as total_receiving_qty,
+        (SELECT IFNULL(SUM(bmb.volume*oiod.order_qty),0) FROM om_other_in_order_det oiod left join base_material_tab bmb
+        ON oiod.material_id = bmb.material_id where oiod.other_in_order_id = oio.other_in_order_id) as total_volume,
+        (SELECT IFNULL(SUM(bmb.net_weight*oiod.order_qty),0) FROM om_other_in_order_det oiod left join base_material_tab
+        bmb ON oiod.material_id = bmb.material_id where oiod.other_in_order_id = oio.other_in_order_id) as
+        total_net_weight,
+        (SELECT IFNULL(SUM(bmb.gross_weight*oiod.order_qty),0) FROM om_other_in_order_det oiod left join
+        base_material_tab bmb ON oiod.material_id = bmb.material_id where oiod.other_in_order_id =
+        oio.other_in_order_id) as total_gross_weight
+        FROM om_ht_other_in_order oio
+        LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = oio.material_owner_id
+        left join sys_user su on oio.create_user_id = su.user_id
+        left join sys_user sus on oio.modified_user_id = sus.user_id
+        left join base_organization bo on oio.org_id = bo.organization_id
+        <where>
+            <if test="otherInOrderCode!=null and otherInOrderCode!=''">
+                and oio.other_in_order_code like CONCAT('%',#{otherInOrderCode},'%')
+            </if>
+            <if test="relatedOrderCode!=null and relatedOrderCode!=''">
+                and oio.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and oio.org_id = #{orgId}
+            </if>
+            <if test="materialOwnerName!=null and materialOwnerName!=''">
+                and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
+            </if>
+            <if test="orderStatus!=null and orderStatus!=''">
+                and oio.order_status = #{orderStatus}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(oio.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        order by oio.create_time desc
+    </select>
 </mapper>
