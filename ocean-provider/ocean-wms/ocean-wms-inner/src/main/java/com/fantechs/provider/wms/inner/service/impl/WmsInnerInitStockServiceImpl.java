@@ -140,7 +140,10 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             throw new BizErrorException("重复扫码");
         }
         //厂内码截取12位 查询物料信息
-        if(StringUtils.isNotEmpty(initStockCheckBarCode.getInPlantBarcode())){
+        if(isInPlantBarCode && (StringUtils.isNotEmpty(initStockCheckBarCode.getInPlantBarcode())|| StringUtils.isNotEmpty(initStockCheckBarCode.getClientBarcode()))){
+            if(StringUtils.isEmpty(initStockCheckBarCode.getInPlantBarcode())){
+                initStockCheckBarCode.setInPlantBarcode(initStockCheckBarCode.getClientBarcode());
+            }
             String materialCode = initStockCheckBarCode.getInPlantBarcode().substring(0,12);
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(materialCode);
@@ -150,11 +153,20 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
             }
             if(responseEntity.getData().isEmpty()){
-                throw new BizErrorException("条码："+initStockCheckBarCode.getBarCode()+"未查询到物料信息");
+                if(initStockCheckBarCode.getType()==4){
+                    initStockCheckBarCode.setInPlantBarcode(null);
+                }else {
+                    throw new BizErrorException("条码："+initStockCheckBarCode.getBarCode()+"未查询到物料信息");
+                }
+            }else {
+                if(initStockCheckBarCode.getType()==4){
+                    initStockCheckBarCode.setClientBarcode(null);
+                    initStockCheckBarCode.setType((byte)1);
+                }
+                initStockCheckBarCode.setMaterialId(responseEntity.getData().get(0).getMaterialId());
+                initStockCheckBarCode.setMaterialCode(responseEntity.getData().get(0).getMaterialCode());
+                initStockCheckBarCode.setMaterialDesc(responseEntity.getData().get(0).getMaterialDesc());
             }
-            initStockCheckBarCode.setMaterialId(responseEntity.getData().get(0).getMaterialId());
-            initStockCheckBarCode.setMaterialCode(responseEntity.getData().get(0).getMaterialCode());
-            initStockCheckBarCode.setMaterialDesc(responseEntity.getData().get(0).getMaterialDesc());
         }
 
         return initStockCheckBarCode;
