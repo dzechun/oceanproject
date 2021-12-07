@@ -39,7 +39,7 @@
         bof.supplier_id,
         bof.order_node,
         bof.source_order,
-        bof.push_down_order
+        bof.push_down_order,
         bof.status,
         bof.remark,
         bof.org_id,
