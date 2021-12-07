@@ -34,8 +34,8 @@ public class SrmHtAppointDeliveryReAsnDto extends SrmHtAppointDeliveryReAsn impl
      * asn编码
      */
     @ApiModelProperty(name="asnCode",value = "asn编码")
-    @Excel(name = "asn编码", height = 20, width = 30)
-    private Long asnCode;
+    private String asnCode;
+
 
     private static final long serialVersionUID = 1L;
 }

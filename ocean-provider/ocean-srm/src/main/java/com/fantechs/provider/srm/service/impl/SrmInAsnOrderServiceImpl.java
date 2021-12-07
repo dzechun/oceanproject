@@ -25,6 +25,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.srm.mapper.*;
+import com.fantechs.provider.srm.service.SrmAppointDeliveryReAsnService;
 import com.fantechs.provider.srm.service.SrmInAsnOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,10 +34,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -58,7 +56,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     @Resource
     private SrmDeliveryAppointMapper srmDeliveryAppointMapper;
     @Resource
-    private SrmAppointDeliveryReAsnMapper srmAppointDeliveryReAsnMapper;
+    private SrmAppointDeliveryReAsnService srmAppointDeliveryReAsnService;
 
     @Override
     public List<SrmInAsnOrderDto> findList(Map<String, Object> map) {
@@ -282,12 +280,12 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 SearchBaseSupplier  searchBaseSupplier = new SearchBaseSupplier();
                 searchBaseSupplier.setSupplierId(dto.getSupplierId());
                 List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierList(searchBaseSupplier).getData();
-                if(StringUtils.isEmpty(baseSuppliers) || "0".equals(baseSuppliers.get(0).getIfAppointDeliver())){
-                    if(!"3".equals(baseSuppliers.get(0).getIfAppointDeliver()))
+                if(StringUtils.isEmpty(baseSuppliers) || baseSuppliers.get(0).getIfAppointDeliver()==0 ){
+                    if(dto.getOrderStatus() != 3)
                         throw new BizErrorException("只有状态为审核通过的订单才能发货");
                     dto.setOrderStatus((byte)6);
                 }else{
-                    if(!"5".equals(baseSuppliers.get(0).getIfAppointDeliver()))
+                    if(dto.getOrderStatus() != 5)
                         throw new BizErrorException("只有已预约状态的订单才能发货");
                 }
                 dto.setOrderStatus((byte)6);
@@ -302,10 +300,9 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
                 //返写送货预约状态
                 if(i==1){
-                    Example example2 = new Example(SrmAppointDeliveryReAsn.class);
-                    Example.Criteria criteria2 = example2.createCriteria();
-                    criteria2.andEqualTo("asnCode",dto.getAsnCode());
-                    List<SrmAppointDeliveryReAsn> srmAppointDeliveryReAsns = srmAppointDeliveryReAsnMapper.selectByExample(example2);
+                    Map map = new HashMap();
+                    map.put("asnCode",dto.getAsnCode());
+                    List<SrmAppointDeliveryReAsn> srmAppointDeliveryReAsns = srmAppointDeliveryReAsnService.findList(map);
                     if(StringUtils.isEmpty(srmAppointDeliveryReAsns)) throw new BizErrorException("未查询到送货预约对应的ASN单号");
 
                     Example example = new Example(SrmDeliveryAppoint.class);

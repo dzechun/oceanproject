@@ -67,20 +67,6 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                 continue;*/
             }
 
-            //判断集合中是否已经存在同样的数据
-          /*  boolean tag = false;
-            if (StringUtils.isNotEmpty(list)){
-                for (SrmInAsnOrderDetBarcode srmInAsnOrderDetBarcode : list) {
-                    if (srmInAsnOrderDetBarcode.getAsnOrderDetId().equals(purchaseOrderCode)){
-                        tag = true;
-                    }
-                }
-            }
-            if (tag){
-                fail.add(i+2);
-                continue;
-            }*/
-
             SrmInAsnOrderDetDto srmInAsnOrderDetDto = new SrmInAsnOrderDetDto();
             BeanUtils.copyProperties(srmInAsnOrderDetImport, srmInAsnOrderDetDto);
 

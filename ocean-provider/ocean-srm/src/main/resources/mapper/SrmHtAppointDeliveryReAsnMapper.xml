@@ -50,14 +50,19 @@
 
     <select id="findList" resultMap="BaseResultMapDto">
         select <include refid="Base_Column_List"></include>,
+        wiao.asn_code AS asnCode,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
         from srm_ht_appoint_delivery_re_asn shadra
+        LEFT JOIN wms_in_asn_order wiao ON wiao.asn_order_id = shadra.asn_order_id
         LEFT JOIN sys_user su ON shadra.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON shadra.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON shadra.org_id = bo.organization_id
         <where>
             <if test="orgId!=null and orgId!=''">
                 and shadra.org_id = #{orgId}
+            </if>
+            <if test="deliveryAppointId!=null and deliveryAppointId!=''">
+                and shadra.delivery_appoint_id = #{deliveryAppointId}
             </if>
         </where>
         order by shadra.create_time desc
