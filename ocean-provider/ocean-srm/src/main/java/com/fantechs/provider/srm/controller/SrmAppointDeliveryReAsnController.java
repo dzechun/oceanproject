@@ -84,32 +84,4 @@ public class SrmAppointDeliveryReAsnController {
         List<SrmHtAppointDeliveryReAsnDto> list = srmHtAppointDeliveryReAsnService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmAppointDeliveryReAsn));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
-
- /*   @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
-    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchSrmAppointDeliveryReAsn searchSrmAppointDeliveryReAsn){
-    List<SrmAppointDeliveryReAsnDto> list = srmAppointDeliveryReAsnService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmAppointDeliveryReAsn));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SrmAppointDeliveryReAsn信息", SrmAppointDeliveryReAsnDto.class, "SrmAppointDeliveryReAsn.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
-    }
-
-    @PostMapping(value = "/import")
-    @ApiOperation(value = "从excel导入",notes = "从excel导入")
-    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
-        try {
-            // 导入操作
-            List<SrmAppointDeliveryReAsn> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, SrmAppointDeliveryReAsn.class);
-            Map<String, Object> resultMap = srmAppointDeliveryReAsnService.importExcel(baseAddressImports);
-            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
-        }
-    }*/
 }

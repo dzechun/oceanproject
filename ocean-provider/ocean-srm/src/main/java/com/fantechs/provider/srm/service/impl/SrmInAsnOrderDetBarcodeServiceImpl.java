@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service.impl;
 
+import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetBarcodeDto;
 import com.fantechs.common.base.general.dto.srm.imports.SrmInAsnOrderDetBarcodeImport;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetBarcodeMapper;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetMapper;
 import com.fantechs.provider.srm.mapper.SrmInHtAsnOrderDetBarcodeMapper;
@@ -39,7 +41,8 @@ public class SrmInAsnOrderDetBarcodeServiceImpl extends BaseService<SrmInAsnOrde
     private SrmInAsnOrderDetMapper smInAsnOrderDetMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
-
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<SrmInAsnOrderDetBarcodeDto> findList(Map<String, Object> map) {
@@ -52,6 +55,7 @@ public class SrmInAsnOrderDetBarcodeServiceImpl extends BaseService<SrmInAsnOrde
         Map<String, Object> resutlMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        List<Map<Integer,String>> failMap = new ArrayList<>();  //记录操作失败行数
         LinkedList<SrmInAsnOrderDetBarcode> list = new LinkedList<>();
         LinkedList<SrmInHtAsnOrderDetBarcode> htList = new LinkedList<>();
         for (int i = 0; i < srmInAsnOrderDetBarcodeImports.size(); i++) {
@@ -66,6 +70,9 @@ public class SrmInAsnOrderDetBarcodeServiceImpl extends BaseService<SrmInAsnOrde
                     purchaseOrderCode,materialCode,barcode,productionDate
             )){
               //  throw new BizErrorException("添加失败，采购单号、物料号、SN码和生产日期不能为空,"+"错误行数为:"+(i+2));
+                Map map = new HashMap();
+                map.put(i+2,"采购单号、物料号、SN码和生产日期不能为空");
+                failMap.add(map);
                 fail.add(i+2);
                 continue;
             }
@@ -79,6 +86,9 @@ public class SrmInAsnOrderDetBarcodeServiceImpl extends BaseService<SrmInAsnOrde
             List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
             if (StringUtils.isEmpty(baseMaterials)){
                 //   if(StringUtils.isEmpty(baseMaterials)) throw new BizErrorException("未查询到对应的物料信息");
+                Map map = new HashMap();
+                map.put(i+2,"未查询到对应的物料信息");
+                failMap.add(map);
                 fail.add(i+2);
                 continue;
             }
@@ -115,6 +125,14 @@ public class SrmInAsnOrderDetBarcodeServiceImpl extends BaseService<SrmInAsnOrde
         if (StringUtils.isNotEmpty(htList)){
             srmInHtAsnOrderDetBarcodeMapper.insertList(htList);
         }
+        SysImportAndExportLog log = new SysImportAndExportLog();
+        log.setSucceedCount(srmInAsnOrderDetBarcodeImports.size() - fail.size());
+        log.setFailCount(fail.size());
+        log.setFailInfo(failMap.toString());
+        log.setOperatorUserId(user.getUserId());
+        log.setTotalCount(srmInAsnOrderDetBarcodeImports.size());
+        log.setType((byte)1);
+        securityFeignApi.add(log);
         resutlMap.put("操作成功总数",success);
         resutlMap.put("操作失败行数",fail);
         return resutlMap;
