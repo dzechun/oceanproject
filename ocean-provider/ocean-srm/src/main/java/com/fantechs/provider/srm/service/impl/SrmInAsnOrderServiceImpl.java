@@ -283,11 +283,11 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 searchBaseSupplier.setSupplierId(dto.getSupplierId());
                 List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierList(searchBaseSupplier).getData();
                 if(StringUtils.isEmpty(baseSuppliers) || "0".equals(baseSuppliers.get(0).getIfAppointDeliver())){
-                    if(!"3".equals(baseSuppliers.get(0).getIfAppointDeliver()))
+                    if(!"3".equals(dto.getOrderStatus()))
                         throw new BizErrorException("只有状态为审核通过的订单才能发货");
                     dto.setOrderStatus((byte)6);
                 }else{
-                    if(!"5".equals(baseSuppliers.get(0).getIfAppointDeliver()))
+                    if(!"5".equals(dto.getOrderStatus()))
                         throw new BizErrorException("只有已预约状态的订单才能发货");
                 }
                 dto.setOrderStatus((byte)6);
