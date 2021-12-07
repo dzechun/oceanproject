@@ -17,7 +17,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>ocean-guest-eng</module>
         <module>ocean-guest-leisai</module>
         <module>ocean-guest-callagv</module>   <!-- 木林森AGV备料配送-->
     </modules>
