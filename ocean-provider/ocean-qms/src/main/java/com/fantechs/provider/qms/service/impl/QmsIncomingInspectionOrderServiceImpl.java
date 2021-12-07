@@ -74,6 +74,13 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         return qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
     }
 
+    @Override
+    public QmsIncomingInspectionOrder selectByKey(Long incomingInspectionOrderId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("incomingInspectionOrderId",incomingInspectionOrderId);
+        List<QmsIncomingInspectionOrderDto> list = findList(map);
+        return list.get(0);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

@@ -1,6 +1,8 @@
 package com.fantechs.provider.qms.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.qms.PdaIncomingCheckBarcodeDto;
+import com.fantechs.common.base.general.dto.qms.PdaIncomingSampleSubmitDto;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDetSampleDto;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspectionOrderDetSample;
@@ -38,6 +40,19 @@ public class QmsIncomingInspectionOrderDetSampleController {
 
     @Resource
     private QmsIncomingInspectionOrderDetSampleService qmsIncomingInspectionOrderDetSampleService;
+
+    @ApiOperation("PDA条码校验")
+    @PostMapping("/checkBarcode")
+    public ResponseEntity<String> checkBarcode(@ApiParam(value = "查询对象")@RequestBody @Validated PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto) {
+        String barcode = qmsIncomingInspectionOrderDetSampleService.checkBarcode(pdaIncomingCheckBarcodeDto);
+        return  ControllerUtil.returnDataSuccess(barcode,StringUtils.isEmpty(barcode)?0:1);
+    }
+
+    @ApiOperation(value = "PDA样本值提交",notes = "PDA样本值提交")
+    @PostMapping("/sampleSubmit")
+    public ResponseEntity sampleSubmit(@ApiParam(value = "必传：",required = true)@RequestBody @Validated PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto) {
+        return ControllerUtil.returnCRUD(qmsIncomingInspectionOrderDetSampleService.sampleSubmit(pdaIncomingSampleSubmitDto));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

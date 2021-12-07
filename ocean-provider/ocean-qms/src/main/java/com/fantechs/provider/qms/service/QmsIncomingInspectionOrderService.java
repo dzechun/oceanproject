@@ -27,4 +27,6 @@ public interface QmsIncomingInspectionOrderService extends IService<QmsIncomingI
     int update(QmsIncomingInspectionOrderDto entity);
 
     int MRBReview(Long incomingInspectionOrderId, Byte mrbResult);
+
+    QmsIncomingInspectionOrder selectByKey(Long incomingInspectionOrderId);
 }

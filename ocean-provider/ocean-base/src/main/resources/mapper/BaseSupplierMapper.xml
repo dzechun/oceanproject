@@ -127,7 +127,7 @@
                 left JOIN base_material bm on bm.material_id = biel.material_id where bm.material_code = #{materialCode})
             </if>
             <if test="materialCode!=null and materialCode!='' and objType==1">
-                and ss.supplier_id not in
+                and ss.supplier_type = 1 and ss.supplier_id not in
                 (select if(biel.obj_type = 1,biel.supplier_id,biel.customer_id) from base_inspection_exempted_list biel
                 left JOIN base_material bm on bm.material_id = biel.material_id where bm.material_code = #{materialCode})
             </if>
