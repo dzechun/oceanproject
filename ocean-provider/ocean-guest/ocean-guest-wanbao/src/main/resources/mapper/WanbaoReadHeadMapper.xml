@@ -57,13 +57,13 @@
     LEFT JOIN fantech_imes_v2.base_organization bo ON wrh.org_id = bo.organization_id
     LEFT JOIN base_platform bp ON wrh.platform_id = bp.platform_id
     <where>
-      <if test="readHeadIp != null">
+      <if test="readHeadIp != null and readHeadIp != ''">
         AND wrh.read_head_ip = like CONCAT('%', #{readHeadIp}, '%')
       </if>
-      <if test="readHeadName != null">
+      <if test="readHeadName != null and readHeadName != ''">
         AND wrh.read_head_name = like CONCAT('%', #{readHeadName}, '%')
       </if>
-      <if test="platformName != null">
+      <if test="platformName != null and platformName != ''">
         AND bp.platform_name = like CONCAT('%', #{platformName}, '%')
       </if>
       <if test="status!=null">
