@@ -1,5 +1,7 @@
 package com.fantechs.provider.qms.service;
 
+import com.fantechs.common.base.general.dto.qms.PdaIncomingCheckBarcodeDto;
+import com.fantechs.common.base.general.dto.qms.PdaIncomingSampleSubmitDto;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDetSampleDto;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspectionOrderDetSample;
@@ -17,4 +19,8 @@ public interface QmsIncomingInspectionOrderDetSampleService extends IService<Qms
     List<QmsIncomingInspectionOrderDetSampleDto> findList(Map<String, Object> map);
 
     List<QmsHtIncomingInspectionOrderDetSample> findHtList(Map<String, Object> map);
+
+    String checkBarcode(PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto);
+
+    int sampleSubmit(PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto);
 }
