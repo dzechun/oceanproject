@@ -183,6 +183,7 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
         searchBaseInventoryStatus.setWarehouseId(responseEntity.getData().get(0).getWarehouseId());
         searchBaseInventoryStatus.setInventoryStatusName("合格");
+        searchBaseInventoryStatus.setNameQueryMark(1);
         ResponseEntity<List<BaseInventoryStatus>> rs = baseFeignApi.findList(searchBaseInventoryStatus);
         if (rs.getCode()!=0){
             throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
@@ -376,9 +377,9 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         record.setOrderStatus((byte)1);
         int num = wmsInnerInitStockMapper.insertUseGeneratedKeys(record);
         for (WmsInnerInitStockDet wmsInnerInitStockDet : record.getWmsInnerInitStockDets()) {
-            if(record.getInitStockType()==1){
-                wmsInnerInitStockDet.setPlanQty(record.getTotalPlanQty());
-            }
+//            if(record.getInitStockType()==1){
+//                wmsInnerInitStockDet.setPlanQty(record.getTotalPlanQty());
+//            }
             wmsInnerInitStockDet.setCreateTime(new Date());
             wmsInnerInitStockDet.setCreateUserId(sysUser.getUserId());
             wmsInnerInitStockDet.setModifiedTime(new Date());
@@ -406,9 +407,9 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         example.createCriteria().andEqualTo("initStockId",entity.getInitStockId());
         wmsInnerInitStockDetMapper.deleteByExample(example);
         for (WmsInnerInitStockDet wmsInnerInitStockDet : entity.getWmsInnerInitStockDets()) {
-            if(entity.getInitStockType()==1){
-                wmsInnerInitStockDet.setPlanQty(entity.getTotalPlanQty());
-            }
+//            if(entity.getInitStockType()==1){
+//                wmsInnerInitStockDet.setPlanQty(entity.getTotalPlanQty());
+//            }
             wmsInnerInitStockDet.setCreateTime(new Date());
             wmsInnerInitStockDet.setCreateUserId(sysUser.getUserId());
             wmsInnerInitStockDet.setModifiedTime(new Date());
