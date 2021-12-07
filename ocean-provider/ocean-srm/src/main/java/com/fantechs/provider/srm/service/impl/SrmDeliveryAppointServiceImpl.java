@@ -8,9 +8,7 @@ import com.fantechs.common.base.general.dto.srm.SrmAppointDeliveryReAsnDto;
 import com.fantechs.common.base.general.dto.srm.SrmCarportTimeQuantumDto;
 import com.fantechs.common.base.general.dto.srm.SrmDeliveryAppointDto;
 import com.fantechs.common.base.general.dto.srm.SrmHtAppointDeliveryReAsnDto;
-import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.srm.SrmAppointDeliveryReAsn;
 import com.fantechs.common.base.general.entity.srm.SrmDeliveryAppoint;
@@ -180,7 +178,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         srmDeliveryAppointDto.setModifiedUserId(user.getUserId());
 
         //判断取消预约审核
-        if("4".equals(srmDeliveryAppointDto.getAppointStatus())) {
+        if(srmDeliveryAppointDto.getAppointStatus() == 4 ) {
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("isCensor");
             List<SysSpecItem> specItemLists = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
@@ -226,7 +224,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
             if (StringUtils.isNotEmpty(list))  srmAppointDeliveryReAsnMapper.insertList(list);
             if (StringUtils.isNotEmpty(htList)) srmHtAppointDeliveryReAsnMapper.insertList(htList);
             //反写预收货通知单
-            if("3".equals(srmDeliveryAppointDto.getAppointStatus())){
+            if(srmDeliveryAppointDto.getAppointStatus() == 3){
                 for(SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto : list) {
                     Example example1 = new Example(SrmInAsnOrder.class);
                     Example.Criteria criteria1 = example1.createCriteria();
