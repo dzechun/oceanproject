@@ -68,7 +68,7 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(sal.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-      <if test="callResult!=null and callResult!=''">
+      <if test="callResult!=null">
         and sal.call_result = #{callResult}
       </if>
       <if test="apiUrl!=null and apiUrl!=''">
