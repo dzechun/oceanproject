@@ -1,6 +1,7 @@
 package com.fantechs.provider.qms.service.impl;
 
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
 import com.fantechs.common.base.general.dto.qms.imports.QmsIncomingInspectionOrderImport;
 import com.fantechs.common.base.general.entity.basic.*;
@@ -68,8 +69,10 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int MRBReview(Long incomingInspectionOrderId, Byte mrbResult) {
-        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = new QmsIncomingInspectionOrder();
-        qmsIncomingInspectionOrder.setIncomingInspectionOrderId(incomingInspectionOrderId);
+        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(incomingInspectionOrderId);
+        if(qmsIncomingInspectionOrder.getInspectionResult()==1){
+            throw new BizErrorException("该检验单检验结果为合格，无法进行MRB评审");
+        }
         qmsIncomingInspectionOrder.setMrbResult(mrbResult);
         return qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
     }
@@ -92,7 +95,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             baseFile.setAccessUrl(record.getAccessUrl());
             ResponseEntity<BaseFile> responseEntity = baseFeignApi.add(baseFile);
             if (responseEntity.getCode() == 0) {
-                record.setFileId(baseFile.getFileId());
+                BaseFile data = responseEntity.getData();
+                record.setFileId(data.getFileId());
             }
         }
 
@@ -140,7 +144,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             baseFile.setAccessUrl(entity.getAccessUrl());
             ResponseEntity<BaseFile> responseEntity = baseFeignApi.add(baseFile);
             if (responseEntity.getCode() == 0) {
-                entity.setFileId(baseFile.getFileId());
+                BaseFile data = responseEntity.getData();
+                entity.setFileId(data.getFileId());
             }
         }
 
@@ -169,12 +174,37 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             qmsIncomingInspectionOrderDetMapper.insertList(list);
         }
 
+        //返写单据信息
+        checkInspectionResult(list);
+
         //履历
         QmsHtIncomingInspectionOrder qmsHtIncomingInspectionOrder = new QmsHtIncomingInspectionOrder();
         BeanUtils.copyProperties(entity, qmsHtIncomingInspectionOrder);
         qmsHtIncomingInspectionOrderMapper.insertSelective(qmsHtIncomingInspectionOrder);
 
         return i;
+    }
+
+    public void checkInspectionResult(List<QmsIncomingInspectionOrderDet> list){
+        boolean tag = true;
+        Byte inspectionResult = 1;
+        for (QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet : list){
+            if(StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getInspectionResult())){
+                tag = false;
+            }
+            if(qmsIncomingInspectionOrderDet.getInspectionResult() == (byte)0){
+                inspectionResult = 0;
+            }
+        }
+
+        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(list.get(0).getIncomingInspectionOrderId());
+
+        if(tag){
+            //返写检验单结果
+            qmsIncomingInspectionOrder.setInspectionResult(inspectionResult);
+            qmsIncomingInspectionOrder.setInspectionStatus((byte)3);
+            qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
+        }
     }
 
     @Override
