@@ -71,6 +71,7 @@
     wiao.plan_ago_date,
     wiao.start_receiving_date,
     wiao.end_receiving_date,
+    wiao.deliver_date,
     wiao.shipper_name,
     wiao.link_man_name,
     wiao.link_man_phone,

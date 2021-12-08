@@ -207,13 +207,15 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         BeanUtils.copyProperties(srmInAsnOrderDto, srmInHtAsnOrder);
         srmInHtAsnOrderMapper.insertSelective(srmInHtAsnOrder);
 
-        //删除子表重新添加
-        Example example1 = new Example(SrmInAsnOrderDet.class);
-        Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("asnOrderId",srmInAsnOrderDto.getAsnOrderId());
-        srmInAsnOrderDetMapper.deleteByExample(example1);
         //保存详情表
         if(StringUtils.isNotEmpty(srmInAsnOrderDto.getSrmInAsnOrderDetDtos())) {
+
+            //删除子表重新添加
+            Example example1 = new Example(SrmInAsnOrderDet.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("asnOrderId",srmInAsnOrderDto.getAsnOrderId());
+            srmInAsnOrderDetMapper.deleteByExample(example1);
+
             List<SrmInAsnOrderDetDto> list = new ArrayList<>();
             List<SrmInHtAsnOrderDetDto> htList = new ArrayList<>();
             for (SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
@@ -299,7 +301,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 srmInHtAsnOrderMapper.insertSelective(srmInHtAsnOrder);
 
                 //返写送货预约状态
-                if(i==1){
+                if(i==1 && (StringUtils.isNotEmpty(baseSuppliers) && baseSuppliers.get(0).getIfAppointDeliver() ==1)){
                     Map map = new HashMap();
                     map.put("asnCode",dto.getAsnCode());
                     List<SrmAppointDeliveryReAsn> srmAppointDeliveryReAsns = srmAppointDeliveryReAsnService.findList(map);
@@ -307,9 +309,9 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
                     Example example = new Example(SrmDeliveryAppoint.class);
                     Example.Criteria criteria = example.createCriteria();
-                    criteria.andEqualTo("asnOrderId",srmAppointDeliveryReAsns.get(0).getAsnOrderId());
+                    criteria.andEqualTo("deliveryAppointId",srmAppointDeliveryReAsns.get(0).getDeliveryAppointId());
                     List<SrmDeliveryAppoint> srmDeliveryAppoints = srmDeliveryAppointMapper.selectByExample(example);
-                    if(StringUtils.isEmpty(srmAppointDeliveryReAsns)) throw new BizErrorException("未查询到id为"+srmAppointDeliveryReAsns.get(0).getAsnOrderId()+"送货预约单号");
+                    if(StringUtils.isEmpty(srmAppointDeliveryReAsns)) throw new BizErrorException("未查询到id为"+srmAppointDeliveryReAsns.get(0).getDeliveryAppointId()+"送货预约单号");
                     srmDeliveryAppoints.get(0).setAppointStatus((byte)6);
                     srmDeliveryAppointMapper.updateByPrimaryKeySelective(srmDeliveryAppoints.get(0));
                 }

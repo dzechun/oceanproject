@@ -72,6 +72,7 @@
     wihao.plan_ago_date,
     wihao.start_receiving_date,
     wihao.end_receiving_date,
+    wihao.deliver_date,
     wihao.shipper_name,
     wihao.link_man_name,
     wihao.link_man_phone,

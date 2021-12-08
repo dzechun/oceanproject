@@ -125,7 +125,8 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30) 
+    @Excel(name = "订单日期", height = 20, width = 30)
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -133,7 +134,8 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
      * 预计到货(arrival of good)日期
      */
     @ApiModelProperty(name="planAgoDate",value = "预计到货(arrival of good)日期")
-    @Excel(name = "预计到货(arrival of good)日期", height = 20, width = 30) 
+    @Excel(name = "预计到货(arrival of good)日期", height = 20, width = 30)
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_ago_date")
     private Date planAgoDate;
 
@@ -141,7 +143,8 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
      * 开始收货日期
      */
     @ApiModelProperty(name="startReceivingDate",value = "开始收货日期")
-    @Excel(name = "开始收货日期", height = 20, width = 30) 
+    @Excel(name = "开始收货日期", height = 20, width = 30)
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "start_receiving_date")
     private Date startReceivingDate;
 
@@ -149,7 +152,8 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
      * 结束收货日期
      */
     @ApiModelProperty(name="endReceivingDate",value = "结束收货日期")
-    @Excel(name = "结束收货日期", height = 20, width = 30) 
+    @Excel(name = "结束收货日期", height = 20, width = 30)
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "end_receiving_date")
     private Date endReceivingDate;
 
@@ -158,6 +162,7 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="deliverDate",value = "发货日期")
     @Excel(name = "发货日期", height = 20, width = 30,orderNum="3")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "deliver_date")
     private Date deliverDate;
 
