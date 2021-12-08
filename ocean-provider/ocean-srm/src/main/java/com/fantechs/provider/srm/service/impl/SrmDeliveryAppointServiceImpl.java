@@ -70,10 +70,8 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
         searchBaseSupplierReUser.setUserId(sysUser.getUserId());
         ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
-        List<Long> suppliers = new ArrayList<>();
         if (StringUtils.isNotEmpty(list.getData())){
-            suppliers.add(list.getData().get(0).getSupplierId());
-            map.put("supplierIdList", suppliers);
+            map.put("supplierIdList", list.getData());
         }
         return srmDeliveryAppointMapper.findList(map);
     }
