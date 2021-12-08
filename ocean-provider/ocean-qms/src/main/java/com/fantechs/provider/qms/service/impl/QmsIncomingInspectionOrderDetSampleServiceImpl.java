@@ -108,6 +108,9 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
         //不良数量
         qmsIncomingInspectionOrderDet.setBadnessQty(new BigDecimal(badnessQty));
         //计算明细检验结果
+        if(StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getAcValue(),qmsIncomingInspectionOrderDet.getReValue())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"该检验单明细的AC或RE值为空，无法计算检验结果");
+        }
         if (qmsIncomingInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsIncomingInspectionOrderDet.getAcValue())) == 0
                 ||qmsIncomingInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsIncomingInspectionOrderDet.getAcValue())) == -1) {
             qmsIncomingInspectionOrderDet.setInspectionResult((byte) 1);
@@ -140,10 +143,15 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
             criteria1.andEqualTo("incomingInspectionOrderDetId", detId);
             List<QmsIncomingInspectionOrderDetSample> detSamples = qmsIncomingInspectionOrderDetSampleMapper.selectByExample(example);
             QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet = qmsIncomingInspectionOrderDetMapper.selectByPrimaryKey(detId);
+            if(StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getSampleQty())){
+                throw new BizErrorException("样本数为空");
+            }
             if(qmsIncomingInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(detSamples.size())) == 0){
                 throw new BizErrorException("检验样本数已达上限");
             }
         }
+
+        //条码校验
 
         return barcode;
     }
@@ -174,6 +182,9 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
                 }
                 //检验数与样本数相等时，计算检验结果
                 if (qmsIncomingInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(detSampleList.size() + 1)) == 0) {
+                    if(StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getAcValue(),qmsIncomingInspectionOrderDet.getReValue())){
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"检验单明细的AC或RE值为空，无法计算检验结果");
+                    }
                     if (qmsIncomingInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsIncomingInspectionOrderDet.getAcValue())) == 0
                     ||qmsIncomingInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsIncomingInspectionOrderDet.getAcValue())) == -1) {
                         qmsIncomingInspectionOrderDet.setInspectionResult((byte) 1);
@@ -218,7 +229,8 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
                 if(qmsIncomingInspectionOrder == null){
                     qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
                 }
-                if(qmsIncomingInspectionOrderDet.getInspectionResult() == (byte)0){
+                if(qmsIncomingInspectionOrderDet.getInspectionResult()!=null
+                        &&qmsIncomingInspectionOrderDet.getInspectionResult() == (byte)0){
                     inspectionResult = 0;
                 }
             }

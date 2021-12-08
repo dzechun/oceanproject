@@ -43,6 +43,12 @@ public class QmsIncomingInspectionOrderController {
     @Resource
     private QmsIncomingInspectionOrderService qmsIncomingInspectionOrderService;
 
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "来料检验单ID列表，多个逗号分隔",required = true)@RequestParam  @NotBlank(message="来料检验单ID不能为空") String ids) {
+        return ControllerUtil.returnCRUD(qmsIncomingInspectionOrderService.pushDown(ids));
+    }
+
     @ApiOperation(value = "MRB评审",notes = "MRB评审")
     @PostMapping("/MRBReview")
     public ResponseEntity MRBReview(@ApiParam(value = "来料检验单ID",required = true)@RequestParam  @NotNull(message="来料检验单ID不能为空") Long incomingInspectionOrderId,

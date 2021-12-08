@@ -1,5 +1,6 @@
 package com.fantechs.provider.qms.service.impl;
 
+import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
@@ -16,6 +17,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.qms.mapper.QmsHtIncomingInspectionOrderMapper;
 import com.fantechs.provider.qms.mapper.QmsIncomingInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsIncomingInspectionOrderDetSampleMapper;
@@ -52,6 +54,9 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     @Resource
     private BaseFeignApi baseFeignApi;
 
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+
     @Override
     public List<QmsHtIncomingInspectionOrder> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -64,6 +69,26 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
         return qmsIncomingInspectionOrderMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int pushDown(String ids) {
+        //根据单据流生成入库计划单或上架作业单
+        int i = 0;
+        List<QmsIncomingInspectionOrder> qmsIncomingInspectionOrders = qmsIncomingInspectionOrderMapper.selectByIds(ids);
+        //查当前单据的下游单据
+        String sysOrderTypeCode = qmsIncomingInspectionOrders.get(0).getSysOrderTypeCode();
+
+        if("".equals("")){
+            //生成入库计划单
+
+        }else if("".equals("")){
+            //生成上架作业单
+
+        }
+
+        return i;
     }
 
     @Override
@@ -189,18 +214,20 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         boolean tag = true;
         Byte inspectionResult = 1;
         for (QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet : list){
-            if(StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getInspectionResult())){
+            if(qmsIncomingInspectionOrderDet.getIfMustInspection()==1&&
+                    StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getInspectionResult())){
                 tag = false;
+                break;
             }
-            if(qmsIncomingInspectionOrderDet.getInspectionResult() == (byte)0){
+            if(qmsIncomingInspectionOrderDet.getInspectionResult()!=null&&
+                    qmsIncomingInspectionOrderDet.getInspectionResult() == (byte)0){
                 inspectionResult = 0;
             }
         }
 
-        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(list.get(0).getIncomingInspectionOrderId());
-
         if(tag){
             //返写检验单结果
+            QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(list.get(0).getIncomingInspectionOrderId());
             qmsIncomingInspectionOrder.setInspectionResult(inspectionResult);
             qmsIncomingInspectionOrder.setInspectionStatus((byte)3);
             qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
@@ -242,6 +269,19 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         LinkedList<QmsIncomingInspectionOrder> list = new LinkedList<>();
         LinkedList<QmsHtIncomingInspectionOrder> htList = new LinkedList<>();
         LinkedList<QmsIncomingInspectionOrderImport> incomingInspectionOrderImports = new LinkedList<>();
+        //日志记录
+        StringBuilder succeedInfo = new StringBuilder();
+        StringBuilder failInfo = new StringBuilder();
+        Integer succeedCount = 0;
+        Integer failCount = 0;
+        SysImportAndExportLog sysImportAndExportLog = new SysImportAndExportLog();
+        sysImportAndExportLog.setModuleNames("QMS");
+        sysImportAndExportLog.setFileName("来料检验单导入信息表");
+        sysImportAndExportLog.setType((byte)1);
+        sysImportAndExportLog.setOperatorUserId(user.getUserId());
+        sysImportAndExportLog.setResult((byte)1);
+        sysImportAndExportLog.setTotalCount(qmsIncomingInspectionOrderImports.size());
+
         for (int i = 0; i < qmsIncomingInspectionOrderImports.size(); i++) {
             QmsIncomingInspectionOrderImport qmsIncomingInspectionOrderImport = qmsIncomingInspectionOrderImports.get(i);
             String incomingInspectionOrderCode = qmsIncomingInspectionOrderImport.getIncomingInspectionOrderCode();
@@ -250,6 +290,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             if (StringUtils.isEmpty(
                     incomingInspectionOrderCode,materialCode
             )){
+                failCount++;
+                failInfo.append("必填项为空").append(",");
                 fail.add(i+4);
                 continue;
             }
@@ -260,6 +302,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             criteria.andEqualTo("orgId", user.getOrganizationId())
                     .andEqualTo("incomingInspectionOrderCode", incomingInspectionOrderCode);
             if (StringUtils.isNotEmpty(qmsIncomingInspectionOrderMapper.selectOneByExample(example))){
+                failCount++;
+                failInfo.append("单号已存在").append(",");
                 fail.add(i+4);
                 continue;
             }
@@ -270,6 +314,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             searchBaseMaterial.setCodeQueryMark(1);
             List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
             if (StringUtils.isEmpty(baseMaterials)) {
+                failCount++;
+                failInfo.append("物料不存在").append(",");
                 fail.add(i + 4);
                 continue;
             }
@@ -285,6 +331,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 searchBaseSupplier.setSupplierCode(supplierCode);
                 List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierList(searchBaseSupplier).getData();
                 if (StringUtils.isEmpty(baseSuppliers)) {
+                    failCount++;
+                    failInfo.append("供应商不存在").append(",");
                     fail.add(i + 4);
                     continue;
                 }
@@ -296,6 +344,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 searchBaseInspectionExemptedList.setSupplierId(baseSuppliers.get(0).getSupplierId());
                 List<BaseInspectionExemptedList> inspectionExemptedLists = baseFeignApi.findList(searchBaseInspectionExemptedList).getData();
                 if(StringUtils.isNotEmpty(inspectionExemptedLists)){
+                    failCount++;
+                    failInfo.append("该供应商该物料属于免检清单").append(",");
                     fail.add(i+4);
                     continue;
                 }
@@ -311,6 +361,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 searchBaseWarehouse.setWarehouseCode(supplierCode);
                 List<BaseWarehouse> baseWarehouses = baseFeignApi.findList(searchBaseWarehouse).getData();
                 if (StringUtils.isEmpty(baseWarehouses)) {
+                    failCount++;
+                    failInfo.append("仓库不存在").append(",");
                     fail.add(i + 4);
                     continue;
                 }
@@ -326,6 +378,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 searchBaseInspectionWay.setInspectionType((byte)1);
                 List<BaseInspectionWay> inspectionWays = baseFeignApi.findList(searchBaseInspectionWay).getData();
                 if (StringUtils.isEmpty(inspectionWays)){
+                    failCount++;
+                    failInfo.append("检验方式不存在").append(",");
                     fail.add(i+4);
                     continue;
                 }
@@ -342,14 +396,23 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 searchBaseInspectionStandard.setInspectionWayId(qmsIncomingInspectionOrderImport.getInspectionWayId());
                 List<BaseInspectionStandard> inspectionStandards = baseFeignApi.findList(searchBaseInspectionStandard).getData();
                 if (StringUtils.isEmpty(inspectionStandards)){
+                    failCount++;
+                    failInfo.append("检验标准不存在").append(",");
                     fail.add(i+4);
                     continue;
                 }
                 qmsIncomingInspectionOrderImport.setInspectionStandardId(inspectionStandards.get(0).getInspectionStandardId());
             }
 
+            succeedCount++;
+            succeedInfo.append(i+4+"").append(",");
             incomingInspectionOrderImports.add(qmsIncomingInspectionOrderImport);
         }
+        sysImportAndExportLog.setFailCount(failCount);
+        sysImportAndExportLog.setSucceedCount(succeedCount);
+        sysImportAndExportLog.setFailInfo(failInfo.toString());
+        sysImportAndExportLog.setSucceedInfo(succeedInfo.toString());
+        securityFeignApi.add(sysImportAndExportLog);
 
         if(StringUtils.isNotEmpty(incomingInspectionOrderImports)){
             //对合格数据进行分组
