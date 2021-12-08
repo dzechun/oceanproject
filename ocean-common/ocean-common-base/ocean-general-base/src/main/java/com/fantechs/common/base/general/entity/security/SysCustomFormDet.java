@@ -169,6 +169,38 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     private Byte isDetail;
 
     /**
+     * 排序
+     */
+    @ApiModelProperty(name="querySeq",value = "排序（desc、asc）")
+    @Excel(name = "排序", height = 20, width = 30)
+    @Column(name = "query_seq")
+    private String querySeq;
+
+    /**
+     * 查询方式
+     */
+    @ApiModelProperty(name="queryType",value = "查询方式（=、>、<、=<、=>、in(包含)、not in(不包含)、like(模糊)、between(范围)）")
+    @Excel(name = "查询方式", height = 20, width = 30)
+    @Column(name = "query_type")
+    private String queryType;
+
+    /**
+     * 连接查询
+     */
+    @ApiModelProperty(name="joinQuery",value = "连接查询（and(并且)、or(或者)）")
+    @Excel(name = "连接查询", height = 20, width = 30)
+    @Column(name = "join_query")
+    private String joinQuery;
+
+    /**
+     * 是否高级查询
+     */
+    @ApiModelProperty(name="isHighGrade",value = "是否高级查询")
+    @Excel(name = "是否高级查询", height = 20, width = 30)
+    @Column(name = "is_high_grade")
+    private String isHighGrade;
+
+    /**
      * 配置项Code
      */
     @ApiModelProperty(name="specCode",value = "配置项Code")
@@ -304,6 +336,16 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     @Excel(name = "下拉自定义值", height = 20, width = 30)
     @Column(name = "select_value")
     private String selectValue;
+
+    @ApiModelProperty(name="minValue",value = "最小值")
+    @Excel(name = "最小值", height = 20, width = 30)
+    @Column(name = "min_value")
+    private String minValue;
+
+    @ApiModelProperty(name="maxValue",value = "最大值")
+    @Excel(name = "最大值", height = 20, width = 30)
+    @Column(name = "max_value")
+    private String maxValue;
 
     private static final long serialVersionUID = 1L;
 }

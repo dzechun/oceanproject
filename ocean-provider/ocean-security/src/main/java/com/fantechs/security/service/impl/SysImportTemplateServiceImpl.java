@@ -33,68 +33,13 @@ import java.util.Map;
 @Service
 public class SysImportTemplateServiceImpl extends BaseService<SysImportTemplate> implements SysImportTemplateService {
 
-    // 菜单缓存redis的key
-    private static String MENU_REDIS_KEY = "MENU_REDIS_KEY";
-
     @Resource
     private SysImportTemplateMapper sysImportTemplateMapper;
-    @Resource
-    private RedisUtil redisUtil;
-    @Resource
-    private SysMenuInfoService sysMenuInfoService;
 
 
     @Override
     public List<SysImportTemplate> findList(Map<String, Object> map) {
-        List<Long> menuIds = new ArrayList<>();
-        if (StringUtils.isNotEmpty(map.get("menuId"))) {
-            Object menuList = redisUtil.get(MENU_REDIS_KEY);
-            if(ObjectUtil.isNull(menuList)){
-                if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
-                    menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
-                            "parentId", "0",
-                            "menuType", 2 + ""
-                    ), null);
-                    redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(menuList));
-                }
-            }
-            List<SysMenuInListDTO> menuInListDTOS = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
-            SysMenuInListDTO dg = this.findNodes(menuInListDTOS, Long.parseLong(map.get("menuId").toString()));
-            menuIds.add(dg.getSysMenuInfoDto().getMenuId());
-            this.disassemblyTree(dg,menuIds);
-            map.put("menuIds",menuIds);
-        }
-
         return sysImportTemplateMapper.findList(map);
-    }
-
-    public SysMenuInListDTO findNodes(List<SysMenuInListDTO> menuList, Long menuId){
-        if (StringUtils.isEmpty(menuList)) {
-            return null;
-        }
-        for (SysMenuInListDTO sysMenuInListDTO : menuList) {
-            if (sysMenuInListDTO.getSysMenuInfoDto().getMenuId().equals(menuId)) {
-                return sysMenuInListDTO;
-            }else {
-                SysMenuInListDTO nodes = this.findNodes(sysMenuInListDTO.getSysMenuinList(), menuId);
-                if (StringUtils.isNotEmpty(nodes)) {
-                    return nodes;
-                }else {
-                    this.findNodes(sysMenuInListDTO.getSysMenuinList(), menuId);
-                }
-            }
-        }
-        return null;
-    }
-
-    public void disassemblyTree(SysMenuInListDTO sysMenuInListDTO,List<Long> sysMenuinList){
-        List<SysMenuInListDTO> sysMenuinList1 = sysMenuInListDTO.getSysMenuinList();
-        if (StringUtils.isNotEmpty(sysMenuinList1)) {
-            for (SysMenuInListDTO menuInListDTO : sysMenuinList1) {
-                disassemblyTree(menuInListDTO,sysMenuinList);
-                sysMenuinList.add(menuInListDTO.getSysMenuInfoDto().getMenuId());
-            }
-        }
     }
 
     @Override

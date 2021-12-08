@@ -51,6 +51,14 @@ public class SrmHtPlanDeliveryOrder extends ValidGroup implements Serializable {
     private String planDeliveryOrderCode;
 
     /**
+     * 系统单据类型编码
+     */
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Excel(name = "系统单据类型编码", height = 20, width = 30,orderNum="0")
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
+
+    /**
      * 供应商ID
      */
     @ApiModelProperty(name="supplierId",value = "供应商ID")

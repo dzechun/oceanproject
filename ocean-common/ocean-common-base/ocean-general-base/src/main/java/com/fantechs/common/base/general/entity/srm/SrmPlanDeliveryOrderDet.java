@@ -64,7 +64,7 @@ public class SrmPlanDeliveryOrderDet extends ValidGroup implements Serializable 
      * 是否已经生成ASN(0-否 1-是)
      */
     @ApiModelProperty(name="ifCreateAsn",value = "是否已经生成ASN(0-否 1-是)")
-    @Excel(name = "是否已经生成ASN(0-否 1-是)", height = 20, width = 30,orderNum="15",replace = {"否_0","是_1"})
+    @Excel(name = "是否已经生成ASN", height = 20, width = 30,orderNum="15",replace = {"否_0","是_1"})
     @Column(name = "if_create_asn")
     private Byte ifCreateAsn;
 

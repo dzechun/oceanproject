@@ -34,6 +34,10 @@
     <result column="is_table" jdbcType="TINYINT" property="isTable" />
     <result column="is_form" jdbcType="TINYINT" property="isForm" />
     <result column="is_detail" jdbcType="TINYINT" property="isDetail" />
+    <result column="query_seq" jdbcType="VARCHAR" property="querySeq"/>
+    <result column="query_type" jdbcType="VARCHAR" property="queryType"/>
+    <result column="join_query" jdbcType="VARCHAR" property="joinQuery"/>
+    <result column="is_high_grade" jdbcType="VARCHAR" property="isHighGrade"/>
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
@@ -41,6 +45,8 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="min_value" jdbcType="DECIMAL" property="minValue"/>
+    <result column="max_value" jdbcType="DECIMAL" property="maxValue"/>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -71,6 +77,10 @@
     dcfd.is_table,
     dcfd.is_form,
     dcfd.is_detail,
+    dcfd.query_seq,
+    dcfd.query_type,
+    dcfd.join_query,
+    dcfd.is_high_grade,
     dcfd.spec_code,
     dcfd.enum_data,
     dcfd.is_required,
@@ -87,7 +97,9 @@
     dcfd.event_trigger_mode,
     dcfd.event_trigger_name,
     dcfd.select_name,
-    dcfd.select_value
+    dcfd.select_value,
+    dcfd.min_value,
+    dcfd.max_value
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
