@@ -10,6 +10,7 @@ import com.fantechs.common.base.electronic.entity.PtlJobOrderDet;
 import com.fantechs.common.base.electronic.entity.search.SearchPtlElectronicTagStorage;
 import com.fantechs.common.base.electronic.entity.search.SearchPtlJobOrder;
 import com.fantechs.common.base.electronic.entity.search.SearchPtlJobOrderDet;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.MQResponseEntity;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.RedisUtil;
@@ -84,7 +85,7 @@ public class ElectronicTagReceiver {
                     lockValue = String.valueOf(redisUtil.get(lockKey));
                     log.info("=====================获取到:" + lockKey + "--->redisKEY, " + lockValue + "--->redisVALUE");
                 } else {
-                    throw new Exception("正在处理电子标签任务，请稍后再试！");
+                    throw new BizErrorException("正在处理电子标签任务，请稍后再试！");
                 }
 
                 String endElectronicTagId = b.toString();
@@ -253,9 +254,7 @@ public class ElectronicTagReceiver {
 //                    log.info("===========任务完成，发送消息给最后一个灭灯的中文标签发送END完成===============");
 //                }
             }
-        } catch (Exception e) {
-            electronicTagStorageService.fanoutSender(1001, rabbitMQDTO1, null);
-            log.info("===========发送消息给客户端控制该储位对应的电子标签再次亮灯完成===============");
+        } catch (BizErrorException e) {
             //第二个参数设为true为自动应答，false为手动ack
 //            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
             //重新放入队列
@@ -264,7 +263,10 @@ public class ElectronicTagReceiver {
             channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
             log.warn("===========删除消息队列：" + RabbitConfig.TOPIC_QUEUE1 + " 消息：" + message.getMessageProperties().getDeliveryTag() + "===============> " + JSONObject.toJSONString(mqResponseEntity));
 
-            throw new Exception(e);
+            electronicTagStorageService.fanoutSender(1001, rabbitMQDTO1, null);
+            log.info("===========发送消息给客户端控制该储位对应的电子标签再次亮灯完成===============");
+
+            throw new BizErrorException(e);
         } finally {
             redisUtil.unlock(lockKey, lockValue);
             log.info("=====================释放了:" + lockKey + "--->redisKEY");
