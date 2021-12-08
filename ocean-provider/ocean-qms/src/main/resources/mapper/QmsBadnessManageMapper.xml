@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsBadnessManageMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsBadnessManage">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="badness_manage_id" jdbcType="BIGINT" property="badnessManageId" />
+    <result column="incoming_inspection_order_id" jdbcType="BIGINT" property="incomingInspectionOrderId" />
+    <result column="special_receive_qty" jdbcType="DECIMAL" property="specialReceiveQty" />
+    <result column="return_qty" jdbcType="DECIMAL" property="returnQty" />
+    <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="incoming_inspection_order_code" jdbcType="VARCHAR" property="incomingInspectionOrderCode" />
+    <result column="mrb_result" jdbcType="TINYINT" property="mrbResult" />
+    <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
+    <result column="operator_user_name" jdbcType="VARCHAR" property="operatorUserName" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion" />
+    <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />
+    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qbm.badness_manage_id,
+    qbm.incoming_inspection_order_id,
+    qbm.special_receive_qty,
+    qbm.return_qty,
+    qbm.operator_user_id,
+    qbm.`status`,
+    qbm.org_id,
+    qbm.create_user_id,
+    qbm.create_time,
+    qbm.modified_user_id,
+    qbm.modified_time,
+    qbm.is_delete,
+    qbm.option1,
+    qbm.option2,
+    qbm.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    qiio.incoming_inspection_order_code,qiio.mrb_result,qiio.order_qty,qiio.remark,
+    bm.material_code,bm.material_desc,bm.material_version,
+    bpm.product_model_name,bs.supplier_name,
+    su.user_name as operator_user_name,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from qms_badness_manage qbm
+    left join qms_incoming_inspection_order qiio on qbm.incoming_inspection_order_id=qiio.incoming_inspection_order_id
+    left join base_material bm on qiio.material_id=bm.material_id
+    left join base_material_tab bmt on bm.material_id=bmt.material_id
+    left join base_product_model bpm on bmt.product_model_id=bpm.product_model_id
+    left join base_supplier bs on qiio.supplier_id=bs.supplier_id
+    left join sys_user su on qbm.operator_user_id=su.user_id
+    left join sys_user u on qbm.create_user_id=u.user_id
+    left join sys_user s on qbm.modified_user_id=s.user_id
+    left join base_organization bo ON qbm.org_id = bo.organization_id
+    <where>
+      <if test="incomingInspectionOrderCode!=null and incomingInspectionOrderCode!=''">
+        and qiio.incoming_inspection_order_code like CONCAT('%', #{incomingInspectionOrderCode}, '%')
+      </if>
+      <if test="materialCode!=null and materialCode!=''">
+        and bm.material_code like CONCAT('%',  #{materialCode}, '%')
+      </if>
+      <if test="supplierName!=null and supplierName!=''">
+        and bs.supplier_name like CONCAT('%',  #{supplierName}, '%')
+      </if>
+      <if test="status!=null">
+        and qbm.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qbm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and qbm.org_id=#{orgId}
+      </if>
+    </where>
+    order by qbm.create_time desc
+  </select>
+</mapper>
