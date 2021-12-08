@@ -72,7 +72,7 @@ public interface SecurityFeignApi {
     @PostMapping("/sysRole/findList")
     ResponseEntity<List<SysRoleDto>> selectRoles(@ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSysRole searchSysRole);
 
-    @ApiOperation(value = "新增",notes = "新增")
+    @ApiOperation(value = "导入接口日志新增",notes = "导入接口日志新增")
     @PostMapping("/sysImportAndExportLog/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SysImportAndExportLog sysImportAndExportLog);
 

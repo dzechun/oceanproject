@@ -62,7 +62,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			",/ocean-security/sysSpecItem/findList,/ocean-exhibition-client/RCSAPI/agvCallback,/ocean-base/baseOrganization/findList"+
 			",/ocean-imes-materialapi/material/workOrder,/ocean-imes-materialapi/material/purchaseOrder,/ocean-esop/esopNews/findList" +
 			",/ocean-imes-materialapi/material/ChkLogUserInfo,/ocean-imes-materialapi/material/ChkSnRouting,/ocean-imes-materialapi/material/SnDataTransfer" +
-			",/ocean-security/eamlogin,/ocean-base/baseFile/findList,/ocean-base/baseFile/batchAddFile,/ocean-guest-callagv/callAgvBarcode/add" +
+			",/ocean-security/eamlogin,/ocean-base/baseFile/findList,/ocean-base/baseFile/batchAddFile,/ocean-base/baseFile/add,/ocean-guest-callagv/callAgvBarcode/add" +
 			",/ocean-guest-callagv/callAgvBarcode/findList,/ocean-guest-callagv/callAgvBarcode/findList,/ocean-ureport/proLineBoard/findList," +
 			"/ocean-chinafivering-api/webServiceImport/getVendor,/ocean-chinafivering-api/webServiceImport/getIssueDetails,/ocean-eam/eamEquipment/findList,"+
 			"/ocean-chinafivering-api/webServiceImport/getPoDetails,/ocean-chinafivering-api/webServiceImport/getPartNoInfo,/ocean-chinafivering-api/webServiceImport/getVendorUserNameAndPwd,"+
