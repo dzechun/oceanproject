@@ -79,6 +79,10 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         List<QmsIncomingInspectionOrder> qmsIncomingInspectionOrders = qmsIncomingInspectionOrderMapper.selectByIds(ids);
         //查当前单据的下游单据
         String sysOrderTypeCode = qmsIncomingInspectionOrders.get(0).getSysOrderTypeCode();
+        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+        searchBaseOrderFlow.setBusinessType((byte)1);
+        searchBaseOrderFlow.setOrderNode((byte)4);
+
 
         if("".equals("")){
             //生成入库计划单
