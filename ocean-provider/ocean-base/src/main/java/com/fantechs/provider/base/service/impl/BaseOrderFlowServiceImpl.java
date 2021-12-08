@@ -41,10 +41,13 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
 
         Example example = new Example(BaseOrderFlow.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("businessType", record.getBusinessType());//业务类型
         criteria.andEqualTo("orderNode", record.getOrderNode());//单据节点
         criteria.andEqualTo("orderFlowDimension", record.getOrderFlowDimension());//单据流维度
-        criteria.andEqualTo("materialId", record.getMaterialId());
-        criteria.andEqualTo("supplierId", record.getSupplierId());
+        if(record.getOrderFlowDimension()==(byte)2)
+            criteria.andEqualTo("supplierId", record.getSupplierId());
+        else if(record.getOrderFlowDimension()==(byte)3)
+            criteria.andEqualTo("materialId", record.getMaterialId());
 
         List<BaseOrderFlow> baseOrderFlows = baseOrderFlowMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseOrderFlows)) {
@@ -73,6 +76,7 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
 
         Example example = new Example(BaseOrderFlow.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("businessType", entity.getBusinessType());//业务类型
         criteria.andEqualTo("orderNode", entity.getOrderNode());//单据节点
         criteria.andEqualTo("orderFlowDimension", entity.getOrderFlowDimension());//单据流维度
         if(entity.getOrderFlowDimension()==(byte)2)
