@@ -27,6 +27,8 @@
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
   </resultMap>
@@ -55,6 +57,8 @@
     SELECT<include refid="Base_Column_List"/>, su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name,
+    bm.material_code,
+    bm.material_name,
     bm.material_desc,
     bs.supplier_name
     FROM base_order_flow bof

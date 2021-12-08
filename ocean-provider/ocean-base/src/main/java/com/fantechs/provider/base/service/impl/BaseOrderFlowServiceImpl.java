@@ -38,14 +38,19 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
     @Override
     public int save(BaseOrderFlow record) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+
         Example example = new Example(BaseOrderFlow.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orderNode", record.getOrderNode());//单据节点
         criteria.andEqualTo("orderFlowDimension", record.getOrderFlowDimension());//单据流维度
+        criteria.andEqualTo("materialId", record.getMaterialId());
+        criteria.andEqualTo("supplierId", record.getSupplierId());
+
         List<BaseOrderFlow> baseOrderFlows = baseOrderFlowMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseOrderFlows)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"单据节点和单据流维度已存在");
         }
+
         record.setCreateUserId(currentUser.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedTime(new Date());
@@ -58,14 +63,17 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
     @Override
     public int update(BaseOrderFlow entity) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        Example example = new Example(BaseOrderFlow.class);
+
+        /*Example example = new Example(BaseOrderFlow.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orderNode", entity.getOrderNode());//单据节点
         criteria.andEqualTo("orderFlowDimension", entity.getOrderFlowDimension());//单据流维度
+        criteria.andEqualTo("materialId", entity.getMaterialId());
+        criteria.andEqualTo("supplierId", entity.getSupplierId());
         List<BaseOrderFlow> baseOrderFlows = baseOrderFlowMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseOrderFlows)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"单据节点和单据流维度已存在");
-        }
+        }*/
 
         entity.setModifiedUserId(currentUser.getUserId());
         entity.setModifiedTime(new Date());
