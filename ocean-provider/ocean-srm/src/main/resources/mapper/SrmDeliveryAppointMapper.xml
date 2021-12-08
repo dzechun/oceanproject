@@ -98,8 +98,6 @@
             <if test="appointStatus!=null and appointStatus!=''">
                 and sda.appoint_status = #{appointStatus}
             </if>
-
-
             <choose>
                 <when test="supplierIdList!=null and supplierIdList.size > 0">
                     and sda.supplier_id in
