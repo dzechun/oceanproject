@@ -61,24 +61,30 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(BaseOrderFlow entity) {
+        int i=0;
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-
-        /*Example example = new Example(BaseOrderFlow.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orderNode", entity.getOrderNode());//单据节点
-        criteria.andEqualTo("orderFlowDimension", entity.getOrderFlowDimension());//单据流维度
-        criteria.andEqualTo("materialId", entity.getMaterialId());
-        criteria.andEqualTo("supplierId", entity.getSupplierId());
-        List<BaseOrderFlow> baseOrderFlows = baseOrderFlowMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(baseOrderFlows)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"单据节点和单据流维度已存在");
-        }*/
 
         entity.setModifiedUserId(currentUser.getUserId());
         entity.setModifiedTime(new Date());
         entity.setOrgId(currentUser.getOrganizationId());
-        return baseOrderFlowMapper.updateByPrimaryKeySelective(entity);
+        i=baseOrderFlowMapper.updateByPrimaryKeySelective(entity);
+
+        Example example = new Example(BaseOrderFlow.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orderNode", entity.getOrderNode());//单据节点
+        criteria.andEqualTo("orderFlowDimension", entity.getOrderFlowDimension());//单据流维度
+        if(entity.getOrderFlowDimension()==(byte)2)
+            criteria.andEqualTo("supplierId", entity.getSupplierId());
+        else if(entity.getOrderFlowDimension()==(byte)3)
+            criteria.andEqualTo("materialId", entity.getMaterialId());
+        List<BaseOrderFlow> baseOrderFlows = baseOrderFlowMapper.selectByExample(example);
+        if (baseOrderFlows.size()>1) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"单据节点和单据流维度已存在");
+        }
+
+        return i;
     }
 
     @Override
