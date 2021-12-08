@@ -58,7 +58,7 @@ public class WmsInnerInitStockDetServiceImpl extends BaseService<WmsInnerInitSto
             //初始化盘点
             //查询是否有改物料的明细
             Example example = new Example(WmsInnerInitStockDet.class);
-            example.createCriteria().andEqualTo("materialId",record.getMaterialId());
+            example.createCriteria().andEqualTo("initStockId",wmsInnerInitStock.getInitStockId()).andEqualTo("materialId",record.getMaterialId());
             List<WmsInnerInitStockDet> wmsInnerInitStockDets = wmsInnerInitStockDetMapper.selectByExample(example);
             if(!wmsInnerInitStockDets.isEmpty()){
                 WmsInnerInitStockDet wmsInnerInitStockDet = wmsInnerInitStockDets.get(0);
@@ -95,6 +95,22 @@ public class WmsInnerInitStockDetServiceImpl extends BaseService<WmsInnerInitSto
 
                 wmsInnerInitStockDetMapper.insertUseGeneratedKeys(record);
             }
+        }else {
+            WmsInnerInitStockDet wmsInnerInitStockDet = wmsInnerInitStockDetMapper.selectByPrimaryKey(record.getInitStockDetId());
+            if(StringUtils.isEmpty(wmsInnerInitStockDet.getPlanQty())){
+                wmsInnerInitStockDet.setPlanQty(BigDecimal.ZERO);
+            }
+            if(StringUtils.isEmpty(wmsInnerInitStockDet.getStockQty())){
+                wmsInnerInitStockDet.setStockQty(BigDecimal.ZERO);
+            }
+            record.setStockQty(wmsInnerInitStockDet.getStockQty().add(record.getStockQty()));
+            //差异量
+            BigDecimal varQty = record.getStockQty().subtract(record.getPlanQty());
+            int qty = varQty.intValue();
+            if(varQty.signum()==-1){
+                qty =  ~(varQty.intValue() - 1);
+            }
+            record.setVarianceQty(new BigDecimal(qty));
         }
         wmsInnerInitStockDetMapper.updateByPrimaryKeySelective(record);
         for (WmsInnerInitStockBarcode wmsInnerInitStockBarcode : record.getWmsInnerInitStockBarcodes()) {
