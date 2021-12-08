@@ -98,12 +98,11 @@ public class MonthInOutController {
 
     @PostMapping("/exportShipmentDet")
     @ApiOperation(value = "导出发货明细excel",notes = "导出发货明细excel",produces = "application/octet-stream")
-    public void export(HttpServletResponse response, @ApiParam(value = "查询对象") @RequestBody(required = false) SearchShipmentDet dto){
-        Page<Object> page = PageHelper.startPage(dto.getStartPage(), dto.getPageSize());
+    public void exportShipmentDet(HttpServletResponse response, @ApiParam(value = "查询对象") @RequestBody(required = false) SearchShipmentDet dto){
         List<ShipmentDetDto> list = monthInOutService.findShipmentDet(ControllerUtil.dynamicConditionByEntity(dto));
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "发货明细报表", "发货明细报表", MonthInDto.class, "发货明细报表.xls", response);
+            EasyPoiUtils.exportExcel(list, "发货明细报表", "发货明细报表", ShipmentDetDto.class, "发货明细报表.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
