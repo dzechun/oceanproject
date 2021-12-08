@@ -80,18 +80,23 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             List<PtlJobOrderDetDto> ptlJobOrderDetDtoList = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet).getData();
             warehouseAreaId = ptlJobOrderDetDtoList.get(0).getWarehouseAreaId();
         }
-        BaseWarehouseArea baseWarehouseArea = baseFeignApi.warehouseAreaDetail(warehouseAreaId).getData();
-        String lockKey = baseWarehouseArea.getWarehouseAreaCode() + "_lock";
+        String lockKey = "";
         String lockValue = "";
+        if (type == 0) {
+            BaseWarehouseArea baseWarehouseArea = baseFeignApi.warehouseAreaDetail(warehouseAreaId).getData();
+            lockKey = baseWarehouseArea.getWarehouseAreaCode() + "_lock";
+        }
 
         // 本次激活任务单列表
         List<PtlJobOrderDto> ptlJobOrderDtos = new LinkedList<>();
         try {
-            if (redisUtil.lock(lockKey)) {
-                lockValue = String.valueOf(redisUtil.get(lockKey));
-                log.info("=====================获取到:" + lockKey + "--->redisKEY, " + lockValue + "--->redisVALUE");
-            } else {
-                throw new Exception("正在处理电子标签任务，请稍后再试！");
+            if (type == 0) {
+                if (redisUtil.lock(lockKey)) {
+                    lockValue = String.valueOf(redisUtil.get(lockKey));
+                    log.info("=====================获取到:" + lockKey + "--->redisKEY, " + lockValue + "--->redisVALUE");
+                } else {
+                    throw new Exception("正在处理电子标签任务，请稍后再试！");
+                }
             }
             // 当前区域有多少任务单正在作业
             SearchPtlJobOrder searchPtlJobOrder = new SearchPtlJobOrder();
@@ -687,20 +692,24 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
         String[] jobOrderIds = ids.split(",");
         List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = new LinkedList<>();
-
-        SearchPtlJobOrderDet searchPtlJobOrderDet1 = new SearchPtlJobOrderDet();
-        searchPtlJobOrderDet1.setJobOrderId(Long.valueOf(jobOrderIds[0]));
-        List<PtlJobOrderDetDto> ptlJobOrderDetDtoList1 = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet1).getData();
-        String lockKey = ptlJobOrderDetDtoList1.get(0).getWarehouseAreaCode() + "_lock";
+        String lockKey = "";
         String lockValue = "";
         String endVehicleCode = "";
         String relatedOrderCode = "";
+        if (type == 0) {
+            SearchPtlJobOrderDet searchPtlJobOrderDet1 = new SearchPtlJobOrderDet();
+            searchPtlJobOrderDet1.setJobOrderId(Long.valueOf(jobOrderIds[0]));
+            List<PtlJobOrderDetDto> ptlJobOrderDetDtoList1 = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet1).getData();
+            lockKey = ptlJobOrderDetDtoList1.get(0).getWarehouseAreaCode() + "_lock";
+        }
         try {
-            if (redisUtil.lock(lockKey)) {
-                lockValue = String.valueOf(redisUtil.get(lockKey));
-                log.info("=====================获取到:" + lockKey + "--->redisKEY, " + lockValue + "--->redisVALUE");
-            } else {
-                throw new Exception("正在处理电子标签任务，请稍后再试！");
+            if (type == 0) {
+                if (redisUtil.lock(lockKey)) {
+                    lockValue = String.valueOf(redisUtil.get(lockKey));
+                    log.info("=====================获取到:" + lockKey + "--->redisKEY, " + lockValue + "--->redisVALUE");
+                } else {
+                    throw new Exception("正在处理电子标签任务，请稍后再试！");
+                }
             }
             String queueName = RabbitConfig.TOPIC_QUEUE_PRINT;
             for (String jobOrderId : jobOrderIds) {
@@ -770,7 +779,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                         }
                     }
                     if (StringUtils.isEmpty(temVehicleDtoList, vehicleCode)) {
-                        throw new Exception("空闲集货位不足，请稍后再操作");
+                        throw new Exception(ptlJobOrder.getRelatedOrderCode() + " 空闲集货位不足，请稍后再操作");
                     }
                 }
                 SearchPtlJobOrderDet searchPtlJobOrderDet = new SearchPtlJobOrderDet();
@@ -1293,7 +1302,19 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @LcnTransaction
     public int activateAndPrint(String ids, Long workUserId) throws Exception {
 
+        String[] jobOrderIds = ids.split(",");
+        SearchPtlJobOrderDet searchPtlJobOrderDet1 = new SearchPtlJobOrderDet();
+        searchPtlJobOrderDet1.setJobOrderId(Long.valueOf(jobOrderIds[0]));
+        List<PtlJobOrderDetDto> ptlJobOrderDetDtoList1 = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet1).getData();
+        String lockKey = ptlJobOrderDetDtoList1.get(0).getWarehouseAreaCode() + "_lock";
+        String lockValue = "";
         try {
+            if (redisUtil.lock(lockKey)) {
+                lockValue = String.valueOf(redisUtil.get(lockKey));
+                log.info("=====================获取到:" + lockKey + "--->redisKEY, " + lockValue + "--->redisVALUE");
+            } else {
+                throw new Exception("正在处理电子标签任务，请稍后再试！");
+            }
             List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = printPtlJobOrderLabel(ids, workUserId, 1);
             List<PtlJobOrderDto> ptlJobOrderDtoList = sendElectronicTagStorage(ids, Long.valueOf(0), 1);
             for (PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO : ptlJobOrderDetPrintDTOList) {
@@ -1330,8 +1351,10 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 String relatedOrderCode = ptlJobOrderDetPrintDTO.getRelatedOrderCode();
                 if (!vehicleCodeList.contains(vehicleCode)) {
                     if (StringUtils.isNotEmpty(redisUtil.get(vehicleCode))) {
-                        redisUtil.del(vehicleCode);
-                        log.info("打印完成，redis释放集货位：" + vehicleCode);
+                        redisUtil.set(vehicleCode, redisUtil.get(vehicleCode), 1);
+                        log.info("打印完成，redis延时1秒释放集货位：" + vehicleCode);
+//                        redisUtil.del(vehicleCode);
+//                        log.info("打印完成，redis释放集货位：" + vehicleCode);
                     }
                     if (StringUtils.isNotEmpty(redisUtil.get(relatedOrderCode))) {
                         redisUtil.set(relatedOrderCode, redisUtil.get(relatedOrderCode), 1);
@@ -1345,6 +1368,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             }
         } catch (Exception e) {
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), e.getMessage());
+        } finally {
+            redisUtil.unlock(lockKey, lockValue);
+            log.info("=====================释放了:" + lockKey + "--->redisKEY");
         }
 
         return 1;
@@ -1370,7 +1396,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Override
     public void fanoutSender(Integer code, RabbitMQDTO rabbitMQDTO, List<RabbitMQDTO> rabbitMQDTOList) throws Exception {
 
-        String queueName = RabbitConfig.TOPIC_QUEUE_PTL;
+        String queueName = null;
         MQResponseEntity mQResponseEntity = new MQResponseEntity<>();
         mQResponseEntity.setCode(code);
         if (StringUtils.isEmpty(rabbitMQDTOList)) {
@@ -1380,11 +1406,13 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             mQResponseEntity.setData(rabbitMQDTOList);
             queueName = rabbitMQDTOList.get(0).getQueueName();
         }
-        log.info("===========开始发送消息给客户端===============");
-        //发送给客户端控制亮/灭灯
-        fanoutSender.send(queueName, JSONObject.toJSONString(mQResponseEntity));
-        log.info("===========队列名称:" + queueName);
-        log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
+        if (StringUtils.isNotEmpty(queueName)) {
+            log.info("===========开始发送消息给客户端===============");
+            //发送给客户端控制亮/灭灯
+            fanoutSender.send(queueName, JSONObject.toJSONString(mQResponseEntity));
+            log.info("===========队列名称:" + queueName);
+            log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
+        }
     }
 
     @Override
