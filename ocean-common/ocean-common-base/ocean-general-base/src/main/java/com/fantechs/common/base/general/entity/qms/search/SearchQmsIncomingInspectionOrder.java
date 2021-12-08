@@ -58,5 +58,9 @@ public class SearchQmsIncomingInspectionOrder extends BaseQuery implements Seria
     @ApiModelProperty(name="mrbResult",value = "MRB评审(1-特采 2-挑选使用 3-退供应商)")
     private Byte mrbResult;
 
-
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
 }

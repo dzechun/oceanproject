@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Created by lfz on 2020/9/3.
@@ -47,4 +48,16 @@ public class BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="orgId",value = "组织id")
     private Long orgId;
+
+    /**
+     * 高级查询
+     */
+    @ApiModelProperty(name="map",value = "高级查询")
+    private Map<String,Query> query;
+
+    /**
+     * 查询对象
+     */
+    @ApiModelProperty(name="map",value = "查询对象")
+    private Query q;
 }

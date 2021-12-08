@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.qms.mapper.QmsBadnessManageBarcodeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.qms.QmsBadnessManageBarcode">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="badness_manage_barcode_id" jdbcType="BIGINT" property="badnessManageBarcodeId" />
+    <result column="badness_manage_id" jdbcType="BIGINT" property="badnessManageId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="pick_result" jdbcType="TINYINT" property="pickResult" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qbmb.badness_manage_barcode_id,
+    qbmb.badness_manage_id,
+    qbmb.barcode,
+    qbmb.pick_result,
+    qbmb.`status`,
+    qbmb.remark,
+    qbmb.org_id,
+    qbmb.create_user_id,
+    qbmb.create_time,
+    qbmb.modified_user_id,
+    qbmb.modified_time,
+    qbmb.is_delete,
+    qbmb.option1,
+    qbmb.option2,
+    qbmb.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from qms_badness_manage_barcode qbmb
+    left join sys_user u on qbmb.create_user_id=u.user_id
+    left join sys_user s on qbmb.modified_user_id=s.user_id
+    left join base_organization bo ON qbmb.org_id = bo.organization_id
+    <where>
+      <if test="badnessManageId!=null">
+        and qbmb.badness_manage_id = #{badnessManageId}
+      </if>
+      <if test="status!=null">
+        and qbmb.status = #{status}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qbmb.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and qbmb.org_id=#{orgId}
+      </if>
+    </where>
+    order by qbmb.create_time desc
+  </select>
+</mapper>

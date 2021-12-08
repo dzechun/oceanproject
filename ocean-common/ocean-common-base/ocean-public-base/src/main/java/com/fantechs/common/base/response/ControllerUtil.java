@@ -3,6 +3,7 @@ package com.fantechs.common.base.response;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.dto.Query;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.utils.RedisUtil;
@@ -161,10 +162,33 @@ public class ControllerUtil {
                 }
             }
         }
-
+        advancedQuery(map);
         return map;
     }
 
+    private static void advancedQuery(Map<String,Object> map) {
+        if (StringUtils.isNotEmpty(map.get("query"))) {
+            Map<String, Query> queryMap = (Map<String, Query>) map.get("query");
+            for (String key : queryMap.keySet()) {
+                String sql = "";
+                Query query = queryMap.get(key);
+                if ("in".equals(query.getQueryType())) {
+                    sql = "in("+query.getValue()+")";
+                }else if ("not in".equals(query.getQueryType())) {
+                    sql = "not in("+query.getValue()+")";
+                }else if ("like".equals(query.getQueryType())) {
+                    sql = "like '%"+query.getValue().replace("'","")+"%'";
+                }else if ("between".equals(query.getQueryType())) {
+                    String[] split = query.getValue().trim().split(",");
+                    sql = "between "+split[0]+"and"+split[1];
+                }else {
+                    sql = query.getQueryType()+query.getValue();
+                }
+                query.setSql(sql);
+                queryMap.put(key,query);
+            }
+        }
+    }
 
     /**
      * 对于部分增删改查统一一个返回数据

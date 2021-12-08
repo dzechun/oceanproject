@@ -22,7 +22,7 @@ public interface QmsIncomingInspectionOrderDetSampleService extends IService<Qms
 
     String checkBarcode(PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto);
 
-    int sampleSubmit(PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto);
+    int sampleSubmit(List<PdaIncomingSampleSubmitDto> list);
 
     int batchAdd(List<QmsIncomingInspectionOrderDetSample> qmsIncomingInspectionOrderDetSampleList);
 }

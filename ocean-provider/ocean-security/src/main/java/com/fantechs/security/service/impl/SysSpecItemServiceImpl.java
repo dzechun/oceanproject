@@ -52,20 +52,21 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
             List<SysSpecItem>  specItemList1 = JsonUtils.jsonToList(specItemList.toString(),SysSpecItem.class);
             List<Long> menuIds = new ArrayList<>();
             if (StringUtils.isNotEmpty(searchSysSpecItem.getMenuId())) {
-                Object menuList = redisUtil.get(MENU_REDIS_KEY);
-                if(ObjectUtil.isNull(menuList)){
-                    if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
-                        menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
-                                "parentId", "0",
-                                "menuType", 2 + ""
-                        ), null);
-                        redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(menuList));
-                    }
-                }
-                List<SysMenuInListDTO> menuInListDTOS = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
-                SysMenuInListDTO dg = this.findNodes(menuInListDTOS, searchSysSpecItem.getMenuId());
-                menuIds.add(dg.getSysMenuInfoDto().getMenuId());
-                this.disassemblyTree(dg,menuIds);
+//                Object menuList = redisUtil.get(MENU_REDIS_KEY);
+//                if(ObjectUtil.isNull(menuList)){
+//                    if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
+//                        menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
+//                                "parentId", "0",
+//                                "menuType", 2 + ""
+//                        ), null);
+//                        redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(menuList));
+//                    }
+//                }
+//                List<SysMenuInListDTO> menuInListDTOS = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
+//                SysMenuInListDTO dg = this.findNodes(menuInListDTOS, searchSysSpecItem.getMenuId());
+//                menuIds.add(dg.getSysMenuInfoDto().getMenuId());
+//                this.disassemblyTree(dg,menuIds);
+                menuIds = sysMenuInfoService.getMenu(searchSysSpecItem.getMenuId());
             }
 
             for (int i = 0; i < specItemList1.size(); i++) {

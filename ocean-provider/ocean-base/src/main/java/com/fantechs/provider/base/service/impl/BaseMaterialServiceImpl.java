@@ -4,23 +4,14 @@ package com.fantechs.provider.base.service.impl;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
-import com.fantechs.common.base.general.dto.basic.BaseMaterialDto;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.basic.imports.BaseMaterialImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterial;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseTabDto;
-import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
-import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
-import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
-import com.fantechs.common.base.general.dto.basic.BaseInspectionItemDto;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabel;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
-import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
+import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -74,6 +65,8 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     private BaseBarcodeRuleSetMapper baseBarcodeRuleSetMapper;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private BaseInspectionItemMapper baseInspectionItemMapper;
 
     @Override
     public List<BaseMaterialDto> findList(Map<String, Object> map){
@@ -491,15 +484,16 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
 
             //检验项目单号不为空判断检验项目信息是否存在
             if (StringUtils.isNotEmpty(inspectionItemCode)){
-                SearchQmsInspectionItem searchQmsInspectionItem = new SearchQmsInspectionItem();
-                searchQmsInspectionItem.setInspectionItemCode(inspectionItemCode);
-                searchQmsInspectionItem.setCodeQueryMark((byte) 1);
-                List<BaseInspectionItemDto> qmsInspectionItemDtos = baseFeignApi.findInspectionItemList(searchQmsInspectionItem).getData();
-                if (StringUtils.isEmpty(qmsInspectionItemDtos)){
+                Example example2 = new Example(BaseInspectionItem.class);
+                Example.Criteria criteria2 = example2.createCriteria();
+                criteria2.andEqualTo("organizationId", currentUser.getOrganizationId());
+                criteria2.andEqualTo("inspectionItemCode",inspectionItemCode);
+                BaseInspectionItem baseInspectionItem = baseInspectionItemMapper.selectOneByExample(example2);
+                if (StringUtils.isEmpty(baseInspectionItem)){
                     fail.add(i+4);
                     continue;
                 }
-                baseMaterialImport.setInspectionItemId(qmsInspectionItemDtos.get(0).getInspectionItemId());
+                baseMaterialImport.setInspectionItemId(baseInspectionItem.getInspectionItemId());
             }
 
             //标签类别编码不为空则判断标签类别信息是否存在

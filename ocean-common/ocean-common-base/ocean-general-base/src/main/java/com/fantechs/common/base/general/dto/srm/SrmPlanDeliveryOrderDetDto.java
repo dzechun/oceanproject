@@ -45,7 +45,7 @@ public class SrmPlanDeliveryOrderDetDto extends SrmPlanDeliveryOrderDet implemen
      * 采购订单号
      */
     @Transient
-    @Excel(name = "供应商名称", height = 20, width = 30,orderNum="3")
+    @Excel(name = "采购订单号", height = 20, width = 30,orderNum="3")
     @ApiModelProperty(name="purchaseOrderCode",value = "采购订单号")
     private String purchaseOrderCode;
 

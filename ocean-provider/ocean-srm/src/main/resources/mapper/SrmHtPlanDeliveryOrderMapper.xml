@@ -8,6 +8,7 @@
     <id column="ht_plan_delivery_order_id" jdbcType="BIGINT" property="htPlanDeliveryOrderId" />
     <result column="plan_delivery_order_id" jdbcType="BIGINT" property="planDeliveryOrderId" />
     <result column="plan_delivery_order_code" jdbcType="VARCHAR" property="planDeliveryOrderCode" />
+    <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -29,6 +30,7 @@
   <sql id="Base_Column_List">
     spdo.plan_delivery_order_id,
     spdo.plan_delivery_order_code,
+    spdo.sys_order_type_code,
     spdo.supplier_id,
     spdo.order_status,
     spdo.status,

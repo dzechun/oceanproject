@@ -4,7 +4,6 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingCheckBarcodeDto;
-import com.fantechs.common.base.general.dto.qms.PdaIncomingDetSubmitDto;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingSampleSubmitDto;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDetSampleDto;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
@@ -108,6 +107,9 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
         //不良数量
         qmsIncomingInspectionOrderDet.setBadnessQty(new BigDecimal(badnessQty));
         //计算明细检验结果
+        if(StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getAcValue(),qmsIncomingInspectionOrderDet.getReValue())){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"该检验单明细的AC或RE值为空，无法计算检验结果");
+        }
         if (qmsIncomingInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsIncomingInspectionOrderDet.getAcValue())) == 0
                 ||qmsIncomingInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsIncomingInspectionOrderDet.getAcValue())) == -1) {
             qmsIncomingInspectionOrderDet.setInspectionResult((byte) 1);
@@ -140,31 +142,34 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
             criteria1.andEqualTo("incomingInspectionOrderDetId", detId);
             List<QmsIncomingInspectionOrderDetSample> detSamples = qmsIncomingInspectionOrderDetSampleMapper.selectByExample(example);
             QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet = qmsIncomingInspectionOrderDetMapper.selectByPrimaryKey(detId);
+            if(StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getSampleQty())){
+                throw new BizErrorException("样本数为空");
+            }
             if(qmsIncomingInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(detSamples.size())) == 0){
                 throw new BizErrorException("检验样本数已达上限");
             }
         }
+
+        //条码校验
 
         return barcode;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int sampleSubmit(PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto){
+    public int sampleSubmit(List<PdaIncomingSampleSubmitDto> list){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        List<PdaIncomingDetSubmitDto> pdaIncomingDetSubmitDtoList = pdaIncomingSampleSubmitDto.getPdaIncomingDetSubmitDtoList();
-        String barcode = pdaIncomingSampleSubmitDto.getBarcode();
         List<QmsIncomingInspectionOrderDetSample> sampleList = new LinkedList<>();
         int i = 0;
 
         //条码不为空则提交样本值，条码为空则提交明细
-        if(StringUtils.isNotEmpty(barcode)) {
+        if(StringUtils.isNotEmpty(list.get(0).getBarcode())) {
             QmsIncomingInspectionOrder qmsIncomingInspectionOrder = null;
-            for (PdaIncomingDetSubmitDto pdaIncomingDetSubmitDto : pdaIncomingDetSubmitDtoList) {
-                Long detId = pdaIncomingDetSubmitDto.getIncomingInspectionOrderDetId();
+            for (PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto : list) {
+                Long detId = pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId();
                 Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
                 Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("incomingInspectionOrderDetId",pdaIncomingDetSubmitDto.getIncomingInspectionOrderDetId());
+                criteria1.andEqualTo("incomingInspectionOrderDetId",pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId());
                 List<QmsIncomingInspectionOrderDetSample> detSampleList = qmsIncomingInspectionOrderDetSampleMapper.selectByExample(example1);
                 QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet = qmsIncomingInspectionOrderDetMapper.selectByPrimaryKey(detId);
 
@@ -174,6 +179,9 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
                 }
                 //检验数与样本数相等时，计算检验结果
                 if (qmsIncomingInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(detSampleList.size() + 1)) == 0) {
+                    if(StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getAcValue(),qmsIncomingInspectionOrderDet.getReValue())){
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"检验单明细的AC或RE值为空，无法计算检验结果");
+                    }
                     if (qmsIncomingInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsIncomingInspectionOrderDet.getAcValue())) == 0
                     ||qmsIncomingInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsIncomingInspectionOrderDet.getAcValue())) == -1) {
                         qmsIncomingInspectionOrderDet.setInspectionResult((byte) 1);
@@ -210,15 +218,16 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
         }else {
             Byte inspectionResult = 1;
             QmsIncomingInspectionOrder qmsIncomingInspectionOrder = null;
-            for (PdaIncomingDetSubmitDto pdaIncomingDetSubmitDto : pdaIncomingDetSubmitDtoList) {
-                QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet = qmsIncomingInspectionOrderDetMapper.selectByPrimaryKey(pdaIncomingDetSubmitDto.getIncomingInspectionOrderDetId());
-                qmsIncomingInspectionOrderDet.setBadnessCategoryId(pdaIncomingDetSubmitDto.getBadnessCategoryId());
+            for (PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto : list) {
+                QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet = qmsIncomingInspectionOrderDetMapper.selectByPrimaryKey(pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId());
+                qmsIncomingInspectionOrderDet.setBadnessCategoryId(pdaIncomingSampleSubmitDto.getBadnessCategoryId());
                 i += qmsIncomingInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrderDet);
 
                 if(qmsIncomingInspectionOrder == null){
                     qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
                 }
-                if(qmsIncomingInspectionOrderDet.getInspectionResult() == (byte)0){
+                if(qmsIncomingInspectionOrderDet.getInspectionResult()!=null
+                        &&qmsIncomingInspectionOrderDet.getInspectionResult() == (byte)0){
                     inspectionResult = 0;
                 }
             }
