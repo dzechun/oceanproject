@@ -14,6 +14,6 @@ import java.util.Map;
 
 public interface QmsBadnessManageService extends IService<QmsBadnessManage> {
     List<QmsBadnessManage> findList(Map<String, Object> map);
-    String checkBarcode(String barcode);
+    String checkBarcode(String barcode,Long incomingInspectionOrderId);
     int submit(PdaIncomingSelectToUseSubmitDto pdaIncomingSelectToUseSubmitDto);
 }

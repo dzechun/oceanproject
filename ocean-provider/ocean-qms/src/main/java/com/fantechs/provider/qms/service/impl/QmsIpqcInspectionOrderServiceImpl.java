@@ -307,36 +307,38 @@ public class QmsIpqcInspectionOrderServiceImpl extends BaseService<QmsIpqcInspec
         criteria.andEqualTo("ipqcInspectionOrderId",ipqcInspectionOrderId);
         List<QmsIpqcInspectionOrderDet> qmsIpqcInspectionOrderDets = qmsIpqcInspectionOrderDetMapper.selectByExample(example);
 
-        //计算明细项目合格数、不合格数、必检项目已检验数、必检项目数
-        int qualifiedCount = 0;
-        int unqualifiedCount = 0;
-        int inspectionCount = 0;
-        int mustInspectionCount = 0;
-        for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDets){
-            if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDet.getInspectionResult())){
-                if(qmsIpqcInspectionOrderDet.getInspectionResult()==(byte)0){
-                    unqualifiedCount++;
-                }else {
-                    qualifiedCount++;
+        if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDets)) {
+            //计算明细项目合格数、不合格数、必检项目已检验数、必检项目数
+            int qualifiedCount = 0;
+            int unqualifiedCount = 0;
+            int inspectionCount = 0;
+            int mustInspectionCount = 0;
+            for (QmsIpqcInspectionOrderDet qmsIpqcInspectionOrderDet : qmsIpqcInspectionOrderDets) {
+                if (StringUtils.isNotEmpty(qmsIpqcInspectionOrderDet.getInspectionResult())) {
+                    if (qmsIpqcInspectionOrderDet.getInspectionResult() == (byte) 0) {
+                        unqualifiedCount++;
+                    } else {
+                        qualifiedCount++;
+                    }
+                }
+
+                if (qmsIpqcInspectionOrderDet.getIfMustInspection() == (byte) 1) {
+                    mustInspectionCount++;
+                }
+
+                if (StringUtils.isNotEmpty(qmsIpqcInspectionOrderDet.getInspectionResult())
+                        && qmsIpqcInspectionOrderDet.getIfMustInspection() == (byte) 1) {
+                    inspectionCount++;
                 }
             }
 
-            if(qmsIpqcInspectionOrderDet.getIfMustInspection()==(byte)1){
-                mustInspectionCount++;
+            if (inspectionCount == mustInspectionCount) {
+                QmsIpqcInspectionOrder qmsIpqcInspectionOrder = new QmsIpqcInspectionOrder();
+                qmsIpqcInspectionOrder.setIpqcInspectionOrderId(ipqcInspectionOrderId);
+                qmsIpqcInspectionOrder.setInspectionStatus((byte) 3);
+                qmsIpqcInspectionOrder.setInspectionResult(unqualifiedCount == 0 ? (byte) 1 : (byte) 2);
+                return qmsIpqcInspectionOrderMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrder);
             }
-
-            if(StringUtils.isNotEmpty(qmsIpqcInspectionOrderDet.getInspectionResult())
-                    &&qmsIpqcInspectionOrderDet.getIfMustInspection()==(byte)1){
-                inspectionCount++;
-            }
-        }
-
-        if(inspectionCount == mustInspectionCount){
-            QmsIpqcInspectionOrder qmsIpqcInspectionOrder = new QmsIpqcInspectionOrder();
-            qmsIpqcInspectionOrder.setIpqcInspectionOrderId(ipqcInspectionOrderId);
-            qmsIpqcInspectionOrder.setInspectionStatus((byte) 3);
-            qmsIpqcInspectionOrder.setInspectionResult(unqualifiedCount==0 ? (byte)1 : (byte)2);
-            return qmsIpqcInspectionOrderMapper.updateByPrimaryKeySelective(qmsIpqcInspectionOrder);
         }
 
         return 0;

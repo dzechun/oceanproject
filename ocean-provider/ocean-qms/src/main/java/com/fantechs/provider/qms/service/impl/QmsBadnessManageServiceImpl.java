@@ -41,7 +41,7 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String checkBarcode(String barcode) {
+    public String checkBarcode(String barcode,Long incomingInspectionOrderId) {
         //校验条码
 
         return barcode;

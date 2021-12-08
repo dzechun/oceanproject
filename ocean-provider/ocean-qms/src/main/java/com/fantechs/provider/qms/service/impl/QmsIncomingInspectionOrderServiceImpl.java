@@ -211,26 +211,28 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     }
 
     public void checkInspectionResult(List<QmsIncomingInspectionOrderDet> list){
-        boolean tag = true;
-        Byte inspectionResult = 1;
-        for (QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet : list){
-            if(qmsIncomingInspectionOrderDet.getIfMustInspection()==1&&
-                    StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getInspectionResult())){
-                tag = false;
-                break;
+        if(StringUtils.isNotEmpty(list)) {
+            boolean tag = true;
+            Byte inspectionResult = 1;
+            for (QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet : list) {
+                if (qmsIncomingInspectionOrderDet.getIfMustInspection() == 1 &&
+                        StringUtils.isEmpty(qmsIncomingInspectionOrderDet.getInspectionResult())) {
+                    tag = false;
+                    break;
+                }
+                if (qmsIncomingInspectionOrderDet.getInspectionResult() != null &&
+                        qmsIncomingInspectionOrderDet.getInspectionResult() == (byte) 0) {
+                    inspectionResult = 0;
+                }
             }
-            if(qmsIncomingInspectionOrderDet.getInspectionResult()!=null&&
-                    qmsIncomingInspectionOrderDet.getInspectionResult() == (byte)0){
-                inspectionResult = 0;
-            }
-        }
 
-        if(tag){
-            //返写检验单结果
-            QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(list.get(0).getIncomingInspectionOrderId());
-            qmsIncomingInspectionOrder.setInspectionResult(inspectionResult);
-            qmsIncomingInspectionOrder.setInspectionStatus((byte)3);
-            qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
+            if (tag) {
+                //返写检验单结果
+                QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(list.get(0).getIncomingInspectionOrderId());
+                qmsIncomingInspectionOrder.setInspectionResult(inspectionResult);
+                qmsIncomingInspectionOrder.setInspectionStatus((byte) 3);
+                qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
+            }
         }
     }
 
