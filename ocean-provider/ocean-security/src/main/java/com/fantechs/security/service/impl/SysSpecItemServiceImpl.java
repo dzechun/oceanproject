@@ -72,19 +72,13 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
                 if (StringUtils.isNotEmpty(menuIds) && menuIds.size()>0 && !menuIds.contains(specItemList1.get(i).getMenuId())){
                     specItemList1.remove(i);
                     i--;
-                }
-
-                if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecCode()) && !specItemList1.get(i).getSpecCode().contains(searchSysSpecItem.getSpecCode())) {
+                }else if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecCode()) && !specItemList1.get(i).getSpecCode().contains(searchSysSpecItem.getSpecCode())) {
                     specItemList1.remove(i);
                     i--;
-                }
-
-                if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecName()) && !specItemList1.get(i).getSpecName().contains(searchSysSpecItem.getSpecName())) {
+                }else if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecName()) && !specItemList1.get(i).getSpecName().contains(searchSysSpecItem.getSpecName())) {
                     specItemList1.remove(i);
                     i--;
-                }
-
-                if (StringUtils.isNotEmpty(searchSysSpecItem.getPara()) && !specItemList1.get(i).getPara().contains(searchSysSpecItem.getPara())) {
+                }else if (StringUtils.isNotEmpty(searchSysSpecItem.getPara()) && !specItemList1.get(i).getPara().contains(searchSysSpecItem.getPara())) {
                     specItemList1.remove(i);
                     i--;
                 }
