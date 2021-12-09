@@ -29,8 +29,6 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
 
         searchProLineBoard.setStartTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
         searchProLineBoard.setEndTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
-       /* searchProLineBoard.setStartTime("2021-10-22");
-        searchProLineBoard.setEndTime("2021-10-22");*/
         searchProLineBoard.setOrgId((long)1000);
         ProLineBoardModel model = proLineBoardMapper.findPlanList(searchProLineBoard);
         if(StringUtils.isNotEmpty(model)) {
