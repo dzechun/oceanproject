@@ -57,8 +57,8 @@ public class QmsIncomingInspectionOrderDetSampleController {
 
     @ApiOperation(value = "PDA样本值提交",notes = "PDA样本值提交")
     @PostMapping("/sampleSubmit")
-    public ResponseEntity sampleSubmit(@ApiParam(value = "必传：",required = true)@RequestBody @Validated PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto) {
-        return ControllerUtil.returnCRUD(qmsIncomingInspectionOrderDetSampleService.sampleSubmit(pdaIncomingSampleSubmitDto));
+    public ResponseEntity sampleSubmit(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<PdaIncomingSampleSubmitDto> list) {
+        return ControllerUtil.returnCRUD(qmsIncomingInspectionOrderDetSampleService.sampleSubmit(list));
     }
 
     @ApiOperation(value = "新增",notes = "新增")
