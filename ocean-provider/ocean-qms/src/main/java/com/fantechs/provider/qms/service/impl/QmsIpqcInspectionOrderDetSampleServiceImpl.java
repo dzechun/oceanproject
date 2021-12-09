@@ -6,25 +6,19 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.entity.basic.BaseProLine;
-import com.fantechs.common.base.general.entity.basic.BaseSampleProcess;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
-import com.fantechs.common.base.general.entity.qms.*;
+import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder;
+import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDet;
+import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderDetSample;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderDetSampleService;
-import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderDetService;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +26,10 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -117,6 +114,9 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
                     beginIndex = Integer.parseInt(arry[0]);
                     endIndex = Integer.parseInt(arry[1]);
                 }
+            }
+            if(barcode.length() < endIndex){
+                throw new BizErrorException("条码错误");
             }
             String workOrderCode = barcode.substring(beginIndex, endIndex);
 

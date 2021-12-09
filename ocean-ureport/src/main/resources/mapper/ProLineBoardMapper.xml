@@ -25,7 +25,7 @@
     </resultMap>
 
     <select id="findPlanList" resultMap="BaseResultMap" parameterType="com.fantechs.entity.search.SearchProLineBoard">
-        select 	sum(mpwo.scheduled_qty)AS 'scheduledQty', sum(mpwo.output_qty) AS 'outputQty', mpwo.pro_line_id AS 'proLineId'
+        select 	sum(mpdp.schedule_qty)AS 'scheduledQty', sum(mpwo.output_qty) AS 'outputQty', mpwo.pro_line_id AS 'proLineId'
         , bpl.pro_name AS 'proName'
         from mes_pm_daily_plan mpdp
         LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id

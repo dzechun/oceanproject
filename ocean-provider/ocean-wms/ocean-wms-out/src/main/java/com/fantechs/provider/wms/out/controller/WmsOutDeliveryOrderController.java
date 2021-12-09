@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryOrderImport;
+import com.fantechs.common.base.general.dto.wms.out.imports.WmsSamsungOutDeliveryOrderImport;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
@@ -180,6 +181,31 @@ public class WmsOutDeliveryOrderController {
             // 导入操作
             List<WmsOutDeliveryOrderImport> wmsOutDeliveryOrderImports = EasyPoiUtils.importExcel(file, 0, 1, WmsOutDeliveryOrderImport.class);
             Map<String, Object> resultMap = wmsOutDeliveryOrderService.importExcel(wmsOutDeliveryOrderImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        }catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+    }
+
+    /**
+     * 从excel导入数据（三星）
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/importSamsungExcel")
+    @ApiOperation(value = "从excel导入信息（三星）",notes = "从excel导入信息（三星）")
+    public ResponseEntity importSamsungExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<WmsSamsungOutDeliveryOrderImport> wmsSamsungOutDeliveryOrderImports = EasyPoiUtils.importExcel(file, 2, 1, WmsSamsungOutDeliveryOrderImport.class);
+            Map<String, Object> resultMap = wmsOutDeliveryOrderService.importSamsungExcel(wmsSamsungOutDeliveryOrderImports);
             return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
         }catch (RuntimeException e) {
             e.printStackTrace();
