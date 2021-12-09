@@ -121,17 +121,20 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
         List<Long> menuIds = new ArrayList<>();
         if (StringUtils.isNotEmpty(menuId)) {
             Object menuList = redisUtil.get(MENU_REDIS_KEY);
+            List<SysMenuInListDTO> list = null;
             if(ObjectUtil.isNull(menuList)){
                 if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
-                    menuList = this.findMenuList(ControllerUtil.dynamicCondition(
+                    list = this.findMenuList(ControllerUtil.dynamicCondition(
                             "parentId", "0",
                             "menuType", 2 + ""
                     ), null);
-                    redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(menuList));
+                    redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(list));
                 }
             }
-            List<SysMenuInListDTO> menuInListDTOS = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
-            SysMenuInListDTO dg = this.findNodes(menuInListDTOS, menuId);
+            if (StringUtils.isEmpty(list)) {
+                list = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
+            }
+            SysMenuInListDTO dg = this.findNodes(list, menuId);
             if (StringUtils.isNotEmpty(dg)) {
                 menuIds.add(dg.getSysMenuInfoDto().getMenuId());
                 this.disassemblyTree(dg,menuIds);

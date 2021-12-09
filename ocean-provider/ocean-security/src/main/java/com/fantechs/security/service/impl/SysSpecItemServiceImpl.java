@@ -42,8 +42,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     private RedisUtil redisUtil;
     @Resource
     private SysHtSpecItemMapper sysHtSpecItemMapper;
-    @Resource
-    private SysMenuInfoService sysMenuInfoService;
+
 
     @Override
     public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
@@ -66,7 +65,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
 //                SysMenuInListDTO dg = this.findNodes(menuInListDTOS, searchSysSpecItem.getMenuId());
 //                menuIds.add(dg.getSysMenuInfoDto().getMenuId());
 //                this.disassemblyTree(dg,menuIds);
-                menuIds = sysMenuInfoService.getMenu(searchSysSpecItem.getMenuId());
+                menuIds = searchSysSpecItem.getMenuIds();
             }
 
             for (int i = 0; i < specItemList1.size(); i++) {

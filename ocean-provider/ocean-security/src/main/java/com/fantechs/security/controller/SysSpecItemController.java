@@ -10,6 +10,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.service.SysHtSpecItemService;
+import com.fantechs.security.service.SysMenuInfoService;
 import com.fantechs.security.service.SysSpecItemService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -42,11 +44,15 @@ public class SysSpecItemController {
     private SysSpecItemService sysSpecItemService;
     @Autowired
     private SysHtSpecItemService sysHtSpecItemService;
+    @Resource
+    private SysMenuInfoService sysMenuInfoService;
 
     @ApiOperation("根据条件查询程序配置项列表")
     @PostMapping("/findList")
     public ResponseEntity<List<SysSpecItem>> findList(
             @ApiParam(value = "查询条件，请参考Model说明")@RequestBody(required = false) SearchSysSpecItem searchSysSpecItem){
+        List<Long> menuIds = sysMenuInfoService.getMenu(searchSysSpecItem.getMenuId());
+        searchSysSpecItem.setMenuIds(menuIds);
         Page<Object> page = PageHelper.startPage(searchSysSpecItem.getStartPage(),searchSysSpecItem.getPageSize());
         List<SysSpecItem> SysSpecItems = sysSpecItemService.findList(searchSysSpecItem);
         return ControllerUtil.returnDataSuccess(SysSpecItems,(int)page.getTotal());
