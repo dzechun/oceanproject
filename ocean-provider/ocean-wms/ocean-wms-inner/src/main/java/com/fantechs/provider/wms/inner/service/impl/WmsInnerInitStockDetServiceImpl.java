@@ -105,7 +105,7 @@ public class WmsInnerInitStockDetServiceImpl extends BaseService<WmsInnerInitSto
             }
             record.setStockQty(wmsInnerInitStockDet.getStockQty().add(record.getStockQty()));
             //差异量
-            BigDecimal varQty = record.getStockQty().subtract(record.getPlanQty());
+            BigDecimal varQty = record.getStockQty().subtract(wmsInnerInitStockDet.getPlanQty());
             int qty = varQty.intValue();
             if(varQty.signum()==-1){
                 qty =  ~(varQty.intValue() - 1);
