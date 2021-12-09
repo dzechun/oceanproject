@@ -103,11 +103,12 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                 for(OmPurchaseOrderDet det : omPurchaseOrderDetDtos){
                     if(baseMaterials.get(0).getMaterialId().equals(det.getMaterialId())){
                         srmInAsnOrderDetDto.setOrderQty(det.getOrderQty());
+                        srmInAsnOrderDetDto.setSourceOrderId(det.getPurchaseOrderId());
                     }
                 }
 
             }else{
-                srmInAsnOrderDetDto.setOrderQty(BigDecimal.ZERO);
+                throw new BizErrorException("未查询到采购订单明细为"+ purchaseOrderCode +"的信息");
             }
             if(StringUtils.isEmpty(srmInAsnOrderDetImport.getDeliveryQty()))
                 srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
