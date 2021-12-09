@@ -9,15 +9,14 @@ import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDetSam
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDetSample;
+import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspectionOrderDetSample;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.qms.mapper.QmsHtIncomingInspectionOrderDetSampleMapper;
-import com.fantechs.provider.qms.mapper.QmsIncomingInspectionOrderDetMapper;
-import com.fantechs.provider.qms.mapper.QmsIncomingInspectionOrderDetSampleMapper;
-import com.fantechs.provider.qms.mapper.QmsIncomingInspectionOrderMapper;
+import com.fantechs.provider.qms.mapper.*;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderDetSampleService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -47,6 +46,9 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
 
     @Resource
     private QmsHtIncomingInspectionOrderDetSampleMapper qmsHtIncomingInspectionOrderDetSampleMapper;
+
+    @Resource
+    private QmsHtIncomingInspectionOrderMapper qmsHtIncomingInspectionOrderMapper;
 
     @Override
     public List<QmsHtIncomingInspectionOrderDetSample> findHtList(Map<String, Object> map) {
@@ -160,11 +162,11 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
     public int sampleSubmit(List<PdaIncomingSampleSubmitDto> list){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<QmsIncomingInspectionOrderDetSample> sampleList = new LinkedList<>();
+        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = null;
         int i = 0;
 
         //条码不为空则提交样本值，条码为空则提交明细
         if(StringUtils.isNotEmpty(list.get(0).getBarcode())) {
-            QmsIncomingInspectionOrder qmsIncomingInspectionOrder = null;
             for (PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto : list) {
                 Long detId = pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId();
                 Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
@@ -217,7 +219,6 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
             i += qmsIncomingInspectionOrderDetSampleMapper.insertList(sampleList);
         }else {
             Byte inspectionResult = 1;
-            QmsIncomingInspectionOrder qmsIncomingInspectionOrder = null;
             for (PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto : list) {
                 QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet = qmsIncomingInspectionOrderDetMapper.selectByPrimaryKey(pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId());
                 qmsIncomingInspectionOrderDet.setBadnessCategoryId(pdaIncomingSampleSubmitDto.getBadnessCategoryId());
@@ -236,6 +237,11 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
             qmsIncomingInspectionOrder.setInspectionStatus((byte)3);
             qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
         }
+
+        //履历
+        QmsHtIncomingInspectionOrder qmsHtIncomingInspectionOrder = new QmsHtIncomingInspectionOrder();
+        BeanUtils.copyProperties(qmsIncomingInspectionOrder, qmsHtIncomingInspectionOrder);
+        qmsHtIncomingInspectionOrderMapper.insertSelective(qmsHtIncomingInspectionOrder);
 
         return i;
     }
