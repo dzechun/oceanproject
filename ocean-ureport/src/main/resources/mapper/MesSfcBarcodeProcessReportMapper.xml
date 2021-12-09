@@ -161,7 +161,7 @@
     FROM
       mes_sfc_rework_order_barcode msrob
       LEFT JOIN mes_sfc_rework_order msro ON msrob.rework_order_id = msro.rework_order_id
-      LEFT JOIN mes_sfc_barcode_process_record msbpr ON msrob.work_order_barcode_id = msbpr.work_order_barcode_id AND msrob.rework_order_id IS NOT NULL
+      LEFT JOIN mes_sfc_barcode_process_record msbpr ON msrob.work_order_barcode_id = msbpr.work_order_barcode_id  AND msbpr.rework_order_id = msrob.rework_order_id
       LEFT JOIN base_process bp ON msro.rework_start_process_id = bp.process_id
       LEFT JOIN base_route br ON msro.rework_route_id = br.route_id
       <where>
