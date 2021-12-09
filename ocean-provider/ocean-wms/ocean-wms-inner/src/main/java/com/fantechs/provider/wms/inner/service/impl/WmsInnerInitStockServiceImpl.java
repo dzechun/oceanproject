@@ -135,9 +135,31 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                 criteria.andEqualTo("clientBarcode1",barCode).orEqualTo("clientBarcode2",barCode).orEqualTo("clientBarcode3",barCode);
             }
         }
-        WmsInnerInitStockBarcode wmsInnerInitStockBarcode = wmsInnerInitStockBarcodeMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(wmsInnerInitStockBarcode)){
-            throw new BizErrorException("重复扫码");
+        List<WmsInnerInitStockBarcode> wmsInnerInitStockBarcodes = wmsInnerInitStockBarcodeMapper.selectByExample(example);
+        if (!wmsInnerInitStockBarcodes.isEmpty()){
+            if(initStockCheckBarCode.getType()==4){
+                for (WmsInnerInitStockBarcode wmsInnerInitStockBarcode : wmsInnerInitStockBarcodes) {
+                    //判断是否GE/多美达
+                    WmsInnerInitStockDet wmsInnerInitStockDet = wmsInnerInitStockDetMapper.selectByPrimaryKey(wmsInnerInitStockBarcode.getInitStockDetId());
+                    if(wmsInnerInitStockDet.getProductType()==2){
+                        //获取长度最
+                        String clientCode = null;
+                        if(wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode2().length() && wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
+                            clientCode = wmsInnerInitStockBarcode.getClientBarcode1();
+                        }else if(wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode1().length() && wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
+                            clientCode = wmsInnerInitStockBarcode.getClientBarcode2();
+                        }else{
+                            clientCode = wmsInnerInitStockBarcode.getClientBarcode3();
+                        }
+
+                        if(StringUtils.isNotEmpty(clientCode) && clientCode.equals(initStockCheckBarCode.getClientBarcode())){
+                            throw new BizErrorException("重复扫码");
+                        }
+                    }
+                }
+            }else {
+                throw new BizErrorException("重复扫码");
+            }
         }
         //厂内码截取12位 查询物料信息
         if(isInPlantBarCode && (StringUtils.isNotEmpty(initStockCheckBarCode.getInPlantBarcode())|| StringUtils.isNotEmpty(initStockCheckBarCode.getClientBarcode()))){

@@ -41,5 +41,6 @@
         and (wiisb.client_barcode1 like CONCAT('%',#{clientBarcode},'%') or wiisb.client_barcode2 like CONCAT('%',#{clientBarcode},'%') or wiisb.client_barcode3 like CONCAT('%',#{clientBarcode},'%'))
       </if>
     </where>
+    order by wiisb.init_stock_barcode_id desc
   </select>
 </mapper>
