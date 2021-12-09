@@ -103,7 +103,7 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                 for(OmPurchaseOrderDet det : omPurchaseOrderDetDtos){
                     if(baseMaterials.get(0).getMaterialId().equals(det.getMaterialId())){
                         srmInAsnOrderDetDto.setOrderQty(det.getOrderQty());
-                        srmInAsnOrderDetDto.setSourceOrderId(det.getPurchaseOrderId());
+                        srmInAsnOrderDetDto.setSourceOrderId(det.getPurchaseOrderDetId());
                     }
                 }
 
