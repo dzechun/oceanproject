@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.out.service;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryOrderImport;
+import com.fantechs.common.base.general.dto.wms.out.imports.WmsSamsungOutDeliveryOrderImport;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
 import com.fantechs.common.base.support.IService;
@@ -49,4 +50,7 @@ public interface WmsOutDeliveryOrderService extends IService<WmsOutDeliveryOrder
 
     //封单
     int sealOrder(Long outDeliveryOrderId);
+
+    //三星导入
+    Map<String, Object> importSamsungExcel(List<WmsSamsungOutDeliveryOrderImport> wmsSamsungOutDeliveryOrderImports);
 }
