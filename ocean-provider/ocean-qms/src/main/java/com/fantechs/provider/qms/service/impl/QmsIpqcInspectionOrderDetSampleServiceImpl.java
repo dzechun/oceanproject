@@ -115,6 +115,9 @@ public class QmsIpqcInspectionOrderDetSampleServiceImpl extends BaseService<QmsI
                     endIndex = Integer.parseInt(arry[1]);
                 }
             }
+            if(barcode.length() < endIndex){
+                throw new BizErrorException("条码错误");
+            }
             String workOrderCode = barcode.substring(beginIndex, endIndex);
 
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();

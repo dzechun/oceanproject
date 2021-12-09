@@ -227,6 +227,10 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         return i;
     }
 
+    /**
+     *
+     * @param list
+     */
     public void checkInspectionResult(List<QmsIncomingInspectionOrderDet> list){
         if(StringUtils.isNotEmpty(list)) {
             Byte inspectionResult = 1;

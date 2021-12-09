@@ -79,14 +79,17 @@
       <if test="materialName!=null and materialName!=''">
         and bm.material_name like CONCAT('%', #{materialName}, '%')
       </if>
-      <if test="supplierId!=null">
-        and bis.supplier_id = #{supplierId}
-      </if>
       <if test="inspectionType!=null">
         and bis.inspection_type = #{inspectionType}
       </if>
-      <if test="customerId!=null and ifContainCommon!=1">
-        and bis.customer_id = #{customerId}
+      <if test="supplierId!=null and ifContainCommon!=1">
+        and bis.supplier_id = #{supplierId}
+      </if>
+      <if test="supplierId!=null and ifContainCommon==1">
+        and (bis.supplier_id = #{supplierId} or bis.material_id = 0)
+      </if>
+      <if test="supplierId==null and ifContainCommon==1">
+        and (bis.supplier_id is null or bis.material_id = 0)
       </if>
       <if test="materialId!=null and ifContainCommon!=1">
         and bis.material_id = #{materialId}
@@ -96,6 +99,9 @@
       </if>
       <if test="materialId==null and ifContainCommon==1">
         and (bis.material_id is null or bis.material_id = 0)
+      </if>
+      <if test="customerId!=null and ifContainCommon!=1">
+        and bis.customer_id = #{customerId}
       </if>
       <if test="customerId!=null and ifContainCommon==1">
         and (bis.customer_id = #{customerId} or bis.material_id = 0)
