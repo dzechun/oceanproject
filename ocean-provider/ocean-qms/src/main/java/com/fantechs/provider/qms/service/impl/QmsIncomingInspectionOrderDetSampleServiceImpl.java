@@ -16,6 +16,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.qms.mapper.*;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderDetSampleService;
+import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,9 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
 
     @Resource
     private QmsHtIncomingInspectionOrderMapper qmsHtIncomingInspectionOrderMapper;
+
+    @Resource
+    private QmsIncomingInspectionOrderService qmsIncomingInspectionOrderService;
 
     @Override
     public List<QmsHtIncomingInspectionOrderDetSample> findHtList(Map<String, Object> map) {
@@ -167,6 +171,7 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
 
         //条码不为空则提交样本值，条码为空则提交明细
         if(StringUtils.isNotEmpty(list.get(0).getBarcode())) {
+            Byte inspectionResult = 1;
             for (PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto : list) {
                 Long detId = pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId();
                 Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
@@ -217,25 +222,20 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
                 }
             }
             i += qmsIncomingInspectionOrderDetSampleMapper.insertList(sampleList);
+
+            //返写检验单结果
+            Example example = new Example(QmsIncomingInspectionOrderDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("incomingInspectionOrderId",qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+            List<QmsIncomingInspectionOrderDet> qmsIncomingInspectionOrderDets = qmsIncomingInspectionOrderDetMapper.selectByExample(example);
+            qmsIncomingInspectionOrderService.checkInspectionResult(qmsIncomingInspectionOrderDets);
         }else {
-            Byte inspectionResult = 1;
             for (PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto : list) {
                 QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet = qmsIncomingInspectionOrderDetMapper.selectByPrimaryKey(pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId());
                 qmsIncomingInspectionOrderDet.setBadnessCategoryId(pdaIncomingSampleSubmitDto.getBadnessCategoryId());
                 i += qmsIncomingInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrderDet);
-
-                if(qmsIncomingInspectionOrder == null){
-                    qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
-                }
-                if(qmsIncomingInspectionOrderDet.getInspectionResult()!=null
-                        &&qmsIncomingInspectionOrderDet.getInspectionResult() == (byte)0){
-                    inspectionResult = 0;
-                }
             }
-            //返写检验单结果
-            qmsIncomingInspectionOrder.setInspectionResult(inspectionResult);
-            qmsIncomingInspectionOrder.setInspectionStatus((byte)3);
-            qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
+
         }
 
         //履历

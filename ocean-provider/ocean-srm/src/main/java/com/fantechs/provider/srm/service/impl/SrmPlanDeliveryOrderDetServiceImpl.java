@@ -50,6 +50,7 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
         if (StringUtils.isNotEmpty(list)) {
 
             SrmInAsnOrderDto srmInAsnOrderDto = new SrmInAsnOrderDto();
+            srmInAsnOrderDto.setOrderStatus((byte) 1);
             List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos = new ArrayList<>();
 
             List<Long> idList = new ArrayList<>();

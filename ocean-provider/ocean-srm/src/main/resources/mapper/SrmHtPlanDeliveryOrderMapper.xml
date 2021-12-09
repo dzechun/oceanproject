@@ -7,6 +7,8 @@
     -->
     <id column="ht_plan_delivery_order_id" jdbcType="BIGINT" property="htPlanDeliveryOrderId" />
     <result column="plan_delivery_order_id" jdbcType="BIGINT" property="planDeliveryOrderId" />
+    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="corSourceSysOrderTypeCode"/>
+    <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode"/>
     <result column="plan_delivery_order_code" jdbcType="VARCHAR" property="planDeliveryOrderCode" />
     <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
@@ -29,6 +31,8 @@
 
   <sql id="Base_Column_List">
     spdo.plan_delivery_order_id,
+    spdo.core_source_sys_order_type_code,
+    spdo.source_sys_order_type_code,
     spdo.plan_delivery_order_code,
     spdo.sys_order_type_code,
     spdo.supplier_id,
