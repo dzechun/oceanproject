@@ -43,18 +43,46 @@ public class SrmInAsnOrderDet extends ValidGroup implements Serializable {
     private Long asnOrderId;
 
     /**
+     * 核心单据编码
+     */
+    @ApiModelProperty(name="coreSourceOrderCode",value = "核心单据编码")
+    @Column(name = "core_source_order_code")
+    private String coreSourceOrderCode;
+
+    /**
+     * 来源单据编码
+     */
+    @ApiModelProperty(name="sourceOrderCode",value = "来源单据编码")
+    @Column(name = "source_order_code")
+    private String sourceOrderCode;
+
+    /**
      * 订单ID
      */
     @ApiModelProperty(name="sourceOrderId",value = "订单ID")
-    @Excel(name = "订单ID", height = 20, width = 30) 
+    @Excel(name = "订单ID", height = 20, width = 30)
     @Column(name = "source_order_id")
     private Long sourceOrderId;
+
+    /**
+     * 核心单据明细ID
+     */
+    @ApiModelProperty(name="coreSourceId",value = "核心单据明细ID")
+    @Column(name = "core_source_id")
+    private Long coreSourceId;
+
+    /**
+     * 来源ID
+     */
+    @ApiModelProperty(name="sourceId",value = "来源ID")
+    @Column(name = "source_id")
+    private Long sourceId;
 
     /**
      * 订单明细ID
      */
     @ApiModelProperty(name="orderDetId",value = "订单明细ID")
-    @Excel(name = "订单明细ID", height = 20, width = 30) 
+    @Excel(name = "订单明细ID", height = 20, width = 30)
     @Column(name = "order_det_id")
     private Long orderDetId;
 
@@ -99,52 +127,12 @@ public class SrmInAsnOrderDet extends ValidGroup implements Serializable {
     private Long materialId;
 
     /**
-     * 包装单位名称
-     */
-    @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
-    @Excel(name = "包装单位名称", height = 20, width = 30) 
-    @Column(name = "packing_unit_name")
-    private String packingUnitName;
-
-    /**
      * 交货数量
      */
     @ApiModelProperty(name="deliveryQty",value = "交货数量")
     @Excel(name = "交货数量", height = 20, width = 30) 
     @Column(name = "delivery_qty")
     private BigDecimal deliveryQty;
-
-    /**
-     * 包装数量
-     */
-    @ApiModelProperty(name="packingQty",value = "包装数量")
-    @Excel(name = "包装数量", height = 20, width = 30) 
-    @Column(name = "packing_qty")
-    private BigDecimal packingQty;
-
-    /**
-     * 实收数量
-     */
-    @ApiModelProperty(name="actualQty",value = "实收数量")
-    @Excel(name = "实收数量", height = 20, width = 30) 
-    @Column(name = "actual_qty")
-    private BigDecimal actualQty;
-
-    /**
-     * 上架数量
-     */
-    @ApiModelProperty(name="putawayQty",value = "上架数量")
-    @Excel(name = "上架数量", height = 20, width = 30) 
-    @Column(name = "putaway_qty")
-    private BigDecimal putawayQty;
-
-    /**
-     * 质检数量
-     */
-    @ApiModelProperty(name="qualityTestingQty",value = "质检数量")
-    @Excel(name = "质检数量", height = 20, width = 30) 
-    @Column(name = "quality_testing_qty")
-    private BigDecimal qualityTestingQty;
 
     /**
      * 托盘号
@@ -161,22 +149,6 @@ public class SrmInAsnOrderDet extends ValidGroup implements Serializable {
     @Excel(name = "交货日期", height = 20, width = 30)
     @Column(name = "receiving_date")
     private Date receivingDate;
-
-    /**
-     * 生产日期
-     */
-    @ApiModelProperty(name="productionDate",value = "生产日期")
-    @Excel(name = "生产日期", height = 20, width = 30) 
-    @Column(name = "production_date")
-    private Date productionDate;
-
-    /**
-     * 过期日期
-     */
-    @ApiModelProperty(name="expiredDate",value = "过期日期")
-    @Excel(name = "过期日期", height = 20, width = 30) 
-    @Column(name = "expired_date")
-    private Date expiredDate;
 
     /**
      * 批次号

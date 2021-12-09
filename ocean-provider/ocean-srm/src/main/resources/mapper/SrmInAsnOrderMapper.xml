@@ -7,17 +7,15 @@
         -->
         <id column="asn_order_id" jdbcType="BIGINT" property="asnOrderId"/>
         <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId"/>
+        <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="corSourceSysOrderTypeCode"/>
+        <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode"/>
+        <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
         <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="asn_code" jdbcType="VARCHAR" property="asnCode"/>
-        <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode"/>
-        <result column="related_order_code_1" jdbcType="VARCHAR" property="relatedOrderCode1"/>
-        <result column="related_order_code_2" jdbcType="VARCHAR" property="relatedOrderCode2"/>
-        <result column="related_order_code_3" jdbcType="VARCHAR" property="relatedOrderCode3"/>
-        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
         <result column="plan_ago_date" jdbcType="TIMESTAMP" property="planAgoDate"/>
         <result column="start_receiving_date" jdbcType="TIMESTAMP" property="startReceivingDate"/>
         <result column="end_receiving_date" jdbcType="TIMESTAMP" property="endReceivingDate"/>
@@ -26,10 +24,6 @@
         <result column="shipper_user_id" jdbcType="BIGINT" property="shipperUserId"/>
         <result column="link_man_name" jdbcType="VARCHAR" property="linkManName"/>
         <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
-        <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
-        <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress"/>
-        <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress"/>
-        <result column="descr" jdbcType="VARCHAR" property="descr"/>
         <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
         <result column="file_id" jdbcType="BIGINT" property="fileId"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
@@ -57,17 +51,15 @@
     <sql id="BaseColumn">
     wiao.asn_order_id,
     wiao.source_order_id,
+    wiao.core_source_sys_order_type_code,
+    wiao.source_sys_order_type_code,
+    wiao.sys_order_type_code,
     wiao.material_owner_id,
     wiao.supplier_id,
+    wiao.warehouse_id,
     wiao.order_type_id,
     wiao.asn_code,
-    wiao.warehouse_id,
     wiao.storage_id,
-    wiao.customer_order_code,
-    wiao.related_order_code_1,
-    wiao.related_order_code_2,
-    wiao.related_order_code_3,
-    wiao.order_date,
     wiao.plan_ago_date,
     wiao.start_receiving_date,
     wiao.end_receiving_date,
@@ -75,10 +67,6 @@
     wiao.shipper_name,
     wiao.link_man_name,
     wiao.link_man_phone,
-    wiao.fax_number,
-    wiao.e_mail_address,
-    wiao.detailed_address,
-    wiao.descr,
     wiao.order_status,
     wiao.file_id,
     wiao.status,
@@ -145,6 +133,15 @@
             </if>
             <if test="warehouseName!=null and warehouseName!=''">
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+            </if>
+            <if test="corSourceSysOrderTypeCode!=null and corSourceSysOrderTypeCode!=''">
+                and wiao.core_source_sys_order_type_code = #{corSourceSysOrderTypeCode}
+            </if>
+            <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+                and wiao.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+            </if>
+            <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
+                and wiao.sys_order_type_code = #{sysOrderTypeCode}
             </if>
             <choose>
                 <when test="supplierIdList!=null and supplierIdList.size > 0">

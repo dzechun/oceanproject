@@ -97,7 +97,6 @@
                 and shda.appoint_status = #{appointStatus}
             </if>
 
-
             <choose>
                 <when test="supplierIdList!=null and supplierIdList.size > 0">
                     and shda.supplier_id in
