@@ -2,7 +2,7 @@ package com.fantechs.provider.srm.service.impl;
 
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
+import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.imports.SrmInAsnOrderDetImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
@@ -10,7 +10,7 @@ import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
-import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDet;
 import com.fantechs.common.base.support.BaseService;
@@ -95,17 +95,19 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                 //continue;
             }
 
-            SearchOmPurchaseOrder searchOmPurchaseOrder = new SearchOmPurchaseOrder();
-            searchOmPurchaseOrder.setOrgId(user.getOrganizationId());
-            searchOmPurchaseOrder.setPurchaseOrderCode(purchaseOrderCode);
-            List<OmPurchaseOrderDto> omPurchaseOrderDtos = oMFeignApi.findList(searchOmPurchaseOrder).getData();
-            if(StringUtils.isEmpty(omPurchaseOrderDtos)) {
-                for(OmPurchaseOrderDet det : omPurchaseOrderDtos.get(0).getOmPurchaseOrderDetList()){
+            SearchOmPurchaseOrderDet searchOmPurchaseOrderDet = new SearchOmPurchaseOrderDet();
+            searchOmPurchaseOrderDet.setOrgId(user.getOrganizationId());
+            searchOmPurchaseOrderDet.setPurchaseOrderCode(purchaseOrderCode);
+            List<OmPurchaseOrderDetDto> omPurchaseOrderDetDtos = oMFeignApi.findList(searchOmPurchaseOrderDet).getData();
+            if(StringUtils.isNotEmpty(omPurchaseOrderDetDtos)) {
+                for(OmPurchaseOrderDet det : omPurchaseOrderDetDtos){
                     if(baseMaterials.get(0).getMaterialId().equals(det.getMaterialId())){
                         srmInAsnOrderDetDto.setOrderQty(det.getOrderQty());
                     }
                 }
 
+            }else{
+                srmInAsnOrderDetDto.setOrderQty(BigDecimal.ZERO);
             }
             if(StringUtils.isEmpty(srmInAsnOrderDetImport.getDeliveryQty()))
                 srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
