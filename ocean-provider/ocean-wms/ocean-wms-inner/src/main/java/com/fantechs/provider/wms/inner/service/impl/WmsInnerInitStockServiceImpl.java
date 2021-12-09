@@ -125,13 +125,15 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                 if(responseEntity.getData().isEmpty()){
                     //客户条码
                     initStockCheckBarCode.setType((byte)4);
+                    initStockCheckBarCode.setClientBarcode(barCode);
                 }else {
                     initStockCheckBarCode.setType((byte)3);
                     //三星厂内码
                     initStockCheckBarCode.setInPlantBarcode(responseEntity.getData().get(0).getBarcode());
                     criteria.andEqualTo("inPlantBarcode",initStockCheckBarCode.getInPlantBarcode());
+                    initStockCheckBarCode.setClientBarcode(responseEntity.getData().get(0).getCustomerBarcode());
+                    barCode = initStockCheckBarCode.getClientBarcode();
                 }
-                initStockCheckBarCode.setClientBarcode(barCode);
                 criteria.andEqualTo("clientBarcode1",barCode).orEqualTo("clientBarcode2",barCode).orEqualTo("clientBarcode3",barCode);
             }
         }
@@ -182,6 +184,13 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                 }
             }else {
                 if(initStockCheckBarCode.getType()==4){
+                    //查询是否重复
+                    example.clear();
+                    criteria.andEqualTo("inPlantBarcode",barCode);
+                    WmsInnerInitStockBarcode wmsInnerInitStockBarcode = wmsInnerInitStockBarcodeMapper.selectOneByExample(example);
+                    if(StringUtils.isNotEmpty(wmsInnerInitStockBarcode)){
+                        throw new BizErrorException("重复扫码");
+                    }
                     initStockCheckBarCode.setClientBarcode(null);
                     initStockCheckBarCode.setType((byte)1);
                 }
@@ -229,7 +238,7 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         for (WmsInnerInitStockDet innerInitStockDet : wmsInnerInitStockDets) {
             //查询条码
             example = new Example(WmsInnerInitStockBarcode.class);
-            example.createCriteria().andEqualTo("initStockDetId");
+            example.createCriteria().andEqualTo("initStockDetId",innerInitStockDet.getInitStockDetId());
             List<WmsInnerInitStockBarcode> wmsInnerInitStockBarcodes = wmsInnerInitStockBarcodeMapper.selectByExample(example);
 
 

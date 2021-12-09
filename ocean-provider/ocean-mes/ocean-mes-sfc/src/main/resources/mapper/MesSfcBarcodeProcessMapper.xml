@@ -105,7 +105,7 @@
         AND msbp.work_order_barcode_id = #{workOrderBarcodeId}
       </if>
       <if test="isCustomerBarcode!=null and isCustomerBarcode!=''">
-        and msbp.customer_barcode =#{isCustomerBarcode}
+        and msbp.customer_barcode like CONCAT(#{isCustomerBarcode},'%')
       </if>
     </where>
   </select>
