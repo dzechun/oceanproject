@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.in.service;
 
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.imports.WmsInInPlanOrderImport;
 import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrder;
 import com.fantechs.common.base.support.IService;
 
@@ -18,5 +19,9 @@ public interface WmsInInPlanOrderService extends IService<WmsInInPlanOrder> {
 
     int update(WmsInInPlanOrderDto wmsInInPlanOrderDto);
 
-    Map<String, Object> importExcel(List<WmsInInPlanOrder> list);
+    int close(String ids);
+
+    Map<String, Object> importExcel(List<WmsInInPlanOrderImport> list);
+
+    int pushDown(String ids);
 }

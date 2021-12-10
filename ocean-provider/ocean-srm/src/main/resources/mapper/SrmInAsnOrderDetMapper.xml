@@ -16,7 +16,7 @@
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
-        <result column="line_number" jdbcType="INTEGER" property="lineNumber"/>
+        <result column="line_number" jdbcType="VARCHAR" property="lineNumber"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="delivery_qty" jdbcType="DECIMAL" property="deliveryQty"/>
         <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
@@ -81,7 +81,7 @@
         <include refid="BaseColumnList"/>,
         opo.purchase_order_code,opod.delivery_date AS order_date,bm.material_code,opod.order_qty AS order_qty,
         bm.material_name,bw.warehouse_name,bm.material_version,bm.material_desc,bmt.main_unit,
-        ( SELECT SUM( wiaods.delivery_qty ) FROM wms_in_asn_order_det wiaods WHERE wiaods.asn_order_id = wiaod.asn_order_id ) AS total_delivery_qty,
+        ( SELECT SUM( wiaods.delivery_qty ) FROM wms_in_asn_order_det wiaods WHERE wiaods.source_order_id = opod.purchase_order_det_id ) AS total_delivery_qty,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name

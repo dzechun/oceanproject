@@ -172,17 +172,23 @@ public class ControllerUtil {
             for (String key : queryMap.keySet()) {
                 String sql = "";
                 Query query = queryMap.get(key);
-                if ("in".equals(query.getQueryType())) {
-                    sql = "in("+query.getValue()+")";
-                }else if ("not in".equals(query.getQueryType())) {
-                    sql = "not in("+query.getValue()+")";
+                if (StringUtils.isEmpty(query.getValue())) {
+                    queryMap.put(key,null);
+                    continue;
+                }else if (query.getQueryType().contains("in")) {
+                    String value ="";
+                    for (String s : query.getValue().split(",")) {
+                        value += "'"+s+"',";
+                    }
+                    value = value.substring(0,value.length()-1);
+                    sql = query.getQueryType()+"("+value+")";
                 }else if ("like".equals(query.getQueryType())) {
                     sql = "like '%"+query.getValue().replace("'","")+"%'";
                 }else if ("between".equals(query.getQueryType())) {
                     String[] split = query.getValue().trim().split(",");
-                    sql = "between "+split[0]+"and"+split[1];
+                    sql = "between '"+split[0]+"' and '"+split[1]+"'";
                 }else {
-                    sql = query.getQueryType()+query.getValue();
+                    sql = query.getQueryType()+"'"+query.getValue()+"'";
                 }
                 query.setSql(sql);
                 queryMap.put(key,query);

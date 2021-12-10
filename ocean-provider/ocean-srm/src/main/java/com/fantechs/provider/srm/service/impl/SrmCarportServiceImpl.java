@@ -138,5 +138,18 @@ public class SrmCarportServiceImpl extends BaseService<SrmCarport> implements Sr
         return i;
     }
 
+    @Override
+    public int batchDelete(String ids) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        String[] arrIds = ids.split(",");
+        for (String id : arrIds) {
+            Example example1 = new Example(SrmCarportTimeQuantum.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("carportId",id);
+            srmCarportTimeQuantumMapper.deleteByExample(example1);
+        }
+        int i = srmCarportMapper.deleteByIds(ids);
+        return i;
+    }
 
 }
