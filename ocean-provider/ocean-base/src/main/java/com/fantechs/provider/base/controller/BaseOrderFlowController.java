@@ -4,7 +4,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -12,12 +11,11 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseOrderFlowService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +35,13 @@ public class BaseOrderFlowController {
 
     @Resource
     private BaseOrderFlowService baseOrderFlowService;
+
+    @ApiOperation("查询上下游单据")
+    @PostMapping("/findOrderFlow")
+    public ResponseEntity<BaseOrderFlow> findOrderFlow(@ApiParam(value = "查询对象")@RequestBody SearchBaseOrderFlow searchBaseOrderFlow) {
+        BaseOrderFlow baseOrderFlow = baseOrderFlowService.findOrderFlow(ControllerUtil.dynamicConditionByEntity(searchBaseOrderFlow));
+        return ControllerUtil.returnDataSuccess(baseOrderFlow,StringUtils.isEmpty(baseOrderFlow)?0:1);
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

@@ -113,4 +113,37 @@
     </where>
     order by bof.create_time desc
   </select>
+
+    <select id="findOrderFlow" resultMap="BaseResultMap" parameterType="map">
+        select *
+        from base_order_flow
+        where business_type = #{businessType}
+        and order_node = #{orderNode}
+        and order_flow_dimension = 1
+        and status= 1
+        and org_id=#{orgId}
+        <if test="supplierId!=null">
+            union
+            select *
+            from base_order_flow
+            where business_type = #{businessType}
+            and order_node = #{orderNode}
+            and order_flow_dimension = 2
+            and supplier_id = #{supplierId}
+            and status= 1
+            and org_id=#{orgId}
+        </if>
+        <if test="materialId!=null">
+            union
+            select *
+            from base_order_flow
+            where business_type = #{businessType}
+            and order_node = #{orderNode}
+            and order_flow_dimension = 3
+            and material_id = #{materialId}
+            and status= 1
+            and org_id=#{orgId}
+        </if>
+        ORDER BY order_flow_dimension DESC LIMIT 1
+    </select>
 </mapper>
