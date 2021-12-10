@@ -672,8 +672,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                         .addAll(mesSfcWorkOrderBarcodeList.stream()
                                 .map(MesSfcWorkOrderBarcode::getBarcode)
                                 .collect(Collectors.toList()));
-                palletAutoAsnDto.setActualQty(palletAutoAsnDto.getActualQty().add(new BigDecimal(mesSfcWorkOrderBarcodeList.size())));
-                palletAutoAsnDto.setPackingQty(palletAutoAsnDto.getActualQty());
+//                palletAutoAsnDto.setActualQty(palletAutoAsnDto.getActualQty().add(new BigDecimal(mesSfcWorkOrderBarcodeList.size())));
+//                palletAutoAsnDto.setPackingQty(palletAutoAsnDto.getActualQty());
             }
             //完工入库
             SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
@@ -720,7 +720,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }else{
                 throw new BizErrorException(ErrorCodeEnum.STO30012000);
             }
-            palletAutoAsnDto.setProductionDate(new Date());
+            //palletAutoAsnDto.setProductionDate(new Date());
 
             //2021-07-30 增加包装单位 by Dylan
             SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
@@ -731,12 +731,12 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 List<BaseMaterialPackageDto> baseMaterialPackageDtos = basePackgeSpecifications.getData().get(0).getBaseMaterialPackages();
                 if(StringUtils.isNotEmpty(baseMaterialPackageDtos)){
                     BaseMaterialPackageDto baseMaterialPackageDto = baseMaterialPackageDtos.get(0);
-                    palletAutoAsnDto.setPackingUnitName(baseMaterialPackageDto.getPackingUnitName());
+//                    palletAutoAsnDto.setPackingUnitName(baseMaterialPackageDto.getPackingUnitName());
                 }
 
             }
 
-            inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
+//            inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
     }
 

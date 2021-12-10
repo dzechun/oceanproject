@@ -495,4 +495,12 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         resultMap.put("操作失败行数",fail);
         return resultMap;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateIfAllIssued(QmsIncomingInspectionOrder entity) {
+        int num=0;
+        num=qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(entity);
+        return num;
+    }
 }
