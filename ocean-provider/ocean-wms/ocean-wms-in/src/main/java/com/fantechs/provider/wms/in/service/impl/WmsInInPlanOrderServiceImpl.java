@@ -83,13 +83,6 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
 
 
         //预约数量校验
-        Example example = new Example(WmsInInPlanOrder.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("inPlanOrderCode",wmsInInPlanOrderDto.getInPlanOrderCode());
-        List<WmsInInPlanOrder> wmsInInPlanOrders = wmsInInPlanOrderMapper.selectByExample(example);
-        if(StringUtils.isNotEmpty(wmsInInPlanOrders))
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"入库计划编码重复");
-
         if(StringUtils.isEmpty(wmsInInPlanOrderDto.getWarehouseId())) {
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "仓库编码不能为空");
         }else{
@@ -103,6 +96,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 wmsInInPlanOrderDto.setStorageId(baseStorages.get(0).getStorageId());
         }
 
+        wmsInInPlanOrderDto.setInPlanOrderCode(CodeUtils.getId("IN-IPO"));
         wmsInInPlanOrderDto.setMakeOrderUserId(user.getUserId());
         wmsInInPlanOrderDto.setCreateUserId(user.getUserId());
         wmsInInPlanOrderDto.setCreateTime(new Date());
