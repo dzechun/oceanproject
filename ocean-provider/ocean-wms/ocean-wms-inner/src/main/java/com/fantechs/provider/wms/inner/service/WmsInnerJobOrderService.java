@@ -39,6 +39,12 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     int cancelDistribution(String ids);
 
     /**
+     * 指定工作人员
+     * @return
+     */
+    int distributionWorker(Long jobOrderId,Long workerId);
+
+    /**
      * 整单确认
      * @param ids
      * @return
@@ -90,7 +96,7 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     /**
      * 库容入库规则判断入库数量
      * @param materialId
-     * @param materialStoreType
+     * @param storageId
      * @param qty
      * @return
      */
