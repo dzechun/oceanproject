@@ -2,7 +2,9 @@ package com.fantechs.provider.wms.in.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysImportAndExportLog;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
@@ -352,4 +354,36 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
         resultMap.put("操作失败的送货计划标识",fail);
         return resultMap;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int pushDown(String ids) {
+        //根据单据流生成入库计划单或上架作业单
+
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("InPlanOrderIsWork");
+        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(StringUtils.isEmpty(specItems))
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"需先配置作业循序先后");
+        if("0".equals(StringUtils.isEmpty(specItems.get(0).getParaValue())))
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"先作业后单据无法进行下推操作");
+
+        int i = 0;
+        List<WmsInInPlanOrderDetDto> wmsInInPlanOrderDetDtos = wmsInInPlanOrderDetService.findListByIds(ids);
+        //查当前单据的下游单据
+/*        String sysOrderTypeCode = wmsInInPlanOrderDetDtos.get(0).getSysOrderTypeCode();
+        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+        searchBaseOrderFlow.setBusinessType((byte)1);
+        searchBaseOrderFlow.setOrderNode((byte)4);*/
+
+
+        if("".equals("")){
+            //生成上架作业单
+
+        }
+
+        return i;
+    }
+
+
 }

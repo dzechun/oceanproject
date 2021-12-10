@@ -100,6 +100,12 @@ public class WmsInInPlanOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "来料检验单ID列表，多个逗号分隔",required = true)@RequestParam  @NotBlank(message="来料检验单ID不能为空") String ids) {
+        return ControllerUtil.returnCRUD(wmsInInPlanOrderService.pushDown(ids));
+    }
+
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")

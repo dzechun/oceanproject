@@ -22,4 +22,6 @@ public interface WmsInInPlanOrderService extends IService<WmsInInPlanOrder> {
     int close(String ids);
 
     Map<String, Object> importExcel(List<WmsInInPlanOrderImport> list);
+
+    int pushDown(String ids);
 }
