@@ -50,26 +50,26 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
             searchProLineBoard.setEquipmentStatus(equipmentStatus);
             Long equipMentUseingNum = proLineBoardMapper.findEquipMentList(searchProLineBoard);
 
-            //查询过站记录
-            searchProLineBoard.setSectionName("组装");
-            Long zzNum = proLineBoardMapper.findBarCodeRecordList(searchProLineBoard);
-            searchProLineBoard.setSectionName("LQC测试");
-            Long lqcNum = proLineBoardMapper.findBarCodeRecordList(searchProLineBoard);
+            //查询LQC工序OK的过站记录，需去重
+            searchProLineBoard.setProcessCode("GY01-20");
             searchProLineBoard.setBarcodeStatus((byte)1);
-            Long passNum = proLineBoardMapper.findBarCodeRecordList(searchProLineBoard); //通过数量
-
+            searchProLineBoard.setIsDistinct((byte)1);//去重
+            Long passNum = proLineBoardMapper.findBarCodeRecordList(searchProLineBoard);//
+            model.setOutputQty(passNum);//完成数
 
             String outputRate = "0";
-            model.setOutputQty(passNum+zzNum);
             if(StringUtils.isNotEmpty(model.getScheduledQty()) && StringUtils.isNotEmpty(model.getOutputQty()) && model.getScheduledQty()>0 ) {
                 outputRate = numberFormat.format((float) model.getOutputQty() / (float)model.getScheduledQty() * 100);
             }
 
+            //查询LQC工序第一次OK的过站记录
+            searchProLineBoard.setPassStationCount((byte)1);
+            Long passNum2 = proLineBoardMapper.findBarCodeRecordList(searchProLineBoard);
             String passRate = "0";
-            if(StringUtils.isNotEmpty(passNum) && StringUtils.isNotEmpty(lqcNum) && StringUtils.isNotEmpty(zzNum)
-            && (lqcNum + zzNum)!=0 ) {
-                passRate = numberFormat.format((float) (passNum+ zzNum)/ (float) (lqcNum + zzNum) * 100);
+            if(StringUtils.isNotEmpty(passNum) && StringUtils.isNotEmpty(passNum2) && (passNum + passNum2)!=0 ) {
+                passRate = numberFormat.format((float) passNum2 / (float) model.getOutputQty() * 100);
             }
+
             String operationRatio = numberFormat.format((float) equipMentUseingNum / (float)equipMentNum * 100);
 
             //查询预警良率和停线良率
@@ -85,14 +85,14 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
                 if(StringUtils.isEmpty(yieldList)) throw new BizErrorException("未查询到默认的产品良率配置");
             }
 
-            model.setEquipmentQty(equipMentNum);
-            model.setUseQty(equipMentUseingNum);
+            model.setEquipmentQty(equipMentNum);//设备数量
+            model.setUseQty(equipMentUseingNum);//使用数量
             model.setWarningRate(numberFormat.format(yieldList.getWarningYield()));
             model.setStopProLineRate (numberFormat.format(yieldList.getProductlineStopYield()));
 
-            model.setOutputRate(outputRate);
-            model.setPassRate(passRate);
-            model.setOperationRatio(operationRatio);
+            model.setOutputRate(outputRate);//完成率
+            model.setPassRate(passRate);//直通率
+            model.setOperationRatio(operationRatio);//稼动率
         }
         return model;
     }
