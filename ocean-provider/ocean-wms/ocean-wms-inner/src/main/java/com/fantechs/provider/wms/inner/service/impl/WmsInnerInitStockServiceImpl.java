@@ -26,6 +26,7 @@ import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.WmsInnerInitStockService;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
  * Created by leifengzhi on 2021/12/01.
  */
 @Service
+@Slf4j
 public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock> implements WmsInnerInitStockService {
 
     @Resource
@@ -80,63 +82,55 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
            // throw new BizErrorException("条码错误");
         }
         //判断是否是厂内码3911
-        String code = barCode.substring(0,4);
-        initStockCheckBarCode.setBarCode(barCode);
-        if(isInPlantBarCode && code.equals("3911")){
-            //厂内码 并返回1 物料
+        if (barCode.length() == 23){
+            initStockCheckBarCode.setBarCode(barCode);
             initStockCheckBarCode.setType((byte)1);
             initStockCheckBarCode.setInPlantBarcode(barCode);
             criteria.andEqualTo("inPlantBarcode",barCode);
-        }else if(code.equals("391-")){
-            //销售条码 返回 2
-            initStockCheckBarCode.setType((byte)2);
-            initStockCheckBarCode.setSalesBarcode(barCode);
-            criteria.andEqualTo("salesBarcode",barCode);
-        }else {
-            code = barCode.substring(0,2);
-            if(isInPlantBarCode && code.equals("99")){
+            String code = barCode.substring(0,1);
+            if(isInPlantBarCode && code.equals("9")){
                 //梅州厂内码
-                initStockCheckBarCode.setType((byte)1);
-                initStockCheckBarCode.setInPlantBarcode(barCode);
-                criteria.andEqualTo("inPlantBarcode",barCode);
                 //首位转换 3 第五位替换成 0
                 StringBuilder sb = new StringBuilder(barCode);
                 sb.replace(0,1,"3");
                 sb.replace(4,5,"0");
                 barCode = sb.toString();
-            }else if(isInPlantBarCode && code.equals("89")){
+            }else if(isInPlantBarCode && code.equals("8")){
                 //民权厂内码
-                initStockCheckBarCode.setType((byte)1);
-                initStockCheckBarCode.setInPlantBarcode(barCode);
-                criteria.andEqualTo("inPlantBarcode",barCode);
                 //首位转换成3
                 StringBuilder sb = new StringBuilder(barCode);
                 sb.replace(0,1,"3");
                 barCode = sb.toString();
+            }
+        } else if (barCode.contains("391-")){
+            //销售条码 返回 2
+            initStockCheckBarCode.setType((byte)2);
+            initStockCheckBarCode.setSalesBarcode(barCode);
+            criteria.andEqualTo("salesBarcode",barCode);
+        }else {
+            initStockCheckBarCode.setType((byte)3);
+            //客户条码匹配PQMS条码查询厂内码及对应物料
+            SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
+            searchMesSfcBarcodeProcess.setIsCustomerBarcode(barCode);
+            ResponseEntity<List<MesSfcBarcodeProcessDto>> responseEntity = sfcFeignApi.findList(searchMesSfcBarcodeProcess);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
+            if(responseEntity.getData().isEmpty()){
+                //客户条码
+                initStockCheckBarCode.setType((byte)4);
+                initStockCheckBarCode.setClientBarcode(barCode);
             }else {
                 initStockCheckBarCode.setType((byte)3);
-                //客户条码匹配PQMS条码查询厂内码及对应物料
-                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
-                searchMesSfcBarcodeProcess.setIsCustomerBarcode(barCode);
-                ResponseEntity<List<MesSfcBarcodeProcessDto>> responseEntity = sfcFeignApi.findList(searchMesSfcBarcodeProcess);
-                if(responseEntity.getCode()!=0){
-                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
-                }
-                if(responseEntity.getData().isEmpty()){
-                    //客户条码
-                    initStockCheckBarCode.setType((byte)4);
-                    initStockCheckBarCode.setClientBarcode(barCode);
-                }else {
-                    initStockCheckBarCode.setType((byte)3);
-                    //三星厂内码
-                    initStockCheckBarCode.setInPlantBarcode(responseEntity.getData().get(0).getBarcode());
-                    criteria.andEqualTo("inPlantBarcode",initStockCheckBarCode.getInPlantBarcode());
-                    initStockCheckBarCode.setClientBarcode(responseEntity.getData().get(0).getCustomerBarcode());
-                    barCode = initStockCheckBarCode.getClientBarcode();
-                }
-                criteria.andEqualTo("clientBarcode1",barCode).orEqualTo("clientBarcode2",barCode).orEqualTo("clientBarcode3",barCode);
+                //三星厂内码
+                initStockCheckBarCode.setInPlantBarcode(responseEntity.getData().get(0).getBarcode());
+                criteria.andEqualTo("inPlantBarcode",initStockCheckBarCode.getInPlantBarcode());
+                initStockCheckBarCode.setClientBarcode(responseEntity.getData().get(0).getCustomerBarcode());
+                barCode = initStockCheckBarCode.getClientBarcode();
             }
+            criteria.andEqualTo("clientBarcode1",barCode).orEqualTo("clientBarcode2",barCode).orEqualTo("clientBarcode3",barCode);
         }
+
         List<WmsInnerInitStockBarcode> wmsInnerInitStockBarcodes = wmsInnerInitStockBarcodeMapper.selectByExample(example);
         if (!wmsInnerInitStockBarcodes.isEmpty()){
             if(initStockCheckBarCode.getType()==4){
@@ -168,10 +162,11 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             if(StringUtils.isEmpty(initStockCheckBarCode.getInPlantBarcode())){
                 initStockCheckBarCode.setInPlantBarcode(initStockCheckBarCode.getClientBarcode());
             }
-            String materialCode = initStockCheckBarCode.getInPlantBarcode().substring(0,12);
+            String materialCode = barCode.substring(0,12);
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(materialCode);
             searchBaseMaterial.setCodeQueryMark(1);
+            log.info("========= 预盘点条码materialCode" + materialCode + "initStockCheckBarCode.getInPlantBarcode()" + initStockCheckBarCode.getInPlantBarcode());
             ResponseEntity<List<BaseMaterial>> responseEntity = baseFeignApi.findList(searchBaseMaterial);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
