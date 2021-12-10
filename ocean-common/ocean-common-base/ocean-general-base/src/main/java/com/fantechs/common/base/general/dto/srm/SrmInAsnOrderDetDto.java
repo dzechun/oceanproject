@@ -1,9 +1,11 @@
 package com.fantechs.common.base.general.dto.srm;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -11,6 +13,12 @@ import java.util.Date;
 
 @Data
 public class SrmInAsnOrderDetDto extends SrmInAsnOrderDet implements Serializable {
+
+    /**
+     * ASN单号
+     */
+    @ApiModelProperty(name="asnCode",value = "ASN单号")
+    private String asnCode;
 
     /**
      * 采购订单编码

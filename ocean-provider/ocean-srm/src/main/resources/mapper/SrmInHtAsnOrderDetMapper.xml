@@ -22,6 +22,8 @@
       <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
       <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate"/>
       <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+      <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+      <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
       <result column="status" jdbcType="TINYINT" property="status"/>
       <result column="remark" jdbcType="VARCHAR" property="remark"/>
       <result column="org_id" jdbcType="BIGINT" property="orgId"/>
@@ -65,6 +67,8 @@
         wihaod.pallet_code,
         wihaod.receiving_date,
         wihaod.batch_code,
+        wihaod.total_issue_qty,
+        wihaod.if_all_issued,
         wihaod.delivery_qty,
         wihaod.status,
         wihaod.remark,

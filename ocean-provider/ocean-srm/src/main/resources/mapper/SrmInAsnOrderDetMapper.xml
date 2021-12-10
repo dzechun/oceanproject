@@ -22,6 +22,10 @@
         <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
         <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
+
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId"/>
@@ -33,6 +37,7 @@
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto">
+        <result column="asn_code" jdbcType="VARCHAR" property="asnCode"/>
         <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
@@ -65,6 +70,8 @@
         wiaod.pallet_code,
         wiaod.receiving_date,
         wiaod.batch_code,
+        wiaod.total_issue_qty,
+        wiaod.if_all_issued,
         wiaod.delivery_qty,
         wiaod.status,
         wiaod.remark,
@@ -84,8 +91,10 @@
         ( SELECT SUM( wiaods.delivery_qty ) FROM wms_in_asn_order_det wiaods WHERE wiaods.asn_order_id = wiaod.asn_order_id ) AS total_delivery_qty,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
-        bo.organization_name AS organization_Name
+        bo.organization_name AS organization_Name,
+        wiao.asn_code
         FROM wms_in_asn_order_det wiaod
+        LEFT JOIN wms_in_asn_order wiao on wiao.asn_order_id = wiaod.asn_order_id
         LEFT JOIN om_purchase_order_det opod ON wiaod.source_order_id = opod.purchase_order_det_id
         LEFT JOIN om_purchase_order opo ON opod.purchase_order_id = opo.purchase_order_id
         LEFT JOIN base_material bm ON wiaod.material_id = bm.material_id
@@ -97,6 +106,11 @@
         <where>
             <if test="asnOrderId !=null and asnOrderId !=''">
                 and wiaod.asn_order_id=#{asnOrderId}
+            </if>
+            <if test="asnOrderIdList !=null and asnOrderIdList !=''">
+                <foreach collection="asnOrderIdList" item="item" index="index" open="and wiaod.asn_order_id in(" separator="," close=")">
+                    {item}
+                </foreach>
             </if>
             <if test="asnOrderDetId !=null and asnOrderDetId!=''">
                 and wiaod.asn_order_det_id = #{asnOrderDetId}
