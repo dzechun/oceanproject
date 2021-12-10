@@ -152,6 +152,13 @@ public class QmsIncomingInspectionOrder extends ValidGroup implements Serializab
     private Byte mrbResult;
 
     /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    @Column(name = "if_all_issued")
+    private Byte ifAllIssued;
+
+    /**
      * 文件表ID
      */
     @ApiModelProperty(name="fileId",value = "文件表ID")

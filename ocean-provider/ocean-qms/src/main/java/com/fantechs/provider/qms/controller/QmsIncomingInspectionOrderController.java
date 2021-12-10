@@ -131,4 +131,10 @@ public class QmsIncomingInspectionOrderController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+    @ApiOperation("修改")
+    @PostMapping("/updateIfAllIssued")
+    public ResponseEntity updateIfAllIssued(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsIncomingInspectionOrder.update.class) QmsIncomingInspectionOrder qmsIncomingInspectionOrder) {
+        return ControllerUtil.returnCRUD(qmsIncomingInspectionOrderService.updateIfAllIssued(qmsIncomingInspectionOrder));
+    }
 }

@@ -582,4 +582,8 @@ public interface BaseFeignApi {
     @ApiOperation("免检清单列表")
     @PostMapping("/baseInspectionExemptedList/findList")
     ResponseEntity<List<BaseInspectionExemptedList>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInspectionExemptedList searchBaseInspectionExemptedList);
+
+    @ApiOperation("查询上下游单据")
+    @PostMapping("/baseOrderFlow/findOrderFlow")
+    ResponseEntity<BaseOrderFlow> findOrderFlow(@ApiParam(value = "查询对象")@RequestBody SearchBaseOrderFlow searchBaseOrderFlow);
 }

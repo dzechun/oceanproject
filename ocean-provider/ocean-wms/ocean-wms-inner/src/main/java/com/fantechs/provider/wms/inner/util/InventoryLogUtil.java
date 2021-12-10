@@ -3,7 +3,6 @@ package com.fantechs.provider.wms.inner.util;
 import cn.hutool.core.bean.BeanUtil;
 import com.ctc.wstx.util.DataUtil;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.utils.DateUtils;
@@ -36,23 +35,6 @@ public class InventoryLogUtil {
         inventoryLogUtil.wmsInnerInventoryLogService = wmsInnerInventoryLogService;
     }
 
-    public static void addLog(WmsInAsnOrder wmsInAsnOrder, WmsInAsnOrderDet wmsInAsnOrderDet){
-        WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
-        wmsInnerInventoryLog.setAsnCode(wmsInAsnOrder.getAsnCode());
-        //收货
-        wmsInnerInventoryLog.setJobOrderType((byte)1);
-        wmsInnerInventoryLog.setAddOrSubtract((byte)1);
-        wmsInnerInventoryLog.setProductionDate(wmsInAsnOrderDet.getProductionDate());
-        wmsInnerInventoryLog.setExpiredDate(wmsInAsnOrderDet.getExpiredDate());
-        wmsInnerInventoryLog.setBatchCode(wmsInAsnOrderDet.getBatchCode());
-        wmsInnerInventoryLog.setPalletCode(wmsInAsnOrderDet.getPalletCode());
-        wmsInnerInventoryLog.setInventoryStatusId(wmsInAsnOrderDet.getInventoryStatusId());
-        wmsInnerInventoryLog.setChangeQty(wmsInAsnOrderDet.getActualQty());
-        wmsInnerInventoryLog.setSupplierId(wmsInAsnOrder.getSupplierId());
-        wmsInnerInventoryLog.setMaterialOwnerId(wmsInAsnOrder.getMaterialOwnerId());
-        wmsInnerInventoryLog.setInventoryStatusName(inventoryLogUtil.wmsInnerInventoryLogService.findInvName(wmsInnerInventoryLog.getInventoryLogId()));
-    }
-
     /**
      *
      * @param wmsInnerJobOrder 拣货/上架
@@ -63,7 +45,7 @@ public class InventoryLogUtil {
     public static void addLog(WmsInnerInventory wmsInnerInventory,WmsInnerJobOrder wmsInnerJobOrder, WmsInnerJobOrderDet wmsInnerJobOrderDet,BigDecimal initQty,BigDecimal chaQty, Byte jobStatus, Byte addOrSubtract){
         WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
         BeanUtil.copyProperties(wmsInnerInventory,wmsInnerInventoryLog);
-        wmsInnerInventoryLog.setAsnCode(wmsInnerJobOrder.getRelatedOrderCode());
+        //wmsInnerInventoryLog.setAsnCode(wmsInnerJobOrder.getRelatedOrderCode());
         wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerJobOrder.getJobOrderCode());
         //收货
         wmsInnerInventoryLog.setJobOrderType(jobStatus);
@@ -73,21 +55,21 @@ public class InventoryLogUtil {
         }else {
             wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
         }
-        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getWarehouseId())){
-            wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
-        }else {
-            wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrderDet.getWarehouseId());
-        }
-        wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
-        wmsInnerInventoryLog.setProductionDate(wmsInnerJobOrderDet.getProductionDate());
-        wmsInnerInventoryLog.setExpiredDate(wmsInnerJobOrderDet.getExpiredDate());
-        wmsInnerInventoryLog.setBatchCode(wmsInnerJobOrderDet.getBatchCode());
-        wmsInnerInventoryLog.setPalletCode(wmsInnerJobOrderDet.getPalletCode());
-        wmsInnerInventoryLog.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
-        wmsInnerInventoryLog.setInitialQty(initQty);
-        wmsInnerInventoryLog.setChangeQty(chaQty);
-        wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerJobOrder.getMaterialOwnerId());
-        inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
+//        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getWarehouseId())){
+//            wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+//        }else {
+//            wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrderDet.getWarehouseId());
+//        }
+//        wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
+//        wmsInnerInventoryLog.setProductionDate(wmsInnerJobOrderDet.getProductionDate());
+//        wmsInnerInventoryLog.setExpiredDate(wmsInnerJobOrderDet.getExpiredDate());
+//        wmsInnerInventoryLog.setBatchCode(wmsInnerJobOrderDet.getBatchCode());
+//        wmsInnerInventoryLog.setPalletCode(wmsInnerJobOrderDet.getPalletCode());
+//        wmsInnerInventoryLog.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
+//        wmsInnerInventoryLog.setInitialQty(initQty);
+//        wmsInnerInventoryLog.setChangeQty(chaQty);
+//        wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerJobOrder.getMaterialOwnerId());
+//        inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
     }
 
     /**

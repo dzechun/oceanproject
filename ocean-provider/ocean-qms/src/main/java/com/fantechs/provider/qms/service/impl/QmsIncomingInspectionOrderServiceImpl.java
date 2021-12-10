@@ -5,12 +5,16 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
 import com.fantechs.common.base.general.dto.qms.imports.QmsIncomingInspectionOrderImport;
+import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspectionOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -18,6 +22,8 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.wms.in.InFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.qms.mapper.QmsHtIncomingInspectionOrderMapper;
 import com.fantechs.provider.qms.mapper.QmsIncomingInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsIncomingInspectionOrderDetSampleMapper;
@@ -55,6 +61,12 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     private BaseFeignApi baseFeignApi;
 
     @Resource
+    private InFeignApi inFeignApi;
+
+    @Resource
+    private InnerFeignApi innerFeignApi;
+
+    @Resource
     private SecurityFeignApi securityFeignApi;
 
     @Override
@@ -74,22 +86,93 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int pushDown(String ids) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         //根据单据流生成入库计划单或上架作业单
         int i = 0;
         List<QmsIncomingInspectionOrder> qmsIncomingInspectionOrders = qmsIncomingInspectionOrderMapper.selectByIds(ids);
+        String sysOrderTypeCode = qmsIncomingInspectionOrders.get(0).getSysOrderTypeCode();//当前单据类型编码
+        String coreSourceSysOrderTypeCode = qmsIncomingInspectionOrders.get(0).getCoreSourceSysOrderTypeCode();//核心单据类型编码
         //查当前单据的下游单据
-        String sysOrderTypeCode = qmsIncomingInspectionOrders.get(0).getSysOrderTypeCode();
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setBusinessType((byte)1);
         searchBaseOrderFlow.setOrderNode((byte)4);
+        BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
+        if(StringUtils.isEmpty(baseOrderFlow)){
+            throw new BizErrorException("未找到当前单据配置的下游单据");
+        }
 
-
-        if("".equals("")){
+        if("IN-IPO".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成入库计划单
+            List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
+            for(QmsIncomingInspectionOrder qmsIncomingInspectionOrder : qmsIncomingInspectionOrders){
+                int lineNumber = 1;
+                WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
+                wmsInInPlanOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
+                wmsInInPlanOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());
+                wmsInInPlanOrderDet.setLineNumber(lineNumber+"");
+                wmsInInPlanOrderDet.setSourceId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+                wmsInInPlanOrderDet.setMaterialId(qmsIncomingInspectionOrder.getMaterialId());
+                wmsInInPlanOrderDet.setPlanQty(qmsIncomingInspectionOrder.getOrderQty());
+                wmsInInPlanOrderDet.setLineStatus((byte)1);
+                detList.add(wmsInInPlanOrderDet);
+            }
 
-        }else if("".equals("")){
+            WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
+            wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
+            wmsInInPlanOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
+            wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+            wmsInInPlanOrder.setOrderStatus((byte)1);
+            wmsInInPlanOrder.setCreateUserId(user.getUserId());
+            wmsInInPlanOrder.setCreateTime(new Date());
+            wmsInInPlanOrder.setModifiedUserId(user.getUserId());
+            wmsInInPlanOrder.setModifiedTime(new Date());
+            wmsInInPlanOrder.setStatus((byte)1);
+            wmsInInPlanOrder.setOrgId(user.getOrganizationId());
+            wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(detList);
+
+            ResponseEntity responseEntity = inFeignApi.add(wmsInInPlanOrder);
+            if(responseEntity.getCode() != 0){
+                throw new BizErrorException("下推生成入库计划单失败");
+            }else {
+                i++;
+            }
+        }else if("IN-IWK".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成上架作业单
+            List<WmsInnerJobOrderDet> detList = new LinkedList<>();
+            for(QmsIncomingInspectionOrder qmsIncomingInspectionOrder : qmsIncomingInspectionOrders){
+                int lineNumber = 1;
+                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                wmsInnerJobOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
+                wmsInnerJobOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());
+                wmsInnerJobOrderDet.setSourceId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+                wmsInnerJobOrderDet.setLineNumber(lineNumber+"");
+                wmsInnerJobOrderDet.setMaterialId(qmsIncomingInspectionOrder.getMaterialId());
+                wmsInnerJobOrderDet.setPlanQty(qmsIncomingInspectionOrder.getOrderQty());
+                wmsInnerJobOrderDet.setLineStatus((byte)1);
+                detList.add(wmsInnerJobOrderDet);
+            }
 
+            WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+            wmsInnerJobOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
+            wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+            wmsInnerJobOrder.setJobOrderType((byte)1);
+            wmsInnerJobOrder.setOrderStatus((byte)1);
+            wmsInnerJobOrder.setCreateUserId(user.getUserId());
+            wmsInnerJobOrder.setCreateTime(new Date());
+            wmsInnerJobOrder.setModifiedUserId(user.getUserId());
+            wmsInnerJobOrder.setModifiedTime(new Date());
+            wmsInnerJobOrder.setStatus((byte)1);
+            wmsInnerJobOrder.setOrgId(user.getOrganizationId());
+            wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
+
+            ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+            if(responseEntity.getCode() != 0){
+                throw new BizErrorException("下推生成上架作业单失败");
+            }else {
+                i++;
+            }
+        }else {
+            throw new BizErrorException("单据流配置错误");
         }
 
         return i;
@@ -184,22 +267,20 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             }
         }
 
-        entity.setModifiedUserId(user.getUserId());
-        entity.setModifiedTime(new Date());
-        int i = qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(entity);
-
         //删除原明细
         Example example = new Example(QmsIncomingInspectionOrderDet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("incomingInspectionOrderId",entity.getIncomingInspectionOrderId());
         List<QmsIncomingInspectionOrderDet> detList = qmsIncomingInspectionOrderDetMapper.selectByExample(example);
-        List<Long> detIds = detList.stream().map(QmsIncomingInspectionOrderDet::getIncomingInspectionOrderDetId).collect(Collectors.toList());
+        if(StringUtils.isNotEmpty(detList)){
+            List<Long> detIds = detList.stream().map(QmsIncomingInspectionOrderDet::getIncomingInspectionOrderDetId).collect(Collectors.toList());
+            Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andIn("incomingInspectionOrderDetId",detIds);
+            qmsIncomingInspectionOrderDetSampleMapper.deleteByExample(example1);
+        }
         qmsIncomingInspectionOrderDetMapper.deleteByExample(example);
 
-        Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
-        Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andIn("incomingInspectionOrderDetId",detIds);
-        qmsIncomingInspectionOrderDetSampleMapper.deleteByExample(example1);
 
         //新增来料检验单明细
         List<QmsIncomingInspectionOrderDet> list = entity.getList();
@@ -214,7 +295,13 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 qmsIncomingInspectionOrderDet.setOrgId(user.getOrganizationId());
             }
             qmsIncomingInspectionOrderDetMapper.insertList(list);
+        }else{
+            entity.setInspectionStatus((byte)1);
         }
+
+        entity.setModifiedUserId(user.getUserId());
+        entity.setModifiedTime(new Date());
+        int i = qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(entity);
 
         //返写单据信息
         checkInspectionResult(list);
@@ -234,6 +321,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     public void checkInspectionResult(List<QmsIncomingInspectionOrderDet> list){
         if(StringUtils.isNotEmpty(list)) {
             Byte inspectionResult = 1;
+            Byte inspectionStatus = 1;
             int mustInspectioncount = 0;//必检项目数
             int haveInspectioncount = 0;//已检验项目数
             int mustAndHaveInspectioncount = 0;//必检且已检验项目数
@@ -254,18 +342,24 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 }
             }
 
-            if(haveInspectioncount > 0) {
-                //返写检验单结果
-                QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(list.get(0).getIncomingInspectionOrderId());
-                qmsIncomingInspectionOrder.setInspectionResult(mustInspectioncount == mustAndHaveInspectioncount ? inspectionResult : null);
-                qmsIncomingInspectionOrder.setInspectionStatus(mustInspectioncount == mustAndHaveInspectioncount ? (byte) 3 : (byte) 2);
-                qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
 
-                //履历
-                QmsHtIncomingInspectionOrder qmsHtIncomingInspectionOrder = new QmsHtIncomingInspectionOrder();
-                BeanUtils.copyProperties(qmsIncomingInspectionOrder, qmsHtIncomingInspectionOrder);
-                qmsHtIncomingInspectionOrderMapper.insertSelective(qmsHtIncomingInspectionOrder);
+            //返写检验单结果
+            QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(list.get(0).getIncomingInspectionOrderId());
+            qmsIncomingInspectionOrder.setInspectionResult(mustInspectioncount == mustAndHaveInspectioncount ? inspectionResult : null);
+            if(haveInspectioncount > 0){
+                inspectionStatus = 2;
             }
+            if(mustInspectioncount == mustAndHaveInspectioncount){
+                inspectionStatus = 3;
+            }
+            qmsIncomingInspectionOrder.setInspectionStatus(inspectionStatus);
+            qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
+
+            //履历
+            QmsHtIncomingInspectionOrder qmsHtIncomingInspectionOrder = new QmsHtIncomingInspectionOrder();
+            BeanUtils.copyProperties(qmsIncomingInspectionOrder, qmsHtIncomingInspectionOrder);
+            qmsHtIncomingInspectionOrderMapper.insertSelective(qmsHtIncomingInspectionOrder);
+
         }
     }
 
@@ -279,13 +373,14 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("incomingInspectionOrderId",qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
             List<QmsIncomingInspectionOrderDet> detList = qmsIncomingInspectionOrderDetMapper.selectByExample(example);
-            List<Long> detIds = detList.stream().map(QmsIncomingInspectionOrderDet::getIncomingInspectionOrderDetId).collect(Collectors.toList());
+            if(StringUtils.isNotEmpty(detList)){
+                List<Long> detIds = detList.stream().map(QmsIncomingInspectionOrderDet::getIncomingInspectionOrderDetId).collect(Collectors.toList());
+                Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
+                Example.Criteria criteria1 = example1.createCriteria();
+                criteria1.andIn("incomingInspectionOrderDetId",detIds);
+                qmsIncomingInspectionOrderDetSampleMapper.deleteByExample(example1);
+            }
             qmsIncomingInspectionOrderDetMapper.deleteByExample(example);
-
-            Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
-            Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andIn("incomingInspectionOrderDetId",detIds);
-            qmsIncomingInspectionOrderDetSampleMapper.deleteByExample(example1);
 
             //履历
             QmsHtIncomingInspectionOrder qmsHtIncomingInspectionOrder = new QmsHtIncomingInspectionOrder();
@@ -494,5 +589,13 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         resultMap.put("操作成功总数",success);
         resultMap.put("操作失败行数",fail);
         return resultMap;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateIfAllIssued(QmsIncomingInspectionOrder entity) {
+        int num=0;
+        num=qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(entity);
+        return num;
     }
 }

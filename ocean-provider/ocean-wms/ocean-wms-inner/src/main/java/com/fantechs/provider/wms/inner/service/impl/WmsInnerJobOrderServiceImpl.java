@@ -21,6 +21,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
+import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
@@ -35,6 +36,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
@@ -84,6 +86,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     private EngFeignApi engFeignApi;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private QmsFeignApi qmsFeignApi;
     @Resource
     private WmsDataExportInnerJobOrderService wmsDataExportInnerJobOrderService;
 
@@ -1640,7 +1644,39 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             Example exampleDet = new Example(WmsInnerJobOrderDet.class);
             exampleDet.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
             List<WmsInnerJobOrderDet> jobOrderDets = wmsInPutawayOrderDetMapper.selectByExample(exampleDet);
+            String sourceSysOrderTypeCode=wmsInnerJobOrder.getSourceSysOrderTypeCode();
+            switch (sourceSysOrderTypeCode) {
+                case "IN-IPO":
+                    //入库计划
+                    for (WmsInnerJobOrderDet jobOrderDetIPO : jobOrderDets) {
 
+                    }
+                    break;
+                case "IN-SWK":
+                    //收货作业
+                    for (WmsInnerJobOrderDet jobOrderDetSWK : jobOrderDets) {
+
+                    }
+                    break;
+                case "IN-SPO":
+                    //收货计划
+                    for (WmsInnerJobOrderDet jobOrderDetSPO : jobOrderDets) {
+
+                    }
+                    break;
+                case "QMS-MIIO":
+                    //来料检验
+                    for (WmsInnerJobOrderDet jobOrderDetMIIO : jobOrderDets) {
+                        Long sourceId=jobOrderDetMIIO.getSourceId();
+                        QmsIncomingInspectionOrder incomingOrder=new QmsIncomingInspectionOrder();
+                        incomingOrder.setIncomingInspectionOrderId(sourceId);
+                        incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
+                        qmsFeignApi.updateIfAllIssued(incomingOrder);
+                    }
+                    break;
+                default:
+                    break;
+            }
 
 
             Example example = new Example(WmsInnerJobOrderDet.class);

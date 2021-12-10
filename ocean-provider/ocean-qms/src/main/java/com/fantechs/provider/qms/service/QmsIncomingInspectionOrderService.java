@@ -34,4 +34,6 @@ public interface QmsIncomingInspectionOrderService extends IService<QmsIncomingI
     int pushDown(String ids);
 
     void checkInspectionResult(List<QmsIncomingInspectionOrderDet> list);
+
+    int updateIfAllIssued(QmsIncomingInspectionOrder entity);
 }
