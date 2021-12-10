@@ -13,4 +13,6 @@ import java.util.Map;
 
 public interface BaseOrderFlowService extends IService<BaseOrderFlow> {
     List<BaseOrderFlowDto> findList(Map<String, Object> map);
+
+    BaseOrderFlow findOrderFlow(Map<String, Object> map);
 }

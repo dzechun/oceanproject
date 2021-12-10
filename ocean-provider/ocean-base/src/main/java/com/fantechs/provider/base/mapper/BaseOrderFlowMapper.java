@@ -11,4 +11,6 @@ import java.util.Map;
 @Mapper
 public interface BaseOrderFlowMapper extends MyMapper<BaseOrderFlow> {
     List<BaseOrderFlowDto> findList(Map<String, Object> map);
+
+    BaseOrderFlow findOrderFlow(Map<String, Object> map);
 }

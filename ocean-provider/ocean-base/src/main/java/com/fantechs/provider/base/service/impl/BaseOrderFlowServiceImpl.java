@@ -4,7 +4,6 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
-import com.fantechs.common.base.general.entity.basic.BaseAddress;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -16,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +34,16 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
         return baseOrderFlowMapper.findList(map);
+    }
+
+    @Override
+    public BaseOrderFlow findOrderFlow(Map<String, Object> map) {
+        if(StringUtils.isEmpty(map.get("businessType"),map.get("orderNode"))){
+            throw new BizErrorException("业务类型或单据节点不能为空");
+        }
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",user.getOrganizationId());
+        return baseOrderFlowMapper.findOrderFlow(map);
     }
 
     @Override

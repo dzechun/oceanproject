@@ -141,7 +141,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"发货数量不能小于0");
 
                 Map map = new HashMap();
-                map.put("sourceOrderId",srmInAsnOrderDto.getSourceOrderId());
+                map.put("sourceOrderId",srmInAsnOrderDetDto.getSourceOrderId());
                 List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos = srmInAsnOrderDetMapper.findList(map);
                 if (StringUtils.isEmpty(srmInAsnOrderDetDtos))
                     srmInAsnOrderDetDto.setTotalDeliveryQty(BigDecimal.ZERO);

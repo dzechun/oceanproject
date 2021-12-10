@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Builder
@@ -28,5 +29,10 @@ public class SearchSrmInAsnOrderDet extends BaseQuery implements Serializable {
     @ApiModelProperty(name="materialCode",value = "物料编码")
     private String materialCode;
 
+    /**
+     * ANS单ID集合
+     */
+    @ApiModelProperty(name="asnOrderIdList",value = "ANS单ID集合")
+    private List<Long> asnOrderIdList;
 
 }
