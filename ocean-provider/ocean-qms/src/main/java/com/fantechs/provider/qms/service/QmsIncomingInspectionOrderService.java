@@ -4,6 +4,7 @@ package com.fantechs.provider.qms.service;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
 import com.fantechs.common.base.general.dto.qms.imports.QmsIncomingInspectionOrderImport;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
+import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspectionOrder;
 import com.fantechs.common.base.support.IService;
 
@@ -29,4 +30,8 @@ public interface QmsIncomingInspectionOrderService extends IService<QmsIncomingI
     int MRBReview(Long incomingInspectionOrderId, Byte mrbResult);
 
     QmsIncomingInspectionOrder selectByKey(Long incomingInspectionOrderId);
+
+    int pushDown(String ids);
+
+    void checkInspectionResult(List<QmsIncomingInspectionOrderDet> list);
 }

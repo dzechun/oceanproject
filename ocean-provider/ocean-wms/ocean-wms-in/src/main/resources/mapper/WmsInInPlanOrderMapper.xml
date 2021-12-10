@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInInPlanOrderMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="in_plan_order_id" jdbcType="BIGINT" property="inPlanOrderId"/>
+        <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode"/>
+        <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode"/>
+        <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
+        <result column="in_plan_order_code" jdbcType="VARCHAR" property="inPlanOrderCode"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="plan_start_time" jdbcType="TIMESTAMP" property="planStartTime"/>
+        <result column="plan_end_time" jdbcType="TIMESTAMP" property="planEndTime"/>
+        <result column="make_order_user_id" jdbcType="BIGINT" property="makeOrderUserId"/>
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto">
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="total_plan_qty" jdbcType="DECIMAL" property="totalPlanQty"/>
+        <result column="total_putaway_qty" jdbcType="DECIMAL" property="totalPutawayQty"/>
+        <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <sql id="BaseColumnList">
+        wiipo.in_plan_order_id,
+        wiipo.core_source_sys_order_type_code,
+        wiipo.source_sys_order_type_code,
+        wiipo.sys_order_type_code,
+        wiipo.in_plan_order_code,
+        wiipo.warehouse_id,
+        wiipo.storage_id,
+        wiipo.plan_start_time,
+        wiipo.plan_end_time,
+        wiipo.make_order_user_id,
+        wiipo.order_status,
+        wiipo.status,
+        wiipo.remark,
+        wiipo.org_id,
+        wiipo.create_user_id,
+        wiipo.create_time,
+        wiipo.modified_user_id,
+        wiipo.modified_time,
+        wiipo.is_delete,
+        wiipo.option1,
+        wiipo.option2,
+        wiipo.option3
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="BaseColumnList"/>,
+        bw.warehouse_name AS warehouse_name,bs.storage_name AS storage_name,
+        ( SELECT SUM(plan_qty) FROM wms_in_in_plan_order_det wiipod WHERE wiipod.in_plan_order_id = wiipo.in_plan_order_id ) AS total_plan_qty,
+        ( SELECT SUM(putaway_qty) FROM wms_in_in_plan_order_det wiipods WHERE wiipods.in_plan_order_id = wiipo.in_plan_order_id ) AS total_putaway_qty,
+        su.user_name AS make_order_user_name,
+        u.user_name AS create_user_name,
+        s.user_name AS modified_user_name,
+        bo.organization_name
+        FROM wms_in_in_plan_order wiipo
+        LEFT JOIN base_warehouse bw ON wiipo.warehouse_id = bw.warehouse_id
+        LEFT JOIN base_storage bs ON wiipo.storage_id = bs.storage_id
+        LEFT JOIN sys_user u ON wiipo.create_user_id=u.user_id
+        LEFT JOIN sys_user s ON wiipo.modified_user_id=s.user_id
+        LEFT JOIN sys_user su ON wiipo.make_order_user_id=su.user_id
+        LEFT JOIN base_organization bo ON wiipo.org_id = bo.organization_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                and wiipo.org_id = #{orgId}
+            </if>
+            <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
+                and wiipo.sys_order_type_code = #{sysOrderTypeCode}
+            </if>
+            <if test="warehouseName!=null and warehouseName!=''">
+                and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+            </if>
+            <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+                and wiipo.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+            </if>
+            <if test="orderStatus!=null and orderStatus!=''">
+                and wiipo.order_status = #{orderStatus}
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and date_format(wiipo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="planStartTime1 != null and planStartTime1 != '' and planStartTime2 != null and planStartTime2 != ''">
+                and date_format(wiipo.plan_start_time, '%Y-%m-%d') BETWEEN #{planStartTime1} AND #{planStartTime2}
+            </if>
+            <if test="planEndTime1 != null and planEndTime1 != '' and planEndTime2 != null and planEndTime2 != ''">
+                and date_format(wiipo.plan_end_time, '%Y-%m-%d') BETWEEN #{planEndTime1} AND #{planEndTime2}
+            </if>
+        </where>
+        order by wiipo.create_time desc
+    </select>
+
+</mapper>

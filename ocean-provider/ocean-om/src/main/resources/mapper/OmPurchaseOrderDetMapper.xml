@@ -83,7 +83,7 @@
         bm.material_version as materialVersion,
         bw.warehouse_code as warehouseCode, bw.warehouse_name as warehouseName, bm.material_source as materialSource,
         bmc.material_category_name as materialCategoryName
-        , bpm.product_model_name as productModelName,opo.purchase_order_code,
+        , bpm.product_model_name as productModelName,opo.purchase_order_code,bs.supplier_name as supplierName,
         u.user_name as create_user_name,
         s.user_name as modified_user_name,
         bo.organization_name
@@ -96,6 +96,7 @@
         left join base_material_category bmc on bmt.material_category_id = bmc.material_category_id
         left join base_product_model bpm on bmt.product_model_id = bpm.product_model_id
         left join base_warehouse bw on opod.warehouse_id = bw.warehouse_id
+        left join base_supplier bs on opo.supplier_id = bs.supplier_id
         left join sys_user u on opod.create_user_id=u.user_id
         left join sys_user s on opod.modified_user_id=s.user_id
         left join base_organization bo on opod.org_id = bo.organization_id

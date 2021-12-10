@@ -6,8 +6,12 @@
       WARNING - @mbg.generated
     -->
     <id column="incoming_inspection_order_id" jdbcType="BIGINT" property="incomingInspectionOrderId" />
-    <result column="source_order_type" jdbcType="TINYINT" property="sourceOrderType" />
+    <result column="source_id" jdbcType="BIGINT" property="sourceId" />
     <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+    <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
+    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
+    <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
+    <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
     <result column="incoming_inspection_order_code" jdbcType="VARCHAR" property="incomingInspectionOrderCode" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
@@ -52,8 +56,12 @@
 
   <sql id="Base_Column_List">
     qiio.incoming_inspection_order_id,
-    qiio.source_order_type,
+    qiio.source_id,
     qiio.source_order_code,
+    qiio.core_source_order_code,
+    qiio.core_source_sys_order_type_code,
+    qiio.source_sys_order_type_code,
+    qiio.sys_order_type_code,
     qiio.incoming_inspection_order_code,
     qiio.material_id,
     qiio.supplier_id,
@@ -102,8 +110,11 @@
       <if test="incomingInspectionOrderId != null">
         and qiio.incoming_inspection_order_id = #{incomingInspectionOrderId}
       </if>
-      <if test="incomingInspectionOrderCode != null and incomingInspectionOrderCode!=''">
+      <if test="incomingInspectionOrderCode != null and incomingInspectionOrderCode!='' and codeQueryMark!=1">
         and qiio.incoming_inspection_order_code like CONCAT('%', #{incomingInspectionOrderCode}, '%')
+      </if>
+      <if test="incomingInspectionOrderCode != null and incomingInspectionOrderCode!='' and codeQueryMark==1">
+        and qiio.incoming_inspection_order_code = #{incomingInspectionOrderCode}
       </if>
       <if test="sourceOrderCode != null and sourceOrderCode!=''">
         and qiio.source_order_code like CONCAT('%', #{sourceOrderCode}, '%')

@@ -6,41 +6,35 @@
       WARNING - @mbg.generated
     -->
     <id column="ht_asn_order_id" jdbcType="BIGINT" property="htAsnOrderId" />
-    <result column="asn_order_id" jdbcType="BIGINT" property="asnOrderId" />
-    <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId" />
-    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId" />
-    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId" />
-    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
-    <result column="asn_code" jdbcType="VARCHAR" property="asnCode" />
-    <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
-    <result column="related_order_code_1" jdbcType="VARCHAR" property="relatedOrderCode1" />
-    <result column="related_order_code_2" jdbcType="VARCHAR" property="relatedOrderCode2" />
-    <result column="related_order_code_3" jdbcType="VARCHAR" property="relatedOrderCode3" />
-    <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
-    <result column="plan_ago_date" jdbcType="TIMESTAMP" property="planAgoDate" />
-    <result column="start_receiving_date" jdbcType="TIMESTAMP" property="startReceivingDate" />
-    <result column="end_receiving_date" jdbcType="TIMESTAMP" property="endReceivingDate" />
-    <result column="deliver_date" jdbcType="TIMESTAMP" property="deliverDate" />
-    <result column="shipper_name" jdbcType="VARCHAR" property="shipperName" />
-    <result column="shipper_user_id" jdbcType="BIGINT" property="shipperUserId" />
-    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
-    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone" />
-    <result column="fax_number" jdbcType="VARCHAR" property="faxNumber" />
-    <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress" />
-    <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
-    <result column="descr" jdbcType="VARCHAR" property="descr" />
-    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
-    <result column="file_id" jdbcType="BIGINT" property="fileId" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <id column="asn_order_id" jdbcType="BIGINT" property="asnOrderId"/>
+    <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId"/>
+    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="corSourceSysOrderTypeCode"/>
+    <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode"/>
+    <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
+    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+    <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId"/>
+    <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+    <result column="asn_code" jdbcType="VARCHAR" property="asnCode"/>
+    <result column="plan_ago_date" jdbcType="TIMESTAMP" property="planAgoDate"/>
+    <result column="start_receiving_date" jdbcType="TIMESTAMP" property="startReceivingDate"/>
+    <result column="end_receiving_date" jdbcType="TIMESTAMP" property="endReceivingDate"/>
+    <result column="deliver_date" jdbcType="TIMESTAMP" property="deliverDate"/>
+    <result column="shipper_name" jdbcType="VARCHAR" property="shipperName"/>
+    <result column="shipper_user_id" jdbcType="BIGINT" property="shipperUserId"/>
+    <result column="link_man_name" jdbcType="VARCHAR" property="linkManName"/>
+    <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+    <result column="file_id" jdbcType="BIGINT" property="fileId"/>
+    <result column="status" jdbcType="TINYINT" property="status"/>
+    <result column="remark" jdbcType="VARCHAR" property="remark"/>
+    <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
   </resultMap>
 
   <resultMap id="BaseResultDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDto">
@@ -58,27 +52,22 @@
     wihao.ht_asn_order_id,
     wihao.asn_order_id,
     wihao.source_order_id,
+    wihao.core_source_sys_order_type_code,
+    wihao.source_sys_order_type_code,
+    wihao.sys_order_type_code,
     wihao.material_owner_id,
     wihao.supplier_id,
+    wihao.warehouse_id,
     wihao.order_type_id,
     wihao.asn_code,
-    wihao.warehouse_id,
     wihao.storage_id,
-    wihao.customer_order_code,
-    wihao.related_order_code_1,
-    wihao.related_order_code_2,
-    wihao.related_order_code_3,
-    wihao.order_date,
     wihao.plan_ago_date,
     wihao.start_receiving_date,
     wihao.end_receiving_date,
+    wihao.deliver_date,
     wihao.shipper_name,
     wihao.link_man_name,
     wihao.link_man_phone,
-    wihao.fax_number,
-    wihao.e_mail_address,
-    wihao.detailed_address,
-    wihao.descr,
     wihao.order_status,
     wihao.file_id,
     wihao.status,
@@ -146,6 +135,15 @@
       </if>
       <if test="warehouseName!=null and warehouseName!=''">
         and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+      </if>
+      <if test="corSourceSysOrderTypeCode!=null and corSourceSysOrderTypeCode!=''">
+        and wihao.core_source_sys_order_type_code = #{corSourceSysOrderTypeCode}
+      </if>
+      <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+        and wihao.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+      </if>
+      <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
+        and wihao.sys_order_type_code = #{sysOrderTypeCode}
       </if>
       <choose>
         <when test="supplierIdList!=null and supplierIdList.size > 0">

@@ -42,6 +42,28 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
     private Long sourceOrderId;
 
     /**
+     * 核心系统单据类型编码
+     */
+    @ApiModelProperty(name="corSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    @Column(name = "core_source_sys_order_type_code")
+    private String corSourceSysOrderTypeCode;
+
+    /**
+     * 来源系统单据类型编码
+     */
+    @ApiModelProperty(name="sourceSysOrderTypeCode",value = "来源系统单据类型编码")
+    @Column(name = "source_sys_order_type_code")
+    private String sourceSysOrderTypeCode;
+
+    /**
+     * 系统单据类型编码
+     */
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
+
+
+    /**
      * 货主信息
      */
     @ApiModelProperty(name="materialOwnerId",value = "货主信息")
@@ -90,50 +112,11 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
     private String asnCode;
 
     /**
-     * 客户单号
-     */
-    @ApiModelProperty(name="customerOrderCode",value = "客户单号")
-    @Excel(name = "客户单号", height = 20, width = 30) 
-    @Column(name = "customer_order_code")
-    private String customerOrderCode;
-
-    /**
-     * 相关单号1
-     */
-    @ApiModelProperty(name="relatedOrderCode1",value = "相关单号1")
-    @Excel(name = "相关单号1", height = 20, width = 30) 
-    @Column(name = "related_order_code_1")
-    private String relatedOrderCode1;
-
-    /**
-     * 相关单号2
-     */
-    @ApiModelProperty(name="relatedOrderCode2",value = "相关单号2")
-    @Excel(name = "相关单号2", height = 20, width = 30) 
-    @Column(name = "related_order_code_2")
-    private String relatedOrderCode2;
-
-    /**
-     * 相关单号3
-     */
-    @ApiModelProperty(name="relatedOrderCode3",value = "相关单号3")
-    @Excel(name = "相关单号3", height = 20, width = 30) 
-    @Column(name = "related_order_code_3")
-    private String relatedOrderCode3;
-
-    /**
-     * 订单日期
-     */
-    @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30) 
-    @Column(name = "order_date")
-    private Date orderDate;
-
-    /**
      * 预计到货(arrival of good)日期
      */
     @ApiModelProperty(name="planAgoDate",value = "预计到货(arrival of good)日期")
-    @Excel(name = "预计到货(arrival of good)日期", height = 20, width = 30) 
+    @Excel(name = "预计到货(arrival of good)日期", height = 20, width = 30)
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_ago_date")
     private Date planAgoDate;
 
@@ -141,7 +124,8 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
      * 开始收货日期
      */
     @ApiModelProperty(name="startReceivingDate",value = "开始收货日期")
-    @Excel(name = "开始收货日期", height = 20, width = 30) 
+    @Excel(name = "开始收货日期", height = 20, width = 30)
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "start_receiving_date")
     private Date startReceivingDate;
 
@@ -149,7 +133,8 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
      * 结束收货日期
      */
     @ApiModelProperty(name="endReceivingDate",value = "结束收货日期")
-    @Excel(name = "结束收货日期", height = 20, width = 30) 
+    @Excel(name = "结束收货日期", height = 20, width = 30)
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "end_receiving_date")
     private Date endReceivingDate;
 
@@ -158,6 +143,7 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="deliverDate",value = "发货日期")
     @Excel(name = "发货日期", height = 20, width = 30,orderNum="3")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "deliver_date")
     private Date deliverDate;
 
@@ -192,37 +178,6 @@ public class SrmInAsnOrder extends ValidGroup implements Serializable {
     @Excel(name = "联系人电话", height = 20, width = 30) 
     @Column(name = "link_man_phone")
     private String linkManPhone;
-
-    /**
-     * 传真号码
-     */
-    @ApiModelProperty(name="faxNumber",value = "传真号码")
-    @Excel(name = "传真号码", height = 20, width = 30) 
-    @Column(name = "fax_number")
-    private String faxNumber;
-
-    /**
-     * 邮箱地址
-     */
-    @ApiModelProperty(name="emailAddress",value = "邮箱地址")
-    @Excel(name = "邮箱地址", height = 20, width = 30) 
-    @Column(name = "e_mail_address")
-    private String emailAddress;
-
-    /**
-     * 详细地址
-     */
-    @ApiModelProperty(name="detailedAddress",value = "详细地址")
-    @Excel(name = "详细地址", height = 20, width = 30) 
-    @Column(name = "detailed_address")
-    private String detailedAddress;
-
-    /**
-     * 描述
-     */
-    @ApiModelProperty(name="descr",value = "描述")
-    @Excel(name = "描述", height = 20, width = 30) 
-    private String descr;
 
     /**
      * 单据状态(1-保存 2-提交 3-审核通过 4-审核未通过 5-已预约 6-发货)

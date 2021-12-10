@@ -2,18 +2,22 @@ package com.fantechs.provider.srm.service.impl;
 
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.imports.SrmInAsnOrderDetImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
+import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
+import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetMapper;
 import com.fantechs.provider.srm.mapper.SrmInHtAsnOrderDetMapper;
 import com.fantechs.provider.srm.service.SrmInAsnOrderDetService;
@@ -37,6 +41,8 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
     private SrmInHtAsnOrderDetMapper srmInHtAsnOrderDetMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private OMFeignApi oMFeignApi;
 
     @Override
     public List<SrmInAsnOrderDetDto> findList(Map<String, Object> map) {
@@ -88,8 +94,25 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                 //fail.add(i+2);
                 //continue;
             }
+
+            SearchOmPurchaseOrderDet searchOmPurchaseOrderDet = new SearchOmPurchaseOrderDet();
+            searchOmPurchaseOrderDet.setOrgId(user.getOrganizationId());
+            searchOmPurchaseOrderDet.setPurchaseOrderCode(purchaseOrderCode);
+            List<OmPurchaseOrderDetDto> omPurchaseOrderDetDtos = oMFeignApi.findList(searchOmPurchaseOrderDet).getData();
+            if(StringUtils.isNotEmpty(omPurchaseOrderDetDtos)) {
+                for(OmPurchaseOrderDet det : omPurchaseOrderDetDtos){
+                    if(baseMaterials.get(0).getMaterialId().equals(det.getMaterialId())){
+                        srmInAsnOrderDetDto.setOrderQty(det.getOrderQty());
+                        srmInAsnOrderDetDto.setSourceOrderId(det.getPurchaseOrderDetId());
+                    }
+                }
+
+            }else{
+                throw new BizErrorException("未查询到采购订单明细为"+ purchaseOrderCode +"的信息");
+            }
             if(StringUtils.isEmpty(srmInAsnOrderDetImport.getDeliveryQty()))
                 srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
+
             srmInAsnOrderDetDto.setMaterialId(baseMaterials.get(0).getMaterialId());
             srmInAsnOrderDetDto.setWarehouseId(baseWarehouses.get(0).getWarehouseId());
             srmInAsnOrderDetDto.setCreateTime(new Date());

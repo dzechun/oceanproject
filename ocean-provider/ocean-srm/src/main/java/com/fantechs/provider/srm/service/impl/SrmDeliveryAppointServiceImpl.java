@@ -8,7 +8,9 @@ import com.fantechs.common.base.general.dto.srm.SrmAppointDeliveryReAsnDto;
 import com.fantechs.common.base.general.dto.srm.SrmCarportTimeQuantumDto;
 import com.fantechs.common.base.general.dto.srm.SrmDeliveryAppointDto;
 import com.fantechs.common.base.general.dto.srm.SrmHtAppointDeliveryReAsnDto;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
 import com.fantechs.common.base.general.entity.srm.SrmAppointDeliveryReAsn;
 import com.fantechs.common.base.general.entity.srm.SrmDeliveryAppoint;
@@ -113,11 +115,12 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
             throw new BizErrorException("该时间段预约已满");
 
         //保存供应商
-        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
-        searchBaseSupplierReUser.setUserId(user.getUserId());
-        List<BaseSupplierReUser> baseSupplierReUsers = baseFeignApi.findList(searchBaseSupplierReUser).getData();
-        if(StringUtils.isNotEmpty(baseSupplierReUsers))
-            srmDeliveryAppointDto.setSupplierId(baseSupplierReUsers.get(0).getSupplierId());
+        if(StringUtils.isEmpty(srmDeliveryAppointDto.getSupplierId()))   throw new BizErrorException("供应商id不能为空");
+        SearchBaseSupplier searchBaseSupplier = new SearchBaseSupplier();
+        searchBaseSupplier.setSupplierId(srmDeliveryAppointDto.getSupplierId());
+        List<BaseSupplier> baseSupplier = baseFeignApi.findSupplierList(searchBaseSupplier).getData();
+        if(baseSupplier.get(0).getIfAppointDeliver() == 0)
+            throw new BizErrorException("该供应商不需要预约");
 
 
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -194,8 +197,6 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         int i = srmHtDeliveryAppointMapper.insertUseGeneratedKeys(srmHtDeliveryAppoint);
 
 
-
-
         //删除子表重新添加
         if(StringUtils.isNotEmpty(srmDeliveryAppointDto.getList())) {
             Example example = new Example(SrmAppointDeliveryReAsn.class);
@@ -222,22 +223,30 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
             if (StringUtils.isNotEmpty(list))  srmAppointDeliveryReAsnMapper.insertList(list);
             if (StringUtils.isNotEmpty(htList)) srmHtAppointDeliveryReAsnMapper.insertList(htList);
             //反写预收货通知单
-            if(srmDeliveryAppointDto.getAppointStatus() == 3){
+            if(srmDeliveryAppointDto.getAppointStatus() == 3 || srmDeliveryAppointDto.getAppointStatus() == 4 || srmDeliveryAppointDto.getAppointStatus() == 5){
                 for(SrmAppointDeliveryReAsnDto srmAppointDeliveryReAsnDto : list) {
                     Example example1 = new Example(SrmInAsnOrder.class);
                     Example.Criteria criteria1 = example1.createCriteria();
                     criteria1.andEqualTo("asnCode", srmAppointDeliveryReAsnDto.getAsnCode());
-                    List<SrmInAsnOrder> srmInAsnOrders = srmInAsnOrderMapper.selectByExample(example);
+                    List<SrmInAsnOrder> srmInAsnOrders = srmInAsnOrderMapper.selectByExample(example1);
                     if(StringUtils.isEmpty(srmInAsnOrders))  throw new BizErrorException("未查询到对应的asn单号");
                     SrmInAsnOrder order = srmInAsnOrders.get(0);
-                    order.setOrderStatus((byte)5);
-                    srmInAsnOrderMapper.updateByPrimaryKeySelective(order);
+
+                    if(srmDeliveryAppointDto.getAppointStatus() == 3) {
+                        order.setOrderStatus((byte) 5);
+                        srmInAsnOrderMapper.updateByPrimaryKeySelective(order);
+                    }
+                    if(srmDeliveryAppointDto.getAppointStatus() == 4 &&  order.getOrderStatus() == 6  ){
+                        throw new BizErrorException("ASN单已发货，无法取消");
+                    }
+                    if(srmDeliveryAppointDto.getAppointStatus() == 5){
+                        order.setOrderStatus((byte)3);
+                        srmInAsnOrderMapper.updateByPrimaryKeySelective(order);
+                    }
+
                 }
             }
         }
-
-
-
 
         return i;
     }

@@ -31,6 +31,34 @@ public class SrmPlanDeliveryOrderDet extends ValidGroup implements Serializable 
     private Long planDeliveryOrderDetId;
 
     /**
+     * 核心单据编码
+     */
+    @ApiModelProperty(name="coreSourceOrderCode",value = "核心单据编码")
+    @Column(name = "core_source_order_code")
+    private String coreSourceOrderCode;
+
+    /**
+     * 来源单据编码
+     */
+    @ApiModelProperty(name="sourceOrderCode",value = "来源单据编码")
+    @Column(name = "source_order_code")
+    private String sourceOrderCode;
+
+    /**
+     * 核心单据明细ID
+     */
+    @ApiModelProperty(name="coreSourceId",value = "核心单据明细ID")
+    @Column(name = "core_source_id")
+    private Long coreSourceId;
+
+    /**
+     * 来源ID
+     */
+    @ApiModelProperty(name="sourceId",value = "来源ID")
+    @Column(name = "source_id")
+    private Long sourceId;
+
+    /**
      * 送货计划单ID
      */
     @ApiModelProperty(name="planDeliveryOrderId",value = "送货计划单ID")
@@ -64,7 +92,7 @@ public class SrmPlanDeliveryOrderDet extends ValidGroup implements Serializable 
      * 是否已经生成ASN(0-否 1-是)
      */
     @ApiModelProperty(name="ifCreateAsn",value = "是否已经生成ASN(0-否 1-是)")
-    @Excel(name = "是否已经生成ASN(0-否 1-是)", height = 20, width = 30,orderNum="15",replace = {"否_0","是_1"})
+    @Excel(name = "是否已经生成ASN", height = 20, width = 30,orderNum="15",replace = {"否_0","是_1"})
     @Column(name = "if_create_asn")
     private Byte ifCreateAsn;
 

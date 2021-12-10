@@ -1,20 +1,8 @@
 package com.fantechs.provider.wms.in.config;
 
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
-import com.fantechs.common.base.utils.RedisUtil;
-import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
-import tk.mybatis.mapper.entity.Example;
-
-import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * @Author mr.lei
@@ -22,16 +10,16 @@ import java.util.Date;
  */
 @Component
 public class RedisKeyExpirationListener extends KeyExpirationEventMessageListener {
-    @Resource
+/*    @Resource
     private WmsInAsnOrderMapper wmsInAsnOrderMapper;
     @Resource
-    private RedisUtil redisUtil;
+    private RedisUtil redisUtil;*/
 
     public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer) {
         super(listenerContainer);
     }
-    private final static String  MAYIKT_REDIS_KEY="pallet_id";
-    @Override
+//    private final static String  MAYIKT_REDIS_KEY="pallet_id";
+    /*@Override
     public void onMessage(Message message, byte[] pattern) {
         // 用户做自己的业务处理即可,注意message.toString()可以获取失效的key
         String expiredKey = message.toString();
@@ -49,5 +37,5 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
                 redisUtil.set("lastAsnId",wmsInAsnOrder);
             }
         }
-    }
+    }*/
 }

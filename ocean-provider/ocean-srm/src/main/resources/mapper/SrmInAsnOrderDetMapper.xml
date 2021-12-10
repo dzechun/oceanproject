@@ -7,23 +7,20 @@
         -->
         <id column="asn_order_det_id" jdbcType="BIGINT" property="asnOrderDetId"/>
         <result column="asn_order_id" jdbcType="BIGINT" property="asnOrderId"/>
+        <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode"/>
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
         <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId"/>
+        <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId"/>
+        <result column="source_id" jdbcType="BIGINT" property="sourceId"/>
         <result column="order_det_id" jdbcType="BIGINT" property="orderDetId"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
         <result column="line_number" jdbcType="INTEGER" property="lineNumber"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
-        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
         <result column="delivery_qty" jdbcType="DECIMAL" property="deliveryQty"/>
-        <result column="packing_qty" jdbcType="DECIMAL" property="packingQty"/>
-        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
-        <result column="putaway_qty" jdbcType="DECIMAL" property="putawayQty"/>
-        <result column="quality_testing_qty" jdbcType="DECIMAL" property="qualityTestingQty"/>
         <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
         <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate"/>
-        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
-        <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -54,23 +51,21 @@
     <sql id="BaseColumnList">
         wiaod.asn_order_det_id,
         wiaod.asn_order_id,
+        wiaod.core_source_order_code,
+        wiaod.source_order_code,
         wiaod.source_order_id,
+        wiaod.core_source_id,
+        wiaod.source_id,
         wiaod.order_det_id,
         wiaod.inventory_status_id,
         wiaod.line_number,
         wiaod.material_id,
         wiaod.warehouse_id,
         wiaod.storage_id,
-        wiaod.packing_unit_name,
-        wiaod.packing_qty,
-        wiaod.actual_qty,
-        wiaod.putaway_qty,
-        wiaod.quality_testing_qty,
         wiaod.pallet_code,
         wiaod.receiving_date,
-        wiaod.production_date,
-        wiaod.expired_date,
         wiaod.batch_code,
+        wiaod.delivery_qty,
         wiaod.status,
         wiaod.remark,
         wiaod.org_id,

@@ -1,14 +1,9 @@
 package com.fantechs.common.base.general.dto.wms.in;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
+import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +13,7 @@ import java.util.List;
  * @Date 2021/5/20
  */
 @Data
-public class PalletAutoAsnDto extends WmsInAsnOrderDet implements Serializable {
+public class PalletAutoAsnDto extends SrmInAsnOrderDet implements Serializable {
     /**
      * 货主信息
      */

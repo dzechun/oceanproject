@@ -6,34 +6,30 @@
       WARNING - @mbg.generated
     -->
     <id column="ht_asn_order_det_id" jdbcType="BIGINT" property="htAsnOrderDetId" />
-    <result column="asn_order_det_id" jdbcType="BIGINT" property="asnOrderDetId" />
-    <result column="asn_order_id" jdbcType="BIGINT" property="asnOrderId" />
-    <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId" />
-    <result column="order_det_id" jdbcType="BIGINT" property="orderDetId" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="storage_id" jdbcType="BIGINT" property="storageId" />
-    <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
-    <result column="line_number" jdbcType="INTEGER" property="lineNumber" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
-    <result column="delivery_qty" jdbcType="DECIMAL" property="deliveryQty" />
-    <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
-    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
-    <result column="putaway_qty" jdbcType="DECIMAL" property="putawayQty" />
-    <result column="quality_testing_qty" jdbcType="DECIMAL" property="qualityTestingQty" />
-    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
-    <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate" />
-    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
-    <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate" />
-    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+      <result column="asn_order_id" jdbcType="BIGINT" property="asnOrderId"/>
+      <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode"/>
+      <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
+      <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId"/>
+      <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId"/>
+      <result column="source_id" jdbcType="BIGINT" property="sourceId"/>
+      <result column="order_det_id" jdbcType="BIGINT" property="orderDetId"/>
+      <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+      <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+      <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
+      <result column="line_number" jdbcType="INTEGER" property="lineNumber"/>
+      <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+      <result column="delivery_qty" jdbcType="DECIMAL" property="deliveryQty"/>
+      <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
+      <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate"/>
+      <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+      <result column="status" jdbcType="TINYINT" property="status"/>
+      <result column="remark" jdbcType="VARCHAR" property="remark"/>
+      <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+      <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+      <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+      <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+      <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
   </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDetDto">
@@ -55,23 +51,21 @@
         wihaod.ht_asn_order_det_id,
         wihaod.asn_order_det_id,
         wihaod.asn_order_id,
+        wihaod.core_source_order_code,
+        wihaod.source_order_code,
         wihaod.source_order_id,
+        wihaod.core_source_id,
+        wihaod.source_id,
         wihaod.order_det_id,
         wihaod.inventory_status_id,
         wihaod.line_number,
         wihaod.material_id,
         wihaod.warehouse_id,
         wihaod.storage_id,
-        wihaod.packing_unit_name,
-        wihaod.packing_qty,
-        wihaod.actual_qty,
-        wihaod.putaway_qty,
-        wihaod.quality_testing_qty,
         wihaod.pallet_code,
         wihaod.receiving_date,
-        wihaod.production_date,
-        wihaod.expired_date,
         wihaod.batch_code,
+        wihaod.delivery_qty,
         wihaod.status,
         wihaod.remark,
         wihaod.org_id,

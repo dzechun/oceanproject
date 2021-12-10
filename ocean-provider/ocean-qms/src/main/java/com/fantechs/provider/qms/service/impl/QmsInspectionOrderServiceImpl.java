@@ -4,26 +4,15 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
-import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
-import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
-import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionStandard;
-import com.fantechs.common.base.general.entity.basic.BaseInspectionWay;
 import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionStandard;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionWay;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
@@ -32,12 +21,10 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
-import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.qms.mapper.QmsHtInspectionOrderMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
@@ -69,8 +56,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     private QmsHtInspectionOrderMapper qmsHtInspectionOrderMapper;
     @Resource
     private QmsInspectionOrderDetSampleMapper qmsInspectionOrderDetSampleMapper;
-    @Resource
-    private InFeignApi inFeignApi;
+    /*@Resource
+    private SrmFeignApi srmFeignApi;*/
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
@@ -630,27 +617,26 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public int autoAdd() {
-        System.out.println("===========自动生成成品检验单定时任务============");
+        /*System.out.println("===========自动生成成品检验单定时任务============");
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         //获取完工入库单
-        SearchWmsInAsnOrder searchWmsInAsnOrder = new SearchWmsInAsnOrder();
-        searchWmsInAsnOrder.setOrderStatus((byte) 3);
+        SearchSrmInAsnOrder searchSrmInAsnOrder = new SearchSrmInAsnOrder();
+        searchSrmInAsnOrder.setOrderStatus((byte) 3);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.DATE, -1);
         Date date = calendar.getTime();
-        searchWmsInAsnOrder.setStartTime(DateUtils.getDateString(date));
-        searchWmsInAsnOrder.setEndTime(DateUtils.getDateString(date));
-        searchWmsInAsnOrder.setOrderTypeName("完工入库");
-        searchWmsInAsnOrder.setOrgId(user.getOrganizationId());
-        List<WmsInAsnOrderDto> wmsInAsnOrderList = inFeignApi.findList(searchWmsInAsnOrder).getData();
+        searchSrmInAsnOrder.setStartTime(DateUtils.getDateString(date));
+        searchSrmInAsnOrder.setEndTime(DateUtils.getDateString(date));
+        searchSrmInAsnOrder.setOrderTypeName("完工入库");
+        List<SrmInAsnOrderDto> srmInAsnOrderDtos = srmFeignApi.findList(searchSrmInAsnOrder).getData();
 
-        if (StringUtils.isNotEmpty(wmsInAsnOrderList)) {
-            WmsInAsnOrderDto wmsInAsnOrderDto = wmsInAsnOrderList.get(0);
+        if (StringUtils.isNotEmpty(srmInAsnOrderDtos)) {
+            SrmInAsnOrderDto srmInAsnOrderDto = srmInAsnOrderDtos.get(0);
             //分组：PO号为空的同一组，PO号不为空且相同的同一组
             SearchWmsInnerInventoryDet searchInnerInventoryDet = new SearchWmsInnerInventoryDet();
             searchInnerInventoryDet.setPageSize(999);
-            searchInnerInventoryDet.setAsnCode(wmsInAsnOrderDto.getAsnCode());
+            searchInnerInventoryDet.setAsnCode(srmInAsnOrderDto.getAsnCode());
             List<WmsInnerInventoryDetDto> innerInventoryDetDtos = innerFeignApi.findList(searchInnerInventoryDet).getData();
 
             Map<String, List<WmsInnerInventoryDetDto>> collect = new HashMap<>();
@@ -676,19 +662,19 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }
             }
 
-            if (StringUtils.isNotEmpty(wmsInAsnOrderDto.getWmsInAsnOrderDetList())) {
-                for (WmsInAsnOrderDet wmsInAsnOrderDet : wmsInAsnOrderDto.getWmsInAsnOrderDetList()) {
+            if (StringUtils.isNotEmpty(srmInAsnOrderDto.getSrmInAsnOrderDetDtos())) {
+                for (SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
                     SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
-                    searchBaseInventoryStatus.setInventoryStatusId(wmsInAsnOrderDet.getInventoryStatusId());
+                    searchBaseInventoryStatus.setInventoryStatusId(srmInAsnOrderDetDto.getInventoryStatusId());
                     List<BaseInventoryStatus> inventoryStatuses = baseFeignApi.findList(searchBaseInventoryStatus).getData();
                     if (StringUtils.isNotEmpty(inventoryStatuses) && "待检".equals(inventoryStatuses.get(0).getInventoryStatusName())) {
                         Set<String> codes = collect.keySet();
                         for (String code : codes) {
                             List<WmsInnerInventoryDetDto> inventoryDetDtos = collect.get(code);
-                            List<WmsInnerInventoryDetDto> detDtos = inventoryDetDtos.stream().filter(li -> li.getMaterialId().equals(wmsInAsnOrderDet.getMaterialId())).collect(Collectors.toList());
+                            List<WmsInnerInventoryDetDto> detDtos = inventoryDetDtos.stream().filter(li -> li.getMaterialId().equals(srmInAsnOrderDetDto.getMaterialId())).collect(Collectors.toList());
 
                             QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
-                            qmsInspectionOrder.setMaterialId(wmsInAsnOrderDet.getMaterialId());
+                            qmsInspectionOrder.setMaterialId(srmInAsnOrderDetDto.getMaterialId());
                             qmsInspectionOrder.setOrderQty(new BigDecimal(detDtos.size()));
                             qmsInspectionOrder.setInspectionStatus((byte) 1);
 
@@ -702,14 +688,14 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                             qmsInspectionOrder.setInspectionWayId(inspectionWays.get(0).getInspectionWayId());
 
                             SearchOmSalesOrderDto searchOmSalesOrderDto = new SearchOmSalesOrderDto();
-                            searchOmSalesOrderDto.setWorkOrderId(wmsInAsnOrderDet.getSourceOrderId());
+                            searchOmSalesOrderDto.setWorkOrderId(srmInAsnOrderDetDto.getSourceOrderId());
                             List<OmSalesOrderDto> salesOrderDtoList = oMFeignApi.findList(searchOmSalesOrderDto).getData();
                             if (StringUtils.isNotEmpty(salesOrderDtoList)) {
                                 qmsInspectionOrder.setCustomerId(salesOrderDtoList.get(0).getSupplierId());
                             }
 
                             SearchBaseInspectionStandard searchBaseInspectionStandard = new SearchBaseInspectionStandard();
-                            searchBaseInspectionStandard.setMaterialId(wmsInAsnOrderDet.getMaterialId());
+                            searchBaseInspectionStandard.setMaterialId(srmInAsnOrderDetDto.getMaterialId());
                             searchBaseInspectionStandard.setSupplierId(qmsInspectionOrder.getCustomerId());
                             List<BaseInspectionStandard> inspectionStandardList = baseFeignApi.findList(searchBaseInspectionStandard).getData();
                             if (StringUtils.isEmpty(inspectionStandardList)) {
@@ -758,7 +744,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     }
                 }
             }
-        }
+        }*/
         return 1;
     }
 

@@ -215,7 +215,8 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
             SearchOmPurchaseOrderDet searchOmPurchaseOrderDet = new SearchOmPurchaseOrderDet();
             for (Long aLong : collect.keySet()) {
                 List<SrmPlanDeliveryOrderDetDto> srmPlanDeliveryOrderDetDtos = collect.get(aLong);
-                BigDecimal bigDecimal = srmPlanDeliveryOrderDetDtos.get(0).getTotalPlanDeliveryQty();
+                BigDecimal bigDecimal = StringUtils.isEmpty(srmPlanDeliveryOrderDetDtos.get(0).getTotalPlanDeliveryQty())?new BigDecimal(0):srmPlanDeliveryOrderDetDtos.get(0).getTotalPlanDeliveryQty();
+
 
                 for (SrmPlanDeliveryOrderDetDto srmPlanDeliveryOrderDetDto : srmPlanDeliveryOrderDetDtos) {
                     bigDecimal = bigDecimal.add(srmPlanDeliveryOrderDetDto.getPlanDeliveryQty());

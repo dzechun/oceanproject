@@ -8,6 +8,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.service.SysImportTemplateService;
+import com.fantechs.security.service.SysMenuInfoService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -34,6 +36,8 @@ public class SysImportTemplateController {
 
     @Resource
     private SysImportTemplateService sysImportTemplateService;
+    @Resource
+    private SysMenuInfoService sysMenuInfoService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -63,8 +67,11 @@ public class SysImportTemplateController {
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<SysImportTemplate>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSysImportTemplate searchSysImportTemplate) {
+        List<Long> menuIds = sysMenuInfoService.getMenu(searchSysImportTemplate.getMenuId());
         Page<Object> page = PageHelper.startPage(searchSysImportTemplate.getStartPage(),searchSysImportTemplate.getPageSize());
-        List<SysImportTemplate> list = sysImportTemplateService.findList(ControllerUtil.dynamicConditionByEntity(searchSysImportTemplate));
+        Map<String, Object> map = ControllerUtil.dynamicConditionByEntity(searchSysImportTemplate);
+        map.put("menuIds",menuIds);
+        List<SysImportTemplate> list = sysImportTemplateService.findList(map);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

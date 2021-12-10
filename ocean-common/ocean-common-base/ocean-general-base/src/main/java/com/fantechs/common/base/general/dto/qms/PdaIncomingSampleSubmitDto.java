@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 
 /**
@@ -31,10 +30,18 @@ public class PdaIncomingSampleSubmitDto implements Serializable {
     @ApiModelProperty(name="badnessPhenotypeId",value = "不良现象ID")
     private Long badnessPhenotypeId;
 
+
     /**
-     * 来料检验单明细不良类别列表
+     * 来料检验单明细id
      */
-    @ApiModelProperty(name="pdaIncomingDetSubmitDtoList",value = "来料检验单明细不良类别列表")
-    private List<PdaIncomingDetSubmitDto> pdaIncomingDetSubmitDtoList;
+    @ApiModelProperty(name="incomingInspectionOrderDetId",value = "来料检验单明细id")
+    private Long incomingInspectionOrderDetId;
+
+    /**
+     * 不良类别ID
+     */
+    @ApiModelProperty(name="badnessCategoryId",value = "不良类别ID")
+    private Long badnessCategoryId;
+
 
 }

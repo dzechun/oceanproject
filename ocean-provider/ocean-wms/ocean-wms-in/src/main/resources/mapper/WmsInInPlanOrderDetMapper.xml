@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInInPlanOrderDetMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrderDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="in_plan_order_det_id" jdbcType="BIGINT" property="inPlanOrderDetId"/>
+        <result column="in_plan_order_id" jdbcType="BIGINT" property="inPlanOrderId"/>
+        <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode"/>
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
+        <result column="line_number" jdbcType="VARCHAR" property="lineNumber"/>
+        <result column="source_id" jdbcType="BIGINT" property="sourceId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="plan_qty" jdbcType="DECIMAL" property="planQty"/>
+        <result column="putaway_qty" jdbcType="DECIMAL" property="putawayQty"/>
+        <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
+        <result column="line_status" jdbcType="TINYINT" property="lineStatus"/>
+        <result column="production_time" jdbcType="TIMESTAMP" property="productionTime"/>
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
+        <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
+    </resultMap>
+
+    <sql id="BaseColumnList">
+        wiipod.in_plan_order_det_id,
+        wiipod.in_plan_order_id,
+        wiipod.core_source_order_code,
+        wiipod.source_order_code,
+        wiipod.line_number,
+        wiipod.source_id,
+        wiipod.material_id,
+        wiipod.plan_qty,
+        wiipod.putaway_qty,
+        wiipod.inventory_status_id,
+        wiipod.line_status,
+        wiipod.production_time,
+        wiipod.batch_code,
+        wiipod.status,
+        wiipod.remark,
+        wiipod.org_id,
+        wiipod.create_user_id,
+        wiipod.create_time,
+        wiipod.modified_user_id,
+        wiipod.modified_time,
+        wiipod.is_delete,
+        wiipod.option1,
+        wiipod.option2,
+        wiipod.option3
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="BaseColumnList"/>,
+        bm.material_name,bw.warehouse_name,bm.material_version,bm.material_desc,bmt.main_unit,bis.inventory_status_name,
+        u.user_name as create_user_name,
+        s.user_name as modified_user_name,
+        bo.organization_name
+        FROM wms_in_in_plan_order_det wiipod
+        LEFT JOIN base_material bm ON wiipod.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON wiipod.material_id = bm.material_id
+        LEFT JOIN base_inventory_status bis ON wiipod.inventory_status_id = bis.inventory_status_id
+        LEFT JOIN sys_user u ON wiipod.create_user_id=u.user_id
+        LEFT JOIN sys_user s ON wiipod.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON wiipod.org_id = bo.organization_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                and wiipod.org_id = #{orgId}
+            </if>
+            <if test="inPlanOrderId!=null and inPlanOrderId!=''">
+                and wiipod.in_plan_order_id = #{inPlanOrderId}
+            </if>
+            <choose>
+                <when test="inPlanOrderIds!=null and inPlanOrderIds.size > 0">
+                    and wiipod.in_plan_order_id in
+                    <foreach collection="inPlanOrderIds" item="item" separator="," open="(" close=")">
+                        #{item,jdbcType=BIGINT}
+                    </foreach>
+                </when>
+            </choose>
+        </where>
+        order by wiipod.modified_time desc
+    </select>
+
+</mapper>

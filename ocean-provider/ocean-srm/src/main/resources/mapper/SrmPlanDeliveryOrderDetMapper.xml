@@ -6,6 +6,10 @@
       WARNING - @mbg.generated
     -->
     <id column="plan_delivery_order_det_id" jdbcType="BIGINT" property="planDeliveryOrderDetId" />
+    <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode"/>
+    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
+    <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId"/>
+    <result column="source_id" jdbcType="BIGINT" property="sourceId"/>
     <result column="plan_delivery_order_id" jdbcType="BIGINT" property="planDeliveryOrderId" />
     <result column="purchase_order_det_id" jdbcType="BIGINT" property="purchaseOrderDetId" />
     <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate" />
@@ -44,6 +48,10 @@
 
   <sql id="Base_Column_List">
     spdod.plan_delivery_order_det_id,
+    spdod.core_source_order_code,
+    spdod.source_order_code,
+    spdod.core_source_id,
+    spdod.source_id,
     spdod.plan_delivery_order_id,
     spdod.purchase_order_det_id,
     spdod.plan_delivery_date,

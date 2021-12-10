@@ -42,8 +42,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     private RedisUtil redisUtil;
     @Resource
     private SysHtSpecItemMapper sysHtSpecItemMapper;
-    @Resource
-    private SysMenuInfoService sysMenuInfoService;
+
 
     @Override
     public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
@@ -52,39 +51,34 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
             List<SysSpecItem>  specItemList1 = JsonUtils.jsonToList(specItemList.toString(),SysSpecItem.class);
             List<Long> menuIds = new ArrayList<>();
             if (StringUtils.isNotEmpty(searchSysSpecItem.getMenuId())) {
-                Object menuList = redisUtil.get(MENU_REDIS_KEY);
-                if(ObjectUtil.isNull(menuList)){
-                    if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
-                        menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
-                                "parentId", "0",
-                                "menuType", 2 + ""
-                        ), null);
-                        redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(menuList));
-                    }
-                }
-                List<SysMenuInListDTO> menuInListDTOS = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
-                SysMenuInListDTO dg = this.findNodes(menuInListDTOS, searchSysSpecItem.getMenuId());
-                menuIds.add(dg.getSysMenuInfoDto().getMenuId());
-                this.disassemblyTree(dg,menuIds);
+//                Object menuList = redisUtil.get(MENU_REDIS_KEY);
+//                if(ObjectUtil.isNull(menuList)){
+//                    if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
+//                        menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
+//                                "parentId", "0",
+//                                "menuType", 2 + ""
+//                        ), null);
+//                        redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(menuList));
+//                    }
+//                }
+//                List<SysMenuInListDTO> menuInListDTOS = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
+//                SysMenuInListDTO dg = this.findNodes(menuInListDTOS, searchSysSpecItem.getMenuId());
+//                menuIds.add(dg.getSysMenuInfoDto().getMenuId());
+//                this.disassemblyTree(dg,menuIds);
+                menuIds = searchSysSpecItem.getMenuIds();
             }
 
             for (int i = 0; i < specItemList1.size(); i++) {
                 if (StringUtils.isNotEmpty(menuIds) && menuIds.size()>0 && !menuIds.contains(specItemList1.get(i).getMenuId())){
                     specItemList1.remove(i);
                     i--;
-                }
-
-                if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecCode()) && !specItemList1.get(i).getSpecCode().contains(searchSysSpecItem.getSpecCode())) {
+                }else if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecCode()) && !specItemList1.get(i).getSpecCode().contains(searchSysSpecItem.getSpecCode())) {
                     specItemList1.remove(i);
                     i--;
-                }
-
-                if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecName()) && !specItemList1.get(i).getSpecName().contains(searchSysSpecItem.getSpecName())) {
+                }else if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecName()) && !specItemList1.get(i).getSpecName().contains(searchSysSpecItem.getSpecName())) {
                     specItemList1.remove(i);
                     i--;
-                }
-
-                if (StringUtils.isNotEmpty(searchSysSpecItem.getPara()) && !specItemList1.get(i).getPara().contains(searchSysSpecItem.getPara())) {
+                }else if (StringUtils.isNotEmpty(searchSysSpecItem.getPara()) && !specItemList1.get(i).getPara().contains(searchSysSpecItem.getPara())) {
                     specItemList1.remove(i);
                     i--;
                 }

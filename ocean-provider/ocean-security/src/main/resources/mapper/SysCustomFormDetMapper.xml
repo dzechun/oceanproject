@@ -20,6 +20,12 @@
         <result column="is_table" jdbcType="TINYINT" property="isTable"/>
         <result column="is_form" jdbcType="TINYINT" property="isForm"/>
         <result column="is_detail" jdbcType="TINYINT" property="isDetail"/>
+
+        <result column="query_seq" jdbcType="VARCHAR" property="querySeq"/>
+        <result column="query_type" jdbcType="VARCHAR" property="queryType"/>
+        <result column="join_query" jdbcType="VARCHAR" property="joinQuery"/>
+        <result column="is_high_grade" jdbcType="VARCHAR" property="isHighGrade"/>
+
         <result column="spec_code" jdbcType="VARCHAR" property="specCode"/>
         <result column="enum_data" jdbcType="VARCHAR" property="enumData"/>
         <result column="event_trigger_mode" jdbcType="TINYINT" property="eventTriggerMode"/>
@@ -38,6 +44,8 @@
         <result column="select_name" jdbcType="VARCHAR" property="selectName"/>
         <result column="select_value" jdbcType="VARCHAR" property="selectValue"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="min_value" jdbcType="DECIMAL" property="minValue"/>
+        <result column="max_value" jdbcType="DECIMAL" property="maxValue"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -68,6 +76,10 @@
     cfd.is_table,
     cfd.is_form,
     cfd.is_detail,
+    cfd.query_seq,
+    cfd.query_type,
+    cfd.join_query,
+    cfd.is_high_grade,
     cfd.spec_code,
     cfd.enum_data,
     cfd.is_required,
@@ -83,8 +95,10 @@
     cfd.is_delete,
     cfd.event_trigger_mode,
     cfd.event_trigger_name,
-cfd.select_name,
-cfd.select_value
+    cfd.select_name,
+    cfd.select_value,
+    cfd.min_value,
+    cfd.max_value
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select

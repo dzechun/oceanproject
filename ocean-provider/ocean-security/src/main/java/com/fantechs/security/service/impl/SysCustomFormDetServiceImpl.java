@@ -6,9 +6,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.security.SysCustomFormDetDto;
-import com.fantechs.common.base.general.dto.security.SysCustomFormDto;
 import com.fantechs.common.base.general.dto.security.SysDefaultCustomFormDetDto;
-import com.fantechs.common.base.general.dto.security.SysDefaultCustomFormDto;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.general.entity.security.SysCustomForm;
 import com.fantechs.common.base.general.entity.security.SysCustomFormDet;
@@ -31,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -80,12 +77,13 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("customFormCode",sysCustomForm.getCustomFormCode());
         SysDefaultCustomForm defaultCustomForm = sysDefaultCustomFormMapper.selectOneByExample(example);
-
-        SysDefaultCustomFormDet defaultCustomFormDet = new SysDefaultCustomFormDet();
-        BeanUtil.copyProperties(sysCustomFormDet, defaultCustomFormDet);
-        defaultCustomFormDet.setCustomFormId(defaultCustomForm.getCustomFormId());
-        defaultCustomFormDet.setOrgId(null);
-        sysDefaultCustomFormDetMapper.insertSelective(defaultCustomFormDet);
+        if(StringUtils.isNotEmpty(defaultCustomForm)) {
+            SysDefaultCustomFormDet defaultCustomFormDet = new SysDefaultCustomFormDet();
+            BeanUtil.copyProperties(sysCustomFormDet, defaultCustomFormDet);
+            defaultCustomFormDet.setCustomFormId(defaultCustomForm.getCustomFormId());
+            defaultCustomFormDet.setOrgId(null);
+            sysDefaultCustomFormDetMapper.insertSelective(defaultCustomFormDet);
+        }
 
         //全组织新增
         List<SysCustomFormDet> formDetList = new LinkedList<>();

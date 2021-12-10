@@ -44,20 +44,47 @@ public class QmsHtIncomingInspectionOrder extends ValidGroup implements Serializ
     private Long incomingInspectionOrderId;
 
     /**
-     * 来源单据类型(1-创建 2-ASN单 3-第三方系统 4-采购订单 5-收货计划单 6-收货作业单)
+     * 来源ID
      */
-    @ApiModelProperty(name="sourceOrderType",value = "来源单据类型(1-创建 2-ASN单 3-第三方系统 4-采购订单 5-收货计划单 6-收货作业单)")
-    @Excel(name = "来源单据类型(1-创建 2-ASN单 3-第三方系统 4-采购订单 5-收货计划单 6-收货作业单)", height = 20, width = 30,orderNum="") 
-    @Column(name = "source_order_type")
-    private Byte sourceOrderType;
+    @ApiModelProperty(name="sourceId",value = "来源ID")
+    @Column(name = "source_id")
+    private Long sourceId;
 
     /**
      * 来源单号
      */
     @ApiModelProperty(name="sourceOrderCode",value = "来源单号")
-    @Excel(name = "来源单号", height = 20, width = 30,orderNum="") 
+    @Excel(name = "来源单号", height = 20, width = 30,orderNum="2",needMerge = true)
     @Column(name = "source_order_code")
     private String sourceOrderCode;
+
+    /**
+     * 核心系统单据类型编码
+     */
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    @Column(name = "core_source_sys_order_type_code")
+    private String coreSourceSysOrderTypeCode;
+
+    /**
+     * 核心单据编码
+     */
+    @ApiModelProperty(name="coreSourceOrderCode",value = "核心单据编码")
+    @Column(name = "core_source_order_code")
+    private String coreSourceOrderCode;
+
+    /**
+     * 来源系统单据类型编码
+     */
+    @ApiModelProperty(name="sourceSysOrderTypeCode",value = "来源系统单据类型编码")
+    @Column(name = "source_sys_order_type_code")
+    private String sourceSysOrderTypeCode;
+
+    /**
+     * 系统单据类型编码
+     */
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
 
     /**
      * 来料检验单号

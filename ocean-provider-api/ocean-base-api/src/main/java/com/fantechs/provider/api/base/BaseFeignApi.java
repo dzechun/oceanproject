@@ -4,7 +4,6 @@ import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -305,7 +304,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("获取检验项目列表")
     @PostMapping("/baseInspectionItem/findList")
-    ResponseEntity<List<BaseInspectionItemDto>> findInspectionItemList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionItem searchQmsInspectionItem);
+    ResponseEntity<List<BaseInspectionItemDto>> findInspectionItemList(@ApiParam(value = "查询对象") @RequestBody SearchBaseInspectionItem searchBaseInspectionItem);
 
     @ApiOperation("减可放托盘数")
     @PostMapping("/baseStorage/minusSurplusCanPutSalver")

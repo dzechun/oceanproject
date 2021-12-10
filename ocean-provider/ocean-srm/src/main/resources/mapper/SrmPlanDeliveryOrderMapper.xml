@@ -6,7 +6,10 @@
       WARNING - @mbg.generated
     -->
     <id column="plan_delivery_order_id" jdbcType="BIGINT" property="planDeliveryOrderId" />
+    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="corSourceSysOrderTypeCode"/>
+    <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode"/>
     <result column="plan_delivery_order_code" jdbcType="VARCHAR" property="planDeliveryOrderCode" />
+    <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -30,7 +33,10 @@
 
   <sql id="Base_Column_List">
     spdo.plan_delivery_order_id,
+    spdo.core_source_sys_order_type_code,
+    spdo.source_sys_order_type_code,
     spdo.plan_delivery_order_code,
+    spdo.sys_order_type_code,
     spdo.supplier_id,
     spdo.order_status,
     spdo.status,
@@ -56,38 +62,38 @@
       <if test="supplierId != null">
         and spdo.supplier_id = #{supplierId} and spdo.order_status = 2
       </if>
-      <if test="planDeliveryOrderCode != null and planDeliveryOrderCode != ''">
-        and spdo.plan_delivery_order_code like CONCAT('%', #{planDeliveryOrderCode}, '%')
+      <if test="query != null and query.planDeliveryOrderCode != null">
+        ${query.planDeliveryOrderCode.joinQuery} spdo.plan_delivery_order_code ${query.planDeliveryOrderCode.sql}
       </if>
-      <if test="orderStatus != null ">
-        and spdo.order_status = #{orderStatus}
+      <if test="query != null and query.orderStatus != null ">
+        ${query.orderStatus.joinQuery} spdo.order_status ${query.planDeliveryOrderCode.sql}
       </if>
-      <if test="supplierName != null and supplierName != ''">
-        and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
+      <if test="query != null and query.supplierName != null">
+        ${query.supplierName.joinQuery} bs.supplier_name ${query.supplierName.sql}
       </if>
-      <if test="status != null ">
-        and spdo.status = #{status}
+      <if test="query != null and query.status != null ">
+        ${query.status.joinQuery} spdo.status ${query.status.sql}
       </if>
-      <if test="isDelete != null ">
-        and spdo.is_delete = #{isDelete}
+      <if test="query != null and query.isDelete != null ">
+        ${query.isDelete.joinQuery} spdo.is_delete ${query.isDelete.sql}
       </if>
       <if test="orgId != null">
         and spdo.org_id = #{orgId}
       </if>
-      <if test="createUserId != null">
-        and spdo.create_user_id = #{createUserId}
+      <if test="query != null and query.createUserId != null">
+        ${query.createUserId.joinQuery} spdo.create_user_id ${query.createUserId.sql}
       </if>
-      <if test="modifiedUserId != null">
-        and spdo.modified_user_id = #{modifiedUserId}
+      <if test="query != null and query.modifiedUserId != null">
+        ${query.modifiedUserId.joinQuery} spdo.modified_user_id ${query.modifiedUserId.sql}
       </if>
-      <if test="remark != null and remark != ''">
-        and spdo.remark like CONCAT('%', #{remark}, '%')
+      <if test="query != null and query.remark != null">
+        ${query.remark.joinQuery} spdo.remark ${query.remark.sql}
       </if>
-      <if test="modifiedTimeStart != null and modifiedTimeStart != '' and modifiedTimeEnd != null and modifiedTimeEnd != ''">
-        and date_format(spdo.modified_time, '%Y-%m-%d') between #{modifiedTimeStart} and #{modifiedTimeEnd}
+      <if test="query != null and query.modifiedTime != null">
+        ${query.modifiedTime.joinQuery} date_format(spdo.modified_time, '%Y-%m-%d') ${query.modifiedTime.sql}
       </if>
-      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-        and date_format(spdo.create_time, '%Y-%m-%d') between #{startTime} and #{endTime}
+      <if test="query != null and query.createTime != null ">
+        ${query.createTime.joinQuery} date_format(spdo.create_time, '%Y-%m-%d') ${query.createTime.sql}
       </if>
     </where>
     order by spdo.create_time desc
