@@ -45,7 +45,7 @@ public class WmsInInPlanOrderDetDto extends WmsInInPlanOrderDet implements Seria
      * 库存状态
      */
     @ApiModelProperty(name="inventoryStatusName",value = "库存状态")
-    private Long inventoryStatusName;
+    private String inventoryStatusName;
 
     /**
      * 组织
