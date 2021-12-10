@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -207,5 +208,29 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
         }
 
         return i;
+    }
+
+    @Override
+    public int batchUpdate(List<SysCustomFormDet> list) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        Example example = new Example(SysCustomFormDet.class);
+        if (StringUtils.isNotEmpty(list)) {
+            List<Long> idList = new ArrayList<>();
+            Long id = 0L;
+            for (SysCustomFormDet sysCustomFormDet : list) {
+                id = sysCustomFormDet.getCustomFormId();
+                sysCustomFormDet.setModifiedUserId(user.getUserId());
+                sysCustomFormDet.setOrgId(user.getOrganizationId());
+                idList.add(sysCustomFormDet.getCustomFormDetId());
+            }
+            example.createCriteria().andEqualTo("customFormId",id)
+                    .andIn("customFormDetId",idList);
+            sysCustomFormDetMapper.deleteByExample(example);
+
+            sysCustomFormDetMapper.insertList(list);
+        }
+
+        return 1;
     }
 }

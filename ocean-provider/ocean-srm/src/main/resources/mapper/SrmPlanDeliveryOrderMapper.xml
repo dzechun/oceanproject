@@ -66,7 +66,7 @@
         ${query.planDeliveryOrderCode.joinQuery} spdo.plan_delivery_order_code ${query.planDeliveryOrderCode.sql}
       </if>
       <if test="query != null and query.orderStatus != null ">
-        ${query.orderStatus.joinQuery} spdo.order_status ${query.planDeliveryOrderCode.sql}
+        ${query.orderStatus.joinQuery} spdo.order_status ${query.orderStatus.sql}
       </if>
       <if test="query != null and query.supplierName != null">
         ${query.supplierName.joinQuery} bs.supplier_name ${query.supplierName.sql}
