@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ProLineBoardServiceImpl implements ProLineBoardService {
@@ -26,9 +24,11 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
     @Override
     public ProLineBoardModel findList(SearchProLineBoard searchProLineBoard) {
         //查询当天日计划的所有排产数量和完工数量
-
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(new Date());
+        calendar.add(calendar.DATE,1);
         searchProLineBoard.setStartTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
-        searchProLineBoard.setEndTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
+        searchProLineBoard.setEndTime(DateUtil.format(calendar.getTime(),"yyyy-MM-dd"));
         searchProLineBoard.setOrgId((long)1000);
         ProLineBoardModel model = proLineBoardMapper.findPlanList(searchProLineBoard);
         if(StringUtils.isNotEmpty(model)) {
@@ -65,6 +65,8 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
             //查询LQC工序第一次OK的过站记录
             searchProLineBoard.setPassStationCount((byte)1);
             Long passNum2 = proLineBoardMapper.findBarCodeRecordList(searchProLineBoard);
+
+
             String passRate = "0";
             if(StringUtils.isNotEmpty(passNum) && StringUtils.isNotEmpty(passNum2) && (passNum + passNum2)!=0 ) {
                 passRate = numberFormat.format((float) passNum2 / (float) model.getOutputQty() * 100);
