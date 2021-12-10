@@ -11,9 +11,11 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInInPlanOrderImport;
 import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInHtInPlanOrder;
@@ -84,9 +86,22 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
         Example example = new Example(WmsInInPlanOrder.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("appointStartTime",wmsInInPlanOrderDto.getInPlanOrderCode());
-       List<WmsInInPlanOrder> wmsInInPlanOrders = wmsInInPlanOrderMapper.selectByExample(example);
+        List<WmsInInPlanOrder> wmsInInPlanOrders = wmsInInPlanOrderMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(wmsInInPlanOrders))
             throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"入库计划编码重复");
+
+        if(StringUtils.isEmpty(wmsInInPlanOrderDto.getWarehouseId())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "仓库编码不能为空");
+        }else{
+            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            searchBaseStorage.setWarehouseId(wmsInInPlanOrderDto.getWarehouseId());
+            searchBaseStorage.setStorageType((byte)2);
+            List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+            if(StringUtils.isEmpty(baseStorages))
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未查询到该仓库的收货库位");
+            else
+                wmsInInPlanOrderDto.setStorageId(baseStorages.get(0).getStorageId());
+        }
 
         wmsInInPlanOrderDto.setMakeOrderUserId(user.getUserId());
         wmsInInPlanOrderDto.setCreateUserId(user.getUserId());
