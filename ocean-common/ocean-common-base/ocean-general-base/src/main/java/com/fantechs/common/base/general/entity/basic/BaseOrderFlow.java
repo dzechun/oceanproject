@@ -75,20 +75,28 @@ public class BaseOrderFlow extends ValidGroup implements Serializable {
     private Byte orderNode;
 
     /**
-     * 来源单据(1-订单模块 2-收货计划 3-收货作业 4-来料检验 5-入库计划 6-上架作业)
+     * 单据类型编码
      */
-    @ApiModelProperty(name="sourceOrder",value = "来源单据(1-订单模块 2-收货计划 3-收货作业 4-来料检验 5-入库计划 6-上架作业)")
-    @Excel(name = "来源单据(1-订单模块 2-收货计划 3-收货作业 4-来料检验 5-入库计划 6-上架作业)", height = 20, width = 30,replace={"订单模块_1","收货计划_2","收货作业_3","来料检验_4","入库计划_5","上架作业_6"})
-    @Column(name = "source_order")
-    private Byte sourceOrder;
+    @ApiModelProperty(name="orderTypeCode",value = "单据类型编码")
+    @Excel(name = "单据类型编码", height = 20, width = 30)
+    @Column(name = "order_type_code")
+    private String orderTypeCode;
 
     /**
-     * 下推单据(1-订单模块 2-收货计划 3-收货作业 4-来料检验 5-入库计划 6-上架作业)
+     * 来源单据类型编码
      */
-    @ApiModelProperty(name="pushDownOrder",value = "下推单据(1-订单模块 2-收货计划 3-收货作业 4-来料检验 5-入库计划 6-上架作业)")
-    @Excel(name = "下推单据(1-订单模块 2-收货计划 3-收货作业 4-来料检验 5-入库计划 6-上架作业)", height = 20, width = 30,replace={"订单模块_1","收货计划_2","收货作业_3","来料检验_4","入库计划_5","上架作业_6"})
-    @Column(name = "push_down_order")
-    private Byte pushDownOrder;
+    @ApiModelProperty(name="sourceOrderTypeCode",value = "来源单据类型编码")
+    @Excel(name = "来源单据类型编码", height = 20, width = 30,replace={"订单模块_1","收货计划_2","收货作业_3","来料检验_4","入库计划_5","上架作业_6"})
+    @Column(name = "source_order_type_code")
+    private String sourceOrderTypeCode;
+
+    /**
+     * 下推单据类型编码
+     */
+    @ApiModelProperty(name="nextOrderTypeCode",value = "下推单据类型编码")
+    @Excel(name = "下推单据类型编码", height = 20, width = 30,replace={"订单模块_1","收货计划_2","收货作业_3","来料检验_4","入库计划_5","上架作业_6"})
+    @Column(name = "next_order_type_code")
+    private String nextOrderTypeCode;
 
     /**
      * 状态（0、无效 1、有效）

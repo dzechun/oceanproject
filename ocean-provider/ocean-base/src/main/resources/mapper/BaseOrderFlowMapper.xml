@@ -12,8 +12,9 @@
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="order_node" jdbcType="TINYINT" property="orderNode" />
-    <result column="source_order" jdbcType="TINYINT" property="sourceOrder" />
-    <result column="push_down_order" jdbcType="TINYINT" property="pushDownOrder" />
+    <result column="order_type_code" jdbcType="VARCHAR" property="orderTypeCode"/>
+    <result column="source_order_type_code" jdbcType="VARCHAR" property="sourceOrderTypeCode"/>
+    <result column="next_order_type_code" jdbcType="VARCHAR" property="nextOrderTypeCode"/>
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -40,8 +41,9 @@
         bof.material_id,
         bof.supplier_id,
         bof.order_node,
-        bof.source_order,
-        bof.push_down_order,
+        bof.order_type_code,
+        bof.source_order_type_code,
+        bof.next_order_type_code,
         bof.status,
         bof.remark,
         bof.org_id,
@@ -89,13 +91,15 @@
       <if test="orderNode != null and orderNode != ''">
         and bof.order_node = #{orderNode}
       </if>
-      <if test="sourceOrder != null and sourceOrder != ''">
-        and bof.source_order = #{sourceOrder}
+      <if test="orderTypeCode != null and orderTypeCode != ''">
+        and bof.order_type_code = #{orderTypeCode}
       </if>
-      <if test="pushDownOrder != null and pushDownOrder != ''">
-        and bof.push_down_order = #{pushDownOrder}
+      <if test="sourceOrderTypeCode != null and sourceOrderTypeCode != ''">
+        and bof.source_order_type_code = #{sourceOrderTypeCode}
       </if>
-
+      <if test="nextOrderTypeCode != null and nextOrderTypeCode != ''">
+        and bof.next_order_type_code = #{nextOrderTypeCode}
+      </if>
       <if test="remark != null and remark != ''">
         and bof.remark like CONCAT('%', #{remark}, '%')
       </if>

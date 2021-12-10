@@ -8,15 +8,10 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class WmsInnerJobOrderDto extends WmsInnerJobOrder implements Serializable {
-    /**
-     * 货主名称
-     */
-    @Transient
-    @ApiModelProperty(name="materialOwnerName",value = "货主名称")
-    private String materialOwnerName;
 
     /**
      * 仓库
@@ -61,64 +56,26 @@ public class WmsInnerJobOrderDto extends WmsInnerJobOrder implements Serializabl
     private String modifiedUserName;
 
     /**
-     * 是否栈板自动生成(1-是，0-否) PDA标识字段
+     * 计划数量
      */
     @Transient
-    @ApiModelProperty(name = "isPallet",value = "是否栈板自动生成(1-是，0-否) PDA标识字段")
-    private Byte isPallet;
+    @ApiModelProperty(name="planQty",value = "计划数量")
+    @Excel(name = "计划数量", height = 20, width = 30,orderNum="")
+    private BigDecimal planQty;
 
     /**
-     * 收货人名称
+     * 拣货数量
      */
     @Transient
-    @ApiModelProperty(name="consigneeName",value = "发货人名称")
-    @Excel(name = "发货人名称", height = 20, width = 30,orderNum="")
-    private String consigneeName;
+    @ApiModelProperty(name="actualQty",value = "拣货数量")
+    @Excel(name = "拣货数量", height = 20, width = 30,orderNum="")
+    private BigDecimal actualQty;
 
     /**
-     * 联系人名称
-     */
-    @ApiModelProperty(name="linkManName",value = "联系人名称")
-    @Excel(name = "联系人名称", height = 20, width = 30,orderNum="")
-    @Transient
-    private String linkManName;
-
-    /**
-     * 联系人电话
-     */
-    @ApiModelProperty(name="linkManPhone",value = "联系人电话")
-    @Excel(name = "联系人电话", height = 20, width = 30,orderNum="")
-    @Transient
-    private String linkManPhone;
-
-    /**
-     * 传真号码
+     * 分配数量
      */
     @Transient
-    @ApiModelProperty(name="faxNumber",value = "传真号码")
-    @Excel(name = "传真号码", height = 20, width = 30,orderNum="")
-    private String faxNumber;
-
-    /**
-     * 邮箱地址
-     */
-    @Transient
-    @ApiModelProperty(name="eMailAddress",value = "邮箱地址")
-    @Excel(name = "邮箱地址", height = 20, width = 30,orderNum="")
-    private String eMailAddress;
-
-    /**
-     * 详细地址
-     */
-    @Transient
-    @ApiModelProperty(name="detailedAddress",value = "详细地址")
-    @Excel(name = "详细地址", height = 20, width = 30,orderNum="")
-    private String detailedAddress;
-
-    /**
-     * 月台名称
-     */
-    @Transient
-    @ApiModelProperty(name = "platformName",value = "月台")
-    private String platformName;
+    @ApiModelProperty(name="distributionQty",value = "分配数量")
+    @Excel(name = "分配数量", height = 20, width = 30,orderNum="")
+    private BigDecimal distributionQty;
 }
