@@ -73,7 +73,7 @@ public class WmsInAsnOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="lineNumber",value = "行号")
     @Excel(name = "行号", height = 20, width = 30,orderNum="")
     @Column(name = "line_number")
-    private String lineNumber;
+    private Integer lineNumber;
 
     /**
      * 物料ID

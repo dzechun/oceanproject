@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ccom.fantechs.provider.wms.in.mapper.WmsInHtInPlanOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInHtInPlanOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_in_plan_order_det_id" jdbcType="BIGINT" property="htInPlanOrderDetId" />
+    <result column="in_plan_order_det_id" jdbcType="BIGINT" property="inPlanOrderDetId" />
+    <result column="in_plan_order_id" jdbcType="BIGINT" property="inPlanOrderId" />
+    <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
+    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+    <result column="line_number" jdbcType="VARCHAR" property="lineNumber" />
+    <result column="source_id" jdbcType="BIGINT" property="sourceId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
+    <result column="putaway_qty" jdbcType="DECIMAL" property="putawayQty" />
+    <result column="line_status" jdbcType="TINYINT" property="lineStatus" />
+    <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+</mapper>

@@ -10,7 +10,7 @@
     <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId" />
     <result column="order_det_id" jdbcType="BIGINT" property="orderDetId" />
     <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
-    <result column="line_number" jdbcType="VARCHAR" property="lineNumber" />
+    <result column="line_number" jdbcType="INTEGER" property="lineNumber" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />

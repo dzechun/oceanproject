@@ -1,17 +1,23 @@
 package com.fantechs.provider.qms.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingSelectToUseBarcodeDto;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingSelectToUseSubmitDto;
 import com.fantechs.common.base.general.entity.qms.QmsBadnessManage;
 import com.fantechs.common.base.general.entity.qms.QmsBadnessManageBarcode;
+import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.qms.mapper.QmsBadnessManageBarcodeMapper;
 import com.fantechs.provider.qms.mapper.QmsBadnessManageMapper;
+import com.fantechs.provider.qms.mapper.QmsIncomingInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsBadnessManageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -31,6 +37,8 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
     private QmsBadnessManageMapper qmsBadnessManageMapper;
     @Resource
     private QmsBadnessManageBarcodeMapper qmsBadnessManageBarcodeMapper;
+    @Resource
+    private QmsIncomingInspectionOrderMapper qmsIncomingInspectionOrderMapper;
 
     @Override
     public List<QmsBadnessManage> findList(Map<String, Object> map) {
@@ -51,15 +59,29 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
     @Transactional(rollbackFor = Exception.class)
     public int submit(PdaIncomingSelectToUseSubmitDto pdaIncomingSelectToUseSubmitDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        //提交
         int i = 0;
         Byte pickResult = pdaIncomingSelectToUseSubmitDto.getPickResult();
         BigDecimal orderQty = pdaIncomingSelectToUseSubmitDto.getOrderQty();
+        Long incomingInspectionOrderId = pdaIncomingSelectToUseSubmitDto.getIncomingInspectionOrderId();
         List<PdaIncomingSelectToUseBarcodeDto> barcodeDtoList = pdaIncomingSelectToUseSubmitDto.getBarcodeDtoList();
         QmsBadnessManage qmsBadnessManage = new QmsBadnessManage();
         List<QmsBadnessManageBarcode> barcodeList = new LinkedList<>();
 
-        qmsBadnessManage.setIncomingInspectionOrderId(pdaIncomingSelectToUseSubmitDto.getIncomingInspectionOrderId());
+        Example example = new Example(QmsBadnessManage.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("incomingInspectionOrderId",incomingInspectionOrderId);
+        QmsBadnessManage badnessManage = qmsBadnessManageMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(badnessManage)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"不可重复挑选使用");
+        }
+
+        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(incomingInspectionOrderId);
+        if(qmsIncomingInspectionOrder.getOrderQty().compareTo(new BigDecimal(barcodeDtoList.size())) == -1){
+            throw new BizErrorException("条码数量不可大于总数量");
+        }
+
+        //提交
+        qmsBadnessManage.setIncomingInspectionOrderId(incomingInspectionOrderId);
         if(pickResult == 1){
             qmsBadnessManage.setSpecialReceiveQty(new BigDecimal(barcodeDtoList.size()));
             qmsBadnessManage.setReturnQty(orderQty.subtract(new BigDecimal(barcodeDtoList.size())));
