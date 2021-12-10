@@ -31,12 +31,6 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     private Long orderTypeId;
 
     /**
-     * 货主
-     */
-    @ApiModelProperty(name="materialOwnerName",value = "货主")
-    private String materialOwnerName;
-
-    /**
      * 仓库
      */
     @ApiModelProperty(name="warehouseName",value = "仓库")
@@ -57,9 +51,9 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     private Long jobOrderId;
 
     /**
-     * 作业类型(1-加工拣货 2-移位 3-上架 4-拣货 5-补货)
+     * 作业类型(1-上架 2-拣货 3-移位)
      */
-    @ApiModelProperty("作业类型(1-加工拣货 2-移位 3-上架 4-拣货 5-补货)")
+    @ApiModelProperty("作业类型(1-上架 2-拣货 3-移位)")
     private Byte jobOrderType;
 
     private Long sourceOrderId;
@@ -71,16 +65,9 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     private Long orgId;
 
     /**
-     * 是否栈板自动生成(1-是，0-否) PDA标识字段
-     */
-    @ApiModelProperty(name = "isPallet",value = "是否栈板自动生成(1-是，0-否) PDA标识字段")
-    private Byte isPallet;
-
-    /**
      * 单据状态(1-待分配2-分配中 3-待作业 4-作业中 5-完成 6-待激活)
      */
     @ApiModelProperty(name="orderStatus",value = "单据状态(1-待分配2-分配中 3-待作业 4-作业中 5-完成 6-待激活)")
     private Byte orderStatus;
 
-    private Byte sealOrder;
 }

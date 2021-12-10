@@ -46,16 +46,22 @@ public class SearchBaseOrderFlow extends BaseQuery implements Serializable {
     private Byte orderNode;
 
     /**
-     * 来源单据(1-订单模块 2-收货计划 3-收货作业 4-来料检验 5-入库计划 6-上架作业)
+     * 单据类型编码
      */
-    @ApiModelProperty(name="sourceOrder",value = "来源单据(1-订单模块 2-收货计划 3-收货作业 4-来料检验 5-入库计划 6-上架作业)")
-    private Byte sourceOrder;
+    @ApiModelProperty(name="orderTypeCode",value = "单据类型编码")
+    private String orderTypeCode;
 
     /**
-     * 下推单据(1-订单模块 2-收货计划 3-收货作业 4-来料检验 5-入库计划 6-上架作业)
+     * 来源单据类型编码
      */
-    @ApiModelProperty(name="pushDownOrder",value = "下推单据(1-订单模块 2-收货计划 3-收货作业 4-来料检验 5-入库计划 6-上架作业)")
-    private Byte pushDownOrder;
+    @ApiModelProperty(name="sourceOrderTypeCode",value = "来源单据类型编码")
+    private String sourceOrderTypeCode;
+
+    /**
+     * 下推单据类型编码
+     */
+    @ApiModelProperty(name="nextOrderTypeCode",value = "下推单据类型编码")
+    private String nextOrderTypeCode;
 
     /**
      * 备注
