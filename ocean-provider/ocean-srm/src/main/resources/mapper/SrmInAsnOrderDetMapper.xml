@@ -104,6 +104,10 @@
             <if test="materialCode !=null and materialCode !=''">
                 and bm.material_code like CONCAT('%',#{materialCode},'%')
             </if>
+            <if test="sourceOrderId !=null and sourceOrderId!=''">
+                and wiaod.source_order_id = #{sourceOrderId}
+            </if>
+
         </where>
         group by wiaod.asn_order_det_id
     </select>
