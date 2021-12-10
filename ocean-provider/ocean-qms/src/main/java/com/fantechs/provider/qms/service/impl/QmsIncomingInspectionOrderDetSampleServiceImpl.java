@@ -132,6 +132,7 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
     public String checkBarcode(PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto){
         List<Long> detIdList = pdaIncomingCheckBarcodeDto.getIncomingInspectionOrderDetIdList();
         String barcode = pdaIncomingCheckBarcodeDto.getBarcode();
+        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = null;
 
         for (Long detId : detIdList){
             Example example = new Example(QmsIncomingInspectionOrderDetSample.class);
@@ -154,6 +155,10 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
             if(qmsIncomingInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(detSamples.size())) == 0){
                 throw new BizErrorException("检验样本数已达上限");
             }
+
+            if(qmsIncomingInspectionOrder == null){
+                qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
+            }
         }
 
         //条码校验
@@ -171,7 +176,6 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
 
         //条码不为空则提交样本值，条码为空则提交明细
         if(StringUtils.isNotEmpty(list.get(0).getBarcode())) {
-            Byte inspectionResult = 1;
             for (PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto : list) {
                 Long detId = pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId();
                 Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
