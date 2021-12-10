@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.in.controller;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.imports.WmsInInPlanOrderImport;
 import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInInPlanOrder;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -47,8 +48,8 @@ public class WmsInInPlanOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInInPlanOrder wmsInInPlanOrder) {
-        return ControllerUtil.returnCRUD(wmsInInPlanOrderService.save(wmsInInPlanOrder));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInInPlanOrderDto wmsInInPlanOrderDto) {
+        return ControllerUtil.returnCRUD(wmsInInPlanOrderService.save(wmsInInPlanOrderDto));
     }
 
     @ApiOperation("删除")
@@ -59,8 +60,14 @@ public class WmsInInPlanOrderController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInInPlanOrder.update.class) WmsInInPlanOrder wmsInInPlanOrder) {
-        return ControllerUtil.returnCRUD(wmsInInPlanOrderService.update(wmsInInPlanOrder));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInInPlanOrder.update.class) WmsInInPlanOrderDto wmsInInPlanOrderDto) {
+        return ControllerUtil.returnCRUD(wmsInInPlanOrderService.update(wmsInInPlanOrderDto));
+    }
+
+    @ApiOperation("关闭订单")
+    @PostMapping("/close")
+    public ResponseEntity close(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(wmsInInPlanOrderService.close(ids));
     }
 
     @ApiOperation("获取详情")
@@ -93,6 +100,12 @@ public class WmsInInPlanOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "来料检验单ID列表，多个逗号分隔",required = true)@RequestParam  @NotBlank(message="来料检验单ID不能为空") String ids) {
+        return ControllerUtil.returnCRUD(wmsInInPlanOrderService.pushDown(ids));
+    }
+
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
@@ -111,8 +124,8 @@ public class WmsInInPlanOrderController {
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<WmsInInPlanOrder> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, WmsInInPlanOrder.class);
-            Map<String, Object> resultMap = wmsInInPlanOrderService.importExcel(baseAddressImports);
+            List<WmsInInPlanOrderImport> wmsInInPlanOrderImports = EasyPoiUtils.importExcel(file, 0, 1, WmsInInPlanOrderImport.class);
+            Map<String, Object> resultMap = wmsInInPlanOrderService.importExcel(wmsInInPlanOrderImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,4 +133,8 @@ public class WmsInInPlanOrderController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
+
+
+
+
 }

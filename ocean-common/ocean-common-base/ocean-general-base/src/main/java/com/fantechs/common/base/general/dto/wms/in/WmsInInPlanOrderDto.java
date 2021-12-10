@@ -18,7 +18,7 @@ public class WmsInInPlanOrderDto extends WmsInInPlanOrder implements Serializabl
      */
     @Transient
     @ApiModelProperty(name="warehouseName",value = "仓库")
-    @Excel(name = "仓库", height = 20, width = 30,orderNum="4")
+    @Excel(name = "仓库", height = 20, width = 30,orderNum="2")
     private String warehouseName;
 
     /**
@@ -26,28 +26,28 @@ public class WmsInInPlanOrderDto extends WmsInInPlanOrder implements Serializabl
      */
     @Transient
     @ApiModelProperty(name="storageName",value = "库位")
-    @Excel(name = "库位", height = 20, width = 30,orderNum="5")
+    @Excel(name = "库位", height = 20, width = 30,orderNum="3")
     private String storageName;
 
     /**
      * 计划总数量
      */
     @ApiModelProperty(name="planQty",value = "计划总数量")
-    @Excel(name = "计划总数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "计划总数量", height = 20, width = 30,orderNum="6")
     private BigDecimal totalPlanQty;
 
     /**
      * 上架总数量
      */
     @ApiModelProperty(name="putawayQty",value = "上架总数量")
-    @Excel(name = "上架总数量", height = 20, width = 30,orderNum="")
+    @Excel(name = "上架总数量", height = 20, width = 30,orderNum="7")
     private BigDecimal totalPutawayQty;
 
     /**
      * 制单人
      */
     @ApiModelProperty(name="makeOrderUserName",value = "制单人")
-    @Excel(name = "制单人", height = 20, width = 30,orderNum="")
+    @Excel(name = "制单人", height = 20, width = 30,orderNum="8")
     private String makeOrderUserName;
 
     /**
@@ -55,7 +55,7 @@ public class WmsInInPlanOrderDto extends WmsInInPlanOrder implements Serializabl
      */
     @Transient
     @ApiModelProperty(name="organizationName",value = "组织")
-    @Excel(name = "组织", height = 20, width = 30,orderNum="8")
+    @Excel(name = "组织", height = 20, width = 30)
     private String organizationName;
 
     /**
@@ -63,7 +63,7 @@ public class WmsInInPlanOrderDto extends WmsInInPlanOrder implements Serializabl
      */
     @Transient
     @ApiModelProperty(name="createUserName",value = "创建人")
-    @Excel(name = "创建人", height = 20, width = 30,orderNum="19")
+    @Excel(name = "创建人", height = 20, width = 30,orderNum="12")
     private String createUserName;
 
     /**
@@ -71,7 +71,7 @@ public class WmsInInPlanOrderDto extends WmsInInPlanOrder implements Serializabl
      */
     @Transient
     @ApiModelProperty(name="modifiedUserName",value = "修改人")
-    @Excel(name = "修改人", height = 20, width = 30,orderNum="21")
+    @Excel(name = "修改人", height = 20, width = 30,orderNum="41")
     private String modifiedUserName;
 
     List<WmsInInPlanOrderDetDto> wmsInInPlanOrderDetDtos;

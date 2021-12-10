@@ -5,45 +5,39 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="job_order_det_id" jdbcType="BIGINT" property="jobOrderDetId"/>
-        <result column="job_order_id" jdbcType="BIGINT" property="jobOrderId"/>
-        <result column="source_det_id" jdbcType="BIGINT" property="sourceDetId"/>
-        <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
-        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
-        <result column="in_storage_id" jdbcType="BIGINT" property="inStorageId"/>
-        <result column="out_storage_id" jdbcType="BIGINT" property="outStorageId"/>
-        <result column="platform_id" jdbcType="BIGINT" property="platformId"/>
-        <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
-        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
-        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
-        <result column="plan_qty" jdbcType="DECIMAL" property="planQty"/>
-        <result column="distribution_qty" jdbcType="DECIMAL" property="distributionQty"/>
-        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
-        <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
-        <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate"/>
-        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
-        <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
-        <result column="work_start_time" jdbcType="TIMESTAMP" property="workStartTime"/>
-        <result column="work_end_time" jdbcType="TIMESTAMP" property="workEndTime"/>
-        <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
-        <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="remark" jdbcType="VARCHAR" property="remark"/>
-        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
-        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
-        <result column="option1" jdbcType="VARCHAR" property="option1"/>
-        <result column="option2" jdbcType="VARCHAR" property="option2"/>
-        <result column="option3" jdbcType="VARCHAR" property="option3"/>
-        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
-        <result column="shift_storage_status" jdbcType="TINYINT" property="shiftStorageStatus"/>
+        <id column="job_order_det_id" jdbcType="BIGINT" property="jobOrderDetId" />
+        <result column="job_order_id" jdbcType="BIGINT" property="jobOrderId" />
+        <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+        <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
+        <result column="source_id" jdbcType="BIGINT" property="sourceId" />
+        <result column="line_number" jdbcType="VARCHAR" property="lineNumber" />
+        <result column="in_storage_id" jdbcType="BIGINT" property="inStorageId" />
+        <result column="out_storage_id" jdbcType="BIGINT" property="outStorageId" />
+        <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
+        <result column="material_id" jdbcType="BIGINT" property="materialId" />
+        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+        <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
+        <result column="distribution_qty" jdbcType="DECIMAL" property="distributionQty" />
+        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+        <result column="work_start_time" jdbcType="TIMESTAMP" property="workStartTime" />
+        <result column="work_end_time" jdbcType="TIMESTAMP" property="workEndTime" />
+        <result column="line_status" jdbcType="TINYINT" property="lineStatus" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="option1" jdbcType="VARCHAR" property="option1" />
+        <result column="option2" jdbcType="VARCHAR" property="option2" />
+        <result column="option3" jdbcType="VARCHAR" property="option3" />
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto">
-        <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
-        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="out_storage_name" jdbcType="VARCHAR" property="outStorageName"/>
         <result column="out_storage_code" jdbcType="VARCHAR" property="outStorageCode"/>
         <result column="in_storage_name" jdbcType="VARCHAR" property="inStorageName"/>
@@ -55,30 +49,27 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-        <result column="platform_name" jdbcType="VARCHAR" property="platformName"/>
     </resultMap>
     <sql id="BaseColumnList">
         wipod.job_order_det_id,
         wipod.job_order_id,
-        wipod.source_det_id,
-        wipod.material_owner_id,
-        wipod.warehouse_id,
+        wipod.core_source_order_code,
+        wipod.source_order_code,
+        wipod.core_source_id,
+        wipod.source_id,
+        wipod.line_number,
         wipod.in_storage_id,
         wipod.out_storage_id,
-        wipod.platform_id,
         wipod.inventory_status_id,
         wipod.material_id,
-        wipod.packing_unit_name,
+        wipod.production_date,
+        wipod.batch_code,
         wipod.plan_qty,
         wipod.distribution_qty,
         wipod.actual_qty,
-        wipod.pallet_code,
-        wipod.receiving_date,
-        wipod.production_date,
-        wipod.expired_date,
         wipod.work_start_time,
         wipod.work_end_time,
-        wipod.batch_code,
+        wipod.line_status,
         wipod.status,
         wipod.remark,
         wipod.org_id,
@@ -89,19 +80,14 @@
         wipod.is_delete,
         wipod.option1,
         wipod.option2,
-        wipod.option3,
-        wipod.order_status,
-        wipod.shift_storage_status
+        wipod.option3
     </sql>
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="BaseColumnList"/>,
-        bmo.material_owner_name,
-        bw.warehouse_name,
         bso.storage_code AS out_storage_name,
         bso.storage_code AS out_storage_code,
         bsi.storage_code AS in_storage_name,
         bsi.storage_code AS in_storage_code,
-        bp.platform_name,
         bm.material_code,
         bm.material_name,
         bm.material_desc,
@@ -110,11 +96,8 @@
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_name
         FROM wms_inner_job_order_det wipod
-        LEFT JOIN base_material_owner bmo ON wipod.material_owner_id = bmo.material_owner_id
-        LEFT JOIN base_warehouse bw ON wipod.warehouse_id = bw.warehouse_id
         LEFT JOIN base_storage bso ON wipod.out_storage_id = bso.storage_id
         LEFT JOIN base_storage bsi ON wipod.in_storage_id = bsi.storage_id
-        left JOIN base_platform bp on wipod.platform_id = bp.platform_id
         LEFT JOIN base_inventory_status bis ON wipod.inventory_status_id = bis.inventory_status_id
         LEFT JOIN base_material bm ON wipod.material_id = bm.material_id
         LEFT JOIN sys_user su ON wipod.create_user_id = su.user_id
@@ -126,15 +109,6 @@
             </if>
             <if test="jobOrderDetId !=null and jobOrderDetId !=''">
                 and wipod.job_order_det_id = #{jobOrderDetId}
-            </if>
-            <if test="orderStatusList !=null and orderStatusList.size()!=0">
-                and wipod.order_status in
-                <foreach item="orderStatus" collection="orderStatusList" open="(" separator="," close=")">
-                    #{orderStatus}
-                </foreach>
-            </if>
-            <if test="nonShiftStorageStatus !=null and nonShiftStorageStatus!=''">
-                and wipod.shift_storage_status != #{nonShiftStorageStatus}
             </if>
             <if test="orgId!=null and orgId!=''">
                 and wipod.org_id = #{orgId}

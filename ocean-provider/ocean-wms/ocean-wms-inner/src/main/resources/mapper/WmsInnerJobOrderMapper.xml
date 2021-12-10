@@ -5,70 +5,52 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="job_order_id" jdbcType="BIGINT" property="jobOrderId"/>
-        <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId"/>
-        <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
-        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
-        <result column="order_type_id" jdbcType="BIGINT" property="orderTypeId"/>
-        <result column="working_area_id" jdbcType="BIGINT" property="workingAreaId"/>
-        <result column="worker_id" jdbcType="BIGINT" property="workerId"/>
-        <result column="platform_id" jdbcType="BIGINT" property="platformId"/>
-        <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode"/>
-        <result column="job_order_type" jdbcType="TINYINT" property="jobOrderType"/>
-        <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
-        <result column="plan_qty" jdbcType="DECIMAL" property="planQty"/>
-        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
-        <result column="distribution_qty" jdbcType="DECIMAL" property="distributionQty"/>
-        <result column="work_start_time" jdbcType="TIMESTAMP" property="workStartTime"/>
-        <result column="work_endt_time" jdbcType="TIMESTAMP" property="workEndtTime"/>
-        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
-        <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="remark" jdbcType="VARCHAR" property="remark"/>
-        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
-        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
-        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
-        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
-        <result column="option1" jdbcType="VARCHAR" property="option1"/>
-        <result column="option2" jdbcType="VARCHAR" property="option2"/>
-        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <id column="job_order_id" jdbcType="BIGINT" property="jobOrderId" />
+        <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
+        <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+        <result column="worker_id" jdbcType="BIGINT" property="workerId" />
+        <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode" />
+        <result column="job_order_type" jdbcType="TINYINT" property="jobOrderType" />
+        <result column="work_start_time" jdbcType="TIMESTAMP" property="workStartTime" />
+        <result column="work_endt_time" jdbcType="TIMESTAMP" property="workEndtTime" />
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="option1" jdbcType="VARCHAR" property="option1" />
+        <result column="option2" jdbcType="VARCHAR" property="option2" />
+        <result column="option3" jdbcType="VARCHAR" property="option3" />
+
         <collection property="wmsInPutawayOrderDets" ofType="com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet"
                     column="{jobOrderId=job_order_id}" select="com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper.findList">
         </collection>
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto">
-        <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="order_type_name" jdbcType="VARCHAR" property="orderTypeName"/>
         <result column="work_name" jdbcType="VARCHAR" property="workName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-        <result column="isPallet" jdbcType="TINYINT" property="isPallet"/>
-        <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName" />
-        <result column="link_man_name" jdbcType="VARCHAR" property="linkManName" />
-        <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone" />
-        <result column="fax_number" jdbcType="VARCHAR" property="faxNumber" />
-        <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress" />
-        <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
-        <result column="platform_name" jdbcType="VARCHAR" property="platformName"/>
+        <result column="plan_qty" jdbcType="DECIMAL" property="planQty"/>
+        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
+        <result column="distribution_qty" jdbcType="DECIMAL" property="distributionQty"/>
     </resultMap>
     <sql id="BaseColumnList">
         wipo.job_order_id,
-        wipo.source_order_id,
-        wipo.material_owner_id,
+        wipo.core_source_sys_order_type_code,
+        wipo.source_sys_order_type_code,
         wipo.warehouse_id,
-        wipo.order_type_id,
-        wipo.working_area_id,
         wipo.worker_id,
-        wipo.platform_id,
         wipo.job_order_code,
         wipo.job_order_type,
-        wipo.related_order_code,
-        wipo.plan_qty,
-        wipo.actual_qty,
         wipo.work_start_time,
         wipo.work_endt_time,
         wipo.order_status,
@@ -83,31 +65,21 @@
         wipo.option1,
         wipo.option2,
         wipo.option3
+
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
         SELECT<include refid="BaseColumnList"/>,
-        bmo.material_owner_name,boy.order_type_name,bw.warehouse_name,wr.user_name as work_name,
-        wodo.consignee as consignee_name,wodo.link_man_name,wodo.link_man_phone,wodo.fax_number,wodo.e_mail_address,wodo.detailed_address,
+        bw.warehouse_name,wr.user_name as work_name,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name,
-        bp.platform_name,
-        (SELECT IFNULL(SUM(wipod.distribution_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wipo.job_order_id) as distribution_qty
-        <if test="isPallet!=null and isPallet!='' and isPallet==1">
-            ,
-          CASE
-            WHEN (select COUNT(*) FROM wms_inner_job_order_re_mspp wijorm where wijorm.job_order_id=wipo.job_order_id)>0
-            THEN 1
-            ELSE 0
-        END as isPallet
-        </if>
+        (SELECT IFNULL(SUM(wipod.plan_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wipo.job_order_id) as plan_qty,
+        (SELECT IFNULL(SUM(wipod.distribution_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wipo.job_order_id) as distribution_qty,
+        (SELECT IFNULL(SUM(wipod.actual_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wipo.job_order_id) as actual_qty
+
         FROM wms_inner_job_order wipo
-        LEFT JOIN wms_out_delivery_order wodo ON wipo.source_order_id = wodo.delivery_order_id
-        LEFT JOIN base_material_owner bmo ON wipo.material_owner_id=bmo.material_owner_id
         LEFT JOIN base_warehouse bw ON wipo.warehouse_id = bw.warehouse_id
-        LEFT join base_order_type boy on wipo.order_type_id = boy.order_type_id
         LEFT JOIN base_worker bwr ON wipo.worker_id = bwr.worker_id
-        left JOIN base_platform bp on wipo.platform_id = bp.platform_id
         LEFT JOIN sys_user wr ON bwr.user_id = wr.user_id
         LEFT JOIN sys_user su ON wipo.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wipo.modified_user_id = sus.user_id
@@ -119,21 +91,10 @@
             <if test="jobOrderCode!=null and jobOrderCode!=''">
                 and wipo.job_order_code like CONCAT('%',#{jobOrderCode},'%')
             </if>
-            <if test="materialOwnerName!=null and materialOwnerName!=''">
-                and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
-            </if>
             <if test="warehouseName!=null and warehouseName!=''">
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
             </if>
-            <if test="relatedOrderCode!=null and relatedOrderCode!='' and codeQueryMark!=1">
-                and wipo.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
-            </if>
-            <if test="relatedOrderCode!=null and relatedOrderCode!='' and codeQueryMark==1">
-                and wipo.related_order_code = #{relatedOrderCode}
-            </if>
-            <if test="orderTypeId!=null and orderTypeId!=''">
-                and wipo.order_type_id =#{orderTypeId}
-            </if>
+
             <if test="workName!=null and workName!=''">
                 and wr.user_name =#{workName}
             </if>
@@ -143,26 +104,14 @@
             <if test="jobOrderId !=null and jobOrderId !=''">
                 and wipo.job_order_id = #{jobOrderId}
             </if>
-            <if test="sourceOrderId!=null and sourceOrderId!=''">
-                and wipo.source_order_id =#{sourceOrderId}
-            </if>
             <if test="orderStatus!=null and orderStatus!=''">
                 and wipo.order_status =#{orderStatus}
-            </if>
-            <if test="isPick==true">
-                and wipo.job_order_type =4 and wipo.order_status = 5
-                and wipo.job_order_id NOT IN(SELECT wodor.job_order_id From wms_out_despatch_order_re_jo wodor where wodor.job_order_id=wipo.job_order_id)
             </if>
             <if test="orderStatusList !=null and orderStatusList.size()!=0">
                 and wipo.order_status in
                 <foreach item="orderStatus" collection="orderStatusList" open="(" separator="," close=")">
                     #{orderStatus}
                 </foreach>
-            </if>
-            <if test="sealOrder!=null and sealOrder==1">
-                and DATE_FORMAT(wipo.work_start_time,'%y-%m-%d')&lt;=DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 21 day),'%y-%m-%d')
-                and wipo.order_status!=6
-                and wipo.order_type_id=8
             </if>
         </where>
         order by wipo.create_time desc

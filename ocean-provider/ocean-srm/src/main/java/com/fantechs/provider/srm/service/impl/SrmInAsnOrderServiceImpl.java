@@ -134,12 +134,20 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             for (SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
                 if (StringUtils.isEmpty(srmInAsnOrderDetDto.getOrderQty()))
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"采购订单数量不能为空");
-                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getTotalDeliveryQty()))
-                    srmInAsnOrderDetDto.setTotalDeliveryQty(BigDecimal.ZERO);
+
                 if (StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
                     srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
                 if(srmInAsnOrderDetDto.getDeliveryQty().compareTo(BigDecimal.ZERO)<0)
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"发货数量不能小于0");
+
+                Map map = new HashMap();
+                map.put("sourceOrderId",srmInAsnOrderDetDto.getSourceOrderId());
+                List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos = srmInAsnOrderDetMapper.findList(map);
+                if (StringUtils.isEmpty(srmInAsnOrderDetDtos))
+                    srmInAsnOrderDetDto.setTotalDeliveryQty(BigDecimal.ZERO);
+                else
+                    srmInAsnOrderDetDto.setTotalDeliveryQty(srmInAsnOrderDetDtos.get(0).getTotalDeliveryQty());
+
                 if (srmInAsnOrderDetDto.getOrderQty().compareTo(srmInAsnOrderDetDto.getTotalDeliveryQty().add(srmInAsnOrderDetDto.getDeliveryQty())) == -1)
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"交货总量大于订单数量");
 
@@ -322,5 +330,18 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         return 1;
     }
 
+    @Override
+    public int batchDelete(String ids) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        String[] arrIds = ids.split(",");
+        for (String id : arrIds) {
+            Example example1 = new Example(SrmInAsnOrderDet.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("asnOrderId",id);
+            srmInAsnOrderDetMapper.deleteByExample(example1);
+        }
+        int i = srmInAsnOrderMapper.deleteByIds(ids);
+        return i;
+    }
 
 }

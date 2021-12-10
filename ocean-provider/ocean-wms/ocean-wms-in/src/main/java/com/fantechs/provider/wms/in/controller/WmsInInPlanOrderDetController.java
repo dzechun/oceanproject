@@ -27,7 +27,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/12/08.
  */
 @RestController
-@Api(tags = "wmsInInPlanOrderDet控制器")
+@Api(tags = "入库计划详情表")
 @RequestMapping("/wmsInInPlanOrderDet")
 @Validated
 @Slf4j

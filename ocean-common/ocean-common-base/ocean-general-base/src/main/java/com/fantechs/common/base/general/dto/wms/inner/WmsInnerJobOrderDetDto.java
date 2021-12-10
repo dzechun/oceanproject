@@ -9,19 +9,6 @@ import java.io.Serializable;
 
 @Data
 public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Serializable {
-    /**
-     * 货主名称
-     */
-    @Transient
-    @ApiModelProperty(name="materialOwnerName",value = "货主名称")
-    private String materialOwnerName;
-
-    /**
-     * 仓库
-     */
-    @Transient
-    @ApiModelProperty(name="warehouseName",value = "仓库")
-    private String warehouseName;
 
     /**
      * 移出库位
@@ -99,11 +86,4 @@ public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Seria
     @Transient
     @ApiModelProperty(name="modifiedUserName",value = "修改人")
     private String modifiedUserName;
-
-    /**
-     * 月台名称
-     */
-    @Transient
-    @ApiModelProperty(name = "platformName",value = "月台")
-    private String platformName;
 }
