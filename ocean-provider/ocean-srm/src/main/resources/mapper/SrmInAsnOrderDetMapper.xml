@@ -81,7 +81,7 @@
         <include refid="BaseColumnList"/>,
         opo.purchase_order_code,opod.delivery_date AS order_date,bm.material_code,opod.order_qty AS order_qty,
         bm.material_name,bw.warehouse_name,bm.material_version,bm.material_desc,bmt.main_unit,
-        ( SELECT SUM( wiaods.delivery_qty ) FROM wms_in_asn_order_det wiaods WHERE wiaods.asn_order_id = wiaod.asn_order_id ) AS total_delivery_qty,
+        ( SELECT SUM( wiaods.delivery_qty ) FROM wms_in_asn_order_det wiaods WHERE wiaods.source_order_id = opod.purchase_order_det_id ) AS total_delivery_qty,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name

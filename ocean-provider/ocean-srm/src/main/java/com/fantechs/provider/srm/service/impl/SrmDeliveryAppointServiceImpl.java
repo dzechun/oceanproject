@@ -111,7 +111,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         criteria.andEqualTo("appointEndTime",srmDeliveryAppointDto.getAppointEndTime());
         Integer num = srmDeliveryAppointMapper.selectCountByExample(example);
         Integer size = srmCarportTimeQuantumDtos.get(0).getCarportCount();
-        if(num > size )
+        if(num >= size )
             throw new BizErrorException("该时间段预约已满");
 
         //保存供应商
@@ -248,6 +248,20 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
             }
         }
 
+        return i;
+    }
+
+    @Override
+    public int batchDelete(String ids) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        String[] arrIds = ids.split(",");
+        for (String id : arrIds) {
+            Example example = new Example(SrmAppointDeliveryReAsn.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("deliveryAppointId",id);
+            srmAppointDeliveryReAsnMapper.deleteByExample(example);
+        }
+        int i = srmDeliveryAppointMapper.deleteByIds(ids);
         return i;
     }
 
