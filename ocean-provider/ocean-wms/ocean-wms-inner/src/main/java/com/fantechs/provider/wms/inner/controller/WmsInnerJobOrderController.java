@@ -59,6 +59,12 @@ public class WmsInnerJobOrderController {
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.cancelDistribution(ids));
     }
 
+    @ApiOperation(" 指定工作人员")
+    @PostMapping("/distributionWorker")
+    public ResponseEntity distributionWorker(@ApiParam(value = "对象ID",required = true) @RequestParam @NotBlank(message="id不能为空") Long jobOrderId,@ApiParam(value = "人员ID",required = true) @RequestParam @NotBlank(message="人员ID不能为空") Long workerId){
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.distributionWorker(jobOrderId,workerId));
+    }
+
     @ApiOperation("整单确认")
     @PostMapping("/allReceiving")
     public ResponseEntity allReceiving(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){

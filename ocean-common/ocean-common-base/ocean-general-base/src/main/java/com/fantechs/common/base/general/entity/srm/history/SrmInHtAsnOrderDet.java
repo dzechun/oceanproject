@@ -29,7 +29,7 @@ public class SrmInHtAsnOrderDet extends ValidGroup implements Serializable {
      * ASN单明细履历ID
      */
     @ApiModelProperty(name="htAsnOrderDetId",value = "ASN单明细履历ID")
-    @Excel(name = "ASN单明细履历ID", height = 20, width = 30,orderNum="") 
+    @Excel(name = "ASN单明细履历ID", height = 20, width = 30,orderNum="")
     @Id
     @Column(name = "ht_asn_order_det_id")
     private Long htAsnOrderDetId;
@@ -124,7 +124,7 @@ public class SrmInHtAsnOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="lineNumber",value = "行号")
     @Excel(name = "行号", height = 20, width = 30)
     @Column(name = "line_number")
-    private Integer lineNumber;
+    private String lineNumber;
 
     /**
      * 物料ID

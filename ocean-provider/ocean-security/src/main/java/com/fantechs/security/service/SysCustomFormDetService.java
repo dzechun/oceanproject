@@ -20,4 +20,6 @@ public interface SysCustomFormDetService extends IService<SysCustomFormDet> {
     int updateInAllOrg(SysCustomFormDet sysCustomFormDet);
 
     int batchDeleteInAllOrg(String ids);
+
+    int batchUpdate(List<SysCustomFormDet> list);
 }
