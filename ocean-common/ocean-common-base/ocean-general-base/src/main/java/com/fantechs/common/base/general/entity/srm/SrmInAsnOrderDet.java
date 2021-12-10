@@ -159,6 +159,20 @@ public class SrmInAsnOrderDet extends ValidGroup implements Serializable {
     private String batchCode;
 
     /**
+     * 累计下发数量
+     */
+    @ApiModelProperty(name="totalIssueQty",value = "累计下发数量")
+    @Column(name = "total_issue_qty")
+    private BigDecimal totalIssueQty;
+
+    /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    @Column(name = "if_all_issued")
+    private Byte ifAllIssued;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
