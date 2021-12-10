@@ -109,7 +109,7 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
             boolean flag = false;
             for (OmSalesCodeReSpcDto dto : reSpcDtos){
                 if (dto.getSalesCode().equals(item.getSalesCode())
-                        && dto.getPriority().equals(item.getPriority())){
+                        && dto.getPriority().toString().equals(item.getPriority())){
                     flag = true;
                     break;
                 }
