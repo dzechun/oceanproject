@@ -276,6 +276,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     public int batchDelete(String ids) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         String[] arrIds = ids.split(",");
+
         for (String id : arrIds) {
             OmOtherInOrder omOtherInOrder = omOtherInOrderMapper.selectByPrimaryKey(id);
             if (StringUtils.isEmpty(omOtherInOrder)) {
