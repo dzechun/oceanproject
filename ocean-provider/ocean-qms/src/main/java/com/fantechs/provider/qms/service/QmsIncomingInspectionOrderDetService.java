@@ -19,5 +19,5 @@ public interface QmsIncomingInspectionOrderDetService extends IService<QmsIncomi
 
     List<QmsHtIncomingInspectionOrderDet> findHtList(Map<String, Object> map);
 
-    List<QmsIncomingInspectionOrderDetDto> showOrderDet(Long inspectionStandardId, BigDecimal qty);
+    List<QmsIncomingInspectionOrderDet> showOrderDet(Long inspectionStandardId, BigDecimal qty);
 }

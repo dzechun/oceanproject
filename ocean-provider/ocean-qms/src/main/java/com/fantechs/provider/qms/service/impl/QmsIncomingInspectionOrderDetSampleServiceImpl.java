@@ -176,7 +176,7 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
         searchBaseOrderFlow.setOrderNode((byte)4);
         BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
         if(StringUtils.isEmpty(baseOrderFlow)){
-            throw new BizErrorException("未找到当前单据配置的下游单据");
+            throw new BizErrorException("未找到当前单据配置的单据流");
         }
         //条码校验
         if("SRM-ASN".equals(baseOrderFlow.getSourceOrderTypeCode())){
@@ -190,9 +190,6 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
 
         }else if("IN-SWK".equals(baseOrderFlow.getSourceOrderTypeCode())){
             //收货作业
-
-        }else if("IN-PO".equals(baseOrderFlow.getSourceOrderTypeCode())){
-            //采购订单
 
         }
 

@@ -57,6 +57,17 @@ public class BaseInspectionWayServiceImpl extends BaseService<BaseInspectionWay>
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
 
+        if(baseInspectionWay.getInspectionType() == 1) {
+            example.clear();
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria1.andEqualTo("orgId", user.getOrganizationId())
+                    .andEqualTo("inspectionType", baseInspectionWay.getInspectionType());
+            BaseInspectionWay baseInspectionWay2 = baseInspectionWayMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(baseInspectionWay2)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"只允许一条来料检验的检验方式");
+            }
+        }
+
         baseInspectionWay.setCreateUserId(user.getUserId());
         baseInspectionWay.setCreateTime(new Date());
         baseInspectionWay.setModifiedUserId(user.getUserId());
@@ -85,6 +96,18 @@ public class BaseInspectionWayServiceImpl extends BaseService<BaseInspectionWay>
         BaseInspectionWay baseInspectionWay1 = baseInspectionWayMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(baseInspectionWay1)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        }
+
+        if(baseInspectionWay.getInspectionType() == 1) {
+            example.clear();
+            Example.Criteria criteria1 = example.createCriteria();
+            criteria1.andEqualTo("orgId", user.getOrganizationId())
+                    .andEqualTo("inspectionType", baseInspectionWay.getInspectionType())
+                    .andNotEqualTo("inspectionWayId",baseInspectionWay.getInspectionWayId());
+            BaseInspectionWay baseInspectionWay2 = baseInspectionWayMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(baseInspectionWay2)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"只允许一条来料检验的检验方式");
+            }
         }
 
         baseInspectionWay.setModifiedTime(new Date());
