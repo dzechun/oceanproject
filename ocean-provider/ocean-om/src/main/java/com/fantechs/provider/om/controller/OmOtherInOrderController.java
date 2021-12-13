@@ -5,17 +5,16 @@ import com.fantechs.common.base.general.dto.om.OmOtherInOrderDto;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmOtherInOrder;
-import com.fantechs.provider.om.service.OmOtherInOrderService;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.om.service.OmOtherInOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -102,5 +101,11 @@ public class OmOtherInOrderController {
     @PostMapping("/writeQty")
     public ResponseEntity writeQty(@RequestBody OmOtherInOrderDet omOtherInOrderDet){
         return ControllerUtil.returnCRUD(omOtherInOrderService.writeQty(omOtherInOrderDet));
+    }
+
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "来料检验单ID列表，多个逗号分隔",required = true)@RequestParam  @NotBlank(message="来料检验单ID不能为空") String ids) {
+        return ControllerUtil.returnCRUD(omOtherInOrderService.pushDown(ids));
     }
 }

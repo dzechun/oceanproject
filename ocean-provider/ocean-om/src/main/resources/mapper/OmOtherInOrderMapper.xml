@@ -7,6 +7,7 @@
         -->
         <id column="other_in_order_id" jdbcType="BIGINT" property="otherInOrderId"/>
         <result column="other_in_order_code" jdbcType="VARCHAR" property="otherInOrderCode"/>
+        <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
         <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
         <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
         <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
@@ -40,6 +41,7 @@
     <sql id="Base_Column_List">
         oio.other_in_order_id,
         oio.other_in_order_code,
+        oio.sys_order_type_code,
         oio.related_order_code,
         oio.material_owner_id,
         oio.order_status,
