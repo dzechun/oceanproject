@@ -28,10 +28,12 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
         calendar.setTime(new Date());
         calendar.add(calendar.DATE,1);
         searchProLineBoard.setStartTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
-        searchProLineBoard.setEndTime(DateUtil.format(calendar.getTime(),"yyyy-MM-dd"));
+        searchProLineBoard.setEndTime(DateUtil.format(new Date(),"yyyy-MM-dd"));
         searchProLineBoard.setOrgId((long)1000);
         ProLineBoardModel model = proLineBoardMapper.findPlanList(searchProLineBoard);
         if(StringUtils.isNotEmpty(model)) {
+
+            searchProLineBoard.setEndTime(DateUtil.format(calendar.getTime(),"yyyy-MM-dd"));
 
             // 设置精确到小数点后2位,可以写0不带小数位
             NumberFormat numberFormat = NumberFormat.getInstance();
