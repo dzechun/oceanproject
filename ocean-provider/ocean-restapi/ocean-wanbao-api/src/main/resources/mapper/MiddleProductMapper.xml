@@ -27,8 +27,8 @@
         LEFT JOIN  ProductTrace PT ON P.Id= pt.ProductId
         <where>
             pt.Status= '1'
-            /*AND  PP.PlanName= 'ZA2107-0098' AND
-            pt.StationId= '5eccf61c-de83-4380-ab99-3e722141ebe3'*/
+            AND pt.StationId= '5eccf61c-de83-4380-ab99-3e722141ebe3'
+            /*AND  PP.PlanName= 'ZA2107-0098' */
         </where>
     </select>
 

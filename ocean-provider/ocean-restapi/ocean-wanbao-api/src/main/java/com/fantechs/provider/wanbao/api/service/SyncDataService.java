@@ -32,8 +32,14 @@ public interface SyncDataService {
     void syncOutDeliveryData();
 
     /**
-     * 万宝-产品条码同步同步
+     * 万宝-产品条码同步
      * @return
      */
     void syncBarcodeData();
+
+    /**
+     * 万宝-所有PQMS数据同步
+     * @return
+     */
+    void syncAllBarcodeData();
 }
