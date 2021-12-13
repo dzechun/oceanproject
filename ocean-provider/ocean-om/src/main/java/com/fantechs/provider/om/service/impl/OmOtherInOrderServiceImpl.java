@@ -315,7 +315,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     @Transactional(rollbackFor = Exception.class)
     public int pushDown(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-
+        String coreSourceSysOrderTypeCode = null;
         int i = 0;
 
         List<OmOtherInOrderDet> omOtherInOrderDets = omOtherInOrderDetMapper.selectByIds(ids);
@@ -347,7 +347,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
             WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
             wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
-            wmsInInPlanOrder.setSourceSysOrderTypeCode("OTRK");
+            wmsInInPlanOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
             wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
             wmsInInPlanOrder.setOrderStatus((byte)1);
             wmsInInPlanOrder.setCreateUserId(user.getUserId());
@@ -385,6 +385,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 Map map = new HashMap();
                 map.put("otherInOrderId",omOtherInOrderDet.getOtherInOrderId());
                 List<OmOtherInOrderDto> omOtherInOrderDto = omOtherInOrderMapper.findList(map);
+                coreSourceSysOrderTypeCode = omOtherInOrderDto.get(0).getSysOrderTypeCode();
 
                 QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
                 qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
@@ -394,8 +395,8 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 qmsIncomingInspectionOrderDto.setWarehouseId(omOtherInOrderDet.getWarehouseId());
                 qmsIncomingInspectionOrderDto.setOrderQty(omOtherInOrderDet.getOrderQty());
                 qmsIncomingInspectionOrderDto.setInspectionStatus((byte)1);
-                qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode("OTRK");
-                qmsIncomingInspectionOrderDto.setCoreSourceSysOrderTypeCode("OTRK");
+                qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                qmsIncomingInspectionOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 qmsIncomingInspectionOrderDto.setCreateUserId(user.getUserId());
                 qmsIncomingInspectionOrderDto.setCreateTime(new Date());
                 qmsIncomingInspectionOrderDto.setModifiedUserId(user.getUserId());
@@ -423,6 +424,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"先作业后单据无法进行下推操作");
 
             List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
+
             for(OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets){
                 int lineNumber = 1;
 
@@ -439,12 +441,14 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 wmsInInPlanOrderDet.setPlanQty(omOtherInOrderDet.getOrderQty());
                 wmsInInPlanOrderDet.setLineStatus((byte)1);
                 detList.add(wmsInInPlanOrderDet);
+                coreSourceSysOrderTypeCode = omOtherInOrderDto.get(0).getSysOrderTypeCode();
+
             }
 
             WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
             wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
-            wmsInInPlanOrder.setSourceSysOrderTypeCode("OTRK");
-            wmsInInPlanOrder.setCoreSourceSysOrderTypeCode("OTRK");
+            wmsInInPlanOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+            wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
             wmsInInPlanOrder.setOrderStatus((byte)1);
             wmsInInPlanOrder.setCreateUserId(user.getUserId());
             wmsInInPlanOrder.setCreateTime(new Date());
@@ -488,11 +492,12 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 wmsInnerJobOrderDet.setPlanQty(omOtherInOrderDet.getIssueQty());
                 wmsInnerJobOrderDet.setLineStatus((byte)1);
                 detList.add(wmsInnerJobOrderDet);
+                coreSourceSysOrderTypeCode = omOtherInOrderDto.get(0).getSysOrderTypeCode();
             }
 
             WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-            wmsInnerJobOrder.setSourceSysOrderTypeCode("OTRK");
-            wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OTRK");
+            wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+            wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
             wmsInnerJobOrder.setJobOrderType((byte)1);
             wmsInnerJobOrder.setOrderStatus((byte)1);
             wmsInnerJobOrder.setCreateUserId(user.getUserId());
