@@ -1,7 +1,9 @@
 package com.fantechs.provider.api.srm;
 
+import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetBarcodeDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmInAsnOrder;
+import com.fantechs.common.base.general.entity.srm.search.SearchSrmInAsnOrderDetBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -17,5 +19,9 @@ public interface SrmFeignApi {
     @ApiOperation("预收货通知单列表")
     @PostMapping("/srmInAsnOrder/findList")
     ResponseEntity<List<SrmInAsnOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrder searchSrmInAsnOrder);
+
+    @ApiOperation("预收货通知单条码列表")
+    @PostMapping("/srmInAsnOrderDetBarcode/findList")
+    ResponseEntity<List<SrmInAsnOrderDetBarcodeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrderDetBarcode searchSrmInAsnOrderDetBarcode);
 
 }
