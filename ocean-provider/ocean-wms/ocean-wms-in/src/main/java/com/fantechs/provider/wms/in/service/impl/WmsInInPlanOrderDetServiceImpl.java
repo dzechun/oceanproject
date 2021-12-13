@@ -46,7 +46,7 @@ public class WmsInInPlanOrderDetServiceImpl extends BaseService<WmsInInPlanOrder
         }
         String[] str = ids.split(",");
         List<String> list = Arrays.asList(str);
-        map.put("inPlanOrderIds", str);
+        map.put("inPlanOrderIds", list);
         return  wmsInInPlanOrderDetMapper.findList(map);
     }
 
