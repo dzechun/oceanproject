@@ -61,7 +61,7 @@ public class ProductDailyPlanModel implements Serializable {
      * 生产数量
      */
     @Transient
-    @ApiModelProperty(name="workOrderQty",value = "生产数量")
+    @ApiModelProperty(name="workOrderQty",value = "生产数量/工单数量")
     private BigDecimal workOrderQty;
 
     /**
@@ -77,6 +77,15 @@ public class ProductDailyPlanModel implements Serializable {
     @ApiModelProperty(name="finishedQty",value = "完工数量")
     @Transient
     private BigDecimal finishedQty;
+
+    //
+
+    /**
+     * 投产数量
+     */
+    @ApiModelProperty(name="productionQty",value = "投产数量")
+    @Transient
+    private BigDecimal productionQty;
 
     /**
      * 工单状态

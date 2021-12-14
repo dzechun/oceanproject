@@ -22,4 +22,10 @@ public class SearchProductDailyPlan extends BaseQuery {
     @ApiModelProperty(name="planDateEnd",value = "结束计划日期")
     private String planDateEnd;
 
+    /**
+     * 线别id
+     */
+    @ApiModelProperty(name="proLineId" ,value="线别id")
+    private Long proLineId;
+
 }
