@@ -22,5 +22,5 @@ public interface OmSalesReturnOrderService extends IService<OmSalesReturnOrder> 
 
     int writeQty(OmSalesReturnOrderDet omSalesReturnOrderDet);
 
-    int pushDown(String ids);
+    int pushDown(List<OmSalesReturnOrderDet> omSalesReturnOrderDets);
 }
