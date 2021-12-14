@@ -122,6 +122,11 @@ public class SyncDataServiceImpl implements SyncDataService {
 
         if (!middleMaterials.isEmpty()) {
             long start = System.currentTimeMillis();
+            Map<String, List<MiddleMaterial>> collect = middleMaterials.stream().collect(Collectors.groupingBy(MiddleMaterial::getMaterialCode));
+            List<MiddleMaterial> list = new ArrayList<>();
+            collect.forEach((key, value) -> {
+                list.add(value.get(0));
+            });
 
             // 1、保存平台库
             // 产品型号集合
@@ -150,7 +155,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
             }
 
-            for (MiddleMaterial dto : middleMaterials) {
+            for (MiddleMaterial dto : list) {
                 if (dto.getProductModelCode() != null) {
                     for (BaseProductModel item : productModels) {
                         if (item.getProductModelCode().equals(dto.getProductModelCode())) {
@@ -1004,8 +1009,59 @@ public class SyncDataServiceImpl implements SyncDataService {
             securityFeignApi.add(apiLog);
         }
 
+    }
 
+    @Override
+    public void syncAllBarcodeData() {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        // 记录日志
+        SysApiLog apiLog = new SysApiLog();
+        apiLog.setCreateTime(new Date());
+        apiLog.setThirdpartySysName("万宝数据库对接");
+        apiLog.setCallType((byte) 1);
+        apiLog.setCallResult((byte) 0);
+        apiLog.setApiModule("ocean-wanbao-api");
+        apiLog.setApiUrl("查询数据库-同步产品条码");
+        apiLog.setOrgId(sysUser.getOrganizationId());
 
+        // 执行查询
+        DynamicDataSourceHolder.putDataSouce("thirdary");
+        List<MiddleProduct> barcodeDatas = middleProductMapper.findBarcodeData(new HashMap<>());
+        log.info("------barcodeDatas----------" + barcodeDatas);
+        DynamicDataSourceHolder.removeDataSource();
+
+        if (StringUtils.isNotEmpty(barcodeDatas)) {
+            // 记录日志
+            long start = System.currentTimeMillis();
+            for (MiddleProduct middleProduct : barcodeDatas) {
+                if (StringUtils.isEmpty(middleProduct) || StringUtils.isEmpty(middleProduct.getCustomerBarcode()) || StringUtils.isEmpty(middleProduct.getBarcode())) {
+                    continue;
+                }
+                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
+                searchMesSfcBarcodeProcess.setBarcode(middleProduct.getBarcode());
+                List<MesSfcBarcodeProcess> mesSfcBarcodeProcess = sfcFeignApi.findBarcode(searchMesSfcBarcodeProcess).getData();
+                if (StringUtils.isNotEmpty(mesSfcBarcodeProcess) && StringUtils.isEmpty(mesSfcBarcodeProcess.get(0).getCustomerBarcode())) {
+                    mesSfcBarcodeProcess.get(0).setCustomerBarcode(middleProduct.getCustomerBarcode());
+                    sfcFeignApi.update(mesSfcBarcodeProcess.get(0));
+                } else {
+                    apiLog.setResponseData(middleProduct.getBarcode() + "，此产品条码未匹配到对应的过站数据，不同步此条数据");
+                    securityFeignApi.add(apiLog);
+                    continue;
+                }
+
+            }
+
+            // 保存中间库
+            DynamicDataSourceHolder.putDataSouce("secondary");
+            for (MiddleProduct middleProduct : barcodeDatas) {
+                middleProductMapper.save(middleProduct);
+            }
+            DynamicDataSourceHolder.removeDataSource();
+
+            apiLog.setRequestTime(new Date());
+            apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
+            securityFeignApi.add(apiLog);
+        }
     }
 
 }

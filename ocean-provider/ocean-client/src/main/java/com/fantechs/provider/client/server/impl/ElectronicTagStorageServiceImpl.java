@@ -755,10 +755,10 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     for (TemVehicleDto temVehicleDto : temVehicleDtoList) {
                         if (!"JH-FAST".equals(temVehicleDto.getVehicleCode()) && StringUtils.isEmpty(redisUtil.get(temVehicleDto.getVehicleCode()))) {
                             vehicleCode = temVehicleDto.getVehicleCode();
-                            redisUtil.set(temVehicleDto.getVehicleCode(), 1, 5);
+                            redisUtil.set(temVehicleDto.getVehicleCode(), ptlJobOrder.getRelatedOrderCode(), 30);
                             log.info("开始打印，redis锁定集货位：" + vehicleCode);
                             endVehicleCode = vehicleCode;
-                            redisUtil.set(ptlJobOrder.getRelatedOrderCode(), temVehicleDto.getVehicleCode(), 5);
+                            redisUtil.set(ptlJobOrder.getRelatedOrderCode(), temVehicleDto.getVehicleCode(), 30);
                             log.info("开始打印，redis锁定拣货单：" + ptlJobOrder.getRelatedOrderCode());
                             relatedOrderCode = ptlJobOrder.getRelatedOrderCode();
 
@@ -1308,6 +1308,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         List<PtlJobOrderDetDto> ptlJobOrderDetDtoList1 = electronicTagFeignApi.findPtlJobOrderDetList(searchPtlJobOrderDet1).getData();
         String lockKey = ptlJobOrderDetDtoList1.get(0).getWarehouseAreaCode() + "_lock";
         String lockValue = "";
+        List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = new ArrayList<>();
         try {
             if (redisUtil.lock(lockKey)) {
                 lockValue = String.valueOf(redisUtil.get(lockKey));
@@ -1315,7 +1316,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             } else {
                 throw new Exception("正在处理电子标签任务，请稍后再试！");
             }
-            List<PtlJobOrderDetPrintDTO> ptlJobOrderDetPrintDTOList = printPtlJobOrderLabel(ids, workUserId, 1);
+            ptlJobOrderDetPrintDTOList = printPtlJobOrderLabel(ids, workUserId, 1);
             List<PtlJobOrderDto> ptlJobOrderDtoList = sendElectronicTagStorage(ids, Long.valueOf(0), 1);
             for (PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO : ptlJobOrderDetPrintDTOList) {
                 for (PtlJobOrderDto ptlJobOrderDto : ptlJobOrderDtoList) {
@@ -1344,6 +1345,9 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
             log.info("===========队列名称:" + ptlJobOrderDetPrintDTOList.get(0).getQueueName());
             log.info("===========消息内容:" + JSONObject.toJSONString(mQResponseEntity));
             log.info("===========发送消息给打印客户端打印整、零标签完成===============");
+        } catch (Exception e) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), e.getMessage());
+        } finally {
 
             List<String> vehicleCodeList = new LinkedList<>();
             for (PtlJobOrderDetPrintDTO ptlJobOrderDetPrintDTO : ptlJobOrderDetPrintDTOList) {
@@ -1366,9 +1370,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                     vehicleCodeList.add(vehicleCode);
                 }
             }
-        } catch (Exception e) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), e.getMessage());
-        } finally {
+
             redisUtil.unlock(lockKey, lockValue);
             log.info("=====================释放了:" + lockKey + "--->redisKEY");
         }

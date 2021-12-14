@@ -74,4 +74,12 @@ public class WanbaoSyncDataController {
         syncDataService.syncBarcodeData();
         return ControllerUtil.returnSuccess();
     }
+
+    @ApiOperation(value = "万宝-PQMS所有数据同步",notes = "万宝-PQMS所有数据同步")
+    @PostMapping("/syncAllBarcodeData")
+    public ResponseEntity syncAllBarcodeData(){
+        log.info("万宝-PQMS所有数据同步");
+        syncDataService.syncAllBarcodeData();
+        return ControllerUtil.returnSuccess();
+    }
 }

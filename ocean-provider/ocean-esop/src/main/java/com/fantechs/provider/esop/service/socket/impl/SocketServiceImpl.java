@@ -124,7 +124,7 @@ public class SocketServiceImpl implements SocketService {
         ResponseEntity<List<SysSpecItem>> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem);
         for (EsopEquipment eamEquipment : eamEquipments) {
             try {
-                Socket socket = (Socket)hashtable.get(eamEquipment.getEquipmentIp());
+                Socket socket  = (Socket)hashtable.get(eamEquipment.getEquipmentMacAddress());
                 if(socket == null || (socket != null && (eamEquipment.getOnlineStatus() ==0 || eamEquipment.getOnlineStatus() ==3 )))
                 continue;
 
@@ -221,7 +221,6 @@ public class SocketServiceImpl implements SocketService {
                 }
                 String url = getUrl();
                 //开机连接发送新闻命令
-                String localHostIp = InetAddress.getLocalHost().getHostAddress();
                 hashtable.put(addr.getHostAddress(),socket);
                 Map<String, Object> map = new HashMap();
                 Map<String, Object> newMap = new HashMap();
