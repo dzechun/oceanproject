@@ -394,10 +394,14 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         if(varQty.signum()==-1){
             qty =  ~(varQty.intValue() - 1);
         }
-        wmsInnerInitStockDet.setVarianceQty(new BigDecimal(qty));
-        wmsInnerInitStockDet.setModifiedTime(new Date());
-        wmsInnerInitStockDet.setModifiedUserId(sysUser.getUserId());
-        wmsInnerInitStockDetMapper.updateByPrimaryKeySelective(wmsInnerInitStockDet);
+        if(varQty.compareTo(BigDecimal.ZERO)==0){
+            wmsInnerInitStockDetMapper.deleteByPrimaryKey(wmsInnerInitStockDet);
+        }else {
+            wmsInnerInitStockDet.setVarianceQty(new BigDecimal(qty));
+            wmsInnerInitStockDet.setModifiedTime(new Date());
+            wmsInnerInitStockDet.setModifiedUserId(sysUser.getUserId());
+            wmsInnerInitStockDetMapper.updateByPrimaryKeySelective(wmsInnerInitStockDet);
+        }
         return wmsInnerInitStockBarcodeMapper.deleteByPrimaryKey(initStockBarCodeId);
     }
 
