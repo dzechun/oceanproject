@@ -82,8 +82,8 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
            // throw new BizErrorException("条码错误");
         }
         //判断是否是厂内码3911
+        initStockCheckBarCode.setBarCode(barCode);
         if (barCode.length() == 23){
-            initStockCheckBarCode.setBarCode(barCode);
             initStockCheckBarCode.setType((byte)1);
             initStockCheckBarCode.setInPlantBarcode(barCode);
             criteria.andEqualTo("inPlantBarcode",barCode);
@@ -126,7 +126,7 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                 initStockCheckBarCode.setInPlantBarcode(responseEntity.getData().get(0).getBarcode());
                 criteria.andEqualTo("inPlantBarcode",initStockCheckBarCode.getInPlantBarcode());
                 initStockCheckBarCode.setClientBarcode(responseEntity.getData().get(0).getCustomerBarcode());
-                barCode = initStockCheckBarCode.getClientBarcode();
+                barCode = initStockCheckBarCode.getInPlantBarcode();
             }
             criteria.andEqualTo("clientBarcode1",barCode).orEqualTo("clientBarcode2",barCode).orEqualTo("clientBarcode3",barCode);
         }
@@ -166,7 +166,6 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(materialCode);
             searchBaseMaterial.setCodeQueryMark(1);
-            log.info("========= 预盘点条码materialCode" + materialCode + "initStockCheckBarCode.getInPlantBarcode()" + initStockCheckBarCode.getInPlantBarcode());
             ResponseEntity<List<BaseMaterial>> responseEntity = baseFeignApi.findList(searchBaseMaterial);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());

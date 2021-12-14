@@ -35,10 +35,10 @@
         LEFT JOIN APPS.po_buyers_val_v pbv ON msib.buyer_id = pbv.employee_id
         LEFT JOIN APPS.mtl_descr_element_values mde2 ON mde2.inventory_item_id = msib.inventory_item_id AND mde2.element_name = '电压频率'
         <where>
-            msib.organization_id = 83
+            msib.organization_id in (83, 82, 105)
             AND msib.inventory_item_status_code = 'Active'
             AND msib.ITEM_TYPE = 'FG'
-            AND t.organization_id = 83
+            AND t.organization_id in (83, 82, 105)
             AND fc.lookup_type = 'ITEM_TYPE'
             AND t.category_set_id = 1
             AND msib.description NOT LIKE '%回用%'
