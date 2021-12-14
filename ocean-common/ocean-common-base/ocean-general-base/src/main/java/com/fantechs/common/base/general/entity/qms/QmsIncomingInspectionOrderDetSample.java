@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -47,9 +48,17 @@ public class QmsIncomingInspectionOrderDetSample extends ValidGroup implements S
     private Long incomingInspectionOrderId;
 
     /**
+     * 来料条码ID
+     */
+    @ApiModelProperty(name="materialBarcodeId",value = "来料条码ID")
+    @Column(name = "material_barcode_id")
+    private Long materialBarcodeId;
+
+    /**
      * 条码
      */
-    @ApiModelProperty(name="barcode",value = "条码")
+    @Transient
+    @ApiModelProperty(name = "barcode",value = "条码")
     @Excel(name = "条码", height = 20, width = 30,orderNum="1")
     private String barcode;
 

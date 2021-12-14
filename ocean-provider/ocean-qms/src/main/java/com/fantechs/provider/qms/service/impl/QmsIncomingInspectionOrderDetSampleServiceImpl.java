@@ -1,22 +1,24 @@
 package com.fantechs.provider.qms.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingCheckBarcodeDto;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingSampleSubmitDto;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDetSampleDto;
-import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspectionOrderDetSample;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.qms.mapper.*;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderDetSampleService;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderService;
@@ -60,8 +62,9 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
     @Resource
     private BaseFeignApi baseFeignApi;
 
-    /*@Resource
-    private SrmFeignApi srmFeignApi;*/
+    @Resource
+    private InnerFeignApi innerFeignApi;
+
 
     @Override
     public List<QmsHtIncomingInspectionOrderDetSample> findHtList(Map<String, Object> map) {
@@ -93,27 +96,56 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
             throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"样本的个数与样本数的值不一致");
         }
 
+        //查出所有条码
+        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
+        SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
+        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(qmsIncomingInspectionOrder.getSysOrderTypeCode());
+        searchWmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+        List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
+        if(StringUtils.isEmpty(materialBarcodeReOrderDtos)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到当前单据对应的条码");
+        }
+
         int badnessQty = 0;//不良数量
         for(QmsIncomingInspectionOrderDetSample qmsIncomingInspectionOrderDetSample : qmsIncomingInspectionOrderDetSampleList){
-            if(StringUtils.isNotEmpty(qmsIncomingInspectionOrderDetSample.getBarcode())) {
-                Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
-                Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("barcode", qmsIncomingInspectionOrderDetSample.getBarcode())
-                        .andEqualTo("incomingInspectionOrderDetId",qmsIncomingInspectionOrderDetSample.getIncomingInspectionOrderDetId());
-                QmsIncomingInspectionOrderDetSample incomingInspectionOrderDetSample = qmsIncomingInspectionOrderDetSampleMapper.selectOneByExample(example1);
-                if (StringUtils.isNotEmpty(incomingInspectionOrderDetSample)) {
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"条码"+incomingInspectionOrderDetSample.getBarcode()+"已存在");
+            if (StringUtils.isEmpty(qmsIncomingInspectionOrderDetSample.getBarcode())) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"条码不能为空");
+            }
+
+            Long materialBarcodeId = 0L;
+            //条码校验
+            boolean tag = false;
+            for (WmsInnerMaterialBarcodeReOrderDto materialBarcodeReOrderDto : materialBarcodeReOrderDtos) {
+                if (qmsIncomingInspectionOrderDetSample.getBarcode().equals(materialBarcodeReOrderDto.getBarcode())) {
+                    tag = true;
+                    materialBarcodeId = materialBarcodeReOrderDto.getMaterialBarcodeId();
+                    break;
                 }
             }
+            if (!tag) {
+                throw new BizErrorException("该条码不属于当前单据");
+            }
+
+            //是否重复
+            Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("materialBarcodeId", materialBarcodeId)
+                    .andEqualTo("incomingInspectionOrderDetId", qmsIncomingInspectionOrderDetSample.getIncomingInspectionOrderDetId());
+            QmsIncomingInspectionOrderDetSample incomingInspectionOrderDetSample = qmsIncomingInspectionOrderDetSampleMapper.selectOneByExample(example1);
+            if (StringUtils.isNotEmpty(incomingInspectionOrderDetSample)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "条码" + incomingInspectionOrderDetSample.getBarcode() + "已存在");
+            }
+
+            qmsIncomingInspectionOrderDetSample.setMaterialBarcodeId(materialBarcodeId);
             qmsIncomingInspectionOrderDetSample.setCreateUserId(user.getUserId());
             qmsIncomingInspectionOrderDetSample.setCreateTime(new Date());
             qmsIncomingInspectionOrderDetSample.setModifiedUserId(user.getUserId());
             qmsIncomingInspectionOrderDetSample.setModifiedTime(new Date());
-            qmsIncomingInspectionOrderDetSample.setStatus((byte)1);
+            qmsIncomingInspectionOrderDetSample.setStatus((byte) 1);
             qmsIncomingInspectionOrderDetSample.setOrgId(user.getOrganizationId());
 
             //计算不良数量
-            if(StringUtils.isNotEmpty(qmsIncomingInspectionOrderDetSample.getBadnessPhenotypeId())){
+            if (StringUtils.isNotEmpty(qmsIncomingInspectionOrderDetSample.getBadnessPhenotypeId())) {
                 badnessQty++;
             }
         }
@@ -138,15 +170,38 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
     }
 
     @Override
-    public String checkBarcode(PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto){
+    public Long checkBarcode(PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto){
         List<Long> detIdList = pdaIncomingCheckBarcodeDto.getIncomingInspectionOrderDetIdList();
         String barcode = pdaIncomingCheckBarcodeDto.getBarcode();
-        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = null;
+        Long materialBarcodeId = 0L;
+        QmsIncomingInspectionOrderDet orderDet = qmsIncomingInspectionOrderDetMapper.selectByPrimaryKey(detIdList.get(0));
+        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(orderDet.getIncomingInspectionOrderId());
+
+        //条码校验
+        SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
+        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(qmsIncomingInspectionOrder.getSysOrderTypeCode());
+        searchWmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+        List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
+        if(StringUtils.isEmpty(materialBarcodeReOrderDtos)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到当前单据对应的条码");
+        }
+        boolean tag = false;
+        for (WmsInnerMaterialBarcodeReOrderDto materialBarcodeReOrderDto : materialBarcodeReOrderDtos){
+            if(barcode.equals(materialBarcodeReOrderDto.getBarcode())){
+                tag = true;
+                materialBarcodeId = materialBarcodeReOrderDto.getMaterialBarcodeId();
+                break;
+            }
+        }
+        if(!tag){
+            throw new BizErrorException("该条码不属于当前单据");
+        }
+
 
         for (Long detId : detIdList){
             Example example = new Example(QmsIncomingInspectionOrderDetSample.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("barcode",barcode)
+            criteria.andEqualTo("materialBarcodeId",materialBarcodeId)
                     .andEqualTo("incomingInspectionOrderDetId",detId);
             List<QmsIncomingInspectionOrderDetSample> qmsIncomingInspectionOrderDetSamples = qmsIncomingInspectionOrderDetSampleMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(qmsIncomingInspectionOrderDetSamples)) {
@@ -164,40 +219,14 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
             if(qmsIncomingInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(detSamples.size())) == 0){
                 throw new BizErrorException("检验样本数已达上限");
             }
-
-            if(qmsIncomingInspectionOrder == null){
-                qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
-            }
         }
 
-        //查当前单据的下游单据
-        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-        searchBaseOrderFlow.setBusinessType((byte)1);
-        searchBaseOrderFlow.setOrderNode((byte)4);
-        BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
-        if(StringUtils.isEmpty(baseOrderFlow)){
-            throw new BizErrorException("未找到当前单据配置的单据流");
-        }
-        //条码校验
-        if("SRM-ASN".equals(baseOrderFlow.getSourceOrderTypeCode())){
-            //ASN单
-            /*SearchSrmInAsnOrderDetBarcode searchSrmInAsnOrderDetBarcode = new SearchSrmInAsnOrderDetBarcode();
-            searchSrmInAsnOrderDetBarcode.setAsnOrderDetId(qmsIncomingInspectionOrder.getSourceId());
-            List<SrmInAsnOrderDetBarcodeDto> detBarcodeDtos = srmFeignApi.findList(searchSrmInAsnOrderDetBarcode).getData();
-*/
-        }else if("IN-SPO".equals(baseOrderFlow.getSourceOrderTypeCode())){
-            //收货计划
-
-        }else if("IN-SWK".equals(baseOrderFlow.getSourceOrderTypeCode())){
-            //收货作业
-
-        }
-
-        return barcode;
+        return materialBarcodeId;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int sampleSubmit(List<PdaIncomingSampleSubmitDto> list){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<QmsIncomingInspectionOrderDetSample> sampleList = new LinkedList<>();
@@ -236,6 +265,7 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
                 QmsIncomingInspectionOrderDetSample qmsIncomingInspectionOrderDetSample = new QmsIncomingInspectionOrderDetSample();
                 qmsIncomingInspectionOrderDetSample.setIncomingInspectionOrderDetId(detId);
                 qmsIncomingInspectionOrderDetSample.setBarcode(pdaIncomingSampleSubmitDto.getBarcode());
+                qmsIncomingInspectionOrderDetSample.setMaterialBarcodeId(pdaIncomingSampleSubmitDto.getMaterialBarcodeId());
                 qmsIncomingInspectionOrderDetSample.setSampleValue(pdaIncomingSampleSubmitDto.getSampleValue());
                 qmsIncomingInspectionOrderDetSample.setBadnessPhenotypeId(pdaIncomingSampleSubmitDto.getBadnessPhenotypeId());
                 qmsIncomingInspectionOrderDetSample.setStatus((byte) 1);

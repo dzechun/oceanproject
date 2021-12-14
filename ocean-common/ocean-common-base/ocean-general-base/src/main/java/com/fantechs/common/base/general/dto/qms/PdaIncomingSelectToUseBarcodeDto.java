@@ -18,4 +18,10 @@ public class PdaIncomingSelectToUseBarcodeDto implements Serializable {
     @ApiModelProperty(name="barcode",value = "条码")
     private String barcode;
 
+    /**
+     * 条码ID
+     */
+    @ApiModelProperty(name="materialBarcodeId",value = "条码ID")
+    private Long materialBarcodeId;
+
 }
