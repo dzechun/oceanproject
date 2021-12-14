@@ -47,7 +47,7 @@ spring:
       # 链接超时时间（毫秒）
       timeout: 1000
   jackson:
-    date-format: yyyy-MM-dd HH:mm
+    date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   servlet:
     multipart:

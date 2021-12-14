@@ -18,7 +18,7 @@ public interface OmSalesReturnOrderService extends IService<OmSalesReturnOrder> 
 
     List<OmHtSalesReturnOrderDto> findHtList(Map<String,Object> map);
 
-    int packageAutoOutOrder(OmSalesReturnOrder omSalesReturnOrder);
+//    int packageAutoOutOrder(OmSalesReturnOrder omSalesReturnOrder);
 
     int writeQty(OmSalesReturnOrderDet omSalesReturnOrderDet);
 }

@@ -13,6 +13,8 @@
         <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
         <result column="issue_qty" jdbcType="DECIMAL" property="issueQty"/>
         <result column="receiving_qty" jdbcType="DECIMAL" property="receivingQty"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
         <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
         <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
@@ -47,6 +49,8 @@
         oiod.order_qty,
         oiod.issue_qty,
         oiod.receiving_qty,
+        oiod.total_issue_qty,
+        oiod.if_all_issued,
         oiod.production_date,
         oiod.expired_date,
         oiod.batch_code,
@@ -60,8 +64,8 @@
         oiod.modified_time
   </sql>
     <select id="findList" resultMap="BaseResultMapDto">
-        SELECT<include refid="Base_Column_List"/>
-        ,bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
+        SELECT<include refid="Base_Column_List"/>,
+        bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
         su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
         FROM om_other_in_order_det oiod
         LEFT JOIN base_warehouse bw ON bw.warehouse_id = oiod.warehouse_id

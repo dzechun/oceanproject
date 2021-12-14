@@ -1,7 +1,6 @@
 package com.fantechs.provider.om.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -11,9 +10,6 @@ import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrder;
 import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -31,7 +27,9 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -72,6 +70,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
      * @param omSalesReturnOrder
      * @return
      */
+/*
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
@@ -134,6 +133,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
             //更新订单状态
         return num;
     }
+*/
 
     /**
      * 数量累加更新状态

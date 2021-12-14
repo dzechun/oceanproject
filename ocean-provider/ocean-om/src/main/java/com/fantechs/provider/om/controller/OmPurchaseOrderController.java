@@ -80,4 +80,10 @@ public class OmPurchaseOrderController {
         String  materialId = omPurchaseOrderService.findPurchaseMaterial(purchaseOrderCode);
         return  ControllerUtil.returnDataSuccess(materialId,1);
     }
+
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "采购订单明细ID列表，多个逗号分隔",required = true)@RequestParam  @NotBlank(message="采购订单明细ID不能为空") String ids) {
+        return ControllerUtil.returnCRUD(omPurchaseOrderService.pushDown(ids));
+    }
 }

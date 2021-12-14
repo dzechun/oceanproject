@@ -21,6 +21,8 @@
         <result column="total_sales_return_qty" jdbcType="DECIMAL" property="totalSalesReturnQty"/>
         <result column="total_plan_delivery_qty" jdbcType="DECIMAL" property="totalPlanDeliveryQty"/>
         <result column="iqc_temporary_qty" jdbcType="DECIMAL" property="iqcTemporaryQty"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
         <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress"/>
         <result column="material_status" jdbcType="TINYINT" property="materialStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
@@ -52,6 +54,8 @@
     opod.total_plan_delivery_qty,
     opod.total_sales_return_qty,
     opod.iqc_temporary_qty,
+    opod.total_issue_qty,
+    opod.if_all_issued,
     opod.status,
     opod.delivery_address,
     opod.material_status,

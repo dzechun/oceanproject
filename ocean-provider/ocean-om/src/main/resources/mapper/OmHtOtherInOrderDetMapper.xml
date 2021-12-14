@@ -14,6 +14,8 @@
         <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
         <result column="issue_qty" jdbcType="DECIMAL" property="issueQty"/>
         <result column="receiving_qty" jdbcType="DECIMAL" property="receivingQty"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
         <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
         <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
@@ -47,6 +49,8 @@
         oiod.order_qty,
         oiod.issue_qty,
         oiod.receiving_qty,
+        oiod.total_issue_qty,
+        oiod.if_all_issued,
         oiod.production_date,
         oiod.expired_date,
         oiod.batch_code,
