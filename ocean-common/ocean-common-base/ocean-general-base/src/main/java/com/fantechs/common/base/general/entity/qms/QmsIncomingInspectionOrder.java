@@ -4,7 +4,10 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -24,6 +27,9 @@ import java.util.Date;
  */
 @Data
 @Table(name = "qms_incoming_inspection_order")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class QmsIncomingInspectionOrder extends ValidGroup implements Serializable {
     /**
      * 来料检验单ID
@@ -150,13 +156,6 @@ public class QmsIncomingInspectionOrder extends ValidGroup implements Serializab
     @Excel(name = "MRB评审(1-特采 2-挑选使用 3-退供应商)", height = 20, width = 30,orderNum="15",needMerge = true)
     @Column(name = "mrb_result")
     private Byte mrbResult;
-
-    /**
-     * 是否已全部下发(0-否 1-是)
-     */
-    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
-    @Column(name = "if_all_issued")
-    private Byte ifAllIssued;
 
     /**
      * 文件表ID

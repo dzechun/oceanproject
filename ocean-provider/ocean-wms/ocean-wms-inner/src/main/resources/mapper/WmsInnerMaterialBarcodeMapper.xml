@@ -1,45 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId" />
-    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
-    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
-    <result column="material_qty" jdbcType="DECIMAL" property="materialQty" />
-    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
-    <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
-    <result column="label_id" jdbcType="BIGINT" property="labelId" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
-  <resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto">
-  </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto">
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId" />
+        <result column="create_type" jdbcType="TINYINT" property="createType" />
+        <result column="print_order_source_ip" jdbcType="VARCHAR" property="printOrderSourceIp" />
+        <result column="printer_name" jdbcType="VARCHAR" property="printerName" />
+        <result column="print_order_type_code" jdbcType="VARCHAR" property="printOrderTypeCode" />
+        <result column="print_order_code" jdbcType="VARCHAR" property="printOrderCode" />
+        <result column="print_order_id" jdbcType="BIGINT" property="printOrderId" />
+        <result column="print_order_det_id" jdbcType="BIGINT" property="printOrderDetId" />
+        <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+        <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode" />
+        <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
+        <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+        <result column="not_sys_code" jdbcType="VARCHAR" property="notSysCode" />
+        <result column="material_id" jdbcType="BIGINT" property="materialId" />
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+        <result column="material_qty" jdbcType="DECIMAL" property="materialQty" />
+        <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
+        <result column="inspection_status" jdbcType="TINYINT" property="inspectionStatus" />
+        <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
+        <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
+        <result column="label_id" jdbcType="BIGINT" property="labelId" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result column="option1" jdbcType="VARCHAR" property="option1" />
+        <result column="option2" jdbcType="VARCHAR" property="option2" />
+        <result column="option3" jdbcType="VARCHAR" property="option3" />
+    </resultMap>
+    <resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto">
+    </resultMap>
 
-  <sql id="BaseColumnList">
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto">
+    </resultMap>
+
+    <sql id="BaseColumnList">
         wimb.material_barcode_id,
+        wimb.create_type,
+        wimb.print_order_source_ip,
+        wimb.printer_name,
+        wimb.print_order_type_code,
+        wimb.print_order_code,
+        wimb.print_order_id,
+        wimb.print_order_det_id,
         wimb.barcode,
+        wimb.color_box_code,
+        wimb.carton_code,
+        wimb.pallet_code,
+        wimb.not_sys_code,
         wimb.material_id,
         wimb.supplier_id,
         wimb.batch_code,
         wimb.material_qty,
-        wimb.production_date,
-        wimb.barcode_rule_id,
         wimb.label_id,
+        wimb.inspection_status,
+        wimb.barcode_status,
+        wimb.barcode_rule_id,
+        wimb.color_box_code,
         wimb.org_id,
         wimb.create_user_id,
         wimb.create_time,
@@ -51,28 +78,44 @@
         wimb.option3
     </sql>
 
-  <select id="findList" resultMap="BaseResultMapDto">
+    <select id="findList" resultMap="BaseResultMapDto">
     SELECT<include refid="BaseColumnList"/>,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
-    bo.organization_name AS organization_Name
+    bo.organization_name AS organization_Name,
+    bm.material_name as materialName,
+    bm.material_code as materialCode
     FROM wms_inner_material_barcode wimb
     LEFT JOIN sys_user su ON wimb.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wimb.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wimb.org_id = bo.organization_id
+    LEFT JOIN base_material bm on bm.material_id = wimb.material_id
     <where>
-      <if test="orgId!=null and orgId!=''">
+        <if test="orgId!=null and orgId!=''">
         and wimb.org_id = #{orgId}
-      </if>
-      <if test="materialBarcodeId!=null and materialBarcodeId!=''">
+        </if>
+        <if test="materialBarcodeId!=null and materialBarcodeId!=''">
         and wimb.material_barcode_id = #{materialBarcodeId}
-      </if>
+        </if>
         <if test="barcode!=null and barcode!=''">
-            and wimb.barcode = #{barcode}
+        and wimb.barcode = #{barcode}
+        </if>
+
+        <if test="printOrderDetId !=null and printOrderDetId!=''">
+            and wimb.print_order_det_id = #{printOrderDetId}
+        </if>
+        <if test="printOrderCode!=null and printOrderCode!=''">
+            and wimb.print_order_code = #{printOrderCode}
+        </if>
+        <if test="materialId!=null and materialId!=''">
+            and wimb.material_id = #{materialId}
+        </if>
+        <if test="supplierId!=null and supplierId!=''">
+            and wimb.supplier_id = #{supplierId}
         </if>
     </where>
     order by wimb.create_time desc
-  </select>
+    </select>
 
     <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
         select * FROM view_material

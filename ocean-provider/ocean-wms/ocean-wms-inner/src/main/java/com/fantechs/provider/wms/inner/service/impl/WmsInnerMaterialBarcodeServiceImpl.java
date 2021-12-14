@@ -1,5 +1,8 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -7,24 +10,21 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto;
+import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSetDet;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDetBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDetBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.BeanUtils;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.RedisUtil;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,65 +67,98 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
     }
 
     @Override
-    public List<WmsInnerMaterialBarcodeDto> add(WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto) {
+    public List<WmsInnerMaterialBarcodeDto> add(List<WmsInnerMaterialBarcodeDto> barcodeDtoList,Integer type) {
         SysUser sysUser = currentUser();
-        if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialId())){
-            throw new BizErrorException("绑定物料编码不能为空");
-        }
-        if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getPrintQty())){
-            throw new BizErrorException("打印条码数量不能为空");
-        }
-
-        SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
-
-        if(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId() !=0 ){
-            //特殊处理，查询规则集合后，如果集合内有默认规则则使用默认规则
-            SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
-            searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(wmsInnerMaterialBarcodeDto.getBarcodeRuleSetId());
-            ResponseEntity<List<BaseBarcodeRuleSetDetDto>> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet);
-            if(StringUtils.isEmpty(barcodeRuleSetDetList.getData())) throw new BizErrorException("未找到对应条码集合");
-
-            SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
-            for (BaseBarcodeRuleSetDetDto dto : barcodeRuleSetDetList.getData()) {
-                searchBaseBarcodeRule.setBarcodeRuleId(dto.getBarcodeRuleId());
-
-                List<BaseBarcodeRuleDto> baseBarcodeRuleDtos = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
-                if(StringUtils.isNotEmpty(baseBarcodeRuleDtos) && "来料打印".equals(baseBarcodeRuleDtos.get(0).getLabelCategoryName()))
-                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleSetDetList.getData().get(0).getBarcodeRuleId());
-            }
-            if(StringUtils.isEmpty(searchBaseBarcodeRuleSpec.getBarcodeRuleId())) {
-                BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
-                searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
-            }
-            //if(barcodeRuleSetDetList.getData().size()>1) throw new BizErrorException("规则集合配置错误，该规则集合只能配置一条规则");
-
-        }else{
-            //取系统配置默认编码
-            BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
-            searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
-        }
-
-        ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecList= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
-        if(barcodeRuleSpecList.getCode()!=0) throw new BizErrorException(barcodeRuleSpecList.getMessage());
-        if(barcodeRuleSpecList.getData().size()<1) throw new BizErrorException("请设置条码规则");
-        List<BaseBarcodeRuleSpec>  list = barcodeRuleSpecList.getData();
 
         //根据选择生成的条码数量生成条码
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList = new ArrayList<>();
-        for(int i=0;i< wmsInnerMaterialBarcodeDto.getBarCodeQty();i++) {
-            WmsInnerMaterialBarcodeDto  wmsInnerMaterialBarCode = new WmsInnerMaterialBarcodeDto();
-            BeanUtils.autoFillEqFields(wmsInnerMaterialBarcodeDto,wmsInnerMaterialBarCode);
-            String barCode = creatBarCode(list, wmsInnerMaterialBarcodeDto.getMaterialCode(), wmsInnerMaterialBarcodeDto.getMaterialId());
-            wmsInnerMaterialBarCode.setBarcode(barCode);
-            wmsInnerMaterialBarCode.setBarcodeRuleId(list.get(0).getBarcodeRuleId());
-            wmsInnerMaterialBarCode.setOrgId(sysUser.getOrganizationId());
-            wmsInnerMaterialBarCode.setCreateTime(new Date());
-            wmsInnerMaterialBarCode.setCreateUserId(sysUser.getUserId());
-            wmsInnerMaterialBarCode.setModifiedTime(new Date());
-            wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
-            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
-            materialBarcodeList.add(wmsInnerMaterialBarCode);
+
+        //ASN条码明细集合
+        List<SrmInAsnOrderDetBarcode> asnOrderDetBarcodeList = new ArrayList<>();
+        //收货作业条码明细集合
+//        List<> list1 = new ArrayList<>();
+        //来料检验条码明细集合
+//        List<> list1 = new ArrayList<>();
+        //上架作业条码明细集合
+        List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
+
+
+        for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : barcodeDtoList) {
+            if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialId())){
+                throw new BizErrorException("绑定物料编码不能为空");
+            }
+            if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getPrintQty())){
+                throw new BizErrorException("打印条码数量不能为空");
+            }
+            if (StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getTotalMaterialQty(),wmsInnerMaterialBarcodeDto.getGenerateQty(),
+                    wmsInnerMaterialBarcodeDto.getOrderQty())) {
+                throw new BizErrorException("数量不正确");
+            } else if (wmsInnerMaterialBarcodeDto.getOrderQty().compareTo(wmsInnerMaterialBarcodeDto.getTotalMaterialQty().add(wmsInnerMaterialBarcodeDto.getGenerateQty())) == -1) {
+                throw new BizErrorException("打印数量操作订单数量");
+            }
+
+
+            SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+
+            //取系统配置默认编码
+            BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
+            searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+
+            ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecList= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
+            if(barcodeRuleSpecList.getCode()!=0) throw new BizErrorException(barcodeRuleSpecList.getMessage());
+            if(barcodeRuleSpecList.getData().size()<1) throw new BizErrorException("请设置条码规则");
+            List<BaseBarcodeRuleSpec>  list = barcodeRuleSpecList.getData();
+
+            Integer materialQty = StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialQty())?1:wmsInnerMaterialBarcodeDto.getMaterialQty().intValue();
+            Integer generateQty = StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getGenerateQty())?0:wmsInnerMaterialBarcodeDto.getGenerateQty().intValue();
+            for(int i=0;i < Math.ceil(generateQty/materialQty);i++) {
+
+                WmsInnerMaterialBarcodeDto  wmsInnerMaterialBarCode = new WmsInnerMaterialBarcodeDto();
+                BeanUtils.autoFillEqFields(wmsInnerMaterialBarcodeDto,wmsInnerMaterialBarCode);
+                String barCode = creatBarCode(list, wmsInnerMaterialBarcodeDto.getMaterialCode(), wmsInnerMaterialBarcodeDto.getMaterialId());
+                if (generateQty%materialQty != 0 && i == Math.ceil(generateQty/materialQty) -1) {
+                    wmsInnerMaterialBarCode.setMaterialQty(new BigDecimal(generateQty%materialQty));
+                }
+                wmsInnerMaterialBarCode.setSupplierId(sysUser.getSupplierId());
+                wmsInnerMaterialBarCode.setBarcode(barCode);
+                wmsInnerMaterialBarCode.setBarcodeRuleId(list.get(0).getBarcodeRuleId());
+                wmsInnerMaterialBarCode.setOrgId(sysUser.getOrganizationId());
+                wmsInnerMaterialBarCode.setCreateTime(new Date());
+                wmsInnerMaterialBarCode.setCreateUserId(sysUser.getUserId());
+                wmsInnerMaterialBarCode.setModifiedTime(new Date());
+                wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
+                wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
+                materialBarcodeList.add(wmsInnerMaterialBarCode);
+
+                //判断打印类型（1，ASN单 2，收货作业单 3，来料检验单 4，上架作业单）
+                if (type == 1) {
+                    SrmInAsnOrderDetBarcode srmInAsnOrderDetBarcode = new SrmInAsnOrderDetBarcode();
+                    srmInAsnOrderDetBarcode.setAsnOrderDetId(wmsInnerMaterialBarCode.getPrintOrderDetId());
+                    srmInAsnOrderDetBarcode.setAsnOrderId(wmsInnerMaterialBarCode.getPrintOrderId());
+                    asnOrderDetBarcodeList.add(srmInAsnOrderDetBarcode);
+                }else if (type == 2) {
+
+                }else if (type == 3) {
+
+                }else if (type == 4) {
+                    WmsInnerJobOrderDetBarcode wmsInnerJobOrderDetBarcode = new WmsInnerJobOrderDetBarcode();
+                    wmsInnerJobOrderDetBarcode.setJobOrderDetId(wmsInnerMaterialBarCode.getPrintOrderDetId());
+                    wmsInnerJobOrderDetBarcode.setMaterialBarcodeId(wmsInnerMaterialBarCode.getMaterialBarcodeId());
+                    jobOrderDetBarcodeList.add(wmsInnerJobOrderDetBarcode);
+                }
+            }
+
+            if (StringUtils.isNotEmpty(asnOrderDetBarcodeList)) {
+
+            }else if (StringUtils.isNotEmpty(asnOrderDetBarcodeList)) {
+
+            }else if (StringUtils.isNotEmpty(asnOrderDetBarcodeList)) {
+
+            }else if (StringUtils.isNotEmpty(jobOrderDetBarcodeList)) {
+
+            }
         }
+
         return materialBarcodeList;
     }
 
@@ -206,28 +240,40 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int print(String ids, int printQty) {
+    public int print(String ids, int printQty,String printName,int printType) {
         String[] arrId = ids.split(",");
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("printModel");
+        List<SysSpecItem> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+
+        if (StringUtils.isEmpty(specItemList)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未配置打印标签模板");
+        }
+
+        JSONArray jsonArray = JSONArray.parseArray(specItemList.get(0).getParaValue());
+        SearchBaseLabel searchBaseLabel = new SearchBaseLabel();
+
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
+            if (StringUtils.isNotEmpty(jsonObject.get("type")) && printType == Integer.valueOf(jsonObject.get("type").toString())) {
+                searchBaseLabel.setLabelCode(StringUtils.isNotEmpty(jsonObject.get("modelName"))?jsonObject.get("modelName").toString():"");
+            }
+        }
+        List<BaseLabelDto> labelList = baseFeignApi.findLabelList(searchBaseLabel).getData();
+        if (StringUtils.isEmpty(labelList)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"标签模板不存在");
+        }
+
         for (String s : arrId) {
             //查询模版信息
             WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(s);
-            SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-            searchBaseMaterial.setMaterialId(wmsInnerMaterialBarcode.getMaterialId());
-            ResponseEntity<List<BaseMaterial>> list = baseFeignApi.findList(searchBaseMaterial);
-            Long setId = (long)0;
-            if(StringUtils.isNotEmpty(list.getData()) && StringUtils.isNotEmpty(list.getData().get(0).getBarcodeRuleSetId()))
-                setId = list.getData().get(0).getBarcodeRuleSetId();
 
-            LabelRuteDto labelRuteDto = this.findLabelRute(setId,wmsInnerMaterialBarcode.getMaterialId());
-            if(StringUtils.isEmpty(labelRuteDto)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未匹配到绑定的条码模板");
-            }
             PrintModel printModel = wmsInnerMaterialBarcodeMapper.findPrintModel(wmsInnerMaterialBarcode.getMaterialBarcodeId());
             printModel.setSize(printQty);
             PrintDto printDto = new PrintDto();
-            printDto.setLabelName(labelRuteDto.getLabelName());
-            printDto.setLabelVersion(labelRuteDto.getLabelVersion());
-         //   printDto.setPrintName();
+            printDto.setLabelName(labelList.get(0).getLabelName());
+            printDto.setLabelVersion(labelList.get(0).getLabelVersion());
+            printDto.setPrintName(printName);
             List<PrintModel> printModelList = new ArrayList<>();
             printModelList.add(printModel);
             printDto.setPrintModelList(printModelList);

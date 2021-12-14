@@ -37,8 +37,8 @@ public class WmsInnerMaterialBarcodeController {
 
     @ApiOperation(value = "生成条码",notes = "生成条码")
     @PostMapping("/add")
-    public ResponseEntity<List<WmsInnerMaterialBarcodeDto>> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto) {
-        List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.add(wmsInnerMaterialBarcodeDto);
+    public ResponseEntity<List<WmsInnerMaterialBarcodeDto>> add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerMaterialBarcodeDto> list,@ApiParam(value = "必传：打印类型",required = true)@RequestBody @Validated Integer type) {
+        list = wmsInnerMaterialBarcodeService.add(list,type);
         return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
     }
 
