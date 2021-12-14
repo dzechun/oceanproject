@@ -36,4 +36,6 @@ public interface QmsIncomingInspectionOrderService extends IService<QmsIncomingI
     void checkInspectionResult(List<QmsIncomingInspectionOrderDet> list);
 
     int updateIfAllIssued(QmsIncomingInspectionOrder entity);
+
+    int batchAdd(List<QmsIncomingInspectionOrderDto> list);
 }
