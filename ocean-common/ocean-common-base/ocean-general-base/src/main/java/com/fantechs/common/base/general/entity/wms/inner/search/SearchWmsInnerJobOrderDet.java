@@ -18,7 +18,7 @@ public class SearchWmsInnerJobOrderDet extends BaseQuery implements Serializable
     @ApiModelProperty(name="jobOrderId",value = "上架单ID")
     private Long jobOrderId;
 
-    private List<Byte> orderStatusList;
+    private List<Byte> lineStatusList;
 
     private Long jobOrderDetId;
 

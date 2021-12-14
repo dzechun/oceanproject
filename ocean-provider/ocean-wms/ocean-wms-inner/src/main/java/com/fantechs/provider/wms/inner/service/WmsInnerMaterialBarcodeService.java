@@ -19,6 +19,8 @@ public interface WmsInnerMaterialBarcodeService extends IService<WmsInnerMateria
 
     List<WmsInnerMaterialBarcodeDto> add(List<WmsInnerMaterialBarcodeDto> barcodeDtoList,Integer type);
 
+    int batchUpdate(List<WmsInnerMaterialBarcodeDto> list);
+
     LabelRuteDto findLabelRute(Long barcodeRuleSetId,Long materialId);
 
     int print(String ids,int printQty,String printName,int printType);

@@ -97,6 +97,12 @@ public class WmsInnerJobOrderController {
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.batchDelete(ids));
     }
 
+    @ApiOperation("关闭单据")
+    @PostMapping("/closeWmsInnerJobOrder")
+    public ResponseEntity closeWmsInnerJobOrder(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.closeWmsInnerJobOrder(ids));
+    }
+
     @ApiOperation("移位单批量删除")
     @PostMapping("/batchDeleteByShiftWork")
     public ResponseEntity batchDeleteByShiftWork(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {

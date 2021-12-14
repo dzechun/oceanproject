@@ -67,6 +67,12 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchUpdate(List<WmsInnerMaterialBarcodeDto> list) {
+        return wmsInnerMaterialBarcodeMapper.batchUpdate(list);
+    }
+
+    @Override
     public List<WmsInnerMaterialBarcodeDto> add(List<WmsInnerMaterialBarcodeDto> barcodeDtoList,Integer type) {
         SysUser sysUser = currentUser();
 

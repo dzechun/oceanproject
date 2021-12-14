@@ -113,9 +113,23 @@
         <if test="supplierId!=null and supplierId!=''">
             and wimb.supplier_id = #{supplierId}
         </if>
+        <if test="materialBarcodeIdList != null and materialBarcodeIdList.size() > 0">
+            and wimb.material_barcode_id
+            <foreach collection="materialBarcodeIdList" open="in (" close=")" item="item" separator="," index="index">
+                #{item}
+            </foreach>
+        </if>
     </where>
     order by wimb.create_time desc
     </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            update wms_inner_material_barcode wimb set
+            wimb.inspection_status = #{item.inspectionStatus}
+            where wimb.material_barcode_id = #{item.materialBarcodeId}
+        </foreach>
+    </update>
 
     <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
         select * FROM view_material
