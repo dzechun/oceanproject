@@ -22,6 +22,13 @@ public class SearchOmPurchaseOrder extends BaseQuery implements Serializable {
     @ApiModelProperty(name="supplierName",value = "供应商名称")
     private String supplierName;
 
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    private Long warehouseId;
+
+    @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    private String warehouseName;
+
+
     @ApiModelProperty(name="orderStatus",value = "订单状态")
     private Byte orderStatus;
 
