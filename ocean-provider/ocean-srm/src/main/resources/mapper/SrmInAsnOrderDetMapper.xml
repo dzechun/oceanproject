@@ -51,6 +51,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modifiedUser_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
     </resultMap>
 
     <sql id="BaseColumnList">
@@ -87,7 +88,7 @@
         select
         <include refid="BaseColumnList"/>,
         opo.purchase_order_code,opod.delivery_date AS order_date,bm.material_code,opod.order_qty AS order_qty,
-        bm.material_name,bw.warehouse_name,bm.material_version,bm.material_desc,bmt.main_unit,
+        bm.material_name,bw.warehouse_name,bm.material_version,bm.material_desc,bmt.main_unit,wiao.supplier_id,
         ( SELECT SUM( wiaods.delivery_qty ) FROM wms_in_asn_order_det wiaods WHERE wiaods.source_order_id = opod.purchase_order_det_id ) AS total_delivery_qty,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
@@ -98,7 +99,7 @@
         LEFT JOIN om_purchase_order_det opod ON wiaod.source_order_id = opod.purchase_order_det_id
         LEFT JOIN om_purchase_order opo ON opod.purchase_order_id = opo.purchase_order_id
         LEFT JOIN base_material bm ON wiaod.material_id = bm.material_id
-        LEFT JOIN base_material_tab bmt ON wiaod.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON wiaod.material_id = bmt.material_id
         LEFT JOIN base_warehouse bw ON wiaod.warehouse_id = bw.warehouse_id
         LEFT JOIN sys_user su ON wiaod.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wiaod.modified_user_id = sus.user_id
@@ -121,9 +122,26 @@
             <if test="sourceOrderId !=null and sourceOrderId!=''">
                 and wiaod.source_order_id = #{sourceOrderId}
             </if>
-
+            <if test="ifAllIssued !=null and ifAllIssued!=''">
+                and wiaod.if_all_issued = #{ifAllIssued}
+            </if>
         </where>
         group by wiaod.asn_order_det_id
     </select>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" separator=";" item="item" index="index" >
+            update wms_in_asn_order_det
+            <set>
+                <if test="item.totalIssueQty != null and item.totalIssueQty != ''" >
+                    total_issue_qty = #{item.totalIssueQty},
+                </if>
+                <if test="item.ifAllIssued != null and item.ifAllIssued != ''" >
+                    if_all_issued = #{item.ifAllIssued}
+                </if>
+            </set>
+            where asn_order_det_id = #{item.asnOrderDetId}
+        </foreach>
+    </update>
 
 </mapper>

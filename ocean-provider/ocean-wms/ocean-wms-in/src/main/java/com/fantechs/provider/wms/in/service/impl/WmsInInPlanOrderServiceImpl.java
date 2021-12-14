@@ -402,6 +402,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
 
         if("IN-IWK".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成上架作业单
+            //TODO 移除移入库位
             List<WmsInnerJobOrderDet> detList = new LinkedList<>();
             for(WmsInInPlanOrderDet wmsInInPlanOrderDet : wmsInInPlanOrderDets){
                 int lineNumber = 1;

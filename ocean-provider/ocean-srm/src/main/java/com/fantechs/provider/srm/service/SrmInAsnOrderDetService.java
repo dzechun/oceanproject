@@ -19,4 +19,6 @@ public interface SrmInAsnOrderDetService extends IService<SrmInAsnOrderDet> {
   //  Map<String, Object> importExcel(List<SrmInAsnOrderDetImport> srmInAsnOrderDetImports, Long asnOrderId);
 
     List<SrmInAsnOrderDetDto> importExcels(List<SrmInAsnOrderDetImport> srmInAsnOrderDetImports);
+
+    int pushDown(List<SrmInAsnOrderDetDto> list);
 }

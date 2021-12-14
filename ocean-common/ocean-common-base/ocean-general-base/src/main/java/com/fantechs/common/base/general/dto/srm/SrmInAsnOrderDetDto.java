@@ -102,4 +102,18 @@ public class SrmInAsnOrderDetDto extends SrmInAsnOrderDet implements Serializabl
     @ApiModelProperty(name="modifiedUserName",value = "修改人")
     private String modifiedUserName;
 
+    /**
+     * 下发数量
+     */
+    @Transient
+    @ApiModelProperty(name="issueQty",value = "下发数量")
+    private BigDecimal issueQty;
+
+    /**
+     * 供应商ID
+     */
+    @Transient
+    @ApiModelProperty(name="supplierId",value = "供应商ID")
+    private Long supplierId;
+
 }

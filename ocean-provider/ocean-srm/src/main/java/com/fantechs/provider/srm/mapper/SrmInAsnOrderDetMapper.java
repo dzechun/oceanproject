@@ -11,4 +11,6 @@ import java.util.Map;
 @Mapper
 public interface SrmInAsnOrderDetMapper extends MyMapper<SrmInAsnOrderDet> {
     List<SrmInAsnOrderDetDto> findList(Map<String, Object> map);
+
+    int batchUpdate(List<SrmInAsnOrderDetDto> list);
 }

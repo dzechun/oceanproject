@@ -981,7 +981,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 QmsIncomingInspectionOrder incomingOrder=new QmsIncomingInspectionOrder();
                 incomingOrder.setIncomingInspectionOrderId(sourceId);
                 //incomingOrder
-                incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
+//                incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
                 //qmsFeignApi.updateIfAllIssued(incomingOrder);
                 break;
             default:
@@ -1716,7 +1716,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         Long sourceId=jobOrderDetMIIO.getSourceId();
                         QmsIncomingInspectionOrder incomingOrder=new QmsIncomingInspectionOrder();
                         incomingOrder.setIncomingInspectionOrderId(sourceId);
-                        incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
+//                        incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
                         //qmsFeignApi.updateIfAllIssued(incomingOrder);
                     }
                     break;

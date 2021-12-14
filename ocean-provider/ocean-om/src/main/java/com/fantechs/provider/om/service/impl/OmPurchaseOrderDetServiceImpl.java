@@ -43,7 +43,6 @@ public class OmPurchaseOrderDetServiceImpl extends BaseService<OmPurchaseOrderDe
 
     @Override
     public int batchAdd(List<OmPurchaseOrderDet> omPurchaseOrderDets) {
-
         int i = omPurchaseOrderDetMapper.insertList(omPurchaseOrderDets);
         return i;
     }
