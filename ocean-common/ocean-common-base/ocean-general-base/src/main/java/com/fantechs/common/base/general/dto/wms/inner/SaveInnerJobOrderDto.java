@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 public class SaveInnerJobOrderDto implements Serializable {
@@ -49,7 +50,7 @@ public class SaveInnerJobOrderDto implements Serializable {
      * 生产日期
      */
     @ApiModelProperty(name="productionTime",value = "生产日期")
-    private String productionTime;
+    private Date productionTime;
 
     /**
      * 非系统条码(0 是 1 否)
