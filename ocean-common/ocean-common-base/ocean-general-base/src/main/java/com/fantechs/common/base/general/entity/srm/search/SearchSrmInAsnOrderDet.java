@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.List;
 
@@ -34,5 +35,11 @@ public class SearchSrmInAsnOrderDet extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="asnOrderIdList",value = "ANS单ID集合")
     private List<Long> asnOrderIdList;
+
+    /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    private Byte ifAllIssued;
 
 }

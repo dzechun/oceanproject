@@ -4,7 +4,10 @@ import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.*;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -108,4 +111,12 @@ public interface InnerFeignApi {
     @ApiOperation(value = "领料单发运校验",notes = "领料单发运校验")
     @PostMapping("/wmsInnerJobOrderDet/pickDisQty")
     ResponseEntity pickDisQty(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerJobOrderDet> wmsInPutawayOrderDet);
+
+    @ApiOperation(value = "新增",notes = "新增")
+    @PostMapping("/wmsInnerMaterialBarcodeReOrder/batchAdd")
+    ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerMaterialBarcodeReOrder> list) ;
+
+    @ApiOperation("列表")
+    @PostMapping("/wmsInnerMaterialBarcodeReOrder/findList")
+    ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder);
 }

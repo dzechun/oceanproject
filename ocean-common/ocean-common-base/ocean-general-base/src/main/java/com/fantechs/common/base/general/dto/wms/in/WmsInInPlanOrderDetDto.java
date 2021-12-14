@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.dto.wms.in;
 
 import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrderDet;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.Transient;

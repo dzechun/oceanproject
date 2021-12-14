@@ -1,11 +1,11 @@
 package com.fantechs.provider.wms.inner.util;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.ctc.wstx.util.DataUtil;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.*;
-import com.fantechs.common.base.utils.DateUtils;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryLog;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryLogService;
 import org.springframework.stereotype.Component;
@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
