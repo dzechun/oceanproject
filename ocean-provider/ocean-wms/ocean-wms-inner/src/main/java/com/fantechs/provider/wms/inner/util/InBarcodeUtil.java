@@ -6,7 +6,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
-import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
@@ -125,37 +124,6 @@ public class InBarcodeUtil {
         }
         if (StringUtils.isNotEmpty(inventoryStatusId)){
             list = list.stream().filter(li->li.getInventoryStatusId().equals(inventoryStatusId)).collect(Collectors.toList());
-        }
-        BigDecimal totalQty =list.stream()
-                .map(WmsInnerInventoryDet::getMaterialQty)
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
-        if(totalQty.compareTo(BigDecimal.ZERO)==0){
-            throw new BizErrorException("暂无入库数量");
-        }
-        return totalQty;
-    }
-
-    /**
-     * 上架获取扫码条码的数量
-     * @param materialId 物料ID
-     * @param barCode 条码
-     * @return
-     */
-    public static BigDecimal getInventoryDetQty(Long asnOrderId,Long materialId,String barCode){
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        List<WmsInAsnOrderDto> wmsInAsnOrderDtoList = inBarcodeUtil.inFeignApi.findList(SearchWmsInAsnOrder.builder()
-                .asnOrderId(asnOrderId)
-                .build()).getData();
-        if(StringUtils.isEmpty(wmsInAsnOrderDtoList)){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404);
-        }
-        String asnOrderCode = wmsInAsnOrderDtoList.get(0).getSourceOrderCode();
-        //查询库存明细是否存在改条码
-        Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode).andEqualTo("asnCode",asnOrderCode).andEqualTo("orgId",sysUser.getOrganizationId());
-        List<WmsInnerInventoryDet> list = inBarcodeUtil.wmsInnerInventoryDetMapper.selectByExample(example);
-        if(list.size()<1){
-            throw new BizErrorException("条码不存在");
         }
         BigDecimal totalQty =list.stream()
                 .map(WmsInnerInventoryDet::getMaterialQty)
