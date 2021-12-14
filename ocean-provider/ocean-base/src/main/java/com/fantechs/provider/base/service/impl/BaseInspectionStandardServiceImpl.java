@@ -4,13 +4,9 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionStandardImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionStandard;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterialOwner;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionStandardDet;
-import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -20,7 +16,6 @@ import com.fantechs.provider.base.service.BaseInspectionStandardService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.common.BaseMapper;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -173,7 +168,7 @@ public class BaseInspectionStandardServiceImpl extends BaseService<BaseInspectio
         baseInspectionStandard.setModifiedUserId(user.getUserId());
         baseInspectionStandard.setModifiedTime(new Date());
         baseInspectionStandard.setOrgId(user.getOrganizationId());
-        int i=baseInspectionStandardMapper.updateByPrimaryKeySelective(baseInspectionStandard);
+        int i=baseInspectionStandardMapper.updateByPrimaryKey(baseInspectionStandard);
 
         //原来有的明细只更新
         ArrayList<Long> idList = new ArrayList<>();

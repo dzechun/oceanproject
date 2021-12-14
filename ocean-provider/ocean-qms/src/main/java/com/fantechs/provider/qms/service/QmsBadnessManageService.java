@@ -1,5 +1,6 @@
 package com.fantechs.provider.qms.service;
 
+import com.fantechs.common.base.general.dto.qms.PdaIncomingSelectToUseBarcodeDto;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingSelectToUseSubmitDto;
 import com.fantechs.common.base.general.entity.qms.QmsBadnessManage;
 import com.fantechs.common.base.support.IService;
@@ -14,6 +15,6 @@ import java.util.Map;
 
 public interface QmsBadnessManageService extends IService<QmsBadnessManage> {
     List<QmsBadnessManage> findList(Map<String, Object> map);
-    String checkBarcode(String barcode,Long incomingInspectionOrderId);
+    PdaIncomingSelectToUseBarcodeDto checkBarcode(String barcode, Long incomingInspectionOrderId);
     int submit(PdaIncomingSelectToUseSubmitDto pdaIncomingSelectToUseSubmitDto);
 }
