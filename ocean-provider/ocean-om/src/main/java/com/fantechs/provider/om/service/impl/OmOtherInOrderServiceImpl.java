@@ -146,7 +146,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
         SrmInAsnOrderDto srmInAsnOrderDto = new SrmInAsnOrderDto();
         srmInAsnOrderDto.setSourceOrderId(omOtherInOrder.getOtherInOrderId());
-        srmInAsnOrderDto.setMaterialOwnerId(omOtherInOrder.getMaterialOwnerId());
         srmInAsnOrderDto.setOrderTypeId((long) 6);
         srmInAsnOrderDto.setSrmInAsnOrderDetDtos(srmInAsnOrderDetDtos);
         ResponseEntity responseEntity = srmFeignApi.add(srmInAsnOrderDto);
@@ -318,7 +317,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         String coreSourceSysOrderTypeCode = null;
         int i = 0;
-
+        List<OmOtherInOrderDet> list = new ArrayList<>();
         List<OmOtherInOrderDet> omOtherInOrderDets = omOtherInOrderDetMapper.selectByIds(ids);
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
@@ -326,58 +325,35 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         searchBaseOrderFlow.setOrderNode((byte)5);
         BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
         if(StringUtils.isEmpty(baseOrderFlow)){
-            throw new BizErrorException("未找到当前单据配置的下游单据");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到当前单据配置的下游单据");
         }
+
+        HashSet set = new HashSet();
+        for(OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets){
+            set.add(omOtherInOrderDet.getWarehouseId());
+            if(omOtherInOrderDet.getOrderQty().compareTo(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty())) == -1 )
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
+
+        }
+        if (set.size()>1)
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
 
 
         if("IN-SPO".equals(baseOrderFlow.getNextOrderTypeCode())){
         //生成收货计划
-            /*List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
-            for(QmsIncomingInspectionOrder qmsIncomingInspectionOrder : qmsIncomingInspectionOrders){
-                int lineNumber = 1;
-                WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
-                wmsInInPlanOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
-                wmsInInPlanOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());
-                wmsInInPlanOrderDet.setLineNumber(lineNumber+"");
-                wmsInInPlanOrderDet.setSourceId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
-                wmsInInPlanOrderDet.setMaterialId(qmsIncomingInspectionOrder.getMaterialId());
-                wmsInInPlanOrderDet.setPlanQty(qmsIncomingInspectionOrder.getOrderQty());
-                wmsInInPlanOrderDet.setLineStatus((byte)1);
-                detList.add(wmsInInPlanOrderDet);
-            }
-
-            WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
-            wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
-            wmsInInPlanOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-            wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-            wmsInInPlanOrder.setOrderStatus((byte)1);
-            wmsInInPlanOrder.setCreateUserId(user.getUserId());
-            wmsInInPlanOrder.setCreateTime(new Date());
-            wmsInInPlanOrder.setModifiedUserId(user.getUserId());
-            wmsInInPlanOrder.setModifiedTime(new Date());
-            wmsInInPlanOrder.setStatus((byte)1);
-            wmsInInPlanOrder.setOrgId(user.getOrganizationId());
-            wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(detList);
-
-            ResponseEntity responseEntity = inFeignApi.add(wmsInInPlanOrder);
-            if(responseEntity.getCode() != 0){
-                throw new BizErrorException("下推生成入库计划单失败");
-            }else {
-                i++;
-            }*/
 
         }else if ("IN-SWK".equals(baseOrderFlow.getNextOrderTypeCode())){
         //生成收货作业
 
         }else if ("QMS-MIIO".equals(baseOrderFlow.getNextOrderTypeCode())){
         //生成来料检验单
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            /*SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("");
             List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
             if(StringUtils.isEmpty(specItems))
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"需先配置作业循序先后");
             if("0".equals(StringUtils.isEmpty(specItems.get(0).getParaValue())))
-                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"先作业后单据无法进行下推操作");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"先作业后单据无法进行下推操作");*/
 
             List<QmsIncomingInspectionOrderDto> detList = new LinkedList<>();
             for(OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets){
@@ -405,14 +381,20 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 qmsIncomingInspectionOrderDto.setStatus((byte)1);
                 qmsIncomingInspectionOrderDto.setOrgId(user.getOrganizationId());
                 detList.add(qmsIncomingInspectionOrderDto);
+                omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
+                if(omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty())== 0)
+                    omOtherInOrderDet.setIfAllIssued((byte)1);
+                else
+                    omOtherInOrderDet.setIfAllIssued((byte)0);
+                list.add(omOtherInOrderDet);
             }
-        /*    ResponseEntity responseEntity = qmsFeignApi.add(qmsIncomingInspectionOrderDto);
+            ResponseEntity responseEntity = qmsFeignApi.batchAdd(detList);
 
             if(responseEntity.getCode() != 0){
-                throw new BizErrorException("下推生成入库计划单失败");
+                throw new BizErrorException("下推生成来料检验单失败");
             }else {
                 i++;
-            }*/
+            }
 
         }else if("IN-IPO".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成入库计划单
@@ -432,6 +414,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 Map map = new HashMap();
                 map.put("otherInOrderId",omOtherInOrderDet.getOtherInOrderId());
                 List<OmOtherInOrderDto> omOtherInOrderDto = omOtherInOrderMapper.findList(map);
+                coreSourceSysOrderTypeCode = omOtherInOrderDto.get(0).getSysOrderTypeCode();
 
                 WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                 wmsInInPlanOrderDet.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
@@ -442,8 +425,12 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 wmsInInPlanOrderDet.setPlanQty(omOtherInOrderDet.getOrderQty());
                 wmsInInPlanOrderDet.setLineStatus((byte)1);
                 detList.add(wmsInInPlanOrderDet);
-                coreSourceSysOrderTypeCode = omOtherInOrderDto.get(0).getSysOrderTypeCode();
-
+                omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
+                if(omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty())== 0)
+                    omOtherInOrderDet.setIfAllIssued((byte)1);
+                else
+                    omOtherInOrderDet.setIfAllIssued((byte)0);
+                list.add(omOtherInOrderDet);
             }
 
             WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
@@ -463,18 +450,20 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             if(responseEntity.getCode() != 0){
                 throw new BizErrorException("下推生成入库计划单失败");
             }else {
+
                 i++;
             }
         }else if("IN-IWK".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成上架作业单
 
+            /*
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("");
             List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
             if(StringUtils.isEmpty(specItems))
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"需先配置作业循序先后");
             if("0".equals(StringUtils.isEmpty(specItems.get(0).getParaValue())))
-                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"先作业后单据无法进行下推操作");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"先作业后单据无法进行下推操作");*/
 
             List<WmsInnerJobOrderDet> detList = new LinkedList<>();
             for(OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets){
@@ -483,6 +472,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 Map map = new HashMap();
                 map.put("otherInOrderId",omOtherInOrderDet.getOtherInOrderId());
                 List<OmOtherInOrderDto> omOtherInOrderDto = omOtherInOrderMapper.findList(map);
+                coreSourceSysOrderTypeCode = omOtherInOrderDto.get(0).getSysOrderTypeCode();
 
                 WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                 wmsInnerJobOrderDet.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
@@ -490,10 +480,15 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 wmsInnerJobOrderDet.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                 wmsInnerJobOrderDet.setLineNumber(lineNumber+"");
                 wmsInnerJobOrderDet.setMaterialId(omOtherInOrderDet.getMaterialId());
-                wmsInnerJobOrderDet.setPlanQty(omOtherInOrderDet.getIssueQty());
+                wmsInnerJobOrderDet.setPlanQty(omOtherInOrderDet.getQty());
                 wmsInnerJobOrderDet.setLineStatus((byte)1);
                 detList.add(wmsInnerJobOrderDet);
-                coreSourceSysOrderTypeCode = omOtherInOrderDto.get(0).getSysOrderTypeCode();
+                omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
+                if(omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty())== 0)
+                    omOtherInOrderDet.setIfAllIssued((byte)1);
+                else
+                    omOtherInOrderDet.setIfAllIssued((byte)0);
+                list.add(omOtherInOrderDet);
             }
 
             WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
@@ -519,6 +514,12 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             throw new BizErrorException("单据流配置错误");
         }
 
+        //返写下推数据
+        if(StringUtils.isNotEmpty(list)) {
+            for (OmOtherInOrderDet omOtherInOrderDet : list) {
+                omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
+            }
+        }
 
         return i;
     }
