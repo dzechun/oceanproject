@@ -81,7 +81,7 @@
         bo.organization_name
         FROM wms_in_in_plan_order_det wiipod
         LEFT JOIN base_material bm ON wiipod.material_id = bm.material_id
-        LEFT JOIN base_material_tab bmt ON wiipod.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON wiipod.material_id = bmt.material_id
         LEFT JOIN base_inventory_status bis ON wiipod.inventory_status_id = bis.inventory_status_id
         LEFT JOIN sys_user u ON wiipod.create_user_id=u.user_id
         LEFT JOIN sys_user s ON wiipod.modified_user_id=s.user_id
