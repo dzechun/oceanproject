@@ -9,23 +9,23 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInInPlanOrderImport;
-import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInHtInPlanOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInHtInPlanOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.in.mapper.WmsInHtInPlanOrderDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInHtInPlanOrderMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInInPlanOrderDetMapper;
@@ -63,6 +63,10 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
     private BaseFeignApi baseFeignApi;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private InnerFeignApi innerFeignApi;
+
+
 
     @Override
     public List<WmsInInPlanOrderDto> findList(Map<String, Object> map) {
@@ -81,13 +85,20 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
 
 
         //预约数量校验
-        Example example = new Example(WmsInInPlanOrder.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("appointStartTime",wmsInInPlanOrderDto.getInPlanOrderCode());
-       List<WmsInInPlanOrder> wmsInInPlanOrders = wmsInInPlanOrderMapper.selectByExample(example);
-        if(StringUtils.isNotEmpty(wmsInInPlanOrders))
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"入库计划编码重复");
+        if(StringUtils.isEmpty(wmsInInPlanOrderDto.getWarehouseId())) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "仓库编码不能为空");
+        }else{
+            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            searchBaseStorage.setWarehouseId(wmsInInPlanOrderDto.getWarehouseId());
+            searchBaseStorage.setStorageType((byte)2);
+            List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+            if(StringUtils.isEmpty(baseStorages))
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未查询到该仓库的收货库位");
+            else
+                wmsInInPlanOrderDto.setStorageId(baseStorages.get(0).getStorageId());
+        }
 
+        wmsInInPlanOrderDto.setInPlanOrderCode(CodeUtils.getId("IN-IPO"));
         wmsInInPlanOrderDto.setMakeOrderUserId(user.getUserId());
         wmsInInPlanOrderDto.setCreateUserId(user.getUserId());
         wmsInInPlanOrderDto.setCreateTime(new Date());
@@ -359,6 +370,8 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
     @Transactional(rollbackFor = Exception.class)
     public int pushDown(String ids) {
         //根据单据流生成入库计划单或上架作业单
+        //等待确认是否限制相同的单据来源
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("InPlanOrderIsWork");
@@ -369,17 +382,61 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"先作业后单据无法进行下推操作");
 
         int i = 0;
-        List<WmsInInPlanOrderDetDto> wmsInInPlanOrderDetDtos = wmsInInPlanOrderDetService.findListByIds(ids);
+//        List<WmsInInPlanOrderDetDto> wmsInInPlanOrderDetDtos = wmsInInPlanOrderDetService.findListByIds(ids);
+        List<WmsInInPlanOrderDet> wmsInInPlanOrderDets = wmsInInPlanOrderDetMapper.selectByIds(ids);
         //查当前单据的下游单据
-/*        String sysOrderTypeCode = wmsInInPlanOrderDetDtos.get(0).getSysOrderTypeCode();
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setBusinessType((byte)1);
-        searchBaseOrderFlow.setOrderNode((byte)4);*/
+        searchBaseOrderFlow.setOrderNode((byte)5);
+        BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
+        if(StringUtils.isEmpty(baseOrderFlow)){
+            throw new BizErrorException("未找到当前单据配置的下游单据");
+        }
 
+        Example example = new Example(WmsInInPlanOrder.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("inPlanOrderCode",wmsInInPlanOrderDets.get(0).getInPlanOrderId());
+        List<WmsInInPlanOrder> wmsInInPlanOrders = wmsInInPlanOrderMapper.selectByExample(example);
+        if(StringUtils.isEmpty(wmsInInPlanOrders))
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到对应的入库计划");
 
-        if("".equals("")){
+        if("IN-IWK".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成上架作业单
+            List<WmsInnerJobOrderDet> detList = new LinkedList<>();
+            for(WmsInInPlanOrderDet wmsInInPlanOrderDet : wmsInInPlanOrderDets){
+                int lineNumber = 1;
+                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                wmsInnerJobOrderDet.setCoreSourceOrderCode(wmsInInPlanOrderDet.getCoreSourceOrderCode());
+                wmsInnerJobOrderDet.setSourceOrderCode(wmsInInPlanOrders.get(0).getInPlanOrderCode());
+                wmsInnerJobOrderDet.setSourceId(wmsInInPlanOrderDet.getInPlanOrderDetId());
+                wmsInnerJobOrderDet.setLineNumber(lineNumber+"");
+                wmsInnerJobOrderDet.setMaterialId(wmsInInPlanOrderDet.getMaterialId());
+                wmsInnerJobOrderDet.setPlanQty(wmsInInPlanOrderDet.getPlanQty());
+                wmsInnerJobOrderDet.setLineStatus((byte)1);
+                detList.add(wmsInnerJobOrderDet);
+            }
 
+            WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+            wmsInnerJobOrder.setSourceSysOrderTypeCode(wmsInInPlanOrders.get(0).getSourceSysOrderTypeCode());
+            wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(wmsInInPlanOrders.get(0).getCoreSourceSysOrderTypeCode());
+            wmsInnerJobOrder.setJobOrderType((byte)1);
+            wmsInnerJobOrder.setOrderStatus((byte)1);
+            wmsInnerJobOrder.setCreateUserId(user.getUserId());
+            wmsInnerJobOrder.setCreateTime(new Date());
+            wmsInnerJobOrder.setModifiedUserId(user.getUserId());
+            wmsInnerJobOrder.setModifiedTime(new Date());
+            wmsInnerJobOrder.setStatus((byte)1);
+            wmsInnerJobOrder.setOrgId(user.getOrganizationId());
+            wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
+
+            ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+            if(responseEntity.getCode() != 0){
+                throw new BizErrorException("下推生成上架作业单失败");
+            }else {
+                i++;
+            }
+        }else {
+            throw new BizErrorException("单据流配置错误");
         }
 
         return i;

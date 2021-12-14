@@ -6,6 +6,8 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingCheckBarcodeDto;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingSampleSubmitDto;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDetSampleDto;
+import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDetSample;
@@ -14,6 +16,7 @@ import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspecti
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.qms.mapper.*;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderDetSampleService;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderService;
@@ -53,6 +56,12 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
 
     @Resource
     private QmsIncomingInspectionOrderService qmsIncomingInspectionOrderService;
+
+    @Resource
+    private BaseFeignApi baseFeignApi;
+
+    /*@Resource
+    private SrmFeignApi srmFeignApi;*/
 
     @Override
     public List<QmsHtIncomingInspectionOrderDetSample> findHtList(Map<String, Object> map) {
@@ -132,6 +141,7 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
     public String checkBarcode(PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto){
         List<Long> detIdList = pdaIncomingCheckBarcodeDto.getIncomingInspectionOrderDetIdList();
         String barcode = pdaIncomingCheckBarcodeDto.getBarcode();
+        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = null;
 
         for (Long detId : detIdList){
             Example example = new Example(QmsIncomingInspectionOrderDetSample.class);
@@ -154,9 +164,34 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
             if(qmsIncomingInspectionOrderDet.getSampleQty().compareTo(new BigDecimal(detSamples.size())) == 0){
                 throw new BizErrorException("检验样本数已达上限");
             }
+
+            if(qmsIncomingInspectionOrder == null){
+                qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
+            }
         }
 
+        //查当前单据的下游单据
+        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+        searchBaseOrderFlow.setBusinessType((byte)1);
+        searchBaseOrderFlow.setOrderNode((byte)4);
+        BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
+        if(StringUtils.isEmpty(baseOrderFlow)){
+            throw new BizErrorException("未找到当前单据配置的单据流");
+        }
         //条码校验
+        if("SRM-ASN".equals(baseOrderFlow.getSourceOrderTypeCode())){
+            //ASN单
+            /*SearchSrmInAsnOrderDetBarcode searchSrmInAsnOrderDetBarcode = new SearchSrmInAsnOrderDetBarcode();
+            searchSrmInAsnOrderDetBarcode.setAsnOrderDetId(qmsIncomingInspectionOrder.getSourceId());
+            List<SrmInAsnOrderDetBarcodeDto> detBarcodeDtos = srmFeignApi.findList(searchSrmInAsnOrderDetBarcode).getData();
+*/
+        }else if("IN-SPO".equals(baseOrderFlow.getSourceOrderTypeCode())){
+            //收货计划
+
+        }else if("IN-SWK".equals(baseOrderFlow.getSourceOrderTypeCode())){
+            //收货作业
+
+        }
 
         return barcode;
     }
@@ -171,7 +206,6 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
 
         //条码不为空则提交样本值，条码为空则提交明细
         if(StringUtils.isNotEmpty(list.get(0).getBarcode())) {
-            Byte inspectionResult = 1;
             for (PdaIncomingSampleSubmitDto pdaIncomingSampleSubmitDto : list) {
                 Long detId = pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId();
                 Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);

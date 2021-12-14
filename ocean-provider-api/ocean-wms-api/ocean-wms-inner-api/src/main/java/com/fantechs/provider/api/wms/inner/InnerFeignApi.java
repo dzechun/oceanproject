@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +85,10 @@ public interface InnerFeignApi {
     @ApiOperation("来料打印列表")
     @PostMapping("/wmsInnerMaterialBarcode/findList")
     ResponseEntity<List<WmsInnerMaterialBarcodeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
+
+    @ApiOperation(value = "批量修改",notes = "批量修改")
+    @PostMapping("/wmsInnerMaterialBarcode/batchUpdate")
+    ResponseEntity batchUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<WmsInnerMaterialBarcodeDto> list);
 
     @ApiOperation(value = "新增库存日志",notes = "新增库存日志")
     @PostMapping("/wmsInnerInventoryLog/add")

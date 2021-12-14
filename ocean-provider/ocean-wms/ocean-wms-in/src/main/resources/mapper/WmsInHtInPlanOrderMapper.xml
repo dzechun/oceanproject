@@ -29,4 +29,89 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
+
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+             type="com.fantechs.common.base.general.dto.wms.in.WmsInHtInPlanOrderDto">
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+    <result column="total_plan_qty" jdbcType="DECIMAL" property="totalPlanQty"/>
+    <result column="total_putaway_qty" jdbcType="DECIMAL" property="totalPutawayQty"/>
+    <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+  <sql id="BaseColumnList">
+        witipo.ht_in_plan_order_id,
+        witipo.in_plan_order_id,
+        witipo.core_source_sys_order_type_code,
+        witipo.source_sys_order_type_code,
+        witipo.sys_order_type_code,
+        witipo.in_plan_order_code,
+        witipo.warehouse_id,
+        witipo.storage_id,
+        witipo.plan_start_time,
+        witipo.plan_end_time,
+        witipo.make_order_user_id,
+        witipo.order_status,
+        witipo.status,
+        witipo.remark,
+        witipo.org_id,
+        witipo.create_user_id,
+        witipo.create_time,
+        witipo.modified_user_id,
+        witipo.modified_time,
+        witipo.is_delete,
+        witipo.option1,
+        witipo.option2,
+        witipo.option3
+    </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    SELECT<include refid="BaseColumnList"/>,
+    bw.warehouse_name AS warehouse_name,bs.storage_name AS storage_name,
+    ( SELECT SUM(plan_qty) FROM wms_in_in_plan_order_det witipod WHERE witipod.in_plan_order_id = witipo.in_plan_order_id ) AS total_plan_qty,
+    ( SELECT SUM(putaway_qty) FROM wms_in_in_plan_order_det witipods WHERE witipods.in_plan_order_id = witipo.in_plan_order_id ) AS total_putaway_qty,
+    su.user_name AS make_order_user_name,
+    u.user_name AS create_user_name,
+    s.user_name AS modified_user_name,
+    bo.organization_name
+    FROM wms_in_ht_in_plan_order witipo
+    LEFT JOIN base_warehouse bw ON witipo.warehouse_id = bw.warehouse_id
+    LEFT JOIN base_storage bs ON witipo.storage_id = bs.storage_id
+    LEFT JOIN sys_user u ON witipo.create_user_id=u.user_id
+    LEFT JOIN sys_user s ON witipo.modified_user_id=s.user_id
+    LEFT JOIN sys_user su ON witipo.make_order_user_id=su.user_id
+    LEFT JOIN base_organization bo ON witipo.org_id = bo.organization_id
+    <where>
+      <if test="orgId!=null and orgId!=''">
+        and witipo.org_id = #{orgId}
+      </if>
+      <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
+        and witipo.sys_order_type_code = #{sysOrderTypeCode}
+      </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+      </if>
+      <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+        and witipo.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+      </if>
+      <if test="orderStatus!=null and orderStatus!=''">
+        and witipo.order_status = #{orderStatus}
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(witipo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="planStartTime1 != null and planStartTime1 != '' and planStartTime2 != null and planStartTime2 != ''">
+        and date_format(witipo.plan_start_time, '%Y-%m-%d') BETWEEN #{planStartTime1} AND #{planStartTime2}
+      </if>
+      <if test="planEndTime1 != null and planEndTime1 != '' and planEndTime2 != null and planEndTime2 != ''">
+        and date_format(witipo.plan_end_time, '%Y-%m-%d') BETWEEN #{planEndTime1} AND #{planEndTime2}
+      </if>
+    </where>
+    order by witipo.create_time desc
+  </select>
+
 </mapper>

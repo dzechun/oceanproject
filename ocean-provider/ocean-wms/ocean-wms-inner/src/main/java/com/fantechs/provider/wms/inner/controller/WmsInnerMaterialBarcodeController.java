@@ -1,10 +1,7 @@
 package com.fantechs.provider.wms.inner.controller;
 
-import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -34,6 +32,12 @@ public class WmsInnerMaterialBarcodeController {
 
     @Resource
     private WmsInnerMaterialBarcodeService wmsInnerMaterialBarcodeService;
+
+    @ApiOperation(value = "批量修改",notes = "批量修改")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<WmsInnerMaterialBarcodeDto> list) {
+        return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.batchUpdate(list));
+    }
 
     @ApiOperation(value = "生成条码",notes = "生成条码")
     @PostMapping("/add")

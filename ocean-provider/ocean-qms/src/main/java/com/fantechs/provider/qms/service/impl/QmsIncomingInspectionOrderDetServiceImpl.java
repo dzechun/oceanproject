@@ -57,8 +57,8 @@ public class QmsIncomingInspectionOrderDetServiceImpl extends BaseService<QmsInc
     }
 
     @Override
-    public List<QmsIncomingInspectionOrderDetDto> showOrderDet(Long inspectionStandardId, BigDecimal qty){
-        List<QmsIncomingInspectionOrderDetDto> qmsIncomingInspectionOrderDetDtos = new ArrayList<>();
+    public List<QmsIncomingInspectionOrderDet> showOrderDet(Long inspectionStandardId, BigDecimal qty){
+        List<QmsIncomingInspectionOrderDet> qmsIncomingInspectionOrderDets = new ArrayList<>();
 
         SearchBaseInspectionStandard searchBaseInspectionStandard = new SearchBaseInspectionStandard();
         searchBaseInspectionStandard.setInspectionStandardId(inspectionStandardId);
@@ -70,36 +70,36 @@ public class QmsIncomingInspectionOrderDetServiceImpl extends BaseService<QmsInc
 
         if(StringUtils.isNotEmpty(baseInspectionStandardDets)){
             for (BaseInspectionStandardDet baseInspectionStandardDet : baseInspectionStandardDets){
-                QmsIncomingInspectionOrderDetDto qmsIncomingInspectionOrderDetDto = new QmsIncomingInspectionOrderDetDto();
-                BeanUtils.copyProperties(baseInspectionStandardDet, qmsIncomingInspectionOrderDetDto);
-                qmsIncomingInspectionOrderDetDto.setBigInspectionItemDesc(baseInspectionStandardDet.getInspectionItemDescBig());
-                qmsIncomingInspectionOrderDetDto.setSmallInspectionItemDesc(baseInspectionStandardDet.getInspectionItemDescSmall());
-                qmsIncomingInspectionOrderDetDto.setInspectionStandardName(baseInspectionStandardDet.getInspectionItemStandard());
+                QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet = new QmsIncomingInspectionOrderDet();
+                BeanUtils.copyProperties(baseInspectionStandardDet, qmsIncomingInspectionOrderDet);
+                qmsIncomingInspectionOrderDet.setBigInspectionItemDesc(baseInspectionStandardDet.getInspectionItemDescBig());
+                qmsIncomingInspectionOrderDet.setSmallInspectionItemDesc(baseInspectionStandardDet.getInspectionItemDescSmall());
+                qmsIncomingInspectionOrderDet.setInspectionStandardName(baseInspectionStandardDet.getInspectionItemStandard());
 
                 //抽样类型为抽样方案时，去抽样方案取AC、RE、样本数
                 if(baseInspectionStandardDet.getSampleProcessType()!=null&&baseInspectionStandardDet.getSampleProcessType()==(byte)4){
                     BaseSampleProcess baseSampleProcess = baseFeignApi.getAcReQty(baseInspectionStandardDet.getSampleProcessId(), qty).getData();
                     if(StringUtils.isNotEmpty(baseSampleProcess.getSampleQty())) {
                         //总数量<样本数时,样本数=总数量
-                        qmsIncomingInspectionOrderDetDto.setSampleQty(qty.compareTo(baseSampleProcess.getSampleQty())==-1 ? qty : baseSampleProcess.getSampleQty());
+                        qmsIncomingInspectionOrderDet.setSampleQty(qty.compareTo(baseSampleProcess.getSampleQty())==-1 ? qty : baseSampleProcess.getSampleQty());
                     }
-                    qmsIncomingInspectionOrderDetDto.setAcValue(baseSampleProcess.getAcValue());
-                    qmsIncomingInspectionOrderDetDto.setReValue(baseSampleProcess.getReValue());
+                    qmsIncomingInspectionOrderDet.setAcValue(baseSampleProcess.getAcValue());
+                    qmsIncomingInspectionOrderDet.setReValue(baseSampleProcess.getReValue());
 
                 }else if(baseInspectionStandardDet.getSampleProcessType()!=null&&baseInspectionStandardDet.getSampleProcessType()!=(byte)4){
                     if(StringUtils.isNotEmpty(baseInspectionStandardDet.getSampleQty())) {
                         //总数量<样本数时,样本数=总数量
-                        qmsIncomingInspectionOrderDetDto.setSampleQty(qty.compareTo(baseInspectionStandardDet.getSampleQty()) == -1 ? qty : baseInspectionStandardDet.getSampleQty());
+                        qmsIncomingInspectionOrderDet.setSampleQty(qty.compareTo(baseInspectionStandardDet.getSampleQty()) == -1 ? qty : baseInspectionStandardDet.getSampleQty());
                     }
-                    qmsIncomingInspectionOrderDetDto.setAcValue(baseInspectionStandardDet.getAcValue());
-                    qmsIncomingInspectionOrderDetDto.setReValue(baseInspectionStandardDet.getReValue());
+                    qmsIncomingInspectionOrderDet.setAcValue(baseInspectionStandardDet.getAcValue());
+                    qmsIncomingInspectionOrderDet.setReValue(baseInspectionStandardDet.getReValue());
                 }
 
-                qmsIncomingInspectionOrderDetDtos.add(qmsIncomingInspectionOrderDetDto);
+                qmsIncomingInspectionOrderDets.add(qmsIncomingInspectionOrderDet);
             }
         }
 
-        return qmsIncomingInspectionOrderDetDtos;
+        return qmsIncomingInspectionOrderDets;
     }
 
 }

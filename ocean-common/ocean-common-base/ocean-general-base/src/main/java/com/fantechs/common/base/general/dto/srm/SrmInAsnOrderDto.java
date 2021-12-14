@@ -3,7 +3,10 @@ package com.fantechs.common.base.general.dto.srm;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Transient;
 import java.io.Serializable;

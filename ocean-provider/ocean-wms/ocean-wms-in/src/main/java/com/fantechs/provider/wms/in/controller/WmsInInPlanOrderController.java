@@ -48,7 +48,7 @@ public class WmsInInPlanOrderController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInInPlanOrderDto wmsInInPlanOrderDto) {
+    public ResponseEntity add(@ApiParam(value = "必传：warehouseId",required = true)@RequestBody @Validated WmsInInPlanOrderDto wmsInInPlanOrderDto) {
         return ControllerUtil.returnCRUD(wmsInInPlanOrderService.save(wmsInInPlanOrderDto));
     }
 
