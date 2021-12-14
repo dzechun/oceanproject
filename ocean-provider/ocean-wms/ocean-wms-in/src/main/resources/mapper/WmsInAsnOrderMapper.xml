@@ -37,6 +37,7 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="material_type" jdbcType="TINYINT" property="materialType"/>
     <collection property="wmsInAsnOrderDetList" ofType="com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet"
                 column="{asnOrderId=asn_order_id}" select="com.fantechs.provider.wms.in.mapper.WmsInAsnOrderDetMapper.findList">
     </collection>
