@@ -1,24 +1,21 @@
 package com.fantechs.provider.om.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.om.OmHtSalesReturnOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmHtSalesReturnOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDto;
-import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesReturnOrder;
-import com.fantechs.provider.om.service.OmSalesReturnOrderService;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.om.service.OmSalesReturnOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -95,11 +92,11 @@ public class OmSalesReturnOrderController {
         }
     }
 
-    @ApiOperation("下发生成出库单")
+/*    @ApiOperation("下发生成出库单")
     @PostMapping("/packageAutoOutOrder")
     public ResponseEntity packageAutoOutOrder(@RequestBody(required = true)OmSalesReturnOrder omSalesReturnOrder){
         return ControllerUtil.returnCRUD(omSalesReturnOrderService.packageAutoOutOrder(omSalesReturnOrder));
-    }
+    }*/
 
     @PostMapping("/writeQty")
     public ResponseEntity writeQty(@RequestBody OmSalesReturnOrderDet omSalesReturnOrderDet){
