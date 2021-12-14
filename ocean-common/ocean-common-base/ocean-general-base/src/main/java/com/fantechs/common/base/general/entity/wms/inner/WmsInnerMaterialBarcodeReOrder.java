@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -40,6 +41,14 @@ public class WmsInnerMaterialBarcodeReOrder extends ValidGroup implements Serial
     @Excel(name = "单据类型编码", height = 20, width = 30,orderNum="")
     @Column(name = "order_type_code")
     private String orderTypeCode;
+
+    /**
+     * 单据编码
+     */
+    @ApiModelProperty(name="orderCode",value = "单据编码")
+    @Excel(name = "单据编码", height = 20, width = 30,orderNum="")
+    @Column(name = "order_code")
+    private String orderCode;
 
     /**
      * 单据ID

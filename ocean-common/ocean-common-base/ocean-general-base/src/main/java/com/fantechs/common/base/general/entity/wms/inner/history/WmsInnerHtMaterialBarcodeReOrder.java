@@ -9,7 +9,9 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 ;
@@ -48,6 +50,14 @@ public class WmsInnerHtMaterialBarcodeReOrder extends ValidGroup implements Seri
     @Excel(name = "单据类型编码", height = 20, width = 30,orderNum="")
     @Column(name = "order_type_code")
     private String orderTypeCode;
+
+    /**
+     * 单据编码
+     */
+    @ApiModelProperty(name="orderCode",value = "单据编码")
+    @Excel(name = "单据编码", height = 20, width = 30,orderNum="")
+    @Column(name = "order_code")
+    private String orderCode;
 
     /**
      * 单据ID
@@ -144,6 +154,69 @@ public class WmsInnerHtMaterialBarcodeReOrder extends ValidGroup implements Seri
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="")
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * 条码
+     */
+    @ApiModelProperty(name="barcode",value = "条码")
+    @Transient
+    private String barcode;
+
+    /**
+     * 物料编码
+     */
+    @Transient
+    @ApiModelProperty(name="materialCode",value = "物料编码")
+    private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @Transient
+    @ApiModelProperty(name="materialName",value = "物料名称")
+    private String materialName;
+
+    /**
+     * 数量
+     */
+    @Transient
+    @ApiModelProperty(name="qty",value = "数量")
+    private BigDecimal qty;
+
+    /**
+     * 生产日期
+     */
+    @Transient
+    @ApiModelProperty(name="productionDate",value = "生产日期")
+    private Date productionDate;
+
+    /**
+     * 彩盒号
+     */
+    @Transient
+    @ApiModelProperty(name="colorBoxCode",value = "彩盒号")
+    private String colorBoxCode;
+
+    /**
+     * 箱码
+     */
+    @Transient
+    @ApiModelProperty(name="cartonCode",value = "箱码")
+    private String cartonCode;
+
+    /**
+     * 栈板码
+     */
+    @Transient
+    @ApiModelProperty(name="palletCode",value = "栈板码")
+    private String palletCode;
+
+    /**
+     * 批次号
+     */
+    @Transient
+    @ApiModelProperty(name="batchCode",value = "批次号")
+    private String batchCode;
 
     private static final long serialVersionUID = 1L;
 }

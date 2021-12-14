@@ -32,7 +32,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/12/14.
  */
 @RestController
-@Api(tags = "wmsInnerMaterialBarcodeReOrder控制器")
+@Api(tags = "单据条码明细")
 @RequestMapping("/wmsInnerMaterialBarcodeReOrder")
 @Validated
 public class WmsInnerMaterialBarcodeReOrderController {

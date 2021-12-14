@@ -12,12 +12,6 @@ import java.util.Date;
 
 @Data
 public class WmsInnerMaterialBarcodeReOrderDto extends WmsInnerMaterialBarcodeReOrder implements Serializable {
-    /**
-     * 编码
-     */
-    @Transient
-    @ApiModelProperty(name="code",value = "编码")
-    private String code;
 
     /**
      * 条码

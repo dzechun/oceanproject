@@ -68,6 +68,12 @@ public class SrmInAsnOrderDetController {
         return  ControllerUtil.returnDataSuccess(srmInAsnOrderDet,StringUtils.isEmpty(srmInAsnOrderDet)?0:1);
     }
 
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<SrmInAsnOrderDetDto> list) {
+        return ControllerUtil.returnCRUD(srmInAsnOrderDetService.pushDown(list));
+    }
+
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<SrmInAsnOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSrmInAsnOrderDet searchSrmInAsnOrderDet) {

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.mapper.inner.WmsInnerMaterialBarcodeReOrderMapper">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeReOrderMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReOrder">
     <!--
       WARNING - @mbg.generated
     -->
     <id column="material_barcode_re_order_id" jdbcType="BIGINT" property="materialBarcodeReOrderId" />
     <result column="order_type_code" jdbcType="VARCHAR" property="orderTypeCode" />
+    <result column="order_code" jdbcType="VARCHAR" property="orderCode" />
     <result column="order_id" jdbcType="VARCHAR" property="orderId" />
     <result column="order_det_id" jdbcType="VARCHAR" property="orderDetId" />
     <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId" />
@@ -22,7 +23,6 @@
   </resultMap>
 
   <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto">
-    <result column="code" jdbcType="VARCHAR" property="code" />
     <result column="barcode" jdbcType="VARCHAR" property="barcode" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
@@ -35,23 +35,61 @@
   </resultMap>
 
   <sql id="BaseColumnList">
-    wimb.material_barcode_re_order_id,
-    wimb.order_type_code,
-    wimb.order_id,
-    wimb.order_det_id,
-    wimb.material_barcode_id,
-    wimb.scan_status,
-    wimb.org_id,
-    wimb.create_user_id,
-    wimb.create_time,
-    wimb.modified_user_id,
-    wimb.modified_time,
-    wimb.is_delete,
-    wimb.option1,
-    wimb.option2,
-    wimb.option3
+    wimbro.material_barcode_re_order_id,
+    wimbro.order_type_code,
+    wimbro.order_code,
+    wimbro.order_id,
+    wimbro.order_det_id,
+    wimbro.material_barcode_id,
+    wimbro.scan_status,
+    wimbro.org_id,
+    wimbro.create_user_id,
+    wimbro.create_time,
+    wimbro.modified_user_id,
+    wimbro.modified_time,
+    wimbro.is_delete,
+    wimbro.option1,
+    wimbro.option2,
+    wimbro.option3
   </sql>
 
+  <select id="findList" resultMap="BaseResultMapDto">
+    SELECT<include refid="BaseColumnList"/>,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name AS organization_Name,
+    bm.material_name as materialName,
+    bm.material_code as materialCode,
+    wimb.material_qty as qty,wimb.production_time as production_date,wimb.color_box_code,wimb.carton_code,wimb.pallet_code,wimb.batch_code
+    FROM wms_inner_material_barcode_re_order wimbro
+    LEFT JOIN sys_user su ON wimbro.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wimbro.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wimbro.org_id = bo.organization_id
+    left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id
+    LEFT JOIN base_material bm on bm.material_id = wimb.material_id
+    <where>
+        <if test="orgId!=null and orgId!=''">
+            and wimbro.org_id = #{orgId}
+        </if>
+        <if test="orderTypeCode!=null and orderTypeCode!=''">
+            and wimbro.order_type_code = #{orderTypeCode}
+        </if>
+        <if test="orderId!=null and orderId!=''">
+            and wimbro.order_id = #{orderId}
+        </if>
+
+        <if test="orderDetId !=null and orderDetId!=''">
+            and wimbro.order_det_id = #{orderDetId}
+        </if>
+        <if test="materialBarcodeId!=null and materialBarcodeId!=''">
+            and wimbro.material_barcode_id = #{materialBarcodeId}
+        </if>
+        <if test="scanStatus!=null and scanStatus!=''">
+            and wimbro.scan_status = #{scanStatus}
+        </if>
+    </where>
+    order by wimbro.create_time desc
+  </select>
 
 
 </mapper>

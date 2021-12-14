@@ -23,8 +23,6 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
-import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
-import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
@@ -984,7 +982,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 QmsIncomingInspectionOrder incomingOrder=new QmsIncomingInspectionOrder();
                 incomingOrder.setIncomingInspectionOrderId(sourceId);
                 //incomingOrder
-                incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
+//                incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
                 //qmsFeignApi.updateIfAllIssued(incomingOrder);
                 break;
             default:
@@ -1719,7 +1717,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         Long sourceId=jobOrderDetMIIO.getSourceId();
                         QmsIncomingInspectionOrder incomingOrder=new QmsIncomingInspectionOrder();
                         incomingOrder.setIncomingInspectionOrderId(sourceId);
-                        incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
+//                        incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
                         //qmsFeignApi.updateIfAllIssued(incomingOrder);
                     }
                     break;

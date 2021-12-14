@@ -211,6 +211,7 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchUpdate(List<SysCustomFormDet> list) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
