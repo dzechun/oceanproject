@@ -61,14 +61,6 @@ public class OmOtherInOrder extends ValidGroup implements Serializable {
     private String relatedOrderCode;
 
     /**
-     * 货主ID
-     */
-    @ApiModelProperty(name="materialOwnerId",value = "货主ID")
-    @Excel(name = "货主ID", height = 20, width = 30,orderNum="4")
-    @Column(name = "material_owner_id")
-    private Long materialOwnerId;
-
-    /**
      * 总加入数量
      */
     @Transient
