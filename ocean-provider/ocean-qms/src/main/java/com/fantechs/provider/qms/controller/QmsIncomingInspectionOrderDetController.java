@@ -42,9 +42,9 @@ public class QmsIncomingInspectionOrderDetController {
 
     @ApiOperation("获取来料检验单明细信息")
     @PostMapping("/showOrderDet")
-    public ResponseEntity<List<QmsIncomingInspectionOrderDetDto>> showOrderDet(@ApiParam(value = "检验标准ID",required = true)@RequestParam  @NotNull(message="检验标准ID不能为空") Long inspectionStandardId,
+    public ResponseEntity<List<QmsIncomingInspectionOrderDet>> showOrderDet(@ApiParam(value = "检验标准ID",required = true)@RequestParam  @NotNull(message="检验标准ID不能为空") Long inspectionStandardId,
                                                                                @ApiParam(value = "总数量",required = true)@RequestParam  @NotNull(message="总数量不能为空") BigDecimal qty) {
-        List<QmsIncomingInspectionOrderDetDto> list = qmsIncomingInspectionOrderDetService.showOrderDet(inspectionStandardId,qty);
+        List<QmsIncomingInspectionOrderDet> list = qmsIncomingInspectionOrderDetService.showOrderDet(inspectionStandardId,qty);
         return ControllerUtil.returnDataSuccess(list,list.size());
     }
 

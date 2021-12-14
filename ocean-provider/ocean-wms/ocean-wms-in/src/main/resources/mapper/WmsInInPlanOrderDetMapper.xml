@@ -75,7 +75,7 @@
 
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="BaseColumnList"/>,
-        bm.material_name,bw.warehouse_name,bm.material_version,bm.material_desc,bmt.main_unit,bis.inventory_status_name,
+        bm.material_name,bm.material_code,bm.material_version,bm.material_desc,bmt.main_unit,bis.inventory_status_name,
         u.user_name as create_user_name,
         s.user_name as modified_user_name,
         bo.organization_name

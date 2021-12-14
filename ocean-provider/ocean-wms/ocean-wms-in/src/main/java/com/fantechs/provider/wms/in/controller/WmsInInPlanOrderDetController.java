@@ -71,6 +71,13 @@ public class WmsInInPlanOrderDetController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+    @ApiOperation("通过ids列表")
+    @PostMapping("/findListByIds")
+    public ResponseEntity findListByIds(@ApiParam(value = "inPlanOrderId列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        List<WmsInInPlanOrderDetDto> list = wmsInInPlanOrderDetService.findListByIds(ids);
+        return ControllerUtil.returnDataSuccess(list,list.size());
+    }
+
     @ApiOperation("列表(不分页)")
     @PostMapping("/findAll")
     public ResponseEntity<List<WmsInInPlanOrderDetDto>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchWmsInInPlanOrderDet searchWmsInInPlanOrderDet) {

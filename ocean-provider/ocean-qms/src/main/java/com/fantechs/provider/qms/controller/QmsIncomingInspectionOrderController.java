@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,12 @@ public class QmsIncomingInspectionOrderController {
 
     @Resource
     private QmsIncomingInspectionOrderService qmsIncomingInspectionOrderService;
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<QmsIncomingInspectionOrderDto> list) {
+        return ControllerUtil.returnCRUD(qmsIncomingInspectionOrderService.batchAdd(list));
+    }
 
     @ApiOperation(value = "下推",notes = "下推")
     @PostMapping("/pushDown")

@@ -6,6 +6,8 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingCheckBarcodeDto;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingSampleSubmitDto;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDetSampleDto;
+import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDetSample;
@@ -14,6 +16,7 @@ import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspecti
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.qms.mapper.*;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderDetSampleService;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderService;
@@ -53,6 +56,12 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
 
     @Resource
     private QmsIncomingInspectionOrderService qmsIncomingInspectionOrderService;
+
+    @Resource
+    private BaseFeignApi baseFeignApi;
+
+    /*@Resource
+    private SrmFeignApi srmFeignApi;*/
 
     @Override
     public List<QmsHtIncomingInspectionOrderDetSample> findHtList(Map<String, Object> map) {
@@ -161,7 +170,28 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
             }
         }
 
+        //查当前单据的下游单据
+        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+        searchBaseOrderFlow.setBusinessType((byte)1);
+        searchBaseOrderFlow.setOrderNode((byte)4);
+        BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
+        if(StringUtils.isEmpty(baseOrderFlow)){
+            throw new BizErrorException("未找到当前单据配置的单据流");
+        }
         //条码校验
+        if("SRM-ASN".equals(baseOrderFlow.getSourceOrderTypeCode())){
+            //ASN单
+            /*SearchSrmInAsnOrderDetBarcode searchSrmInAsnOrderDetBarcode = new SearchSrmInAsnOrderDetBarcode();
+            searchSrmInAsnOrderDetBarcode.setAsnOrderDetId(qmsIncomingInspectionOrder.getSourceId());
+            List<SrmInAsnOrderDetBarcodeDto> detBarcodeDtos = srmFeignApi.findList(searchSrmInAsnOrderDetBarcode).getData();
+*/
+        }else if("IN-SPO".equals(baseOrderFlow.getSourceOrderTypeCode())){
+            //收货计划
+
+        }else if("IN-SWK".equals(baseOrderFlow.getSourceOrderTypeCode())){
+            //收货作业
+
+        }
 
         return barcode;
     }
