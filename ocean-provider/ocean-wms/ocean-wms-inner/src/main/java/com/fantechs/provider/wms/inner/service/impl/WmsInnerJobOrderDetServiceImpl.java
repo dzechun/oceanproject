@@ -62,7 +62,7 @@ public class WmsInnerJobOrderDetServiceImpl extends BaseService<WmsInnerJobOrder
                 wmsInnerJobOrderDet.setJobOrderDetId(null);
                 wmsInnerJobOrderDet.setWorkStartTime(null);
                 wmsInnerJobOrderDet.setWorkEndTime(null);
-                wmsInnerJobOrderDet.setOrderStatus((byte)3);
+                wmsInnerJobOrderDet.setLineStatus((byte)3);
                 wmsInnerJobOrderDet.setPlanQty(qty);
                 wmsInnerJobOrderDet.setDistributionQty(qty);
                 wmsInnerJobOrderDet.setActualQty(BigDecimal.ZERO);

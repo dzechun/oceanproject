@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service;
 
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
+import com.fantechs.common.base.general.dto.wms.inner.SaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -39,6 +40,12 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     int cancelDistribution(String ids);
 
     /**
+     * 关闭单据
+     * @return
+     */
+    int closeWmsInnerJobOrder(String ids);
+
+    /**
      * 指定工作人员
      * @return
      */
@@ -62,6 +69,13 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     WmsInnerJobOrderDet scanStorageBackQty(String storageCode,Long jobOrderDetId,BigDecimal qty,String barcode);
 
     WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder);
+
+    /**
+     * PDA先作业后单 产生上架单
+     * @param list
+     * @return
+     */
+    int saveInnerJobOrder(List<SaveInnerJobOrderDto> list);
 
     /**
      * PDA激活关闭栈板

@@ -55,21 +55,16 @@ public class InventoryLogUtil {
         }else {
             wmsInnerInventoryLog.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
         }
-//        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getWarehouseId())){
-//            wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
-//        }else {
-//            wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrderDet.getWarehouseId());
-//        }
-//        wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
-//        wmsInnerInventoryLog.setProductionDate(wmsInnerJobOrderDet.getProductionDate());
-//        wmsInnerInventoryLog.setExpiredDate(wmsInnerJobOrderDet.getExpiredDate());
-//        wmsInnerInventoryLog.setBatchCode(wmsInnerJobOrderDet.getBatchCode());
-//        wmsInnerInventoryLog.setPalletCode(wmsInnerJobOrderDet.getPalletCode());
-//        wmsInnerInventoryLog.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
-//        wmsInnerInventoryLog.setInitialQty(initQty);
-//        wmsInnerInventoryLog.setChangeQty(chaQty);
-//        wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerJobOrder.getMaterialOwnerId());
-//        inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
+        if(StringUtils.isEmpty(wmsInnerInventoryLog.getWarehouseId())){
+            wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+        }
+        wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
+        wmsInnerInventoryLog.setProductionDate(wmsInnerJobOrderDet.getProductionDate());
+        wmsInnerInventoryLog.setBatchCode(wmsInnerJobOrderDet.getBatchCode());
+        wmsInnerInventoryLog.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
+        wmsInnerInventoryLog.setInitialQty(initQty);
+        wmsInnerInventoryLog.setChangeQty(chaQty);
+        inventoryLogUtil.wmsInnerInventoryLogService.save(wmsInnerInventoryLog);
     }
 
     /**

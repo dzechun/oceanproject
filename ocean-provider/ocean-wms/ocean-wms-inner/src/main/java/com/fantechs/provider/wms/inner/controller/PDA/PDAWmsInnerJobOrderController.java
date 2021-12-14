@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.controller.PDA;
 
+import com.fantechs.common.base.general.dto.wms.inner.SaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -48,12 +49,7 @@ public class PDAWmsInnerJobOrderController {
         List<Byte> bytes= new ArrayList<>();
         bytes.add((byte)3);
         bytes.add((byte)4);
-        //PDA拣货不展示已完成单据
-        if(searchWmsInnerJobOrder.getJobOrderType()!=(byte)4){
-            bytes.add((byte)6);
-        }
         searchWmsInnerJobOrder.setOrderStatusList(bytes);
-        searchWmsInnerJobOrder.setIsPallet((byte)1);
         List<WmsInnerJobOrderDto> list = wmsInnerJobOrderService.findList(searchWmsInnerJobOrder);
         return ControllerUtil.returnDataSuccess(list, StringUtils.isEmpty(list)?0:1);
     }
@@ -62,9 +58,8 @@ public class PDAWmsInnerJobOrderController {
     @PostMapping("/findDetList")
     public ResponseEntity<List<WmsInnerJobOrderDetDto>> findDetList(@RequestBody(required = false) SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet){
         List<Byte> bytes= new ArrayList<>();
-        bytes.add((byte)3);
-        bytes.add((byte)4);
-        searchWmsInnerJobOrderDet.setOrderStatusList(bytes);
+        bytes.add((byte)2);
+        searchWmsInnerJobOrderDet.setLineStatusList(bytes);
         List<WmsInnerJobOrderDetDto> list = wmsInnerJobOrderDetService.findList(searchWmsInnerJobOrderDet);
         return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
     }
@@ -101,6 +96,13 @@ public class PDAWmsInnerJobOrderController {
     @PostMapping("/singleReceiving")
     public ResponseEntity singleReceiving(@RequestBody(required = true) List<WmsInnerJobOrderDet> wmsInPutawayOrderDets){
         return ControllerUtil.returnCRUD(wmsInnerJobOrderService.singleReceiving(wmsInPutawayOrderDets));
+    }
+
+    @ApiOperation("PDA先作业后单 产生上架单")
+    @ApiIgnore
+    @PostMapping("/saveInnerJobOrder")
+    public ResponseEntity saveInnerJobOrder(@RequestBody(required = true) List<SaveInnerJobOrderDto> list){
+        return ControllerUtil.returnCRUD(wmsInnerJobOrderService.saveInnerJobOrder(list));
     }
 
     @ApiOperation("PDA激活关闭栈板")

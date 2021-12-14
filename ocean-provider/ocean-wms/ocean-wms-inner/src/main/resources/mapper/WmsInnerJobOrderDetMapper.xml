@@ -110,6 +110,12 @@
             <if test="jobOrderDetId !=null and jobOrderDetId !=''">
                 and wipod.job_order_det_id = #{jobOrderDetId}
             </if>
+            <if test="lineStatusList !=null and lineStatusList.size()!=0">
+                and wipod.line_status in
+                <foreach item="lineStatus" collection="lineStatusList" open="(" separator="," close=")">
+                    #{lineStatus}
+                </foreach>
+            </if>
             <if test="orgId!=null and orgId!=''">
                 and wipod.org_id = #{orgId}
             </if>

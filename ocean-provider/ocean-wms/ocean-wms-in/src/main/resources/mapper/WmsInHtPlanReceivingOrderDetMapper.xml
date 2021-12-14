@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInHtPlanReceivingOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInHtPlanReceivingOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_plan_receiving_order_det_id" jdbcType="BIGINT" property="htPlanReceivingOrderDetId" />
+    <result column="plan_receiving_order_det_id" jdbcType="BIGINT" property="planReceivingOrderDetId" />
+    <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
+    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+    <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
+    <result column="source_id" jdbcType="BIGINT" property="sourceId" />
+    <result column="plan_receiving_order_id" jdbcType="BIGINT" property="planReceivingOrderId" />
+    <result column="line_number" jdbcType="VARCHAR" property="lineNumber" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
+    <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
+    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+    <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId" />
+    <result column="line_status" jdbcType="TINYINT" property="lineStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInHtPlanReceivingOrderDetDto">
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="operator_user_name" jdbcType="VARCHAR" property="operatorUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+  <sql id="base_column_list">
+wiprod.ht_plan_receiving_order_det_id,
+    wiprod.plan_receiving_order_det_id,
+    wiprod.core_source_order_code,
+    wiprod.source_order_code,
+wiprod.core_source_id,
+wiprod.source_id,
+wiprod.plan_receiving_order_id,
+wiprod.line_number,
+wiprod.material_id,
+wiprod.batch_code,
+wiprod.production_time,
+wiprod.plan_qty,
+wiprod.actual_qty,
+wiprod.operator_user_id,
+wiprod.line_status,
+wiprod.if_all_issued,
+wiprod.status,
+wiprod.remark,
+wiprod.org_id,
+wiprod.create_user_id,
+wiprod.create_time,
+wiprod.modified_user_id,
+wiprod.modified_time,
+wiprod.is_delete,
+wiprod.option1,
+wiprod.option2,
+wiprod.option3
+  </sql>
+  <select id="findHtList" resultMap="BaseResultMapDto">
+    SELECT <include refid="base_column_list"/>, bm.material_code,bm.material_desc,bm.material_version,bm.material_name,
+    u.user_name AS create_user_name,
+    s.user_name AS modified_user_name,
+    su.user_name AS operator_user_name,
+    bo.organization_name
+    FROM wms_in_ht_plan_receiving_order_det wiprod
+    LEFT JOIN base_material bm ON wiprod.material_id = bm.material_id
+    LEFT JOIN sys_user u ON wiprod.create_user_id=u.user_id
+    LEFT JOIN sys_user s ON wiprod.modified_user_id=s.user_id
+    LEFT JOIN sys_user su ON wiprod.operator_user_id = su.user_id
+    LEFT JOIN base_organization bo ON wiprod.org_id = bo.organization_id
+    <where>
+      <if test="planReceivingOrderId!=null and planReceivingOrderId!=''">
+        and wiprod.plan_receiving_order_id = #{planReceivingOrderId}
+      </if>
+    </where>
+  </select>
+</mapper>

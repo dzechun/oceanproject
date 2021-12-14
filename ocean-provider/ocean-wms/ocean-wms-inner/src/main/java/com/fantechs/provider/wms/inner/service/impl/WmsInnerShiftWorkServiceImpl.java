@@ -191,19 +191,19 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (dto.getJobOrderDetId() != null) {
             // 移位作业明细单 变更移位状态
             WmsInnerJobOrderDet jobOrderDet = wmsInnerJobOrderDetService.selectByKey(dto.getJobOrderDetId());
-            jobOrderDet.setOrderStatus((byte) 4);
+            //jobOrderDet.setOrderStatus((byte) 4);
             jobOrderDet.setActualQty(jobOrderDet.getActualQty() != null ? jobOrderDet.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
             Byte status = 2;
             if (jobOrderDet.getActualQty().compareTo(jobOrderDet.getDistributionQty()) == 0) {
                 status = (byte) 3;
             }
-            jobOrderDet.setShiftStorageStatus(status);
+            //jobOrderDet.setShiftStorageStatus(status);
             wmsInnerJobOrderDetService.update(jobOrderDet);
 
             // 作业单拣货数量+1以及变更单据状态
             WmsInnerJobOrder innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderId());
             innerJobOrder.setOrderStatus((byte) 4);
-            innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
+            //innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
             wmsInnerJobOrderMapper.updateByPrimaryKey(innerJobOrder);
         } else {
             // 查询库存信息，同一库位跟同物料有且只有一条数据
@@ -232,8 +232,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 // 更新移位单
                 innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderId());
                 innerJobOrder.setOrderStatus((byte) 4);
-                innerJobOrder.setActualQty(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
-                innerJobOrder.setPlanQty(innerJobOrder.getActualQty());
+
                 wmsInnerJobOrderMapper.updateByPrimaryKey(innerJobOrder);
             } else {
                 // 创建移位单
@@ -241,12 +240,12 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 searchBaseMaterialOwner.setAsc((byte) 1);
                 List<BaseMaterialOwnerDto> ownerDtos = baseFeignApi.findList(searchBaseMaterialOwner).getData();
                 if (!ownerDtos.isEmpty()) {
-                    innerJobOrder.setMaterialOwnerId(ownerDtos.get(0).getMaterialOwnerId());
+                    //innerJobOrder.setMaterialOwnerId(ownerDtos.get(0).getMaterialOwnerId());
                 }
                 innerJobOrder.setWarehouseId(dto.getWarehouseId());
                 innerJobOrder.setJobOrderCode(CodeUtils.getId("SHIFT-"));
                 innerJobOrder.setJobOrderType((byte) 2);
-                innerJobOrder.setPlanQty(dto.getMaterialQty());
+
 //                innerJobOrder.setActualQty(innerJobOrder.getPlanQty());
                 innerJobOrder.setOrderStatus((byte) 4);
                 innerJobOrder.setStatus((byte) 1);
@@ -266,21 +265,21 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setJobOrderId(dto.getJobOrderId());
 
             //保存库存ID 2021/10/18
-            wmsInnerJobOrderDet.setSourceDetId(innerInventoryDto.getInventoryId());
+            //wmsInnerJobOrderDet.setSourceDetId(innerInventoryDto.getInventoryId());
 
-            wmsInnerJobOrderDet.setMaterialOwnerId(innerInventoryDto.getMaterialOwnerId());
-            wmsInnerJobOrderDet.setWarehouseId(dto.getWarehouseId());
+//            wmsInnerJobOrderDet.setMaterialOwnerId(innerInventoryDto.getMaterialOwnerId());
+//            wmsInnerJobOrderDet.setWarehouseId(dto.getWarehouseId());
             wmsInnerJobOrderDet.setOutStorageId(dto.getStorageId());
             wmsInnerJobOrderDet.setMaterialId(innerInventoryDto.getMaterialId());
-            wmsInnerJobOrderDet.setPackingUnitName(innerInventoryDto.getPackingUnitName());
+//            wmsInnerJobOrderDet.setPackingUnitName(innerInventoryDto.getPackingUnitName());
             wmsInnerJobOrderDet.setPlanQty(dto.getMaterialQty());
             wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getPlanQty());
 //            wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getPlanQty());
-            wmsInnerJobOrderDet.setPalletCode(innerInventoryDto.getPalletCode());
-            wmsInnerJobOrderDet.setReceivingDate(innerInventoryDto.getReceivingDate());
+//            wmsInnerJobOrderDet.setPalletCode(innerInventoryDto.getPalletCode());
+//            wmsInnerJobOrderDet.setReceivingDate(innerInventoryDto.getReceivingDate());
             wmsInnerJobOrderDet.setProductionDate(innerInventoryDto.getProductionDate());
             wmsInnerJobOrderDet.setInventoryStatusId(innerInventoryDto.getInventoryStatusId());
-            wmsInnerJobOrderDet.setExpiredDate(innerInventoryDto.getExpiredDate());
+
             wmsInnerJobOrderDet.setWorkStartTime(new Date());
             wmsInnerJobOrderDet.setWorkEndTime(new Date());
             wmsInnerJobOrderDet.setBatchCode(innerInventoryDto.getBatchCode());
@@ -290,8 +289,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setCreateTime(new Date());
             wmsInnerJobOrderDet.setCreateUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setIsDelete((byte) 1);
-            wmsInnerJobOrderDet.setOrderStatus((byte) 4);
-            wmsInnerJobOrderDet.setShiftStorageStatus((byte) 3);
+//            wmsInnerJobOrderDet.setOrderStatus((byte) 4);
+//            wmsInnerJobOrderDet.setShiftStorageStatus((byte) 3);
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
             WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
             BeanUtil.copyProperties(wmsInnerJobOrderDet, innerHtJobOrderDet);
@@ -321,7 +320,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             for (String barcode : dto.getBarcodes()) {
                 // 创建条码移位单明细关系
                 WmsInnerJobOrderDetBarcode wmsInnerJobOrderDetBarcode = new WmsInnerJobOrderDetBarcode();
-                wmsInnerJobOrderDetBarcode.setBarcode(barcode);
+//                wmsInnerJobOrderDetBarcode.setBarcode(barcode);
                 wmsInnerJobOrderDetBarcode.setJobOrderDetId(dto.getJobOrderDetId());
                 wmsInnerJobOrderDetBarcode.setStatus((byte) 1);
                 wmsInnerJobOrderDetBarcode.setOrgId(sysUser.getOrganizationId());
@@ -370,9 +369,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 .jobOrderDetId(dto.getJobOrderDetId())
                 .inStorageId(baseStorage.getStorageId())
                 .actualQty(wmsInnerJobOrderDet.getActualQty())
-                .orderStatus((byte) 5)
+//                .orderStatus((byte) 5)
                 .modifiedTime(new Date())
-                .shiftStorageStatus((byte) 4)
+//                .shiftStorageStatus((byte) 4)
                 .modifiedUserId(sysUser.getUserId())
                 .workStartTime(new Date())
                 .workEndTime(new Date())
@@ -391,7 +390,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId", oldDto.getMaterialId())
-                .andEqualTo("warehouseId", oldDto.getWarehouseId())
+//                .andEqualTo("warehouseId", oldDto.getWarehouseId())
                 .andEqualTo("storageId", oldDto.getOutStorageId())
                 .andEqualTo("jobOrderDetId", oldDto.getJobOrderDetId())
                 .andEqualTo("jobStatus", (byte) 2)
@@ -401,7 +400,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
         example.clear();
         Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
-                .andEqualTo("warehouseId", oldDto.getWarehouseId())
+//                .andEqualTo("warehouseId", oldDto.getWarehouseId())
                 .andEqualTo("storageId", baseStorage.getStorageId())
                 .andEqualTo("jobStatus", (byte) 1)
                 .andEqualTo("stockLock", 0)
@@ -453,7 +452,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             for (WmsInnerJobOrderDetBarcode jobOrderDetBarcode : orderDetBarcodeList) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("storageId", wmsInnerJobOrderDet.getOutStorageId());
-                map.put("barcode", jobOrderDetBarcode.getBarcode());
+//                map.put("barcode", jobOrderDetBarcode.getBarcode());
                 List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
                 if (inventoryDetDtos.isEmpty()) {
                     throw new BizErrorException(ErrorCodeEnum.PDA5001004);
@@ -468,7 +467,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         wms = new WmsInnerJobOrderDet();
         wms.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
         int count = wmsInnerJobOrderDetService.selectCount(wms);
-        wms.setOrderStatus((byte) 5);
+//        wms.setOrderStatus((byte) 5);
         int oCount = wmsInnerJobOrderDetService.selectCount(wms);
 
         SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
@@ -485,7 +484,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
         WmsInnerJobOrder ws = new WmsInnerJobOrder();
         ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
-        ws.setActualQty(resQty);
+//        ws.setActualQty(resQty);
         ws.setModifiedUserId(sysUser.getUserId());
         ws.setModifiedTime(new Date());
         ws.setWorkEndtTime(new Date());

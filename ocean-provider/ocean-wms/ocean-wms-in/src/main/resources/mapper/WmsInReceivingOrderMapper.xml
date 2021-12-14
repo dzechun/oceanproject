@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInReceivingOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="receiving_order_id" jdbcType="BIGINT" property="receivingOrderId" />
+    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
+    <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
+    <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
+    <result column="receiving_order_code" jdbcType="VARCHAR" property="receivingOrderCode" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDto">
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+  <sql id="base_column_list">
+    wiro.receiving_order_id,
+    wiro.core_source_sys_order_type_code,
+    wiro.source_sys_order_type_code,
+wiro.sys_order_type_code,
+wiro.receiving_order_code,
+wiro.warehouse_id,
+wiro.order_status,
+wiro.status,
+wiro.remark,
+wiro.org_id,
+wiro.create_user_id,
+wiro.create_time,
+wiro.modified_user_id,
+wiro.modified_time,
+wiro.is_delete,
+wiro.option1,
+wiro.option2,
+wiro.option1
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="base_column_list"/>, bw.warehouse_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
+    FROM wms_in_receiving_order wiro
+           LEFT JOIN base_warehouse bw ON wiro.warehouse_id = bw.warehouse_id
+           LEFT JOIN sys_user su ON wiro.create_user_id = su.user_id
+           LEFT JOIN sys_user sus ON wiro.modified_user_id = sus.user_id
+           LEFT JOIN base_organization bo ON wiro.org_id = bo.organization_id
+    <where>
+      <if test="coreSourceSysOrderTypeCode!=null and coreSourceSysOrderTypeCode!=''">
+        and wiro.core_source_sys_order_type_code like CONCAT('%',#{coreSourceSysOrderTypeCode},'%')
+      </if>
+    <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+      and wiro.source_sys_order_type_code like CONCAT('%',#{sourceSysOrderTypeCode},'%')
+    </if>
+    <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
+      and wiro.sys_order_type_code like CONCAT('%',#{sysOrderTypeCode},'%')
+    </if>
+      <if test="receivingOrderCode!=null and receivingOrderCode!=''">
+        and wiro.receiving_order_code like CONCAT('%',#{receivingOrderCode},'%')
+      </if>
+      <if test="warehouseId!=null and warehouseId!=''">
+        and wiro.warehouse_id =#{warehouseId}
+      </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+      </if>
+      <if test="orderStatusList!=null and orderStatusList.size > 0">
+        and wiro.order_status in
+        <foreach collection="orderStatusList" item="item" separator="," open="(" close=")">
+          #{item}
+        </foreach>
+      </if>
+    <if test="orgId!=null and orgId!=''">
+      and wiro.org_id=#{orgId}
+    </if>
+    </where>
+    order by wiro.create_time
+  </select>
+</mapper>
