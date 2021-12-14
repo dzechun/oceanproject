@@ -97,10 +97,9 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
         }
 
         //查出所有条码
-        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
         SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(qmsIncomingInspectionOrder.getSysOrderTypeCode());
-        searchWmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("QMS-MIIO");
+        searchWmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
         List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
         if(StringUtils.isEmpty(materialBarcodeReOrderDtos)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到当前单据对应的条码");
@@ -123,7 +122,7 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
                 }
             }
             if (!tag) {
-                throw new BizErrorException("该条码不属于当前单据");
+                throw new BizErrorException("条码"+qmsIncomingInspectionOrderDetSample.getBarcode()+"不属于当前单据");
             }
 
             //是否重复
@@ -239,7 +238,7 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
                 Long detId = pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId();
                 Example example1 = new Example(QmsIncomingInspectionOrderDetSample.class);
                 Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("incomingInspectionOrderDetId",pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId());
+                criteria1.andEqualTo("incomingInspectionOrderDetId",detId);
                 List<QmsIncomingInspectionOrderDetSample> detSampleList = qmsIncomingInspectionOrderDetSampleMapper.selectByExample(example1);
                 QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet = qmsIncomingInspectionOrderDetMapper.selectByPrimaryKey(detId);
 

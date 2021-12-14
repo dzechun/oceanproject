@@ -9,7 +9,6 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.qms.QmsBadnessManage;
 import com.fantechs.common.base.general.entity.qms.QmsBadnessManageBarcode;
-import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -61,13 +60,12 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
     @Transactional(rollbackFor = Exception.class)
     public PdaIncomingSelectToUseBarcodeDto checkBarcode(String barcode,Long incomingInspectionOrderId) {
         PdaIncomingSelectToUseBarcodeDto pdaIncomingSelectToUseBarcodeDto = new PdaIncomingSelectToUseBarcodeDto();
-        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(incomingInspectionOrderId);
 
         //校验条码
         Long materialBarcodeId = 0L;
         SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(qmsIncomingInspectionOrder.getSysOrderTypeCode());
-        searchWmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("QMS-MIIO");
+        searchWmsInnerMaterialBarcodeReOrder.setOrderId(incomingInspectionOrderId);
         List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
         if(StringUtils.isEmpty(materialBarcodeReOrderDtos)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到当前单据对应的条码");
@@ -109,15 +107,10 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
             throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"不可重复挑选使用");
         }
 
-        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(incomingInspectionOrderId);
-        if(qmsIncomingInspectionOrder.getOrderQty().compareTo(new BigDecimal(barcodeDtoList.size())) == -1){
-            throw new BizErrorException("条码数量不可大于总数量");
-        }
-
         //该单据的所有条码
         SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(qmsIncomingInspectionOrder.getSysOrderTypeCode());
-        searchWmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("QMS-MIIO");
+        searchWmsInnerMaterialBarcodeReOrder.setOrderId(incomingInspectionOrderId);
         List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
         if(StringUtils.isEmpty(materialBarcodeReOrderDtos)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到当前单据对应的条码");
