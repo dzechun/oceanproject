@@ -181,12 +181,11 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int pushDown(String ids) {
+    public int pushDown(List<OmPurchaseOrderDet> omPurchaseOrderDets) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         String coreSourceSysOrderTypeCode = null;
         int i = 0;
         List<OmPurchaseOrderDet> list = new ArrayList<>();
-        List<OmPurchaseOrderDet> omPurchaseOrderDets = omPurchaseOrderDetMapper.selectByIds(ids);
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setBusinessType((byte)1);

@@ -66,76 +66,6 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     }
 
     /**
-     * 下发
-     * @param omSalesReturnOrder
-     * @return
-     */
-/*
-    @Override
-    @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
-    public int packageAutoOutOrder(OmSalesReturnOrder omSalesReturnOrder) {
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        int num = 0;
-        if(omSalesReturnOrder.getOmSalesReturnOrderDets().size()<1){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请输入下发数量");
-        }
-            List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
-            int i = 0;
-            for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrder.getOmSalesReturnOrderDets()) {
-                //获取物料单位名称
-                String unitName =omSalesReturnOrderDetMapper.findUnitName(omSalesReturnOrderDet.getMaterialId());
-                if(StringUtils.isEmpty(omSalesReturnOrderDet.getIssueQty())){
-                    omSalesReturnOrderDet.setIssueQty(BigDecimal.ZERO);
-                }
-                BigDecimal total = omSalesReturnOrderDet.getIssueQty().add(omSalesReturnOrderDet.getQty());
-                if(total.compareTo(omSalesReturnOrderDet.getOrderQty())==1){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"下发数量不能大于工单数量");
-                }
-                //获取收货库位
-                Map<String,Object> map = new HashMap<>();
-                map.put("orgId",sysUser.getOrganizationId());
-                map.put("warehouseId",omSalesReturnOrderDet.getWarehouseId());
-                map.put("storageType",2);
-                Long storageId = omTransferOrderMapper.findStorage(map);
-                if(StringUtils.isEmpty(storageId)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到该仓库的发货库位");
-                }
-                WmsInAsnOrderDet wmsInAsnOrderDet = WmsInAsnOrderDet.builder()
-                        .sourceOrderId(omSalesReturnOrderDet.getSalesReturnOrderId())
-                        .orderDetId(omSalesReturnOrderDet.getSalesReturnOrderDetId())
-                        .warehouseId(omSalesReturnOrderDet.getWarehouseId())
-                        .storageId(storageId)
-                        .materialId(omSalesReturnOrderDet.getMaterialId())
-                        .packingUnitName(unitName)
-                        .batchCode(omSalesReturnOrderDet.getBatchCode())
-                        .packingQty(omSalesReturnOrderDet.getQty())
-                        .productionDate(omSalesReturnOrderDet.getProductionDate())
-                        .expiredDate(omSalesReturnOrderDet.getExpiredDate())
-                        .lineNumber(i++)
-                        .build();
-                wmsInAsnOrderDets.add(wmsInAsnOrderDet);
-            }
-            WmsInAsnOrder wmsInAsnOrder = WmsInAsnOrder.builder()
-                    .sourceOrderId(omSalesReturnOrder.getSalesReturnOrderId())
-                    .materialOwnerId(omSalesReturnOrder.getMaterialOwnerId())
-                    //销退入库单
-                    .orderTypeId(Long.parseLong("5"))
-                    .relatedOrderCode1(omSalesReturnOrder.getSalesReturnOrderCode())
-                    .orderDate(new Date())
-                    .wmsInAsnOrderDetList(wmsInAsnOrderDets)
-                    .build();
-            ResponseEntity responseEntity = inFeignApi.add(wmsInAsnOrder);
-            if(responseEntity.getCode()!=0){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),responseEntity.getMessage());
-            }
-            num+=this.updateStatus(omSalesReturnOrder);
-            //更新订单状态
-        return num;
-    }
-*/
-
-    /**
      * 数量累加更新状态
      * @param omSalesReturnOrder
      * @return
@@ -288,6 +218,11 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         int num = omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
         num+=omSalesReturnOrderMapper.updateByPrimaryKeySelective(omSalesReturnOrder);
         return num;
+    }
+
+    @Override
+    public int pushDown(String ids) {
+        return 0;
     }
 
 }

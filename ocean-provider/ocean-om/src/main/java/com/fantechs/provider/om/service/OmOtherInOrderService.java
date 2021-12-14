@@ -26,5 +26,5 @@ public interface OmOtherInOrderService extends IService<OmOtherInOrder> {
      */
     int writeQty(OmOtherInOrderDet omOtherInOrderDet);
 
-    int pushDown(String ids);
+    int pushDown(List<OmOtherInOrderDet> omOtherInOrderDets);
 }

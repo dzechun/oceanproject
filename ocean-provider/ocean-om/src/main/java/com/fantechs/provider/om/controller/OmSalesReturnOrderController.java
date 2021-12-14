@@ -92,14 +92,14 @@ public class OmSalesReturnOrderController {
         }
     }
 
-/*    @ApiOperation("下发生成出库单")
-    @PostMapping("/packageAutoOutOrder")
-    public ResponseEntity packageAutoOutOrder(@RequestBody(required = true)OmSalesReturnOrder omSalesReturnOrder){
-        return ControllerUtil.returnCRUD(omSalesReturnOrderService.packageAutoOutOrder(omSalesReturnOrder));
-    }*/
-
     @PostMapping("/writeQty")
     public ResponseEntity writeQty(@RequestBody OmSalesReturnOrderDet omSalesReturnOrderDet){
         return ControllerUtil.returnCRUD(omSalesReturnOrderService.writeQty(omSalesReturnOrderDet));
+    }
+
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "采购订单明细ID列表，多个逗号分隔",required = true)@RequestParam  @NotBlank(message="采购订单明细ID不能为空") String ids) {
+        return ControllerUtil.returnCRUD(omSalesReturnOrderService.pushDown(ids));
     }
 }

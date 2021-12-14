@@ -2,6 +2,7 @@ package com.fantechs.provider.om.controller;
 
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -83,7 +84,7 @@ public class OmPurchaseOrderController {
 
     @ApiOperation(value = "下推",notes = "下推")
     @PostMapping("/pushDown")
-    public ResponseEntity pushDown(@ApiParam(value = "采购订单明细ID列表，多个逗号分隔",required = true)@RequestParam  @NotBlank(message="采购订单明细ID不能为空") String ids) {
-        return ControllerUtil.returnCRUD(omPurchaseOrderService.pushDown(ids));
+    public ResponseEntity pushDown(@ApiParam(value = "采购订单明细ID列表，多个逗号分隔",required = true)@RequestBody List<OmPurchaseOrderDet> omPurchaseOrderDets) {
+        return ControllerUtil.returnCRUD(omPurchaseOrderService.pushDown(omPurchaseOrderDets));
     }
 }
