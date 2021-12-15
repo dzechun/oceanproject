@@ -13,6 +13,8 @@ import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseProductMaterialReP;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
@@ -24,9 +26,7 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -379,24 +379,24 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
         if("IN-SPO".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成收货计划
-            List<WmsInPlanReceivingOrderDet> detList = new LinkedList<>();
+            List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
 
             for(MesPmWorkOrder mesPmWorkOrder : mesPmWorkOrders){
                 int lineNumber = 1;
 
                 coreSourceSysOrderTypeCode = "MES-WO";
 
-                WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet = new WmsInPlanReceivingOrderDet();
-                wmsInPlanReceivingOrderDet.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
-                wmsInPlanReceivingOrderDet.setSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
-                wmsInPlanReceivingOrderDet.setLineNumber(lineNumber+"");
-                wmsInPlanReceivingOrderDet.setSourceId(mesPmWorkOrder.getWorkOrderId());
-                wmsInPlanReceivingOrderDet.setMaterialId(mesPmWorkOrder.getMaterialId());
-                wmsInPlanReceivingOrderDet.setPlanQty(mesPmWorkOrder.getWorkOrderQty());  //完工数量
-                wmsInPlanReceivingOrderDet.setLineStatus((byte)1);
-                wmsInPlanReceivingOrderDet.setActualQty(mesPmWorkOrder.getOutputQty());
-                wmsInPlanReceivingOrderDet.setOperatorUserId(user.getUserId());
-                detList.add(wmsInPlanReceivingOrderDet);
+                WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
+                wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+                wmsInPlanReceivingOrderDetDto.setSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+                wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber+"");
+                wmsInPlanReceivingOrderDetDto.setSourceId(mesPmWorkOrder.getWorkOrderId());
+                wmsInPlanReceivingOrderDetDto.setMaterialId(mesPmWorkOrder.getMaterialId());
+                wmsInPlanReceivingOrderDetDto.setPlanQty(mesPmWorkOrder.getWorkOrderQty());  //完工数量
+                wmsInPlanReceivingOrderDetDto.setLineStatus((byte)1);
+                wmsInPlanReceivingOrderDetDto.setActualQty(mesPmWorkOrder.getOutputQty());
+                wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
+                detList.add(wmsInPlanReceivingOrderDetDto);
                 mesPmWorkOrder.setTotalIssueQty(mesPmWorkOrder.getTotalIssueQty().add(mesPmWorkOrder.getQty()));
                 if(mesPmWorkOrder.getTotalIssueQty().compareTo(mesPmWorkOrder.getOutputQty())== 0) {
                     mesPmWorkOrder.setIfAllIssued((byte) 1);
@@ -428,22 +428,22 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         }else if ("IN-SWK".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成收货作业
 
-            List<WmsInReceivingOrderDet> detList = new LinkedList<>();
+            List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
 
             for(MesPmWorkOrder mesPmWorkOrder : mesPmWorkOrders){
                 int lineNumber = 1;
 
-                WmsInReceivingOrderDet wmsInReceivingOrderDet = new WmsInReceivingOrderDet();
-                wmsInReceivingOrderDet.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
-                wmsInReceivingOrderDet.setSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
-                wmsInReceivingOrderDet.setLineNumber(lineNumber+"");
-                wmsInReceivingOrderDet.setSourceId(mesPmWorkOrder.getWorkOrderId());
-                wmsInReceivingOrderDet.setMaterialId(mesPmWorkOrder.getMaterialId());
-                wmsInReceivingOrderDet.setPlanQty(mesPmWorkOrder.getWorkOrderQty());
-                wmsInReceivingOrderDet.setLineStatus((byte)1);
-                wmsInReceivingOrderDet.setActualQty(mesPmWorkOrder.getOutputQty());
-                wmsInReceivingOrderDet.setOperatorUserId(user.getUserId());
-                detList.add(wmsInReceivingOrderDet);
+                WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
+                wmsInReceivingOrderDetDto.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+                wmsInReceivingOrderDetDto.setSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+                wmsInReceivingOrderDetDto.setLineNumber(lineNumber+"");
+                wmsInReceivingOrderDetDto.setSourceId(mesPmWorkOrder.getWorkOrderId());
+                wmsInReceivingOrderDetDto.setMaterialId(mesPmWorkOrder.getMaterialId());
+                wmsInReceivingOrderDetDto.setPlanQty(mesPmWorkOrder.getWorkOrderQty());
+                wmsInReceivingOrderDetDto.setLineStatus((byte)1);
+                wmsInReceivingOrderDetDto.setActualQty(mesPmWorkOrder.getOutputQty());
+                wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
+                detList.add(wmsInReceivingOrderDetDto);
                 mesPmWorkOrder.setTotalIssueQty(mesPmWorkOrder.getTotalIssueQty().add(mesPmWorkOrder.getQty()));
                 if(mesPmWorkOrder.getTotalIssueQty().compareTo(mesPmWorkOrder.getOutputQty())== 0) {
                     mesPmWorkOrder.setIfAllIssued((byte) 1);

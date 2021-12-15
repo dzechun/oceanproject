@@ -13,6 +13,8 @@ import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.om.OmHtOtherInOrder;
@@ -20,9 +22,7 @@ import com.fantechs.common.base.general.entity.om.OmHtOtherInOrderDet;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -343,7 +343,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
         if("IN-SPO".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成收货计划
-            List<WmsInPlanReceivingOrderDet> detList = new LinkedList<>();
+            List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
 
             for(OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets){
                 int lineNumber = 1;
@@ -353,17 +353,17 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 List<OmOtherInOrderDto> omOtherInOrderDto = omOtherInOrderMapper.findList(map);
                 coreSourceSysOrderTypeCode = omOtherInOrderDto.get(0).getSysOrderTypeCode();
 
-                WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet = new WmsInPlanReceivingOrderDet();
-                wmsInPlanReceivingOrderDet.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
-                wmsInPlanReceivingOrderDet.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
-                wmsInPlanReceivingOrderDet.setLineNumber(lineNumber+"");
-                wmsInPlanReceivingOrderDet.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
-                wmsInPlanReceivingOrderDet.setMaterialId(omOtherInOrderDet.getMaterialId());
-                wmsInPlanReceivingOrderDet.setPlanQty(omOtherInOrderDet.getOrderQty());
-                wmsInPlanReceivingOrderDet.setLineStatus((byte)1);
-                wmsInPlanReceivingOrderDet.setActualQty(omOtherInOrderDet.getReceivingQty());
-                wmsInPlanReceivingOrderDet.setOperatorUserId(user.getUserId());
-                detList.add(wmsInPlanReceivingOrderDet);
+                WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
+                wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                wmsInPlanReceivingOrderDetDto.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber+"");
+                wmsInPlanReceivingOrderDetDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
+                wmsInPlanReceivingOrderDetDto.setMaterialId(omOtherInOrderDet.getMaterialId());
+                wmsInPlanReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getOrderQty());
+                wmsInPlanReceivingOrderDetDto.setLineStatus((byte)1);
+                wmsInPlanReceivingOrderDetDto.setActualQty(omOtherInOrderDet.getReceivingQty());
+                wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
+                detList.add(wmsInPlanReceivingOrderDetDto);
                 omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                 if(omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty())== 0) {
                     omOtherInOrderDet.setIfAllIssued((byte) 1);
@@ -395,7 +395,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         }else if ("IN-SWK".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成收货作业
 
-            List<WmsInReceivingOrderDet> detList = new LinkedList<>();
+            List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
 
             for(OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets){
                 int lineNumber = 1;
@@ -404,17 +404,17 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 List<OmOtherInOrderDto> omOtherInOrderDto = omOtherInOrderMapper.findList(map);
                 coreSourceSysOrderTypeCode = omOtherInOrderDto.get(0).getSysOrderTypeCode();
 
-                WmsInReceivingOrderDet wmsInReceivingOrderDet = new WmsInReceivingOrderDet();
-                wmsInReceivingOrderDet.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
-                wmsInReceivingOrderDet.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
-                wmsInReceivingOrderDet.setLineNumber(lineNumber+"");
-                wmsInReceivingOrderDet.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
-                wmsInReceivingOrderDet.setMaterialId(omOtherInOrderDet.getMaterialId());
-                wmsInReceivingOrderDet.setPlanQty(omOtherInOrderDet.getOrderQty());
-                wmsInReceivingOrderDet.setLineStatus((byte)1);
-                wmsInReceivingOrderDet.setActualQty(omOtherInOrderDet.getReceivingQty());
-                wmsInReceivingOrderDet.setOperatorUserId(user.getUserId());
-                detList.add(wmsInReceivingOrderDet);
+                WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
+                wmsInReceivingOrderDetDto.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                wmsInReceivingOrderDetDto.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                wmsInReceivingOrderDetDto.setLineNumber(lineNumber+"");
+                wmsInReceivingOrderDetDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
+                wmsInReceivingOrderDetDto.setMaterialId(omOtherInOrderDet.getMaterialId());
+                wmsInReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getOrderQty());
+                wmsInReceivingOrderDetDto.setLineStatus((byte)1);
+                wmsInReceivingOrderDetDto.setActualQty(omOtherInOrderDet.getReceivingQty());
+                wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
+                detList.add(wmsInReceivingOrderDetDto);
                 omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                 if(omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty())== 0) {
                     omOtherInOrderDet.setIfAllIssued((byte) 1);
