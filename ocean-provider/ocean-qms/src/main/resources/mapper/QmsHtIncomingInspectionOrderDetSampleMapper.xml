@@ -9,7 +9,7 @@
     <result column="incoming_inspection_order_det_sample_id" jdbcType="BIGINT" property="incomingInspectionOrderDetSampleId" />
     <result column="incoming_inspection_order_det_id" jdbcType="BIGINT" property="incomingInspectionOrderDetId" />
     <result column="incoming_inspection_order_id" jdbcType="BIGINT" property="incomingInspectionOrderId" />
-    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId" />
     <result column="sample_value" jdbcType="VARCHAR" property="sampleValue" />
     <result column="badness_phenotype_id" jdbcType="BIGINT" property="badnessPhenotypeId" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -28,6 +28,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="badness_phenotype_desc" jdbcType="VARCHAR" property="badnessPhenotypeDesc"/>
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -35,7 +36,7 @@
     qiiods.incoming_inspection_order_det_sample_id,
     qiiods.incoming_inspection_order_det_id,
     qiiods.incoming_inspection_order_id,
-    qiiods.barcode,
+    qiiods.material_barcode_id,
     qiiods.sample_value,
     qiiods.badness_phenotype_id,
     qiiods.`status`,
@@ -54,10 +55,12 @@
   <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
     bbp.badness_phenotype_desc,
+    wimb.barcode,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from qms_ht_incoming_inspection_order_det_sample qiiods
+    left join wms_inner_material_barcode wimb ON qiiods.material_barcode_id = wimb.material_barcode_id
     left join base_badness_phenotype bbp ON qiiods.badness_phenotype_id = bbp.badness_phenotype_id
     left join sys_user u on qiiods.create_user_id=u.user_id
     left join sys_user s on qiiods.modified_user_id=s.user_id

@@ -12,7 +12,6 @@
         <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
         <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
         <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
-        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>
         <result column="delivery_date" jdbcType="TIMESTAMP" property="deliveryDate"/>
         <result column="unit_price" jdbcType="DECIMAL" property="unitPrice"/>
@@ -45,7 +44,6 @@
     opod.material_id,
     opod.unit_name,opod.order_qty,
     opod.actual_qty,
-    opod.warehouse_id,
     opod.factory_id,
     opod.delivery_date,
     opod.unit_price,
@@ -84,10 +82,8 @@
         select
         <include refid="Base_Column_List"/>,
         bm.material_code as materialCode, bm.material_name as materialName, bm.material_desc as materialDesc,
-        bm.material_version as materialVersion,
-        bw.warehouse_code as warehouseCode, bw.warehouse_name as warehouseName, bm.material_source as materialSource,
-        bmc.material_category_name as materialCategoryName
-        , bpm.product_model_name as productModelName,opo.purchase_order_code,bs.supplier_name as supplierName,
+        bm.material_version as materialVersion, bm.material_source as materialSource,bmc.material_category_name as materialCategoryName,
+        bpm.product_model_name as productModelName,opo.purchase_order_code,bs.supplier_name as supplierName,
         u.user_name as create_user_name,
         s.user_name as modified_user_name,
         bo.organization_name
@@ -99,7 +95,6 @@
         left join base_material_tab bmt on opod.material_id = bmt.material_id
         left join base_material_category bmc on bmt.material_category_id = bmc.material_category_id
         left join base_product_model bpm on bmt.product_model_id = bpm.product_model_id
-        left join base_warehouse bw on opod.warehouse_id = bw.warehouse_id
         left join base_supplier bs on opo.supplier_id = bs.supplier_id
         left join sys_user u on opod.create_user_id=u.user_id
         left join sys_user s on opod.modified_user_id=s.user_id

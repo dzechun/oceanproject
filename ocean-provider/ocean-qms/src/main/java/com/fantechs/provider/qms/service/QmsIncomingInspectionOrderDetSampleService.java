@@ -20,7 +20,7 @@ public interface QmsIncomingInspectionOrderDetSampleService extends IService<Qms
 
     List<QmsHtIncomingInspectionOrderDetSample> findHtList(Map<String, Object> map);
 
-    String checkBarcode(PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto);
+    Long checkBarcode(PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto);
 
     int sampleSubmit(List<PdaIncomingSampleSubmitDto> list);
 

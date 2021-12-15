@@ -105,7 +105,7 @@ public class OmOtherInOrderController {
 
     @ApiOperation(value = "下推",notes = "下推")
     @PostMapping("/pushDown")
-    public ResponseEntity pushDown(@ApiParam(value = "其他入库计划ID列表，多个逗号分隔",required = true)@RequestParam  @NotBlank(message="其他入库计划ID不能为空") String ids) {
-        return ControllerUtil.returnCRUD(omOtherInOrderService.pushDown(ids));
+    public ResponseEntity pushDown(@ApiParam(value = "其他入库计划ID列表，多个逗号分隔",required = true)@RequestBody  List<OmOtherInOrderDet> omOtherInOrderDets) {
+        return ControllerUtil.returnCRUD(omOtherInOrderService.pushDown(omOtherInOrderDets));
     }
 }

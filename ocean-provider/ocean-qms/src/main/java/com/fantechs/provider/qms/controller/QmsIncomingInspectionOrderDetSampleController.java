@@ -50,9 +50,9 @@ public class QmsIncomingInspectionOrderDetSampleController {
 
     @ApiOperation("PDA条码校验")
     @PostMapping("/checkBarcode")
-    public ResponseEntity<String> checkBarcode(@ApiParam(value = "查询对象")@RequestBody @Validated PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto) {
-        String barcode = qmsIncomingInspectionOrderDetSampleService.checkBarcode(pdaIncomingCheckBarcodeDto);
-        return  ControllerUtil.returnDataSuccess(barcode,StringUtils.isEmpty(barcode)?0:1);
+    public ResponseEntity<Long> checkBarcode(@ApiParam(value = "查询对象")@RequestBody @Validated PdaIncomingCheckBarcodeDto pdaIncomingCheckBarcodeDto) {
+        Long materialBarcodeId = qmsIncomingInspectionOrderDetSampleService.checkBarcode(pdaIncomingCheckBarcodeDto);
+        return  ControllerUtil.returnDataSuccess(materialBarcodeId,StringUtils.isEmpty(materialBarcodeId)?0:1);
     }
 
     @ApiOperation(value = "PDA样本值提交",notes = "PDA样本值提交")

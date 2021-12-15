@@ -19,6 +19,12 @@ public class PdaIncomingSampleSubmitDto implements Serializable {
     private String barcode;
 
     /**
+     * 条码ID
+     */
+    @ApiModelProperty(name="materialBarcodeId",value = "条码ID")
+    private Long materialBarcodeId;
+
+    /**
      * 样本值
      */
     @ApiModelProperty(name="sampleValue",value = "样本值")

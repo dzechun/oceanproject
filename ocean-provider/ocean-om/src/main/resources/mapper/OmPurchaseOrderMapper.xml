@@ -10,6 +10,7 @@
         <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
         <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
         <result column="purchase_dept_id" jdbcType="BIGINT" property="purchaseDeptId"/>
         <result column="purchase_user_id" jdbcType="BIGINT" property="purchaseUserId"/>
@@ -44,6 +45,7 @@
         opo.order_type,
         opo.order_status,
         opo.supplier_id,
+        opo.warehouse_id,
         opo.order_date,
         opo.purchase_dept_id,
         opo.purchase_user_id,
@@ -77,10 +79,14 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-
         <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
         <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
         <result column="complete_detail" jdbcType="VARCHAR" property="completeDetail"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <collection property="omPurchaseOrderDetDtos" ofType="com.fantechs.common.base.general.dto.om.OmPurchaseOrderDetDto"
+                    column="{purchaseOrderId=purchase_order_id}"  select="com.fantechs.provider.om.mapper.OmPurchaseOrderDetMapper.findList">
+        </collection>
     </resultMap>
 
 
@@ -88,9 +94,9 @@
         select
         <include refid="Base_Column_List"/>,
         bs.supplier_code as supplierCode, bs.supplier_name as supplierName,bs.e_mail as
-        eMail,bs.mobile_phone,bs.telephone,ba.complete_detail,
+        eMail,bs.mobile_phone,bs.telephone,ba.complete_detail,bw.warehouse_name as warehouse_name,
         bc.currency_name as currencyName,
-        bd.dept_code as deptCode, bd.dept_name as deptName,sum(opod.material_total_price) as totalPrice,
+        bd.dept_code as deptCode,bd.dept_name as deptName,sum(opod.material_total_price) as totalPrice,
         supu.nick_name as purchaseUserName, supu.nick_name as makeOrderUserName, supu.nick_name as auditUserName,
         u.user_name as create_user_name,
         s.user_name as modified_user_name,
@@ -101,7 +107,8 @@
         left join base_supplier bs on opo.supplier_id = bs.supplier_id
         left join base_dept bd on opo.purchase_dept_id = bd.dept_id
         left join base_currency bc on opo.currency_id = bc.currency_id
-        LEFT JOIN om_purchase_order_det opod ON opo.purchase_order_id = opod.purchase_order_id
+        left join om_purchase_order_det opod on opo.purchase_order_id = opod.purchase_order_id
+        left join base_warehouse bw on opo.warehouse_id = bw.warehouse_id
         left join sys_user supu on opo.purchase_user_id = supu.user_id
         left join sys_user sumou on opo.make_order_user_id = sumou.user_id
         left join sys_user suau on opo.audit_user_id = suau.user_id
@@ -123,8 +130,14 @@
             <if test="orgId != null">
                 and opo.org_id = #{orgId}
             </if>
+            <if test="warehouseId != null">
+                and opo.warehouse_id = #{warehouseId}
+            </if>
             <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark != 1">
                 and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
+            </if>
+            <if test="warehouseName != null and warehouseName != ''">
+                and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
             </if>
             <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark ==1">
                 and opo.purchase_order_code = #{purchaseOrderCode}
