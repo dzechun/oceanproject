@@ -6,7 +6,6 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInHtPlanReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInPlanReceivingOrderImport;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInPlanReceivingOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -97,8 +96,8 @@ public class WmsInPlanReceivingOrderController {
 
     @ApiOperation(value = "下推",notes = "下推")
     @PostMapping("/pushDown")
-    public ResponseEntity pushDown(@ApiParam(value = "",required = true)@RequestParam  @NotBlank(message="来料检验单ID不能为空")List<WmsInPlanReceivingOrderDet> wmsInPlanReceivingOrderDets) {
-        return ControllerUtil.returnCRUD(wmsInPlanReceivingOrderService.pushDown(wmsInPlanReceivingOrderDets));
+    public ResponseEntity pushDown(@ApiParam(value = "",required = true)@RequestParam  @NotBlank(message="收货计划明细ID不能为空")String ids) {
+        return ControllerUtil.returnCRUD(wmsInPlanReceivingOrderService.pushDown(ids));
     }
 
     @PostMapping(value = "/export")
