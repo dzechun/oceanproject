@@ -32,4 +32,7 @@ public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
     int update(MesPmWorkOrderDto mesPmWorkOrderDto);
 
     int updatePmWorkOrder(MesPmWorkOrder mesPmWorkOrder);
+
+    int pushDown(List<MesPmWorkOrder> mesPmWorkOrders);
+
 }

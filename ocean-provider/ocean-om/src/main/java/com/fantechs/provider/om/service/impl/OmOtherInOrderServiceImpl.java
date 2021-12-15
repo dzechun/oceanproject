@@ -338,6 +338,8 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
 
         }
+        if (set.size()>1)
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
 
         if("IN-SPO".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成收货计划
@@ -369,11 +371,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     omOtherInOrderDet.setIfAllIssued((byte) 0);
                 }
                 list.add(omOtherInOrderDet);
-                set.add(omOtherInOrderDet.getWarehouseId());
             }
-
-            if (set.size()>1)
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
 
             WmsInPlanReceivingOrder wmsInPlanReceivingOrder = new WmsInPlanReceivingOrder();
             wmsInPlanReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
@@ -385,10 +383,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             wmsInPlanReceivingOrder.setModifiedTime(new Date());
             wmsInPlanReceivingOrder.setStatus((byte)1);
             wmsInPlanReceivingOrder.setOrgId(user.getOrganizationId());
-            Iterator<Long> iterator=set.iterator();
-            while(iterator.hasNext()){
-                wmsInPlanReceivingOrder.setWarehouseId(iterator.next());
-            }
+            wmsInPlanReceivingOrder.setWarehouseId(omOtherInOrderDets.get(0).getWarehouseId());
             wmsInPlanReceivingOrder.setInPlanReceivingOrderDets(detList);
 
             ResponseEntity responseEntity = inFeignApi.add(wmsInPlanReceivingOrder);
@@ -427,12 +422,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     omOtherInOrderDet.setIfAllIssued((byte) 0);
                 }
                 list.add(omOtherInOrderDet);
-                set.add(omOtherInOrderDet.getWarehouseId());
             }
-
-            if (set.size()>1)
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
-
             WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
             wmsInReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
             wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
@@ -443,10 +433,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             wmsInReceivingOrder.setModifiedTime(new Date());
             wmsInReceivingOrder.setStatus((byte)1);
             wmsInReceivingOrder.setOrgId(user.getOrganizationId());
-            Iterator<Long> iterator=set.iterator();
-            while(iterator.hasNext()){
-                wmsInReceivingOrder.setWarehouseId(iterator.next());
-            }
+            wmsInReceivingOrder.setWarehouseId(omOtherInOrderDets.get(0).getWarehouseId());
             wmsInReceivingOrder.setWmsInReceivingOrderDets(detList);
 
             ResponseEntity responseEntity = inFeignApi.add(wmsInReceivingOrder);
@@ -534,11 +521,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 else
                     omOtherInOrderDet.setIfAllIssued((byte)0);
                 list.add(omOtherInOrderDet);
-                set.add(omOtherInOrderDet.getWarehouseId());
             }
-            if (set.size()>1)
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
-
             WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
             wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
             wmsInInPlanOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
@@ -546,10 +529,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             wmsInInPlanOrder.setOrderStatus((byte)1);
             wmsInInPlanOrder.setCreateUserId(user.getUserId());
             wmsInInPlanOrder.setCreateTime(new Date());
-            Iterator<Long> iterator=set.iterator();
-            while(iterator.hasNext()){
-                wmsInInPlanOrder.setWarehouseId(iterator.next());
-            }
+            wmsInInPlanOrder.setWarehouseId(omOtherInOrderDets.get(0).getWarehouseId());
             wmsInInPlanOrder.setModifiedUserId(user.getUserId());
             wmsInInPlanOrder.setModifiedTime(new Date());
             wmsInInPlanOrder.setStatus((byte)1);
@@ -590,20 +570,13 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 else
                     omOtherInOrderDet.setIfAllIssued((byte)0);
                 list.add(omOtherInOrderDet);
-                set.add(omOtherInOrderDet.getWarehouseId());
             }
-            if (set.size()>1)
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
-
             WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
             wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
             wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
             wmsInnerJobOrder.setJobOrderType((byte)1);
             wmsInnerJobOrder.setOrderStatus((byte)1);
-            Iterator<Long> iterator=set.iterator();
-            while(iterator.hasNext()){
-                wmsInnerJobOrder.setWarehouseId(iterator.next());
-            }
+            wmsInnerJobOrder.setWarehouseId(omOtherInOrderDets.get(0).getWarehouseId());
             wmsInnerJobOrder.setCreateUserId(user.getUserId());
             wmsInnerJobOrder.setCreateTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(user.getUserId());
