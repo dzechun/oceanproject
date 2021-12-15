@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInHtReceivingOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInHtReceivingOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_receiving_order_det_id" jdbcType="BIGINT" property="htReceivingOrderDetId" />
+    <result column="receiving_order_det_id" jdbcType="BIGINT" property="receivingOrderDetId" />
+    <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
+    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+    <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
+    <result column="source_id" jdbcType="BIGINT" property="sourceId" />
+    <result column="receiving_order_id" jdbcType="BIGINT" property="receivingOrderId" />
+    <result column="line_number" jdbcType="VARCHAR" property="lineNumber" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
+    <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
+    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+    <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId" />
+    <result column="line_status" jdbcType="TINYINT" property="lineStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInHtReceivingOrderDetDto">
+  <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+  <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+  <result column="materialDesc" jdbcType="VARCHAR" property="materialDesc"/>
+  <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+  <result column="operator_user_name" jdbcType="VARCHAR" property="operatorUserName"/>
+  <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+  <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+  <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+</resultMap>
+<sql id="base_column_list">
+wirod.ht_receiving_order_det_id,
+wirod.receiving_order_det_id,
+    wirod.core_source_order_code,
+wirod.source_order_code,
+wirod.core_source_id,
+wirod.source_id,
+wirod.receiving_order_id,
+wirod.line_number,
+wirod.material_id,
+wirod.batch_code,
+wirod.production_time,
+wirod.plan_qty,
+wirod.actual_qty,
+wirod.operator_user_id,
+wirod.line_status,
+wirod.if_all_issued,
+wirod.status,
+wirod.remark,
+wirod.org_id,
+wirod.create_user_id,
+wirod.create_time,
+wirod.modified_user_id,
+wirod.modified_time,
+wirod.is_delete,
+wirod.option1,
+wirod.option2,
+wirod.option3
+</sql>
+<select id="findHtList" resultMap="BaseResultMapDto">
+select <include refid="base_column_list"/>,bm.material_code,bm.material_name,bm.material_desc,bm.material_version,u.user_name as operator_user_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
+FROM wms_in_ht_receiving_order_det wirod
+LEFT JOIN base_material bm ON wirod.material_id = bm.material_id
+LEFT JOIN sys_user u ON u.user_id = wirod.operator_user_id
+LEFT JOIN sys_user su ON wirod.create_user_id = su.user_id
+LEFT JOIN sys_user sus ON wirod.modified_user_id = sus.user_id
+LEFT JOIN base_organization bo ON wirod.org_id = bo.organization_id
+<where>
+  <if test="receivingOrderId!=null and receivingOrderId!=''">
+    and wirod.receiving_order_id = #{receivingOrderId}
+  </if>
+  <if test="lineStatusList!=null and lineStatusList.size > 0">
+    and wirod.line_status in
+    <foreach collection="lineStatusList" item="item" separator="," open="(" close=")">
+      #{item}
+    </foreach>
+  </if>
+</where>
+</select>
+</mapper>

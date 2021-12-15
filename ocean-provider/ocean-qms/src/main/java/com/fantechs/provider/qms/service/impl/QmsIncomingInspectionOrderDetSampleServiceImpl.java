@@ -60,9 +60,6 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
     private QmsIncomingInspectionOrderService qmsIncomingInspectionOrderService;
 
     @Resource
-    private BaseFeignApi baseFeignApi;
-
-    @Resource
     private InnerFeignApi innerFeignApi;
 
 

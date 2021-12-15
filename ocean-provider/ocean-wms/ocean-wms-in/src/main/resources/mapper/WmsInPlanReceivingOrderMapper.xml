@@ -23,6 +23,9 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <collection property="inPlanReceivingOrderDets" ofType="com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto"
+                column="{planReceivingOrderId=plan_receiving_order_id}" select="com.fantechs.provider.wms.in.mapper.WmsInPlanReceivingOrderDetMapper.findList">
+    </collection>
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDto">
       <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>

@@ -1,11 +1,13 @@
 package com.fantechs.provider.wms.in.controller;
 
+import com.fantechs.common.base.general.dto.wms.in.WmsInHtReceivingOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInReceivingOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.in.service.WmsInHtReceivingOrderDetService;
 import com.fantechs.provider.wms.in.service.WmsInReceivingOrderDetService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -31,6 +33,8 @@ public class WmsInReceivingOrderDetController {
 
     @Resource
     private WmsInReceivingOrderDetService wmsInReceivingOrderDetService;
+    @Resource
+    private WmsInHtReceivingOrderDetService wmsInHtReceivingOrderDetService;
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
@@ -54,12 +58,12 @@ public class WmsInReceivingOrderDetController {
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
-//    @ApiOperation("历史列表")
-//    @PostMapping("/findHtList")
-//    public ResponseEntity<List<WmsInReceivingOrderDet>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInReceivingOrderDet searchWmsInReceivingOrderDet) {
-//        Page<Object> page = PageHelper.startPage(searchWmsInReceivingOrderDet.getStartPage(),searchWmsInReceivingOrderDet.getPageSize());
-//        List<WmsInReceivingOrderDet> list = wmsInReceivingOrderDetService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsInReceivingOrderDet));
-//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-//    }
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<WmsInHtReceivingOrderDetDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInReceivingOrderDet searchWmsInReceivingOrderDet) {
+        Page<Object> page = PageHelper.startPage(searchWmsInReceivingOrderDet.getStartPage(),searchWmsInReceivingOrderDet.getPageSize());
+        List<WmsInHtReceivingOrderDetDto> list = wmsInHtReceivingOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInReceivingOrderDet));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 
 }

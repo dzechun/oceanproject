@@ -1,39 +1,38 @@
 package com.fantechs.common.base.general.entity.wms.in;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderBarcode;
-import com.fantechs.common.base.support.ValidGroup;
+import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-
-;
-;
+import javax.persistence.*;
+import lombok.Data;
 
 /**
- * 收货单明细
- * wms_in_receiving_order_det
+ * 收货单明细履历表
+ * wms_in_ht_receiving_order_det
  * @author mr.lei
- * @date 2021-12-13 20:06:10
+ * @date 2021-12-15 16:01:15
  */
 @Data
-@Table(name = "wms_in_receiving_order_det")
-public class WmsInReceivingOrderDet extends ValidGroup implements Serializable {
+@Table(name = "wms_in_ht_receiving_order_det")
+public class WmsInHtReceivingOrderDet extends ValidGroup implements Serializable {
+    /**
+     * 收货单明细履历ID
+     */
+    @ApiModelProperty(name="htReceivingOrderDetId",value = "收货单明细履历ID")
+    @Excel(name = "收货单明细履历ID", height = 20, width = 30,orderNum="") 
+    @Id
+    @Column(name = "ht_receiving_order_det_id")
+    private Long htReceivingOrderDetId;
+
     /**
      * 收货单明细ID
      */
     @ApiModelProperty(name="receivingOrderDetId",value = "收货单明细ID")
     @Excel(name = "收货单明细ID", height = 20, width = 30,orderNum="") 
-    @Id
     @Column(name = "receiving_order_det_id")
     private Long receivingOrderDetId;
 
@@ -143,14 +142,6 @@ public class WmsInReceivingOrderDet extends ValidGroup implements Serializable {
     private Byte lineStatus;
 
     /**
-     * 是否已全部下发(0-否 1-是)
-     */
-    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
-    @Excel(name = "是否已全部下发(0-否 1-是)", height = 20, width = 30,orderNum="") 
-    @Column(name = "if_all_issued")
-    private Byte ifAllIssued;
-
-    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
@@ -219,10 +210,6 @@ public class WmsInReceivingOrderDet extends ValidGroup implements Serializable {
     private String option2;
 
     private String option3;
-
-    @Transient
-    @ApiModelProperty(name = "wmsInReceivingOrderBarcodeList",value = "条码id")
-    private List<WmsInReceivingOrderBarcode> wmsInReceivingOrderBarcodeList;
 
     private static final long serialVersionUID = 1L;
 }

@@ -2,13 +2,16 @@ package com.fantechs.provider.wms.in.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.in.WmsInHtReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.imports.WmsInReceivingOrderImport;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInReceivingOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.wms.in.service.WmsInHtReceivingOrderService;
 import com.fantechs.provider.wms.in.service.WmsInReceivingOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -40,6 +43,8 @@ public class WmsInReceivingOrderController {
 
     @Resource
     private WmsInReceivingOrderService wmsInReceivingOrderService;
+    @Resource
+    private WmsInHtReceivingOrderService wmsInHtReceivingOrderService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -81,13 +86,19 @@ public class WmsInReceivingOrderController {
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
-//    @ApiOperation("历史列表")
-//    @PostMapping("/findHtList")
-//    public ResponseEntity<List<WmsInReceivingOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInReceivingOrder searchWmsInReceivingOrder) {
-//        Page<Object> page = PageHelper.startPage(searchWmsInReceivingOrder.getStartPage(),searchWmsInReceivingOrder.getPageSize());
-//        List<WmsInReceivingOrder> list = wmsInReceivingOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsInReceivingOrder));
-//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-//    }
+    @ApiOperation("历史列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<WmsInHtReceivingOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInReceivingOrder searchWmsInReceivingOrder) {
+        Page<Object> page = PageHelper.startPage(searchWmsInReceivingOrder.getStartPage(),searchWmsInReceivingOrder.getPageSize());
+        List<WmsInHtReceivingOrderDto> list = wmsInHtReceivingOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInReceivingOrder));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "",required = true)@RequestParam  @NotBlank(message="收货计划明细ID不能为空")String ids) {
+        return ControllerUtil.returnCRUD(wmsInReceivingOrderService.pushDown(ids));
+    }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
@@ -96,7 +107,7 @@ public class WmsInReceivingOrderController {
     List<WmsInReceivingOrderDto> list = wmsInReceivingOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInReceivingOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsInReceivingOrder信息", WmsInReceivingOrderDto.class, "WmsInReceivingOrder.xls", response);
+        EasyPoiUtils.exportExcel(list, "收货作业", "收货作业", WmsInReceivingOrderDto.class, "收货作业.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
@@ -107,7 +118,7 @@ public class WmsInReceivingOrderController {
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<WmsInReceivingOrder> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, WmsInReceivingOrder.class);
+            List<WmsInReceivingOrderImport> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, WmsInReceivingOrderImport.class);
             Map<String, Object> resultMap = wmsInReceivingOrderService.importExcel(baseAddressImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
