@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.inner.controller.PDA;
 import com.fantechs.common.base.general.dto.wms.inner.SaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
@@ -101,8 +102,9 @@ public class PDAWmsInnerJobOrderController {
     @ApiOperation("PDA先作业后单 产生上架单")
     @ApiIgnore
     @PostMapping("/saveInnerJobOrder")
-    public ResponseEntity saveInnerJobOrder(@RequestBody(required = true) List<SaveInnerJobOrderDto> list){
-        return ControllerUtil.returnCRUD(wmsInnerJobOrderService.saveInnerJobOrder(list));
+    public ResponseEntity<WmsInnerJobOrder> saveInnerJobOrder(@RequestBody(required = true) List<SaveInnerJobOrderDto> list){
+        WmsInnerJobOrder wmsInnerJobOrder=wmsInnerJobOrderService.saveInnerJobOrder(list);
+        return ControllerUtil.returnDataSuccess(wmsInnerJobOrder,StringUtils.isEmpty(wmsInnerJobOrder)?0:1);
     }
 
     @ApiOperation("PDA激活关闭栈板")

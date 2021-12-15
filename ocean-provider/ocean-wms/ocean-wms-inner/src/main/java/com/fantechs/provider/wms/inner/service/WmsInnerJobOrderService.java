@@ -71,11 +71,30 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder);
 
     /**
+     * PDA先单后作业 扫描检验条码
+     * @param notSysCode 是否非系统条码
+     * @param orderId 主表ID
+     * @param orderDetId 明细ID
+     * @param barCode 条码
+     * @return
+     */
+    Map<String,Object> checkBarcodeHaveOrder(String notSysCode,Long orderId,
+                                             Long orderDetId, String barCode);
+
+    /**
+     * PDA先作业后单 扫描检验条码
+     * @param notSysCode 是否非系统条码
+     * @param barCode 条码
+     * @return
+     */
+    Map<String,Object> checkBarcodeNotOrder(String notSysCode,String barCode);
+
+    /**
      * PDA先作业后单 产生上架单
      * @param list
      * @return
      */
-    int saveInnerJobOrder(List<SaveInnerJobOrderDto> list);
+    WmsInnerJobOrder saveInnerJobOrder(List<SaveInnerJobOrderDto> list);
 
     /**
      * PDA激活关闭栈板
