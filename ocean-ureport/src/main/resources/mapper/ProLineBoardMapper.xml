@@ -78,6 +78,9 @@
         </if>
         from mes_sfc_barcode_process_record msbpr
         <where>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and msbpr.work_order_code = #{workOrderCode}
+            </if>
             <if test="proLineId!=null and proLineId!=''">
                 and msbpr.pro_line_id = #{proLineId}
             </if>
@@ -135,5 +138,63 @@
                 and bpy.yield_type = #{yieldType}
             </if>
         </where>
+    </select>
+    <select id="findLastBarCideRecirdList" resultType="com.fantechs.entity.ProductLineLeft" parameterType="com.fantechs.entity.search.SearchProLineBoard">
+        SELECT
+            msbpr.work_order_code as workOrderCode
+        FROM
+            mes_sfc_barcode_process_record msbpr
+            <where>
+                <if test="processCode!=null and processCode!=''">
+                    and msbpr.process_code = #{processCode}
+                </if>
+                <if test="proLineId!=null and proLineId!=''">
+                    and msbpr.pro_line_id = #{proLineId}
+                </if>
+            </where>
+        ORDER BY
+            barcode_process_record_id DESC limit 0,1
+    </select>
+    <select id="findNextPlan" resultType="com.fantechs.entity.ProductDailyPlanModel" parameterType="com.fantechs.entity.search.SearchProLineBoard">
+        SELECT
+            mpdp.seq_num as seqNum,
+            mpdp.schedule_qty as scheduledQty,
+            bm.material_name as materialName,
+            mpwo.work_order_code as workOrderCode
+        FROM
+            mes_pm_daily_plan mpdp
+        LEFT JOIN mes_pm_work_order mpwo ON mpwo.work_order_id = mpdp.work_order_id
+        LEFT JOIN base_material bm ON bm.material_id = mpwo.material_id
+        <where>
+            <if test="workOrderId != null and workOrderId != ''">
+                and mpdp.work_order_id = #{workOrderId}
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="seqNum != null and seqNum != ''">
+                and mpdp.seq_num = #{seqNum}
+            </if>
+        </where>
+    </select>
+    <select id="findProductLineRight" resultType="com.fantechs.entity.ProductLineRight" >
+        SELECT
+            msbpr.work_order_code AS workOrderCode,
+            msbpr.process_name AS processName,
+            brp.standard_time AS standardTime,
+            msbpr.option1 AS practicalTime,
+            1 as numberOfTimes
+        FROM
+            mes_sfc_barcode_process_record msbpr
+            LEFT JOIN base_route_process brp ON brp.route_id = msbpr.route_id
+            AND brp.process_id = msbpr.process_id
+        <where>
+            <if test="workOrderId != null and workOrderId != ''">
+                and msbpr.work_order_id = #{workOrderId}
+            </if>
+        </where>
+        ORDER BY
+            create_time DESC
+
     </select>
 </mapper>

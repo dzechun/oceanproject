@@ -24,7 +24,7 @@ import java.util.List;
  * @Date 2021/12/01
  */
 @RestController
-@Api(tags = "雷赛-产线智能看板")
+@Api(tags = "雷赛-生产计划看板")
 @RequestMapping("/productDailyPlan")
 @Validated
 public class ProductDailyPlanController {

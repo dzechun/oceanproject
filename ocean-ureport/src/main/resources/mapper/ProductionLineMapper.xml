@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.ProductionLineMapper">
+<!--    <resultMap id="BaseResultMap" type="com.fantechs.entity.ProductionLine">-->
+<!--        <result column="work_order_code" jdbcType="VARCHAR" property="scheduledQty" />-->
+<!--        <result column="material_code" jdbcType="VARCHAR" property="outputQty" />-->
+<!--        <result column="material_name" jdbcType="VARCHAR" property="noOutputQty" />-->
+<!--        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc" />-->
+<!--        <result column="product_model_name" jdbcType="VARCHAR" property="productModelName" />-->
+<!--        <result column="material_version" jdbcType="VARCHAR" property="materialVersion" />-->
+<!--        <result column="work_order_qty" jdbcType="VARCHAR" property="workOrderQty" />-->
+<!--        <result column="scheduled_qty" jdbcType="VARCHAR" property="scheduledQty" />-->
+<!--        <result column="finished_qty" jdbcType="VARCHAR" property="finishedQty" />-->
+<!--        <result column="production_qty" jdbcType="VARCHAR" property="productionQty" />-->
+<!--        <result column="work_order_status" jdbcType="VARCHAR" property="workOrderStatus" />-->
+<!--        <result column="product_condition" jdbcType="VARCHAR" property="productCondition" />-->
+<!--        <result column="if_order_inserting" jdbcType="VARCHAR" property="ifOrderInserting" />-->
+<!--        <result column="plan_date" jdbcType="VARCHAR" property="planDate" />-->
+<!--    </resultMap>-->
+    <select id="findTopList" resultType="com.fantechs.entity.ProductLineTop" parameterType="map">
+        select 	sum(mpdp.schedule_qty)AS 'scheduledQty', sum(mpwo.output_qty) AS 'outputQty',mpwo.work_order_id as workOrderId
+        from mes_pm_daily_plan mpdp
+        LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
+        LEFT JOIN base_pro_line bpl ON mpwo.pro_line_id = bpl.pro_line_id
+        where 1=1 and mpdp.status = 1
+        <if test="planDateBegin!= null and planDateBegin!= '' and planDateEnd!= null and planDateEnd!= ''">
+            and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{planDateBegin} AND #{planDateEnd}
+        </if>
+        <if test="orgId!=null">
+            and mpdp.org_id=#{orgId}
+        </if>
+        <if test="proLineId!=null and proLineId!=''">
+            and mpwo.pro_line_id = #{proLineId}
+        </if>
+    </select>
+</mapper>

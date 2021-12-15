@@ -2,9 +2,11 @@ package com.fantechs.mapper;
 
 
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductYield;
-import com.fantechs.entity.BaseProductYield;
-import com.fantechs.entity.ProLineBoardModel;
+import com.fantechs.entity.*;
 import com.fantechs.entity.search.SearchProLineBoard;
+
+import java.util.List;
+import java.util.Map;
 
 public interface ProLineBoardMapper {
 
@@ -15,4 +17,10 @@ public interface ProLineBoardMapper {
     Long findBarCodeRecordList(SearchProLineBoard searchProLineBoard);
 
     BaseProductYield findYieldList(SearchBaseProductYield searchBaseProductYield);
+
+    ProductLineLeft findLastBarCideRecirdList(SearchProLineBoard searchProLineBoard);
+
+    ProductDailyPlanModel findNextPlan(SearchProLineBoard searchProLineBoard);
+
+    List<ProductLineRight> findProductLineRight(Map<String, Object> workOrderId);
 }

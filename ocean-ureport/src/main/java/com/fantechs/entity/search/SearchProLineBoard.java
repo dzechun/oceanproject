@@ -60,5 +60,25 @@ public class SearchProLineBoard extends BaseQuery implements Serializable {
     @ApiModelProperty(name="processCode" ,value="是否需要去重")
     private byte isDistinct;
 
+    /**
+     * 工单编码
+     */
+    @ApiModelProperty(name="workOrderCode" ,value="工单编码")
+    private String workOrderCode;
+
+    /**
+     * 工单ID
+     */
+    @ApiModelProperty(name="workOrderId" ,value="工单ID")
+    private String workOrderId;
+
+    /**
+     * 序号
+     */
+    @ApiModelProperty(name="seqNum" ,value="序号")
+    private int seqNum;
+
+
+
 
 }
