@@ -39,7 +39,7 @@ public class WanbaoSyncDataController {
     @PostMapping("/syncOrderData")
     public ResponseEntity syncOrderData(){
         log.info("万宝-工单信息同步");
-        syncDataService.syncOrderData();
+        syncDataService.syncOrderData(null);
         return ControllerUtil.returnSuccess();
     }
 
@@ -47,7 +47,7 @@ public class WanbaoSyncDataController {
     @PostMapping("/syncOrderByOrderCode")
     public ResponseEntity syncOrderByOrderCode(@ApiParam(value = "工单号", required = true) @RequestParam @NotNull(message = "工单号不能为空") String workOrderCode){
         log.info("万宝-根据订单编码同步工单信息");
-        syncDataService.syncOrderByOrderCode(workOrderCode);
+        syncDataService.syncOrderData(workOrderCode);
         return ControllerUtil.returnSuccess();
     }
 
@@ -71,7 +71,7 @@ public class WanbaoSyncDataController {
     @PostMapping("/syncBarcodeData")
     public ResponseEntity syncBarcodeData(){
         log.info("万宝-产品条码信息同步");
-        syncDataService.syncBarcodeData();
+        syncDataService.syncBarcodeData(true);
         return ControllerUtil.returnSuccess();
     }
 
@@ -79,7 +79,7 @@ public class WanbaoSyncDataController {
     @PostMapping("/syncAllBarcodeData")
     public ResponseEntity syncAllBarcodeData(){
         log.info("万宝-PQMS所有数据同步");
-        syncDataService.syncAllBarcodeData();
+        syncDataService.syncBarcodeData(false);
         return ControllerUtil.returnSuccess();
     }
 }

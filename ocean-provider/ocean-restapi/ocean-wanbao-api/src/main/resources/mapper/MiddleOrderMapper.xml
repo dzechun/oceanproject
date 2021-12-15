@@ -47,50 +47,18 @@
             AND wjs.lookup_type = 'WIP_JOB_STATUS'
             AND wjs.LOOKUP_CODE = WDJ.STATUS_TYPE
             AND wjs.meaning = '已发放'
---             AND we.wip_entity_name IN ( 'A1车间A线', 'A2车间D线', 'A2车间C线' )
             AND wdj.job_type = 1
             AND wdj.scheduled_start_date >= TO_DATE ( '2021-10-01', 'YYYY-MM-DD' )
             <if test="date != null and date != ''">
                 AND wdj.scheduled_start_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>
+            <if test="workOrderCode != null and workOrderCode != ''">
+                AND we.wip_entity_name = #{workOrderCode}
+            </if>
         </where>
         ORDER BY
             msib.segment1,
             we.wip_entity_name
-    </select>
-
-    <select id="findOrderDataByCode" parameterType="map" resultMap="BaseResultMap">
-        SELECT
-        we.wip_entity_name AS work_order_code,
-        wjs.meaning AS work_order_status,
-        decode( wdj.job_type, 1, '4', '5' ) AS work_order_type,
-        wdj.Attribute5 AS sales_order_code,
-        wdj.attribute6 AS pro_name,
-        wdj.SCHEDULE_GROUP_ID AS pro_code,
-        wdj.scheduled_start_date AS plan_start_time,
-        wdj.scheduled_completion_date AS plan_end_time,
-        msib.segment1 AS material_code,
-        msib.description AS material_name,
-        wdj.start_quantity AS work_order_qty,
-        wdj.quantity_completed AS output_qty,
-        wdj.last_update_date AS modified_time,
-        wdj.attribute10 AS sales_code
-        FROM
-        APPS.wip_entities we,
-        APPS.mfg_lookups wjs,
-        APPS.wip_discrete_jobs wdj,
-        APPS.mtl_system_items_b msib
-        <where>
-            we.wip_entity_id = wdj.wip_entity_id
-            AND wdj.primary_item_id = msib.inventory_item_id
-            AND msib.organization_id = 83
-            AND wjs.lookup_type = 'WIP_JOB_STATUS'
-            AND wjs.LOOKUP_CODE = WDJ.STATUS_TYPE
-            AND we.wip_entity_name = #{workOrderCode}
-        </where>
-        ORDER BY
-        msib.segment1,
-        we.wip_entity_name
     </select>
 
     <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleOrder">

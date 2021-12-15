@@ -22,10 +22,4 @@ public interface MiddleOrderMapper extends MyMapper<MiddleOrder> {
      * @return
      */
     int save(MiddleOrder order);
-
-    /**
-     * 万宝-根据工单号查询工单信息
-     * @return
-     */
-    List<MiddleOrder> findOrderDataByCode(Map<String, Object> map);
 }

@@ -180,7 +180,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     @Transactional(rollbackFor = RuntimeException.class)
     public String saveShiftWorkDetBarcode(SaveShiftWorkDetDto dto) {
         SysUser sysUser = currentUser();
-
         if (dto.getBarcodes() == null && dto.getBarcodes().size() <= 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001006);
         }
@@ -193,6 +192,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             WmsInnerJobOrderDet jobOrderDet = wmsInnerJobOrderDetService.selectByKey(dto.getJobOrderDetId());
             jobOrderDet.setOrderStatus((byte) 4);
             jobOrderDet.setActualQty(jobOrderDet.getActualQty() != null ? jobOrderDet.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
+            if (jobOrderDet.getActualQty().compareTo(jobOrderDet.getDistributionQty()) == 1){
+                throw new BizErrorException(ErrorCodeEnum.PDA5001006.getCode(), "移位数量不能大于计划数量");
+            }
             Byte status = 2;
             if (jobOrderDet.getActualQty().compareTo(jobOrderDet.getDistributionQty()) == 0) {
                 status = (byte) 3;
