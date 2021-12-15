@@ -15,12 +15,10 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRul
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
-import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseMaterialService;
@@ -56,8 +54,6 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     @Resource
     private BaseProductModelMapper baseProductModelMapper;
     @Resource
-    private BaseFeignApi baseFeignApi;
-    @Resource
     private BaseTabMapper baseTabMapper;
     @Resource
     private BaseUnitPriceMapper baseUnitPriceMapper;
@@ -67,6 +63,8 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     private BaseLabelCategoryMapper baseLabelCategoryMapper;
     @Resource
     private BaseBarcodeRuleSetMapper baseBarcodeRuleSetMapper;
+    @Resource
+    private BaseInspectionItemMapper baseInspectionItemMapper;
     @Resource
     private SecurityFeignApi securityFeignApi;
 
@@ -484,17 +482,18 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 baseMaterialImport.setSupplierId(baseSupplier.getSupplierId());
             }
 
-            //检验项目单号不为空判断检验项目信息是否存在
+            //检验项目不为空判断检验项目信息是否存在
             if (StringUtils.isNotEmpty(inspectionItemCode)){
-                SearchQmsInspectionItem searchQmsInspectionItem = new SearchQmsInspectionItem();
-                searchQmsInspectionItem.setInspectionItemCode(inspectionItemCode);
-                searchQmsInspectionItem.setCodeQueryMark((byte) 1);
-                List<BaseInspectionItemDto> qmsInspectionItemDtos = baseFeignApi.findInspectionItemList(searchQmsInspectionItem).getData();
-                if (StringUtils.isEmpty(qmsInspectionItemDtos)){
+                Example example4 = new Example(BaseInspectionItem.class);
+                Example.Criteria criteria4 = example4.createCriteria();
+                criteria4.andEqualTo("inspectionItemCode",inspectionItemCode)
+                        .andEqualTo("organizationId",currentUser.getOrganizationId());
+                BaseInspectionItem baseInspectionItem = baseInspectionItemMapper.selectOneByExample(example4);
+                if (StringUtils.isEmpty(baseInspectionItem)){
                     fail.add(i+4);
                     continue;
                 }
-                baseMaterialImport.setInspectionItemId(qmsInspectionItemDtos.get(0).getInspectionItemId());
+                baseMaterialImport.setInspectionItemId(baseInspectionItem.getInspectionItemId());
             }
 
             //标签类别编码不为空则判断标签类别信息是否存在

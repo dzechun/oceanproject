@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeReprintMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcodeReprint">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="work_order_barcode_reprint_id" jdbcType="BIGINT" property="workOrderBarcodeReprintId" />
+    <result column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
+    <result column="barcode_code" jdbcType="VARCHAR" property="barcodeCode" />
+    <result column="barcode_type" jdbcType="TINYINT" property="barcodeType" />
+    <result column="comfirm_user_id" jdbcType="BIGINT" property="comfirmUserId" />
+    <result column="comfirm_time" jdbcType="TIMESTAMP" property="comfirmTime" />
+    <result column="reprint_user_id" jdbcType="BIGINT" property="reprintUserId" />
+    <result column="reprint_time" jdbcType="TIMESTAMP" property="reprintTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeReprintDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+
+  <select id="findList" resultMap="BaseResultDtoMap"  parameterType="map">
+
+  </select>
+</mapper>

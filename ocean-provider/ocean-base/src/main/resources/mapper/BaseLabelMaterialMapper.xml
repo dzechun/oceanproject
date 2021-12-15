@@ -88,6 +88,12 @@
             <if test="materialCode!=null and materialCode!=''">
                 and sm.material_code like CONCAT('%',#{materialCode},'%')
             </if>
+            <if test="materialName!=null and materialName!=''">
+                and sm.material_name like CONCAT('%',#{materialName},'%')
+            </if>
+            <if test="materialDesc!=null and materialDesc!=''">
+                and sm.material_desc like CONCAT('%',#{materialDesc},'%')
+            </if>
             <if test="labelCode!=null and labelCode!=''">
                 and bl.label_code like CONCAT('%',#{labelCode},'%')
             </if>
