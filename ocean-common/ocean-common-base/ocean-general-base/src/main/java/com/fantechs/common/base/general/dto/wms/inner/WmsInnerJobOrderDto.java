@@ -28,6 +28,13 @@ public class WmsInnerJobOrderDto extends WmsInnerJobOrder implements Serializabl
     private String orderTypeName;
 
     /**
+     * 核心单据类型
+     */
+    @Transient
+    @ApiModelProperty(name = "coreOrderTypeName",value = "核心单据类型")
+    private String coreOrderTypeName;
+
+    /**
      * 工作人员
      */
     @Transient

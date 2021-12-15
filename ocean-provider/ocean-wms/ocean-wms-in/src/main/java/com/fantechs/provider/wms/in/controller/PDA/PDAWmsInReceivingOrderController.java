@@ -57,12 +57,14 @@ public class PDAWmsInReceivingOrderController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInReceivingOrder wmsInReceivingOrder) {
+        wmsInReceivingOrder.setIsPdaCreate((byte)1);
         return ControllerUtil.returnCRUD(wmsInReceivingOrderService.save(wmsInReceivingOrder));
     }
 
     @ApiOperation("提交")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInReceivingOrder.update.class) WmsInReceivingOrder wmsInReceivingOrder) {
+        wmsInReceivingOrder.setIsPdaCreate((byte)1);
         return ControllerUtil.returnCRUD(wmsInReceivingOrderService.update(wmsInReceivingOrder));
     }
 }

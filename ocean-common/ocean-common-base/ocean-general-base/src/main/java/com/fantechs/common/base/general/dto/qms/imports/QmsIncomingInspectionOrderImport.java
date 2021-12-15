@@ -168,7 +168,7 @@ public class QmsIncomingInspectionOrderImport implements Serializable {
      */
     @ApiModelProperty(name="aqlValue",value = "AQL值")
     @Excel(name = "AQL值", height = 20, width = 30)
-    private Integer aqlValue;
+    private BigDecimal aqlValue;
 
     /**
      * AC值
