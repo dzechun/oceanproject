@@ -68,7 +68,7 @@
         so.order_date,
         so.make_order_user_name,
         so.make_order_date,
-        o.audit_user_name,
+        so.audit_user_name,
         so.audit_date,
         so.sales_code,
         so.make_code,

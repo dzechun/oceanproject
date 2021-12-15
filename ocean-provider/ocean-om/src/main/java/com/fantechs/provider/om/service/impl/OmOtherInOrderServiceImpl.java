@@ -313,12 +313,11 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int pushDown(String ids) {
+    public int pushDown(List<OmOtherInOrderDet> omOtherInOrderDets) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         String coreSourceSysOrderTypeCode = null;
         int i = 0;
         List<OmOtherInOrderDet> list = new ArrayList<>();
-        List<OmOtherInOrderDet> omOtherInOrderDets = omOtherInOrderDetMapper.selectByIds(ids);
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setBusinessType((byte)1);

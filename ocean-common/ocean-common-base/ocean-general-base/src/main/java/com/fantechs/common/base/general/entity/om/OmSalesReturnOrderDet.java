@@ -1,14 +1,21 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 销退入库单明细
@@ -91,6 +98,22 @@ public class OmSalesReturnOrderDet extends ValidGroup implements Serializable {
     @Excel(name = "收货数量", height = 20, width = 30,orderNum="") 
     @Column(name = "receiving_qty")
     private BigDecimal receivingQty;
+
+    /**
+     * 累计下发数量
+     */
+    @ApiModelProperty(name="totalIssueQty",value = "累计下发数量")
+    @Excel(name = "累计下发数量", height = 20, width = 30,orderNum="")
+    @Column(name = "total_issue_qty")
+    private BigDecimal totalIssueQty;
+
+    /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    @Excel(name = "是否已全部下发(0-否 1-是)", height = 20, width = 30,orderNum="")
+    @Column(name = "if_all_issued")
+    private Byte ifAllIssued;
 
     /**
      * 生产日期

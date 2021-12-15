@@ -181,12 +181,11 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int pushDown(String ids) {
+    public int pushDown(List<OmPurchaseOrderDet> omPurchaseOrderDets) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         String coreSourceSysOrderTypeCode = null;
         int i = 0;
         List<OmPurchaseOrderDet> list = new ArrayList<>();
-        List<OmPurchaseOrderDet> omPurchaseOrderDets = omPurchaseOrderDetMapper.selectByIds(ids);
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setBusinessType((byte)1);
@@ -198,7 +197,6 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
         HashSet set = new HashSet();
         for(OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets){
-            set.add(omPurchaseOrderDet.getWarehouseId());
             if(omPurchaseOrderDet.getOrderQty().compareTo(omPurchaseOrderDet.getTotalIssueQty().add(omPurchaseOrderDet.getQty())) == -1 )
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于采购数量");
 
@@ -238,7 +236,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 qmsIncomingInspectionOrderDto.setSourceOrderCode(omPurchaseOrderDto.get(0).getPurchaseOrderCode());
                 qmsIncomingInspectionOrderDto.setSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                 qmsIncomingInspectionOrderDto.setMaterialId(omPurchaseOrderDet.getMaterialId());
-                qmsIncomingInspectionOrderDto.setWarehouseId(omPurchaseOrderDet.getWarehouseId());
+                qmsIncomingInspectionOrderDto.setWarehouseId(omPurchaseOrderDto.get(0).getWarehouseId());
                 qmsIncomingInspectionOrderDto.setOrderQty(omPurchaseOrderDet.getOrderQty());
                 qmsIncomingInspectionOrderDto.setInspectionStatus((byte)1);
                 qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);

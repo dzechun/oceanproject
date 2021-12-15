@@ -2,6 +2,7 @@ package com.fantechs.provider.om.service;
 
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -21,5 +22,5 @@ public interface OmPurchaseOrderService extends IService<OmPurchaseOrder> {
 
     String findPurchaseMaterial(String purchaseOrderCode);
 
-    int pushDown(String ids);
+    int pushDown(List<OmPurchaseOrderDet> omPurchaseOrderDets);
 }

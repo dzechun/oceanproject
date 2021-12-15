@@ -60,6 +60,15 @@ public class OmPurchaseOrder extends ValidGroup implements Serializable {
     @Column(name = "supplier_id")
     private Long supplierId;
 
+
+    /**
+     * 仓库ID
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    @Excel(name = "仓库ID", height = 20, width = 30,orderNum="")
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
+
     /**
      * 订单日期
      */

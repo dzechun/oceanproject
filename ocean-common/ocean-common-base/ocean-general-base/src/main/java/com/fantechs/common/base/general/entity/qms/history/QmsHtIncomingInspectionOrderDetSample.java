@@ -59,11 +59,11 @@ public class QmsHtIncomingInspectionOrderDetSample extends ValidGroup implements
     private Long incomingInspectionOrderId;
 
     /**
-     * 条码
+     * 来料条码ID
      */
-    @ApiModelProperty(name="barcode",value = "条码")
-    @Excel(name = "条码", height = 20, width = 30,orderNum="") 
-    private String barcode;
+    @ApiModelProperty(name="materialBarcodeId",value = "来料条码ID")
+    @Column(name = "material_barcode_id")
+    private Long materialBarcodeId;
 
     /**
      * 样本值
@@ -175,6 +175,14 @@ public class QmsHtIncomingInspectionOrderDetSample extends ValidGroup implements
     @ApiModelProperty(name = "badnessPhenotypeDesc",value = "不良现象")
     @Excel(name = "不良现象", height = 20, width = 30,orderNum="13")
     private String badnessPhenotypeDesc;
+
+    /**
+     * 条码
+     */
+    @Transient
+    @ApiModelProperty(name = "barcode",value = "条码")
+    @Excel(name = "条码", height = 20, width = 30,orderNum="1")
+    private String barcode;
 
     private String option1;
 

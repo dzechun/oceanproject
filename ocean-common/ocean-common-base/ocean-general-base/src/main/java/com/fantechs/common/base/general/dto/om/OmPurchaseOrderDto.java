@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class OmPurchaseOrderDto extends OmPurchaseOrder implements Serializable {
@@ -49,6 +50,9 @@ public class OmPurchaseOrderDto extends OmPurchaseOrder implements Serializable 
     @ApiModelProperty(name="modifiedUserName",value = "修改人员名称")
     private String modifiedUserName;
 
+    @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    private String warehouseName;
+
     /**
      * 创建名称
      */
@@ -66,4 +70,7 @@ public class OmPurchaseOrderDto extends OmPurchaseOrder implements Serializable 
      */
     @ApiModelProperty(name="TotalPrice",value = "总金额")
     private BigDecimal totalPrice;
+
+    List<OmPurchaseOrderDetDto> omPurchaseOrderDetDtos;
+
 }

@@ -1,6 +1,7 @@
 package com.fantechs.provider.qms.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.qms.PdaIncomingSelectToUseBarcodeDto;
 import com.fantechs.common.base.general.dto.qms.PdaIncomingSelectToUseSubmitDto;
 import com.fantechs.common.base.general.entity.qms.QmsBadnessManage;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsBadnessManage;
@@ -39,10 +40,10 @@ public class QmsBadnessManageController {
 
     @ApiOperation(value = "PDA条码校验",notes = "PDA条码校验")
     @PostMapping("/checkBarcode")
-    public ResponseEntity checkBarcode(@ApiParam(value = "条码",required = true)@RequestParam  @NotBlank(message="条码不能为空") String barcode,
-                                       @ApiParam(value = "检验单id",required = true)@RequestParam  @NotNull(message="检验单id不能为空") Long incomingInspectionOrderId) {
-        String s = qmsBadnessManageService.checkBarcode(barcode,incomingInspectionOrderId);
-        return ControllerUtil.returnDataSuccess(s,StringUtils.isEmpty(s)?0:1);
+    public ResponseEntity<PdaIncomingSelectToUseBarcodeDto> checkBarcode(@ApiParam(value = "条码",required = true)@RequestParam  @NotBlank(message="条码不能为空") String barcode,
+                                                                         @ApiParam(value = "检验单id",required = true)@RequestParam  @NotNull(message="检验单id不能为空") Long incomingInspectionOrderId) {
+        PdaIncomingSelectToUseBarcodeDto pdaIncomingSelectToUseBarcodeDto = qmsBadnessManageService.checkBarcode(barcode,incomingInspectionOrderId);
+        return ControllerUtil.returnDataSuccess(pdaIncomingSelectToUseBarcodeDto,StringUtils.isEmpty(pdaIncomingSelectToUseBarcodeDto)?0:1);
     }
 
     @ApiOperation(value = "PDA挑选使用提交",notes = "PDA挑选使用提交")
