@@ -2,11 +2,13 @@ package com.fantechs.provider.wms.inner.service;
 
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBarcodeImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -24,4 +26,6 @@ public interface WmsInnerMaterialBarcodeService extends IService<WmsInnerMateria
     LabelRuteDto findLabelRute(Long barcodeRuleSetId,Long materialId);
 
     int print(String ids,int printQty,String printName,int printType);
+
+    Map<String, Object> importExcel(List<WmsInnerMaterialBarcodeImport> importList, List<WmsInnerMaterialBarcodeDto> list);
 }

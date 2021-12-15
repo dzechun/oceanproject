@@ -17,7 +17,7 @@
         <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode" />
         <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
         <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
-        <result column="not_sys_code" jdbcType="VARCHAR" property="notSysCode" />
+        <result column="if_sys_barcode" jdbcType="TINYINT" property="ifSysBarcode" />
         <result column="material_id" jdbcType="BIGINT" property="materialId" />
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
@@ -57,7 +57,7 @@
         wimb.color_box_code,
         wimb.carton_code,
         wimb.pallet_code,
-        wimb.not_sys_code,
+        wimb.if_sys_barcode,
         wimb.material_id,
         wimb.supplier_id,
         wimb.batch_code,
@@ -92,15 +92,38 @@
     LEFT JOIN base_material bm on bm.material_id = wimb.material_id
     <where>
         <if test="orgId!=null and orgId!=''">
-        and wimb.org_id = #{orgId}
+            and wimb.org_id = #{orgId}
         </if>
         <if test="materialBarcodeId!=null and materialBarcodeId!=''">
-        and wimb.material_barcode_id = #{materialBarcodeId}
+            and wimb.material_barcode_id = #{materialBarcodeId}
         </if>
         <if test="barcode!=null and barcode!=''">
-        and wimb.barcode = #{barcode}
+            and wimb.barcode = #{barcode}
         </if>
-
+        <if test="printOrderTypeCode!=null and printOrderTypeCode!=''">
+            and wimb.print_order_type_code = #{printOrderTypeCode}
+        </if>
+        <if test="ifSysBarcode!=null and ifSysBarcode!=''">
+            and wimb.if_sys_barcode = #{ifSysBarcode}
+        </if>
+        <if test="colorBoxCode!=null and colorBoxCode!=''">
+            and wimb.color_box_code like CONCAT('%',#{colorBoxCode},'%')
+        </if>
+        <if test="cartonCode!=null and cartonCode!=''">
+            and wimb.carton_code like CONCAT('%',#{cartonCode},'%')
+        </if>
+        <if test="palletCode!=null and palletCode!=''">
+            and wimb.pallet_code like CONCAT('%',#{palletCode},'%')
+        </if>
+        <if test="materialCode!=null and materialCode!=''">
+            and bm.material_code like CONCAT('%',#{materialCode},'%')
+        </if>
+        <if test="materialName!=null and materialName!=''">
+            and bm.material_name like CONCAT('%',#{materialName},'%')
+        </if>
+        <if test="productionTimeStart!= null and productionTimeStart!= '' and productionTimeEnd!= null and productionTimeEnd!= ''">
+            and date_format(wimb.production_time, '%Y-%m-%d') BETWEEN #{productionTimeStart} AND #{productionTimeEnd}
+        </if>
         <if test="printOrderDetId !=null and printOrderDetId!=''">
             and wimb.print_order_det_id = #{printOrderDetId}
         </if>
@@ -158,6 +181,27 @@
             </if>
         </where>
 
+    </select>
+
+    <select id="getTotalMaterialQty" resultMap="BaseResultMapDto">
+        SELECT sum(wimb.material_qty)
+        FROM wms_inner_material_barcode wimb
+        LEFT JOIN base_material bm on bm.material_id = wimb.material_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                and wimb.org_id = #{orgId}
+            </if>
+            <if test="printOrderTypeCode!=null and printOrderTypeCode!=''">
+                and wimb.print_order_type_code = #{printOrderTypeCode}
+            </if>
+            <if test="printOrderDetId !=null and printOrderDetId!=''">
+                and wimb.print_order_det_id = #{printOrderDetId}
+            </if>
+
+            <if test="materialId!=null and materialId!=''">
+                and wimb.material_id = #{materialId}
+            </if>
+        </where>
     </select>
 
 </mapper>

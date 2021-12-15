@@ -13,13 +13,18 @@ import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
+import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDetDto;
+import com.fantechs.common.base.general.dto.srm.imports.SrmPlanDeliveryOrderImport;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBarcodeImport;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDetBarcode;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDetBarcode;
+import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
+import com.fantechs.common.base.general.entity.srm.SrmPlanDeliveryOrder;
+import com.fantechs.common.base.general.entity.srm.SrmPlanDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -28,15 +33,15 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
+import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeReOrderService;
 import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -55,12 +60,15 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
     private SecurityFeignApi securityFeignApi;
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
+    private WmsInnerMaterialBarcodeReOrderService wmsInnerMaterialBarcodeReOrderService;
 
     @Override
     public List<WmsInnerMaterialBarcodeDto> findList(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode) {
         if(StringUtils.isEmpty(searchWmsInnerMaterialBarcode.getOrgId())){
             SysUser sysUser = currentUser();
             searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+            searchWmsInnerMaterialBarcode.setSupplierId(sysUser.getSupplierId());
         }
         return wmsInnerMaterialBarcodeMapper.findList(searchWmsInnerMaterialBarcode);
     }
@@ -79,13 +87,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList = new ArrayList<>();
 
         //ASN条码明细集合
-        List<SrmInAsnOrderDetBarcode> asnOrderDetBarcodeList = new ArrayList<>();
-        //收货作业条码明细集合
-//        List<> list1 = new ArrayList<>();
-        //来料检验条码明细集合
-//        List<> list1 = new ArrayList<>();
-        //上架作业条码明细集合
-        List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
+        List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrderList = new ArrayList<>();
 
 
         for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : barcodeDtoList) {
@@ -95,6 +97,24 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getPrintQty())){
                 throw new BizErrorException("打印条码数量不能为空");
             }
+
+            SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode = new SearchWmsInnerMaterialBarcode();
+            //判断打印类型（1，ASN单 2，收货作业单 3，来料检验单 4，上架作业单）
+            if (type == 1) {
+                searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("SRM-ASN");
+            }else if (type == 2) {
+                searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-SWK");
+            }else if (type == 3) {
+                searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("QMS-MIIO");
+            }else if (type == 4) {
+                searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-IWK");
+            }
+            searchWmsInnerMaterialBarcode.setPrintOrderDetId(wmsInnerMaterialBarcodeDto.getPrintOrderDetId());
+            searchWmsInnerMaterialBarcode.setMaterialId(wmsInnerMaterialBarcodeDto.getMaterialId());
+            searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+            BigDecimal totalMaterialQty = wmsInnerMaterialBarcodeMapper.getTotalMaterialQty(searchWmsInnerMaterialBarcode);
+            wmsInnerMaterialBarcodeDto.setTotalMaterialQty(totalMaterialQty);
+
             if (StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getTotalMaterialQty(),wmsInnerMaterialBarcodeDto.getGenerateQty(),
                     wmsInnerMaterialBarcodeDto.getOrderQty())) {
                 throw new BizErrorException("数量不正确");
@@ -124,7 +144,22 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 if (generateQty%materialQty != 0 && i == Math.ceil(generateQty/materialQty) -1) {
                     wmsInnerMaterialBarCode.setMaterialQty(new BigDecimal(generateQty%materialQty));
                 }
-                wmsInnerMaterialBarCode.setSupplierId(sysUser.getSupplierId());
+                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                //判断打印类型（1，ASN单 2，收货作业单 3，来料检验单 4，上架作业单）
+                if (type == 1) {
+                    wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("SRM-ASN");
+                    wmsInnerMaterialBarCode.setPrintOrderTypeCode("SRM-ASN");
+                }else if (type == 2) {
+                    wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("IN-SWK");
+                    wmsInnerMaterialBarCode.setPrintOrderTypeCode("IN-SWK");
+                }else if (type == 3) {
+                    wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("QMS-MIIO");
+                    wmsInnerMaterialBarCode.setPrintOrderTypeCode("QMS-MIIO");
+                }else if (type == 4) {
+                    wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("IN-IWK");
+                    wmsInnerMaterialBarCode.setPrintOrderTypeCode("IN-IWK");
+                }
+
                 wmsInnerMaterialBarCode.setBarcode(barCode);
                 wmsInnerMaterialBarCode.setBarcodeRuleId(list.get(0).getBarcodeRuleId());
                 wmsInnerMaterialBarCode.setOrgId(sysUser.getOrganizationId());
@@ -135,33 +170,14 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
                 materialBarcodeList.add(wmsInnerMaterialBarCode);
 
-                //判断打印类型（1，ASN单 2，收货作业单 3，来料检验单 4，上架作业单）
-                if (type == 1) {
-                    SrmInAsnOrderDetBarcode srmInAsnOrderDetBarcode = new SrmInAsnOrderDetBarcode();
-                    srmInAsnOrderDetBarcode.setAsnOrderDetId(wmsInnerMaterialBarCode.getPrintOrderDetId());
-                    srmInAsnOrderDetBarcode.setAsnOrderId(wmsInnerMaterialBarCode.getPrintOrderId());
-                    asnOrderDetBarcodeList.add(srmInAsnOrderDetBarcode);
-                }else if (type == 2) {
 
-                }else if (type == 3) {
-
-                }else if (type == 4) {
-                    WmsInnerJobOrderDetBarcode wmsInnerJobOrderDetBarcode = new WmsInnerJobOrderDetBarcode();
-                    wmsInnerJobOrderDetBarcode.setJobOrderDetId(wmsInnerMaterialBarCode.getPrintOrderDetId());
-                    wmsInnerJobOrderDetBarcode.setMaterialBarcodeId(wmsInnerMaterialBarCode.getMaterialBarcodeId());
-                    jobOrderDetBarcodeList.add(wmsInnerJobOrderDetBarcode);
-                }
+                wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerMaterialBarcodeDto.getPrintOrderCode());
+                wmsInnerMaterialBarcodeReOrder.setOrgId(wmsInnerMaterialBarcodeDto.getPrintOrderId());
+                wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInnerMaterialBarcodeDto.getPrintOrderDetId());
+                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInnerMaterialBarCode.getMaterialBarcodeId());
+                wmsInnerMaterialBarcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
             }
-
-            if (StringUtils.isNotEmpty(asnOrderDetBarcodeList)) {
-
-            }else if (StringUtils.isNotEmpty(asnOrderDetBarcodeList)) {
-
-            }else if (StringUtils.isNotEmpty(asnOrderDetBarcodeList)) {
-
-            }else if (StringUtils.isNotEmpty(jobOrderDetBarcodeList)) {
-
-            }
+            wmsInnerMaterialBarcodeReOrderService.batchAdd(wmsInnerMaterialBarcodeReOrderList);
         }
 
         return materialBarcodeList;
@@ -319,5 +335,20 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
         if(StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未查询到配置项配置的默认编码规则");
         return barcodeRulList.getData().get(0);
+    }
+
+    @Override
+    public Map<String, Object> importExcel(List<WmsInnerMaterialBarcodeImport> importList, List<WmsInnerMaterialBarcodeDto> list) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<String> fail = new ArrayList<>();  //记录操作失败行数
+        List<SrmPlanDeliveryOrderDet> detList = new ArrayList<>();
+
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败的送货计划标识",fail);
+        return resultMap;
     }
 }

@@ -88,7 +88,7 @@
     left join srm_plan_delivery_order spdo on spdo.plan_delivery_order_id = spdod.plan_delivery_order_id
     left join om_purchase_order_det opod on opod.purchase_order_det_id = spdod.purchase_order_det_id
     left join om_purchase_order opo on opo.purchase_order_id = opod.purchase_order_id
-    left join base_warehouse bw on bw.warehouse_id =  opod.warehouse_id
+    left join base_warehouse bw on bw.warehouse_id =  opo.warehouse_id
     left join base_material bm on bm.material_id = opod.material_id
     left join base_supplier bs on bs.supplier_id = opo.supplier_id
     <where>
