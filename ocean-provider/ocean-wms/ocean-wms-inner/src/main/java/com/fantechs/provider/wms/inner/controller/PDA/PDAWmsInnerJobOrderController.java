@@ -77,7 +77,6 @@ public class PDAWmsInnerJobOrderController {
     }
 
     @ApiOperation("PDA先单后作业提交")
-    @ApiIgnore
     @PostMapping("/saveHaveInnerJobOrder")
     public ResponseEntity<WmsInnerJobOrderDet> saveHaveInnerJobOrder(@RequestBody(required = true) List<SaveHaveInnerJobOrderDto> list){
         WmsInnerJobOrderDet wmsInnerJobOrderDet=wmsInnerJobOrderService.saveHaveInnerJobOrder(list);
@@ -93,7 +92,6 @@ public class PDAWmsInnerJobOrderController {
     }
 
     @ApiOperation("PDA先作业后单提交")
-    @ApiIgnore
     @PostMapping("/saveInnerJobOrder")
     public ResponseEntity<WmsInnerJobOrder> saveInnerJobOrder(@RequestBody(required = true) List<SaveInnerJobOrderDto> list){
         WmsInnerJobOrder wmsInnerJobOrder=wmsInnerJobOrderService.saveInnerJobOrder(list);
