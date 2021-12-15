@@ -131,17 +131,23 @@ zuul:
     socket-timeout-millis: 60000
     max-per-route-connections: 20
     max-total-connections: 200
+endpoints:
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+    enabled-by-default: false
   endpoint:
     health:
       show-details: ALWAYS
     env:
       enabled: false
+    metrics:
+      enabled: true
+  server:
+    address: 127.0.0.1
 #提高日志级别为WARN
 logging:
   level:
