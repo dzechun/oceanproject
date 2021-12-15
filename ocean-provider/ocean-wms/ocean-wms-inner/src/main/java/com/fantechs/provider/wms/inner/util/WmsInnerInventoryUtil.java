@@ -49,7 +49,7 @@ public class WmsInnerInventoryUtil {
      * @param sysUser 用户
      * @param addOrSubtract 加减类型(1-加 2-减)
      */
-    public static int distributionInventory(WmsInnerJobOrder wmsInnerJobOrder, WmsInnerJobOrderDet wmsInnerJobOrderDet,SysUser sysUser,byte addOrSubtract) {
+    public static int distributionInventory(WmsInnerJobOrder wmsInnerJobOrder, WmsInnerJobOrderDet wmsInnerJobOrderDet,BigDecimal finalQty,SysUser sysUser,byte addOrSubtract) {
         int num=0;
         // 上架 增加分配库存 库位是收货库位
         if(wmsInnerJobOrder.getJobOrderType()==((byte) 1)){
@@ -76,7 +76,7 @@ public class WmsInnerInventoryUtil {
                 inv.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
                 inv.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
                 inv.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
-                inv.setPackingQty(wmsInnerJobOrderDet.getDistributionQty());
+                inv.setPackingQty(finalQty);
                 inv.setJobStatus((byte) 2);
                 inv.setInventoryId(null);
                 inv.setBatchCode(wmsInnerJobOrderDet.getBatchCode());
@@ -88,7 +88,7 @@ public class WmsInnerInventoryUtil {
                 inv.setModifiedUserId(sysUser.getUserId());
                 //记录库存日志
                 BigDecimal qty=new BigDecimal(0);
-                BigDecimal chaQty=wmsInnerJobOrderDet.getDistributionQty();
+                BigDecimal chaQty=finalQty;
                 InventoryLogUtil.addLog(wmsInnerInventorys,wmsInnerJobOrder,wmsInnerJobOrderDet,qty,chaQty,(byte)2,(byte)1);
                 return wmsInnerInventoryUtil.wmsInnerInventoryMapper.insertSelective(inv);
             } else {
@@ -97,13 +97,13 @@ public class WmsInnerInventoryUtil {
                 BigDecimal chaQty=wmsInnerJobOrderDet.getDistributionQty();
                 if(addOrSubtract==((byte)1)){
 
-                    wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().add(wmsInnerJobOrderDet.getDistributionQty()));
+                    wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().add(finalQty));
                     //记录库存日志
                     InventoryLogUtil.addLog(wmsInnerInventorys,wmsInnerJobOrder,wmsInnerJobOrderDet,qty,chaQty,(byte)2,(byte)1);
                     return wmsInnerInventoryUtil.wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
                 }
                 else if(addOrSubtract==((byte)2)) {
-                    wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().subtract(wmsInnerJobOrderDet.getDistributionQty()));
+                    wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().subtract(finalQty));
                     //记录库存日志
                     InventoryLogUtil.addLog(wmsInnerInventorys,wmsInnerJobOrder,wmsInnerJobOrderDet,qty,chaQty,(byte)2,(byte)2);
                     return wmsInnerInventoryUtil.wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);

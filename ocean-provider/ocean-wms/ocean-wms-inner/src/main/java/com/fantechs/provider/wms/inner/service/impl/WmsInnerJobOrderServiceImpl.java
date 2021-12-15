@@ -180,7 +180,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : listInnerDetDto) {
                     //分配库存
                     //num += this.updateInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto);
-                    num+= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto,sysUser,(byte) 1);
+                    num+= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto,wmsInnerJobOrderDetDto.getPlanQty(),sysUser,(byte) 1);
                 }
 
                 return num;
@@ -235,7 +235,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
                         //分配库存
                         //num += this.updateInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto);
-                        num+= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto,sysUser,(byte) 1);
+                        num+= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto,wmsInnerJobOrderDetDto.getDistributionQty(),sysUser,(byte) 1);
 
                         wms = wmsInnerJobOrderDetNew;
 
@@ -261,7 +261,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
                         //分配库存
                         //num += this.updateInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto);
-                        num+= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto,sysUser,(byte) 1);
+                        num+= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto,wmsInnerJobOrderDetDto.getDistributionQty(),sysUser,(byte) 1);
                         totalQty = BigDecimal.ZERO;
                     }
 
@@ -365,7 +365,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if (wmsInnerJobOrderDto.getJobOrderType() == (byte) 1) {
                 //上架分配库存
                 //num += this.updateInventory(wmsInnerJobOrderDto, wms);
-                num+= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrderDto, wms,sysUser,(byte) 1);
+                num+= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrderDto, wms,wms.getDistributionQty(),sysUser,(byte) 1);
             } else if(wmsInnerJobOrderDto.getJobOrderType() == (byte) 3){
                 //旧  移位作业 手动分配逻辑
                 Example example = new Example(WmsInnerInventory.class);
@@ -627,7 +627,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         //num = this.Inventory(wmsInnerJobOrder,oldDto, wmsInnerJobOrderDetDto);
 
                         //减少分配库存
-                        num= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrder, oldDto,sysUser,(byte) 2);
+                        num= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrder, oldDto,oldDto.getDistributionQty(),sysUser,(byte) 2);
                         if(num==0){
                             throw new BizErrorException(ErrorCodeEnum.OPT20012006.getCode(),"更新分配库存失败");
                         }
@@ -804,7 +804,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //num = this.Inventory(wmsInnerJobOrder,oldDto, wmsInnerJobOrderDetDto);
 
                 //减少分配库存
-                num= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrder, oldDto,sysUser,(byte) 2);
+                num= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrder, oldDto,wmsInPutawayOrderDet.getActualQty(),sysUser,(byte) 2);
                 if(num==0){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012006.getCode(),"更新分配库存失败");
                 }
@@ -1165,7 +1165,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //num = this.Inventory(wmsInnerJobOrderDto,oldDto, wmsInnerJobOrderDetDto.get(0));
 
         //减少分配库存
-        num= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrder, oldDto,sysUser,(byte) 2);
+        num= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrder, oldDto,qty,sysUser,(byte) 2);
         if(num==0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006.getCode(),"更新分配库存失败");
         }
@@ -2073,7 +2073,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto=wmsInnerJobOrderDetDtoList.get(0);
 
         //减少分配库存
-        num= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrder, oldDto,sysUser,(byte) 2);
+        num= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrder, oldDto,qty,sysUser,(byte) 2);
         if(num==0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006.getCode(),"更新分配库存失败");
         }
