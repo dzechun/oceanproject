@@ -117,6 +117,9 @@
             <if test="itemKey!=null and itemKey!=''">
                 and cfd.item_key=#{itemKey}
             </if>
+            <if test="itemName!=null and itemName!=''">
+                and cfd.item_name like CONCAT('%',#{itemName},'%')
+            </if>
             <if test="customFormId!=null and customFormId!=''">
                 and cfd.custom_form_id=#{customFormId}
             </if>

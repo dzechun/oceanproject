@@ -9,8 +9,8 @@
     <result column="material_barcode_re_order_id" jdbcType="BIGINT" property="materialBarcodeReOrderId" />
     <result column="order_type_code" jdbcType="VARCHAR" property="orderTypeCode" />
     <result column="order_code" jdbcType="VARCHAR" property="orderCode" />
-    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
-    <result column="order_det_id" jdbcType="VARCHAR" property="orderDetId" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="order_det_id" jdbcType="BIGINT" property="orderDetId" />
     <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId" />
     <result column="scan_status" jdbcType="TINYINT" property="scanStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />

@@ -340,12 +340,12 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="minValue",value = "最小值")
     @Excel(name = "最小值", height = 20, width = 30)
     @Column(name = "min_value")
-    private String minValue;
+    private Integer minValue;
 
     @ApiModelProperty(name="maxValue",value = "最大值")
     @Excel(name = "最大值", height = 20, width = 30)
     @Column(name = "max_value")
-    private String maxValue;
+    private Integer maxValue;
 
     private static final long serialVersionUID = 1L;
 }
