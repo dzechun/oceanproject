@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.controller.PDA;
 
+import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.SaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
@@ -65,25 +66,39 @@ public class PDAWmsInnerJobOrderController {
         return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
     }
 
-    @ApiOperation("PDA扫码库位上架")
-    @PostMapping("/scanStorageBackQty")
-    public ResponseEntity<WmsInnerJobOrderDet> scanStorageBackQty(@ApiParam(value = "库位编码")@RequestParam @NotBlank(message = "库位编码不能为空") String storageCode,
-                                                                  @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId,
-                                                                  @ApiParam(value = "确认数量")@RequestParam BigDecimal qty,
-                                                                  @ApiParam(value = "条码逗号隔开 扫码物料则无需传值")@RequestParam String barcode){
-        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderService.scanStorageBackQty(storageCode,jobOrderDetId,qty,barcode);
+    @ApiOperation("先单后作业 检验条码")
+    @PostMapping("/checkBarcodeHaveOrder")
+    public ResponseEntity<Map<String,Object>> checkBarcodeHaveOrder(@ApiParam(value = "是否系统条码(0 否 1 是)")@RequestParam @NotBlank(message = "是否系统条码不能为空") String ifSysBarcode,
+                                                                    @ApiParam(value = "作业单主表id")@RequestParam Long orderId,
+                                                                    @ApiParam(value = "明细ID")@RequestParam Long orderDetId,
+                                                                    @ApiParam(value = "条码")@RequestParam String barCode){
+        Map<String,Object> qty = wmsInnerJobOrderService.checkBarcodeHaveOrder(ifSysBarcode,orderId,orderDetId,barCode);
+        return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
+    }
+
+    @ApiOperation("PDA先单后作业提交")
+    @PostMapping("/saveHaveInnerJobOrder")
+    public ResponseEntity<WmsInnerJobOrderDet> saveHaveInnerJobOrder(@RequestBody(required = true) List<SaveHaveInnerJobOrderDto> list){
+        WmsInnerJobOrderDet wmsInnerJobOrderDet=wmsInnerJobOrderService.saveHaveInnerJobOrder(list);
         return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?0:1);
     }
 
-//    @ApiOperation("条码校验")
-//    @PostMapping("/checkBarcode")
-//    public ResponseEntity<Map<String,Object>> checkBarcode(@ApiParam(value = "条码")@RequestParam String barCode,
-//                                                   @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId){
-//        Map<String,Object> qty = wmsInnerJobOrderService.checkBarcode(barCode,jobOrderDetId);
-//        return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
-//    }
+    @ApiOperation("PDA先作业后单 检验条码")
+    @PostMapping("/checkBarcodeNotOrder")
+    public ResponseEntity<Map<String,Object>> checkBarcodeNotOrder(@ApiParam(value = "是否系统条码(0 否 1 是)")@RequestParam @NotBlank(message = "是否系统条码不能为空") String ifSysBarcode,
+                                                                    @ApiParam(value = "条码")@RequestParam String barCode){
+        Map<String,Object> qty = wmsInnerJobOrderService.checkBarcodeNotOrder(ifSysBarcode,barCode);
+        return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
+    }
 
-    @ApiOperation("条码校验")
+    @ApiOperation("PDA先作业后单提交")
+    @PostMapping("/saveInnerJobOrder")
+    public ResponseEntity<WmsInnerJobOrder> saveInnerJobOrder(@RequestBody(required = true) List<SaveInnerJobOrderDto> list){
+        WmsInnerJobOrder wmsInnerJobOrder=wmsInnerJobOrderService.saveInnerJobOrder(list);
+        return ControllerUtil.returnDataSuccess(wmsInnerJobOrder,StringUtils.isEmpty(wmsInnerJobOrder)?0:1);
+    }
+
+    /*@ApiOperation("条码校验")
     @PostMapping("/checkBarcode")
     public ResponseEntity<Map<String,Object>> checkBarcode(@RequestBody Map<String ,Object> map){
         String barCode = map.get("barCode").toString();
@@ -97,22 +112,7 @@ public class PDAWmsInnerJobOrderController {
     @PostMapping("/singleReceiving")
     public ResponseEntity singleReceiving(@RequestBody(required = true) List<WmsInnerJobOrderDet> wmsInPutawayOrderDets){
         return ControllerUtil.returnCRUD(wmsInnerJobOrderService.singleReceiving(wmsInPutawayOrderDets));
-    }
-
-    @ApiOperation("PDA先作业后单 产生上架单")
-    @ApiIgnore
-    @PostMapping("/saveInnerJobOrder")
-    public ResponseEntity<WmsInnerJobOrder> saveInnerJobOrder(@RequestBody(required = true) List<SaveInnerJobOrderDto> list){
-        WmsInnerJobOrder wmsInnerJobOrder=wmsInnerJobOrderService.saveInnerJobOrder(list);
-        return ControllerUtil.returnDataSuccess(wmsInnerJobOrder,StringUtils.isEmpty(wmsInnerJobOrder)?0:1);
-    }
-
-    @ApiOperation("PDA激活关闭栈板")
-    @PostMapping("/activation")
-    public ResponseEntity activation(@RequestParam Long jobOrderId){
-        return ControllerUtil.returnCRUD(wmsInnerJobOrderService.activation(jobOrderId));
-    }
-
+    }*/
 
     /**
      * ========================================拣货========================================
