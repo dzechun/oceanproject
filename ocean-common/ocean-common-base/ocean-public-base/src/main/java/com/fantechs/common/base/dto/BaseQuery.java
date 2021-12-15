@@ -1,9 +1,13 @@
 package com.fantechs.common.base.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -16,14 +20,17 @@ public class BaseQuery implements Serializable {
     /**
      * 开始时间
      */
-    @ApiModelProperty(name="startTime" ,value="开始时间(YYYY-MM-DD)")
-    private String startTime;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date startTime;
 
     /**
      * 结束时间
      */
     @ApiModelProperty(name="endTime" ,value="结束时间(YYYY-MM-DD)")
-    private String endTime;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date endTime;
 
     /**
      * 当前页数
