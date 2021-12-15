@@ -44,6 +44,9 @@
             <if test="proLineId!=null and proLineId!=''">
                 and mpwo.pro_line_id=#{proLineId}
             </if>
+            <if test="workOrderCode != null and workOrderCode != ''">
+                and mpwo.work_order_code = #{workOrderCode}
+            </if>
         </where>
     </select>
 </mapper>

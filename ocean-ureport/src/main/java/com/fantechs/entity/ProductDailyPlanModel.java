@@ -108,7 +108,17 @@ public class ProductDailyPlanModel implements Serializable {
     @ApiModelProperty(name="ifOrderInserting" ,value="计划变动")
     private String ifOrderInserting;
 
+    /**
+     *
+     */
     @Transient
     @ApiModelProperty(name = "planDate",value = "计划日期（yyyy-MM-dd）")
     private String planDate;
+
+    /**
+     *序号
+     */
+    @Transient
+    @ApiModelProperty(name = "seqNum",value = "序号")
+    private int seqNum;
 }
