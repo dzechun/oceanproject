@@ -44,8 +44,6 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
     @Resource
     private QmsBadnessManageBarcodeMapper qmsBadnessManageBarcodeMapper;
     @Resource
-    private QmsIncomingInspectionOrderMapper qmsIncomingInspectionOrderMapper;
-    @Resource
     private InnerFeignApi innerFeignApi;
 
 
