@@ -45,6 +45,34 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     private Long salesOrderId;
 
     /**
+     * 核心单据编码
+     */
+    @ApiModelProperty(name = "coreSourceOrderCode",value = "核心单据编码")
+    @Column(name = "core_source_order_code")
+    private String coreSourceOrderCode;
+
+    /**
+     * 来源单据编码
+     */
+    @ApiModelProperty(name = "sourceOrderCode",value = "来源单据编码")
+    @Column(name = "source_order_code")
+    private String sourceOrderCode;
+
+    /**
+     * 核心来源ID
+     */
+    @ApiModelProperty(name = "coreSourceId",value = "核心来源ID")
+    @Column(name = "core_source_id")
+    private Long coreSourceId;
+
+    /**
+     * 来源ID
+     */
+    @ApiModelProperty(name = "sourceId",value = "来源ID")
+    @Column(name = "source_id")
+    private Long sourceId;
+
+    /**
      * 行号
      */
     @ApiModelProperty(name = "lineNumber",value = "行号")
@@ -52,12 +80,12 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     private String lineNumber;
 
     /**
-     * 客户订单行号
+     * 客户订单号
      */
-    @ApiModelProperty(name="customerOrderLineNumber",value = "客户订单行号")
-    @Excel(name = "客户订单行号", height = 20, width = 30,orderNum="") 
-    @Column(name = "customer_order_line_number")
-    private String customerOrderLineNumber;
+    @ApiModelProperty(name="customerOrderCode",value = "客户订单号")
+    @Excel(name = "客户订单号", height = 20, width = 30,orderNum="")
+    @Column(name = "customer_order_code")
+    private String customerOrderCode;
 
     /**
      * 来源行号
@@ -154,7 +182,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format = "yyyy-MM-dd")
     @Column(name = "plan_revert_date")
-    private String planRevertDate;
+    private Date planRevertDate;
 
     /**
      * 计划发货日期
@@ -164,7 +192,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format = "yyyy-MM-dd")
     @Column(name = "plan_deliver_date")
-    private String planDeliverDate;
+    private Date planDeliverDate;
 
     /**
      * 实际发货日期
@@ -174,7 +202,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format = "yyyy-MM-dd")
     @Column(name = "actual_deliver_date")
-    private String actualDeliverDate;
+    private Date actualDeliverDate;
 
     /**
      * 计划交货日期
@@ -184,7 +212,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format = "yyyy-MM-dd")
     @Column(name = "plan_delivery_date")
-    private String planDeliveryDate;
+    private Date planDeliveryDate;
 
     /**
      * 实际交货日期
@@ -194,7 +222,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format = "yyyy-MM-dd")
     @Column(name = "actual_delivery_date")
-    private String actualDeliveryDate;
+    private Date actualDeliveryDate;
 
     /**
      * 送货地址
@@ -293,6 +321,14 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     private BigDecimal returnArrangeDispatchQty;
 
     /**
+     * 行状态(1-作废”、2-审核、3-下达、4-冻结、5-关闭、6-变更中、7-完成)
+     */
+    @ApiModelProperty(name="lineStatus",value = "行状态(1-作废”、2-审核、3-下达、4-冻结、5-关闭、6-变更中、7-完成)")
+    @Excel(name = "行状态(1-作废”、2-审核、3-下达、4-冻结、5-关闭、6-变更中、7-完成)", height = 20, width = 30,orderNum="")
+    @Column(name = "line_status")
+    private Byte lineStatus;
+
+    /**
      * 状态
      */
     @ApiModelProperty(name="status",value = "状态")
@@ -351,17 +387,11 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @Column(name = "modified_time")
     private Date modifiedTime;
 
-
-    // =========== 2021-09-29 新增 start ===========
-    @ApiModelProperty(name="salesCode" ,value="销售编码")
-    @Column(name = "sales_code")
-    private String salesCode;
-    // =========== 2021-09-29 新增 end ===========
-
     /**
      * 是否数量反写 1=是
      */
     @Transient
+    @ApiModelProperty(name="isWriteQty",value = "是否数量反写 1=是")
     private Integer isWriteQty;
 
     private static final long serialVersionUID = 1L;

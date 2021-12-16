@@ -8,15 +8,18 @@
         <id column="ht_other_out_order_det_id" jdbcType="BIGINT" property="htOtherOutOrderDetId"/>
         <result column="other_out_order_det_id" jdbcType="BIGINT" property="otherOutOrderDetId"/>
         <result column="other_out_order_id" jdbcType="BIGINT" property="otherOutOrderId"/>
+        <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode"/>
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
+        <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId"/>
+        <result column="source_id" jdbcType="BIGINT" property="sourceId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
         <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
-        <result column="issue_qty" jdbcType="DECIMAL" property="issueQty"/>
-        <result column="dispatch_qty" jdbcType="DECIMAL" property="dispatchQty"/>
-        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
-        <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
+        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -42,16 +45,19 @@
     <sql id="Base_Column_List">
         ouod.ht_other_out_order_det_id,
         ouod.other_out_order_det_id,
+        ouod.core_source_order_code,
+        ouod.source_order_code,
+        ouod.core_source_id,
+        ouod.source_id,
         ouod.other_out_order_id,
         ouod.warehouse_id,
         ouod.material_id,
         ouod.unit_name,
         ouod.order_qty,
-        ouod.issue_qty,
-        ouod.dispatch_qty,
-        ouod.production_date,
-        ouod.expired_date,
+        ouod.actual_qty,
         ouod.batch_code,
+        ouod.total_issue_qty,
+        ouod.if_all_issued,
         ouod.status,
         ouod.is_delete,
         ouod.remark,
@@ -62,8 +68,8 @@
         ouod.modified_time
     </sql>
     <select id="findHtList" resultMap="BaseResultMapDto">
-        SELECT<include refid="Base_Column_List"/>
-        ,bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
+        SELECT<include refid="Base_Column_List"/>,
+        bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
         su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
         FROM om_ht_other_out_order_det ouod
         LEFT JOIN base_warehouse bw ON bw.warehouse_id = ouod.warehouse_id

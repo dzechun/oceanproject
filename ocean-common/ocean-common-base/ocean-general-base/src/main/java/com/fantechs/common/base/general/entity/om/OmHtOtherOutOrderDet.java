@@ -41,6 +41,38 @@ public class OmHtOtherOutOrderDet extends ValidGroup implements Serializable {
     private Long otherOutOrderId;
 
     /**
+     * 核心单据编码
+     */
+    @ApiModelProperty(name="coreSourceOrderCode",value = "核心单据编码")
+    @Excel(name = "核心单据编码", height = 20, width = 30,orderNum="1")
+    @Column(name = "core_source_order_code")
+    private String coreSourceOrderCode;
+
+    /**
+     * 来源单据编码
+     */
+    @ApiModelProperty(name="sourceOrderCode",value = "来源单据编码")
+    @Excel(name = "来源单据编码", height = 20, width = 30,orderNum="1")
+    @Column(name = "source_order_code")
+    private String sourceOrderCode;
+
+    /**
+     * 核心来源ID
+     */
+    @ApiModelProperty(name="coreSourceId",value = "核心来源ID")
+    @Excel(name = "核心来源ID", height = 20, width = 30,orderNum="")
+    @Column(name = "core_source_id")
+    private Long coreSourceId;
+
+    /**
+     * 来源ID
+     */
+    @ApiModelProperty(name="sourceId",value = "来源ID")
+    @Excel(name = "来源ID", height = 20, width = 30,orderNum="")
+    @Column(name = "source_id")
+    private Long sourceId;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
@@ -73,36 +105,12 @@ public class OmHtOtherOutOrderDet extends ValidGroup implements Serializable {
     private BigDecimal orderQty;
 
     /**
-     * 加入数量
+     * 实际出货数量
      */
-    @ApiModelProperty(name="issueQty",value = "加入数量")
-    @Excel(name = "加入数量", height = 20, width = 30,orderNum="")
-    @Column(name = "issue_qty")
-    private BigDecimal issueQty;
-
-    /**
-     * 发运数量
-     */
-    @ApiModelProperty(name="dispatchQty",value = "发运数量")
-    @Excel(name = "发运数量", height = 20, width = 30,orderNum="")
-    @Column(name = "dispatch_qty")
-    private BigDecimal dispatchQty;
-
-    /**
-     * 生产日期
-     */
-    @ApiModelProperty(name="productionDate",value = "生产日期")
-    @Excel(name = "生产日期", height = 20, width = 30,orderNum="")
-    @Column(name = "production_date")
-    private Date productionDate;
-
-    /**
-     * 过期日期
-     */
-    @ApiModelProperty(name="expiredDate",value = "过期日期")
-    @Excel(name = "过期日期", height = 20, width = 30,orderNum="")
-    @Column(name = "expired_date")
-    private Date expiredDate;
+    @ApiModelProperty(name="actualQty",value = "实际出货数量")
+    @Excel(name = "实际出货数量", height = 20, width = 30,orderNum="")
+    @Column(name = "actual_qty")
+    private BigDecimal actualQty;
 
     /**
      * 批次号
@@ -111,6 +119,22 @@ public class OmHtOtherOutOrderDet extends ValidGroup implements Serializable {
     @Excel(name = "批次号", height = 20, width = 30,orderNum="")
     @Column(name = "batch_code")
     private String batchCode;
+
+    /**
+     * 累计下发数量
+     */
+    @ApiModelProperty(name="totalIssueQty",value = "累计下发数量")
+    @Excel(name = "累计下发数量", height = 20, width = 30,orderNum="")
+    @Column(name = "total_issue_qty")
+    private BigDecimal totalIssueQty;
+
+    /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    @Excel(name = "是否已全部下发(0-否 1-是)", height = 20, width = 30,orderNum="")
+    @Column(name = "if_all_issued")
+    private Byte ifAllIssued;
 
     /**
      * 状态

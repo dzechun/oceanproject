@@ -11,7 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 ;
@@ -34,6 +33,30 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     @Id
     @Column(name = "sales_order_id")
     private Long salesOrderId;
+
+    /**
+     * 核心系统单据类型编码
+     */
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    //@Excel(name = "核心系统单据类型编码", height = 20, width = 30,orderNum="1")
+    @Column(name = "core_source_sys_order_type_code")
+    private String coreSourceSysOrderTypeCode;
+
+    /**
+     * 来源系统单据类型编码
+     */
+    @ApiModelProperty(name="sourceSysOrderTypeCode",value = "来源系统单据类型编码")
+    //@Excel(name = "来源系统单据类型编码", height = 20, width = 30,orderNum="1")
+    @Column(name = "source_sys_order_type_code")
+    private String sourceSysOrderTypeCode;
+
+    /**
+     * 系统单据类型编码
+     */
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    //@Excel(name = "系统单据类型编码", height = 20, width = 30,orderNum="1")
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
 
     /**
      * 销售订单号
@@ -68,22 +91,6 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     private String customerOrderCode;
 
     /**
-     * 来源单据号
-     */
-    @ApiModelProperty(name="sourceOrderCode",value = "来源单据号")
-    @Excel(name = "来源单据号", height = 20, width = 30, orderNum = "5")
-    @Column(name = "source_order_code")
-    private String sourceOrderCode;
-
-    /**
-     * 来源单据行号
-     */
-    @ApiModelProperty(name="sourceOrderLineNumber",value = "来源单据行号")
-//    @Excel(name = "来源单据行号", height = 20, width = 30)
-    @Column(name = "source_order_line_number")
-    private String sourceOrderLineNumber;
-
-    /**
      * 条码规则集合ID
      */
     @ApiModelProperty(name="barcodeRuleSetId",value = "条码规则集合ID")
@@ -100,20 +107,18 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     private String deliveryType;
 
     /**
-     * 销售部门
+     * 销售部门ID
      */
-    @ApiModelProperty(name="salesDept",value = "销售部门")
-    @Excel(name = "销售部门", height = 20, width = 30, orderNum = "7")
-    @Column(name = "sales_dept")
-    private String salesDept;
+    @ApiModelProperty(name="salesDeptId",value = "销售部门")
+    @Column(name = "sales_dept_id")
+    private Long salesDeptId;
 
     /**
-     * 销售人员
+     * 销售人员ID
      */
-    @ApiModelProperty(name="salesUserName",value = "销售人员")
-    @Excel(name = "销售人员", height = 20, width = 30, orderNum = "8")
-    @Column(name = "sales_user_name")
-    private String salesUserName;
+    @ApiModelProperty(name="salesUserId",value = "销售人员ID")
+    @Column(name = "sales_user_id")
+    private Long salesUserId;
 
     /**
      * 数据来源
@@ -126,10 +131,10 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     /**
      * 订单类型
      */
-    @ApiModelProperty(name="orderType",value = "订单类型")
+    @ApiModelProperty(name="salesOrderType",value = "订单类型")
     @Excel(name = "订单类型", height = 20, width = 30, orderNum = "10")
-    @Column(name = "order_type")
-    private String orderType;
+    @Column(name = "sales_order_type")
+    private String salesOrderType;
 
     /**
      * 订单状态
@@ -154,15 +159,15 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format ="yyyy-MM-dd")
     @Column(name = "order_date")
-    private String orderDate;
+    private Date orderDate;
 
     /**
-     * 制单人员
+     * 制单人员ID
      */
-    @ApiModelProperty(name="makeOrderUserName",value = "制单人员")
-    @Excel(name = "制单人员", height = 20, width = 30, orderNum = "12")
-    @Column(name = "make_order_user_name")
-    private String makeOrderUserName;
+    @ApiModelProperty(name="makeOrderUserId",value = "制单人员ID")
+    @Excel(name = "制单人员ID", height = 20, width = 30, orderNum = "12")
+    @Column(name = "make_order_user_id")
+    private Long makeOrderUserId;
 
     /**
      * 制单日期
@@ -172,15 +177,15 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format ="yyyy-MM-dd")
     @Column(name = "make_order_date")
-    private String makeOrderDate;
+    private Date makeOrderDate;
 
     /**
-     * 审核人员
+     * 审核人员ID
      */
-    @ApiModelProperty(name="auditUserName",value = "审核人员")
-    @Excel(name = "审核人员", height = 20, width = 30, orderNum = "14")
-    @Column(name = "audit_user_name")
-    private String auditUserName;
+    @ApiModelProperty(name="auditUserId",value = "审核人员ID")
+    @Excel(name = "审核人员ID", height = 20, width = 30, orderNum = "14")
+    @Column(name = "audit_user_id")
+    private Long auditUserId;
 
     /**
      * 审核日期
@@ -190,19 +195,7 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format ="yyyy-MM-dd")
     @Column(name = "audit_date")
-    private String auditDate;
-
-    @ApiModelProperty(name="salesCode" ,value="销售编码")
-    @Column(name = "sales_code")
-    private String salesCode;
-
-    @ApiModelProperty(name="makeCode" ,value="制造编码")
-    @Column(name = "make_code")
-    private String makeCode;
-
-    @ApiModelProperty(name="salesCodeQty" ,value="订单数量")
-    @Column(name = "sales_code_qty")
-    private BigDecimal salesCodeQty;
+    private Date auditDate;
 
 
     /**

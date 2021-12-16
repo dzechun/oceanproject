@@ -3,6 +3,7 @@ package com.fantechs.provider.om.controller;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +45,12 @@ public class OmSalesOrderController {
     private OmSalesOrderService omSalesOrderService;
     @Resource
     private OmHtSalesOrderService omHtSalesOrderService;
+
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<OmSalesOrderDetDto> omSalesOrderDetDtoList) {
+        return ControllerUtil.returnCRUD(omSalesOrderService.pushDown(omSalesOrderDetDtoList));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

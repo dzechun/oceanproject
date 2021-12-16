@@ -5,11 +5,38 @@ import com.fantechs.common.base.general.entity.om.OmHtSalesOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
 public class OmHtSalesOrderDto extends OmHtSalesOrder implements Serializable {
+    /**
+     * 销售部门
+     */
+    @ApiModelProperty(name = "salesDept", value = "销售部门")
+    @Excel(name = "销售部门", height = 20, width = 30, orderNum = "18")
+    private String salesDept;
+
+    /**
+     * 销售人员
+     */
+    @ApiModelProperty(name = "salesUserName", value = "销售人员")
+    @Excel(name = "销售人员", height = 20, width = 30, orderNum = "18")
+    private String salesUserName;
+
+    /**
+     * 制单人员
+     */
+    @ApiModelProperty(name = "makeOrderUserName", value = "制单人员")
+    @Excel(name = "制单人员", height = 20, width = 30, orderNum = "18")
+    private String makeOrderUserName;
+
+    /**
+     * 审核人员
+     */
+    @ApiModelProperty(name = "auditUserName", value = "审核人员")
+    @Excel(name = "审核人员", height = 20, width = 30, orderNum = "18")
+    private String auditUserName;
+
     @ApiModelProperty(name = "supplierName", value = "客户名称")
 //    @Excel(name = "客户名称", height = 20, width = 30)
     private String supplierName;
