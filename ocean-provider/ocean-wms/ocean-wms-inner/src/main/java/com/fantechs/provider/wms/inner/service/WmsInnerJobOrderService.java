@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.wms.inner.SaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.support.IService;
 
@@ -66,6 +67,14 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      */
     int singleReceiving(List<WmsInnerJobOrderDet> wmsInPutawayOrderDets);
 
+    /**
+     * 按条码单一确认
+     * @param wmsInnerJobOrderDet 明细
+     * @param ids 条码ID 多个条码用逗号隔开
+     * @return
+     */
+    int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInnerJobOrderDet,String ids);
+
     Map<String,Object> checkBarcode(String barCode,Long jobOrderDetId);
 
     WmsInnerJobOrderDet scanStorageBackQty(String storageCode, Long jobOrderDetId, BigDecimal qty, String barcode);
@@ -90,6 +99,14 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @return
      */
     Map<String,Object> checkBarcodeNotOrder(String ifSysBarcode,String barCode);
+
+    /**
+     * Web端单一确认作业 扫描条码
+     * @param ifSysBarcode 是否系统条码
+     * @param barCode 条码
+     * @return
+     */
+    WmsInnerMaterialBarcode checkBarcodeOrderWeb(String ifSysBarcode, Long orderId, Long orderDetId, String barCode);
 
     /**
      * PDA先单后作业

@@ -79,6 +79,15 @@ public class WmsInnerJobOrderController {
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.singleReceiving(list));
     }
 
+    @ApiOperation("按条码单一确认")
+    @PostMapping("/singleReceivingByBarcode")
+    public ResponseEntity singleReceivingByBarcode(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrderDet wmsInPutawayOrderDet,
+                                                   @ApiParam(value = "条码ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.singleReceivingByBarcode(wmsInPutawayOrderDet,ids));
+    }
+
+    //singleReceivingByBarcode
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInPutawayOrder) {
