@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.SaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJo
 import com.fantechs.common.base.support.IService;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -161,4 +163,6 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @return
      */
     Boolean storageCapacity(Long materialId,Long storageId,BigDecimal qty);
+
+    Map<String, Object> importExcel(List<WmsInnerStockOrderImport> wmsInnerStockOrderImportList) throws ParseException;
 }
