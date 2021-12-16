@@ -13,21 +13,32 @@ spring:
     username: root
     password: 123456
     driverClassName: com.mysql.cj.jdbc.Driver
-    initialSize: 5
-    minIdle: 5
-    maxActive: 20
-    maxWait: 60000
-    timeBetweenEvictionRunsMillis: 60000
-    minEvictableIdleTimeMillis: 300000
-    validationQuery: SELECT 1 FROM DUAL
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
-    poolPreparedStatements: true
-    maxPoolPreparedStatementPerConnectionSize: 20
-    #  filters: stat,wall,logback
-    filters: stat,wall,slf4j
-    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    druid:
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      #  filters: stat,wall,logback
+      filters: stat,wall,slf4j
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # StatViewServlet配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: true
+        login-username: root
+        login-password: 123456
+        ##deny优先于allow，如果在deny列表中，就算在allow列表中，也会被拒绝。如果allow没有配置或者为空，则允许所有访问
+        allow:
+        deny:
   redis:
     host: 192.168.204.151
     #host: 10.182.163.246
@@ -67,8 +78,8 @@ eureka:
     #status-page-url: http://${spring.cloud.client.ip-address}:${server.port}/swagger-ui.html
   client:
     service-url:
-      defaultZone: http://root:root@192.168.204.163:8761/eureka/
-      #defaultZone: http://root:root@localhost:8761/eureka/
+#      defaultZone: http://root:root@192.168.204.163:8761/eureka/
+      defaultZone: http://root:root@localhost:8761/eureka/
 ribbon:
   eureka:
     enabled: true
@@ -112,9 +123,14 @@ management:
     web:
       exposure:
         include: "*"
+    enabled-by-default: false
   endpoint:
     health:
       show-details: ALWAYS
+    env:
+      enabled: false
+    metrics:
+      enabled: true
 #提高日志级别为WARN
 logging:
   level:

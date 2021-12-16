@@ -7,7 +7,7 @@ server:
      direct-buffers: true
 spring:
   profiles:
-    active: wuhuan
+    active: dev
   application:
     name: @pom.artifactId@
   servlet:

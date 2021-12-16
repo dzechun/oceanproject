@@ -24,6 +24,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelMater
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
+//import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcodeReprint;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcodeReprint;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -38,7 +39,7 @@ import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
-import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeReprintService;
+//import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeReprintService;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -79,8 +80,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     private SecurityFeignApi securityFeignApi;
     @Resource
     private OMFeignApi omFeignApi;
-    @Resource
-    private MesSfcWorkOrderBarcodeReprintService mesSfcWorkOrderBarcodeReprintService;
+//    @Resource
+//    private MesSfcWorkOrderBarcodeReprintService mesSfcWorkOrderBarcodeReprintService;
 
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
@@ -177,11 +178,11 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 mesSfcWorkOrderBarcode.setPrintTime(new Date());
                 this.update(mesSfcWorkOrderBarcode);
             }else if (printType==2){
-                MesSfcWorkOrderBarcodeReprint reprint = new MesSfcWorkOrderBarcodeReprint();
-                reprint.setWorkOrderBarcodeId(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
-                reprint.setBarcodeCode(mesSfcWorkOrderBarcode.getBarcode());
-                reprint.setBarcodeType(mesSfcWorkOrderBarcode.getBarcodeType());
-                mesSfcWorkOrderBarcodeReprintService.save(reprint);
+//                MesSfcWorkOrderBarcodeReprint reprint = new MesSfcWorkOrderBarcodeReprint();
+//                reprint.setWorkOrderBarcodeId(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
+//                reprint.setBarcodeCode(mesSfcWorkOrderBarcode.getBarcode());
+//                reprint.setBarcodeType(mesSfcWorkOrderBarcode.getBarcodeType());
+//                mesSfcWorkOrderBarcodeReprintService.save(reprint);
             }
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
 
