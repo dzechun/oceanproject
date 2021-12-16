@@ -473,14 +473,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         wms.setOrderStatus((byte) 5);
         int oCount = wmsInnerJobOrderDetService.selectCount(wms);
 
-        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
-        searchBaseWorker.setWarehouseId(wmsInnerJobOrderDto.getWarehouseId());
-        searchBaseWorker.setUserId(sysUser.getUserId());
-        List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
-        if (workerDtos.isEmpty()) {
-            throw new BizErrorException(ErrorCodeEnum.PDA5001014);
-        }
-
         BigDecimal resQty = wmsInnerJobOrderDetDto.stream()
                 .map(WmsInnerJobOrderDet::getDistributionQty)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -491,7 +483,26 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         ws.setModifiedUserId(sysUser.getUserId());
         ws.setModifiedTime(new Date());
         ws.setWorkEndtTime(new Date());
-        ws.setWorkerId(workerDtos.get(0).getWorkerId());
+
+        /**
+         * 20211216 bgkun
+         * 万宝项目不限制操作人员作业，通过程序配置项过滤
+         * 0-不校验1-校验
+         */
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("checkWorkPerson");
+        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(specItems.isEmpty() || "1".equals(specItems.get(0).getParaValue())){
+            SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+            searchBaseWorker.setWarehouseId(wmsInnerJobOrderDto.getWarehouseId());
+            searchBaseWorker.setUserId(sysUser.getUserId());
+            List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+            if (workerDtos.isEmpty()) {
+                throw new BizErrorException(ErrorCodeEnum.PDA5001014);
+            }
+            ws.setWorkerId(workerDtos.get(0).getWorkerId());
+        }
+
         if (oCount == count) {
             ws.setOrderStatus((byte) 5);
             if(StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())){
