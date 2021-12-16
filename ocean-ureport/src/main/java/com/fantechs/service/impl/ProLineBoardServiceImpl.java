@@ -47,8 +47,6 @@ public class ProLineBoardServiceImpl implements ProLineBoardService {
             //查询对应产线使用设备
             List<Byte> equipmentStatus = new ArrayList<>();
             equipmentStatus.add((byte)4);
-            equipmentStatus.add((byte)5);
-            equipmentStatus.add((byte)6);
             searchProLineBoard.setEquipmentStatus(equipmentStatus);
             Long equipMentUseingNum = proLineBoardMapper.findEquipMentList(searchProLineBoard);
 

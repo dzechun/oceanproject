@@ -25,7 +25,7 @@
         bm.material_version,
         mpwo.work_order_qty,
         mpdp.schedule_qty as scheduled_qty,
-        mpdp.finished_qty,
+        mpwo.output_qty as finished_qty,
         mpwo.production_qty,
         mpwo.work_order_status,
         mpdp.if_order_inserting,

@@ -192,6 +192,7 @@
             <if test="workOrderId != null and workOrderId != ''">
                 and msbpr.work_order_id = #{workOrderId}
             </if>
+            and msbpr.option2 = 1
         </where>
         ORDER BY
             create_time DESC
