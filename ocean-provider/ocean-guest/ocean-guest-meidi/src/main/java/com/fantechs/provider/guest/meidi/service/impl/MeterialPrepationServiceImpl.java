@@ -35,6 +35,7 @@ public class MeterialPrepationServiceImpl implements MeterialPrepationService {
     @Override
     public int send(MeterialPrepation meterialPrepation) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        System.out.println("---------调用接口-------------");
         if(StringUtils.isEmpty(meterialPrepation.getStorageCode()) || StringUtils.isEmpty())
             throw  new BizErrorException("库位编码或接口请求类型不能为空");
         MeterialPrepationRequest req = new MeterialPrepationRequest();
