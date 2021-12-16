@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.SaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -164,5 +165,5 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      */
     Boolean storageCapacity(Long materialId,Long storageId,BigDecimal qty);
 
-    Map<String, Object> importExcel(List<WmsInnerStockOrderImport> wmsInnerStockOrderImportList) throws ParseException;
+    Map<String, Object> importExcel(List<WmsInnerJobOrderImport> wmsInnerJobOrderImportList) throws ParseException;
 }

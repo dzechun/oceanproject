@@ -22,6 +22,13 @@ public class WmsInnerJobOrderImport implements Serializable {
     private String warehouseName;
 
     /**
+     * 仓库ID
+     */
+    @Excel(name = "仓库ID",  height = 20, width = 30)
+    @ApiModelProperty(name="warehouseId" ,value="仓库ID")
+    private Long warehouseId;
+
+    /**
      * 作业单号(必填)
      */
     @Excel(name = "作业单号(必填)",  height = 20, width = 30)
@@ -50,11 +57,25 @@ public class WmsInnerJobOrderImport implements Serializable {
     private String outStorageName;
 
     /**
+     * 移出库位ID
+     */
+    @Excel(name = "移出库位ID",  height = 20, width = 30)
+    @ApiModelProperty(name="outStorageId" ,value="移出库位ID")
+    private Long outStorageId;
+
+    /**
      * 物料编码(必填)
      */
     @Excel(name = "物料编码(必填)",  height = 20, width = 30)
     @ApiModelProperty(name="materialCode" ,value="物料编码(必填)")
     private String materialCode;
+
+    /**
+     * 物料ID
+     */
+    @Excel(name = "物料ID",  height = 20, width = 30)
+    @ApiModelProperty(name="materialId" ,value="物料ID")
+    private Long materialId;
 
     /**
      * 物料名称

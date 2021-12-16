@@ -13,6 +13,7 @@ import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
@@ -2919,33 +2920,32 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      * @return
      */
     @Override
-    public Map<String, Object> importExcel(List<WmsInnerStockOrderImport> wmsInnerStockOrderImportListTemp) throws ParseException {
+    public Map<String, Object> importExcel(List<WmsInnerJobOrderImport> wmsInnerJobOrderImportsTemp) throws ParseException {
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
-        /*List<WmsInnerStockOrderImport> wmsInnerStockOrderImports=new ArrayList<>();
-        for (WmsInnerStockOrderImport wmsInnerStockOrderImport : wmsInnerStockOrderImportListTemp) {
-            if(StringUtils.isNotEmpty(wmsInnerStockOrderImport.getEquipmentCode())){
-                wmsInnerStockOrderImports.add(wmsInnerStockOrderImport);
+        List<WmsInnerJobOrderImport> wmsInnerJobOrderImports=new ArrayList<>();
+        for (WmsInnerJobOrderImport wmsInnerJobOrderImport : wmsInnerJobOrderImportsTemp) {
+            if(StringUtils.isNotEmpty(wmsInnerJobOrderImport.getOutStorageName())){
+                wmsInnerJobOrderImports.add(wmsInnerJobOrderImport);
             }
         }
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
-
 
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
 
         //排除不合法的数据
-        Iterator<EamEquipmentMaterialImport> iterator = eamEquipmentMaterialImports.iterator();
+        Iterator<WmsInnerJobOrderImport> iterator = wmsInnerJobOrderImports.iterator();
         int i = 0;
         while (iterator.hasNext()) {
-            EamEquipmentMaterialImport eamEquipmentMaterialImport = iterator.next();
-            String equipmentCode = eamEquipmentMaterialImport.getEquipmentCode();
-            String equipmentName = eamEquipmentMaterialImport.getEquipmentName();
-            String materialCode = eamEquipmentMaterialImport.getMaterialCode();
-            String usageQty = eamEquipmentMaterialImport.getUsageQty().toString();
+            WmsInnerJobOrderImport wmsInnerJobOrderImport = iterator.next();
+            String warehouseName = wmsInnerJobOrderImport.getWarehouseName();
+            String materialCode = wmsInnerJobOrderImport.getMaterialCode();
+            String outStorageName=wmsInnerJobOrderImport.getOutStorageName();
+            String planQty = wmsInnerJobOrderImport.getPlanQty().toString();
 
             //判断必传字段
             if (StringUtils.isEmpty(
-                    equipmentCode,equipmentName,materialCode,usageQty
+                    warehouseName,materialCode,outStorageName,planQty
             )) {
                 fail.add(i + 4);
                 iterator.remove();
@@ -2965,78 +2965,84 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     i++;
                     continue;
                 }
-                eamEquipmentMaterialImport.setMaterialId(baseMaterial.getMaterialId());
+                wmsInnerJobOrderImport.setMaterialId(baseMaterial.getMaterialId());
                 i++;
             }
 
+            //仓库是否存在
+            SearchBaseWarehouse searchBaseWarehouse=new SearchBaseWarehouse();
+            searchBaseWarehouse.setWarehouseName(warehouseName);
+            ResponseEntity<List<BaseWarehouse>> listResponseEntity=baseFeignApi.findList(searchBaseWarehouse);
+            if(StringUtils.isNotEmpty(listResponseEntity.getData())){
+                BaseWarehouse baseWarehouse=listResponseEntity.getData().get(0);
+                if (StringUtils.isEmpty(baseWarehouse)){
+                    fail.add(i + 4);
+                    iterator.remove();
+                    i++;
+                    continue;
+                }
+                wmsInnerJobOrderImport.setWarehouseId(baseWarehouse.getWarehouseId());
+                i++;
+            }
+
+            //移出库位是否存在
+            SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
+            searchBaseStorage.setStorageName(outStorageName);
+            ResponseEntity<List<BaseStorage>> baseStorageRe=baseFeignApi.findList(searchBaseStorage);
+            if(StringUtils.isNotEmpty(baseStorageRe.getData())){
+                BaseStorage baseStorage=baseStorageRe.getData().get(0);
+                if (StringUtils.isEmpty(baseStorage)){
+                    fail.add(i + 4);
+                    iterator.remove();
+                    i++;
+                    continue;
+                }
+                wmsInnerJobOrderImport.setOutStorageId(baseStorage.getStorageId());
+                i++;
+            }
         }
 
         //对合格数据进行分组
-        Map<String, List<EamEquipmentMaterialImport>> map = eamEquipmentMaterialImports.stream().collect(Collectors.groupingBy(EamEquipmentMaterialImport::getEquipmentCode, HashMap::new, Collectors.toList()));
-        Set<String> codeList = map.keySet();
-        for (String code : codeList) {
-            List<EamEquipmentMaterialImport> eamEquipmentMaterialImports1 = map.get(code);
+        Map<Long, List<WmsInnerJobOrderImport>> map = wmsInnerJobOrderImports.stream().collect(Collectors.groupingBy(WmsInnerJobOrderImport::getWarehouseId, HashMap::new, Collectors.toList()));
+        Set<Long> codeList = map.keySet();
+        for (Long code : codeList) {
+            List<WmsInnerJobOrderImport> wmsInnerJobOrderImport1 = map.get(code);
 
-            //判断设备编码
-            Long equipmentId=null;
-            Long equipmentMaterialId=null;
-            Example example = new Example(EamEquipment.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("equipmentCode",code);
-            EamEquipment eamEquipment = eamEquipmentMapper.selectOneByExample(example);
-            if (StringUtils.isNotEmpty(eamEquipment)){
-                equipmentId=eamEquipment.getEquipmentId();
+            //新增表头 WmsInnerJobOrder
+            Long jobOrderId=null;
+            if(StringUtils.isEmpty(jobOrderId)){
+                WmsInnerJobOrder wmsInnerJobOrder=new WmsInnerJobOrder();
+                wmsInnerJobOrder.setJobOrderType((byte)1);
+                wmsInnerJobOrder.setWarehouseId(code);
+                wmsInnerJobOrder.setStatus((byte)1);
+                wmsInnerJobOrder.setOrgId(currentUser.getOrganizationId());
+                wmsInnerJobOrder.setCreateUserId(currentUser.getUserId());
+                wmsInnerJobOrder.setCreateTime(new Date());
+                wmsInPutawayOrderMapper.insertUseGeneratedKeys(wmsInnerJobOrder);
+                jobOrderId=wmsInnerJobOrder.getJobOrderId();
             }
-            if(StringUtils.isNotEmpty(equipmentId)) {
-                Example examplEamMaterial = new Example(EamEquipmentMaterial.class);
-                Example.Criteria criteriaEamMaterial = examplEamMaterial.createCriteria();
-                criteriaEamMaterial.andEqualTo("equipmentId", equipmentId);
-                EamEquipmentMaterial eamEquipmentMaterial = eamEquipmentMaterialMapper.selectOneByExample(examplEamMaterial);
-                if (StringUtils.isNotEmpty(eamEquipmentMaterial)) {
-                    equipmentMaterialId = eamEquipmentMaterial.getEquipmentMaterialId();
-                }
-            }
-            //新增表头 EamEquipmentMaterial
-            if(StringUtils.isEmpty(equipmentMaterialId)){
-                EamEquipmentMaterial eamEquipmentMaterialNew=new EamEquipmentMaterial();
-                eamEquipmentMaterialNew.setEquipmentId(equipmentId);
-                eamEquipmentMaterialNew.setStatus((byte)1);
-                eamEquipmentMaterialNew.setOrgId(currentUser.getOrganizationId());
-                eamEquipmentMaterialNew.setCreateUserId(currentUser.getUserId());
-                eamEquipmentMaterialNew.setCreateTime(new Date());
-                eamEquipmentMaterialMapper.insertUseGeneratedKeys(eamEquipmentMaterialNew);
-                equipmentMaterialId=eamEquipmentMaterialNew.getEquipmentMaterialId();
-            }
-            //新增明细 EamEquipmentMaterialList
-            if(StringUtils.isNotEmpty(equipmentMaterialId)) {
-                List<EamEquipmentMaterialList> eamEquipmentMaterialLists=new ArrayList<>();
-                for (EamEquipmentMaterialImport item : eamEquipmentMaterialImports1) {
+            //新增明细 WmsInnerJobOrderDet
+            if(StringUtils.isNotEmpty(jobOrderId)) {
+                List<WmsInnerJobOrderDet> wmsInnerJobOrderDetList=new ArrayList<>();
+                for (WmsInnerJobOrderImport item : wmsInnerJobOrderImport1) {
 
-                    Example examplEamEJL = new Example(EamEquipmentMaterialList.class);
-                    Example.Criteria criteriaEamML = examplEamEJL.createCriteria();
-                    criteriaEamML.andEqualTo("equipmentMaterialId", equipmentMaterialId);
-                    criteriaEamML.andEqualTo("materialId",item.getMaterialId());
-                    EamEquipmentMaterialList eamEquipmentMaterialList = eamEquipmentMaterialListMapper.selectOneByExample(examplEamEJL);
-                    if(StringUtils.isEmpty(eamEquipmentMaterialList)) {
-                        EamEquipmentMaterialList eamEquipmentMaterialListNew=new EamEquipmentMaterialList();
-                        eamEquipmentMaterialListNew.setEquipmentMaterialId(equipmentMaterialId);
-                        eamEquipmentMaterialListNew.setMaterialId(item.getMaterialId());
-                        eamEquipmentMaterialListNew.setUsageQty(item.getUsageQty());
-                        eamEquipmentMaterialListNew.setOrgId(currentUser.getOrganizationId());
-                        eamEquipmentMaterialListNew.setCreateUserId(currentUser.getUserId());
-                        eamEquipmentMaterialListNew.setCreateTime(new Date());
-                        eamEquipmentMaterialLists.add(eamEquipmentMaterialListNew);
-                    }
-
+                    WmsInnerJobOrderDet wmsInnerJobOrderDetNew=new WmsInnerJobOrderDet();
+                    wmsInnerJobOrderDetNew.setJobOrderId(jobOrderId);
+                    wmsInnerJobOrderDetNew.setMaterialId(item.getMaterialId());
+                    wmsInnerJobOrderDetNew.setPlanQty(new BigDecimal(item.getPlanQty()));
+                    wmsInnerJobOrderDetNew.setOrgId(currentUser.getOrganizationId());
+                    wmsInnerJobOrderDetNew.setCreateUserId(currentUser.getUserId());
+                    wmsInnerJobOrderDetNew.setCreateTime(new Date());
+                    wmsInnerJobOrderDetList.add(wmsInnerJobOrderDetNew);
                 }
 
-                if(eamEquipmentMaterialLists.size()>0){
-                    success += eamEquipmentMaterialListMapper.insertList(eamEquipmentMaterialLists);
+                if(wmsInnerJobOrderDetList.size()>0){
+                    success += wmsInPutawayOrderDetMapper.insertList(wmsInnerJobOrderDetList);
                 }
             }
         }
         resultMap.put("操作成功总数", success);
-        resultMap.put("操作失败行", fail);*/
+        resultMap.put("操作失败行", fail);
         return resultMap;
     }
 
