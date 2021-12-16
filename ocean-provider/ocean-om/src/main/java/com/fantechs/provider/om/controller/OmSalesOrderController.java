@@ -47,7 +47,7 @@ public class OmSalesOrderController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated OmSalesOrderDto omSalesOrderDto) {
-        return ControllerUtil.returnCRUD(omSalesOrderService.saveDto(omSalesOrderDto));
+        return ControllerUtil.returnCRUD(omSalesOrderService.save(omSalesOrderDto));
     }
 
     @ApiOperation(value = "批量新增",notes = "批量新增")
@@ -73,7 +73,7 @@ public class OmSalesOrderController {
     @ApiOperation("修改")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrder.update.class) OmSalesOrderDto omSalesOrderDto) {
-        return ControllerUtil.returnCRUD(omSalesOrderService.updateDto(omSalesOrderDto));
+        return ControllerUtil.returnCRUD(omSalesOrderService.update(omSalesOrderDto));
     }
 
     @ApiOperation("批量修改")

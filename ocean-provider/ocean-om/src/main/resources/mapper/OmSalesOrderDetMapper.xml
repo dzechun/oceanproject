@@ -117,14 +117,18 @@
         left join base_organization bo on sod.org_id = bo.organization_id
         left join sys_user sumod on sod.modified_user_id = sumod.user_id
         <where>
+            <if test="salesOrderIdList != null and salesOrderIdList.size() > 0">
+                and sod.sales_order_id
+                <foreach collection="salesOrderIdList" open="in (" close=")" item="item" separator="," index="index">
+                    #{item}
+                </foreach>
+            </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(oso.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-
             <if test="status != null">
                 and sod.status = #{status}
             </if>
-
             <if test="salesOrderId != null">
                 and sod.sales_order_id = #{salesOrderId}
             </if>

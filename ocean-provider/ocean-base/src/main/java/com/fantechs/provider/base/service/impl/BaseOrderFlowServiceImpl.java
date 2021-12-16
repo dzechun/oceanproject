@@ -38,8 +38,8 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
 
     @Override
     public BaseOrderFlow findOrderFlow(Map<String, Object> map) {
-        if(StringUtils.isEmpty(map.get("businessType"),map.get("orderNode"))){
-            throw new BizErrorException("业务类型或单据节点不能为空");
+        if(StringUtils.isEmpty(map.get("orderTypeCode"))){
+            throw new BizErrorException("单据类型编码不能为空");
         }
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());

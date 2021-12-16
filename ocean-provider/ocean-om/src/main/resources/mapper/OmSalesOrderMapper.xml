@@ -47,6 +47,9 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <collection property="omSalesOrderDetDtoList" ofType="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto"
+                    column="{salesOrderId=sales_order_id}" select="com.fantechs.provider.om.mapper.OmSalesOrderDetMapper.findList">
+        </collection>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -105,27 +108,21 @@
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(so.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-
             <if test="status != null">
                 and so.status = #{status}
             </if>
-
             <if test="orgId != null">
                 and so.org_id = #{orgId}
             </if>
-
             <if test="salesOrderCode != null and salesOrderCode != ''">
                 and so.sales_order_code like CONCAT('%', #{salesOrderCode}, '%')
             </if>
-
             <if test="customerOrderCode != null and customerOrderCode != ''">
                 and so.customer_order_code like CONCAT('%', #{customerOrderCode}, '%')
             </if>
-
             <if test="contractCode != null and contractCode != ''">
                 and so.contract_code like CONCAT('%', #{contractCode}, '%')
             </if>
-
             <if test="salesOrderId != null">
                 and so.sales_order_id = #{salesOrderId}
             </if>

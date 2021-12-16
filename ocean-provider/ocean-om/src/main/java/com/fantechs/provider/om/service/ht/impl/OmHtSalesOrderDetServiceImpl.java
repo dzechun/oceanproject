@@ -1,9 +1,11 @@
 package com.fantechs.provider.om.service.ht.impl;
 
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDetDto;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.provider.om.mapper.ht.OmHtSalesOrderDetMapper;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderDetService;
 import org.springframework.stereotype.Service;
@@ -23,13 +25,9 @@ public class OmHtSalesOrderDetServiceImpl extends BaseService<OmHtSalesOrderDet>
     private OmHtSalesOrderDetMapper omHtSalesOrderDetMapper;
 
     @Override
-    public int save(OmHtSalesOrderDet omHtSalesOrderDet) {
-        omHtSalesOrderDet.setHtSalesOrderDetId(null);
-        return omHtSalesOrderDetMapper.insertSelective(omHtSalesOrderDet);
-    }
-
-    @Override
     public List<OmHtSalesOrderDetDto> findList(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",user.getOrganizationId());
         return omHtSalesOrderDetMapper.findList(map);
     }
 }
