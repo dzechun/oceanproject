@@ -45,4 +45,7 @@ public class CallAgvVehicleReBarcodeDto extends CallAgvVehicleReBarcode implemen
 
     @ApiModelProperty(name="materialFactory",value = "厂家")
     private String materialFactory;
+
+    @ApiModelProperty(name="barcodeStatus",value = "条码状态(1-待入库 2-已备料 3-已入库 4-已出库 5-已解绑)")
+    private Byte barcodeStatus;
 }

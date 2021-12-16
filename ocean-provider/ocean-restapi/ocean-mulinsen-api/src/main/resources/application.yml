@@ -1,0 +1,24 @@
+server:
+  port: 9004
+  max-http-header-size: 10000000
+
+spring:
+  profiles:
+    include: dev
+  application:
+    name: @pom.artifactId@
+  datasource:
+    primary:
+      jdbc-url: jdbc:mysql://192.168.18.110:3306/hl4pl?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+      username: hl_admin
+      password: qMhs1LbcOx5u0v4q
+      type: com.alibaba.druid.pool.DruidDataSource
+      driverClassName: com.mysql.cj.jdbc.Driver
+
+pkGroup: 0001A110000000000AT4
+pkOrg: 0001A110000000002UV1
+factoryCode: 010101
+deptCodePrefix: 00105
+
+logging:
+  file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log

@@ -1,6 +1,7 @@
 package com.fantechs.security.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysUserExcelDTO;
 import com.fantechs.common.base.entity.security.SysOrganizationUser;
@@ -73,6 +74,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int save(SysUser sysUser){
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUser)){
@@ -122,6 +124,7 @@ public class SysUserServiceImpl extends BaseService<SysUser> implements SysUserS
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int update(SysUser sysUser){
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
 

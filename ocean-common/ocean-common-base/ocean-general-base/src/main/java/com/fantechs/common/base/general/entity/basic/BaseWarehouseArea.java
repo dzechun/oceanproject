@@ -63,6 +63,13 @@ public class BaseWarehouseArea extends ValidGroup implements Serializable {
     private Long warehouseId;
 
     /**
+     * 最大使用率
+     */
+    @ApiModelProperty(name="max_usage_rate",value = "最大使用率(%)")
+    @Excel(name = "最大使用率(%)", height = 20, width = 30)
+    private BigDecimal maxUsageRate;
+
+    /**
      * 容量
      */
     @ApiModelProperty(name="capacity",value = "容量")

@@ -7,7 +7,9 @@
     -->
     <id column="barcode_id" jdbcType="BIGINT" property="barcodeId" />
     <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="product_model" jdbcType="VARCHAR" property="productModel" />
+    <result column="erp_product_model" jdbcType="VARCHAR" property="erpProductModel" />
     <result column="batch" jdbcType="VARCHAR" property="batch" />
     <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
     <result column="qty" jdbcType="DECIMAL" property="qty" />
@@ -22,6 +24,7 @@
     <result column="zhe_wan_ji_shift" jdbcType="VARCHAR" property="zheWanJiShift" />
     <result column="material_factory" jdbcType="VARCHAR" property="materialFactory" />
     <result column="material_spec" jdbcType="VARCHAR" property="materialSpec" />
+    <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -36,10 +39,10 @@
   </resultMap>
   
   <sql id="Base_Column_List">
-    cab.barcode_id, cab.barcode, cab.product_model, cab.batch, cab.batch_code, cab.qty, cab.operator_user_name, cab.process_name, cab.shelf_life,
-    cab.production_date, cab.serial_number, cab.zhu_su_ji_name, cab.zhu_su_ji_shift, cab.zhe_wan_ji_name, cab.zhe_wan_ji_shift, cab.material_factory,
-    cab.material_spec, cab.status, cab.remark, cab.org_id, cab.create_user_id, cab.create_time, cab.modified_user_id, cab.modified_time, cab.is_delete,
-    cab.option1, cab.option2, cab.option3
+    cab.barcode_id, cab.barcode, cab.material_code, cab.product_model, cab.erp_product_model, cab.batch, cab.batch_code, cab.qty, cab.operator_user_name,
+    cab.process_name, cab.shelf_life, cab.production_date, cab.serial_number, cab.zhu_su_ji_name, cab.zhu_su_ji_shift, cab.zhe_wan_ji_name, cab.zhe_wan_ji_shift,
+    cab.material_factory, cab.material_spec, cab.barcode_status, cab.status, cab.remark, cab.org_id, cab.create_user_id, cab.create_time, cab.modified_user_id,
+    cab.modified_time, cab.is_delete, cab.option1, cab.option2, cab.option3
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.callagv.CallAgvBarcodeDto">

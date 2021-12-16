@@ -7,6 +7,7 @@
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
         <result column="warehouse_area_desc" jdbcType="VARCHAR" property="warehouseAreaDesc"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="max_usage_rate" jdbcType="DECIMAL" property="maxUsageRate"/>
         <result column="capacity" jdbcType="DECIMAL" property="capacity"/>
         <result column="temperature" jdbcType="DECIMAL" property="temperature"/>
         <result column="unit" jdbcType="VARCHAR" property="unit"/>
@@ -38,6 +39,7 @@
         swa.warehouse_area_name,
         swa.warehouse_area_desc,
         swa.warehouse_category,
+        swa.max_usage_rate,
         swa.capacity,
         swa.temperature,
         swa.unit,
