@@ -19,16 +19,16 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     private String jobOrderCode;
 
     /**
-     * 相关单号
+     * 核心系统单据类型编码
      */
-    @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
-    private String relatedOrderCode;
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    private String coreSourceSysOrderTypeCode;
 
     /**
-     * 单据类型
+     * 来源系统单据类型编码
      */
-    @ApiModelProperty(name="orderTypeId",value = "单据类型")
-    private Long orderTypeId;
+    @ApiModelProperty(name="sourceSysOrderTypeCode",value = "来源系统单据类型编码")
+    private String sourceSysOrderTypeCode;
 
     /**
      * 仓库
@@ -43,18 +43,24 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     private String workName;
 
     /**
+     * 作业类型(1-上架 2-拣货 3-移位)
+     */
+    @ApiModelProperty("作业类型(1-上架 2-拣货 3-移位)")
+    private Byte jobOrderType;
+
+    /**
+     * 单据状态(1-待分配2-分配中 3-待作业 4-作业中 5-完成 6-待激活)
+     */
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待分配2-分配中 3-待作业 4-作业中 5-完成 6-待激活)")
+    private Byte orderStatus;
+
+    /**
      * 根据编码查询方式标记（传1则为等值查询）
      */
     @ApiModelProperty(name = "codeQueryMark",value = "查询方式标记")
     private Integer codeQueryMark;
 
     private Long jobOrderId;
-
-    /**
-     * 作业类型(1-上架 2-拣货 3-移位)
-     */
-    @ApiModelProperty("作业类型(1-上架 2-拣货 3-移位)")
-    private Byte jobOrderType;
 
     private Long sourceOrderId;
 
@@ -64,10 +70,6 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
 
     private Long orgId;
 
-    /**
-     * 单据状态(1-待分配2-分配中 3-待作业 4-作业中 5-完成 6-待激活)
-     */
-    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待分配2-分配中 3-待作业 4-作业中 5-完成 6-待激活)")
-    private Byte orderStatus;
+
 
 }
