@@ -47,10 +47,7 @@
     wimbro.create_time,
     wimbro.modified_user_id,
     wimbro.modified_time,
-    wimbro.is_delete,
-    wimbro.option1,
-    wimbro.option2,
-    wimbro.option3
+    wimbro.is_delete
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
@@ -60,7 +57,8 @@
     bo.organization_name AS organization_Name,
     bm.material_name as materialName,
     bm.material_code as materialCode,
-    wimb.material_qty as qty,wimb.production_time as production_date,wimb.color_box_code,wimb.carton_code,wimb.pallet_code,wimb.batch_code
+    wimb.material_qty as qty,wimb.production_time as production_date,
+    wimb.color_box_code,wimb.carton_code,wimb.pallet_code,wimb.batch_code,wimb.barcode
     FROM wms_inner_material_barcode_re_order wimbro
     LEFT JOIN sys_user su ON wimbro.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wimbro.modified_user_id = sus.user_id
