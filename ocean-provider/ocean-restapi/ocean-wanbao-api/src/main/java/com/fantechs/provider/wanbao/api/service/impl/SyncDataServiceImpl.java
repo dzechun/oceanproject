@@ -241,7 +241,7 @@ public class SyncDataServiceImpl implements SyncDataService {
     }
 
     @Override
-    public void syncOrderData() {
+    public void syncOrderData(String workOrderCode) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -266,8 +266,12 @@ public class SyncDataServiceImpl implements SyncDataService {
         }
         JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
         Map<String, Object> map = new HashMap<>();
-        if ("0".equals(jsonObject.get("all"))) {
-            map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+        if (workOrderCode != null){
+            map.put("workOrderCode", workOrderCode);
+        }else {
+            if ("0".equals(jsonObject.get("all"))) {
+                map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+            }
         }
         List<MiddleOrder> workOrders = middleOrderMapper.findOrderData(map);
         log.info("获取万宝工单数据，当前获取数量：" + workOrders.size());
@@ -346,7 +350,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     if (route.getRouteCode().equals("A1") && order.getWorkOrderCode().contains("ZA")){
                         routeId = route.getRouteId();
                         break;
-                    }else if (route.getRouteCode().equals("A2") && (order.getWorkOrderCode().contains("ZC")) || order.getWorkOrderCode().contains("ZD")){
+                    }else if (route.getRouteCode().equals("A2") && (order.getWorkOrderCode().contains("ZC") || order.getWorkOrderCode().contains("ZD"))){
                         routeId = route.getRouteId();
                         break;
                     }else if (route.getRouteCode().equals("A16") && order.getWorkOrderCode().contains("ZL")){
@@ -357,8 +361,10 @@ public class SyncDataServiceImpl implements SyncDataService {
                 // 工艺路线工序关系
                 List<BaseRouteProcess> routeProcessList = baseFeignApi.findConfigureRout(routeId).getData();
                 workOrder.setRouteId(routeId);
-                workOrder.setPutIntoProcessId(routeProcessList.get(0).getProcessId());
-                workOrder.setOutputProcessId(routeProcessList.get(routeProcessList.size()-1).getProcessId());
+                if (routeProcessList.get(0) != null){
+                    workOrder.setPutIntoProcessId(routeProcessList.get(0).getProcessId());
+                    workOrder.setOutputProcessId(routeProcessList.get(routeProcessList.size()-1).getProcessId());
+                }
 
                 // 按物料-产品型号-产线-默认顺序获取产品工艺路线，如果全都没有则取编码为default的工艺路线
 //                List<BaseProductProcessRoute> processRouteList = baseFeignApi.findListByCondition(searchBaseProductProcessRoute).getData();
@@ -448,183 +454,6 @@ public class SyncDataServiceImpl implements SyncDataService {
             apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
             securityFeignApi.add(apiLog);
         }
-    }
-
-    @Override
-    public void syncOrderByOrderCode(String workOrderCode){
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-
-        // 记录日志
-        SysApiLog apiLog = new SysApiLog();
-        apiLog.setCreateTime(new Date());
-        apiLog.setThirdpartySysName("万宝数据库对接");
-        apiLog.setCallType((byte) 1);
-        apiLog.setCallResult((byte) 0);
-        apiLog.setApiModule("ocean-wanbao-api");
-        apiLog.setApiUrl("查询数据库-根据订单编码同步工单");
-        apiLog.setOrgId(sysUser.getOrganizationId());
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("workOrderCode", workOrderCode);
-        List<MiddleOrder> workOrders = middleOrderMapper.findOrderDataByCode(map);
-        log.info("根据订单编码获取万宝工单数据，当前获取数量：" + workOrders.size());
-        long start = System.currentTimeMillis();
-        if (!workOrders.isEmpty()) {
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("wanbaoSyncData");
-            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            if (specItems.isEmpty()) {
-                // 记录日志
-                apiLog.setResponseData("获取平台同步数据配置项不存在，不同步数据");
-                securityFeignApi.add(apiLog);
-                return;
-            }
-            JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
-
-            // 获取所有销售订单
-            List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
-            // 物料集合
-            List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
-            // 工单集合
-            List<MesPmWorkOrderDto> workOrderDtos = pmFeignApi.findWorkOrderAll().getData();
-            // 产线集合
-            List<BaseProLine> proLines = baseFeignApi.findProLineAll().getData();
-            // 工艺路线
-            SearchBaseRoute baseRoute = new SearchBaseRoute();
-            baseRoute.setPageSize(9999);
-            List<BaseRoute> baseRoutes = baseFeignApi.findRouteList(baseRoute).getData();
-            if(baseRoutes.isEmpty()){
-                // 记录日志
-                apiLog.setResponseData("平台默认工艺路线不存在，不同步工单数据");
-                securityFeignApi.add(apiLog);
-                return;
-            }
-            // 条码规则集合
-            SearchBaseBarcodeRuleSet barcodeRuleSet = new SearchBaseBarcodeRuleSet();
-            barcodeRuleSet.setPageSize(9999);
-            List<BaseBarcodeRuleSetDto> ruleSetDtos = baseFeignApi.findBarcodeRuleSetList(barcodeRuleSet).getData();
-            if(ruleSetDtos.isEmpty()){
-                // 记录日志
-                apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
-                securityFeignApi.add(apiLog);
-                return;
-            }
-
-            // 通过程序配置项取工艺路线、规则集合
-            Long routeId = 0L;
-            for (BaseRoute route : baseRoutes){
-                if (route.getRouteCode().equals(jsonObject.get("routeCode"))){
-                    routeId = route.getRouteId();
-                    break;
-                }
-            }
-            // 工艺路线工序关系
-            List<BaseRouteProcess> routeProcessList = baseFeignApi.findConfigureRout(routeId).getData();
-
-            Long ruleSetId = 0L;
-            for (BaseBarcodeRuleSetDto ruleSetDto : ruleSetDtos){
-                if (ruleSetDto.getBarcodeRuleSetCode().equals(jsonObject.get("ruleCode"))){
-                    ruleSetId = ruleSetDto.getBarcodeRuleSetId();
-                    break;
-                }
-            }
-
-            List<MesPmWorkOrder> addList = new ArrayList<>();
-            List<MesPmWorkOrder> updateList = new ArrayList<>();
-            for (MiddleOrder order : workOrders) {
-                MesPmWorkOrder workOrder = new MesPmWorkOrder();
-                BeanUtil.copyProperties(order, workOrder);
-                workOrder.setRouteId(routeId);
-                workOrder.setPutIntoProcessId(routeProcessList.get(0).getProcessId());
-                workOrder.setOutputProcessId(routeProcessList.get(routeProcessList.size()-1).getProcessId());
-                workOrder.setBarcodeRuleSetId(ruleSetId);
-                workOrder.setIsDelete((byte) 1);
-                workOrder.setOrgId(sysUser.getOrganizationId());
-                workOrder.setScheduledQty(workOrder.getWorkOrderQty());
-                workOrder.setProductionQty(BigDecimal.ZERO);
-                workOrder.setWorkOrderStatus((byte) 1);
-                // 销售订单
-                for (OmSalesOrderDto item : salesOrderDtos) {
-                    if (item.getSalesOrderCode().equals(order.getSalesOrderCode())) {
-                        workOrder.setSalesOrderId(item.getSalesOrderId());
-                        // 记录销售编码
-                        workOrder.setSalesCode(item.getSalesCode());
-                        break;
-                    }
-                }
-
-                SearchBaseProductProcessRoute searchBaseProductProcessRoute = new SearchBaseProductProcessRoute();
-                // 物料
-                if (StringUtils.isEmpty(order.getMaterialCode())) {
-                    apiLog.setResponseData(order.getWorkOrderCode() + "此生产订单数据中物料编码为空，不同步此条订单数据");
-                    securityFeignApi.add(apiLog);
-                    continue;
-                }
-                for (BaseMaterial item : baseMaterials) {
-                    if (item.getMaterialCode().equals(order.getMaterialCode())) {
-                        workOrder.setMaterialId(item.getMaterialId());
-                        searchBaseProductProcessRoute.setMaterialId(workOrder.getMaterialId());
-                        if(item.getBaseTabDto() != null){
-                            searchBaseProductProcessRoute.setProductModelId(item.getBaseTabDto().getProductModelId());
-                        }
-                        break;
-                    }
-                }
-
-                if (StringUtils.isEmpty(workOrder.getMaterialId())) {
-                    // 记录日志
-                    apiLog.setResponseData(order.getWorkOrderCode() + "此订单编号在系统中没有匹配的物料" + order.getMaterialCode() + "，不同步此条订单数据");
-                    securityFeignApi.add(apiLog);
-                    continue;
-                }
-
-                // 产线
-                for (BaseProLine item : proLines) {
-                    if (item.getProCode().equals(order.getProCode())) {
-                        workOrder.setProLineId(item.getProLineId());
-                        searchBaseProductProcessRoute.setProLineId(item.getProLineId());
-                        break;
-                    }
-                }
-
-                // 按物料-产品型号-产线-默认顺序获取产品工艺路线，如果全都没有则取编码为default的工艺路线
-                List<BaseProductProcessRoute> processRouteList = baseFeignApi.findListByCondition(searchBaseProductProcessRoute).getData();
-                if (!processRouteList.isEmpty() && processRouteList.size() > 0){
-                    workOrder.setRouteId(processRouteList.get(0).getRouteId());
-                }
-
-                // 判断订单是否存在
-                for (MesPmWorkOrderDto item : workOrderDtos) {
-                    if (item.getWorkOrderCode().equals(order.getWorkOrderCode())) {
-                        workOrder.setWorkOrderId(item.getWorkOrderId());
-                        order.setWorkOrderId(item.getWorkOrderId().toString());
-                        break;
-                    }
-                }
-                if (StringUtils.isNotEmpty(workOrder.getWorkOrderId())) {
-                    // 修改订单
-                    updateList.add(workOrder);
-                } else {
-                    // 新增订单
-                    addList.add(workOrder);
-                    // 保存中间库
-//                    DynamicDataSourceHolder.putDataSouce("secondary");
-//                    middleOrderMapper.save(order);
-//                    DynamicDataSourceHolder.removeDataSource();
-                }
-            }
-            // 保存平台库
-            if (!addList.isEmpty()){
-                pmFeignApi.addList(addList);
-            }
-            if (!updateList.isEmpty()){
-                pmFeignApi.batchUpdate(updateList);
-            }
-        }
-
-        apiLog.setRequestTime(new Date());
-        apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
-        securityFeignApi.add(apiLog);
     }
 
     @Override
@@ -941,7 +770,7 @@ public class SyncDataServiceImpl implements SyncDataService {
     }
 
     @Override
-    public void syncBarcodeData() {
+    public void syncBarcodeData(boolean flag) {
 
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -966,9 +795,12 @@ public class SyncDataServiceImpl implements SyncDataService {
             return;
         }
         Map<String, Object> map = new HashMap<>();
-        JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
-        if ("0".equals(jsonObject.get("all"))) {
-            map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+        // flag = true时条件查询，=false时查询所有
+        if (flag){
+            JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
+            if ("0".equals(jsonObject.get("all"))) {
+                map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+            }
         }
         // 执行查询
         DynamicDataSourceHolder.putDataSouce("thirdary");
@@ -1009,59 +841,6 @@ public class SyncDataServiceImpl implements SyncDataService {
             securityFeignApi.add(apiLog);
         }
 
-    }
-
-    @Override
-    public void syncAllBarcodeData() {
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        // 记录日志
-        SysApiLog apiLog = new SysApiLog();
-        apiLog.setCreateTime(new Date());
-        apiLog.setThirdpartySysName("万宝数据库对接");
-        apiLog.setCallType((byte) 1);
-        apiLog.setCallResult((byte) 0);
-        apiLog.setApiModule("ocean-wanbao-api");
-        apiLog.setApiUrl("查询数据库-同步产品条码");
-        apiLog.setOrgId(sysUser.getOrganizationId());
-
-        // 执行查询
-        DynamicDataSourceHolder.putDataSouce("thirdary");
-        List<MiddleProduct> barcodeDatas = middleProductMapper.findBarcodeData(new HashMap<>());
-        log.info("------barcodeDatas----------" + barcodeDatas);
-        DynamicDataSourceHolder.removeDataSource();
-
-        if (StringUtils.isNotEmpty(barcodeDatas)) {
-            // 记录日志
-            long start = System.currentTimeMillis();
-            for (MiddleProduct middleProduct : barcodeDatas) {
-                if (StringUtils.isEmpty(middleProduct) || StringUtils.isEmpty(middleProduct.getCustomerBarcode()) || StringUtils.isEmpty(middleProduct.getBarcode())) {
-                    continue;
-                }
-                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
-                searchMesSfcBarcodeProcess.setBarcode(middleProduct.getBarcode());
-                List<MesSfcBarcodeProcess> mesSfcBarcodeProcess = sfcFeignApi.findBarcode(searchMesSfcBarcodeProcess).getData();
-                if (StringUtils.isNotEmpty(mesSfcBarcodeProcess) && StringUtils.isEmpty(mesSfcBarcodeProcess.get(0).getCustomerBarcode())) {
-                    mesSfcBarcodeProcess.get(0).setCustomerBarcode(middleProduct.getCustomerBarcode());
-                    sfcFeignApi.update(mesSfcBarcodeProcess.get(0));
-                } else {
-                    apiLog.setResponseData(middleProduct.getBarcode() + "，此产品条码未匹配到对应的过站数据，不同步此条数据");
-                    securityFeignApi.add(apiLog);
-                    continue;
-                }
-
-            }
-
-            // 保存中间库
-            DynamicDataSourceHolder.putDataSouce("secondary");
-            for (MiddleProduct middleProduct : barcodeDatas) {
-                middleProductMapper.save(middleProduct);
-            }
-            DynamicDataSourceHolder.removeDataSource();
-
-            apiLog.setRequestTime(new Date());
-            apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
-            securityFeignApi.add(apiLog);
-        }
     }
 
 }

@@ -120,7 +120,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 		if (request.getRequestURI().contains(SWAGGER_URI)|| LOGIN_URI.contains(request.getRequestURI())) {
 			return false;
 		}
-			return false;
+			return true;
 	}
 
 	/**

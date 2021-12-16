@@ -1,5 +1,6 @@
 package com.fantechs.security;
 
+import com.codingapi.txlcn.tc.config.EnableDistributedTransaction;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -12,6 +13,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @MapperScan({"com.fantechs.security.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider.api")
 @EnableAutoConfiguration
+@EnableDistributedTransaction
 public class OceanSecurityApplication {
 
     public static void main(String[] args) {

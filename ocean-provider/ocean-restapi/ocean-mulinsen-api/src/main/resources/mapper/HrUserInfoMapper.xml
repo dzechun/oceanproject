@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.restapi.mulinsen.mapper.HrUserInfoMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mulinsen.HrUserInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="DEPT_ID" jdbcType="VARCHAR" property="deptId" />
+    <result column="DOMAIN_ACCOUNT" jdbcType="VARCHAR" property="domainAccount" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="EMP_ID" jdbcType="VARCHAR" property="empId" />
+    <result column="ENTRYDATE" jdbcType="DATE" property="entrydate" />
+    <result column="GENDER" jdbcType="CHAR" property="gender" />
+    <result column="ID_CARD" jdbcType="VARCHAR" property="idCard" />
+    <result column="ISDEL" jdbcType="INTEGER" property="isdel" />
+    <result column="JOB_GRADE" jdbcType="VARCHAR" property="jobGrade" />
+    <result column="JOB_LEVEL" jdbcType="VARCHAR" property="jobLevel" />
+    <result column="JOB_NUM" jdbcType="VARCHAR" property="jobNum" />
+    <result column="JOB_TITLE" jdbcType="VARCHAR" property="jobTitle" />
+    <result column="LEAVEDATE" jdbcType="DATE" property="leavedate" />
+    <result column="MANAGER_ID" jdbcType="VARCHAR" property="managerId" />
+    <result column="MOBILE_PHONE" jdbcType="VARCHAR" property="mobilePhone" />
+    <result column="REAL_NAME" jdbcType="VARCHAR" property="realName" />
+    <result column="DATA_STATUS" jdbcType="INTEGER" property="dataStatus" />
+    <result column="SYNC_TIME" jdbcType="TIMESTAMP" property="syncTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    hui.DEPT_ID, hui.DOMAIN_ACCOUNT, hui.EMAIL, hui.EMP_ID, hui.ENTRYDATE, hui.GENDER, hui.ID_CARD, hui.ISDEL, hui.JOB_GRADE, hui.JOB_LEVEL, hui.JOB_NUM,
+    hui.JOB_TITLE, hui.LEAVEDATE, hui.MANAGER_ID, hui.REAL_NAME, hui.MOBILE_PHONE, hui.DATA_STATUS, hui.SYNC_TIME
+  </sql>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mulinsen.HrUserInfoDto">
+
+  </resultMap>
+
+  <select id="findList" parameterType="com.fantechs.common.base.general.entity.mulinsen.search.SearchHrUserInfo" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>,
+    hdi.DEPT_CODE as deptCode, hdi.ERP_DEPTCODE as erpDeptcode
+    from hr_user_info hui
+    left join hr_dept_info hdi on hui.DEPT_ID = hdi.DEPT_ID
+    <where>
+      hdi.ERP_DEPTCODE is not null
+      <if test="jobNum != null and jobNum != ''">
+        and hui.JOB_NUM = #{jobNum}
+      </if>
+      <if test="deptCodePrefix != null and deptCodePrefix != ''">
+        and hdi.DEPT_CODE like CONCAT(#{deptCodePrefix}, '%')
+      </if>
+      <if test="notDataStatus != null">
+        and hui.DATA_STATUS <![CDATA[ != ]]> #{notDataStatus}
+      </if>
+    </where>
+  </select>
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+      update hr_user_info
+      set DATA_STATUS = #{item.dataStatus}
+      SYNC_TIME = #{item.syncTime}
+      where EMP_ID = #{item.empId}
+    </foreach>
+  </update>
+</mapper>
