@@ -266,6 +266,10 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    @ApiModelProperty(name = "materialType",value = "物料类别：1-国内 2-海外 3-三星")
+    @Column(name = "material_type")
+    private Byte materialType;
+
     @ApiModelProperty(name = "完工入库明细",value = "wmsInAsnOrderDetList")
     private List<WmsInAsnOrderDet> wmsInAsnOrderDetList;
 

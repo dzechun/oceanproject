@@ -239,6 +239,94 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     }
 
     /**
+     * 万宝抛开事物自动分配方法
+     * @param wmsInnerJobOrder
+     * @return
+     */
+    private int dis(WmsInnerJobOrder wmsInnerJobOrder){
+        int num = 0;
+        Example example = new Example(WmsInnerJobOrderDet.class);
+        example.createCriteria().andEqualTo("jobOrderId", wmsInnerJobOrder.getJobOrderId()).andEqualTo("orderStatus",1);
+        List<WmsInnerJobOrderDet> list = wmsInPutawayOrderDetMapper.selectByExample(example);
+        for (WmsInnerJobOrderDet wms : list) {
+            if (StringUtils.isEmpty(wms)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            }
+            //推荐库位
+//                Long storageId = wmsInPutawayOrderMapper.findStorage(wms.getMaterialId(), wmsInnerJobOrder.getWarehouseId(), sysUser.getOrganizationId());
+            JobRuleDto jobRuleDto = new JobRuleDto();
+            jobRuleDto.setPackageQty(wms.getPlanQty());
+            jobRuleDto.setWarehouseId(wms.getWarehouseId());
+            jobRuleDto.setMaterialId(wms.getMaterialId());
+            jobRuleDto.setBatchCode(StringUtils.isEmpty(wms.getBatchCode())?null:wms.getBatchCode());
+            jobRuleDto.setProDate(StringUtils.isEmpty(wms.getProductionDate())?null:DateUtils.getDateString(wms.getProductionDate(),"yyyy-MM-dd"));
+            ResponseEntity<List<StorageRuleDto>> responseEntity = baseFeignApi.JobRule(jobRuleDto);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
+            List<StorageRuleDto> list1 = responseEntity.getData();
+            if(list1.size()<1){
+                throw new BizErrorException("暂无分配库位");
+            }
+            BigDecimal totalQty = wms.getPlanQty();
+            WmsInnerJobOrderDet wmsInnerJobOrderDet =null;
+            for (StorageRuleDto storageRuleDto : list1) {
+                if(totalQty.compareTo(BigDecimal.ZERO)==1){
+                    num += wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
+                            .jobOrderDetId(wms.getJobOrderDetId())
+                            .inStorageId(storageRuleDto.getStorageId())
+                            .planQty(storageRuleDto.getPutawayQty())
+                            .distributionQty(storageRuleDto.getPutawayQty())
+                            .modifiedUserId(wmsInnerJobOrder.getCreateUserId())
+                            .modifiedTime(new Date())
+                            .orderStatus((byte) 3)
+                            .workStartTime(new Date())
+                            .workEndTime(new Date())
+                            .build());
+                    wmsInnerJobOrder.setOrderStatus((byte)3);
+                    wmsInnerJobOrder.setWorkStartTime(new Date());
+                    wmsInnerJobOrder.setWorkEndtTime(new Date());
+                    SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+                    searchWmsInnerJobOrder.setJobOrderId(wms.getJobOrderId());
+                    WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInPutawayOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+                    SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
+                    searchWmsInnerJobOrderDet.setJobOrderDetId(wms.getJobOrderDetId());
+                    WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
+                    //分配库存
+                    num += this.updateInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto);
+
+                    //可上架数量小于计划数量新增一条新明细
+                    if(storageRuleDto.getPutawayQty().compareTo(totalQty)==-1){
+                        WmsInnerJobOrderDet wmsInnerJobOrderDet1 = new WmsInnerJobOrderDet();
+                        BeanUtil.copyProperties(wms,wmsInnerJobOrderDet1);
+                        wmsInnerJobOrderDet1.setJobOrderDetId(null);
+                        wmsInnerJobOrderDet1.setPlanQty(totalQty.subtract(storageRuleDto.getPutawayQty()));
+                        wmsInnerJobOrderDet1.setInStorageId(null);
+                        wmsInnerJobOrderDet1.setDistributionQty(BigDecimal.ZERO);
+                        wmsInnerJobOrderDet1.setOrderStatus((byte)1);
+                        num += wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet1);
+                        wms = wmsInnerJobOrderDet1;
+                        wmsInnerJobOrder.setOrderStatus((byte)2);
+                        wmsInnerJobOrder.setWorkEndtTime(null);
+                    }
+                    totalQty = totalQty.subtract(storageRuleDto.getPutawayQty());
+                }
+            }
+        }
+        //待激活
+        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+        searchBaseWorker.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+        searchBaseWorker.setUserId(wmsInnerJobOrder.getCreateUserId());
+        List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
+        if (!workerDtos.isEmpty()) {
+            wmsInnerJobOrder.setWorkerId(workerDtos.get(0).getWorkerId());
+        }
+        wmsInnerJobOrder.setModifiedTime(new Date());
+        wmsInnerJobOrder.setModifiedUserId(wmsInnerJobOrder.getCreateUserId());
+        wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
+        return num;
+    }
+    /**
      * 手动分配
      *
      * @param list
@@ -1777,8 +1865,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if ("1".equals(sysSpecItem.getParaValue())) {
                 //自动分配
                 try {
-                    this.autoDistribution(record.getJobOrderId().toString());
+                    this.dis(record);
                 }catch (Exception e){
+                    //throw new BizErrorException(e.getMessage());
                     e.printStackTrace();
                 }
             }

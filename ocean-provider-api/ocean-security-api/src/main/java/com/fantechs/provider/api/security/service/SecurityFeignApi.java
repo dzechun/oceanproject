@@ -34,6 +34,14 @@ public interface SecurityFeignApi {
     @GetMapping(value = "/logout")
     ResponseEntity logout();
 
+    @ApiOperation("增加用户信息")
+    @PostMapping("/sysUser/add")
+    ResponseEntity add(@ApiParam(value = "必传：account、userCode、userName、password、status",required = true)@RequestBody @Validated SysUser sysUser);
+
+    @ApiOperation("修改用户信息")
+    @PostMapping("/sysUser/update")
+    ResponseEntity update(@ApiParam(value = "用户信息对象，用户信息Id必传",required = true)@RequestBody @Validated(value = SysUser.update.class) SysUser sysUser);
+
     @GetMapping("/sysUser/detail")
     @ApiOperation(value = "通过ID获取单个用户信息", notes = "通过ID获取单个用户信息")
     ResponseEntity<SysUser> selectUserById(@ApiParam(value = "传入主键userId", required = true) @RequestParam(value = "id") Long id);

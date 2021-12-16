@@ -47,7 +47,7 @@
     ws.option3
   </sql>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     SELECT <include refid="Base_Column_List"></include>,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
@@ -60,13 +60,13 @@
     LEFT JOIN base_pro_line bpl ON ws.pro_line_id = bpl.pro_line_id
     <where>
       <if test="stackingCode != null">
-        AND ws.stacking_code = like CONCAT('%', #{stackingCode}, '%')
+        AND ws.stacking_code like CONCAT('%', #{stackingCode}, '%')
       </if>
       <if test="usageStatus != null">
         AND ws.usage_status = #{usageStatus}
       </if>
       <if test="proName != null">
-        AND bpl.pro_name = like CONCAT('%', #{proName}, '%')
+        AND bpl.pro_name like CONCAT('%', #{proName}, '%')
       </if>
       <if test="status!=null">
         AND ws.status = #{status}

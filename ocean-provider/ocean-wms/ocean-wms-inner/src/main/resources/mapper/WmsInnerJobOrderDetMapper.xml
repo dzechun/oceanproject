@@ -149,6 +149,7 @@
                 and wipod.org_id = #{orgId}
             </if>
         </where>
+order by wipod.create_time desc
     </select>
     <update id="batchUpdate" parameterType="java.util.ArrayList">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">

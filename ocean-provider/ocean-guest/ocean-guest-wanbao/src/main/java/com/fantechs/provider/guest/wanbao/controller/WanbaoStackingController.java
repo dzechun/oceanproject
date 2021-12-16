@@ -1,9 +1,11 @@
 package com.fantechs.provider.guest.wanbao.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.guest.wanbao.dto.WanbaoStackingDto;
@@ -23,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +45,13 @@ public class WanbaoStackingController {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WanbaoStacking wanbaoStacking) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        wanbaoStacking.setCreateTime(new Date());
+        wanbaoStacking.setCreateUserId(sysUser.getUserId());
+        wanbaoStacking.setModifiedTime(new Date());
+        wanbaoStacking.setModifiedUserId(sysUser.getUserId());
+        wanbaoStacking.setOrgId(sysUser.getOrganizationId());
+        wanbaoStacking.setStatus((byte) 1);
         return ControllerUtil.returnCRUD(wanbaoStackingService.save(wanbaoStacking));
     }
 
@@ -54,6 +64,9 @@ public class WanbaoStackingController {
     @ApiOperation("修改")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WanbaoStacking.update.class) WanbaoStacking wanbaoStacking) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        wanbaoStacking.setModifiedTime(new Date());
+        wanbaoStacking.setModifiedUserId(sysUser.getUserId());
         return ControllerUtil.returnCRUD(wanbaoStackingService.update(wanbaoStacking));
     }
 
@@ -97,8 +110,8 @@ public class WanbaoStackingController {
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<WanbaoStacking> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, WanbaoStacking.class);
-            Map<String, Object> resultMap = wanbaoStackingService.importExcel(baseAddressImports);
+            List<WanbaoStackingDto> dtos = EasyPoiUtils.importExcel(file, 0, 1, WanbaoStackingDto.class);
+            Map<String, Object> resultMap = wanbaoStackingService.importExcel(dtos);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

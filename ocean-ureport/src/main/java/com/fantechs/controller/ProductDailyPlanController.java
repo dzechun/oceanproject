@@ -3,12 +3,13 @@ package com.fantechs.controller;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.entity.ProductDailyPlanModel;
+import com.fantechs.entity.search.ProductionBatch;
 import com.fantechs.entity.search.SearchProductDailyPlan;
 import com.fantechs.service.ProductDailyPlanService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ import java.util.List;
  * @Date 2021/12/01
  */
 @RestController
-@Api(tags = "生产计划看板")
+@Api(tags = "雷赛-生产计划看板")
 @RequestMapping("/productDailyPlan")
 @Validated
 public class ProductDailyPlanController {
@@ -31,9 +32,18 @@ public class ProductDailyPlanController {
     private ProductDailyPlanService productDailyPlanService;
 
     @PostMapping("/findList")
-    @ApiModelProperty("生产计划")
+    @ApiOperation("今日明日生产计划")
     public ResponseEntity<List<ProductDailyPlanModel>> findList(@RequestBody SearchProductDailyPlan searchProductDailyPlan){
         Page<Object> page = PageHelper.startPage(searchProductDailyPlan.getStartPage(), searchProductDailyPlan.getPageSize());
         return ControllerUtil.returnDataSuccess(productDailyPlanService.findList(ControllerUtil.dynamicConditionByEntity(searchProductDailyPlan)),(int)page.getTotal());
     }
+
+    @PostMapping("/findBatchList")
+    @ApiOperation("查询批次达成率")
+    public ResponseEntity<List<ProductionBatch>> findBatchList(){
+        return ControllerUtil.returnDataSuccess(productDailyPlanService.findBatchList(),0);
+    }
+
+
+
 }

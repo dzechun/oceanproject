@@ -68,7 +68,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			"/ocean-chinafivering-api/webServiceImport/getPoDetails,/ocean-chinafivering-api/webServiceImport/getPartNoInfo,/ocean-chinafivering-api/webServiceImport/getVendorUserNameAndPwd,"+
 			"/ocean-chinafivering-api/webServiceImport/getShelvesNo,/ocean-chinafivering-api/webServiceImport/getSubcontractor,"+
 			"/ocean-chinafivering-api/webServiceImport/getReqDetails,"+
-			"/ocean-fileserver/file/uploadsFiles";
+			"/ocean-fileserver/file/uploadsFiles,/ocean-ureport/productDailyPlan/findBatchList,/ocean-ureport/productionLine/findList,/ocean-mulinsen-api/nccBdMaterial/findList";
 	private static final String SWAGGER_URI = "/v2/api-docs";
 
 	private static final String CLIENT_URI = "/ocean-client/createPtlJobOrder,/ocean-client/cancelPtrlJobOrder,/ocean-esop/esopEquipmentStatus/closeThird," +
@@ -81,10 +81,11 @@ public class AuthHeaderFilter extends ZuulFilter {
 			"/ocean-mes-sfc/mesSfcScanBarcode/chkLogUserInfo,/ocean-mes-sfc/mesSfcScanBarcode/chkSnRouting,/ocean-mes-sfc/mesSfcScanBarcode/snDataTransfer,"+
 			"/ocean-security/sysUser/findList,/ocean-security/sysRole/findList,/ocean-security/sysUser/saveByApi,"+
 			"/ocean-guest-callagv/RCSAPI/agvCallback,/ocean-imes-materialapi/productBomApi,/ocean-esop-baseapi/getIssue/getAllIssue,/ocean-esop-baseapi/getWorkOrder/getAllWorkOrder," +
-			"/ocean-mes-sfc/scanBarcode/doScan,/ocean-mes-sfc/scanBarcode/getBasics,/ocean-guest-jinan/rfidAsset/findList,/ocean-guest-jinan/rfidBaseStationLog/checkData";
+			"/ocean-mes-sfc/scanBarcode/doScan,/ocean-mes-sfc/scanBarcode/getBasics,/ocean-guest-jinan/rfidAsset/findList,/ocean-guest-jinan/rfidBaseStationLog/checkData," +
+			"/ocean-guest-callagv/callAgvVehicleReBarcode/callAgvDistributionRest";
 
 	/**
-	 * Filter type string.
+	 * Filter type string.res
 	 *
 	 * @return the string
 	 */

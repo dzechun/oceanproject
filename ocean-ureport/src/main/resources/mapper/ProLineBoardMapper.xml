@@ -25,22 +25,23 @@
     </resultMap>
 
     <select id="findPlanList" resultMap="BaseResultMap" parameterType="com.fantechs.entity.search.SearchProLineBoard">
-        select 	sum(mpwo.scheduled_qty)AS 'scheduledQty', sum(mpwo.output_qty) AS 'outputQty', mpwo.pro_line_id AS 'proLineId'
+        select 	sum(mpdp.schedule_qty)AS 'scheduledQty', sum(mpwo.output_qty) AS 'outputQty', mpwo.pro_line_id AS 'proLineId'
         , bpl.pro_name AS 'proName'
         from mes_pm_daily_plan mpdp
         LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
         LEFT JOIN base_pro_line bpl ON mpwo.pro_line_id = bpl.pro_line_id
-        <where>
-            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-                and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-            </if>
-            <if test="orgId!=null">
-                and mpdp.org_id=#{orgId}
-            </if>
-            <if test="proLineId!=null and proLineId!=''">
-                and mpwo.pro_line_id = #{proLineId}
-            </if>
-        </where>
+        where 1=1 and mpdp.status = 1
+        <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+            and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        </if>
+        <if test="orgId!=null">
+            and mpdp.org_id=#{orgId}
+        </if>
+        <if test="proLineId!=null and proLineId!=''">
+            and mpwo.pro_line_id = #{proLineId}
+        </if>
+
+
     </select>
 
     <select id="findEquipMentList" resultType="java.lang.Long" parameterType="com.fantechs.entity.search.SearchProLineBoard">
@@ -68,9 +69,18 @@
     </select>
 
     <select id="findBarCodeRecordList" resultType="java.lang.Long" parameterType="com.fantechs.entity.search.SearchProLineBoard">
-        select 	count(msbpr.barcode_process_record_id)
+        select
+        <if test="isDistinct != null and isDistinct != ''">
+            count(DISTINCT(msbpr.barcode))
+        </if>
+        <if test="isDistinct == null or isDistinct == ''">
+            count(msbpr.barcode_process_record_id)
+        </if>
         from mes_sfc_barcode_process_record msbpr
         <where>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and msbpr.work_order_code = #{workOrderCode}
+            </if>
             <if test="proLineId!=null and proLineId!=''">
                 and msbpr.pro_line_id = #{proLineId}
             </if>
@@ -80,14 +90,14 @@
             <if test="barcodeStatus!=null and barcodeStatus!=''">
                 and msbpr.barcode_status = #{barcodeStatus}
             </if>
-            <!--<if test="sectionNameList != null and sectionNameList.size() > 0">
-                and
-                <foreach collection="list" item="item" open="msbpr.section_name in (" close=")" separator="," >
-                    #{sectionNameList}
-                </foreach>
-            </if>-->
+            <if test="passStationCount!=null and passStationCount!=''">
+                and msbpr.pass_station_count = #{passStationCount}
+            </if>
             <if test="sectionName!=null and sectionName!=''">
                 and msbpr.section_name = #{sectionName}
+            </if>
+            <if test="processCode!=null and processCode!=''">
+                and msbpr.process_code = #{processCode}
             </if>
             <if test="orgId!=null">
                 and msbpr.org_id=#{orgId}
@@ -128,5 +138,63 @@
                 and bpy.yield_type = #{yieldType}
             </if>
         </where>
+    </select>
+    <select id="findLastBarCideRecirdList" resultType="com.fantechs.entity.ProductLineLeft" parameterType="com.fantechs.entity.search.SearchProLineBoard">
+        SELECT
+            msbpr.work_order_code as workOrderCode
+        FROM
+            mes_sfc_barcode_process_record msbpr
+            <where>
+                <if test="processCode!=null and processCode!=''">
+                    and msbpr.process_code = #{processCode}
+                </if>
+                <if test="proLineId!=null and proLineId!=''">
+                    and msbpr.pro_line_id = #{proLineId}
+                </if>
+            </where>
+        ORDER BY
+            barcode_process_record_id DESC limit 0,1
+    </select>
+    <select id="findNextPlan" resultType="com.fantechs.entity.ProductDailyPlanModel" parameterType="com.fantechs.entity.search.SearchProLineBoard">
+        SELECT
+            mpdp.seq_num as seqNum,
+            mpdp.schedule_qty as scheduledQty,
+            bm.material_name as materialName,
+            mpwo.work_order_code as workOrderCode
+        FROM
+            mes_pm_daily_plan mpdp
+        LEFT JOIN mes_pm_work_order mpwo ON mpwo.work_order_id = mpdp.work_order_id
+        LEFT JOIN base_material bm ON bm.material_id = mpwo.material_id
+        <where>
+            <if test="workOrderId != null and workOrderId != ''">
+                and mpdp.work_order_id = #{workOrderId}
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="seqNum != null and seqNum != ''">
+                and mpdp.seq_num = #{seqNum}
+            </if>
+        </where>
+    </select>
+    <select id="findProductLineRight" resultType="com.fantechs.entity.ProductLineRight" >
+        SELECT
+            msbpr.work_order_code AS workOrderCode,
+            msbpr.process_name AS processName,
+            brp.standard_time AS standardTime,
+            msbpr.option1 AS practicalTime,
+            1 as numberOfTimes
+        FROM
+            mes_sfc_barcode_process_record msbpr
+            LEFT JOIN base_route_process brp ON brp.route_id = msbpr.route_id
+            AND brp.process_id = msbpr.process_id
+        <where>
+            <if test="workOrderId != null and workOrderId != ''">
+                and msbpr.work_order_id = #{workOrderId}
+            </if>
+        </where>
+        ORDER BY
+            create_time DESC
+
     </select>
 </mapper>

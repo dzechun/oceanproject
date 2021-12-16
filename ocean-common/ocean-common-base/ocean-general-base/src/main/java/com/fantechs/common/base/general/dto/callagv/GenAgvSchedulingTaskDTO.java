@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class GenAgvSchedulingTaskDTO {
@@ -28,4 +29,7 @@ public class GenAgvSchedulingTaskDTO {
 
     @ApiModelProperty(name="callAgvAgvTask",value = "货架对应的AGV任务")
     private CallAgvAgvTask callAgvAgvTask;
+
+    @ApiModelProperty(name="map",value = "生产报告/备料计划的参数")
+    private Map<String, Object> map;
 }

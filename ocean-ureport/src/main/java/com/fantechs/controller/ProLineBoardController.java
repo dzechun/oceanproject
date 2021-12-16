@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/proLineBoard")
-@Api(tags = "生产线大看板")
+@Api(tags = "雷赛-管理看板")
 public class ProLineBoardController {
 
     @Resource

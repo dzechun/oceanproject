@@ -4,8 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcessRecord;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.wms.inner.InitStockCheckBarCode;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInitStockDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.InitStockImport;
@@ -26,6 +26,7 @@ import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.WmsInnerInitStockService;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
  * Created by leifengzhi on 2021/12/01.
  */
 @Service
+@Slf4j
 public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock> implements WmsInnerInitStockService {
 
     @Resource
@@ -80,68 +82,87 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
            // throw new BizErrorException("条码错误");
         }
         //判断是否是厂内码3911
-        String code = barCode.substring(0,4);
         initStockCheckBarCode.setBarCode(barCode);
-        if(isInPlantBarCode && code.equals("3911")){
-            //厂内码 并返回1 物料
+        if (barCode.length() == 23){
             initStockCheckBarCode.setType((byte)1);
             initStockCheckBarCode.setInPlantBarcode(barCode);
             criteria.andEqualTo("inPlantBarcode",barCode);
-        }else if(code.equals("391-")){
-            //销售条码 返回 2
-            initStockCheckBarCode.setType((byte)2);
-            initStockCheckBarCode.setSalesBarcode(barCode);
-            criteria.andEqualTo("salesBarcode",barCode);
-        }else {
-            code = barCode.substring(0,2);
-            if(isInPlantBarCode && code.equals("99")){
+            String code = barCode.substring(0,1);
+            if(isInPlantBarCode && code.equals("9")){
                 //梅州厂内码
-                initStockCheckBarCode.setType((byte)1);
-                initStockCheckBarCode.setInPlantBarcode(barCode);
-                criteria.andEqualTo("inPlantBarcode",barCode);
                 //首位转换 3 第五位替换成 0
                 StringBuilder sb = new StringBuilder(barCode);
                 sb.replace(0,1,"3");
                 sb.replace(4,5,"0");
                 barCode = sb.toString();
-            }else if(isInPlantBarCode && code.equals("89")){
+            }else if(isInPlantBarCode && code.equals("8")){
                 //民权厂内码
-                initStockCheckBarCode.setType((byte)1);
-                initStockCheckBarCode.setInPlantBarcode(barCode);
-                criteria.andEqualTo("inPlantBarcode",barCode);
                 //首位转换成3
                 StringBuilder sb = new StringBuilder(barCode);
                 sb.replace(0,1,"3");
                 barCode = sb.toString();
+            }
+        } else if (barCode.contains("391-")){
+            //销售条码 返回 2
+            initStockCheckBarCode.setType((byte)2);
+            initStockCheckBarCode.setSalesBarcode(barCode);
+            criteria.andEqualTo("salesBarcode",barCode);
+        }else {
+            initStockCheckBarCode.setType((byte)3);
+            //客户条码匹配PQMS条码查询厂内码及对应物料
+            SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
+            searchMesSfcBarcodeProcess.setIsCustomerBarcode(barCode);
+            ResponseEntity<List<MesSfcBarcodeProcessDto>> responseEntity = sfcFeignApi.findList(searchMesSfcBarcodeProcess);
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
+            if(responseEntity.getData().isEmpty()){
+                //客户条码
+                initStockCheckBarCode.setType((byte)4);
+                initStockCheckBarCode.setClientBarcode(barCode);
             }else {
                 initStockCheckBarCode.setType((byte)3);
-                //客户条码匹配PQMS条码查询厂内码及对应物料
-                SearchMesSfcBarcodeProcessRecord searchMesSfcBarcodeProcessRecord = new SearchMesSfcBarcodeProcessRecord();
-                searchMesSfcBarcodeProcessRecord.setIsCustomerBarcode(barCode);
-                ResponseEntity<List<MesSfcBarcodeProcessRecordDto>> responseEntity = sfcFeignApi.findList(searchMesSfcBarcodeProcessRecord);
-                if(responseEntity.getCode()!=0){
-                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                //三星厂内码
+                initStockCheckBarCode.setInPlantBarcode(responseEntity.getData().get(0).getBarcode());
+                criteria.andEqualTo("inPlantBarcode",initStockCheckBarCode.getInPlantBarcode());
+                initStockCheckBarCode.setClientBarcode(responseEntity.getData().get(0).getCustomerBarcode());
+                barCode = initStockCheckBarCode.getInPlantBarcode();
+            }
+            criteria.andEqualTo("clientBarcode1",barCode).orEqualTo("clientBarcode2",barCode).orEqualTo("clientBarcode3",barCode);
+        }
+
+        List<WmsInnerInitStockBarcode> wmsInnerInitStockBarcodes = wmsInnerInitStockBarcodeMapper.selectByExample(example);
+        if (!wmsInnerInitStockBarcodes.isEmpty()){
+            if(initStockCheckBarCode.getType()==4){
+                for (WmsInnerInitStockBarcode wmsInnerInitStockBarcode : wmsInnerInitStockBarcodes) {
+                    //判断是否GE/多美达
+                    WmsInnerInitStockDet wmsInnerInitStockDet = wmsInnerInitStockDetMapper.selectByPrimaryKey(wmsInnerInitStockBarcode.getInitStockDetId());
+                    if(wmsInnerInitStockDet.getProductType()==2){
+                        //获取长度最
+                        String clientCode = null;
+                        if(wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode2().length() && wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
+                            clientCode = wmsInnerInitStockBarcode.getClientBarcode1();
+                        }else if(wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode1().length() && wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
+                            clientCode = wmsInnerInitStockBarcode.getClientBarcode2();
+                        }else{
+                            clientCode = wmsInnerInitStockBarcode.getClientBarcode3();
+                        }
+
+                        if(StringUtils.isNotEmpty(clientCode) && clientCode.equals(initStockCheckBarCode.getClientBarcode())){
+                            throw new BizErrorException("重复扫码");
+                        }
+                    }
                 }
-                if(responseEntity.getData().isEmpty()){
-                    //客户条码
-                    initStockCheckBarCode.setType((byte)4);
-                }else {
-                    initStockCheckBarCode.setType((byte)3);
-                    //三星厂内码
-                    initStockCheckBarCode.setInPlantBarcode(responseEntity.getData().get(0).getBarcode());
-                    criteria.andEqualTo("inPlantBarcode",initStockCheckBarCode.getInPlantBarcode());
-                }
-                initStockCheckBarCode.setClientBarcode(barCode);
-                criteria.andEqualTo("clientBarcode1",barCode).orEqualTo("clientBarcode2",barCode).orEqualTo("clientBarcode3",barCode);
+            }else {
+                throw new BizErrorException("重复扫码");
             }
         }
-        WmsInnerInitStockBarcode wmsInnerInitStockBarcode = wmsInnerInitStockBarcodeMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(wmsInnerInitStockBarcode)){
-            throw new BizErrorException("重复扫码");
-        }
         //厂内码截取12位 查询物料信息
-        if(StringUtils.isNotEmpty(initStockCheckBarCode.getInPlantBarcode())){
-            String materialCode = initStockCheckBarCode.getInPlantBarcode().substring(0,12);
+        if(isInPlantBarCode && (StringUtils.isNotEmpty(initStockCheckBarCode.getInPlantBarcode())|| StringUtils.isNotEmpty(initStockCheckBarCode.getClientBarcode()))){
+            if(StringUtils.isEmpty(initStockCheckBarCode.getInPlantBarcode())){
+                initStockCheckBarCode.setInPlantBarcode(initStockCheckBarCode.getClientBarcode());
+            }
+            String materialCode = barCode.substring(0,12);
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(materialCode);
             searchBaseMaterial.setCodeQueryMark(1);
@@ -150,11 +171,27 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
             }
             if(responseEntity.getData().isEmpty()){
-                throw new BizErrorException("条码："+initStockCheckBarCode.getBarCode()+"未查询到物料信息");
+                if(initStockCheckBarCode.getType()==4){
+                    initStockCheckBarCode.setInPlantBarcode(null);
+                }else {
+                    throw new BizErrorException("条码："+initStockCheckBarCode.getBarCode()+"未查询到物料信息");
+                }
+            }else {
+                if(initStockCheckBarCode.getType()==4){
+                    //查询是否重复
+                    example.clear();
+                    criteria.andEqualTo("inPlantBarcode",barCode);
+                    WmsInnerInitStockBarcode wmsInnerInitStockBarcode = wmsInnerInitStockBarcodeMapper.selectOneByExample(example);
+                    if(StringUtils.isNotEmpty(wmsInnerInitStockBarcode)){
+                        throw new BizErrorException("重复扫码");
+                    }
+                    initStockCheckBarCode.setClientBarcode(null);
+                    initStockCheckBarCode.setType((byte)1);
+                }
+                initStockCheckBarCode.setMaterialId(responseEntity.getData().get(0).getMaterialId());
+                initStockCheckBarCode.setMaterialCode(responseEntity.getData().get(0).getMaterialCode());
+                initStockCheckBarCode.setMaterialDesc(responseEntity.getData().get(0).getMaterialDesc());
             }
-            initStockCheckBarCode.setMaterialId(responseEntity.getData().get(0).getMaterialId());
-            initStockCheckBarCode.setMaterialCode(responseEntity.getData().get(0).getMaterialCode());
-            initStockCheckBarCode.setMaterialDesc(responseEntity.getData().get(0).getMaterialDesc());
         }
 
         return initStockCheckBarCode;
@@ -183,6 +220,7 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
         searchBaseInventoryStatus.setWarehouseId(responseEntity.getData().get(0).getWarehouseId());
         searchBaseInventoryStatus.setInventoryStatusName("合格");
+        searchBaseInventoryStatus.setNameQueryMark(1);
         ResponseEntity<List<BaseInventoryStatus>> rs = baseFeignApi.findList(searchBaseInventoryStatus);
         if (rs.getCode()!=0){
             throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
@@ -194,7 +232,7 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         for (WmsInnerInitStockDet innerInitStockDet : wmsInnerInitStockDets) {
             //查询条码
             example = new Example(WmsInnerInitStockBarcode.class);
-            example.createCriteria().andEqualTo("initStockDetId");
+            example.createCriteria().andEqualTo("initStockDetId",innerInitStockDet.getInitStockDetId());
             List<WmsInnerInitStockBarcode> wmsInnerInitStockBarcodes = wmsInnerInitStockBarcodeMapper.selectByExample(example);
 
 
@@ -356,10 +394,14 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         if(varQty.signum()==-1){
             qty =  ~(varQty.intValue() - 1);
         }
-        wmsInnerInitStockDet.setVarianceQty(new BigDecimal(qty));
-        wmsInnerInitStockDet.setModifiedTime(new Date());
-        wmsInnerInitStockDet.setModifiedUserId(sysUser.getUserId());
-        wmsInnerInitStockDetMapper.updateByPrimaryKeySelective(wmsInnerInitStockDet);
+        if(varQty.compareTo(BigDecimal.ZERO)==0){
+            wmsInnerInitStockDetMapper.deleteByPrimaryKey(wmsInnerInitStockDet);
+        }else {
+            wmsInnerInitStockDet.setVarianceQty(new BigDecimal(qty));
+            wmsInnerInitStockDet.setModifiedTime(new Date());
+            wmsInnerInitStockDet.setModifiedUserId(sysUser.getUserId());
+            wmsInnerInitStockDetMapper.updateByPrimaryKeySelective(wmsInnerInitStockDet);
+        }
         return wmsInnerInitStockBarcodeMapper.deleteByPrimaryKey(initStockBarCodeId);
     }
 
@@ -376,6 +418,9 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         record.setOrderStatus((byte)1);
         int num = wmsInnerInitStockMapper.insertUseGeneratedKeys(record);
         for (WmsInnerInitStockDet wmsInnerInitStockDet : record.getWmsInnerInitStockDets()) {
+//            if(record.getInitStockType()==1){
+//                wmsInnerInitStockDet.setPlanQty(record.getTotalPlanQty());
+//            }
             wmsInnerInitStockDet.setCreateTime(new Date());
             wmsInnerInitStockDet.setCreateUserId(sysUser.getUserId());
             wmsInnerInitStockDet.setModifiedTime(new Date());
@@ -403,6 +448,9 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
         example.createCriteria().andEqualTo("initStockId",entity.getInitStockId());
         wmsInnerInitStockDetMapper.deleteByExample(example);
         for (WmsInnerInitStockDet wmsInnerInitStockDet : entity.getWmsInnerInitStockDets()) {
+//            if(entity.getInitStockType()==1){
+//                wmsInnerInitStockDet.setPlanQty(entity.getTotalPlanQty());
+//            }
             wmsInnerInitStockDet.setCreateTime(new Date());
             wmsInnerInitStockDet.setCreateUserId(sysUser.getUserId());
             wmsInnerInitStockDet.setModifiedTime(new Date());

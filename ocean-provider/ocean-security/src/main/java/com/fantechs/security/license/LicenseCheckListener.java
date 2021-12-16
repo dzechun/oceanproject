@@ -6,13 +6,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
 
 /**
  * 在项目启动时安装证书
  */
 @Slf4j
-@Component
+//@Component
 public class LicenseCheckListener implements ApplicationListener<ContextRefreshedEvent> {
 
     /**

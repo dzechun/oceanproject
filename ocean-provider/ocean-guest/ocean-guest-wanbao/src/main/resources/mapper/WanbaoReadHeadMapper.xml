@@ -45,7 +45,7 @@
     wrh.option3
   </sql>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     SELECT <include refid="Base_Column_List"></include>,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
@@ -57,14 +57,14 @@
     LEFT JOIN fantech_imes_v2.base_organization bo ON wrh.org_id = bo.organization_id
     LEFT JOIN base_platform bp ON wrh.platform_id = bp.platform_id
     <where>
-      <if test="readHeadIp != null">
-        AND wrh.read_head_ip = like CONCAT('%', #{readHeadIp}, '%')
+      <if test="readHeadIp != null and readHeadIp != ''">
+        AND wrh.read_head_ip like CONCAT('%', #{readHeadIp}, '%')
       </if>
-      <if test="readHeadName != null">
-        AND wrh.read_head_name = like CONCAT('%', #{readHeadName}, '%')
+      <if test="readHeadName != null and readHeadName != ''">
+        AND wrh.read_head_name like CONCAT('%', #{readHeadName}, '%')
       </if>
-      <if test="platformName != null">
-        AND bp.platform_name = like CONCAT('%', #{platformName}, '%')
+      <if test="platformName != null and platformName != ''">
+        AND bp.platform_name like CONCAT('%', #{platformName}, '%')
       </if>
       <if test="status!=null">
         AND wrh.status = #{status}

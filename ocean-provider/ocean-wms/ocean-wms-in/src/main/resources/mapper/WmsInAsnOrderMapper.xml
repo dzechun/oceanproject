@@ -37,6 +37,7 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="material_type" jdbcType="TINYINT" property="materialType"/>
     <collection property="wmsInAsnOrderDetList" ofType="com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet"
                 column="{asnOrderId=asn_order_id}" select="com.fantechs.provider.wms.in.mapper.WmsInAsnOrderDetMapper.findList">
     </collection>
@@ -88,7 +89,8 @@ wiao.storage_id,
   wiao.create_time,
   wiao.modified_user_id,
   wiao.modified_time,
-  wiao.is_delete
+  wiao.is_delete,
+wiao.material_type
   </sql>
     <select id="findList" resultMap="BaseResultDto">
       select <include refid="BaseColumn"/>,
@@ -177,6 +179,9 @@ wiao.storage_id,
     </if>
       <if test="warehouseName!=null and warehouseName!=''">
         and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+      </if>
+      <if test="materialType!=null and materialType!=''">
+        and wiao.material_type = #{materialType}
       </if>
 </where>
 order by wiao.create_time desc

@@ -29,32 +29,34 @@ public class MeterialPrepationServiceImpl implements MeterialPrepationService {
     @Resource
     private SecurityFeignApi securityFeignApi;
 
-    private String completedUrl= "http://IP:Port/FCS/PDA/MeterialPrepationCompleted";
-    private String canceUrl= "http://IP:Port/FCS/PDA/MeterialPrepationCance";
+    private String completedUrl= "http://127.0.0.1:9600/FCS/PDA/MeterialPrepationCompleted";
+    private String canceUrl= "http://127.0.0.1:9600/FCS/PDA/MeterialPrepationCance";
 
     @Override
     public int send(MeterialPrepation meterialPrepation) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        System.out.println("---------调用接口-------------");
         if(StringUtils.isEmpty(meterialPrepation.getStorageCode()) || StringUtils.isEmpty())
             throw  new BizErrorException("库位编码或接口请求类型不能为空");
         MeterialPrepationRequest req = new MeterialPrepationRequest();
         Map<String,Object> map = new HashMap<>();
     //    req.setRequestCode();
         String data = "{\"locationCode\":\""+meterialPrepation.getStorageCode()+"\",\""+user.getNickName()+"\":\""+user.getNickName()+"\"}";
+        System.out.println("---------请求参数-------------"+data);
         req.setRequestData(data);
         if("1".equals(meterialPrepation.getType())){
             req.setRequsetName("MeterialPreparationCompleted");
             String result = HTTPUtils.postMap(completedUrl, new HashMap<>(), ControllerUtil.dynamicConditionByEntity(req));
             if(StringUtils.isNotEmpty(result)){
                 map =  JsonUtils.jsonToMap(result);
-                System.out.println("---------map1-------------"+map);
+                System.out.println("---------请求结果map1-------------"+map);
             }
         }else if("2".equals(meterialPrepation.getType())){
             req.setRequsetName("MeterialPreparationCancel");
             String result = HTTPUtils.postMap(canceUrl, new HashMap<>(), ControllerUtil.dynamicConditionByEntity(req));
             if(StringUtils.isNotEmpty(result)){
                 map = JsonUtils.jsonToMap(result);
-                System.out.println("---------map2------------"+map);
+                System.out.println("---------请求结果map2------------"+map);
             }
         }else{
             throw  new BizErrorException("请求接口类型错误");

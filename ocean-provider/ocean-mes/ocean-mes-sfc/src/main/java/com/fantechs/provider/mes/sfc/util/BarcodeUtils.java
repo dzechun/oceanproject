@@ -139,7 +139,7 @@ public class BarcodeUtils {
 
         // 3、系统检查条码工单状态是否正确（工单表）
         if (mesSfcWorkOrderBarcodeDto.getWorkOrderId() != null) {
-            checkOrder(mesSfcWorkOrderBarcodeDto);
+            checkOrder(mesSfcWorkOrderBarcodeDto, record.getProLineId());
         }
 
         // 4、是否检查排程
@@ -410,6 +410,31 @@ public class BarcodeUtils {
                 // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
                 if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
                     mesPmWorkOrder.setWorkOrderStatus((byte) 3);
+
+                    /**
+                     * 20211215 bgkun
+                     * 如果有附件码，变更销售订单条码状态
+                     */
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
+                    map.put("workOrderBarcodeId", sfcWorkOrderBarcode.getWorkOrderBarcodeId());
+                    List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = barcodeUtils.mesSfcKeyPartRelevanceService.findList(map);
+                    if (!keyPartRelevanceDtos.isEmpty() && keyPartRelevanceDtos.size() >0){
+                        List<MesSfcWorkOrderBarcodeDto> barcodeDtos = barcodeUtils.mesSfcWorkOrderBarcodeService.findList(new SearchMesSfcWorkOrderBarcode());
+                        List<MesSfcWorkOrderBarcode> barcodes = new ArrayList<>();
+                        for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
+                            if (keyPartRelevanceDto.getPartBarcode() != null){
+                                MesSfcWorkOrderBarcodeDto barcodeDto = barcodeDtos.stream().filter(item -> item.getBarcode().equals(keyPartRelevanceDto.getPartBarcode())).findFirst().get();
+                                MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
+                                barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
+                                barcode.setBarcodeStatus((byte) 3);
+                                barcodes.add(barcode);
+                            }
+                        }
+                        if (barcodes.size() > 0){
+                            barcodeUtils.mesSfcWorkOrderBarcodeService.batchUpdate(barcodes);
+                        }
+                    }
                 }
                 // huangshuijun 注释此 updateSmtWorkOrder 方法原因：1 过站方式如果是设备调用 获取不了当前用户
                 // 2 调用此方法会把工单BOM删除 大忌
@@ -447,6 +472,31 @@ public class BarcodeUtils {
                  */
                 sfcWorkOrderBarcode.setBarcodeStatus((byte) 2);
                 barcodeUtils.mesSfcWorkOrderBarcodeService.update(sfcWorkOrderBarcode);
+
+                /**
+                 * 20211215 bgkun
+                 * 如果有附件码，变更销售订单条码状态
+                 */
+                Map<String, Object> map = new HashMap<>();
+                map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
+                map.put("workOrderBarcodeId", sfcWorkOrderBarcode.getWorkOrderBarcodeId());
+                List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = barcodeUtils.mesSfcKeyPartRelevanceService.findList(map);
+                if (!keyPartRelevanceDtos.isEmpty() && keyPartRelevanceDtos.size() >0){
+                    List<MesSfcWorkOrderBarcodeDto> barcodeDtos = barcodeUtils.mesSfcWorkOrderBarcodeService.findList(new SearchMesSfcWorkOrderBarcode());
+                    List<MesSfcWorkOrderBarcode> barcodes = new ArrayList<>();
+                    for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
+                        if (keyPartRelevanceDto.getPartBarcode() != null){
+                            MesSfcWorkOrderBarcodeDto barcodeDto = barcodeDtos.stream().filter(item -> item.getBarcode().equals(keyPartRelevanceDto.getPartBarcode())).findFirst().get();
+                            MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
+                            barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
+                            barcode.setBarcodeStatus((byte) 3);
+                            barcodes.add(barcode);
+                        }
+                    }
+                    if (barcodes.size() > 0){
+                        barcodeUtils.mesSfcWorkOrderBarcodeService.batchUpdate(barcodes);
+                    }
+                }
             }
         }
         return 1;
@@ -1054,7 +1104,7 @@ public class BarcodeUtils {
      *
      * @param mesSfcWorkOrderBarcodeDto 条码DTO
      */
-    private static void checkOrder(MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto) {
+    private static void checkOrder(MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto, Long proLineId) {
         //判断工单是否存在
         ResponseEntity<MesPmWorkOrder> pmWorkOrderResponseEntity = barcodeUtils.pmFeignApi.workOrderDetail(mesSfcWorkOrderBarcodeDto.getWorkOrderId());
         if (pmWorkOrderResponseEntity.getCode() != 0) {
@@ -1069,6 +1119,9 @@ public class BarcodeUtils {
         }
         if (mesPmWorkOrder.getProductionQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 1) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012007, mesPmWorkOrder.getWorkOrderCode());
+        }
+        if (!mesPmWorkOrder.getProLineId().equals(proLineId)){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012007.getCode(), "作业配置的产线与工单上的产线不符，不可操作");
         }
     }
 

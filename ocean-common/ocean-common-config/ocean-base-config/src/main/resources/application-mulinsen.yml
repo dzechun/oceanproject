@@ -11,6 +11,9 @@ spring:
     url: jdbc:mysql://192.168.18.110:3306/ocean_v2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
     username: wms
     password: mulinsen.123
+#    url: jdbc:mysql://192.168.200.181:3306/ocean_v2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
+#    username: root
+#    password: hl123.@2021
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 初始连接数
@@ -48,6 +51,9 @@ spring:
     host: 192.168.18.109
     port: 6379
     password: hlredis#2018
+#    host: 192.168.200.181
+#    port: 6379
+#    password: qwe!@#
     jedis:
       pool:
         # 最大空闲连接
@@ -96,7 +102,7 @@ ribbon:
 
 tx-lcn:
   client:
-    manager-address: 192.168.204.163:8070
+    manager-address: 127.0.0.1:8070
 
 feign:
   hystrix:

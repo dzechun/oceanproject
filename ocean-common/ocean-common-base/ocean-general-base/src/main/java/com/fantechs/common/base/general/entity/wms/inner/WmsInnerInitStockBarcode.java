@@ -1,12 +1,18 @@
 package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import javax.persistence.*;
 import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.io.Serializable;
+
+;
+;
 
 /**
  * wms_inner_init_stock_barcode
@@ -84,6 +90,10 @@ public class WmsInnerInitStockBarcode extends ValidGroup implements Serializable
     @Transient
     @ApiModelProperty(name = "materialCode",value = "物料编码")
     private String materialCode;
+
+    @Transient
+    @ApiModelProperty(name = "materialDesc",value = "物料描述")
+    private String materialDesc;
 
     private static final long serialVersionUID = 1L;
 }

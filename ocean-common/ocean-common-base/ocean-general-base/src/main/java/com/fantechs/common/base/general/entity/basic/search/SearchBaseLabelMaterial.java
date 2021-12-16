@@ -1,11 +1,9 @@
 package com.fantechs.common.base.general.entity.basic.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -31,6 +29,10 @@ public class SearchBaseLabelMaterial extends BaseQuery implements Serializable {
     private String processName;
     @ApiModelProperty(name = "materialCode",value = "产品料号")
     private String materialCode;
+    @ApiModelProperty(name = "materialName",value = "物料名称")
+    private String materialName;
+    @ApiModelProperty(name = "materialDesc",value = "物料描述")
+    private String materialDesc;
     @ApiModelProperty("产品版本")
     private String materialVersion;
     @ApiModelProperty("标签编码")

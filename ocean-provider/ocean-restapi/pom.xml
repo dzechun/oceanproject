@@ -21,6 +21,7 @@
         <module>ocean-chinafivering-api</module>
         <module>ocean-wanbao-api</module>
         <module>ocean-leisai-api</module>
+        <module>ocean-mulinsen-api</module>
     </modules>
 
 </project>

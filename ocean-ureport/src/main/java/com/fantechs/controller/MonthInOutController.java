@@ -6,6 +6,8 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.dto.MonthInDto;
 import com.fantechs.dto.MonthOutDto;
+import com.fantechs.dto.ShipmentDetDto;
+import com.fantechs.entity.search.SearchShipmentDet;
 import com.fantechs.entity.search.SearchMonthInOut;
 import com.fantechs.entity.search.SearchMonthInOutBarCode;
 import com.fantechs.service.MonthInOutService;
@@ -36,28 +38,28 @@ public class MonthInOutController {
     private MonthInOutService monthInOutService;
 
     @PostMapping("/findInList")
-    @ApiModelProperty("月入报表")
+    @ApiOperation("月入报表")
     public ResponseEntity<List<MonthInDto>> findInList(@RequestBody(required = false) SearchMonthInOut searchMonthInOut){
         Page<Object> page = PageHelper.startPage(searchMonthInOut.getStartPage(), searchMonthInOut.getPageSize());
         return ControllerUtil.returnDataSuccess(monthInOutService.findInList(ControllerUtil.dynamicConditionByEntity(searchMonthInOut)),(int)page.getTotal());
     }
 
     @PostMapping("/findInListBarCode")
-    @ApiModelProperty("月入条码明细")
+    @ApiOperation("月入条码明细")
     public ResponseEntity<List<String>> findInListBarCode(@RequestBody(required = false) SearchMonthInOutBarCode searchMonthInOutBarCode){
         Page<Object> page = PageHelper.startPage(searchMonthInOutBarCode.getStartPage(), searchMonthInOutBarCode.getPageSize());
         return ControllerUtil.returnDataSuccess(monthInOutService.findInListBarCode(ControllerUtil.dynamicConditionByEntity(searchMonthInOutBarCode)),(int)page.getTotal());
     }
 
     @PostMapping("/findOutList")
-    @ApiModelProperty("月出报表")
+    @ApiOperation("月出报表")
     public ResponseEntity<List<MonthOutDto>> findOutList(@RequestBody(required = false) SearchMonthInOut searchMonthInOut){
         Page<Object> page = PageHelper.startPage(searchMonthInOut.getStartPage(), searchMonthInOut.getPageSize());
         return ControllerUtil.returnDataSuccess(monthInOutService.findOutList(ControllerUtil.dynamicConditionByEntity(searchMonthInOut)),(int)page.getTotal());
     }
 
     @PostMapping("/findOutListBarCode")
-    @ApiModelProperty("月入条码明细")
+    @ApiOperation("月入条码明细")
     public ResponseEntity<List<String>> findOutListBarCode(@RequestBody(required = false) SearchMonthInOutBarCode searchMonthInOutBarCode){
         Page<Object> page = PageHelper.startPage(searchMonthInOutBarCode.getStartPage(), searchMonthInOutBarCode.getPageSize());
         return ControllerUtil.returnDataSuccess(monthInOutService.findOutListBarCode(ControllerUtil.dynamicConditionByEntity(searchMonthInOutBarCode)),(int)page.getTotal());
@@ -83,6 +85,26 @@ public class MonthInOutController {
             } catch (Exception e) {
                 throw new BizErrorException(e);
             }
+        }
+    }
+
+    @PostMapping("/findShipmentDet")
+    @ApiOperation("发货明细报表")
+    public ResponseEntity<List<ShipmentDetDto>> findShipmentDet(@RequestBody(required = false) SearchShipmentDet dto){
+        Page<Object> page = PageHelper.startPage(dto.getStartPage(), dto.getPageSize());
+        List<ShipmentDetDto> list = monthInOutService.findShipmentDet(ControllerUtil.dynamicConditionByEntity(dto));
+        return ControllerUtil.returnDataSuccess(list, (int)page.getTotal());
+    }
+
+    @PostMapping("/exportShipmentDet")
+    @ApiOperation(value = "导出发货明细excel",notes = "导出发货明细excel",produces = "application/octet-stream")
+    public void exportShipmentDet(HttpServletResponse response, @ApiParam(value = "查询对象") @RequestBody(required = false) SearchShipmentDet dto){
+        List<ShipmentDetDto> list = monthInOutService.findShipmentDet(ControllerUtil.dynamicConditionByEntity(dto));
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "发货明细报表", "发货明细报表", ShipmentDetDto.class, "发货明细报表.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
         }
     }
 }

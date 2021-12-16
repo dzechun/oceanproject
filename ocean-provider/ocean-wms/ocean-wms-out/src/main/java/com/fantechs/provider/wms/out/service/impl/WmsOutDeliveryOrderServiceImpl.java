@@ -15,6 +15,7 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryOrderImport;
+import com.fantechs.common.base.general.dto.wms.out.imports.WmsSamsungOutDeliveryOrderImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
@@ -801,6 +802,92 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         resultMap.put("操作失败行数",fail);
         return resultMap;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importSamsungExcel(List<WmsSamsungOutDeliveryOrderImport> wmsSamsungOutDeliveryOrderImports) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<WmsSamsungOutDeliveryOrderImport> samsungOutDeliveryOrderImports = new LinkedList<>();
+
+        for (int i = 0; i < wmsSamsungOutDeliveryOrderImports.size(); i++) {
+            WmsSamsungOutDeliveryOrderImport wmsSamsungOutDeliveryOrderImport = wmsSamsungOutDeliveryOrderImports.get(i);
+            String LIDCode = wmsSamsungOutDeliveryOrderImport.getOption1();
+            String deliveryOrderCode = "SM"+LIDCode;
+            if (StringUtils.isEmpty(LIDCode)){
+                fail.add(i+4);
+                continue;
+            }
+
+            Example example = new Example(WmsOutDeliveryOrder.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("deliveryOrderCode",deliveryOrderCode)
+                    .andEqualTo("orgId",user.getOrganizationId());
+            WmsOutDeliveryOrder wmsOutDeliveryOrder = wmsOutDeliveryOrderMapper.selectOneByExample(example);
+            if(StringUtils.isNotEmpty(wmsOutDeliveryOrder)){
+                fail.add(i+4);
+                continue;
+            }
+
+            //物料编码
+            String materialCode = wmsSamsungOutDeliveryOrderImport.getMaterialCode();
+            if(StringUtils.isNotEmpty(materialCode)) {
+                SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+                searchBaseMaterial.setMaterialCode(materialCode);
+                searchBaseMaterial.setOrgId(user.getOrganizationId());
+                List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
+                if (StringUtils.isEmpty(baseMaterials)){
+                    fail.add(i+4);
+                    continue;
+                }
+                wmsSamsungOutDeliveryOrderImport.setMaterialId(baseMaterials.get(0).getMaterialId());
+            }
+
+            samsungOutDeliveryOrderImports.add(wmsSamsungOutDeliveryOrderImport);
+        }
+
+        if(StringUtils.isNotEmpty(samsungOutDeliveryOrderImports)){
+            HashMap<String, List<WmsSamsungOutDeliveryOrderImport>> collect = samsungOutDeliveryOrderImports.stream().collect(Collectors.groupingBy(WmsSamsungOutDeliveryOrderImport::getOption1, HashMap::new, Collectors.toList()));
+            Set<String> set = collect.keySet();
+
+            for(String s : set){
+                List<WmsSamsungOutDeliveryOrderImport> wmsSamsungOutDeliveryOrderImports1 = collect.get(s);
+                WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
+                //新增父级数据
+                wmsOutDeliveryOrder.setDeliveryOrderCode("SM"+wmsSamsungOutDeliveryOrderImports1.get(0).getOption1());
+                wmsOutDeliveryOrder.setPlanDespatchDate(wmsSamsungOutDeliveryOrderImports1.get(0).getPlanDespatchDate());
+                wmsOutDeliveryOrder.setCreateTime(new Date());
+                wmsOutDeliveryOrder.setCreateUserId(user.getUserId());
+                wmsOutDeliveryOrder.setModifiedUserId(user.getUserId());
+                wmsOutDeliveryOrder.setModifiedTime(new Date());
+                wmsOutDeliveryOrder.setOrgId(user.getOrganizationId());
+                wmsOutDeliveryOrder.setStatus((byte)1);
+                wmsOutDeliveryOrder.setAuditStatus((byte) 0);
+                wmsOutDeliveryOrder.setOrderStatus((byte)1);
+                wmsOutDeliveryOrder.setOrderTypeId((long)1);
+                success += wmsOutDeliveryOrderMapper.insertUseGeneratedKeys(wmsOutDeliveryOrder);
+
+                //新增明细数据
+                LinkedList<WmsOutDeliveryOrderDet> detList = new LinkedList<>();
+                for (WmsSamsungOutDeliveryOrderImport wmsSamsungOutDeliveryOrderImport : wmsSamsungOutDeliveryOrderImports1) {
+                    WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = new WmsOutDeliveryOrderDet();
+                    BeanUtils.copyProperties(wmsSamsungOutDeliveryOrderImport, wmsOutDeliveryOrderDet);
+                    wmsOutDeliveryOrderDet.setDeliveryOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
+                    wmsOutDeliveryOrderDet.setStatus((byte) 1);
+                    detList.add(wmsOutDeliveryOrderDet);
+                }
+                wmsOutDeliveryOrderDetMapper.insertList(detList);
+            }
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
+    }
+
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)

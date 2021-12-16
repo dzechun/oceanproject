@@ -30,6 +30,7 @@
         <module>ocean-tem-api</module>
         <module>ocean-eam-api</module>
         <module>ocean-guest-api</module>
+        <module>ocean-restapi-api</module>
     </modules>
 
 </project>

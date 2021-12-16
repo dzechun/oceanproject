@@ -14,9 +14,10 @@
     <result column="client_barcode2" jdbcType="VARCHAR" property="clientBarcode2" />
     <result column="client_barcode3" jdbcType="VARCHAR" property="clientBarcode3" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
   </resultMap>
   <select id="findList" resultMap="BaseResultMap">
-    select wiisb.init_stock_barcode_id,wiisb.init_stock_id,wiisb.init_stock_det_id,wiisb.in_plant_barcode,wiisb.sales_barcode,wiisb.client_barcode1,wiisb.client_barcode2,wiisb.client_barcode3,bm.material_code
+    select wiisb.init_stock_barcode_id,wiisb.init_stock_id,wiisb.init_stock_det_id,wiisb.in_plant_barcode,wiisb.sales_barcode,wiisb.client_barcode1,wiisb.client_barcode2,wiisb.client_barcode3,bm.material_code,bm.material_desc
     FROM wms_inner_init_stock_barcode wiisb
     left join wms_inner_init_stock_det wiisd on wiisb.init_stock_det_id = wiisd.init_stock_det_id
     left join base_material bm on bm.material_id = wiisd.material_id
@@ -28,8 +29,18 @@
        and wiisb.init_stock_id=#{initStockId}
      </if>
     <if test="materialCode!=null and materialCode!=''">
-      and bm.material_code =#{materialCode}
+      and bm.material_code like CONCAT('%',#{materialCode},'%')
     </if>
+    <if test="inPlantBarcode!=null and inPlantBarcode!=''">
+      and wiisb.in_plant_barcode like CONCAT('%',#{inPlantBarcode},'%')
+    </if>
+      <if test="salesBarcode!=null and salesBarcode!=''">
+        and wiisb.sales_barcode like CONCAT('%',#{salesBarcode},'%')
+      </if>
+      <if test="clientBarcode!=null and clientBarcode!=''">
+        and (wiisb.client_barcode1 like CONCAT('%',#{clientBarcode},'%') or wiisb.client_barcode2 like CONCAT('%',#{clientBarcode},'%') or wiisb.client_barcode3 like CONCAT('%',#{clientBarcode},'%'))
+      </if>
     </where>
+    order by wiisb.init_stock_barcode_id desc
   </select>
 </mapper>

@@ -584,4 +584,8 @@ public interface BaseFeignApi {
     @ApiOperation("根据物料编码查询物料id")
     @PostMapping("/baseMaterial/findIdByCode")
     ResponseEntity<Map<String, Long>> findIdByCode(@ApiParam(value = "物料编码集合",required = true)@RequestBody List<String> materialCodes);
+
+    @ApiOperation("月台列表(不分页)")
+    @PostMapping("/basePlatform/findAll")
+    ResponseEntity<List<BasePlatform>> findPlatformAll(@ApiParam(value = "查询对象") @RequestBody SearchBasePlatform searchBasePlatform);
 }

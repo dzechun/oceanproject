@@ -5,7 +5,6 @@ import com.fantechs.common.base.entity.security.SysOrganizationUser;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.filter.CustomWebAuthenticationDetails;
-import com.fantechs.security.license.LicenseVerify;
 import com.fantechs.security.mapper.SysOrganizationUserMapper;
 import com.fantechs.security.mapper.SysSpecItemMapper;
 import com.fantechs.security.mapper.SysUserMapper;
@@ -46,14 +45,14 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
     @Override
      public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-        log.info("验证证书可使用性");
+        /*log.info("验证证书可使用性");
         LicenseVerify licenseVerify = new LicenseVerify();
         //校验证书是否有效
         boolean verifyResult = licenseVerify.verify();
         if (!verifyResult) {
             log.warn("验证失败，证书无效");
             throw new BadCredentialsException("您的证书无效权限，请核查服务器是否取得授权或重新申请证书！");
-        }
+        }*/
 
         //用户输入的用户名
         String username = authentication.getName();

@@ -10,7 +10,6 @@
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="init_stock_type" jdbcType="TINYINT" property="initStockType" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
-    <result column="total_plan_qty" jdbcType="DECIMAL" property="totalPlanQty"/>
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -30,7 +29,6 @@ wiis.init_stock_order_code,
     wiis.storage_id,
 wiis.init_stock_type,
 wiis.order_status,
-wiis.total_plan_qty,
 wiis.remark,
 wiis.org_id,
 wiis.create_user_id,
@@ -42,7 +40,18 @@ wiis.is_delete
   <select id="findList" resultMap="BaseResultDtoMap">
     SELECT <include refid="base_column_list"/>,bs.storage_code,bw.warehouse_code,bw.warehouse_name,
            IFNULL((SELECT sum(wiisd.stock_qty) FROM wms_inner_init_stock_det wiisd WHERE wiisd.init_stock_id=wiis.init_stock_id),0) as totalStockQty,
-           IFNULL((SELECT sum(wiisd.variance_qty) FROM wms_inner_init_stock_det wiisd WHERE wiisd.init_stock_id=wiis.init_stock_id),0) as totalVarianceQty,
+    CASE wiis.init_stock_type
+    WHEN 1 THEN
+    wiis.total_plan_qty
+    ELSE
+    IFNULL((SELECT sum(wiisd.plan_qty) FROM wms_inner_init_stock_det wiisd WHERE wiisd.init_stock_id=wiis.init_stock_id),0)
+    END as totalPlanQty,
+    CASE wiis.init_stock_type
+    WHEN 1 THEN
+    wiis.total_plan_qty-IFNULL((SELECT sum(wiisd.stock_qty) FROM wms_inner_init_stock_det wiisd WHERE wiisd.init_stock_id=wiis.init_stock_id),0)
+    ELSE
+    IFNULL((SELECT sum(wiisd.variance_qty) FROM wms_inner_init_stock_det wiisd WHERE wiisd.init_stock_id=wiis.init_stock_id),0)
+    END as totalVarianceQty,
            su.user_name as 'createUserName',sus.user_name as 'modifiedUserName',bo.organization_name as 'organizationName'
     FROM wms_inner_init_stock wiis
            LEFT JOIN base_storage bs ON wiis.storage_id=bs.storage_id

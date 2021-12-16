@@ -69,7 +69,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>D:/IMES/lib2/kreport</outputDirectory>
+                            <outputDirectory>${basedir}/lib2/kreport</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

@@ -15,7 +15,7 @@ public class CallAgvBarcodeDto extends CallAgvBarcode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="17")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="19")
     private String createUserName;
 
     /**
@@ -23,7 +23,7 @@ public class CallAgvBarcodeDto extends CallAgvBarcode implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="19")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="21")
     private String modifiedUserName;
 
     /**

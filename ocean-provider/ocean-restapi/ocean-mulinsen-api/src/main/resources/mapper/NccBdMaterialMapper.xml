@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.restapi.mulinsen.mapper.NccBdMaterialMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mulinsen.NccBdMaterial">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" jdbcType="CHAR" property="id" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="DEF18" jdbcType="VARCHAR" property="def18" />
+    <result column="DEF20" jdbcType="VARCHAR" property="def20" />
+    <result column="DR" jdbcType="INTEGER" property="dr" />
+    <result column="ENABLESTATE" jdbcType="INTEGER" property="enablestate" />
+    <result column="ENAME" jdbcType="VARCHAR" property="ename" />
+    <result column="GRAPHID" jdbcType="VARCHAR" property="graphid" />
+    <result column="MATERIALMNECODE" jdbcType="VARCHAR" property="materialmnecode" />
+    <result column="MATERIALSHORTNAME" jdbcType="VARCHAR" property="materialshortname" />
+    <result column="MATERIALTYPE" jdbcType="VARCHAR" property="materialtype" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PK_MARBASCLASS" jdbcType="CHAR" property="pkMarbasclass" />
+    <result column="PK_MEASDOC" jdbcType="CHAR" property="pkMeasdoc" />
+    <result column="DATA_STATUS" jdbcType="INTEGER" property="dataStatus" />
+    <result column="SYNC_TIME" jdbcType="TIMESTAMP" property="syncTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    nbm.ID, nbm.CODE, nbm.DEF18, nbm.DEF20, nbm.DR, nbm.ENABLESTATE, nbm.ENAME, nbm.GRAPHID, nbm.MATERIALMNECODE, nbm.MATERIALSHORTNAME,
+    nbm.MATERIALTYPE, nbm.NAME, nbm.PK_MARBASCLASS, nbm.PK_MEASDOC, nbm.DATA_STATUS, nbm.SYNC_TIME
+  </sql>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mulinsen.NccBdMaterialDto">
+
+  </resultMap>
+
+  <select id="findList" parameterType="com.fantechs.common.base.general.entity.mulinsen.search.SearchNccBdMaterial" resultMap="BaseResultMapDto">
+    select <include refid="Base_Column_List"></include>
+    from ncc_bd_material nbm
+    <where>
+      <if test="materialtype != null and materialtype != ''">
+        and nbm.MATERIALTYPE like CONCAT('%', #{materialtype}, '%')
+      </if>
+    </where>
+  </select>
+</mapper>

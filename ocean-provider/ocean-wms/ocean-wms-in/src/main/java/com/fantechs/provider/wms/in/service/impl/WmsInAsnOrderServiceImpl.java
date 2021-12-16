@@ -699,10 +699,11 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         SysUser sysUser = currentUser();
 
         //1-国内 2-海外 3-三星
-        Integer materialType = 1;
+        String materialType = "0";
         //查询物料关联标签 区分国内海外或三星
         SearchBaseLabelMaterial searchBaseLabelMaterial = new SearchBaseLabelMaterial();
         searchBaseLabelMaterial.setMaterialId(palletAutoAsnDto.getMaterialId().toString());
+        searchBaseLabelMaterial.setLabelCategoryId("56");
         ResponseEntity<List<BaseLabelMaterialDto>> listResponseEntity = baseFeignApi.findLabelMaterialList(searchBaseLabelMaterial);
         if(listResponseEntity.getCode()!=0){
             throw new BizErrorException(listResponseEntity.getCode(),listResponseEntity.getMessage());
@@ -711,27 +712,28 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             BaseLabelMaterialDto baseLabelMaterialDto = listResponseEntity.getData().get(0);
             switch (baseLabelMaterialDto.getLabelCode()){
                 case "CN01":
-                    materialType=1;
+                    materialType="1";
                     break;
                 case "CN02":
-                    materialType=2;
+                    materialType="2";
                     break;
                 case "SEC":
-                    materialType=3;
+                    materialType="3";
                     break;
                 default:
-                    materialType=1;
-                    break;
+                    materialType="4";
             }
+        }else {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"区分物料类别失败");
         }
         //查询redis是否存储今日入库单号
         Boolean hasKey = redisUtil.hasKey("pallet_id");
-        Map<Integer, Map<String, String>> palletMap = new HashMap<>();
+        Map<String, Map<String, String>> palletMap = new HashMap<>();
         Map<String,String> asnMap = new HashMap<>();
         //true
         boolean isExist = false;
         if(hasKey) {
-            palletMap = (Map<Integer, Map<String, String>>) redisUtil.get("pallet_id");
+            palletMap = (Map<String, Map<String, String>>) redisUtil.get("pallet_id");
             if(palletMap.containsKey(materialType)){
                 asnMap = palletMap.get(materialType);
                 isExist=true;
@@ -801,6 +803,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                         .productPalletId(palletAutoAsnDto.getProductPalletId())
                         .orgId(sysUser.getOrganizationId())
                         .remark(DateUtils.getDateString(new Date(),"yyyy-MM-dd"))
+                        .materialType(Byte.valueOf(materialType))
                         .build();
                 int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(wmsInAsnOrder);
                 if(num<1){
@@ -876,7 +879,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         wmsInnerJobOrder.setWmsInPutawayOrderDets(list);
         ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
         if(responseEntity.getCode()!=0){
-            throw new BizErrorException("上架作业单生成失败");
+            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
         }
         return 1;
     }

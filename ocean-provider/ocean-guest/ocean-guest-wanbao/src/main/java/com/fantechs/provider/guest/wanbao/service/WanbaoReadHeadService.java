@@ -14,5 +14,5 @@ import java.util.Map;
 public interface WanbaoReadHeadService extends IService<WanbaoReadHead> {
     List<WanbaoReadHeadDto> findList(Map<String, Object> map);
 
-    Map<String, Object> importExcel(List<WanbaoReadHead> list);
+    Map<String, Object> importExcel(List<WanbaoReadHeadDto> list);
 }

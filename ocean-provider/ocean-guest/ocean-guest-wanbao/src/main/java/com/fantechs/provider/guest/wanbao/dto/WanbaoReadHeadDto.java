@@ -16,7 +16,7 @@ public class WanbaoReadHeadDto extends WanbaoReadHead implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "platformName",value = "月台名称")
-    @Excel(name = "月台名称", height = 20, width = 30,orderNum="11")
+    @Excel(name = "月台名称", height = 20, width = 30,orderNum="3")
     private String platformName;
 
     /**
@@ -24,7 +24,7 @@ public class WanbaoReadHeadDto extends WanbaoReadHead implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="12")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="6")
     private String createUserName;
 
     /**
@@ -32,7 +32,7 @@ public class WanbaoReadHeadDto extends WanbaoReadHead implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="13")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
     private String modifiedUserName;
 
     /**

@@ -187,6 +187,9 @@
             <if test="materialDesc!=null and materialDesc!=''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
             </if>
+            <if test="proName!=null and proName!=''">
+                and spl.pro_name like CONCAT('%', #{proName}, '%')
+            </if>
             <if test="proLineId!=null and proLineId!=''">
                 and swo.pro_line_id=#{proLineId}
             </if>

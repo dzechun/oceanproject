@@ -11,6 +11,7 @@
         <result column="work_order_qty" jdbcType="VARCHAR" property="workOrderQty" />
         <result column="scheduled_qty" jdbcType="VARCHAR" property="scheduledQty" />
         <result column="finished_qty" jdbcType="VARCHAR" property="finishedQty" />
+        <result column="production_qty" jdbcType="VARCHAR" property="productionQty" />
         <result column="work_order_status" jdbcType="VARCHAR" property="workOrderStatus" />
         <result column="product_condition" jdbcType="VARCHAR" property="productCondition" />
         <result column="if_order_inserting" jdbcType="VARCHAR" property="ifOrderInserting" />
@@ -21,13 +22,12 @@
         bm.material_code,
         bm.material_name,
         bm.material_desc,
-        '' as product_model_name,
         bm.material_version,
         mpwo.work_order_qty,
         mpdp.schedule_qty as scheduled_qty,
         mpdp.finished_qty,
+        mpwo.production_qty,
         mpwo.work_order_status,
-        '' as product_condition,
         mpdp.if_order_inserting,
         date_format(mpdp.plan_time, '%Y-%m-%d') AS plan_date
         from mes_pm_daily_plan mpdp
@@ -40,6 +40,12 @@
             </if>
             <if test="orgId!=null and orgId!=''">
                 and mpwo.org_id=#{orgId}
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and mpwo.pro_line_id=#{proLineId}
+            </if>
+            <if test="workOrderCode != null and workOrderCode != ''">
+                and mpwo.work_order_code = #{workOrderCode}
             </if>
         </where>
     </select>
